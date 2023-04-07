@@ -5,4 +5,6 @@ package_pprint_name = "Recovery Services Backup Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-sample_link = "recoveryservicesbackup"
+sample_link = ""
+title = "RecoveryServicesBackupClient"
+sub_namespace = "activestamp"

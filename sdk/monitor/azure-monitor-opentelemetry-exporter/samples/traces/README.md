@@ -166,7 +166,7 @@ $ pip install opentelemetry-exporter-otlp
 $ python sample_collector.py
 ```
 
-* You should be able to see your traces in the Zipkin backend as well as Azure Monitor application insights backend.
+* You should be able to see your traces in the Zipkin backend as well as Azure Monitor Application Insights backend.
 
 ### Jaeger
 
@@ -193,7 +193,7 @@ $ # from this directory
 $ python sample_jaeger.py
 ```
 
-* You should be able to see your traces in the Jaeger backend as well as Azure Monitor application insights backend.
+* You should be able to see your traces in the Jaeger backend as well as Azure Monitor Application Insights backend.
 
 ### Azure AppConfig Add Config Setting
 

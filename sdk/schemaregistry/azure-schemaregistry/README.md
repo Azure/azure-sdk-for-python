@@ -4,7 +4,12 @@ Azure Schema Registry is a schema repository service hosted by Azure Event Hubs,
 and management. The registry is leveraged by serializers to reduce payload size while describing payload structure with
 schema identifiers rather than full schemas.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_samples] | [Changelog][change_log]
+[Source code][source_code]
+| [Package (PyPi)][pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-schemaregistry/)
+| [API reference documentation][api_reference]
+| [Samples][sr_samples]
+| [Changelog][change_log]
 
 ## _Disclaimer_
 
@@ -85,7 +90,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
@@ -118,7 +123,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 schema_id = 'your-schema-id'
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
@@ -139,7 +144,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ["SCHEMAREGISTRY_GROUP"]
 name = "your-schema-name"
 version = int("<your schema version>")
@@ -162,7 +167,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
@@ -219,7 +224,7 @@ schema_registry_client = SchemaRegistryClient("your_fully_qualified_namespace", 
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 schema_registry_client.get_schema(schema_id, logging_enable=True)
 ```
 
@@ -257,7 +262,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemas]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schemas
 [schema_groups]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schema-groups
 [schemaregistry_service]: https://aka.ms/schemaregistry
-[schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
 [quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

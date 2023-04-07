@@ -4,19 +4,24 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint:disable=unused-import
+from typing import TYPE_CHECKING, Dict, Optional
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
+    from azure.core.credentials import (
+        AccessToken,
+        TokenCredential,
+        AzureKeyCredential,
+        AzureSasCredential,
+    )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 # pylint:disable=too-few-public-methods
-class _BearerTokenCredentialPolicyBase(object):
+class _BearerTokenCredentialPolicyBase:
     """Base class for a Bearer Token Credential Policy.
 
     :param credential: The credential.
@@ -24,17 +29,14 @@ class _BearerTokenCredentialPolicyBase(object):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (TokenCredential, *str, **Any) -> None
+    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:  # pylint:disable=unused-argument
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
+        self._token: Optional["AccessToken"] = None
 
     @staticmethod
-    def _enforce_https(request):
-        # type: (PipelineRequest) -> None
-
+    def _enforce_https(request: "PipelineRequest") -> None:
         # move 'enforce_https' from options to context so it persists
         # across retries but isn't passed to a transport implementation
         option = request.context.options.pop("enforce_https", None)
@@ -50,8 +52,7 @@ class _BearerTokenCredentialPolicyBase(object):
             )
 
     @staticmethod
-    def _update_headers(headers, token):
-        # type: (Dict[str, str], str) -> None
+    def _update_headers(headers: Dict[str, str], token: str) -> None:
         """Updates the Authorization header with the bearer token.
 
         :param dict headers: The HTTP Request headers
@@ -60,8 +61,7 @@ class _BearerTokenCredentialPolicyBase(object):
         headers["Authorization"] = "Bearer {}".format(token)
 
     @property
-    def _need_new_token(self):
-        # type: () -> bool
+    def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
 
 
@@ -74,8 +74,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: "PipelineRequest") -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with a bearer token.
@@ -88,8 +87,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def authorize_request(self, request, *scopes, **kwargs):
-        # type: (PipelineRequest, *str, **Any) -> None
+    def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -101,8 +99,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         self._token = self._credential.get_token(*scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: "PipelineRequest") -> "PipelineResponse":
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
@@ -130,8 +127,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
 
         return response
 
-    def on_challenge(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> bool
+    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -143,8 +139,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
         return False
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -153,8 +148,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    def on_exception(self, request):
-        # type: (PipelineRequest) -> None
+    def on_exception(self, request: "PipelineRequest") -> None:
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
@@ -174,8 +168,10 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name: The name of the key header used for the credential.
     :raises: ValueError or TypeError
     """
-    def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
-        # type: (AzureKeyCredential, str, **Any) -> None
+
+    def __init__(
+        self, credential: "AzureKeyCredential", name: str, **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:
@@ -195,8 +191,8 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     :type credential: ~azure.core.credentials.AzureSasCredential
     :raises: ValueError or TypeError
     """
-    def __init__(self, credential, **kwargs):  # pylint: disable=unused-argument
-        # type: (AzureSasCredential, **Any) -> None
+
+    def __init__(self, credential: "AzureSasCredential", **kwargs) -> None:  # pylint: disable=unused-argument
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
             raise ValueError("credential can not be None")

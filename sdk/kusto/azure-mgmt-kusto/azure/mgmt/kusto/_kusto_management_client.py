@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import KustoManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
@@ -29,6 +29,7 @@ from .operations import (
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     ScriptsOperations,
+    SkusOperations,
 )
 
 if TYPE_CHECKING:
@@ -46,6 +47,8 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :ivar cluster_principal_assignments: ClusterPrincipalAssignmentsOperations operations
     :vartype cluster_principal_assignments:
      azure.mgmt.kusto.operations.ClusterPrincipalAssignmentsOperations
+    :ivar skus: SkusOperations operations
+    :vartype skus: azure.mgmt.kusto.operations.SkusOperations
     :ivar databases: DatabasesOperations operations
     :vartype databases: azure.mgmt.kusto.operations.DatabasesOperations
     :ivar attached_database_configurations: AttachedDatabaseConfigurationsOperations operations
@@ -80,7 +83,7 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-07-07". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-12-29". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -99,7 +102,7 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -107,6 +110,7 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.cluster_principal_assignments = ClusterPrincipalAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.attached_database_configurations = AttachedDatabaseConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -157,15 +161,12 @@ class KustoManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> KustoManagementClient
+    def __enter__(self) -> "KustoManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

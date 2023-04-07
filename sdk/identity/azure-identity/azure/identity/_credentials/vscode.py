@@ -5,12 +5,13 @@
 import abc
 import os
 import sys
-from typing import cast, TYPE_CHECKING, Any, Dict, Optional
+from typing import cast, Any, Dict, Optional
 
+from azure.core.credentials import AccessToken
 from .._exceptions import CredentialUnavailableError
 from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
 from .._internal import normalize_authority, validate_tenant_id
-from .._internal.aad_client import AadClient
+from .._internal.aad_client import AadClient, AadClientBase
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.decorators import log_get_token
 
@@ -21,15 +22,9 @@ elif sys.platform.startswith("darwin"):
 else:
     from .._internal.linux_vscode_adapter import get_refresh_token, get_user_settings
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
-    from .._internal.aad_client import AadClientBase
 
-ABC = abc.ABC
-
-class _VSCodeCredentialBase(ABC):
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+class _VSCodeCredentialBase(abc.ABC):
+    def __init__(self, **kwargs: Any) -> None:
         super(_VSCodeCredentialBase, self).__init__()
 
         user_settings = get_user_settings()
@@ -44,20 +39,17 @@ class _VSCodeCredentialBase(ABC):
             self._unavailable_reason = "Initialization failed"
 
     @abc.abstractmethod
-    def _get_client(self, **kwargs):
-        # type: (**Any) -> AadClientBase
+    def _get_client(self, **kwargs: Any) -> AadClientBase:
         pass
 
-    def _get_refresh_token(self):
-        # type: () -> str
+    def _get_refresh_token(self) -> str:
         if not self._refresh_token:
             self._refresh_token = get_refresh_token(self._cloud)
             if not self._refresh_token:
                 raise CredentialUnavailableError(message="Failed to get Azure user details from Visual Studio Code.")
         return self._refresh_token
 
-    def _initialize(self, vscode_user_settings, **kwargs):
-        # type: (Dict, **Any) -> None
+    def _initialize(self, vscode_user_settings: Dict, **kwargs: Any) -> None:
         """Build a client from kwargs merged with VS Code user settings.
 
         The first stable version of this credential defaulted to Public Cloud and the "organizations"
@@ -134,19 +126,19 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         if self._client:
             self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
     @log_get_token("VSCodeCredential")
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code
@@ -159,17 +151,16 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
             raise CredentialUnavailableError(message=error_message)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         refresh_token = self._get_refresh_token()
         self._client = cast(AadClient, self._client)
         return self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
 
-    def _get_client(self, **kwargs):
-        # type: (**Any) -> AadClient
+    def _get_client(self, **kwargs: Any) -> AadClient:
         return AadClient(**kwargs)

@@ -31,11 +31,8 @@ class AadConnectivityState(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        connectivity_state: Optional[Union[str, "_models.AadConnectivityStateEnum"]] = None,
-        **kwargs
-    ):
+        self, *, connectivity_state: Optional[Union[str, "_models.AadConnectivityStateEnum"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword connectivity_state: The connectivity state of the external AAD solution. Known values
          are: "Discovered", "NotLicensed", and "Connected".
@@ -56,19 +53,15 @@ class Location(_serialization.Model):
     """
 
     _validation = {
-        'location': {'readonly': True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.location = None
 
@@ -85,11 +78,8 @@ class ExternalSecuritySolutionKind(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
-        **kwargs
-    ):
+        self, *, kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
         :paramtype kind: str or
@@ -113,9 +103,9 @@ class Resource(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -124,12 +114,8 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
@@ -137,7 +123,8 @@ class Resource(_serialization.Model):
 
 
 class ExternalSecuritySolution(Resource, ExternalSecuritySolutionKind, Location):
-    """Represents a security solution external to Microsoft Defender for Cloud which sends information to an OMS workspace and whose data is displayed by Microsoft Defender for Cloud.
+    """Represents a security solution external to Microsoft Defender for Cloud which sends information
+    to an OMS workspace and whose data is displayed by Microsoft Defender for Cloud.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -154,10 +141,10 @@ class ExternalSecuritySolution(Resource, ExternalSecuritySolutionKind, Location)
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -169,11 +156,8 @@ class ExternalSecuritySolution(Resource, ExternalSecuritySolutionKind, Location)
     }
 
     def __init__(
-        self,
-        *,
-        kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
-        **kwargs
-    ):
+        self, *, kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
         :paramtype kind: str or
@@ -207,10 +191,10 @@ class AadExternalSecuritySolution(ExternalSecuritySolution):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -227,8 +211,8 @@ class AadExternalSecuritySolution(ExternalSecuritySolution):
         *,
         kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
         properties: Optional["_models.AadSolutionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
         :paramtype kind: str or
@@ -268,8 +252,8 @@ class ExternalSecuritySolutionProperties(_serialization.Model):
         device_vendor: Optional[str] = None,
         device_type: Optional[str] = None,
         workspace: Optional["_models.ConnectedWorkspace"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -322,8 +306,8 @@ class AadSolutionProperties(ExternalSecuritySolutionProperties, AadConnectivityS
         device_vendor: Optional[str] = None,
         device_type: Optional[str] = None,
         workspace: Optional["_models.ConnectedWorkspace"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword connectivity_state: The connectivity state of the external AAD solution. Known values
          are: "Discovered", "NotLicensed", and "Connected".
@@ -339,7 +323,14 @@ class AadSolutionProperties(ExternalSecuritySolutionProperties, AadConnectivityS
         :keyword workspace: Represents an OMS workspace to which the solution is connected.
         :paramtype workspace: ~azure.mgmt.security.v2020_01_01.models.ConnectedWorkspace
         """
-        super().__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, connectivity_state=connectivity_state, **kwargs)
+        super().__init__(
+            additional_properties=additional_properties,
+            device_vendor=device_vendor,
+            device_type=device_type,
+            workspace=workspace,
+            connectivity_state=connectivity_state,
+            **kwargs
+        )
         self.connectivity_state = connectivity_state
         self.additional_properties = additional_properties
         self.device_vendor = device_vendor
@@ -387,14 +378,14 @@ class AdaptiveApplicationControlGroup(Resource, Location):  # pylint: disable=to
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'configuration_status': {'readonly': True},
-        'recommendation_status': {'readonly': True},
-        'issues': {'readonly': True},
-        'source_system': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "configuration_status": {"readonly": True},
+        "recommendation_status": {"readonly": True},
+        "issues": {"readonly": True},
+        "source_system": {"readonly": True},
     }
 
     _attribute_map = {
@@ -419,8 +410,8 @@ class AdaptiveApplicationControlGroup(Resource, Location):  # pylint: disable=to
         protection_mode: Optional["_models.ProtectionMode"] = None,
         vm_recommendations: Optional[List["_models.VmRecommendation"]] = None,
         path_recommendations: Optional[List["_models.PathRecommendation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enforcement_mode: The application control policy enforcement/protection mode of the
          machine group. Known values are: "Audit", "Enforce", and "None".
@@ -450,7 +441,8 @@ class AdaptiveApplicationControlGroup(Resource, Location):  # pylint: disable=to
 
 
 class AdaptiveApplicationControlGroups(_serialization.Model):
-    """Represents a list of VM/server groups and set of rules that are Recommended by Microsoft Defender for Cloud to be allowed.
+    """Represents a list of VM/server groups and set of rules that are Recommended by Microsoft
+    Defender for Cloud to be allowed.
 
     :ivar value:
     :vartype value: list[~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup]
@@ -461,11 +453,8 @@ class AdaptiveApplicationControlGroups(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AdaptiveApplicationControlGroup"]] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.AdaptiveApplicationControlGroup"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.AdaptiveApplicationControlGroup]
@@ -495,8 +484,8 @@ class AdaptiveApplicationControlIssueSummary(_serialization.Model):
         *,
         issue: Optional[Union[str, "_models.AdaptiveApplicationControlIssue"]] = None,
         number_of_vms: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword issue: An alert that machines within a group can have. Known values are:
          "ViolationsAudited", "ViolationsBlocked", "MsiAndScriptViolationsAudited",
@@ -512,7 +501,8 @@ class AdaptiveApplicationControlIssueSummary(_serialization.Model):
 
 
 class AdaptiveNetworkHardening(Resource):
-    """The resource whose properties describes the Adaptive Network Hardening settings for some Azure resource.
+    """The resource whose properties describes the Adaptive Network Hardening settings for some Azure
+    resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -533,9 +523,9 @@ class AdaptiveNetworkHardening(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -544,7 +534,10 @@ class AdaptiveNetworkHardening(Resource):
         "type": {"key": "type", "type": "str"},
         "rules": {"key": "properties.rules", "type": "[Rule]"},
         "rules_calculation_time": {"key": "properties.rulesCalculationTime", "type": "iso-8601"},
-        "effective_network_security_groups": {"key": "properties.effectiveNetworkSecurityGroups", "type": "[EffectiveNetworkSecurityGroups]"},
+        "effective_network_security_groups": {
+            "key": "properties.effectiveNetworkSecurityGroups",
+            "type": "[EffectiveNetworkSecurityGroups]",
+        },
     }
 
     def __init__(
@@ -553,8 +546,8 @@ class AdaptiveNetworkHardening(Resource):
         rules: Optional[List["_models.Rule"]] = None,
         rules_calculation_time: Optional[datetime.datetime] = None,
         effective_network_security_groups: Optional[List["_models.EffectiveNetworkSecurityGroups"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rules: The security rules which are recommended to be effective on the VM.
         :paramtype rules: list[~azure.mgmt.security.v2020_01_01.models.Rule]
@@ -585,8 +578,8 @@ class AdaptiveNetworkHardeningEnforceRequest(_serialization.Model):
     """
 
     _validation = {
-        'rules': {'required': True},
-        'network_security_groups': {'required': True},
+        "rules": {"required": True},
+        "network_security_groups": {"required": True},
     }
 
     _attribute_map = {
@@ -594,13 +587,7 @@ class AdaptiveNetworkHardeningEnforceRequest(_serialization.Model):
         "network_security_groups": {"key": "networkSecurityGroups", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rules: List["_models.Rule"],
-        network_security_groups: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, rules: List["_models.Rule"], network_security_groups: List[str], **kwargs: Any) -> None:
         """
         :keyword rules: The rules to enforce. Required.
         :paramtype rules: list[~azure.mgmt.security.v2020_01_01.models.Rule]
@@ -633,8 +620,8 @@ class AdaptiveNetworkHardeningsList(_serialization.Model):
         *,
         value: Optional[List["_models.AdaptiveNetworkHardening"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Adaptive Network Hardenings resources.
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.AdaptiveNetworkHardening]
@@ -658,8 +645,8 @@ class AllowedConnectionsList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -667,12 +654,8 @@ class AllowedConnectionsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -700,12 +683,12 @@ class AllowedConnectionsResource(Resource, Location):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'calculated_date_time': {'readonly': True},
-        'connectable_resources': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "calculated_date_time": {"readonly": True},
+        "connectable_resources": {"readonly": True},
     }
 
     _attribute_map = {
@@ -717,12 +700,8 @@ class AllowedConnectionsResource(Resource, Location):
         "connectable_resources": {"key": "properties.connectableResources", "type": "[ConnectableResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.location = None
         self.calculated_date_time = None
@@ -742,19 +721,15 @@ class AssessmentLinks(_serialization.Model):
     """
 
     _validation = {
-        'azure_portal_uri': {'readonly': True},
+        "azure_portal_uri": {"readonly": True},
     }
 
     _attribute_map = {
         "azure_portal_uri": {"key": "azurePortalUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.azure_portal_uri = None
 
@@ -774,7 +749,7 @@ class AssessmentStatus(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
+        "code": {"required": True},
     }
 
     _attribute_map = {
@@ -789,8 +764,8 @@ class AssessmentStatus(_serialization.Model):
         code: Union[str, "_models.AssessmentStatusCode"],
         cause: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Programmatic code for the status of the assessment. Required. Known values are:
          "Healthy", "Unhealthy", and "NotApplicable".
@@ -826,10 +801,10 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -846,8 +821,8 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution):
         *,
         kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
         properties: Optional["_models.AtaSolutionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
         :paramtype kind: str or
@@ -891,8 +866,8 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         device_type: Optional[str] = None,
         workspace: Optional["_models.ConnectedWorkspace"] = None,
         last_event_received: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -906,7 +881,13 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         :keyword last_event_received:
         :paramtype last_event_received: str
         """
-        super().__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, **kwargs)
+        super().__init__(
+            additional_properties=additional_properties,
+            device_vendor=device_vendor,
+            device_type=device_type,
+            workspace=workspace,
+            **kwargs
+        )
         self.last_event_received = last_event_received
 
 
@@ -924,25 +905,19 @@ class ResourceDetails(_serialization.Model):
     """
 
     _validation = {
-        'source': {'required': True},
+        "source": {"required": True},
     }
 
     _attribute_map = {
         "source": {"key": "source", "type": "str"},
     }
 
-    _subtype_map = {
-        'source': {'Azure': 'AzureResourceDetails', 'OnPremise': 'OnPremiseResourceDetails'}
-    }
+    _subtype_map = {"source": {"Azure": "AzureResourceDetails", "OnPremise": "OnPremiseResourceDetails"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.source = None  # type: Optional[str]
+        self.source: Optional[str] = None
 
 
 class AzureResourceDetails(ResourceDetails):
@@ -960,8 +935,8 @@ class AzureResourceDetails(ResourceDetails):
     """
 
     _validation = {
-        'source': {'required': True},
-        'id': {'readonly': True},
+        "source": {"required": True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -969,14 +944,10 @@ class AzureResourceDetails(ResourceDetails):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.source = 'Azure'  # type: str
+        self.source: str = "Azure"
         self.id = None
 
 
@@ -990,19 +961,15 @@ class AzureResourceLink(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id = None
 
@@ -1027,10 +994,10 @@ class CefExternalSecuritySolution(ExternalSecuritySolution):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1047,8 +1014,8 @@ class CefExternalSecuritySolution(ExternalSecuritySolution):
         *,
         kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
         properties: Optional["_models.CefSolutionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
         :paramtype kind: str or
@@ -1100,8 +1067,8 @@ class CefSolutionProperties(ExternalSecuritySolutionProperties):
         hostname: Optional[str] = None,
         agent: Optional[str] = None,
         last_event_received: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1119,7 +1086,13 @@ class CefSolutionProperties(ExternalSecuritySolutionProperties):
         :keyword last_event_received:
         :paramtype last_event_received: str
         """
-        super().__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, **kwargs)
+        super().__init__(
+            additional_properties=additional_properties,
+            device_vendor=device_vendor,
+            device_type=device_type,
+            workspace=workspace,
+            **kwargs
+        )
         self.hostname = hostname
         self.agent = agent
         self.last_event_received = last_event_received
@@ -1143,11 +1116,11 @@ class CloudErrorBody(_serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1158,12 +1131,8 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
@@ -1190,9 +1159,9 @@ class ConnectableResource(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'inbound_connected_resources': {'readonly': True},
-        'outbound_connected_resources': {'readonly': True},
+        "id": {"readonly": True},
+        "inbound_connected_resources": {"readonly": True},
+        "outbound_connected_resources": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1201,12 +1170,8 @@ class ConnectableResource(_serialization.Model):
         "outbound_connected_resources": {"key": "outboundConnectedResources", "type": "[ConnectedResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.inbound_connected_resources = None
@@ -1227,9 +1192,9 @@ class ConnectedResource(_serialization.Model):
     """
 
     _validation = {
-        'connected_resource_id': {'readonly': True},
-        'tcp_ports': {'readonly': True},
-        'udp_ports': {'readonly': True},
+        "connected_resource_id": {"readonly": True},
+        "tcp_ports": {"readonly": True},
+        "udp_ports": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1238,12 +1203,8 @@ class ConnectedResource(_serialization.Model):
         "udp_ports": {"key": "udpPorts", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.connected_resource_id = None
         self.tcp_ports = None
@@ -1261,12 +1222,7 @@ class ConnectedWorkspace(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Azure resource ID of the connected OMS workspace.
         :paramtype id: str
@@ -1302,14 +1258,14 @@ class DiscoveredSecuritySolution(Resource, Location):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'security_family': {'required': True},
-        'offer': {'required': True},
-        'publisher': {'required': True},
-        'sku': {'required': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "security_family": {"required": True},
+        "offer": {"required": True},
+        "publisher": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
@@ -1330,8 +1286,8 @@ class DiscoveredSecuritySolution(Resource, Location):
         offer: str,
         publisher: str,
         sku: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword security_family: The security family of the discovered solution. Required. Known
          values are: "Waf", "Ngfw", "SaasWaf", and "Va".
@@ -1366,7 +1322,7 @@ class DiscoveredSecuritySolutionList(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1374,12 +1330,7 @@ class DiscoveredSecuritySolutionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.DiscoveredSecuritySolution"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.DiscoveredSecuritySolution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.DiscoveredSecuritySolution]
@@ -1408,8 +1359,8 @@ class EffectiveNetworkSecurityGroups(_serialization.Model):
         *,
         network_interface: Optional[str] = None,
         network_security_groups: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword network_interface: The Azure resource ID of the network interface.
         :paramtype network_interface: str
@@ -1434,8 +1385,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1443,12 +1394,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
@@ -1466,7 +1413,7 @@ class ExternalSecuritySolutionList(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1474,12 +1421,7 @@ class ExternalSecuritySolutionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ExternalSecuritySolution"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ExternalSecuritySolution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.ExternalSecuritySolution]
@@ -1501,7 +1443,7 @@ class JitNetworkAccessPoliciesList(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1509,12 +1451,7 @@ class JitNetworkAccessPoliciesList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.JitNetworkAccessPolicy"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.JitNetworkAccessPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.JitNetworkAccessPolicy]
@@ -1535,12 +1472,7 @@ class Kind(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of the resource.
         :paramtype kind: str
@@ -1577,12 +1509,12 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'virtual_machines': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "virtual_machines": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1602,8 +1534,8 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
         virtual_machines: List["_models.JitNetworkAccessPolicyVirtualMachine"],
         kind: Optional[str] = None,
         requests: Optional[List["_models.JitNetworkAccessRequest"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of the resource.
         :paramtype kind: str
@@ -1640,8 +1572,8 @@ class JitNetworkAccessPolicyInitiatePort(_serialization.Model):
     """
 
     _validation = {
-        'number': {'required': True, 'maximum': 65535, 'minimum': 0},
-        'end_time_utc': {'required': True},
+        "number": {"required": True, "maximum": 65535, "minimum": 0},
+        "end_time_utc": {"required": True},
     }
 
     _attribute_map = {
@@ -1656,8 +1588,8 @@ class JitNetworkAccessPolicyInitiatePort(_serialization.Model):
         number: int,
         end_time_utc: datetime.datetime,
         allowed_source_address_prefix: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword number: Required.
         :paramtype number: int
@@ -1686,7 +1618,7 @@ class JitNetworkAccessPolicyInitiateRequest(_serialization.Model):
     """
 
     _validation = {
-        'virtual_machines': {'required': True},
+        "virtual_machines": {"required": True},
     }
 
     _attribute_map = {
@@ -1699,8 +1631,8 @@ class JitNetworkAccessPolicyInitiateRequest(_serialization.Model):
         *,
         virtual_machines: List["_models.JitNetworkAccessPolicyInitiateVirtualMachine"],
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_machines: A list of virtual machines & ports to open access for. Required.
         :paramtype virtual_machines:
@@ -1726,8 +1658,8 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'ports': {'required': True},
+        "id": {"required": True},
+        "ports": {"required": True},
     }
 
     _attribute_map = {
@@ -1740,8 +1672,8 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         ports: List["_models.JitNetworkAccessPolicyInitiatePort"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID of the virtual machine that is linked to this policy. Required.
         :paramtype id: str
@@ -1769,8 +1701,8 @@ class JitNetworkAccessPolicyVirtualMachine(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'ports': {'required': True},
+        "id": {"required": True},
+        "ports": {"required": True},
     }
 
     _attribute_map = {
@@ -1785,8 +1717,8 @@ class JitNetworkAccessPolicyVirtualMachine(_serialization.Model):
         id: str,  # pylint: disable=redefined-builtin
         ports: List["_models.JitNetworkAccessPortRule"],
         public_ip_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID of the virtual machine that is linked to this policy. Required.
         :paramtype id: str
@@ -1823,9 +1755,9 @@ class JitNetworkAccessPortRule(_serialization.Model):
     """
 
     _validation = {
-        'number': {'required': True, 'maximum': 65535, 'minimum': 0},
-        'protocol': {'required': True},
-        'max_request_access_duration': {'required': True},
+        "number": {"required": True, "maximum": 65535, "minimum": 0},
+        "protocol": {"required": True},
+        "max_request_access_duration": {"required": True},
     }
 
     _attribute_map = {
@@ -1844,8 +1776,8 @@ class JitNetworkAccessPortRule(_serialization.Model):
         max_request_access_duration: str,
         allowed_source_address_prefix: Optional[str] = None,
         allowed_source_address_prefixes: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword number: Required.
         :paramtype number: int
@@ -1887,9 +1819,9 @@ class JitNetworkAccessRequest(_serialization.Model):
     """
 
     _validation = {
-        'virtual_machines': {'required': True},
-        'start_time_utc': {'required': True},
-        'requestor': {'required': True},
+        "virtual_machines": {"required": True},
+        "start_time_utc": {"required": True},
+        "requestor": {"required": True},
     }
 
     _attribute_map = {
@@ -1906,8 +1838,8 @@ class JitNetworkAccessRequest(_serialization.Model):
         start_time_utc: datetime.datetime,
         requestor: str,
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_machines: Required.
         :paramtype virtual_machines:
@@ -1952,10 +1884,10 @@ class JitNetworkAccessRequestPort(_serialization.Model):
     """
 
     _validation = {
-        'number': {'required': True, 'maximum': 65535, 'minimum': 0},
-        'end_time_utc': {'required': True},
-        'status': {'required': True},
-        'status_reason': {'required': True},
+        "number": {"required": True, "maximum": 65535, "minimum": 0},
+        "end_time_utc": {"required": True},
+        "status": {"required": True},
+        "status_reason": {"required": True},
     }
 
     _attribute_map = {
@@ -1978,8 +1910,8 @@ class JitNetworkAccessRequestPort(_serialization.Model):
         allowed_source_address_prefix: Optional[str] = None,
         allowed_source_address_prefixes: Optional[List[str]] = None,
         mapped_port: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword number: Required.
         :paramtype number: int
@@ -2023,8 +1955,8 @@ class JitNetworkAccessRequestVirtualMachine(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'ports': {'required': True},
+        "id": {"required": True},
+        "ports": {"required": True},
     }
 
     _attribute_map = {
@@ -2037,8 +1969,8 @@ class JitNetworkAccessRequestVirtualMachine(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         ports: List["_models.JitNetworkAccessRequestPort"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID of the virtual machine that is linked to this policy. Required.
         :paramtype id: str
@@ -2072,11 +2004,11 @@ class OnPremiseResourceDetails(ResourceDetails):
     """
 
     _validation = {
-        'source': {'required': True},
-        'workspace_id': {'required': True},
-        'vmuuid': {'required': True},
-        'source_computer_id': {'required': True},
-        'machine_name': {'required': True},
+        "source": {"required": True},
+        "workspace_id": {"required": True},
+        "vmuuid": {"required": True},
+        "source_computer_id": {"required": True},
+        "machine_name": {"required": True},
     }
 
     _attribute_map = {
@@ -2087,19 +2019,11 @@ class OnPremiseResourceDetails(ResourceDetails):
         "machine_name": {"key": "machineName", "type": "str"},
     }
 
-    _subtype_map = {
-        'source': {'OnPremiseSql': 'OnPremiseSqlResourceDetails'}
-    }
+    _subtype_map = {"source": {"OnPremiseSql": "OnPremiseSqlResourceDetails"}}
 
     def __init__(
-        self,
-        *,
-        workspace_id: str,
-        vmuuid: str,
-        source_computer_id: str,
-        machine_name: str,
-        **kwargs
-    ):
+        self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
         :paramtype workspace_id: str
@@ -2111,7 +2035,7 @@ class OnPremiseResourceDetails(ResourceDetails):
         :paramtype machine_name: str
         """
         super().__init__(**kwargs)
-        self.source = 'OnPremise'  # type: str
+        self.source: str = "OnPremise"
         self.workspace_id = workspace_id
         self.vmuuid = vmuuid
         self.source_computer_id = source_computer_id
@@ -2141,13 +2065,13 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
     """
 
     _validation = {
-        'source': {'required': True},
-        'workspace_id': {'required': True},
-        'vmuuid': {'required': True},
-        'source_computer_id': {'required': True},
-        'machine_name': {'required': True},
-        'server_name': {'required': True},
-        'database_name': {'required': True},
+        "source": {"required": True},
+        "workspace_id": {"required": True},
+        "vmuuid": {"required": True},
+        "source_computer_id": {"required": True},
+        "machine_name": {"required": True},
+        "server_name": {"required": True},
+        "database_name": {"required": True},
     }
 
     _attribute_map = {
@@ -2169,8 +2093,8 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
         machine_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
         :paramtype workspace_id: str
@@ -2185,8 +2109,14 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
         :keyword database_name: The Sql database name installed on the machine. Required.
         :paramtype database_name: str
         """
-        super().__init__(workspace_id=workspace_id, vmuuid=vmuuid, source_computer_id=source_computer_id, machine_name=machine_name, **kwargs)
-        self.source = 'OnPremiseSql'  # type: str
+        super().__init__(
+            workspace_id=workspace_id,
+            vmuuid=vmuuid,
+            source_computer_id=source_computer_id,
+            machine_name=machine_name,
+            **kwargs
+        )
+        self.source: str = "OnPremiseSql"
         self.server_name = server_name
         self.database_name = database_name
 
@@ -2243,8 +2173,8 @@ class PathRecommendation(_serialization.Model):
         usernames: Optional[List["_models.UserRecommendation"]] = None,
         file_type: Optional[Union[str, "_models.FileType"]] = None,
         configuration_status: Optional[Union[str, "_models.ConfigurationStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The full path of the file, or an identifier of the application.
         :paramtype path: str
@@ -2283,7 +2213,8 @@ class PathRecommendation(_serialization.Model):
 
 
 class ProtectionMode(_serialization.Model):
-    """The protection mode of the collection/file types. Exe/Msi/Script are used for Windows, Executable is used for Linux.
+    """The protection mode of the collection/file types. Exe/Msi/Script are used for Windows,
+    Executable is used for Linux.
 
     :ivar exe: The application control policy enforcement/protection mode of the machine group.
      Known values are: "Audit", "Enforce", and "None".
@@ -2313,8 +2244,8 @@ class ProtectionMode(_serialization.Model):
         msi: Optional[Union[str, "_models.EnforcementMode"]] = None,
         script: Optional[Union[str, "_models.EnforcementMode"]] = None,
         executable: Optional[Union[str, "_models.EnforcementMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exe: The application control policy enforcement/protection mode of the machine group.
          Known values are: "Audit", "Enforce", and "None".
@@ -2364,8 +2295,8 @@ class PublisherInfo(_serialization.Model):
         product_name: Optional[str] = None,
         binary_name: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher_name: The Subject field of the x.509 certificate used to sign the code,
          using the following fields -  O = Organization, L = Locality, S = State or Province, and C =
@@ -2386,7 +2317,8 @@ class PublisherInfo(_serialization.Model):
 
 
 class Rule(_serialization.Model):
-    """Describes remote addresses that is recommended to communicate with the Azure resource on some (Protocol, Port, Direction). All other remote addresses are recommended to be blocked.
+    """Describes remote addresses that is recommended to communicate with the Azure resource on some
+    (Protocol, Port, Direction). All other remote addresses are recommended to be blocked.
 
     :ivar name: The name of the rule.
     :vartype name: str
@@ -2402,7 +2334,7 @@ class Rule(_serialization.Model):
     """
 
     _validation = {
-        'destination_port': {'maximum': 65535, 'minimum': 0},
+        "destination_port": {"maximum": 65535, "minimum": 0},
     }
 
     _attribute_map = {
@@ -2421,8 +2353,8 @@ class Rule(_serialization.Model):
         destination_port: Optional[int] = None,
         protocols: Optional[List[Union[str, "_models.TransportProtocol"]]] = None,
         ip_addresses: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the rule.
         :paramtype name: str
@@ -2470,14 +2402,14 @@ class SecureScoreControlDefinitionItem(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True, 'max_length': 256},
-        'max_score': {'readonly': True, 'maximum': 10, 'minimum': 0},
-        'source': {'readonly': True},
-        'assessment_definitions': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True, "max_length": 256},
+        "max_score": {"readonly": True, "maximum": 10, "minimum": 0},
+        "source": {"readonly": True},
+        "assessment_definitions": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2491,12 +2423,8 @@ class SecureScoreControlDefinitionItem(Resource):
         "assessment_definitions": {"key": "properties.assessmentDefinitions", "type": "[AzureResourceLink]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.display_name = None
         self.description = None
@@ -2517,8 +2445,8 @@ class SecureScoreControlDefinitionList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2526,12 +2454,8 @@ class SecureScoreControlDefinitionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2549,12 +2473,7 @@ class SecureScoreControlDefinitionSource(_serialization.Model):
         "source_type": {"key": "sourceType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source_type: Optional[Union[str, "_models.ControlType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, source_type: Optional[Union[str, "_models.ControlType"]] = None, **kwargs: Any) -> None:
         """
         :keyword source_type: The type of security control (for example, BuiltIn). Known values are:
          "BuiltIn" and "Custom".
@@ -2598,17 +2517,17 @@ class SecureScoreControlDetails(Resource):  # pylint: disable=too-many-instance-
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'healthy_resource_count': {'readonly': True},
-        'unhealthy_resource_count': {'readonly': True},
-        'not_applicable_resource_count': {'readonly': True},
-        'weight': {'readonly': True, 'minimum': 0},
-        'max': {'readonly': True, 'minimum': 0},
-        'current': {'readonly': True, 'minimum': 0},
-        'percentage': {'readonly': True, 'maximum': 1, 'minimum': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "healthy_resource_count": {"readonly": True},
+        "unhealthy_resource_count": {"readonly": True},
+        "not_applicable_resource_count": {"readonly": True},
+        "weight": {"readonly": True, "minimum": 0},
+        "max": {"readonly": True, "minimum": 0},
+        "current": {"readonly": True, "minimum": 0},
+        "percentage": {"readonly": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
@@ -2627,11 +2546,8 @@ class SecureScoreControlDetails(Resource):  # pylint: disable=too-many-instance-
     }
 
     def __init__(
-        self,
-        *,
-        definition: Optional["_models.SecureScoreControlDefinitionItem"] = None,
-        **kwargs
-    ):
+        self, *, definition: Optional["_models.SecureScoreControlDefinitionItem"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword definition: Information about the security control.
         :paramtype definition: ~azure.mgmt.security.v2020_01_01.models.SecureScoreControlDefinitionItem
@@ -2660,8 +2576,8 @@ class SecureScoreControlList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2669,12 +2585,8 @@ class SecureScoreControlList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2696,9 +2608,9 @@ class SecureScoreControlScore(_serialization.Model):
     """
 
     _validation = {
-        'max': {'readonly': True, 'maximum': 10, 'minimum': 0},
-        'current': {'readonly': True, 'maximum': 10, 'minimum': 0},
-        'percentage': {'readonly': True, 'maximum': 1, 'minimum': 0},
+        "max": {"readonly": True, "maximum": 10, "minimum": 0},
+        "current": {"readonly": True, "maximum": 10, "minimum": 0},
+        "percentage": {"readonly": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
@@ -2707,12 +2619,8 @@ class SecureScoreControlScore(_serialization.Model):
         "percentage": {"key": "percentage", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.max = None
         self.current = None
@@ -2745,14 +2653,14 @@ class SecureScoreItem(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'weight': {'readonly': True, 'minimum': 0},
-        'max': {'readonly': True, 'minimum': 0},
-        'current': {'readonly': True, 'minimum': 0},
-        'percentage': {'readonly': True, 'maximum': 1, 'minimum': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "weight": {"readonly": True, "minimum": 0},
+        "max": {"readonly": True, "minimum": 0},
+        "current": {"readonly": True, "minimum": 0},
+        "percentage": {"readonly": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
@@ -2766,12 +2674,8 @@ class SecureScoreItem(Resource):
         "percentage": {"key": "properties.score.percentage", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.display_name = None
         self.weight = None
@@ -2792,8 +2696,8 @@ class SecureScoresList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2801,12 +2705,8 @@ class SecureScoresList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2840,11 +2740,11 @@ class SecurityAssessment(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'links': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "links": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2868,8 +2768,8 @@ class SecurityAssessment(Resource):
         additional_data: Optional[Dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_details: Details of the resource that was assessed.
         :paramtype resource_details: ~azure.mgmt.security.v2020_01_01.models.ResourceDetails
@@ -2905,8 +2805,8 @@ class SecurityAssessmentList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2914,12 +2814,8 @@ class SecurityAssessmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2972,10 +2868,10 @@ class SecurityAssessmentMetadata(Resource):  # pylint: disable=too-many-instance
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'policy_definition_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "policy_definition_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3010,8 +2906,8 @@ class SecurityAssessmentMetadata(Resource):  # pylint: disable=too-many-instance
         preview: Optional[bool] = None,
         assessment_type: Optional[Union[str, "_models.AssessmentType"]] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: User friendly display name of the assessment.
         :paramtype display_name: str
@@ -3071,8 +2967,8 @@ class SecurityAssessmentMetadataList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3080,12 +2976,8 @@ class SecurityAssessmentMetadataList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3106,8 +2998,8 @@ class SecurityAssessmentMetadataPartnerData(_serialization.Model):
     """
 
     _validation = {
-        'partner_name': {'required': True},
-        'secret': {'required': True},
+        "partner_name": {"required": True},
+        "secret": {"required": True},
     }
 
     _attribute_map = {
@@ -3116,14 +3008,7 @@ class SecurityAssessmentMetadataPartnerData(_serialization.Model):
         "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        partner_name: str,
-        secret: str,
-        product_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, partner_name: str, secret: str, product_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword partner_name: Name of the company of the partner. Required.
         :paramtype partner_name: str
@@ -3182,10 +3067,10 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
     """
 
     _validation = {
-        'display_name': {'required': True},
-        'policy_definition_id': {'readonly': True},
-        'severity': {'required': True},
-        'assessment_type': {'required': True},
+        "display_name": {"required": True},
+        "policy_definition_id": {"readonly": True},
+        "severity": {"required": True},
+        "assessment_type": {"required": True},
     }
 
     _attribute_map = {
@@ -3217,8 +3102,8 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
         threats: Optional[List[Union[str, "_models.Threats"]]] = None,
         preview: Optional[bool] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: User friendly display name of the assessment. Required.
         :paramtype display_name: str
@@ -3278,8 +3163,8 @@ class SecurityAssessmentPartnerData(_serialization.Model):
     """
 
     _validation = {
-        'partner_name': {'required': True},
-        'secret': {'required': True},
+        "partner_name": {"required": True},
+        "secret": {"required": True},
     }
 
     _attribute_map = {
@@ -3287,13 +3172,7 @@ class SecurityAssessmentPartnerData(_serialization.Model):
         "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        partner_name: str,
-        secret: str,
-        **kwargs
-    ):
+    def __init__(self, *, partner_name: str, secret: str, **kwargs: Any) -> None:
         """
         :keyword partner_name: Name of the company of the partner. Required.
         :paramtype partner_name: str
@@ -3331,10 +3210,10 @@ class SecuritySolution(Resource, Location):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3355,8 +3234,8 @@ class SecuritySolution(Resource, Location):
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         template: Optional[str] = None,
         protection_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword security_family: The security family of the security solution. Known values are:
          "Waf", "Ngfw", "SaasWaf", and "Va".
@@ -3392,7 +3271,7 @@ class SecuritySolutionList(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3400,12 +3279,7 @@ class SecuritySolutionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SecuritySolution"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.SecuritySolution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.SecuritySolution]
@@ -3448,17 +3322,17 @@ class SecuritySolutionsReferenceData(Resource, Location):  # pylint: disable=too
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'security_family': {'required': True},
-        'alert_vendor_name': {'required': True},
-        'package_info_url': {'required': True},
-        'product_name': {'required': True},
-        'publisher': {'required': True},
-        'publisher_display_name': {'required': True},
-        'template': {'required': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "security_family": {"required": True},
+        "alert_vendor_name": {"required": True},
+        "package_info_url": {"required": True},
+        "product_name": {"required": True},
+        "publisher": {"required": True},
+        "publisher_display_name": {"required": True},
+        "template": {"required": True},
     }
 
     _attribute_map = {
@@ -3485,8 +3359,8 @@ class SecuritySolutionsReferenceData(Resource, Location):  # pylint: disable=too
         publisher: str,
         publisher_display_name: str,
         template: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword security_family: The security family of the security solution. Required. Known values
          are: "Waf", "Ngfw", "SaasWaf", and "Va".
@@ -3530,11 +3404,8 @@ class SecuritySolutionsReferenceDataList(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SecuritySolutionsReferenceData"]] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SecuritySolutionsReferenceData"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.SecuritySolutionsReferenceData]
@@ -3562,10 +3433,10 @@ class ServerVulnerabilityAssessment(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3575,12 +3446,8 @@ class ServerVulnerabilityAssessment(Resource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.provisioning_state = None
 
@@ -3596,12 +3463,7 @@ class ServerVulnerabilityAssessmentsList(_serialization.Model):
         "value": {"key": "value", "type": "[ServerVulnerabilityAssessment]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ServerVulnerabilityAssessment"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ServerVulnerabilityAssessment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.v2020_01_01.models.ServerVulnerabilityAssessment]
@@ -3622,8 +3484,8 @@ class TopologyList(_serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3631,12 +3493,8 @@ class TopologyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3663,12 +3521,12 @@ class TopologyResource(Resource, Location):
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'calculated_date_time': {'readonly': True},
-        'topology_resources': {'readonly': True},
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "calculated_date_time": {"readonly": True},
+        "topology_resources": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3680,12 +3538,8 @@ class TopologyResource(Resource, Location):
         "topology_resources": {"key": "properties.topologyResources", "type": "[TopologySingleResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.location = None
         self.calculated_date_time = None
@@ -3722,14 +3576,14 @@ class TopologySingleResource(_serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'readonly': True},
-        'severity': {'readonly': True},
-        'recommendations_exist': {'readonly': True},
-        'network_zones': {'readonly': True},
-        'topology_score': {'readonly': True},
-        'location': {'readonly': True},
-        'parents': {'readonly': True},
-        'children': {'readonly': True},
+        "resource_id": {"readonly": True},
+        "severity": {"readonly": True},
+        "recommendations_exist": {"readonly": True},
+        "network_zones": {"readonly": True},
+        "topology_score": {"readonly": True},
+        "location": {"readonly": True},
+        "parents": {"readonly": True},
+        "children": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3743,12 +3597,8 @@ class TopologySingleResource(_serialization.Model):
         "children": {"key": "children", "type": "[TopologySingleResourceChild]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.resource_id = None
         self.severity = None
@@ -3770,19 +3620,15 @@ class TopologySingleResourceChild(_serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'readonly': True},
+        "resource_id": {"readonly": True},
     }
 
     _attribute_map = {
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.resource_id = None
 
@@ -3797,19 +3643,15 @@ class TopologySingleResourceParent(_serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'readonly': True},
+        "resource_id": {"readonly": True},
     }
 
     _attribute_map = {
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.resource_id = None
 
@@ -3835,8 +3677,8 @@ class UserRecommendation(_serialization.Model):
         *,
         username: Optional[str] = None,
         recommendation_action: Optional[Union[str, "_models.RecommendationAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword username: Represents a user that is recommended to be allowed for a certain rule.
         :paramtype username: str
@@ -3882,8 +3724,8 @@ class VmRecommendation(_serialization.Model):
         recommendation_action: Optional[Union[str, "_models.RecommendationAction"]] = None,
         resource_id: Optional[str] = None,
         enforcement_support: Optional[Union[str, "_models.EnforcementSupport"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword configuration_status: The configuration status of the machines group or machine or
          rule. Known values are: "Configured", "NotConfigured", "InProgress", "Failed", and "NoStatus".

@@ -4,21 +4,19 @@
 
 # pylint: disable=protected-access,unused-argument
 
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview import \
-    AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._scope_dependent_operations import (OperationsContainer,
-                                                     OperationScope)
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._utils._experimental import experimental
+
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
-from azure.ai.ml.exceptions import (ErrorCategory, ErrorTarget,
-                                    ValidationException)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
-from azure.ai.ml._utils._experimental import experimental
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations, Scope
 
@@ -29,9 +27,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class RegistryOperations:
     """RegistryOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -39,7 +36,7 @@ class RegistryOperations:
         operation_scope: OperationScope,
         service_client: ServiceClient102022,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         ops_logger.update_info(kwargs)
@@ -55,8 +52,7 @@ class RegistryOperations:
     @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     @experimental
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
-        """List all registries that the user has access to in the current
-        resource group or subscription.
+        """List all registries that the user has access to in the current resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
@@ -67,12 +63,14 @@ class RegistryOperations:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
             )
-        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], \
-            resource_group_name=self._resource_group_name)
+        return self._operation.list(
+            cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
+            resource_group_name=self._resource_group_name,
+        )
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     @experimental
-    def get(self, name: str = None) -> Registry:
+    def get(self, name: Optional[str] = None) -> Registry:
         """Get a registry by name.
 
         :param name: Name of the registry.
@@ -118,8 +116,7 @@ class RegistryOperations:
         registry: Registry,
         **kwargs: Dict,
     ) -> LROPoller[Registry]:
-        """Create a new Azure Machine Learning Registry,
-        or try to update if it already exists.
+        """Create a new Azure Machine Learning Registry, or try to update if it already exists.
 
         Note: Due to service limitations we have to sleep for
         an additional 30~45 seconds AFTER the LRO Poller concludes
@@ -140,12 +137,10 @@ class RegistryOperations:
             registry_name=registry.name,
             body=registry_data,
             polling=self._get_polling(registry.name),
-            cls=lambda response, deserialized, headers: Registry._from_rest_object(
-                deserialized),
+            cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
 
         return poller
-
 
     @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     @experimental

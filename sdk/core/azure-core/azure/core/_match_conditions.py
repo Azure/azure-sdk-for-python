@@ -26,10 +26,21 @@
 
 from enum import Enum
 
+
 class MatchConditions(Enum):
-    """An enum to describe match conditions. """
+    """An enum to describe match conditions."""
+
     Unconditionally = 1
+    """Matches any condition"""
+
     IfNotModified = 2
+    """If the target object is not modified. Usually it maps to etag=<specific etag>"""
+
     IfModified = 3
+    """Only if the target object is modified. Usually it maps to etag!=<specific etag>"""
+
     IfPresent = 4
+    """If the target object exists. Usually it maps to etag='*'"""
+
     IfMissing = 5
+    """If the target object does not exist. Usually it maps to etag!='*'"""

@@ -7,10 +7,10 @@
 import ast
 import concurrent.futures
 import logging
-from pathlib import Path
 import time
 from concurrent.futures import Future
-from typing import Any, Callable, Union
+from pathlib import Path
+from typing import Any, Callable, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -18,6 +18,7 @@ from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LR
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -26,7 +27,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, MlException, ErrorCategory
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -36,7 +36,7 @@ initialize_logger_info(module_logger, terminator="")
 
 
 def get_duration(start_time: float) -> None:
-    """Calculates the duration of the Long running operation took to finish
+    """Calculates the duration of the Long running operation took to finish.
 
     :param start_time: Start time
     :type start_time: float
@@ -48,8 +48,8 @@ def get_duration(start_time: float) -> None:
 
 def polling_wait(
     poller: Union[LROPoller, Future],
-    message: str = None,
-    start_time: float = None,
+    message: Optional[str] = None,
+    start_time: Optional[float] = None,
     is_local=False,
     timeout=LROConfigurations.POLLING_TIMEOUT,
 ) -> Any:
@@ -100,7 +100,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
 
 
 def validate_response(response: HttpResponse) -> None:
-    """Validates the response of POST requests, throws on error
+    """Validates the response of POST requests, throws on error.
 
     :param HttpResponse response: the response of a POST requests
     :raises Exception: Raised when response is not json serializable
@@ -128,8 +128,7 @@ def validate_response(response: HttpResponse) -> None:
 
 
 def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
-    """Upload code, dependency, model dependencies. For BatchDeployment only
-    register compute.
+    """Upload code, dependency, model dependencies. For BatchDeployment only register compute.
 
     :param Deployment deployment: Endpoint deployment object.
     :param OperationOrchestrator orchestrators: Operation Orchestrator.
@@ -171,6 +170,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
         )
 
+
 def validate_scoring_script(deployment):
     score_script_path = Path(deployment.base_path).joinpath(
         deployment.code_configuration.code, deployment.scoring_script
@@ -180,10 +180,10 @@ def validate_scoring_script(deployment):
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)
-            except Exception as err: # pylint: disable=broad-except
+            except Exception as err:  # pylint: disable=broad-except
                 err.filename = err.filename.split("/")[-1]
                 msg = (
-                    f"Failed to submit deployment {deployment.name} due to syntax errors " # pylint: disable=no-member
+                    f"Failed to submit deployment {deployment.name} due to syntax errors "  # pylint: disable=no-member
                     f"in scoring script {err.filename}.\nError on line {err.lineno}: "
                     f"{err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
                 )
@@ -207,6 +207,6 @@ def validate_scoring_script(deployment):
         if isinstance(err, ValidationException):
             raise err
         raise MlException(
-            message= f"Failed to open scoring script {err.filename}.",
-            no_personal_data_message= "Failed to open scoring script.",
+            message=f"Failed to open scoring script {err.filename}.",
+            no_personal_data_message="Failed to open scoring script.",
         )

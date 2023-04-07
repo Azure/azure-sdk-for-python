@@ -6,6 +6,7 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, get_appinsights_log_handler
 from azure.ai.ml._utils._logger_utils import OpsLogger, initialize_logger_info
+from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
 from azure.ai.ml._user_agent import USER_AGENT
 
 
@@ -22,6 +23,19 @@ class TestLoggerUtils:
         assert not module_logger.propagate
         assert module_logger.hasHandlers()
         assert module_logger.handlers[0].terminator == test_terminator
+
+
+@pytest.mark.unittest
+class TestLoggingHandler:
+    def test_logging_enabled(self) -> None:
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            assert isinstance(handler, logging.NullHandler)
+
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
+            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            assert isinstance(handler, AzureLogHandler)
+            assert isinstance(handler, AzureMLSDKLogHandler)
 
 
 @pytest.mark.unittest
@@ -47,18 +61,3 @@ class TestOpsLogger:
         assert len(test_data) == 0
         assert test_logger.package_logger.hasHandlers()
         assert test_logger.package_logger.handlers[0] == test_handler
-
-    def test_disabled_logging(self) -> None:
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.is_telemetry_collection_disabled",
-            return_value=True
-        ):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, logging.NullHandler)
-
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.is_telemetry_collection_disabled",
-            return_value=False
-        ):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, AzureLogHandler)

@@ -5,4 +5,5 @@ package_doc_id = "storage?view=azure-python-preview"
 is_stable = true
 need_msrestazure = false
 need_azuremgmtcore = true
-sample_link = "storage"
+sample_link = ""
+title = "StorageManagementClient"

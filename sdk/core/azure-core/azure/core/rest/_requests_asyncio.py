@@ -28,15 +28,12 @@ from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_basic import _RestRequestsTransportResponseBase
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
-class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase): # type: ignore
-    """Asynchronous streaming of data from the response.
-    """
+
+class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTransportResponseBase):  # type: ignore
+    """Asynchronous streaming of data from the response."""
 
     def __init__(self, **kwargs):
-        super().__init__(
-            stream_download_generator=AsyncioStreamDownloadGenerator,
-            **kwargs
-        )
+        super().__init__(stream_download_generator=AsyncioStreamDownloadGenerator, **kwargs)
 
     async def close(self) -> None:
         """Close the response.

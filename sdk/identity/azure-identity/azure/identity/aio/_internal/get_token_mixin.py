@@ -22,7 +22,9 @@ class GetTokenMixin(abc.ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs
+    ) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
@@ -43,10 +45,10 @@ class GetTokenMixin(abc.ABC):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

@@ -6,10 +6,9 @@ stages:
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
       SupportedClouds: 'Public,UsGov,China'
+      MatrixReplace:
+        - TestSamples=.*/true
       EnvVars:
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'

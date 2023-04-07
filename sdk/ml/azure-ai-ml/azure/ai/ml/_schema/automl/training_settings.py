@@ -6,12 +6,14 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ClassificationModels,
     ForecastingModels,
     RegressionModels,
     StackMetaLearnerType,
 )
+from azure.ai.ml.constants import TabularTrainingMode
+from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -37,6 +39,7 @@ class StackEnsembleSettingsSchema(metaclass=PatchedSchemaMeta):
         stack_meta_learner_type = data.pop("stack_meta_learner_type")
         stack_meta_learner_type = StackMetaLearnerType[stack_meta_learner_type.upper()]
         from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
+
         return StackEnsembleSettings(stack_meta_learner_type=stack_meta_learner_type, **data)
 
 
@@ -48,6 +51,12 @@ class TrainingSettingsSchema(metaclass=PatchedSchemaMeta):
     enable_vote_ensemble = fields.Bool()
     ensemble_model_download_timeout = fields.Int(data_key=AutoMLConstants.ENSEMBLE_MODEL_DOWNLOAD_TIMEOUT_YAML)
     stack_ensemble_settings = NestedField(StackEnsembleSettingsSchema())
+    training_mode = ExperimentalField(
+        StringTransformedEnum(
+            allowed_values=[o.value for o in TabularTrainingMode],
+            casing_transform=camel_to_snake,
+        )
+    )
 
 
 class ClassificationTrainingSettingsSchema(TrainingSettingsSchema):

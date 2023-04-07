@@ -22,7 +22,7 @@ from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
-credential  = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -38,7 +38,7 @@ try:
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
         data = response.partial_data
-        print(error.message)
+        print(error)
     elif response.status == LogsQueryStatus.SUCCESS:
         data = response.tables
     for table in data:

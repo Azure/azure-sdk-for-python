@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
@@ -17,7 +17,7 @@ from .._internal.managed_identity_client import ManagedIdentityClient
 
 
 class AzureArcCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
+    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:
@@ -28,14 +28,16 @@ class AzureArcCredential(ManagedIdentityBase):
             )
         return None
 
-    def __enter__(self):
-        self._client.__enter__()
+    def __enter__(self) -> "AzureArcCredential":
+        if self._client:
+            self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    def __exit__(self, *args: Any) -> None:
+        if self._client:
+            self._client.__exit__(*args)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
     def get_unavailable_message(self) -> str:

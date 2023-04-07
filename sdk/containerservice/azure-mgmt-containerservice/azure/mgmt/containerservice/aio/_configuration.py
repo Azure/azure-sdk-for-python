@@ -36,7 +36,7 @@ class ContainerServiceClientConfiguration(Configuration):
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

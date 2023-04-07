@@ -10,8 +10,14 @@ from ._locations_operations import LocationsOperations
 from ._energy_services_operations import EnergyServicesOperations
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'LocationsOperations',
-    'EnergyServicesOperations',
-    'Operations',
+    "LocationsOperations",
+    "EnergyServicesOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

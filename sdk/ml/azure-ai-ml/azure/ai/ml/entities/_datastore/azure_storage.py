@@ -5,13 +5,13 @@
 # pylint: disable=protected-access,no-member
 
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2022_05_01.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData, DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import (
@@ -58,11 +58,11 @@ class AzureFileDatastore(Datastore):
         name: str,
         account_name: str,
         file_share_name: str,
-        description: str = None,
-        tags: Dict = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
-        properties: Dict = None,
+        properties: Optional[Dict] = None,
         credentials: Union[AccountKeyConfiguration, SasTokenConfiguration],
         **kwargs
     ):
@@ -154,12 +154,12 @@ class AzureBlobDatastore(Datastore):
         name: str,
         account_name: str,
         container_name: str,
-        description: str = None,
-        tags: Dict = None,
-        endpoint: str = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        endpoint: Optional[str] = None,
         protocol: str = HTTPS,
-        properties: Dict = None,
-        credentials: Union[AccountKeyConfiguration, SasTokenConfiguration] = None,
+        properties: Optional[Dict] = None,
+        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_BLOB
@@ -251,12 +251,12 @@ class AzureDataLakeGen2Datastore(Datastore):
         name: str,
         account_name: str,
         filesystem: str,
-        description: str = None,
-        tags: Dict = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
-        properties: Dict = None,
-        credentials: Union[ServicePrincipalConfiguration, CertificateConfiguration] = None,
+        properties: Optional[Dict] = None,
+        credentials: Optional[Union[ServicePrincipalConfiguration, CertificateConfiguration]] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2

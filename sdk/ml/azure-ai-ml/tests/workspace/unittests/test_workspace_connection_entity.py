@@ -1,13 +1,13 @@
 from pathlib import Path
 
 import pytest
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._credentials import PatTokenConfiguration
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_workspace_connection
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
+from azure.ai.ml.entities._credentials import PatTokenConfiguration
 
 
 @pytest.mark.unittest
@@ -83,3 +83,73 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.metadata["type"] == "feast"
         assert ws_connection.metadata["featurestore_config"]
         assert ws_connection.metadata["connection_config"]
+
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/s3_access_key.yaml")
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.S3)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCESS_KEY)
+        assert ws_connection.credentials.access_key_id == "dummy"
+        assert ws_connection.credentials.secret_access_key == "dummy"
+        assert ws_connection.name == "test_ws_conn_s3"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is None
+
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
+        )
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.SNOWFLAKE)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_snowflake"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is None
+
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/azure_sql_db_user_pwd.yaml"
+        )
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_SQL_DB)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_azure_sql_db"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is None
+
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/azure_synapse_analytics_user_pwd.yaml"
+        )
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_SYNAPSE_ANALYTICS)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_azure_synapse_analytics"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is None
+
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/azure_my_sql_db_user_pwd.yaml"
+        )
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_MY_SQL_DB)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_azure_my_sql_db"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is None
+
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/azure_postgres_db_user_pwd.yaml"
+        )
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_POSTGRES_DB)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_azure_postgres_db"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is None

@@ -60,14 +60,14 @@ cert_policy = CertificatePolicy.get_default()
 created_certificate = certificate_client.begin_create_certificate(
     certificate_name=cert_name, policy=cert_policy
 ).result()
-print("Certificate with name '{}' was created".format(created_certificate.name))
+print(f"Certificate with name '{created_certificate.name}' was created")
 
 # Key Vault also creates a secret with the same name as the created certificate.
 # This secret contains the certificate's bytes, which include the private key if the certificate's
 # policy indicates that the key is exportable.
 print("\n.. Get a secret by name")
 certificate_secret = secret_client.get_secret(name=cert_name)
-print("Certificate secret with name '{}' was found.".format(certificate_secret.name))
+print(f"Certificate secret with name '{certificate_secret.name}' was found.")
 
 # Now we can extract the private key and public certificate from the secret using the cryptography
 # package. `additional_certificates` will be empty since the secret only contains one certificate.
@@ -79,7 +79,7 @@ private_key, public_certificate, additional_certificates = pkcs12.load_key_and_c
     data=cert_bytes,
     password=None
 )
-print("Certificate with name '{}' was parsed.".format(certificate_secret.name))
+print(f"Certificate with name '{certificate_secret.name}' was parsed.")
 
 # Now we can clean up the vault by deleting, then purging, the certificate.
 print("\n.. Delete certificate")
@@ -88,9 +88,9 @@ delete_operation_poller = certificate_client.begin_delete_certificate(
 )
 deleted_certificate = delete_operation_poller.result()
 delete_operation_poller.wait()
-print("Certificate with name '{}' was deleted.".format(deleted_certificate.name))
+print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 
 certificate_client.purge_deleted_certificate(certificate_name=deleted_certificate.name)
-print("Certificate with name '{}' is being purged.".format(deleted_certificate.name))
+print(f"Certificate with name '{deleted_certificate.name}' is being purged.")
 
 print("\nrun_sample done")

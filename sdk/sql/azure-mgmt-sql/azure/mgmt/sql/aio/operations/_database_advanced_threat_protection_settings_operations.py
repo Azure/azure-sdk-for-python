@@ -84,10 +84,10 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseAdvancedThreatProtectionListResult]
+        )
+        cls: ClsType[_models.DatabaseAdvancedThreatProtectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -111,12 +111,12 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -124,14 +124,15 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
             deserialized = self._deserialize("DatabaseAdvancedThreatProtectionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -143,7 +144,9 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_database.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advancedThreatProtectionSettings"}  # type: ignore
+    list_by_database.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advancedThreatProtectionSettings"
+    }
 
     @distributed_trace_async
     async def get(
@@ -183,10 +186,10 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseAdvancedThreatProtection]
+        )
+        cls: ClsType[_models.DatabaseAdvancedThreatProtection] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -200,10 +203,11 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -219,7 +223,9 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advancedThreatProtectionSettings/{advancedThreatProtectionName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advancedThreatProtectionSettings/{advancedThreatProtectionName}"
+    }
 
     @overload
     async def create_or_update(
@@ -316,8 +322,8 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
          "Default" Required.
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
-        :param parameters: The database Advanced Threat Protection state. Is either a model type or a
-         IO type. Required.
+        :param parameters: The database Advanced Threat Protection state. Is either a
+         DatabaseAdvancedThreatProtection type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseAdvancedThreatProtection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -338,11 +344,11 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseAdvancedThreatProtection]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DatabaseAdvancedThreatProtection] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -367,10 +373,11 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -386,8 +393,10 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:
             deserialized = self._deserialize("DatabaseAdvancedThreatProtection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advancedThreatProtectionSettings/{advancedThreatProtectionName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advancedThreatProtectionSettings/{advancedThreatProtectionName}"
+    }

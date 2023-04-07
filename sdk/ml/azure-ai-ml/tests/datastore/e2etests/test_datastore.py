@@ -1,14 +1,13 @@
 from typing import Callable, Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_datastore
 from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
-from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore.datastore import Datastore
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.fixture

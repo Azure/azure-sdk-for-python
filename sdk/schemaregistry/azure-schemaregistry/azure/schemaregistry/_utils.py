@@ -19,32 +19,39 @@ def get_http_request_kwargs(kwargs):
     }
     return http_request_kwargs
 
+def get_content_type(format: str):  # pylint:disable=redefined-builtin
+    if format.lower() == SchemaFormat.CUSTOM.value.lower():
+        return "text/plain; charset=utf-8"
+    return f"application/json; serialization={format}"
 
-def build_register_schema_request(
-    group_name: str,
-    name: str,
-    definition: str,
-    format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
-    kwargs: Any,
-) -> HttpRequest:
+def get_case_insensitive_format(
+    format: Union[str, SchemaFormat]  # pylint:disable=redefined-builtin
+) -> str:
     try:
         format = cast(SchemaFormat, format)
         format = format.value
     except AttributeError:
         pass
+    return format.capitalize()
 
-    format = format.capitalize()
+def build_register_schema_request(
+    group_name: str,
+    name: str,
+    definition: str,
+    format: str,  # pylint:disable=redefined-builtin
+    kwargs: Any,
+) -> HttpRequest:
+
     http_request_kwargs = get_http_request_kwargs(kwargs)
     return schema_rest.build_register_request(
         group_name=group_name,
         schema_name=name,
         content=definition,
         content_type=kwargs.pop(
-            "content_type", "application/json; serialization={}".format(format)
+            "content_type", get_content_type(format)
         ),
         **http_request_kwargs,
     )
-
 
 def build_get_schema_props_request(
     group_name: str,
@@ -53,24 +60,17 @@ def build_get_schema_props_request(
     format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
     kwargs: Any,
 ) -> HttpRequest:
-    try:
-        format = cast(SchemaFormat, format)
-        format = format.value
-    except AttributeError:
-        pass
 
-    format = format.capitalize()
     http_request_kwargs = get_http_request_kwargs(kwargs)
     return schema_rest.build_query_id_by_content_request(
         group_name=group_name,
         schema_name=name,
         content=definition,
         content_type=kwargs.pop(
-            "content_type", "application/json; serialization={}".format(format)
+            "content_type", get_content_type(format)
         ),
         **http_request_kwargs,
     )
-
 
 def build_get_schema_request(args: Iterable, kwargs: Any) -> HttpRequest:
     http_request_kwargs = get_http_request_kwargs(kwargs)

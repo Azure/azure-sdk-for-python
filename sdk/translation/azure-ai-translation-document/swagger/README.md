@@ -20,7 +20,7 @@ clear-output-folder: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 no-namespace-folders: true
 python: true
-python-sdks-folder: $(python-sdks-folder)
+models-mode: msrest
 ```
 
 
@@ -30,7 +30,7 @@ These settings apply only when `--tag=release_1_0` is specified on the command l
 
 ``` yaml $(tag) == 'release_1_0'
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/cognitiveservices/data-plane/TranslatorText/stable/v1.0/TranslatorBatch.json
-output-folder: $(python-sdks-folder)/translation/azure-ai-translation-document/azure/ai/translation/document/_generated/
+output-folder: ../azure/ai/translation/document/_generated/
 ```
 
 

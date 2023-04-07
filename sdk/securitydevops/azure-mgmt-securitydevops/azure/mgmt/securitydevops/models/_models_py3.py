@@ -20,7 +20,11 @@ if TYPE_CHECKING:
 class ActionableRemediation(_serialization.Model):
     """ActionableRemediation.
 
-    :ivar state: Known values are: "None", "Disabled", and "Enabled".
+    :ivar state: ActionableRemediation Setting.
+     None - the setting was never set.
+     Enabled - ActionableRemediation is enabled.
+     Disabled - ActionableRemediation is disabled. Known values are: "None", "Disabled", and
+     "Enabled".
     :vartype state: str or ~azure.mgmt.securitydevops.models.ActionableRemediationState
     :ivar severity_levels:
     :vartype severity_levels: list[str]
@@ -47,7 +51,11 @@ class ActionableRemediation(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword state: Known values are: "None", "Disabled", and "Enabled".
+        :keyword state: ActionableRemediation Setting.
+         None - the setting was never set.
+         Enabled - ActionableRemediation is enabled.
+         Disabled - ActionableRemediation is disabled. Known values are: "None", "Disabled", and
+         "Enabled".
         :paramtype state: str or ~azure.mgmt.securitydevops.models.ActionableRemediationState
         :keyword severity_levels:
         :paramtype severity_levels: list[str]
@@ -67,6 +75,9 @@ class AuthorizationInfo(_serialization.Model):
     """AuthorizationInfo.
 
     :ivar code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
+
+     Only used during PUT operations. The secret is cleared during GET.
+     In general, RPaaS does not return any property marked as a secret.
     :vartype code: str
     """
 
@@ -77,6 +88,9 @@ class AuthorizationInfo(_serialization.Model):
     def __init__(self, *, code: Optional[str] = None, **kwargs):
         """
         :keyword code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
+
+         Only used during PUT operations. The secret is cleared during GET.
+         In general, RPaaS does not return any property marked as a secret.
         :paramtype code: str
         """
         super().__init__(**kwargs)
@@ -272,6 +286,8 @@ class AzureDevOpsConnectorListResponse(_serialization.Model):
 class AzureDevOpsConnectorProperties(_serialization.Model):
     """AzureDevOpsConnectorProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar authorization:
@@ -279,6 +295,10 @@ class AzureDevOpsConnectorProperties(_serialization.Model):
     :ivar orgs: Gets or sets org onboarding information.
     :vartype orgs: list[~azure.mgmt.securitydevops.models.AzureDevOpsOrgMetadata]
     """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -289,21 +309,18 @@ class AzureDevOpsConnectorProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         authorization: Optional["_models.AuthorizationInfo"] = None,
         orgs: Optional[List["_models.AzureDevOpsOrgMetadata"]] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword authorization:
         :paramtype authorization: ~azure.mgmt.securitydevops.models.AuthorizationInfo
         :keyword orgs: Gets or sets org onboarding information.
         :paramtype orgs: list[~azure.mgmt.securitydevops.models.AzureDevOpsOrgMetadata]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.authorization = authorization
         self.orgs = orgs
 
@@ -424,6 +441,8 @@ class AzureDevOpsConnectorStatsListResponse(_serialization.Model):
 class AzureDevOpsConnectorStatsProperties(_serialization.Model):
     """AzureDevOpsConnectorStatsProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar orgs_count: Gets or sets orgs count.
@@ -433,6 +452,10 @@ class AzureDevOpsConnectorStatsProperties(_serialization.Model):
     :ivar repos_count: Gets or sets repos count.
     :vartype repos_count: int
     """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -444,15 +467,12 @@ class AzureDevOpsConnectorStatsProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         orgs_count: Optional[int] = None,
         projects_count: Optional[int] = None,
         repos_count: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword orgs_count: Gets or sets orgs count.
         :paramtype orgs_count: int
         :keyword projects_count: Gets or sets projects count.
@@ -461,7 +481,7 @@ class AzureDevOpsConnectorStatsProperties(_serialization.Model):
         :paramtype repos_count: int
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.orgs_count = orgs_count
         self.projects_count = projects_count
         self.repos_count = repos_count
@@ -581,32 +601,30 @@ class AzureDevOpsOrgMetadata(_serialization.Model):
 class AzureDevOpsOrgProperties(_serialization.Model):
     """AzureDevOps Org properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar auto_discovery: Known values are: "Disabled" and "Enabled".
     :vartype auto_discovery: str or ~azure.mgmt.securitydevops.models.AutoDiscovery
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "auto_discovery": {"key": "autoDiscovery", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None, **kwargs):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword auto_discovery: Known values are: "Disabled" and "Enabled".
         :paramtype auto_discovery: str or ~azure.mgmt.securitydevops.models.AutoDiscovery
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.auto_discovery = auto_discovery
 
 
@@ -724,46 +742,49 @@ class AzureDevOpsProjectMetadata(_serialization.Model):
 class AzureDevOpsProjectProperties(_serialization.Model):
     """AzureDevOps Project properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
+    :ivar org_name: Gets or sets AzureDevOps org Name.
+    :vartype org_name: str
     :ivar project_id: Gets or sets AzureDevOps Project Id.
     :vartype project_id: str
-    :ivar org_name: Gets or sets AzureDevOps Org Name.
-    :vartype org_name: str
     :ivar auto_discovery: Known values are: "Disabled" and "Enabled".
     :vartype auto_discovery: str or ~azure.mgmt.securitydevops.models.AutoDiscovery
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "project_id": {"key": "projectId", "type": "str"},
         "org_name": {"key": "orgName", "type": "str"},
+        "project_id": {"key": "projectId", "type": "str"},
         "auto_discovery": {"key": "autoDiscovery", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        project_id: Optional[str] = None,
         org_name: Optional[str] = None,
+        project_id: Optional[str] = None,
         auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
+        :keyword org_name: Gets or sets AzureDevOps org Name.
+        :paramtype org_name: str
         :keyword project_id: Gets or sets AzureDevOps Project Id.
         :paramtype project_id: str
-        :keyword org_name: Gets or sets AzureDevOps Org Name.
-        :paramtype org_name: str
         :keyword auto_discovery: Known values are: "Disabled" and "Enabled".
         :paramtype auto_discovery: str or ~azure.mgmt.securitydevops.models.AutoDiscovery
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
-        self.project_id = project_id
+        self.provisioning_state = None
         self.org_name = org_name
+        self.project_id = project_id
         self.auto_discovery = auto_discovery
 
 
@@ -842,16 +863,18 @@ class AzureDevOpsRepoListResponse(_serialization.Model):
 class AzureDevOpsRepoProperties(_serialization.Model):
     """AzureDevOps Repo properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
+    :ivar org_name: Gets or sets AzureDevOps org Name.
+    :vartype org_name: str
+    :ivar project_name: Gets or sets AzureDevOps project Name.
+    :vartype project_name: str
     :ivar repo_id: Gets or sets Azure DevOps repo id.
     :vartype repo_id: str
     :ivar repo_url: Gets or sets AzureDevOps repo url.
     :vartype repo_url: str
-    :ivar org_name: Gets or sets AzureDevOps Org Name.
-    :vartype org_name: str
-    :ivar project_name: Gets or sets AzureDevOps Project Name.
-    :vartype project_name: str
     :ivar visibility: Gets or sets AzureDevOps repo visibility, whether it is public or private
      etc.
     :vartype visibility: str
@@ -859,52 +882,37 @@ class AzureDevOpsRepoProperties(_serialization.Model):
     :vartype actionable_remediation: ~azure.mgmt.securitydevops.models.ActionableRemediation
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "org_name": {"readonly": True},
+        "project_name": {"readonly": True},
+        "repo_id": {"readonly": True},
+        "repo_url": {"readonly": True},
+        "visibility": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "repo_id": {"key": "repoId", "type": "str"},
-        "repo_url": {"key": "repoUrl", "type": "str"},
         "org_name": {"key": "orgName", "type": "str"},
         "project_name": {"key": "projectName", "type": "str"},
+        "repo_id": {"key": "repoId", "type": "str"},
+        "repo_url": {"key": "repoUrl", "type": "str"},
         "visibility": {"key": "visibility", "type": "str"},
         "actionable_remediation": {"key": "actionableRemediation", "type": "ActionableRemediation"},
     }
 
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        repo_id: Optional[str] = None,
-        repo_url: Optional[str] = None,
-        org_name: Optional[str] = None,
-        project_name: Optional[str] = None,
-        visibility: Optional[str] = None,
-        actionable_remediation: Optional["_models.ActionableRemediation"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, actionable_remediation: Optional["_models.ActionableRemediation"] = None, **kwargs):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
-        :keyword repo_id: Gets or sets Azure DevOps repo id.
-        :paramtype repo_id: str
-        :keyword repo_url: Gets or sets AzureDevOps repo url.
-        :paramtype repo_url: str
-        :keyword org_name: Gets or sets AzureDevOps Org Name.
-        :paramtype org_name: str
-        :keyword project_name: Gets or sets AzureDevOps Project Name.
-        :paramtype project_name: str
-        :keyword visibility: Gets or sets AzureDevOps repo visibility, whether it is public or private
-         etc.
-        :paramtype visibility: str
         :keyword actionable_remediation:
         :paramtype actionable_remediation: ~azure.mgmt.securitydevops.models.ActionableRemediation
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
-        self.repo_id = repo_id
-        self.repo_url = repo_url
-        self.org_name = org_name
-        self.project_name = project_name
-        self.visibility = visibility
+        self.provisioning_state = None
+        self.org_name = None
+        self.project_name = None
+        self.repo_id = None
+        self.repo_url = None
+        self.visibility = None
         self.actionable_remediation = actionable_remediation
 
 
@@ -1096,32 +1104,36 @@ class GitHubConnectorListResponse(_serialization.Model):
 class GitHubConnectorProperties(_serialization.Model):
     """Properties of the ARM resource for /subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.SecurityDevOps/gitHubConnectors.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
+
+     Only used during PUT operations. The secret is cleared during GET.
+     In general, RPaaS does not return any property marked as a secret.
     :vartype code: str
     """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        code: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, **kwargs):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
+
+         Only used during PUT operations. The secret is cleared during GET.
+         In general, RPaaS does not return any property marked as a secret.
         :paramtype code: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.code = code
 
 
@@ -1200,6 +1212,8 @@ class GitHubConnectorStatsListResponse(_serialization.Model):
 class GitHubConnectorStatsProperties(_serialization.Model):
     """GitHubConnectorStatsProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar owners_count: Gets or sets owners count.
@@ -1208,30 +1222,25 @@ class GitHubConnectorStatsProperties(_serialization.Model):
     :vartype repos_count: int
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "owners_count": {"key": "ownersCount", "type": "int"},
         "repos_count": {"key": "reposCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        owners_count: Optional[int] = None,
-        repos_count: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, owners_count: Optional[int] = None, repos_count: Optional[int] = None, **kwargs):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword owners_count: Gets or sets owners count.
         :paramtype owners_count: int
         :keyword repos_count: Gets or sets repos count.
         :paramtype repos_count: int
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.owners_count = owners_count
         self.repos_count = repos_count
 
@@ -1311,32 +1320,30 @@ class GitHubOwnerListResponse(_serialization.Model):
 class GitHubOwnerProperties(_serialization.Model):
     """GitHub Repo Owner properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar owner_url: Gets or sets gitHub owner url.
     :vartype owner_url: str
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "owner_url": {"key": "ownerUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-        owner_url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, owner_url: Optional[str] = None, **kwargs):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword owner_url: Gets or sets gitHub owner url.
         :paramtype owner_url: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.owner_url = owner_url
 
 
@@ -1415,6 +1422,8 @@ class GitHubRepoListResponse(_serialization.Model):
 class GitHubRepoProperties(_serialization.Model):
     """GitHub Repo properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
     :ivar account_id: Gets or sets gitHub repo account id.
@@ -1424,6 +1433,10 @@ class GitHubRepoProperties(_serialization.Model):
     :ivar owner_name: Gets or sets GitHub Owner Name.
     :vartype owner_name: str
     """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
 
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -1435,15 +1448,12 @@ class GitHubRepoProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         account_id: Optional[int] = None,
         repo_url: Optional[str] = None,
         owner_name: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword account_id: Gets or sets gitHub repo account id.
         :paramtype account_id: int
         :keyword repo_url: Gets or sets gitHub repo url.
@@ -1452,7 +1462,7 @@ class GitHubRepoProperties(_serialization.Model):
         :paramtype owner_name: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.account_id = account_id
         self.repo_url = repo_url
         self.owner_name = owner_name
@@ -1460,6 +1470,8 @@ class GitHubRepoProperties(_serialization.Model):
 
 class GitHubReposProperties(_serialization.Model):
     """GitHubReposProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
@@ -1471,6 +1483,10 @@ class GitHubReposProperties(_serialization.Model):
     :vartype repo_url: str
     """
 
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "account_id": {"key": "accountId", "type": "int"},
@@ -1481,15 +1497,12 @@ class GitHubReposProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         account_id: Optional[int] = None,
         repo_name: Optional[str] = None,
         repo_url: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword provisioning_state: Known values are: "Succeeded", "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.securitydevops.models.ProvisioningState
         :keyword account_id: Gets or sets gitHub repo account id.
         :paramtype account_id: int
         :keyword repo_name: Gets or sets gitHub repo name.
@@ -1498,7 +1511,7 @@ class GitHubReposProperties(_serialization.Model):
         :paramtype repo_url: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.account_id = account_id
         self.repo_name = repo_name
         self.repo_url = repo_url

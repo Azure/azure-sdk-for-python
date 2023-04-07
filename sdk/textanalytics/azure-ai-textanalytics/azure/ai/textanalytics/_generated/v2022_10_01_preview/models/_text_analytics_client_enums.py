@@ -62,7 +62,6 @@ class AnalyzeTextTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
     LANGUAGE_DETECTION = "LanguageDetection"
     ENTITY_LINKING = "EntityLinking"
-    DYNAMIC_CLASSIFICATION = "DynamicClassification"
 
 class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Text Analysis task results.
@@ -74,7 +73,6 @@ class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY_PHRASE_EXTRACTION_RESULTS = "KeyPhraseExtractionResults"
     LANGUAGE_DETECTION_RESULTS = "LanguageDetectionResults"
     ENTITY_LINKING_RESULTS = "EntityLinkingResults"
-    DYNAMIC_CLASSIFICATION_RESULTS = "DynamicClassificationResults"
 
 class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The area Unit of measurement.
@@ -110,14 +108,6 @@ class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEUTRAL_POSSIBLE = "neutralPossible"
     NEGATIVE_POSSIBLE = "negativePossible"
     NEGATIVE = "negative"
-
-class ClassificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies either one or multiple categories per document. Defaults to multi classification
-    which may return more than one class for each document.
-    """
-
-    SINGLE = "Single"
-    MULTI = "Multi"
 
 class Conditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes any conditionality on the entity.
@@ -542,7 +532,6 @@ class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity resolution object kind.
     """
 
-    BOOLEAN_RESOLUTION = "BooleanResolution"
     DATE_TIME_RESOLUTION = "DateTimeResolution"
     NUMBER_RESOLUTION = "NumberResolution"
     ORDINAL_RESOLUTION = "OrdinalResolution"
@@ -577,19 +566,19 @@ class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     UNSPECIFIED = "Unspecified"
-    METERS_PER_SECOND = "MetersPerSecond"
-    KILOMETERS_PER_HOUR = "KilometersPerHour"
-    KILOMETERS_PER_MINUTE = "KilometersPerMinute"
-    KILOMETERS_PER_SECOND = "KilometersPerSecond"
-    MILES_PER_HOUR = "MilesPerHour"
+    METER_PER_SECOND = "MeterPerSecond"
+    KILOMETER_PER_HOUR = "KilometerPerHour"
+    KILOMETER_PER_MINUTE = "KilometerPerMinute"
+    KILOMETER_PER_SECOND = "KilometerPerSecond"
+    MILE_PER_HOUR = "MilePerHour"
     KNOT = "Knot"
     FOOT_PER_SECOND = "FootPerSecond"
     FOOT_PER_MINUTE = "FootPerMinute"
-    YARDS_PER_MINUTE = "YardsPerMinute"
-    YARDS_PER_SECOND = "YardsPerSecond"
-    METERS_PER_MILLISECOND = "MetersPerMillisecond"
-    CENTIMETERS_PER_MILLISECOND = "CentimetersPerMillisecond"
-    KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
+    YARD_PER_MINUTE = "YardPerMinute"
+    YARD_PER_SECOND = "YardPerSecond"
+    METER_PER_MILLISECOND = "MeterPerMillisecond"
+    CENTIMETER_PER_MILLISECOND = "CentimeterPerMillisecond"
+    KILOMETER_PER_MILLISECOND = "KilometerPerMillisecond"
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the task at the mentioned last update time.

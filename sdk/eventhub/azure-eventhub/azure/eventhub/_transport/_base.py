@@ -7,7 +7,10 @@ from typing import Tuple, Union, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
-    from uamqp import types as uamqp_types
+    try:
+        from uamqp import types as uamqp_types
+    except ImportError:
+        uamqp_types = None
 
 class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     """
@@ -18,6 +21,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
     CONNECTION_CLOSING_STATES: Tuple
+    TRANSPORT_IDENTIFIER: str
 
     # define symbols
     PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
@@ -49,6 +53,17 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :rtype: uamqp.Message or pyamqp.Message
+        """
+
+    @staticmethod
+    @abstractmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param uamqp.Message or pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
         :rtype: uamqp.Message or pyamqp.Message
         """
 
@@ -163,10 +178,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def add_batch(batch_message, outgoing_event_data, event_data):
+    def add_batch(event_data_batch, outgoing_event_data, event_data):
         """
         Add EventData to the data body of the BatchMessage.
-        :param batch_message: BatchMessage to add data to.
+        :param event_data_batch: BatchMessage to add data to.
         :param outgoing_event_data: Transformed EventData for sending.
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None

@@ -24,12 +24,13 @@ class TestScheduleEntity:
             assert type(schedule.trigger) == CronTrigger
 
         schedule = verify_entity_load_and_dump(load_schedule, simple_schedule_validation, test_path)[0]
+        schedule.properties["test"] = "val"
         actual_dict = schedule._to_rest_object().as_dict()["properties"]
         # Skip job definition
         actual_dict["action"]["job_definition"] = {}
         expected_dict = {
             "description": "a weekly retrain schedule",
-            "properties": {},
+            "properties": {"test": "val"},
             "tags": {},
             "action": {"action_type": "CreateJob", "job_definition": {}},
             "display_name": "weekly retrain schedule",
@@ -54,7 +55,7 @@ class TestScheduleEntity:
             "action": {
                 "action_type": "CreateJob",
                 "job_definition": {
-                    "experiment_name": "Default",
+                    "experiment_name": "",
                     "is_archived": False,
                     "job_type": "Pipeline",
                     "source_job_id": "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
@@ -135,9 +136,38 @@ class TestScheduleEntity:
         rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
         # assert overwrite values
         assert rest_schedule_job_dict["environment_variables"] == {"key": "val"}
-        assert rest_schedule_job_dict["resources"] == {'properties': {}, 'shm_size': '1g'}
-        assert rest_schedule_job_dict["distribution"] == {'distribution_type': 'PyTorch', 'process_count_per_instance': 1}
-        assert rest_schedule_job_dict["limits"] == {'job_limits_type': 'Command', 'timeout': 'PT50M'}
+        assert rest_schedule_job_dict["resources"] == {"properties": {}, "shm_size": "1g"}
+        assert rest_schedule_job_dict["distribution"] == {
+            "distribution_type": "PyTorch",
+            "process_count_per_instance": 1,
+        }
+        assert rest_schedule_job_dict["limits"] == {"job_limits_type": "Command", "timeout": "PT50M"}
+
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
+    def test_schedule_entity_with_spark_job(self):
+        # Test with local file job
+        test_path = "./tests/test_configs/schedule/local_cron_spark_job.yml"
+        inner_job_path = "./tests/test_configs/spark_job/spark_job_word_count_test.yml"
+        inner_job = load_job(inner_job_path)._to_job()
+        schedule = load_schedule(test_path)
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        loaded_job_dict = inner_job._to_rest_object().as_dict()["properties"]
+        assert rest_schedule_job_dict == loaded_job_dict
+        # Test with local file + overwrites
+        test_path = "./tests/test_configs/schedule/local_cron_spark_job2.yml"
+        schedule = load_schedule(test_path)
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        # assert overwrite values
+        assert rest_schedule_job_dict["conf"] == {
+            "spark.driver.cores": "2",
+            "spark.driver.memory": "2g",
+            "spark.executor.cores": "2",
+            "spark.executor.memory": "2g",
+            "spark.executor.instances": "2",
+        }
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" in rest_schedule_job_dict["environment_id"]
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(

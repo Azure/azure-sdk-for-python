@@ -1,5 +1,44 @@
 # Release History
 
+## 2.0.0 (2023-04-03)
+
+### Features Added
+
+  - Added operation group CommunicationServicesOperations
+  - Added operation group DomainsOperations
+  - Added operation group EmailServicesOperations
+  - Added operation group SenderUsernamesOperations
+  - Model CommunicationServiceResource has a new parameter linked_domains
+  - Model Resource has a new parameter system_data
+
+### Breaking Changes
+
+  - Parameter location of model CommunicationServiceResource is now required
+  - Removed operation group CommunicationServiceOperations
+  - Removed operation group OperationStatusesOperations
+
+## 2.0.0b3 (2023-03-23)
+
+### Features Added
+
+  - Added operation CommunicationServicesOperations.regenerate_key
+  - Added operation CommunicationServicesOperations.update
+  - Added operation group SenderUsernamesOperations
+
+### Breaking Changes
+
+  - Model DomainResource no longer has parameter valid_sender_usernames
+  - Model UpdateDomainRequestParameters no longer has parameter valid_sender_usernames
+  - Removed operation CommunicationServicesOperations.begin_regenerate_key
+  - Removed operation CommunicationServicesOperations.begin_update
+
+## 2.0.0b2 (2022-11-28)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 2.0.0b1 (2022-06-07)
 
 **Features**

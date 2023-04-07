@@ -69,7 +69,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
         api_version: Optional[str] = None,
         base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         self._config = IotHubClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -189,6 +189,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import CertificatesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'certificates'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -226,6 +227,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import IotHubOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'iot_hub'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -278,6 +280,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import IotHubResourceOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'iot_hub_resource'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -324,6 +327,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -352,6 +356,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -380,6 +385,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -420,6 +426,7 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_04_30_preview.aio.operations import ResourceProviderCommonOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_provider_common'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

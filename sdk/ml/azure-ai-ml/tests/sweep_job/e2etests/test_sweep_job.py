@@ -3,8 +3,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import AssetTypes
@@ -13,8 +14,6 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from test_utilities.utils import wait_until_done, sleep_if_live
-
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -143,7 +142,7 @@ class TestSweepJob(AzureRecordedTestCase):
         node = command(
             name=randstr("name"),
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs=inputs,
             command="echo ${{inputs.uri}} ${{search_space.learning_rate}}",
             display_name="builder_command_job",
@@ -162,7 +161,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         sweep_node.set_limits(max_concurrent_trials=2, max_total_trials=10, timeout=300)
 
-        assert sweep_node.trial.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert sweep_node.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert sweep_node.display_name == "builder_command_job"
         assert sweep_node.compute == "testCompute"
         assert sweep_node.experiment_name == "mfe-test1-dataset"
@@ -174,7 +173,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         result = client.create_or_update(sweep_node)
         assert result.description == "new-description"
-        assert result.trial.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert result.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"

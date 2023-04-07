@@ -24,21 +24,20 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class DevContainerResolver:
-    """DevContainerResolver class represents the collection of properties of a
-    devcontainer.json.
+    """DevContainerResolver class represents the collection of properties of a devcontainer.json.
 
     Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference
     """
 
     def __init__(
         self,
-        image: str = None,
+        image: Optional[str] = None,
         dockerfile_path: str = "../Dockerfile",
-        build_context: str = None,
-        build_target: str = None,
-        environment: dict = None,
-        mounts: dict = None,
-        labels: dict = None,
+        build_context: Optional[str] = None,
+        build_target: Optional[str] = None,
+        environment: Optional[dict] = None,
+        mounts: Optional[dict] = None,
+        labels: Optional[dict] = None,
         port: int = 5001,
     ):
         """Resolves the devcontainer.json based on provided properties.
@@ -168,8 +167,7 @@ def _reformat_labels(labels: dict) -> list:
 
 
 def _get_devcontainer_file_path(directory_path: str) -> str:
-    """Returns the path of the devcontainer in relation to provided
-    directory path.
+    """Returns the path of the devcontainer in relation to provided directory path.
 
     :param directory_path: absolute path of local directory to write devcontainer.json.
     :type directory_path: str

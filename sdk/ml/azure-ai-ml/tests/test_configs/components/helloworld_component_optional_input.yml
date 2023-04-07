@@ -1,0 +1,13 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+name: helloworld_component_optional_input
+command: ls
+inputs:
+  required_input:
+    type: integer
+    optional: false
+  optional_input:
+    type: integer
+    optional: true
+environment:
+  image: library/python:latest
+compute: azureml:cpu-cluster

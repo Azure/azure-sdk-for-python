@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from collections import deque
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.exceptions import UserErrorException
@@ -43,6 +43,7 @@ _dsl_settings_stack = _DSLSettingsStack()
 
 class _DSLSettings:
     """Initialization & finalization job settings for DSL pipeline job.
+
     Store settings from `dsl.set_pipeline_settings` during pipeline definition.
     """
 
@@ -103,8 +104,8 @@ class _DSLSettings:
 
 def set_pipeline_settings(
     *,
-    on_init: Union[BaseNode, str] = None,
-    on_finalize: Union[BaseNode, str] = None,
+    on_init: Optional[Union[BaseNode, str]] = None,
+    on_finalize: Optional[Union[BaseNode, str]] = None,
 ) -> None:
     """Set pipeline settings for current `dsl.pipeline` definition.
 

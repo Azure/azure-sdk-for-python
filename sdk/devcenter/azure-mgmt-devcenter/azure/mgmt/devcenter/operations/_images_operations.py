@@ -48,8 +48,8 @@ def build_list_by_dev_center_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,8 +91,8 @@ def build_list_by_gallery_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,8 +134,8 @@ def build_get_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -207,7 +207,7 @@ class ImagesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImageListResult]
 
         error_map = {
@@ -308,7 +308,7 @@ class ImagesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImageListResult]
 
         error_map = {
@@ -412,7 +412,7 @@ class ImagesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.Image]
 
         request = build_get_request(

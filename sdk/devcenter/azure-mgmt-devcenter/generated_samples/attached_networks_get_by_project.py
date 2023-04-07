@@ -26,17 +26,17 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
 def main():
     client = DevCenterMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscriptionId}",
+        subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
     response = client.attached_networks.get_by_project(
         resource_group_name="rg1",
-        project_name="{projectName}",
+        project_name="DevProject",
         attached_network_connection_name="network-uswest3",
     )
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-10-12-preview/examples/AttachedNetworks_GetByProject.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/AttachedNetworks_GetByProject.json
 if __name__ == "__main__":
     main()

@@ -25,20 +25,20 @@ class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too
     attributes.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
-     alpha-numeric characters or underscore.
+     alpha-numeric characters or underscore. Required.
     :type hub: str
-    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, hub: str, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2022-11-01")  # type: str
 
         if hub is None:
             raise ValueError("Parameter 'hub' must not be None.")

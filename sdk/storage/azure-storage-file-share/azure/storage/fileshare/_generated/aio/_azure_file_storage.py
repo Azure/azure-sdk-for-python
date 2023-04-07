@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, Optional, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AzureFileStorageConfiguration
 from .operations import DirectoryOperations, FileOperations, ServiceOperations, ShareOperations
@@ -34,8 +34,16 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     :type url: str
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
+    :param file_request_intent: Valid value is backup. "backup" Default value is None.
+    :type file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+    :param allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
+     Default value is None.
+    :type allow_trailing_dot: bool
+    :param allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
+     URI. Default value is None.
+    :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
+     is "2022-11-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -44,12 +52,24 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, base_url: str = "", **kwargs: Any
+        self,
+        url: str,
+        base_url: str = "",
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
-        self._config = AzureFileStorageConfiguration(url=url, **kwargs)
+        self._config = AzureFileStorageConfiguration(
+            url=url,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            allow_source_trailing_dot=allow_source_trailing_dot,
+            **kwargs
+        )
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -87,5 +107,5 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

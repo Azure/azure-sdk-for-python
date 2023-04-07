@@ -101,12 +101,12 @@ resources:
 @pytest.fixture
 def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
@@ -120,7 +120,7 @@ def mock_local_deployment_helper() -> Mock:
 def mock_online_deployment_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> OnlineDeploymentOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
@@ -128,18 +128,18 @@ def mock_online_deployment_operations(
     yield OnlineDeploymentOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_02_2022_preview=mock_aml_services_2021_10_01,
+        service_client_02_2022_preview=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
         local_deployment_helper=mock_local_deployment_helper,
     )
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestOnlineDeploymentOperations:
     @pytest.mark.skipif(
-        condition=platform.python_implementation == "PyPy",
-        reason="writing dumped entity back to file does not work on PyPy"
+        condition=platform.python_implementation() == "PyPy",
+        reason="writing dumped entity back to file does not work on PyPy",
     )
     def test_online_deployment_k8s_create(
         self,
@@ -168,11 +168,11 @@ class TestOnlineDeploymentOperations:
     def test_delete_online_deployment(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,
-        mock_aml_services_2021_10_01: Mock,
+        mock_aml_services_2022_10_01: Mock,
         mocker: MockFixture,
         mock_delete_poller: LROPoller,
     ) -> None:
         random_name = "random_string"
-        mock_aml_services_2021_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
+        mock_aml_services_2022_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
         mock_online_deployment_operations.begin_delete(endpoint_name="k8sendpoint", name=random_name)
         mock_online_deployment_operations._online_deployment.begin_delete.assert_called_once()

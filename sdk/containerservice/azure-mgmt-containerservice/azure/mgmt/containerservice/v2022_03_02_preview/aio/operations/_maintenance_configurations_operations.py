@@ -86,10 +86,10 @@ class MaintenanceConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-03-02-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-03-02-preview")
-        )  # type: Literal["2022-03-02-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MaintenanceConfigurationListResult]
+        )
+        cls: ClsType[_models.MaintenanceConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -112,7 +112,7 @@ class MaintenanceConfigurationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -128,7 +128,7 @@ class MaintenanceConfigurationsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -136,14 +136,15 @@ class MaintenanceConfigurationsOperations:
             deserialized = self._deserialize("MaintenanceConfigurationListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -155,7 +156,9 @@ class MaintenanceConfigurationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_managed_cluster.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations"}  # type: ignore
+    list_by_managed_cluster.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations"
+    }
 
     @distributed_trace_async
     async def get(
@@ -188,10 +191,10 @@ class MaintenanceConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-03-02-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-03-02-preview")
-        )  # type: Literal["2022-03-02-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MaintenanceConfiguration]
+        )
+        cls: ClsType[_models.MaintenanceConfiguration] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -204,10 +207,11 @@ class MaintenanceConfigurationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -223,7 +227,9 @@ class MaintenanceConfigurationsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"
+    }
 
     @overload
     async def create_or_update(
@@ -312,8 +318,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_name: str
         :param config_name: The name of the maintenance configuration. Required.
         :type config_name: str
-        :param parameters: The maintenance configuration to create or update. Is either a model type or
-         a IO type. Required.
+        :param parameters: The maintenance configuration to create or update. Is either a
+         MaintenanceConfiguration type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.containerservice.v2022_03_02_preview.models.MaintenanceConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -335,11 +341,11 @@ class MaintenanceConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-03-02-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-03-02-preview")
-        )  # type: Literal["2022-03-02-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MaintenanceConfiguration]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MaintenanceConfiguration] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -363,10 +369,11 @@ class MaintenanceConfigurationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -382,7 +389,9 @@ class MaintenanceConfigurationsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -415,10 +424,10 @@ class MaintenanceConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-03-02-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-03-02-preview")
-        )  # type: Literal["2022-03-02-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -431,10 +440,11 @@ class MaintenanceConfigurationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -446,4 +456,6 @@ class MaintenanceConfigurationsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"
+    }

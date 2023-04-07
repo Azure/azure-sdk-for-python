@@ -11,16 +11,15 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class SettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the kind of the settings string.
-    """
+    """the kind of the settings string."""
 
     DATA_EXPORT_SETTINGS = "DataExportSettings"
     ALERT_SUPPRESSION_SETTING = "AlertSuppressionSetting"
     ALERT_SYNC_SETTINGS = "AlertSyncSettings"
 
+
 class SettingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SettingName.
-    """
+    """SettingName."""
 
     MCAS = "MCAS"
     WDATP = "WDATP"

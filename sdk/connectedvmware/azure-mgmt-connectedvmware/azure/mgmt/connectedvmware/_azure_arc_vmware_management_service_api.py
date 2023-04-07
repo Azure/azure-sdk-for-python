@@ -9,20 +9,37 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import AzureArcVMwareManagementServiceAPIConfiguration
-from .operations import ClustersOperations, DatastoresOperations, GuestAgentsOperations, HostsOperations, HybridIdentityMetadataOperations, InventoryItemsOperations, MachineExtensionsOperations, Operations, ResourcePoolsOperations, VCentersOperations, VirtualMachineTemplatesOperations, VirtualMachinesOperations, VirtualNetworksOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AzureArcVMwareManagementServiceAPIOperationsMixin,
+    ClustersOperations,
+    DatastoresOperations,
+    GuestAgentsOperations,
+    HostsOperations,
+    HybridIdentityMetadataOperations,
+    InventoryItemsOperations,
+    MachineExtensionsOperations,
+    Operations,
+    ResourcePoolsOperations,
+    VCentersOperations,
+    VirtualMachineTemplatesOperations,
+    VirtualMachinesOperations,
+    VirtualNetworksOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class AzureArcVMwareManagementServiceAPI:    # pylint: disable=too-many-instance-attributes
+
+class AzureArcVMwareManagementServiceAPI(
+    AzureArcVMwareManagementServiceAPIOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Self service experience for VMware.
 
     :ivar operations: Operations operations
@@ -53,13 +70,13 @@ class AzureArcVMwareManagementServiceAPI:    # pylint: disable=too-many-instance
     :vartype machine_extensions: azure.mgmt.connectedvmware.operations.MachineExtensionsOperations
     :ivar guest_agents: GuestAgentsOperations operations
     :vartype guest_agents: azure.mgmt.connectedvmware.operations.GuestAgentsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Subscription ID.
+    :param subscription_id: The Subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-01-10-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-07-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -73,59 +90,40 @@ class AzureArcVMwareManagementServiceAPI:    # pylint: disable=too-many-instance
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AzureArcVMwareManagementServiceAPIConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = AzureArcVMwareManagementServiceAPIConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.resource_pools = ResourcePoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.clusters = ClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.hosts = HostsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.datastores = DatastoresOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.vcenters = VCentersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.resource_pools = ResourcePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.hosts = HostsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datastores = DatastoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vcenters = VCentersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_templates = VirtualMachineTemplatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_networks = VirtualNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.inventory_items = InventoryItemsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.inventory_items = InventoryItemsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.hybrid_identity_metadata = HybridIdentityMetadataOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.machine_extensions = MachineExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.guest_agents = GuestAgentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.guest_agents = GuestAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -134,7 +132,7 @@ class AzureArcVMwareManagementServiceAPI:    # pylint: disable=too-many-instance
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -147,15 +145,12 @@ class AzureArcVMwareManagementServiceAPI:    # pylint: disable=too-many-instance
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureArcVMwareManagementServiceAPI
+    def __enter__(self) -> "AzureArcVMwareManagementServiceAPI":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

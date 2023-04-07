@@ -7,22 +7,20 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccountKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of account key to regenerate.
-    """
+class AccountKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of account key to regenerate."""
 
     #: The primary account key.
     PRIMARY = "Primary"
     #: The secondary account key.
     SECONDARY = "Secondary"
 
-class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether the pool is resizing.
-    """
+
+class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the pool is resizing."""
 
     #: The pool is not resizing. There are no changes to the number of nodes in the pool in progress.
     #: A pool enters this state when it is created and when no operations are being performed on the
@@ -34,9 +32,9 @@ class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: request has not yet been completed.
     STOPPING = "Stopping"
 
-class AuthenticationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication mode for the Batch account.
-    """
+
+class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication mode for the Batch account."""
 
     #: The authentication mode using shared keys.
     SHARED_KEY = "SharedKey"
@@ -45,9 +43,9 @@ class AuthenticationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The authentication mode using task authentication tokens.
     TASK_AUTHENTICATION_TOKEN = "TaskAuthenticationToken"
 
-class AutoStorageAuthenticationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication mode which the Batch service will use to manage the auto-storage account.
-    """
+
+class AutoStorageAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication mode which the Batch service will use to manage the auto-storage account."""
 
     #: The Batch service will authenticate requests to auto-storage using storage account keys.
     STORAGE_KEYS = "StorageKeys"
@@ -55,7 +53,8 @@ class AutoStorageAuthenticationMode(with_metaclass(CaseInsensitiveEnumMeta, str,
     #: assigned to the Batch account.
     BATCH_ACCOUNT_MANAGED_IDENTITY = "BatchAccountManagedIdentity"
 
-class AutoUserScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value is Pool. If the pool is running Windows a value of Task should be specified
     if stricter isolation between tasks is required. For example, if the task mutates the registry
     in a way which could impact other tasks, or if certificates have been specified on the pool
@@ -68,9 +67,9 @@ class AutoUserScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: a pool.
     POOL = "Pool"
 
-class CachingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of caching to enable for the disk.
-    """
+
+class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of caching to enable for the disk."""
 
     #: The caching mode for the disk is not enabled.
     NONE = "None"
@@ -79,16 +78,18 @@ class CachingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The caching mode for the disk is read and write.
     READ_WRITE = "ReadWrite"
 
-class CertificateFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The format of the certificate - either Pfx or Cer. If omitted, the default is Pfx.
-    """
+
+class CertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of the certificate - either Pfx or Cer. If omitted, the default is Pfx."""
 
     #: The certificate is a PFX (PKCS#12) formatted certificate or certificate chain.
     PFX = "Pfx"
     #: The certificate is a base64-encoded X.509 certificate.
     CER = "Cer"
 
-class CertificateProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificateProvisioningState."""
 
     #: The certificate is available for use in pools.
     SUCCEEDED = "Succeeded"
@@ -103,7 +104,8 @@ class CertificateProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     #: the delete.
     FAILED = "Failed"
 
-class CertificateStoreLocation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value is currentUser. This property is applicable only for pools configured with
     Windows nodes (that is, created with cloudServiceConfiguration, or with
     virtualMachineConfiguration using a Windows image reference). For Linux compute nodes, the
@@ -118,7 +120,9 @@ class CertificateStoreLocation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     #: Certificates should be installed to the LocalMachine certificate store.
     LOCAL_MACHINE = "LocalMachine"
 
-class CertificateVisibility(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificateVisibility."""
 
     #: The certificate should be visible to the user account under which the start task is run. Note
     #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
@@ -130,7 +134,8 @@ class CertificateVisibility(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: node.
     REMOTE_USER = "RemoteUser"
 
-class ComputeNodeDeallocationOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines what to do with a node and its running task(s) after it has been selected for
     deallocation.
     """
@@ -149,9 +154,9 @@ class ComputeNodeDeallocationOption(with_metaclass(CaseInsensitiveEnumMeta, str,
     #: expired.
     RETAINED_DATA = "RetainedData"
 
-class ComputeNodeFillType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """How tasks should be distributed across compute nodes.
-    """
+
+class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How tasks should be distributed across compute nodes."""
 
     #: Tasks should be assigned evenly across all nodes in the pool.
     SPREAD = "Spread"
@@ -159,7 +164,8 @@ class ComputeNodeFillType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: any tasks are assigned to the next node in the pool.
     PACK = "Pack"
 
-class ContainerWorkingDirectory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A flag to indicate where the container task working directory is. The default is
     'taskWorkingDirectory'.
     """
@@ -171,9 +177,9 @@ class ContainerWorkingDirectory(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     #: the resource files downloaded by Batch.
     CONTAINER_IMAGE_DEFAULT = "ContainerImageDefault"
 
-class DiskEncryptionTarget(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """If omitted, no disks on the compute nodes in the pool will be encrypted.
-    """
+
+class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """If omitted, no disks on the compute nodes in the pool will be encrypted."""
 
     #: The OS Disk on the compute node is encrypted.
     OS_DISK = "OsDisk"
@@ -181,44 +187,45 @@ class DiskEncryptionTarget(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: partitions (such as those on mounted data disks) when encryption occurs at boot time.
     TEMPORARY_DISK = "TemporaryDisk"
 
-class DynamicVNetAssignmentScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The scope of dynamic vnet assignment.
-    """
+
+class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scope of dynamic vnet assignment."""
 
     #: No dynamic VNet assignment is enabled.
     NONE = "none"
     #: Dynamic VNet assignment is done per-job. If this value is set, the network configuration subnet
-    #: ID must also be set. This feature requires approval before use, please contact support.
+    #: ID must also be set. This feature requires approval before use, please contact support
     JOB = "job"
 
-class ElevationLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The elevation level of the user.
-    """
+
+class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The elevation level of the user."""
 
     #: The user is a standard user without elevated access.
     NON_ADMIN = "NonAdmin"
     #: The user is a user with elevated access and operates with full Administrator permissions.
     ADMIN = "Admin"
 
-class EndpointAccessDefaultAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Default action for endpoint access. It is only applicable when publicNetworkAccess is enabled.
-    """
+
+class EndpointAccessDefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Default action for endpoint access. It is only applicable when publicNetworkAccess is enabled."""
 
     #: Allow client access.
     ALLOW = "Allow"
     #: Deny client access.
     DENY = "Deny"
 
-class InboundEndpointProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The protocol of the endpoint.
-    """
+
+class InboundEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol of the endpoint."""
 
     #: Use TCP for the endpoint.
     TCP = "TCP"
     #: Use UDP for the endpoint.
     UDP = "UDP"
 
-class InterNodeCommunicationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class InterNodeCommunicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This imposes restrictions on which nodes can be assigned to the pool. Enabling this value can
     reduce the chance of the requested number of nodes to be allocated in the pool. If not
     specified, this value defaults to 'Disabled'.
@@ -229,9 +236,9 @@ class InterNodeCommunicationState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     #: Disable network communication between virtual machines.
     DISABLED = "Disabled"
 
-class IPAddressProvisioningType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning type for Public IP Addresses for the Batch Pool.
-    """
+
+class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning type for Public IP Addresses for the Batch Pool."""
 
     #: A public IP will be created and managed by Batch. There may be multiple public IPs depending on
     #: the size of the Pool.
@@ -241,9 +248,9 @@ class IPAddressProvisioningType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     #: No public IP Address will be created for the Compute Nodes in the Pool.
     NO_PUBLIC_IP_ADDRESSES = "NoPublicIPAddresses"
 
-class KeySource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the key source.
-    """
+
+class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the key source."""
 
     #: Batch creates and manages the encryption keys used to protect the account data.
     MICROSOFT_BATCH = "Microsoft.Batch"
@@ -252,7 +259,8 @@ class KeySource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Identifier must also be supplied under the keyVaultProperties.
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
 
-class LoginMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies login mode for the user. The default value for VirtualMachineConfiguration pools is
     interactive mode and for CloudServiceConfiguration pools is batch mode.
     """
@@ -265,7 +273,8 @@ class LoginMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: task, then this option is recommended.
     INTERACTIVE = "Interactive"
 
-class NameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class NameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a Batch account name could not be used. The Reason element is only
     returned if NameAvailable is false.
     """
@@ -275,45 +284,59 @@ class NameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     #: The requested name is already in use.
     ALREADY_EXISTS = "AlreadyExists"
 
-class NetworkSecurityGroupRuleAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The action that should be taken for a specified IP address, subnet range or tag.
-    """
+
+class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action that should be taken for a specified IP address, subnet range or tag."""
 
     #: Allow access.
     ALLOW = "Allow"
     #: Deny access.
     DENY = "Deny"
 
-class NodePlacementPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The default value is regional.
-    """
+
+class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines how a pool communicates with the Batch service."""
+
+    #: The node communication mode is automatically set by the Batch service.
+    DEFAULT = "Default"
+    #: Nodes using the Classic communication mode require inbound TCP communication on ports 29876 and
+    #: 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
+    #: port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags.
+    CLASSIC = "Classic"
+    #: Nodes using the Simplified communication mode require outbound TCP communication on port 443 to
+    #: the "BatchNodeManagement.{region}" service tag. No open inbound ports are required.
+    SIMPLIFIED = "Simplified"
+
+
+class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The default value is regional."""
 
     #: All nodes in the pool will be allocated in the same region.
     REGIONAL = "Regional"
     #: Nodes in the pool will be spread across different zones with best effort balancing.
     ZONAL = "Zonal"
 
-class PackageState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of the application package.
-    """
+
+class PackageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the application package."""
 
     #: The application package has been created but has not yet been activated.
     PENDING = "Pending"
     #: The application package is ready for use.
     ACTIVE = "Active"
 
-class PoolAllocationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The allocation mode for creating pools in the Batch account.
-    """
+
+class PoolAllocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The allocation mode for creating pools in the Batch account."""
 
     #: Pools will be allocated in subscriptions owned by the Batch service.
     BATCH_SERVICE = "BatchService"
     #: Pools will be allocated in a subscription owned by the user.
     USER_SUBSCRIPTION = "UserSubscription"
 
-class PoolIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity used for the Batch Pool.
-    """
+
+class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for the Batch Pool."""
 
     #: Batch pool has user assigned identities with it.
     USER_ASSIGNED = "UserAssigned"
@@ -321,9 +344,9 @@ class PoolIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: existing identities.
     NONE = "None"
 
-class PoolProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of the pool.
-    """
+
+class PoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the pool."""
 
     #: The pool is available to run tasks subject to the availability of compute nodes.
     SUCCEEDED = "Succeeded"
@@ -331,9 +354,9 @@ class PoolProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: completed.
     DELETING = "Deleting"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the private endpoint connection.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the private endpoint connection."""
 
     #: The connection is creating.
     CREATING = "Creating"
@@ -350,22 +373,22 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     #: The user has cancelled the connection creation.
     CANCELLED = "Cancelled"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the Batch private endpoint connection
-    """
 
-    #: The private endpoint connection is approved and can be used to access Batch account.
+class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the Batch private endpoint connection."""
+
+    #: The private endpoint connection is approved and can be used to access Batch account
     APPROVED = "Approved"
-    #: The private endpoint connection is pending and cannot be used to access Batch account.
+    #: The private endpoint connection is pending and cannot be used to access Batch account
     PENDING = "Pending"
-    #: The private endpoint connection is rejected and cannot be used to access Batch account.
+    #: The private endpoint connection is rejected and cannot be used to access Batch account
     REJECTED = "Rejected"
-    #: The private endpoint connection is disconnected and cannot be used to access Batch account.
+    #: The private endpoint connection is disconnected and cannot be used to access Batch account
     DISCONNECTED = "Disconnected"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioned state of the resource
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioned state of the resource."""
 
     #: The account is in an invalid state.
     INVALID = "Invalid"
@@ -380,9 +403,9 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The last operation for the account is cancelled.
     CANCELLED = "Cancelled"
 
-class PublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The network access type for operating on the resources in the Batch account.
-    """
+
+class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network access type for operating on the resources in the Batch account."""
 
     #: Enables connectivity to Azure Batch through public DNS.
     ENABLED = "Enabled"
@@ -390,9 +413,9 @@ class PublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     #: private endpoint resource.
     DISABLED = "Disabled"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity used for the Batch account.
-    """
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for the Batch account."""
 
     #: Batch account has a system assigned identity with it.
     SYSTEM_ASSIGNED = "SystemAssigned"
@@ -402,9 +425,9 @@ class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: remove existing identities.
     NONE = "None"
 
-class StorageAccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The storage account type for use in creating data disks.
-    """
+
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The storage account type for use in creating data disks."""
 
     #: The data disk should use standard locally redundant storage.
     STANDARD_LRS = "Standard_LRS"

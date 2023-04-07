@@ -205,7 +205,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
 
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @StorageAccountPreparer(name_prefix='batch', location=AZURE_LOCATION)
+    @StorageAccountPreparer(name_prefix='batchx', location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_mgmt_batch_applications(self, resource_group, location, storage_account, storage_account_key):
         # Test Create Account with Auto-Storage 

@@ -57,7 +57,7 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -136,7 +136,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -204,7 +204,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -255,7 +255,7 @@ def build_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -293,7 +293,7 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "expiry"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -344,7 +344,7 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -413,7 +413,7 @@ def build_set_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -455,7 +455,7 @@ def build_delete_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -492,7 +492,7 @@ def build_set_legal_hold_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "legalhold"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -540,7 +540,7 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -608,7 +608,7 @@ def build_acquire_lease_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
     action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -666,7 +666,7 @@ def build_release_lease_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
     action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -721,7 +721,7 @@ def build_renew_lease_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
     action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -777,7 +777,7 @@ def build_change_lease_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
     action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -833,7 +833,7 @@ def build_break_lease_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
     action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -893,7 +893,7 @@ def build_create_snapshot_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "snapshot"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -972,7 +972,7 @@ def build_start_copy_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1075,7 +1075,7 @@ def build_copy_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     x_ms_requires_sync = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1167,7 +1167,7 @@ def build_abort_copy_from_url_request(
     copy_action_abort_constant = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1213,7 +1213,7 @@ def build_set_tier_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "tier"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1255,7 +1255,7 @@ def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
 
     restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1300,7 +1300,7 @@ def build_query_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "query"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1364,7 +1364,7 @@ def build_get_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1415,7 +1415,7 @@ def build_set_tags_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1603,6 +1603,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers = {}
         if response.status_code == 200:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-creation-time")
+            )
             response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
             response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
             response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
@@ -1681,6 +1684,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code == 206:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-creation-time")
+            )
             response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
             response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
             response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
@@ -3478,8 +3484,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
          blob. Known values are: "High" and "Standard". Default value is None.
@@ -3652,8 +3658,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -3917,7 +3923,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         update the blob's ETag.
 
         :param tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
-         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive". Required.
+         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Cold".
+         Required.
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,

@@ -15,7 +15,7 @@ from typing import Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.v2021_10_01.models import JobBaseData
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
@@ -36,10 +36,9 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: dict = None, only_streamable=True
+    logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
 ) -> List[str]:
-    """Filters log file names, sorts, and returns list starting with where we
-    left off last iteration.
+    """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
     :param run_details:
     :type run_details: dict
@@ -162,7 +161,7 @@ def _wait_before_polling(current_seconds):
     return max(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN, duration)
 
 
-def list_logs(run_operations: RunOperations, job_resource: JobBaseData):
+def list_logs(run_operations: RunOperations, job_resource: JobBase):
     details: RunDetails = run_operations.get_run_details(job_resource.name)
     logs_dict = details.log_files
     keys = _get_sorted_filtered_logs(logs_dict, job_resource.properties.job_type)
@@ -172,19 +171,18 @@ def list_logs(run_operations: RunOperations, job_resource: JobBaseData):
 # pylint: disable=too-many-statements,too-many-locals
 def stream_logs_until_completion(
     run_operations: RunOperations,
-    job_resource: JobBaseData,
-    datastore_operations: DatastoreOperations = None,
+    job_resource: JobBase,
+    datastore_operations: Optional[DatastoreOperations] = None,
     raise_exception_on_failed_job=True,
     *,
     requests_pipeline: HttpPipeline
 ) -> None:
-    """Stream the experiment run output to the specified file handle. By
-    default the the file handle points to stdout.
+    """Stream the experiment run output to the specified file handle. By default the the file handle points to stdout.
 
     :param run_operations: The run history operations class.
     :type run_operations: RunOperations
     :param job_resource: The job to stream
-    :type job_resource: JobBaseData
+    :type job_resource: JobBase
     :param datastore_operations: Optional, the datastore operations class, used to get logs from datastore
     :type datastore_operations: Optional[DatastoreOperations]
     :param raise_exception_on_failed_job: Should this method fail if job fails
@@ -336,8 +334,7 @@ def get_git_properties() -> Dict[str, str]:
         return str(value).strip() or None
 
     def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it
-        fails."""
+        """Return the output of running git with arguments, or None if it fails."""
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
@@ -400,8 +397,7 @@ def get_job_output_uris_from_dataplane(
     model_dataplane_operations: ModelDataplaneOperations,
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
-    """Returns the output path for the given output in cloud storage of the
-    given job.
+    """Returns the output path for the given output in cloud storage of the given job.
 
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.

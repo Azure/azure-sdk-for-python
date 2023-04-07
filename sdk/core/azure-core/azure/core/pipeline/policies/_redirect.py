@@ -27,7 +27,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 import logging
-from urllib.parse import urlparse  # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 
@@ -36,26 +36,26 @@ from ._base import HTTPPolicy, RequestHistory
 
 _LOGGER = logging.getLogger(__name__)
 
-class RedirectPolicyBase(object):
+
+class RedirectPolicyBase:
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
-    REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
+    REDIRECT_HEADERS_BLACKLIST = frozenset(["Authorization"])
 
     def __init__(self, **kwargs):
-        self.allow = kwargs.get('permit_redirects', True)
-        self.max_redirects = kwargs.get('redirect_max', 30)
+        self.allow = kwargs.get("permit_redirects", True)
+        self.max_redirects = kwargs.get("redirect_max", 30)
 
-        remove_headers = set(kwargs.get('redirect_remove_headers', []))
+        remove_headers = set(kwargs.get("redirect_remove_headers", []))
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
-        redirect_status = set(kwargs.get('redirect_on_status_codes', []))
+        redirect_status = set(kwargs.get("redirect_on_status_codes", []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
         super(RedirectPolicyBase, self).__init__()
 
     @classmethod
     def no_redirects(cls):
-        """Disable redirects.
-        """
+        """Disable redirects."""
         return cls(permit_redirects=False)
 
     def configure_redirects(self, options):
@@ -66,9 +66,9 @@ class RedirectPolicyBase(object):
         :rtype: dict
         """
         return {
-            'allow': options.pop("permit_redirects", self.allow),
-            'redirects': options.pop("redirect_max", self.max_redirects),
-            'history': []
+            "allow": options.pop("permit_redirects", self.allow),
+            "redirects": options.pop("redirect_max", self.max_redirects),
+            "history": [],
         }
 
     def get_redirect_location(self, response):
@@ -81,11 +81,14 @@ class RedirectPolicyBase(object):
          location. ``False`` if not a redirect status code.
         """
         if response.http_response.status_code in [301, 302]:
-            if response.http_request.method in ['GET', 'HEAD', ]:
-                return response.http_response.headers.get('location')
+            if response.http_request.method in [
+                "GET",
+                "HEAD",
+            ]:
+                return response.http_response.headers.get("location")
             return False
         if response.http_response.status_code in self._redirect_on_status_codes:
-            return response.http_response.headers.get('location')
+            return response.http_response.headers.get("location")
 
         return False
 
@@ -101,23 +104,23 @@ class RedirectPolicyBase(object):
         :rtype: bool
         """
         # TODO: Revise some of the logic here.
-        settings['redirects'] -= 1
-        settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
+        settings["redirects"] -= 1
+        settings["history"].append(RequestHistory(response.http_request, http_response=response.http_response))
 
         redirected = urlparse(redirect_location)
         if not redirected.netloc:
             base_url = urlparse(response.http_request.url)
             response.http_request.url = "{}://{}/{}".format(
-                base_url.scheme,
-                base_url.netloc,
-                redirect_location.lstrip('/'))
+                base_url.scheme, base_url.netloc, redirect_location.lstrip("/")
+            )
         else:
             response.http_request.url = redirect_location
         if response.http_response.status_code == 303:
-            response.http_request.method = 'GET'
+            response.http_request.method = "GET"
         for non_redirect_header in self._remove_headers_on_redirect:
             response.http_request.headers.pop(non_redirect_header, None)
-        return settings['redirects'] >= 0
+        return settings["redirects"] >= 0
+
 
 class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
     """A redirect policy.
@@ -152,10 +155,10 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
-            if redirect_location and redirect_settings['allow']:
+            if redirect_location and redirect_settings["allow"]:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 continue
             return response
 
-        raise TooManyRedirectsError(redirect_settings['history'])
+        raise TooManyRedirectsError(redirect_settings["history"])

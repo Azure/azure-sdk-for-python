@@ -51,6 +51,12 @@ class TestToDict(FormRecognizerTest):
             postal_code="98052",
             country_region="USA",
             street_address="123 Contoso Ave",
+            unit="unit",
+            city_district="city_district",
+            state_district="state_district",
+            suburb="suburb",
+            house="house",
+            level="level"
         )
 
         d = model.to_dict()
@@ -63,6 +69,12 @@ class TestToDict(FormRecognizerTest):
             "postal_code": "98052",
             "country_region": "USA",
             "street_address": "123 Contoso Ave",
+            "unit": "unit",
+            "city_district": "city_district",
+            "state_district": "state_district",
+            "suburb": "suburb",
+            "house": "house",
+            "level": "level"
         }
         assert d == final
 
@@ -70,12 +82,14 @@ class TestToDict(FormRecognizerTest):
         model = _models.CurrencyValue(
             amount=5.01,
             symbol="$",
+            code="USD"
         )
 
         d = model.to_dict()
         final = {
             "amount": 5.01,
             "symbol": "$",
+            "code": "USD"
         }
         assert d == final
 
@@ -290,6 +304,150 @@ class TestToDict(FormRecognizerTest):
         }
         assert d == final
 
+    def test_document_field_to_dict_none_value_address(self):
+        model = _models.DocumentField(
+            value_type="address",
+            value=None,
+            content="123 Main St",
+            bounding_regions=[
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+            ],
+            spans=[
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+            ],
+            confidence=0.99,
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "value_type": "address",
+            "value": None,
+            "content": "123 Main St",
+            "bounding_regions": [
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+            ],
+            "spans": [
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+            ],
+            "confidence": 0.99,
+        }
+        assert d == final
+        test_from_dict = _models.DocumentField.from_dict(d)
+        assert test_from_dict.value == None
+
+    def test_document_field_to_dict_none_value_currency(self):
+        model = _models.DocumentField(
+            value_type="currency",
+            value=None,
+            content="$1.33",
+            bounding_regions=[
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+            ],
+            spans=[
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+            ],
+            confidence=0.99,
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "value_type": "currency",
+            "value": None,
+            "content": "$1.33",
+            "bounding_regions": [
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+            ],
+            "spans": [
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+            ],
+            "confidence": 0.99,
+        }
+        assert d == final
+        test_from_dict = _models.DocumentField.from_dict(d)
+        assert test_from_dict.value == None
+
     def test_document_key_value_element_to_dict(self):
         model = _models.DocumentKeyValueElement(
             content="content",
@@ -388,6 +546,7 @@ class TestToDict(FormRecognizerTest):
                 ],
             ),
             confidence=0.89,
+            common_name="Charges"
         )
 
         d = model.to_dict()
@@ -436,6 +595,7 @@ class TestToDict(FormRecognizerTest):
                 ],
             },
             "confidence": 0.89,
+            "common_name": "Charges"
         }
 
         assert d == final
@@ -651,6 +811,11 @@ class TestToDict(FormRecognizerTest):
                 ),
             ],
             confidence=1.0,
+            similar_font_family="Arial",
+            font_style="italic",
+            font_weight="bold",
+            color="#FF0000",
+            background_color="#FFFFFF"
         )
 
         d = model.to_dict()
@@ -664,6 +829,11 @@ class TestToDict(FormRecognizerTest):
                 }
             ],
             "confidence": 1.0,
+            'similar_font_family': 'Arial',
+            'font_style': 'italic',
+            'font_weight': 'bold',
+            'color': '#FF0000',
+            'background_color': '#FFFFFF',
         }
 
         assert d == final
@@ -1091,6 +1261,12 @@ class TestToDict(FormRecognizerTest):
                         ),
                     ],
                     confidence=1.0,
+                    similar_font_family="Arial",
+                    font_style="italic",
+                    font_weight="bold",
+                    color="#FF0000",
+                    background_color="#FFFFFF"
+
                 ),
             ],
             documents=[
@@ -1358,6 +1534,7 @@ class TestToDict(FormRecognizerTest):
                         ],
                     },
                     "confidence": 0.89,
+                    "common_name": None
                 },
             ],
             "styles": [
@@ -1370,6 +1547,11 @@ class TestToDict(FormRecognizerTest):
                         }
                     ],
                     "confidence": 1.0,
+                    'similar_font_family': 'Arial',
+                    'font_style': 'italic',
+                    'font_weight': 'bold',
+                    'color': '#FF0000',
+                    'background_color': '#FFFFFF',
                 },
             ],
             "documents": [
@@ -1470,6 +1652,7 @@ class TestToDict(FormRecognizerTest):
                 tags={},
                 description="my description",
                 created_on="1994-11-05T13:15:30Z",
+                expires_on="2024-11-05T13:15:30Z",
                 model_id="prebuilt-invoice",
                 doc_types={
                     "prebuilt-invoice": _models.DocumentTypeDetails(
@@ -1562,6 +1745,7 @@ class TestToDict(FormRecognizerTest):
                 "tags": {},
                 "description": "my description",
                 "created_on": "1994-11-05T13:15:30Z",
+                "expires_on": "2024-11-05T13:15:30Z",
                 "model_id": "prebuilt-invoice",
                 "doc_types": {
                     "prebuilt-invoice": {
@@ -1757,6 +1941,7 @@ class TestToDict(FormRecognizerTest):
         model = _models.DocumentModelDetails(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
+            expires_on="2024-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
@@ -1820,6 +2005,7 @@ class TestToDict(FormRecognizerTest):
         final = {
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
+            "expires_on": "2024-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
             "api_version": "2022-08-31",
             "tags": {"test": "value"},
@@ -1884,6 +2070,7 @@ class TestToDict(FormRecognizerTest):
         model = _models.DocumentModelSummary(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
+            expires_on="2024-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
@@ -1894,6 +2081,7 @@ class TestToDict(FormRecognizerTest):
         final = {
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
+            "expires_on": "2024-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
             "api_version": "2022-08-31",
             "tags": {"test": "value"},
@@ -1902,11 +2090,18 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_resource_details_to_dict(self):
-        model = _models.ResourceDetails(custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10))
+        model = _models.ResourceDetails(
+            custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10),
+            custom_neural_document_model_builds=_models.QuotaDetails(
+                used=0,
+                quota=20,
+                quota_resets_on="1994-11-05T13:15:30Z"
+            )
+        )
 
         d = model.to_dict()
 
-        final = {"custom_document_models": {"limit": 5000, "count": 10}}
+        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'custom_neural_document_model_builds': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

@@ -1,0 +1,2 @@
+[tool.azure-sdk-build]
+type_check_samples = false

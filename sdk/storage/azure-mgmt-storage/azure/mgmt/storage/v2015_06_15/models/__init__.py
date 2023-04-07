@@ -21,37 +21,35 @@ from ._models_py3 import Usage
 from ._models_py3 import UsageListResult
 from ._models_py3 import UsageName
 
-
-from ._storage_management_enums import (
-    AccountStatus,
-    AccountType,
-    ProvisioningState,
-    Reason,
-    UsageUnit,
-)
+from ._storage_management_enums import AccountStatus
+from ._storage_management_enums import AccountType
+from ._storage_management_enums import ProvisioningState
+from ._storage_management_enums import Reason
+from ._storage_management_enums import UsageUnit
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'CheckNameAvailabilityResult',
-    'CustomDomain',
-    'Endpoints',
-    'Resource',
-    'StorageAccount',
-    'StorageAccountCheckNameAvailabilityParameters',
-    'StorageAccountCreateParameters',
-    'StorageAccountKeys',
-    'StorageAccountListResult',
-    'StorageAccountRegenerateKeyParameters',
-    'StorageAccountUpdateParameters',
-    'Usage',
-    'UsageListResult',
-    'UsageName',
-    'AccountStatus',
-    'AccountType',
-    'ProvisioningState',
-    'Reason',
-    'UsageUnit',
+    "CheckNameAvailabilityResult",
+    "CustomDomain",
+    "Endpoints",
+    "Resource",
+    "StorageAccount",
+    "StorageAccountCheckNameAvailabilityParameters",
+    "StorageAccountCreateParameters",
+    "StorageAccountKeys",
+    "StorageAccountListResult",
+    "StorageAccountRegenerateKeyParameters",
+    "StorageAccountUpdateParameters",
+    "Usage",
+    "UsageListResult",
+    "UsageName",
+    "AccountStatus",
+    "AccountType",
+    "ProvisioningState",
+    "Reason",
+    "UsageUnit",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

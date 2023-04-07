@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._signal_rmanagement_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29,31 +31,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -66,24 +65,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class CustomCertificate(ProxyResource):
@@ -101,37 +96,36 @@ class CustomCertificate(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
-    :ivar key_vault_base_uri: Required. Base uri of the KeyVault that stores certificate.
+    :ivar key_vault_base_uri: Base uri of the KeyVault that stores certificate. Required.
     :vartype key_vault_base_uri: str
-    :ivar key_vault_secret_name: Required. Certificate secret name.
+    :ivar key_vault_secret_name: Certificate secret name. Required.
     :vartype key_vault_secret_name: str
     :ivar key_vault_secret_version: Certificate secret version.
     :vartype key_vault_secret_version: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'key_vault_base_uri': {'required': True},
-        'key_vault_secret_name': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "key_vault_base_uri": {"required": True},
+        "key_vault_secret_name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'key_vault_base_uri': {'key': 'properties.keyVaultBaseUri', 'type': 'str'},
-        'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
-        'key_vault_secret_version': {'key': 'properties.keyVaultSecretVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "key_vault_base_uri": {"key": "properties.keyVaultBaseUri", "type": "str"},
+        "key_vault_secret_name": {"key": "properties.keyVaultSecretName", "type": "str"},
+        "key_vault_secret_version": {"key": "properties.keyVaultSecretVersion", "type": "str"},
     }
 
     def __init__(
@@ -140,17 +134,17 @@ class CustomCertificate(ProxyResource):
         key_vault_base_uri: str,
         key_vault_secret_name: str,
         key_vault_secret_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword key_vault_base_uri: Required. Base uri of the KeyVault that stores certificate.
+        :keyword key_vault_base_uri: Base uri of the KeyVault that stores certificate. Required.
         :paramtype key_vault_base_uri: str
-        :keyword key_vault_secret_name: Required. Certificate secret name.
+        :keyword key_vault_secret_name: Certificate secret name. Required.
         :paramtype key_vault_secret_name: str
         :keyword key_vault_secret_version: Certificate secret version.
         :paramtype key_vault_secret_version: str
         """
-        super(CustomCertificate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.key_vault_base_uri = key_vault_base_uri
@@ -158,7 +152,7 @@ class CustomCertificate(ProxyResource):
         self.key_vault_secret_version = key_vault_secret_version
 
 
-class CustomCertificateList(msrest.serialization.Model):
+class CustomCertificateList(_serialization.Model):
     """Custom certificates list.
 
     :ivar value: List of custom certificates of this resource.
@@ -169,17 +163,17 @@ class CustomCertificateList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CustomCertificate]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CustomCertificate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["CustomCertificate"]] = None,
+        value: Optional[List["_models.CustomCertificate"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of custom certificates of this resource.
         :paramtype value: list[~azure.mgmt.signalr.models.CustomCertificate]
@@ -188,7 +182,7 @@ class CustomCertificateList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(CustomCertificateList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -208,57 +202,50 @@ class CustomDomain(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
-    :ivar domain_name: Required. The custom domain name.
+    :ivar domain_name: The custom domain name. Required.
     :vartype domain_name: str
-    :ivar custom_certificate: Required. Reference to a resource.
+    :ivar custom_certificate: Reference to a resource. Required.
     :vartype custom_certificate: ~azure.mgmt.signalr.models.ResourceReference
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'domain_name': {'required': True},
-        'custom_certificate': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "domain_name": {"required": True},
+        "custom_certificate": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'domain_name': {'key': 'properties.domainName', 'type': 'str'},
-        'custom_certificate': {'key': 'properties.customCertificate', 'type': 'ResourceReference'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "domain_name": {"key": "properties.domainName", "type": "str"},
+        "custom_certificate": {"key": "properties.customCertificate", "type": "ResourceReference"},
     }
 
-    def __init__(
-        self,
-        *,
-        domain_name: str,
-        custom_certificate: "ResourceReference",
-        **kwargs
-    ):
+    def __init__(self, *, domain_name: str, custom_certificate: "_models.ResourceReference", **kwargs: Any) -> None:
         """
-        :keyword domain_name: Required. The custom domain name.
+        :keyword domain_name: The custom domain name. Required.
         :paramtype domain_name: str
-        :keyword custom_certificate: Required. Reference to a resource.
+        :keyword custom_certificate: Reference to a resource. Required.
         :paramtype custom_certificate: ~azure.mgmt.signalr.models.ResourceReference
         """
-        super(CustomDomain, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.domain_name = domain_name
         self.custom_certificate = custom_certificate
 
 
-class CustomDomainList(msrest.serialization.Model):
+class CustomDomainList(_serialization.Model):
     """Custom domains list.
 
     :ivar value: List of custom domains that bind to this resource.
@@ -269,17 +256,13 @@ class CustomDomainList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CustomDomain]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CustomDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["CustomDomain"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.CustomDomain"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of custom domains that bind to this resource.
         :paramtype value: list[~azure.mgmt.signalr.models.CustomDomain]
@@ -288,12 +271,12 @@ class CustomDomainList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(CustomDomainList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Dimension(msrest.serialization.Model):
+class Dimension(_serialization.Model):
     """Specifications of the Dimension of metrics.
 
     :ivar name: The public facing name of the dimension.
@@ -308,10 +291,10 @@ class Dimension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
     def __init__(
@@ -321,8 +304,8 @@ class Dimension(msrest.serialization.Model):
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
         to_be_exported_for_shoebox: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The public facing name of the dimension.
         :paramtype name: str
@@ -334,14 +317,14 @@ class Dimension(msrest.serialization.Model):
          included for the shoebox export scenario.
         :paramtype to_be_exported_for_shoebox: bool
         """
-        super(Dimension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -349,31 +332,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -391,28 +370,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -420,32 +395,28 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.signalr.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.signalr.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class LiveTraceCategory(msrest.serialization.Model):
+class LiveTraceCategory(_serialization.Model):
     """Live trace category configuration of a Microsoft.SignalRService resource.
 
     :ivar name: Gets or sets the live trace category's name.
@@ -459,17 +430,11 @@ class LiveTraceCategory(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "enabled": {"key": "enabled", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        enabled: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the live trace category's name.
          Available values: ConnectivityLogs, MessagingLogs.
@@ -480,12 +445,12 @@ class LiveTraceCategory(msrest.serialization.Model):
          Case insensitive.
         :paramtype enabled: str
         """
-        super(LiveTraceCategory, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.enabled = enabled
 
 
-class LiveTraceConfiguration(msrest.serialization.Model):
+class LiveTraceConfiguration(_serialization.Model):
     """Live trace configuration of a Microsoft.SignalRService resource.
 
     :ivar enabled: Indicates whether or not enable live trace.
@@ -500,17 +465,13 @@ class LiveTraceConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'categories': {'key': 'categories', 'type': '[LiveTraceCategory]'},
+        "enabled": {"key": "enabled", "type": "str"},
+        "categories": {"key": "categories", "type": "[LiveTraceCategory]"},
     }
 
     def __init__(
-        self,
-        *,
-        enabled: Optional[str] = "false",
-        categories: Optional[List["LiveTraceCategory"]] = None,
-        **kwargs
-    ):
+        self, *, enabled: str = "false", categories: Optional[List["_models.LiveTraceCategory"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Indicates whether or not enable live trace.
          When it's set to true, live trace client can connect to the service.
@@ -522,12 +483,12 @@ class LiveTraceConfiguration(msrest.serialization.Model):
         :keyword categories: Gets or sets the list of category configurations.
         :paramtype categories: list[~azure.mgmt.signalr.models.LiveTraceCategory]
         """
-        super(LiveTraceConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.categories = categories
 
 
-class LogSpecification(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
     """Specifications of the Logs for Azure Monitoring.
 
     :ivar name: Name of the log.
@@ -537,35 +498,29 @@ class LogSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the log.
         :paramtype name: str
         :keyword display_name: Localized friendly display name of the log.
         :paramtype display_name: str
         """
-        super(LogSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
 
 
-class ManagedIdentity(msrest.serialization.Model):
+class ManagedIdentity(_serialization.Model):
     """A class represent managed identities used for request and response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Represents the identity type: systemAssigned, userAssigned, None. Possible values
-     include: "None", "SystemAssigned", "UserAssigned".
+    :ivar type: Represents the identity type: systemAssigned, userAssigned, None. Known values are:
+     "None", "SystemAssigned", and "UserAssigned".
     :vartype type: str or ~azure.mgmt.signalr.models.ManagedIdentityType
     :ivar user_assigned_identities: Get or set the user assigned identities.
     :vartype user_assigned_identities: dict[str,
@@ -579,40 +534,40 @@ class ManagedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentityProperty}'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentityProperty}"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagedIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentityProperty"]] = None,
-        **kwargs
-    ):
+        type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentityProperty"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Represents the identity type: systemAssigned, userAssigned, None. Possible
-         values include: "None", "SystemAssigned", "UserAssigned".
+        :keyword type: Represents the identity type: systemAssigned, userAssigned, None. Known values
+         are: "None", "SystemAssigned", and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.signalr.models.ManagedIdentityType
         :keyword user_assigned_identities: Get or set the user assigned identities.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.signalr.models.UserAssignedIdentityProperty]
         """
-        super(ManagedIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
         self.principal_id = None
         self.tenant_id = None
 
 
-class ManagedIdentitySettings(msrest.serialization.Model):
+class ManagedIdentitySettings(_serialization.Model):
     """Managed identity settings for upstream.
 
     :ivar resource: The Resource indicating the App ID URI of the target resource.
@@ -621,25 +576,20 @@ class ManagedIdentitySettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource': {'key': 'resource', 'type': 'str'},
+        "resource": {"key": "resource", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource: The Resource indicating the App ID URI of the target resource.
          It also appears in the aud (audience) claim of the issued token.
         :paramtype resource: str
         """
-        super(ManagedIdentitySettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource = resource
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):
     """Specifications of the Metrics for Azure Monitoring.
 
     :ivar name: Name of the metric.
@@ -668,14 +618,14 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
     }
 
     def __init__(
@@ -688,9 +638,9 @@ class MetricSpecification(msrest.serialization.Model):
         aggregation_type: Optional[str] = None,
         fill_gap_with_zero: Optional[str] = None,
         category: Optional[str] = None,
-        dimensions: Optional[List["Dimension"]] = None,
-        **kwargs
-    ):
+        dimensions: Optional[List["_models.Dimension"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the metric.
         :paramtype name: str
@@ -716,7 +666,7 @@ class MetricSpecification(msrest.serialization.Model):
         :keyword dimensions: The dimensions of the metrics.
         :paramtype dimensions: list[~azure.mgmt.signalr.models.Dimension]
         """
-        super(MetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -727,8 +677,9 @@ class MetricSpecification(msrest.serialization.Model):
         self.dimensions = dimensions
 
 
-class NameAvailability(msrest.serialization.Model):
-    """Result of the request to check name availability. It contains a flag and possible reason of failure.
+class NameAvailability(_serialization.Model):
+    """Result of the request to check name availability. It contains a flag and possible reason of
+    failure.
 
     :ivar name_available: Indicates whether the name is available or not.
     :vartype name_available: bool
@@ -739,9 +690,9 @@ class NameAvailability(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -750,8 +701,8 @@ class NameAvailability(msrest.serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Indicates whether the name is available or not.
         :paramtype name_available: bool
@@ -760,54 +711,48 @@ class NameAvailability(msrest.serialization.Model):
         :keyword message: The message of the operation.
         :paramtype message: str
         """
-        super(NameAvailability, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class NameAvailabilityParameters(msrest.serialization.Model):
+class NameAvailabilityParameters(_serialization.Model):
     """Data POST-ed to the nameAvailability action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The resource type. Can be "Microsoft.SignalRService/SignalR" or
-     "Microsoft.SignalRService/webPubSub".
+    :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
+     "Microsoft.SignalRService/webPubSub". Required.
     :vartype type: str
-    :ivar name: Required. The resource name to validate. e.g."my-resource-name".
+    :ivar name: The resource name to validate. e.g."my-resource-name". Required.
     :vartype name: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: str,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, type: str, name: str, **kwargs: Any) -> None:
         """
-        :keyword type: Required. The resource type. Can be "Microsoft.SignalRService/SignalR" or
-         "Microsoft.SignalRService/webPubSub".
+        :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
+         "Microsoft.SignalRService/webPubSub". Required.
         :paramtype type: str
-        :keyword name: Required. The resource name to validate. e.g."my-resource-name".
+        :keyword name: The resource name to validate. e.g."my-resource-name". Required.
         :paramtype name: str
         """
-        super(NameAvailabilityParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.name = name
 
 
-class NetworkACL(msrest.serialization.Model):
+class NetworkACL(_serialization.Model):
     """Network ACL.
 
     :ivar allow: Allowed request types. The value can be one or more of: ClientConnection,
@@ -819,17 +764,17 @@ class NetworkACL(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allow': {'key': 'allow', 'type': '[str]'},
-        'deny': {'key': 'deny', 'type': '[str]'},
+        "allow": {"key": "allow", "type": "[str]"},
+        "deny": {"key": "deny", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        allow: Optional[List[Union[str, "SignalRRequestType"]]] = None,
-        deny: Optional[List[Union[str, "SignalRRequestType"]]] = None,
-        **kwargs
-    ):
+        allow: Optional[List[Union[str, "_models.SignalRRequestType"]]] = None,
+        deny: Optional[List[Union[str, "_models.SignalRRequestType"]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow: Allowed request types. The value can be one or more of: ClientConnection,
          ServerConnection, RESTAPI.
@@ -838,12 +783,12 @@ class NetworkACL(msrest.serialization.Model):
          ServerConnection, RESTAPI.
         :paramtype deny: list[str or ~azure.mgmt.signalr.models.SignalRRequestType]
         """
-        super(NetworkACL, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allow = allow
         self.deny = deny
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """REST API operation supported by resource provider.
 
     :ivar name: Name of the operation with format: {provider}/{resource}/{operation}.
@@ -860,11 +805,11 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OperationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "OperationProperties"},
     }
 
     def __init__(
@@ -872,11 +817,11 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional["OperationProperties"] = None,
-        **kwargs
-    ):
+        properties: Optional["_models.OperationProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation with format: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -890,7 +835,7 @@ class Operation(msrest.serialization.Model):
         :keyword properties: Extra Operation properties.
         :paramtype properties: ~azure.mgmt.signalr.models.OperationProperties
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
@@ -898,7 +843,7 @@ class Operation(msrest.serialization.Model):
         self.properties = properties
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that describes a operation.
 
     :ivar provider: Friendly name of the resource provider.
@@ -912,10 +857,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -925,8 +870,8 @@ class OperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -937,14 +882,14 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword description: The localized friendly description for the operation.
         :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """Result of the request to list REST API operations. It contains a list of operations.
 
     :ivar value: List of operations supported by the resource provider.
@@ -955,17 +900,13 @@ class OperationList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.signalr.models.Operation]
@@ -974,12 +915,12 @@ class OperationList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(OperationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationProperties(msrest.serialization.Model):
+class OperationProperties(_serialization.Model):
     """Extra Operation properties.
 
     :ivar service_specification: An object that describes a specification.
@@ -987,24 +928,21 @@ class OperationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
     def __init__(
-        self,
-        *,
-        service_specification: Optional["ServiceSpecification"] = None,
-        **kwargs
-    ):
+        self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_specification: An object that describes a specification.
         :paramtype service_specification: ~azure.mgmt.signalr.models.ServiceSpecification
         """
-        super(OperationProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """Private endpoint.
 
     :ivar id: Full qualified Id of the private endpoint.
@@ -1012,20 +950,15 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Full qualified Id of the private endpoint.
         :paramtype id: str
         """
-        super(PrivateEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -1040,28 +973,28 @@ class PrivateEndpointACL(NetworkACL):
     :ivar deny: Denied request types. The value can be one or more of: ClientConnection,
      ServerConnection, RESTAPI.
     :vartype deny: list[str or ~azure.mgmt.signalr.models.SignalRRequestType]
-    :ivar name: Required. Name of the private endpoint connection.
+    :ivar name: Name of the private endpoint connection. Required.
     :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'allow': {'key': 'allow', 'type': '[str]'},
-        'deny': {'key': 'deny', 'type': '[str]'},
-        'name': {'key': 'name', 'type': 'str'},
+        "allow": {"key": "allow", "type": "[str]"},
+        "deny": {"key": "deny", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        allow: Optional[List[Union[str, "SignalRRequestType"]]] = None,
-        deny: Optional[List[Union[str, "SignalRRequestType"]]] = None,
-        **kwargs
-    ):
+        allow: Optional[List[Union[str, "_models.SignalRRequestType"]]] = None,
+        deny: Optional[List[Union[str, "_models.SignalRRequestType"]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow: Allowed request types. The value can be one or more of: ClientConnection,
          ServerConnection, RESTAPI.
@@ -1069,10 +1002,10 @@ class PrivateEndpointACL(NetworkACL):
         :keyword deny: Denied request types. The value can be one or more of: ClientConnection,
          ServerConnection, RESTAPI.
         :paramtype deny: list[str or ~azure.mgmt.signalr.models.SignalRRequestType]
-        :keyword name: Required. Name of the private endpoint connection.
+        :keyword name: Name of the private endpoint connection. Required.
         :paramtype name: str
         """
-        super(PrivateEndpointACL, self).__init__(allow=allow, deny=deny, **kwargs)
+        super().__init__(allow=allow, deny=deny, **kwargs)
         self.name = name
 
 
@@ -1089,9 +1022,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
     :ivar private_endpoint: Private endpoint.
     :vartype private_endpoint: ~azure.mgmt.signalr.models.PrivateEndpoint
@@ -1104,32 +1036,35 @@ class PrivateEndpointConnection(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'group_ids': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "group_ids": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint.
         :paramtype private_endpoint: ~azure.mgmt.signalr.models.PrivateEndpoint
@@ -1138,7 +1073,7 @@ class PrivateEndpointConnection(ProxyResource):
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.signalr.models.PrivateLinkServiceConnectionState
         """
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = private_endpoint
@@ -1146,7 +1081,7 @@ class PrivateEndpointConnection(ProxyResource):
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
-class PrivateEndpointConnectionList(msrest.serialization.Model):
+class PrivateEndpointConnectionList(_serialization.Model):
     """A list of private endpoint connections.
 
     :ivar value: The list of the private endpoint connections.
@@ -1158,17 +1093,17 @@ class PrivateEndpointConnectionList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
+        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of the private endpoint connections.
         :paramtype value: list[~azure.mgmt.signalr.models.PrivateEndpointConnection]
@@ -1177,7 +1112,7 @@ class PrivateEndpointConnectionList(msrest.serialization.Model):
          maximum page size.
         :paramtype next_link: str
         """
-        super(PrivateEndpointConnectionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -1206,19 +1141,22 @@ class PrivateLinkResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
-        'shareable_private_link_resource_types': {'key': 'properties.shareablePrivateLinkResourceTypes', 'type': '[ShareablePrivateLinkResourceType]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
+        "shareable_private_link_resource_types": {
+            "key": "properties.shareablePrivateLinkResourceTypes",
+            "type": "[ShareablePrivateLinkResourceType]",
+        },
     }
 
     def __init__(
@@ -1227,9 +1165,9 @@ class PrivateLinkResource(ProxyResource):
         group_id: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        shareable_private_link_resource_types: Optional[List["ShareablePrivateLinkResourceType"]] = None,
-        **kwargs
-    ):
+        shareable_private_link_resource_types: Optional[List["_models.ShareablePrivateLinkResourceType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: Group Id of the private link resource.
         :paramtype group_id: str
@@ -1242,14 +1180,14 @@ class PrivateLinkResource(ProxyResource):
         :paramtype shareable_private_link_resource_types:
          list[~azure.mgmt.signalr.models.ShareablePrivateLinkResourceType]
         """
-        super(PrivateLinkResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.group_id = group_id
         self.required_members = required_members
         self.required_zone_names = required_zone_names
         self.shareable_private_link_resource_types = shareable_private_link_resource_types
 
 
-class PrivateLinkResourceList(msrest.serialization.Model):
+class PrivateLinkResourceList(_serialization.Model):
     """Contains a list of PrivateLinkResource and a possible link to query more results.
 
     :ivar value: List of PrivateLinkResource.
@@ -1260,17 +1198,17 @@ class PrivateLinkResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of PrivateLinkResource.
         :paramtype value: list[~azure.mgmt.signalr.models.PrivateLinkResource]
@@ -1279,16 +1217,16 @@ class PrivateLinkResourceList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(PrivateLinkResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """Connection state of the private endpoint connection.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+     of the service. Known values are: "Pending", "Approved", "Rejected", and "Disconnected".
     :vartype status: str or ~azure.mgmt.signalr.models.PrivateLinkServiceConnectionStatus
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
@@ -1298,23 +1236,22 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateLinkServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateLinkServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
-         owner of the service. Possible values include: "Pending", "Approved", "Rejected",
-         "Disconnected".
+         owner of the service. Known values are: "Pending", "Approved", "Rejected", and "Disconnected".
         :paramtype status: str or ~azure.mgmt.signalr.models.PrivateLinkServiceConnectionStatus
         :keyword description: The reason for approval/rejection of the connection.
         :paramtype description: str
@@ -1322,40 +1259,34 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
          updates on the consumer.
         :paramtype actions_required: str
         """
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class RegenerateKeyParameters(msrest.serialization.Model):
+class RegenerateKeyParameters(_serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
-    :ivar key_type: The type of access key. Possible values include: "Primary", "Secondary",
-     "Salt".
+    :ivar key_type: The type of access key. Known values are: "Primary", "Secondary", and "Salt".
     :vartype key_type: str or ~azure.mgmt.signalr.models.KeyType
     """
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'str'},
+        "key_type": {"key": "keyType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_type: Optional[Union[str, "KeyType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs: Any) -> None:
         """
-        :keyword key_type: The type of access key. Possible values include: "Primary", "Secondary",
+        :keyword key_type: The type of access key. Known values are: "Primary", "Secondary", and
          "Salt".
         :paramtype key_type: str or ~azure.mgmt.signalr.models.KeyType
         """
-        super(RegenerateKeyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_type = key_type
 
 
-class ResourceLogCategory(msrest.serialization.Model):
+class ResourceLogCategory(_serialization.Model):
     """Resource log category configuration of a Microsoft.SignalRService resource.
 
     :ivar name: Gets or sets the resource log category's name.
@@ -1369,17 +1300,11 @@ class ResourceLogCategory(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "enabled": {"key": "enabled", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        enabled: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the resource log category's name.
          Available values: ConnectivityLogs, MessagingLogs.
@@ -1390,12 +1315,12 @@ class ResourceLogCategory(msrest.serialization.Model):
          Case insensitive.
         :paramtype enabled: str
         """
-        super(ResourceLogCategory, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.enabled = enabled
 
 
-class ResourceLogConfiguration(msrest.serialization.Model):
+class ResourceLogConfiguration(_serialization.Model):
     """Resource log configuration of a Microsoft.SignalRService resource.
 
     :ivar categories: Gets or sets the list of category configurations.
@@ -1403,24 +1328,19 @@ class ResourceLogConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'categories': {'key': 'categories', 'type': '[ResourceLogCategory]'},
+        "categories": {"key": "categories", "type": "[ResourceLogCategory]"},
     }
 
-    def __init__(
-        self,
-        *,
-        categories: Optional[List["ResourceLogCategory"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, categories: Optional[List["_models.ResourceLogCategory"]] = None, **kwargs: Any) -> None:
         """
         :keyword categories: Gets or sets the list of category configurations.
         :paramtype categories: list[~azure.mgmt.signalr.models.ResourceLogCategory]
         """
-        super(ResourceLogConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.categories = categories
 
 
-class ResourceReference(msrest.serialization.Model):
+class ResourceReference(_serialization.Model):
     """Reference to a resource.
 
     :ivar id: Resource ID.
@@ -1428,91 +1348,88 @@ class ResourceReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(ResourceReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class ResourceSku(msrest.serialization.Model):
+class ResourceSku(_serialization.Model):
     """The billing information of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU. Required.
-    
-     Allowed values: Standard_S1, Free_F1.
+    :ivar name: The name of the SKU. Required.
+
+     Allowed values: Standard_S1, Free_F1, Premium_P1. Required.
     :vartype name: str
     :ivar tier: Optional tier of this particular SKU. 'Standard' or 'Free'.
-    
-     ``Basic`` is deprecated, use ``Standard`` instead. Possible values include: "Free", "Basic",
-     "Standard", "Premium".
+
+     ``Basic`` is deprecated, use ``Standard`` instead. Known values are: "Free", "Basic",
+     "Standard", and "Premium".
     :vartype tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
     :ivar size: Not used. Retained for future use.
     :vartype size: str
     :ivar family: Not used. Retained for future use.
     :vartype family: str
     :ivar capacity: Optional, integer. The unit count of the resource. 1 by default.
-    
+
      If present, following values are allowed:
-         Free: 1
-         Standard: 1,2,5,10,20,50,100.
+         Free: 1;
+         Standard: 1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;
+         Premium:  1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;.
     :vartype capacity: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'size': {'readonly': True},
-        'family': {'readonly': True},
+        "name": {"required": True},
+        "size": {"readonly": True},
+        "family": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        tier: Optional[Union[str, "SignalRSkuTier"]] = None,
+        tier: Optional[Union[str, "_models.SignalRSkuTier"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword name: Required. The name of the SKU. Required.
-        
-         Allowed values: Standard_S1, Free_F1.
+        :keyword name: The name of the SKU. Required.
+
+         Allowed values: Standard_S1, Free_F1, Premium_P1. Required.
         :paramtype name: str
         :keyword tier: Optional tier of this particular SKU. 'Standard' or 'Free'.
-        
-         ``Basic`` is deprecated, use ``Standard`` instead. Possible values include: "Free", "Basic",
-         "Standard", "Premium".
+
+         ``Basic`` is deprecated, use ``Standard`` instead. Known values are: "Free", "Basic",
+         "Standard", and "Premium".
         :paramtype tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
         :keyword capacity: Optional, integer. The unit count of the resource. 1 by default.
-        
+
          If present, following values are allowed:
-             Free: 1
-             Standard: 1,2,5,10,20,50,100.
+             Free: 1;
+             Standard: 1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;
+             Premium:  1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;.
         :paramtype capacity: int
         """
-        super(ResourceSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = None
@@ -1520,7 +1437,53 @@ class ResourceSku(msrest.serialization.Model):
         self.capacity = capacity
 
 
-class ServerlessUpstreamSettings(msrest.serialization.Model):
+class ServerlessSettings(_serialization.Model):
+    """Serverless settings.
+
+    :ivar connection_timeout_in_seconds: Gets or sets Client Connection Timeout. Optional to be
+     set.
+     Value in seconds.
+     Default value is 30 seconds.
+     Customer should set the timeout to a shorter period if messages are expected to be sent in
+     shorter intervals,
+     and want the client to disconnect more quickly after the last message is sent.
+     You can set the timeout to a longer period if messages are expected to be sent in longer
+     intervals,
+     and they want to keep the same client connection alive during this session.
+     The service considers the client disconnected if it hasn't received a message (including
+     keep-alive) in this interval.
+    :vartype connection_timeout_in_seconds: int
+    """
+
+    _validation = {
+        "connection_timeout_in_seconds": {"maximum": 120, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "connection_timeout_in_seconds": {"key": "connectionTimeoutInSeconds", "type": "int"},
+    }
+
+    def __init__(self, *, connection_timeout_in_seconds: int = 30, **kwargs: Any) -> None:
+        """
+        :keyword connection_timeout_in_seconds: Gets or sets Client Connection Timeout. Optional to be
+         set.
+         Value in seconds.
+         Default value is 30 seconds.
+         Customer should set the timeout to a shorter period if messages are expected to be sent in
+         shorter intervals,
+         and want the client to disconnect more quickly after the last message is sent.
+         You can set the timeout to a longer period if messages are expected to be sent in longer
+         intervals,
+         and they want to keep the same client connection alive during this session.
+         The service considers the client disconnected if it hasn't received a message (including
+         keep-alive) in this interval.
+        :paramtype connection_timeout_in_seconds: int
+        """
+        super().__init__(**kwargs)
+        self.connection_timeout_in_seconds = connection_timeout_in_seconds
+
+
+class ServerlessUpstreamSettings(_serialization.Model):
     """The settings for the Upstream when the service is in server-less mode.
 
     :ivar templates: Gets or sets the list of Upstream URL templates. Order matters, and the first
@@ -1529,25 +1492,20 @@ class ServerlessUpstreamSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'templates': {'key': 'templates', 'type': '[UpstreamTemplate]'},
+        "templates": {"key": "templates", "type": "[UpstreamTemplate]"},
     }
 
-    def __init__(
-        self,
-        *,
-        templates: Optional[List["UpstreamTemplate"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, templates: Optional[List["_models.UpstreamTemplate"]] = None, **kwargs: Any) -> None:
         """
         :keyword templates: Gets or sets the list of Upstream URL templates. Order matters, and the
          first matching template takes effects.
         :paramtype templates: list[~azure.mgmt.signalr.models.UpstreamTemplate]
         """
-        super(ServerlessUpstreamSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.templates = templates
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """An object that describes a specification.
 
     :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
@@ -1557,29 +1515,29 @@ class ServiceSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
-        log_specifications: Optional[List["LogSpecification"]] = None,
-        **kwargs
-    ):
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
         :paramtype metric_specifications: list[~azure.mgmt.signalr.models.MetricSpecification]
         :keyword log_specifications: Specifications of the Logs for Azure Monitoring.
         :paramtype log_specifications: list[~azure.mgmt.signalr.models.LogSpecification]
         """
-        super(ServiceSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
         self.log_specifications = log_specifications
 
 
-class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
+class ShareablePrivateLinkResourceProperties(_serialization.Model):
     """Describes the properties of a resource type that has been onboarded to private link service.
 
     :ivar description: The description of the resource type that has been onboarded to private link
@@ -1594,9 +1552,9 @@ class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -1605,8 +1563,8 @@ class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
         description: Optional[str] = None,
         group_id: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the resource type that has been onboarded to private
          link service.
@@ -1618,13 +1576,13 @@ class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
          link service.
         :paramtype type: str
         """
-        super(ShareablePrivateLinkResourceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.description = description
         self.group_id = group_id
         self.type = type
 
 
-class ShareablePrivateLinkResourceType(msrest.serialization.Model):
+class ShareablePrivateLinkResourceType(_serialization.Model):
     """Describes a  resource type that has been onboarded to private link service.
 
     :ivar name: The name of the resource type that has been onboarded to private link service.
@@ -1635,17 +1593,17 @@ class ShareablePrivateLinkResourceType(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ShareablePrivateLinkResourceProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "ShareablePrivateLinkResourceProperties"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["ShareablePrivateLinkResourceProperties"] = None,
-        **kwargs
-    ):
+        properties: Optional["_models.ShareablePrivateLinkResourceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the resource type that has been onboarded to private link service.
         :paramtype name: str
@@ -1653,7 +1611,7 @@ class ShareablePrivateLinkResourceType(msrest.serialization.Model):
          private link service.
         :paramtype properties: ~azure.mgmt.signalr.models.ShareablePrivateLinkResourceProperties
         """
-        super(ShareablePrivateLinkResourceType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
 
@@ -1677,37 +1635,36 @@ class SharedPrivateLinkResource(ProxyResource):
     :ivar private_link_resource_id: The resource id of the resource the shared private link
      resource is for.
     :vartype private_link_resource_id: str
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
     :ivar request_message: The request message for requesting approval of the shared private link
      resource.
     :vartype request_message: str
-    :ivar status: Status of the shared private link resource. Possible values include: "Pending",
-     "Approved", "Rejected", "Disconnected", "Timeout".
+    :ivar status: Status of the shared private link resource. Known values are: "Pending",
+     "Approved", "Rejected", "Disconnected", and "Timeout".
     :vartype status: str or ~azure.mgmt.signalr.models.SharedPrivateLinkResourceStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "request_message": {"key": "properties.requestMessage", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
     def __init__(
@@ -1716,8 +1673,8 @@ class SharedPrivateLinkResource(ProxyResource):
         group_id: Optional[str] = None,
         private_link_resource_id: Optional[str] = None,
         request_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: The group id from the provider of resource the shared private link resource
          is for.
@@ -1729,7 +1686,7 @@ class SharedPrivateLinkResource(ProxyResource):
          link resource.
         :paramtype request_message: str
         """
-        super(SharedPrivateLinkResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.group_id = group_id
         self.private_link_resource_id = private_link_resource_id
@@ -1738,7 +1695,7 @@ class SharedPrivateLinkResource(ProxyResource):
         self.status = None
 
 
-class SharedPrivateLinkResourceList(msrest.serialization.Model):
+class SharedPrivateLinkResourceList(_serialization.Model):
     """A list of shared private link resources.
 
     :ivar value: The list of the shared private link resources.
@@ -1750,17 +1707,17 @@ class SharedPrivateLinkResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedPrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedPrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SharedPrivateLinkResource"]] = None,
+        value: Optional[List["_models.SharedPrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of the shared private link resources.
         :paramtype value: list[~azure.mgmt.signalr.models.SharedPrivateLinkResource]
@@ -1769,12 +1726,12 @@ class SharedPrivateLinkResourceList(msrest.serialization.Model):
          maximum page size.
         :paramtype next_link: str
         """
-        super(SharedPrivateLinkResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SignalRCorsSettings(msrest.serialization.Model):
+class SignalRCorsSettings(_serialization.Model):
     """Cross-Origin Resource Sharing (CORS) settings.
 
     :ivar allowed_origins: Gets or sets the list of origins that should be allowed to make
@@ -1784,33 +1741,28 @@ class SignalRCorsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},
+        "allowed_origins": {"key": "allowedOrigins", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        allowed_origins: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, allowed_origins: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword allowed_origins: Gets or sets the list of origins that should be allowed to make
          cross-origin calls (for example: http://example.com:12345). Use "*" to allow all. If omitted,
          allow all by default.
         :paramtype allowed_origins: list[str]
         """
-        super(SignalRCorsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allowed_origins = allowed_origins
 
 
-class SignalRFeature(msrest.serialization.Model):
+class SignalRFeature(_serialization.Model):
     """Feature of a resource, which controls the runtime behavior.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar flag: Required. FeatureFlags is the supported features of Azure SignalR service.
-    
-    
+    :ivar flag: FeatureFlags is the supported features of Azure SignalR service.
+
+
      * ServiceMode: Flag for backend server for SignalR service. Values allowed: "Default": have
      your own backend server; "Serverless": your application doesn't have a backend server;
      "Classic": for backward compatibility. Support both Default and Serverless mode but not
@@ -1823,39 +1775,39 @@ class SignalRFeature(msrest.serialization.Model):
      service, it will give you live traces in real time, it will be helpful when you developing your
      own Azure SignalR based web application or self-troubleshooting some issues. Please note that
      live traces are counted as outbound messages that will be charged. Values allowed:
-     "true"/"false", to enable/disable live trace feature. Possible values include: "ServiceMode",
-     "EnableConnectivityLogs", "EnableMessagingLogs", "EnableLiveTrace".
+     "true"/"false", to enable/disable live trace feature. Required. Known values are:
+     "ServiceMode", "EnableConnectivityLogs", "EnableMessagingLogs", and "EnableLiveTrace".
     :vartype flag: str or ~azure.mgmt.signalr.models.FeatureFlags
-    :ivar value: Required. Value of the feature flag. See Azure SignalR service document
-     https://docs.microsoft.com/azure/azure-signalr/ for allowed values.
+    :ivar value: Value of the feature flag. See Azure SignalR service document
+     https://docs.microsoft.com/azure/azure-signalr/ for allowed values. Required.
     :vartype value: str
     :ivar properties: Optional properties related to this feature.
     :vartype properties: dict[str, str]
     """
 
     _validation = {
-        'flag': {'required': True},
-        'value': {'required': True, 'max_length': 128, 'min_length': 1},
+        "flag": {"required": True},
+        "value": {"required": True, "max_length": 128, "min_length": 1},
     }
 
     _attribute_map = {
-        'flag': {'key': 'flag', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "flag": {"key": "flag", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        flag: Union[str, "FeatureFlags"],
+        flag: Union[str, "_models.FeatureFlags"],
         value: str,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword flag: Required. FeatureFlags is the supported features of Azure SignalR service.
-        
-        
+        :keyword flag: FeatureFlags is the supported features of Azure SignalR service.
+
+
          * ServiceMode: Flag for backend server for SignalR service. Values allowed: "Default": have
          your own backend server; "Serverless": your application doesn't have a backend server;
          "Classic": for backward compatibility. Support both Default and Serverless mode but not
@@ -1868,22 +1820,22 @@ class SignalRFeature(msrest.serialization.Model):
          service, it will give you live traces in real time, it will be helpful when you developing your
          own Azure SignalR based web application or self-troubleshooting some issues. Please note that
          live traces are counted as outbound messages that will be charged. Values allowed:
-         "true"/"false", to enable/disable live trace feature. Possible values include: "ServiceMode",
-         "EnableConnectivityLogs", "EnableMessagingLogs", "EnableLiveTrace".
+         "true"/"false", to enable/disable live trace feature. Required. Known values are:
+         "ServiceMode", "EnableConnectivityLogs", "EnableMessagingLogs", and "EnableLiveTrace".
         :paramtype flag: str or ~azure.mgmt.signalr.models.FeatureFlags
-        :keyword value: Required. Value of the feature flag. See Azure SignalR service document
-         https://docs.microsoft.com/azure/azure-signalr/ for allowed values.
+        :keyword value: Value of the feature flag. See Azure SignalR service document
+         https://docs.microsoft.com/azure/azure-signalr/ for allowed values. Required.
         :paramtype value: str
         :keyword properties: Optional properties related to this feature.
         :paramtype properties: dict[str, str]
         """
-        super(SignalRFeature, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.flag = flag
         self.value = value
         self.properties = properties
 
 
-class SignalRKeys(msrest.serialization.Model):
+class SignalRKeys(_serialization.Model):
     """A class represents the access keys of the resource.
 
     :ivar primary_key: The primary access key.
@@ -1897,10 +1849,10 @@ class SignalRKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
-        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "primary_connection_string": {"key": "primaryConnectionString", "type": "str"},
+        "secondary_connection_string": {"key": "secondaryConnectionString", "type": "str"},
     }
 
     def __init__(
@@ -1910,8 +1862,8 @@ class SignalRKeys(msrest.serialization.Model):
         secondary_key: Optional[str] = None,
         primary_connection_string: Optional[str] = None,
         secondary_connection_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_key: The primary access key.
         :paramtype primary_key: str
@@ -1922,17 +1874,17 @@ class SignalRKeys(msrest.serialization.Model):
         :keyword secondary_connection_string: Connection string constructed via the secondaryKey.
         :paramtype secondary_connection_string: str
         """
-        super(SignalRKeys, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
 
 
-class SignalRNetworkACLs(msrest.serialization.Model):
+class SignalRNetworkACLs(_serialization.Model):
     """Network ACLs for the resource.
 
-    :ivar default_action: Azure Networking ACL Action. Possible values include: "Allow", "Deny".
+    :ivar default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
     :vartype default_action: str or ~azure.mgmt.signalr.models.ACLAction
     :ivar public_network: Network ACL.
     :vartype public_network: ~azure.mgmt.signalr.models.NetworkACL
@@ -1941,28 +1893,28 @@ class SignalRNetworkACLs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default_action': {'key': 'defaultAction', 'type': 'str'},
-        'public_network': {'key': 'publicNetwork', 'type': 'NetworkACL'},
-        'private_endpoints': {'key': 'privateEndpoints', 'type': '[PrivateEndpointACL]'},
+        "default_action": {"key": "defaultAction", "type": "str"},
+        "public_network": {"key": "publicNetwork", "type": "NetworkACL"},
+        "private_endpoints": {"key": "privateEndpoints", "type": "[PrivateEndpointACL]"},
     }
 
     def __init__(
         self,
         *,
-        default_action: Optional[Union[str, "ACLAction"]] = None,
-        public_network: Optional["NetworkACL"] = None,
-        private_endpoints: Optional[List["PrivateEndpointACL"]] = None,
-        **kwargs
-    ):
+        default_action: Optional[Union[str, "_models.ACLAction"]] = None,
+        public_network: Optional["_models.NetworkACL"] = None,
+        private_endpoints: Optional[List["_models.PrivateEndpointACL"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword default_action: Azure Networking ACL Action. Possible values include: "Allow", "Deny".
+        :keyword default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
         :paramtype default_action: str or ~azure.mgmt.signalr.models.ACLAction
         :keyword public_network: Network ACL.
         :paramtype public_network: ~azure.mgmt.signalr.models.NetworkACL
         :keyword private_endpoints: ACLs for requests from private endpoints.
         :paramtype private_endpoints: list[~azure.mgmt.signalr.models.PrivateEndpointACL]
         """
-        super(SignalRNetworkACLs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default_action = default_action
         self.public_network = public_network
         self.private_endpoints = private_endpoints
@@ -1982,46 +1934,39 @@ class TrackedResource(Resource):
     :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
      South Central US.
     :vartype location: str
-    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
-     the resource.
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
          | South Central US.
         :paramtype location: str
-        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
-         describe the resource.
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
         :paramtype tags: dict[str, str]
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
 
 
-class SignalRResource(TrackedResource):
+class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A class represent a resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2035,21 +1980,19 @@ class SignalRResource(TrackedResource):
     :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
      South Central US.
     :vartype location: str
-    :ivar tags: A set of tags. Tags of the service which is a list of key value pairs that describe
-     the resource.
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
     :vartype tags: dict[str, str]
     :ivar sku: The billing information of the resource.
     :vartype sku: ~azure.mgmt.signalr.models.ResourceSku
-    :ivar kind: The kind of the service, it can be SignalR or RawWebSockets. Possible values
-     include: "SignalR", "RawWebSockets".
+    :ivar kind: The kind of the service, it can be SignalR or RawWebSockets. Known values are:
+     "SignalR" and "RawWebSockets".
     :vartype kind: str or ~azure.mgmt.signalr.models.ServiceKind
     :ivar identity: A class represent managed identities used for request and response.
     :vartype identity: ~azure.mgmt.signalr.models.ManagedIdentity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
     :ivar external_ip: The publicly accessible IP of the resource.
     :vartype external_ip: str
@@ -2075,7 +2018,7 @@ class SignalRResource(TrackedResource):
     :ivar host_name_prefix: Deprecated.
     :vartype host_name_prefix: str
     :ivar features: List of the featureFlags.
-    
+
      FeatureFlags that are not included in the parameters for the update operation will not be
      modified.
      And the response will only include featureFlags that are explicitly set.
@@ -2091,6 +2034,8 @@ class SignalRResource(TrackedResource):
     :vartype resource_log_configuration: ~azure.mgmt.signalr.models.ResourceLogConfiguration
     :ivar cors: Cross-Origin Resource Sharing (CORS) settings.
     :vartype cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
+    :ivar serverless: Serverless settings.
+    :vartype serverless: ~azure.mgmt.signalr.models.ServerlessSettings
     :ivar upstream: The settings for the Upstream when the service is in server-less mode.
     :vartype upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
     :ivar network_ac_ls: Network ACLs for the resource.
@@ -2111,90 +2056,101 @@ class SignalRResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'external_ip': {'readonly': True},
-        'host_name': {'readonly': True},
-        'public_port': {'readonly': True},
-        'server_port': {'readonly': True},
-        'version': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'shared_private_link_resources': {'readonly': True},
-        'host_name_prefix': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "external_ip": {"readonly": True},
+        "host_name": {"readonly": True},
+        "public_port": {"readonly": True},
+        "server_port": {"readonly": True},
+        "version": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "shared_private_link_resources": {"readonly": True},
+        "host_name_prefix": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'public_port': {'key': 'properties.publicPort', 'type': 'int'},
-        'server_port': {'key': 'properties.serverPort', 'type': 'int'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
-        'tls': {'key': 'properties.tls', 'type': 'SignalRTlsSettings'},
-        'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
-        'live_trace_configuration': {'key': 'properties.liveTraceConfiguration', 'type': 'LiveTraceConfiguration'},
-        'resource_log_configuration': {'key': 'properties.resourceLogConfiguration', 'type': 'ResourceLogConfiguration'},
-        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
-        'upstream': {'key': 'properties.upstream', 'type': 'ServerlessUpstreamSettings'},
-        'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'SignalRNetworkACLs'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
-        'disable_aad_auth': {'key': 'properties.disableAadAuth', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedIdentity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "external_ip": {"key": "properties.externalIP", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "public_port": {"key": "properties.publicPort", "type": "int"},
+        "server_port": {"key": "properties.serverPort", "type": "int"},
+        "version": {"key": "properties.version", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "shared_private_link_resources": {
+            "key": "properties.sharedPrivateLinkResources",
+            "type": "[SharedPrivateLinkResource]",
+        },
+        "tls": {"key": "properties.tls", "type": "SignalRTlsSettings"},
+        "host_name_prefix": {"key": "properties.hostNamePrefix", "type": "str"},
+        "features": {"key": "properties.features", "type": "[SignalRFeature]"},
+        "live_trace_configuration": {"key": "properties.liveTraceConfiguration", "type": "LiveTraceConfiguration"},
+        "resource_log_configuration": {
+            "key": "properties.resourceLogConfiguration",
+            "type": "ResourceLogConfiguration",
+        },
+        "cors": {"key": "properties.cors", "type": "SignalRCorsSettings"},
+        "serverless": {"key": "properties.serverless", "type": "ServerlessSettings"},
+        "upstream": {"key": "properties.upstream", "type": "ServerlessUpstreamSettings"},
+        "network_ac_ls": {"key": "properties.networkACLs", "type": "SignalRNetworkACLs"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
+        "disable_aad_auth": {"key": "properties.disableAadAuth", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["ResourceSku"] = None,
-        kind: Optional[Union[str, "ServiceKind"]] = None,
-        identity: Optional["ManagedIdentity"] = None,
-        tls: Optional["SignalRTlsSettings"] = None,
-        features: Optional[List["SignalRFeature"]] = None,
-        live_trace_configuration: Optional["LiveTraceConfiguration"] = None,
-        resource_log_configuration: Optional["ResourceLogConfiguration"] = None,
-        cors: Optional["SignalRCorsSettings"] = None,
-        upstream: Optional["ServerlessUpstreamSettings"] = None,
-        network_ac_ls: Optional["SignalRNetworkACLs"] = None,
-        public_network_access: Optional[str] = "Enabled",
-        disable_local_auth: Optional[bool] = False,
-        disable_aad_auth: Optional[bool] = False,
-        **kwargs
-    ):
+        sku: Optional["_models.ResourceSku"] = None,
+        kind: Optional[Union[str, "_models.ServiceKind"]] = None,
+        identity: Optional["_models.ManagedIdentity"] = None,
+        tls: Optional["_models.SignalRTlsSettings"] = None,
+        features: Optional[List["_models.SignalRFeature"]] = None,
+        live_trace_configuration: Optional["_models.LiveTraceConfiguration"] = None,
+        resource_log_configuration: Optional["_models.ResourceLogConfiguration"] = None,
+        cors: Optional["_models.SignalRCorsSettings"] = None,
+        serverless: Optional["_models.ServerlessSettings"] = None,
+        upstream: Optional["_models.ServerlessUpstreamSettings"] = None,
+        network_ac_ls: Optional["_models.SignalRNetworkACLs"] = None,
+        public_network_access: str = "Enabled",
+        disable_local_auth: bool = False,
+        disable_aad_auth: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
          | South Central US.
         :paramtype location: str
-        :keyword tags: A set of tags. Tags of the service which is a list of key value pairs that
-         describe the resource.
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
         :paramtype tags: dict[str, str]
         :keyword sku: The billing information of the resource.
         :paramtype sku: ~azure.mgmt.signalr.models.ResourceSku
-        :keyword kind: The kind of the service, it can be SignalR or RawWebSockets. Possible values
-         include: "SignalR", "RawWebSockets".
+        :keyword kind: The kind of the service, it can be SignalR or RawWebSockets. Known values are:
+         "SignalR" and "RawWebSockets".
         :paramtype kind: str or ~azure.mgmt.signalr.models.ServiceKind
         :keyword identity: A class represent managed identities used for request and response.
         :paramtype identity: ~azure.mgmt.signalr.models.ManagedIdentity
         :keyword tls: TLS settings for the resource.
         :paramtype tls: ~azure.mgmt.signalr.models.SignalRTlsSettings
         :keyword features: List of the featureFlags.
-        
+
          FeatureFlags that are not included in the parameters for the update operation will not be
          modified.
          And the response will only include featureFlags that are explicitly set.
@@ -2210,6 +2166,8 @@ class SignalRResource(TrackedResource):
         :paramtype resource_log_configuration: ~azure.mgmt.signalr.models.ResourceLogConfiguration
         :keyword cors: Cross-Origin Resource Sharing (CORS) settings.
         :paramtype cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
+        :keyword serverless: Serverless settings.
+        :paramtype serverless: ~azure.mgmt.signalr.models.ServerlessSettings
         :keyword upstream: The settings for the Upstream when the service is in server-less mode.
         :paramtype upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
         :keyword network_ac_ls: Network ACLs for the resource.
@@ -2228,7 +2186,7 @@ class SignalRResource(TrackedResource):
          When set as true, connection with AuthType=aad won't work.
         :paramtype disable_aad_auth: bool
         """
-        super(SignalRResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = kind
         self.identity = identity
@@ -2247,6 +2205,7 @@ class SignalRResource(TrackedResource):
         self.live_trace_configuration = live_trace_configuration
         self.resource_log_configuration = resource_log_configuration
         self.cors = cors
+        self.serverless = serverless
         self.upstream = upstream
         self.network_ac_ls = network_ac_ls
         self.public_network_access = public_network_access
@@ -2254,7 +2213,7 @@ class SignalRResource(TrackedResource):
         self.disable_aad_auth = disable_aad_auth
 
 
-class SignalRResourceList(msrest.serialization.Model):
+class SignalRResourceList(_serialization.Model):
     """Object that includes an array of resources and a possible link for next set.
 
     :ivar value: List of the resources.
@@ -2265,17 +2224,13 @@ class SignalRResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SignalRResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SignalRResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SignalRResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SignalRResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of the resources.
         :paramtype value: list[~azure.mgmt.signalr.models.SignalRResource]
@@ -2284,12 +2239,12 @@ class SignalRResourceList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(SignalRResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SignalRTlsSettings(msrest.serialization.Model):
+class SignalRTlsSettings(_serialization.Model):
     """TLS settings for the resource.
 
     :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled.
@@ -2297,33 +2252,28 @@ class SignalRTlsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_cert_enabled': {'key': 'clientCertEnabled', 'type': 'bool'},
+        "client_cert_enabled": {"key": "clientCertEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_cert_enabled: Optional[bool] = True,
-        **kwargs
-    ):
+    def __init__(self, *, client_cert_enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled.
         :paramtype client_cert_enabled: bool
         """
-        super(SignalRTlsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_cert_enabled = client_cert_enabled
 
 
-class SignalRUsage(msrest.serialization.Model):
+class SignalRUsage(_serialization.Model):
     """Object that describes a specific usage of the resources.
 
     :ivar id: Fully qualified ARM resource id.
     :vartype id: str
     :ivar current_value: Current value for the usage quota.
-    :vartype current_value: long
+    :vartype current_value: int
     :ivar limit: The maximum permitted value for the usage quota. If there is no limit, this value
      will be -1.
-    :vartype limit: long
+    :vartype limit: int
     :ivar name: Localizable String object containing the name and a localized value.
     :vartype name: ~azure.mgmt.signalr.models.SignalRUsageName
     :ivar unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
@@ -2332,38 +2282,38 @@ class SignalRUsage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'SignalRUsageName'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "SignalRUsageName"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
-        name: Optional["SignalRUsageName"] = None,
+        name: Optional["_models.SignalRUsageName"] = None,
         unit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ARM resource id.
         :paramtype id: str
         :keyword current_value: Current value for the usage quota.
-        :paramtype current_value: long
+        :paramtype current_value: int
         :keyword limit: The maximum permitted value for the usage quota. If there is no limit, this
          value will be -1.
-        :paramtype limit: long
+        :paramtype limit: int
         :keyword name: Localizable String object containing the name and a localized value.
         :paramtype name: ~azure.mgmt.signalr.models.SignalRUsageName
         :keyword unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
          Seconds, Percent, CountPerSecond, BytesPerSecond.
         :paramtype unit: str
         """
-        super(SignalRUsage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.current_value = current_value
         self.limit = limit
@@ -2371,7 +2321,7 @@ class SignalRUsage(msrest.serialization.Model):
         self.unit = unit
 
 
-class SignalRUsageList(msrest.serialization.Model):
+class SignalRUsageList(_serialization.Model):
     """Object that includes an array of the resource usages and a possible link for next set.
 
     :ivar value: List of the resource usages.
@@ -2382,17 +2332,13 @@ class SignalRUsageList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SignalRUsage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SignalRUsage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SignalRUsage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SignalRUsage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of the resource usages.
         :paramtype value: list[~azure.mgmt.signalr.models.SignalRUsage]
@@ -2401,12 +2347,12 @@ class SignalRUsageList(msrest.serialization.Model):
          It's null for now, added for future use.
         :paramtype next_link: str
         """
-        super(SignalRUsageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SignalRUsageName(msrest.serialization.Model):
+class SignalRUsageName(_serialization.Model):
     """Localizable String object containing the name and a localized value.
 
     :ivar value: The identifier of the usage.
@@ -2416,29 +2362,23 @@ class SignalRUsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The identifier of the usage.
         :paramtype value: str
         :keyword localized_value: Localized name of the usage.
         :paramtype localized_value: str
         """
-        super(SignalRUsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Describes an available sku.".
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2452,30 +2392,26 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'sku': {'readonly': True},
-        'capacity': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "sku": {"readonly": True},
+        "capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "capacity": {"key": "capacity", "type": "SkuCapacity"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Sku, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.sku = None
         self.capacity = None
 
 
-class SkuCapacity(msrest.serialization.Model):
+class SkuCapacity(_serialization.Model):
     """Describes scaling information of a sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2488,34 +2424,30 @@ class SkuCapacity(msrest.serialization.Model):
     :vartype default: int
     :ivar allowed_values: Allows capacity value list.
     :vartype allowed_values: list[int]
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "None",
-     "Manual", "Automatic".
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "None", "Manual", and
+     "Automatic".
     :vartype scale_type: str or ~azure.mgmt.signalr.models.ScaleType
     """
 
     _validation = {
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'default': {'readonly': True},
-        'allowed_values': {'readonly': True},
-        'scale_type': {'readonly': True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "default": {"readonly": True},
+        "allowed_values": {"readonly": True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'int'},
-        'maximum': {'key': 'maximum', 'type': 'int'},
-        'default': {'key': 'default', 'type': 'int'},
-        'allowed_values': {'key': 'allowedValues', 'type': '[int]'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "default": {"key": "default", "type": "int"},
+        "allowed_values": {"key": "allowedValues", "type": "[int]"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SkuCapacity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default = None
@@ -2523,7 +2455,7 @@ class SkuCapacity(msrest.serialization.Model):
         self.scale_type = None
 
 
-class SkuList(msrest.serialization.Model):
+class SkuList(_serialization.Model):
     """The list skus operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2536,82 +2468,78 @@ class SkuList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Sku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Sku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SkuList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.signalr.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.signalr.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.signalr.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.signalr.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -2620,50 +2548,51 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UpstreamAuthSettings(msrest.serialization.Model):
+class UpstreamAuthSettings(_serialization.Model):
     """Upstream auth settings. If not set, no auth is used for upstream messages.
 
-    :ivar type: Upstream auth type enum. Possible values include: "None", "ManagedIdentity".
+    :ivar type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
     :vartype type: str or ~azure.mgmt.signalr.models.UpstreamAuthType
     :ivar managed_identity: Managed identity settings for upstream.
     :vartype managed_identity: ~azure.mgmt.signalr.models.ManagedIdentitySettings
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'managed_identity': {'key': 'managedIdentity', 'type': 'ManagedIdentitySettings'},
+        "type": {"key": "type", "type": "str"},
+        "managed_identity": {"key": "managedIdentity", "type": "ManagedIdentitySettings"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "UpstreamAuthType"]] = None,
-        managed_identity: Optional["ManagedIdentitySettings"] = None,
-        **kwargs
-    ):
+        type: Optional[Union[str, "_models.UpstreamAuthType"]] = None,
+        managed_identity: Optional["_models.ManagedIdentitySettings"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Upstream auth type enum. Possible values include: "None", "ManagedIdentity".
+        :keyword type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
         :paramtype type: str or ~azure.mgmt.signalr.models.UpstreamAuthType
         :keyword managed_identity: Managed identity settings for upstream.
         :paramtype managed_identity: ~azure.mgmt.signalr.models.ManagedIdentitySettings
         """
-        super(UpstreamAuthSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.managed_identity = managed_identity
 
 
-class UpstreamTemplate(msrest.serialization.Model):
+class UpstreamTemplate(_serialization.Model):
     """Upstream template item settings. It defines the Upstream URL of the incoming requests.
-The template defines the pattern of the event, the hub or the category of the incoming request that matches current URL template.
+    The template defines the pattern of the event, the hub or the category of the incoming request
+    that matches current URL template.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar hub_pattern: Gets or sets the matching pattern for hub names. If not set, it matches any
      hub.
      There are 3 kind of patterns supported:
-    
+
      .. code-block::
-    
+
         1. "*", it to matches any hub name.
         2. Combine multiple hubs with ",", for example "hub1,hub2", it matches "hub1" and "hub2".
         3. The single hub name, for example, "hub1", it matches "hub1".
@@ -2671,9 +2600,9 @@ The template defines the pattern of the event, the hub or the category of the in
     :ivar event_pattern: Gets or sets the matching pattern for event names. If not set, it matches
      any event.
      There are 3 kind of patterns supported:
-    
+
      .. code-block::
-    
+
         1. "*", it to matches any event name.
         2. Combine multiple events with ",", for example "connect,disconnect", it matches event
      "connect" and "disconnect".
@@ -2682,36 +2611,36 @@ The template defines the pattern of the event, the hub or the category of the in
     :ivar category_pattern: Gets or sets the matching pattern for category names. If not set, it
      matches any category.
      There are 3 kind of patterns supported:
-    
+
      .. code-block::
-    
+
         1. "*", it to matches any category name.
         2. Combine multiple categories with ",", for example "connections,messages", it matches
      category "connections" and "messages".
         3. The single category name, for example, "connections", it matches the category
      "connections".
     :vartype category_pattern: str
-    :ivar url_template: Required. Gets or sets the Upstream URL template. You can use 3 predefined
-     parameters {hub}, {category} {event} inside the template, the value of the Upstream URL is
-     dynamically calculated when the client request comes in.
+    :ivar url_template: Gets or sets the Upstream URL template. You can use 3 predefined parameters
+     {hub}, {category} {event} inside the template, the value of the Upstream URL is dynamically
+     calculated when the client request comes in.
      For example, if the urlTemplate is ``http://example.com/{hub}/api/{event}``\ , with a client
      request from hub ``chat`` connects, it will first POST to this URL:
-     ``http://example.com/chat/api/connect``.
+     ``http://example.com/chat/api/connect``. Required.
     :vartype url_template: str
     :ivar auth: Upstream auth settings. If not set, no auth is used for upstream messages.
     :vartype auth: ~azure.mgmt.signalr.models.UpstreamAuthSettings
     """
 
     _validation = {
-        'url_template': {'required': True},
+        "url_template": {"required": True},
     }
 
     _attribute_map = {
-        'hub_pattern': {'key': 'hubPattern', 'type': 'str'},
-        'event_pattern': {'key': 'eventPattern', 'type': 'str'},
-        'category_pattern': {'key': 'categoryPattern', 'type': 'str'},
-        'url_template': {'key': 'urlTemplate', 'type': 'str'},
-        'auth': {'key': 'auth', 'type': 'UpstreamAuthSettings'},
+        "hub_pattern": {"key": "hubPattern", "type": "str"},
+        "event_pattern": {"key": "eventPattern", "type": "str"},
+        "category_pattern": {"key": "categoryPattern", "type": "str"},
+        "url_template": {"key": "urlTemplate", "type": "str"},
+        "auth": {"key": "auth", "type": "UpstreamAuthSettings"},
     }
 
     def __init__(
@@ -2721,16 +2650,16 @@ The template defines the pattern of the event, the hub or the category of the in
         hub_pattern: Optional[str] = None,
         event_pattern: Optional[str] = None,
         category_pattern: Optional[str] = None,
-        auth: Optional["UpstreamAuthSettings"] = None,
-        **kwargs
-    ):
+        auth: Optional["_models.UpstreamAuthSettings"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hub_pattern: Gets or sets the matching pattern for hub names. If not set, it matches
          any hub.
          There are 3 kind of patterns supported:
-        
+
          .. code-block::
-        
+
             1. "*", it to matches any hub name.
             2. Combine multiple hubs with ",", for example "hub1,hub2", it matches "hub1" and "hub2".
             3. The single hub name, for example, "hub1", it matches "hub1".
@@ -2738,9 +2667,9 @@ The template defines the pattern of the event, the hub or the category of the in
         :keyword event_pattern: Gets or sets the matching pattern for event names. If not set, it
          matches any event.
          There are 3 kind of patterns supported:
-        
+
          .. code-block::
-        
+
             1. "*", it to matches any event name.
             2. Combine multiple events with ",", for example "connect,disconnect", it matches event
          "connect" and "disconnect".
@@ -2749,26 +2678,26 @@ The template defines the pattern of the event, the hub or the category of the in
         :keyword category_pattern: Gets or sets the matching pattern for category names. If not set, it
          matches any category.
          There are 3 kind of patterns supported:
-        
+
          .. code-block::
-        
+
             1. "*", it to matches any category name.
             2. Combine multiple categories with ",", for example "connections,messages", it matches
          category "connections" and "messages".
             3. The single category name, for example, "connections", it matches the category
          "connections".
         :paramtype category_pattern: str
-        :keyword url_template: Required. Gets or sets the Upstream URL template. You can use 3
-         predefined parameters {hub}, {category} {event} inside the template, the value of the Upstream
-         URL is dynamically calculated when the client request comes in.
+        :keyword url_template: Gets or sets the Upstream URL template. You can use 3 predefined
+         parameters {hub}, {category} {event} inside the template, the value of the Upstream URL is
+         dynamically calculated when the client request comes in.
          For example, if the urlTemplate is ``http://example.com/{hub}/api/{event}``\ , with a client
          request from hub ``chat`` connects, it will first POST to this URL:
-         ``http://example.com/chat/api/connect``.
+         ``http://example.com/chat/api/connect``. Required.
         :paramtype url_template: str
         :keyword auth: Upstream auth settings. If not set, no auth is used for upstream messages.
         :paramtype auth: ~azure.mgmt.signalr.models.UpstreamAuthSettings
         """
-        super(UpstreamTemplate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.hub_pattern = hub_pattern
         self.event_pattern = event_pattern
         self.category_pattern = category_pattern
@@ -2776,7 +2705,7 @@ The template defines the pattern of the event, the hub or the category of the in
         self.auth = auth
 
 
-class UserAssignedIdentityProperty(msrest.serialization.Model):
+class UserAssignedIdentityProperty(_serialization.Model):
     """Properties of user assigned identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2788,21 +2717,17 @@ class UserAssignedIdentityProperty(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentityProperty, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None

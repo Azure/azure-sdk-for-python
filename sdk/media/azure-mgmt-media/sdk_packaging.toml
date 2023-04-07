@@ -4,3 +4,4 @@ package_pprint_name = "Media Services"
 package_doc_id = "media-services"
 is_stable = true
 is_arm = true
+title = "MediaManagementClient"

@@ -138,6 +138,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26569")
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -149,6 +150,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                            value="NotAnomaly")
         client.add_feedback(anomaly_feedback)
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26569")
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -160,6 +162,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                                     value="NotChangePoint")
         client.add_feedback(change_point_feedback)
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26569")
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -171,6 +174,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                            value="comment")
         client.add_feedback(comment_feedback)
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26569")
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # only using API key for now since service issue with AAD
     @MetricsAdvisorPreparer()
     @recorded_by_proxy

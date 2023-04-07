@@ -13,7 +13,7 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
+from . import models as _models
 from ._configuration import QuestionAnsweringClientConfiguration
 from ._operations import QuestionAnsweringClientOperationsMixin
 from ._serialization import Deserializer, Serializer
@@ -23,11 +23,10 @@ class QuestionAnsweringClient(
     QuestionAnsweringClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
-    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    detection and question answering. Further documentation can be found in
+    https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
@@ -44,7 +43,7 @@ class QuestionAnsweringClient(
         self._config = QuestionAnsweringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -75,15 +74,12 @@ class QuestionAnsweringClient(
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> QuestionAnsweringClient
+    def __enter__(self) -> "QuestionAnsweringClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

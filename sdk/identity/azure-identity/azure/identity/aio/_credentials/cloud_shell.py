@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import Optional
+from typing import Optional, Any
 
 from .._internal.managed_identity_base import AsyncManagedIdentityBase
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
@@ -13,7 +13,7 @@ from ..._credentials.cloud_shell import _get_request
 
 
 class CloudShellCredential(AsyncManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[AsyncManagedIdentityClient]:
+    def get_client(self, **kwargs: Any) -> Optional[AsyncManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         if url:
             return AsyncManagedIdentityClient(

@@ -4,9 +4,8 @@
 
 # pylint: disable=protected-access
 
-from azure.ai.ml._restclient.v2022_02_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_05_01 import models
-from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
+from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     CertificateConfiguration,
@@ -14,6 +13,7 @@ from azure.ai.ml.entities._credentials import (
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
 )
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 
 
 def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredentials):
@@ -26,7 +26,7 @@ def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredential
     elif isinstance(rest_credentials, models.ServicePrincipalDatastoreCredentials):
         config_class = ServicePrincipalConfiguration
     elif isinstance(rest_credentials, models.CertificateDatastoreCredentials):
-        config_class =  CertificateConfiguration
+        config_class = CertificateConfiguration
 
     return config_class._from_datastore_rest_object(rest_credentials)
 

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -48,8 +48,8 @@ class CloudToDeviceProperties(_serialization.Model):
         max_delivery_count: Optional[int] = None,
         default_ttl_as_iso8601: Optional[datetime.timedelta] = None,
         feedback: Optional["_models.FeedbackProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_delivery_count: The max delivery count for cloud-to-device messages in the device
          queue. See:
@@ -97,7 +97,7 @@ class ErrorDetails(_serialization.Model):
         "details": {"key": "Details", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -129,8 +129,8 @@ class EventHubConsumerGroupInfo(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: The tags.
         :paramtype tags: dict[str, str]
@@ -165,7 +165,7 @@ class EventHubConsumerGroupsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of Event Hub-compatible consumer group names.
         :paramtype value: list[str]
@@ -210,8 +210,8 @@ class EventHubProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, retention_time_in_days: Optional[int] = None, partition_count: Optional[int] = None, **kwargs
-    ):
+        self, *, retention_time_in_days: Optional[int] = None, partition_count: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword retention_time_in_days: The retention time for device-to-cloud messages in days. See:
          https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
@@ -251,7 +251,7 @@ class ExportDevicesRequest(_serialization.Model):
         "exclude_keys": {"key": "ExcludeKeys", "type": "bool"},
     }
 
-    def __init__(self, *, export_blob_container_uri: str, exclude_keys: bool, **kwargs):
+    def __init__(self, *, export_blob_container_uri: str, exclude_keys: bool, **kwargs: Any) -> None:
         """
         :keyword export_blob_container_uri: The export blob container URI. Required.
         :paramtype export_blob_container_uri: str
@@ -296,8 +296,8 @@ class FeedbackProperties(_serialization.Model):
         lock_duration_as_iso8601: Optional[datetime.timedelta] = None,
         ttl_as_iso8601: Optional[datetime.timedelta] = None,
         max_delivery_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lock_duration_as_iso8601: The lock duration for the feedback queue. See:
          https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
@@ -338,7 +338,7 @@ class ImportDevicesRequest(_serialization.Model):
         "output_blob_container_uri": {"key": "OutputBlobContainerUri", "type": "str"},
     }
 
-    def __init__(self, *, input_blob_container_uri: str, output_blob_container_uri: str, **kwargs):
+    def __init__(self, *, input_blob_container_uri: str, output_blob_container_uri: str, **kwargs: Any) -> None:
         """
         :keyword input_blob_container_uri: The input blob container URI. Required.
         :paramtype input_blob_container_uri: str
@@ -380,7 +380,7 @@ class IotHubCapacity(_serialization.Model):
         "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.minimum = None
@@ -423,7 +423,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -502,8 +502,8 @@ class IotHubDescription(Resource):
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         properties: Optional["_models.IotHubProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -550,7 +550,7 @@ class IotHubDescriptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotHubDescription"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.IotHubDescription"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of IotHubDescription objects.
         :paramtype value: list[~azure.mgmt.iothub.v2016_02_03.models.IotHubDescription]
@@ -584,7 +584,7 @@ class IotHubNameAvailabilityInfo(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message: The detailed reason message.
         :paramtype message: str
@@ -678,8 +678,8 @@ class IotHubProperties(_serialization.Model):  # pylint: disable=too-many-instan
         comments: Optional[str] = None,
         operations_monitoring_properties: Optional["_models.OperationsMonitoringProperties"] = None,
         features: Optional[Union[str, "_models.Capabilities"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authorization_policies: The shared access policies you can use to secure a connection
          to the IoT hub.
@@ -758,7 +758,7 @@ class IotHubQuotaMetricInfo(_serialization.Model):
         "max_value": {"key": "MaxValue", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -786,7 +786,7 @@ class IotHubQuotaMetricInfoListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotHubQuotaMetricInfo"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.IotHubQuotaMetricInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of quota metrics objects.
         :paramtype value: list[~azure.mgmt.iothub.v2016_02_03.models.IotHubQuotaMetricInfo]
@@ -823,7 +823,7 @@ class IotHubSkuDescription(_serialization.Model):
         "capacity": {"key": "capacity", "type": "IotHubCapacity"},
     }
 
-    def __init__(self, *, sku: "_models.IotHubSkuInfo", capacity: "_models.IotHubCapacity", **kwargs):
+    def __init__(self, *, sku: "_models.IotHubSkuInfo", capacity: "_models.IotHubCapacity", **kwargs: Any) -> None:
         """
         :keyword sku: Information about the SKU of the IoT hub. Required.
         :paramtype sku: ~azure.mgmt.iothub.v2016_02_03.models.IotHubSkuInfo
@@ -856,7 +856,7 @@ class IotHubSkuDescriptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.IotHubSkuDescription"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.IotHubSkuDescription"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of IotHubSkuDescription.
         :paramtype value: list[~azure.mgmt.iothub.v2016_02_03.models.IotHubSkuDescription]
@@ -894,7 +894,7 @@ class IotHubSkuInfo(_serialization.Model):
         "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.IotHubSku"], capacity: int, **kwargs):
+    def __init__(self, *, name: Union[str, "_models.IotHubSku"], capacity: int, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SKU. Required. Known values are: "F1", "S1", "S2", and "S3".
         :paramtype name: str or ~azure.mgmt.iothub.v2016_02_03.models.IotHubSku
@@ -935,7 +935,9 @@ class IpFilterRule(_serialization.Model):
         "ip_mask": {"key": "ipMask", "type": "str"},
     }
 
-    def __init__(self, *, filter_name: str, action: Union[str, "_models.IpFilterActionType"], ip_mask: str, **kwargs):
+    def __init__(
+        self, *, filter_name: str, action: Union[str, "_models.IpFilterActionType"], ip_mask: str, **kwargs: Any
+    ) -> None:
         """
         :keyword filter_name: The name of the IP filter rule. Required.
         :paramtype filter_name: str
@@ -1000,7 +1002,7 @@ class JobResponse(_serialization.Model):
         "parent_job_id": {"key": "parentJobId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.job_id = None
@@ -1033,7 +1035,7 @@ class JobResponseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.JobResponse"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.JobResponse"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The array of JobResponse objects.
         :paramtype value: list[~azure.mgmt.iothub.v2016_02_03.models.JobResponse]
@@ -1074,8 +1076,8 @@ class MessagingEndpointProperties(_serialization.Model):
         lock_duration_as_iso8601: Optional[datetime.timedelta] = None,
         ttl_as_iso8601: Optional[datetime.timedelta] = None,
         max_delivery_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lock_duration_as_iso8601: The lock duration. See:
          https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-file-upload.
@@ -1111,7 +1113,7 @@ class OperationInputs(_serialization.Model):
         "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the IoT hub to check. Required.
         :paramtype name: str
@@ -1121,7 +1123,8 @@ class OperationInputs(_serialization.Model):
 
 
 class OperationsMonitoringProperties(_serialization.Model):
-    """The operations monitoring properties for the IoT hub. The possible keys to the dictionary are Connections, DeviceTelemetry, C2DCommands, DeviceIdentityOperations, FileUploadOperations.
+    """The operations monitoring properties for the IoT hub. The possible keys to the dictionary are
+    Connections, DeviceTelemetry, C2DCommands, DeviceIdentityOperations, FileUploadOperations.
 
     :ivar events: Dictionary of :code:`<OperationMonitoringLevel>`.
     :vartype events: dict[str, str or
@@ -1132,7 +1135,9 @@ class OperationsMonitoringProperties(_serialization.Model):
         "events": {"key": "events", "type": "{str}"},
     }
 
-    def __init__(self, *, events: Optional[Dict[str, Union[str, "_models.OperationMonitoringLevel"]]] = None, **kwargs):
+    def __init__(
+        self, *, events: Optional[Dict[str, Union[str, "_models.OperationMonitoringLevel"]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword events: Dictionary of :code:`<OperationMonitoringLevel>`.
         :paramtype events: dict[str, str or
@@ -1167,7 +1172,7 @@ class RegistryStatistics(_serialization.Model):
         "disabled_device_count": {"key": "disabledDeviceCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.total_device_count = None
@@ -1215,8 +1220,8 @@ class SharedAccessSignatureAuthorizationRule(_serialization.Model):
         rights: Union[str, "_models.AccessRights"],
         primary_key: Optional[str] = None,
         secondary_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of the shared access policy. Required.
         :paramtype key_name: str
@@ -1261,7 +1266,9 @@ class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SharedAccessSignatureAuthorizationRule"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.SharedAccessSignatureAuthorizationRule"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of shared access policies.
         :paramtype value:
@@ -1306,8 +1313,8 @@ class StorageEndpointProperties(_serialization.Model):
         connection_string: str,
         container_name: str,
         sas_ttl_as_iso8601: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
          file upload is valid. See:

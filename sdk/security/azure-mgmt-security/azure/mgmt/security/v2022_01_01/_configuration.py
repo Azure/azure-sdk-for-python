@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -13,6 +14,11 @@ from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
 from ._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +42,7 @@ class SecurityCenterConfiguration(Configuration):  # pylint: disable=too-many-in
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(SecurityCenterConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-01-01")  # type: str
+        api_version: Literal["2022-01-01"] = kwargs.pop("api_version", "2022-01-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -50,10 +56,7 @@ class SecurityCenterConfiguration(Configuration):  # pylint: disable=too-many-in
         kwargs.setdefault("sdk_moniker", "mgmt-security/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

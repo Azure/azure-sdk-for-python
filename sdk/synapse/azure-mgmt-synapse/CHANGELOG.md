@@ -1,5 +1,33 @@
 # Release History
 
+## 2.1.0b7 (2023-02-19)
+
+### Features Added
+
+  - Added operation group GetOperations
+
+## 2.1.0b6 (2022-11-23)
+
+### Features Added
+
+  - Added operation group KustoPoolPrivateLinkResourcesOperations
+  - Model BigDataPoolResourceInfo has a new parameter is_autotune_enabled
+  - Model ClusterPrincipalAssignment has a new parameter aad_object_id
+  - Model DatabasePrincipalAssignment has a new parameter aad_object_id
+  - Model IntegrationRuntimeResource has a new parameter description
+  - Model IntegrationRuntimeStatusResponse has a new parameter data_factory_name
+  - Model IntegrationRuntimeStatusResponse has a new parameter state
+  - Model SparkConfigurationResource has a new parameter config_merge_rule
+
+### Breaking Changes
+
+  - Model IntegrationRuntimeResource has a new required parameter type_properties_type
+  - Model IntegrationRuntimeResource no longer has parameter properties
+  - Model IntegrationRuntimeStatusResponse has a new required parameter type
+  - Model IntegrationRuntimeStatusResponse no longer has parameter properties
+  - Renamed operation SqlPoolOperationResultsOperations.get_location_header_result to SqlPoolOperationResultsOperations.begin_get_location_header_result
+  - Renamed operation SqlPoolsOperations.update to SqlPoolsOperations.begin_update
+
 ## 2.1.0b5 (2022-04-15)
 
 **Features**

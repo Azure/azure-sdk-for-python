@@ -5,7 +5,7 @@
 import abc
 import platform
 import time
-from typing import Any, Iterable, List, Mapping, Optional
+from typing import Any, Iterable, List, Mapping, Optional, cast
 from urllib.parse import urlparse
 import six
 import msal
@@ -72,17 +72,22 @@ def _filtered_accounts(accounts, username=None, tenant_id=None):
 
 
 class SharedTokenCacheBase(ABC):
-    def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
-        # type: (Optional[str], **Any) -> None
-        authority = kwargs.pop("authority", None)
+    def __init__(
+            self,
+            username: Optional[str] = None,
+            *,
+            authority: Optional[str] = None,
+            tenant_id: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:  # pylint:disable=unused-argument
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
         self._username = username
-        self._tenant_id = kwargs.pop("tenant_id", None)
+        self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
-        self._client = None  # type: Optional[AadClientBase]
+        self._client: AadClientBase = cast(AadClientBase, None)
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
         self._initialized = False
@@ -117,8 +122,7 @@ class SharedTokenCacheBase(ABC):
     def _get_auth_client(self, **kwargs) -> AadClientBase:
         pass
 
-    def _get_cache_items_for_authority(self, credential_type):
-        # type: (msal.TokenCache.CredentialType) -> List[CacheItem]
+    def _get_cache_items_for_authority(self, credential_type: msal.TokenCache.CredentialType) -> List[CacheItem]:
         """yield cache items matching this credential's authority or one of its aliases"""
 
         items = []
@@ -149,7 +153,7 @@ class SharedTokenCacheBase(ABC):
         return accounts.values()
 
     @wrap_exceptions
-    def _get_account(self, username: str = None, tenant_id: str = None)  -> CacheItem:
+    def _get_account(self, username: Optional[str] = None, tenant_id: Optional[str] = None)  -> CacheItem:
         """returns exactly one account which has a refresh token and matches username and/or tenant_id"""
 
         accounts = self._get_accounts_having_matching_refresh_tokens()
@@ -175,8 +179,7 @@ class SharedTokenCacheBase(ABC):
 
         raise CredentialUnavailableError(message=message)
 
-    def _get_cached_access_token(self, scopes, account):
-        # type: (Iterable[str], CacheItem) -> Optional[AccessToken]
+    def _get_cached_access_token(self, scopes: Iterable[str], account: CacheItem) -> Optional[AccessToken]:
         if "home_account_id" not in account:
             return None
 
@@ -210,8 +213,7 @@ class SharedTokenCacheBase(ABC):
             six.raise_from(CredentialUnavailableError(message=message), ex)
 
     @staticmethod
-    def supported():
-        # type: () -> bool
+    def supported() -> bool:
         """Whether the shared token cache is supported on the current platform.
 
         :rtype: bool

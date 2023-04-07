@@ -5,22 +5,41 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
-
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 
-from test_utilities.utils import assert_job_cancel
-from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE, \
-    get_expected_runsettings_items
+from .._utils import (
+    DATA_VERSION,
+    PARAMETERS_TO_TEST,
+    TEST_CASE_NAME_ENUMERATE,
+    get_expected_runsettings_items,
+    set_run_settings,
+)
 
 _dependent_datasets = {}
+
+PARAMETERS_TO_TEST_WITH_OUTPUT_OUTPUT_RELATED = [
+    ("output_path", "Distributed_output", "1"),
+    ("scored_dataset", "Parallel_output", "1"),
+    ("SSPath", "Scope_output", "1"),
+    ("output_path", "HDInsight_output", "1"),
+    ("output1", "Hemera_output", "1"),
+    ("destination_data", "DataTransfer_output", "1"),
+    ("CosmosPath", "Starlite_output", "1"),
+    ("outputfolderEnc", "Ae365expool_output", "1"),
+]
+PARAMETERS_TO_TEST_WITH_OUTPUT = []
+# don't use PARAMETERS_TO_TEST[0] because this component doesn't have output
+for ori_tuple, output_tuple in zip(PARAMETERS_TO_TEST[1:], PARAMETERS_TO_TEST_WITH_OUTPUT_OUTPUT_RELATED):
+    PARAMETERS_TO_TEST_WITH_OUTPUT.append(ori_tuple + output_tuple)
 
 
 @pytest.fixture
@@ -57,6 +76,7 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "mock_code_hash",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
@@ -90,6 +110,47 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
     @pytest.mark.parametrize(
+        "test_case",
+        PARAMETERS_TO_TEST_WITH_OUTPUT,
+    )
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_for_anonymous_internal_component(
+        self,
+        client: MLClient,
+        test_case: tuple,
+    ):
+        (
+            yaml_path,
+            inputs,
+            runsettings_dict,
+            pipeline_runsettings_dict,
+            output_port_name,
+            output_name,
+            output_version,
+        ) = test_case
+        node_func: InternalComponent = load_component(yaml_path)
+
+        @pipeline()
+        def pipeline_func():
+            node = node_func(**inputs)
+            node.outputs[output_port_name].type = "uri_file"  # use this, in case that the type is path
+            node.outputs[output_port_name].name = output_name
+            node.outputs[output_port_name].version = output_version
+            set_run_settings(node, runsettings_dict)
+
+        dsl_pipeline: PipelineJob = pipeline_func()
+        set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
+        dsl_pipeline.settings.default_compute = "cpu-cluster"
+
+        result = dsl_pipeline._validate()
+        assert result._to_dict() == {"result": "Succeeded"}
+
+        pipeline_job = assert_job_cancel(dsl_pipeline, client)
+
+        assert pipeline_job.jobs["node"].outputs[output_port_name].name == output_name
+        assert pipeline_job.jobs["node"].outputs[output_port_name].version == output_version
+
+    @pytest.mark.parametrize(
         "test_case_i,test_case_name",
         TEST_CASE_NAME_ENUMERATE,
     )
@@ -105,7 +166,6 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
 
-    @pytest.mark.skip(reason="TODO: can't find newly registered component?")
     @pytest.mark.parametrize(
         "test_case_i,test_case_name",
         TEST_CASE_NAME_ENUMERATE,
@@ -122,7 +182,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         component_to_register = load_component(yaml_path, params_override=[{"name": component_name}])
         component_resource = client.components.create_or_update(component_to_register)
-
+        sleep_if_live(5)
         created_component = client.components.get(component_name, component_resource.version)
 
         self._test_component(created_component, inputs, runsettings_dict, pipeline_runsettings_dict, client)
@@ -246,3 +306,24 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
+
+    def test_internal_component_node_output_type(self, client):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+        yaml_path = "./tests/test_configs/internal/command-component-single-file-output/component_spec.yaml"
+        component_func = load_component(yaml_path)
+
+        @pipeline
+        def pipeline_func():
+            node = component_func()
+            # node level should have correct output type when type not configured
+            node.outputs.output.mode = "mount"
+
+        pipeline_job = pipeline_func()
+        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
+            "output": {"job_output_type": "uri_file", "mode": "ReadWriteMount"}
+        }
+        assert_job_cancel(pipeline_job, client)

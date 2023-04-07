@@ -25,7 +25,9 @@ _SUPPORTED_API_VERSIONS = [
     '2021-02-12',
     '2021-04-10',
     '2021-06-08',
-    '2021-08-06'
+    '2021-08-06',
+    '2021-12-02',
+    '2022-11-02'
 ]
 
 
@@ -118,6 +120,36 @@ def get_lease_id(lease):
     except AttributeError:
         lease_id = lease
     return lease_id
+
+
+def get_lease_action_properties(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    lease_action = kwargs.pop('lease_action', None)
+    lease_duration = kwargs.pop('lease_duration', None)
+    lease = kwargs.pop('lease', None)
+    try:
+        lease_id = lease.id
+    except AttributeError:
+        lease_id = lease
+
+    proposed_lease_id = None
+    access_conditions = None
+
+    # Acquiring a new lease
+    if lease_action in ['acquire', 'acquire-release']:
+        # Use provided lease id as the new lease id
+        proposed_lease_id = lease_id
+        # Assign a default lease duration if not provided
+        lease_duration = lease_duration or -1
+    else:
+        # Use lease id as access conditions
+        access_conditions = LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+    return {
+        'lease_action': lease_action,
+        'lease_duration': lease_duration,
+        'proposed_lease_id': proposed_lease_id,
+        'lease_access_conditions': access_conditions
+    }
 
 
 def get_cpk_info(scheme, kwargs):

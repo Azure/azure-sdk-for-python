@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -29,8 +29,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Import(BaseNode):
-    """Base class for import node, used for import component version
-    consumption.
+    """Base class for import node, used for import component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
@@ -56,8 +55,8 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Dict[str, str] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, str]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         # validate init params are valid type

@@ -26,16 +26,16 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
 def main():
     client = DevCenterMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscriptionId}",
+        subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
     response = client.operation_statuses.get(
-        location="{location}",
-        operation_id="{operationId}",
+        location="westus3",
+        operation_id="3fa1a29d-e807-488d-81d1-f1c5456a08cd",
     )
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-10-12-preview/examples/OperationStatus_Get.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/OperationStatus_Get.json
 if __name__ == "__main__":
     main()

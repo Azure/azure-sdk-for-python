@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async  # type: 
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, validate_cache_staleness_value, _deserialize_throughput, \
-    _replace_throughput
+    _replace_throughput, GenerateGuidId
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
@@ -364,7 +364,8 @@ class ContainerProxy(object):
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-
+        correlated_activity_id = GenerateGuidId()
+        feed_options["correlatedActivityId"] = correlated_activity_id
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -389,7 +390,7 @@ class ContainerProxy(object):
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword bool is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default it's start from current (false).
+            beginning (true) or from current (false). By default, it's start from current (false).
         :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
             ranges. This is used to process the change feed in parallel across multiple consumers.
         :keyword str continuation: e_tag value to be used as continuation for reading change feed.
@@ -604,7 +605,8 @@ class ContainerProxy(object):
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :param int throughput: The throughput to be set (an integer).
+        :param throughput: The throughput to be set.
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container

@@ -26,16 +26,17 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
+
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -49,7 +50,6 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_RESOURCE_PROVIDER,
-    BATCH_JOB_CHILD_RUN_NAME,
     BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
     COMMON_RUNTIME_ENV_VAR,
     DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
@@ -61,12 +61,13 @@ from azure.ai.ml.constants._common import (
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
+    SERVERLESS_COMPUTE,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance, ValidationResult
 from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
+from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -75,20 +76,18 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import (
-    SchemaValidatableMixin,
-    _ValidationResultBuilder,
-)
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
     ErrorTarget,
     JobException,
+    JobParsingError,
     MlException,
+    PipelineChildJobError,
     ValidationErrorType,
     ValidationException,
-    JobParsingError,
-    PipelineChildJobError,
+    UserErrorException,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
@@ -99,15 +98,20 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
-from ..entities._builders.condition_node import ConditionNode
-from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
+from ..entities._builders.control_flow_node import ControlFlowNode
+from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupAttrDict
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
 from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
-from ._operation_orchestrator import OperationOrchestrator, is_ARM_id_for_resource, is_registry_id_for_resource
+from ._operation_orchestrator import (
+    OperationOrchestrator,
+    is_ARM_id_for_resource,
+    is_registry_id_for_resource,
+    is_singularity_id_for_resource,
+)
 from ._run_operations import RunOperations
 
 try:
@@ -134,15 +138,15 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_10_2022_preview: ServiceClient102022Preview,
+        service_client_02_2023_preview: ServiceClient022023Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation_2022_10_preview = service_client_10_2022_preview.jobs
-        self._service_client = service_client_10_2022_preview
+        self._operation_2023_02_preview = service_client_02_2023_preview.jobs
+        self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -224,7 +228,7 @@ class JobOperations(_ScopeDependentOperations):
     def list(
         self,
         *,
-        parent_job_name: str = None,
+        parent_job_name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
         **kwargs,
     ) -> Iterable[Job]:
@@ -245,7 +249,7 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name)
 
-        return self._operation_2022_10_preview.list(
+        return self._operation_2023_02_preview.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -253,6 +257,7 @@ class JobOperations(_ScopeDependentOperations):
             scheduled=schedule_defined,
             schedule_id=scheduled_job_name,
             **self._kwargs,
+            **kwargs,
         )
 
     def _handle_rest_errors(self, job_object):
@@ -272,6 +277,8 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: Job
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
+        if not isinstance(name, str):
+            raise UserErrorException(f"{name} is a invalid input for client.jobs.get().")
         job_object = self._get_job(name)
 
         if not _is_pipeline_child_job(job_object):
@@ -309,7 +316,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
-    def begin_cancel(self, name: str) -> LROPoller[None]:
+    def begin_cancel(self, name: str, **kwargs) -> LROPoller[None]:
         """Cancel job resource.
 
         :param str name: Name of the job.
@@ -319,12 +326,30 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        return self._operation_2022_10_preview.begin_cancel(
-            id=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            **self._kwargs,
-        )
+        tag = kwargs.pop("tag", None)
+
+        if not tag:
+            return self._operation_2023_02_preview.begin_cancel(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+                **kwargs,
+            )
+
+        # Note: Below batch cancel is experimental and for private usage
+        results = []
+        jobs = self.list(tag=tag)
+        # TODO: Do we need to show error message when no jobs is returned for the given tag?
+        for job in jobs:
+            result = self._operation_2023_02_preview.begin_cancel(
+                id=job.name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+            results.append(result)
+        return results
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
@@ -333,6 +358,9 @@ class JobOperations(_ScopeDependentOperations):
             return compute
 
         if compute is not None:
+            if is_singularity_id_for_resource(compute):
+                # Singularity compute, skip try to get operation
+                return compute
             if is_ARM_id_for_resource(compute, resource_type=AzureMLResourceType.COMPUTE):
                 # compute is not a sub-workspace resource
                 compute_name = compute.split("/")[-1]
@@ -351,7 +379,8 @@ class JobOperations(_ScopeDependentOperations):
 
             if is_data_binding_expression(compute_name):
                 return compute_name
-
+            if compute_name == SERVERLESS_COMPUTE:
+                return compute_name
             try:
                 return self._compute_operations.get(compute_name).id
             except ResourceNotFoundError as e:
@@ -422,7 +451,7 @@ class JobOperations(_ScopeDependentOperations):
             for node_name, node in job.jobs.items():
                 try:
                     # TODO(1979547): refactor, not all nodes have compute
-                    if not isinstance(node, (DoWhile, ConditionNode)):
+                    if not isinstance(node, ControlFlowNode):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
@@ -436,10 +465,10 @@ class JobOperations(_ScopeDependentOperations):
         self,
         job: Job,
         *,
-        description: str = None,
-        compute: str = None,
-        tags: dict = None,
-        experiment_name: str = None,
+        description: Optional[str] = None,
+        compute: Optional[str] = None,
+        tags: Optional[dict] = None,
+        experiment_name: Optional[str] = None,
         skip_validation: bool = False,
         **kwargs,
     ) -> Job:
@@ -510,13 +539,14 @@ class JobOperations(_ScopeDependentOperations):
 
             # Make a copy of self._kwargs instead of contaminate the original one
             kwargs = dict(**self._kwargs)
-            if hasattr(rest_job_resource.properties, "identity") and (
-                rest_job_resource.properties.identity is None
-                or isinstance(rest_job_resource.properties.identity, UserIdentity)
+            # set headers with user aml token if job is a pipeline or has a user identity setting
+            if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
+                hasattr(rest_job_resource.properties, "identity")
+                and (isinstance(rest_job_resource.properties.identity, UserIdentity))
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
-            result = self._operation_2022_10_preview.create_or_update(
+            result = self._operation_2023_02_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -550,7 +580,7 @@ class JobOperations(_ScopeDependentOperations):
                 if snapshot_id is not None:
                     job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-                result = self._operation_2022_10_preview.create_or_update(
+                result = self._operation_2023_02_preview.create_or_update(
                     id=rest_job_resource.name,  # type: ignore
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -570,7 +600,7 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2022_10_preview.create_or_update(
+        self._operation_2023_02_preview.create_or_update(
             id=job_object.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -625,7 +655,7 @@ class JobOperations(_ScopeDependentOperations):
         name: str,
         *,
         download_path: Union[PathLike, str] = ".",
-        output_name: str = None,
+        output_name: Optional[str] = None,
         all: bool = False,  # pylint: disable=redefined-builtin
     ) -> None:
         """Download logs and output of a job.
@@ -649,8 +679,10 @@ class JobOperations(_ScopeDependentOperations):
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
-        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE and \
-                PipelineConstants.REUSED_JOB_ID in job_details.properties:
+        if (
+            job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE
+            and PipelineConstants.REUSED_JOB_ID in job_details.properties
+        ):
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
             module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)
@@ -674,7 +706,7 @@ class JobOperations(_ScopeDependentOperations):
         output_directory_name = "named-outputs"
 
         def log_missing_uri(what: str):
-            logger.debug(
+            module_logger.debug(
                 'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
             )
 
@@ -769,7 +801,7 @@ class JobOperations(_ScopeDependentOperations):
             try:
                 job = self.get(job_name)
                 artifact_store_uri = job.outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME]
-                if artifact_store_uri and artifact_store_uri.path:
+                if artifact_store_uri is not None and artifact_store_uri.path:
                     outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME] = artifact_store_uri.path
             except (AttributeError, KeyError):
                 outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME] = SHORT_URI_FORMAT.format(
@@ -800,17 +832,18 @@ class JobOperations(_ScopeDependentOperations):
     def _get_batch_job_scoring_output_uri(self, job_name: str) -> Optional[str]:
         uri = None
         # Download scoring output, which is the "score" output of the child job named "batchscoring"
+        # Batch Jobs are pipeline jobs with only one child, so this should terminate after an iteration
         for child in self._runs_operations.get_run_children(job_name):
-            if child.properties.get("azureml.moduleName", None) == BATCH_JOB_CHILD_RUN_NAME:
-                uri = self._get_named_output_uri(child.name, BATCH_JOB_CHILD_RUN_OUTPUT_NAME).get(
-                    BATCH_JOB_CHILD_RUN_OUTPUT_NAME, None
-                )
-                # After the correct child is found, break to prevent unnecessary looping
+            uri = self._get_named_output_uri(child.name, BATCH_JOB_CHILD_RUN_OUTPUT_NAME).get(
+                BATCH_JOB_CHILD_RUN_OUTPUT_NAME, None
+            )
+            # After the correct child is found, break to prevent unnecessary looping
+            if uri is not None:
                 break
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._operation_2022_10_preview.get(
+        return self._operation_2023_02_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -845,8 +878,9 @@ class JobOperations(_ScopeDependentOperations):
         if isinstance(job, PipelineJob):
             # Resolve top-level inputs
             self._resolve_pipeline_job_inputs(job, job._base_path)
-            if job.jobs:
-                self._component_operations._resolve_inputs_for_pipeline_component_jobs(job.jobs, job.base_path)
+            # inputs in sub-pipelines has been resolved in
+            # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
+            # as they are part of the pipeline component
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
         elif isinstance(job, Spark):
@@ -931,6 +965,9 @@ class JobOperations(_ScopeDependentOperations):
             if isinstance(item, _GroupAttrDict):
                 inputs.extend(item.flatten(group_parameter_name=key))
             else:
+                # skip resolving inferred optional input without path (in do-while + dynamic input case)
+                if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
+                    continue
                 inputs.append(item._data)
         for entry in inputs:
             self._resolve_job_input(entry, base_path)
@@ -996,7 +1033,12 @@ class JobOperations(_ScopeDependentOperations):
 
                 entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
-                local_path = Path(base_path, entry.path).resolve()
+                # Base path will be None for dsl pipeline component for now. We have 2 choices if the dsl pipeline
+                # function is imported from another file:
+                # 1) Use cwd as default base path;
+                # 2) Use the file path of the dsl pipeline function as default base path.
+                # Pick solution 1 for now as defining input path in the script to submit is a more common scenario.
+                local_path = Path(base_path or Path.cwd(), entry.path).resolve()
                 entry.path = _upload_and_generate_remote_uri(
                     self._operation_scope,
                     self._datastore_operations,
@@ -1170,16 +1212,17 @@ class JobOperations(_ScopeDependentOperations):
             )
 
         # Process each component job
-        if pipeline_job.jobs:
-            try:
-                self._component_operations._resolve_arm_id_for_pipeline_component_jobs(pipeline_job.jobs, resolver)
-            except ComponentException as e:
-                raise JobException(
-                    message=e.message,
-                    target=ErrorTarget.JOB,
-                    no_personal_data_message=e.no_personal_data_message,
-                    error_category=e.error_category,
-                )
+        try:
+            self._component_operations._resolve_dependencies_for_pipeline_component_jobs(
+                pipeline_job.component, resolver
+            )
+        except ComponentException as e:
+            raise JobException(
+                message=e.message,
+                target=ErrorTarget.JOB,
+                no_personal_data_message=e.no_personal_data_message,
+                error_category=e.error_category,
+            )
 
         # Create a pipeline component for pipeline job if user specified component in job yaml.
         if (
@@ -1213,9 +1256,28 @@ class JobOperations(_ScopeDependentOperations):
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 
     def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
-        azure_ml_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        aml_resource_id = _get_aml_resource_id_from_metadata()
+        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)
         aml_token = self._credential.get_token(*azure_ml_scopes).token
+        # validate token has aml audience
+        decoded_token = jwt.decode(
+            aml_token,
+            options={"verify_signature": False, "verify_aud": False},
+        )
+        if decoded_token.get("aud") != aml_resource_id:
+            msg = """AAD token with aml scope could not be fetched using the credentials being used.
+            Please validate if token with {0} scope can be fetched using credentials provided to MLClient.
+            Token with {0} scope can be fetched using credentials.get_token({0})
+            """
+            raise ValidationException(
+                message=msg.format(*azure_ml_scopes),
+                target=ErrorTarget.JOB,
+                error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
+                no_personal_data_message=msg.format("[job.code]"),
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         headers = kwargs.pop("headers", {})
         headers["x-azureml-token"] = aml_token
         kwargs["headers"] = headers

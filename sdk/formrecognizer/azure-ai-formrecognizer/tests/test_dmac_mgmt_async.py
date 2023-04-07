@@ -51,33 +51,37 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     async def test_get_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.get_document_model("")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.get_document_model(None)
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_delete_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.delete_document_model(None)
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_delete_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.delete_document_model("")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -89,6 +93,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
+        assert info.custom_neural_document_model_builds.quota
+        assert info.custom_neural_document_model_builds.quota_resets_on
+        assert info.custom_neural_document_model_builds.used is not None
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -123,6 +130,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             assert model.model_id == model_from_get.model_id
             assert model.description == model_from_get.description
             assert model.created_on == model_from_get.created_on
+            assert model.expires_on == model_from_get.expires_on
             for name, doc_type in model.doc_types.items():
                 assert name in model_from_get.doc_types
                 for key, field in doc_type.field_schema.items():
@@ -158,7 +166,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert op.kind
                 assert op.resource_location
                 if op.status == "succeeded":
-                    successful_op = op
+                    if op.kind != "documentClassifierBuild":
+                        successful_op = op
+                    else:
+                        successful_classifier_op = op
                 if op.status == "failed":
                     failed_op = op
 
@@ -180,7 +191,24 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     for key, field in doc_type.field_schema.items():
                         assert key
                         assert field["type"]
+                        if doc_type.build_mode == "neural":
+                            continue  # neural models don't have field confidence
                         assert doc_type.field_confidence[key] is not None
+
+            # check successful classifier model op
+            if successful_classifier_op:
+                op = await client.get_operation(successful_classifier_op.operation_id)
+                # test to/from dict
+                op_dict = op.to_dict()
+                op = OperationDetails.from_dict(op_dict)
+                classifier = op.result
+                assert classifier.api_version
+                assert classifier.classifier_id
+                assert classifier.created_on
+                assert classifier.expires_on
+                for doc_type, source in classifier.doc_types.items():
+                    assert doc_type
+                    assert source.azure_blob_source or source.azure_blob_file_list_source
 
             # check failed op
             if failed_op:
@@ -199,10 +227,12 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     async def test_get_operation_bad_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             await client.get_operation("")
-        with pytest.raises(ValueError):
+        assert "'operation_id' cannot be None or empty." in str(e.value)
+        with pytest.raises(ValueError) as e:
             await client.get_operation(None)
+        assert "'operation_id' cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -221,6 +251,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             async with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 await (await dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2022_08_31
+                assert dac._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW
             await dtc.get_resource_details()
             assert transport.session is not None

@@ -9,22 +9,36 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import MobileNetworkManagementClientConfiguration
-from .operations import AttachedDataNetworksOperations, DataNetworksOperations, MobileNetworksOperations, Operations, PacketCoreControlPlaneVersionsOperations, PacketCoreControlPlanesOperations, PacketCoreDataPlanesOperations, ServicesOperations, SimGroupsOperations, SimPoliciesOperations, SimsOperations, SitesOperations, SlicesOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AttachedDataNetworksOperations,
+    DataNetworksOperations,
+    MobileNetworksOperations,
+    Operations,
+    PacketCoreControlPlaneVersionsOperations,
+    PacketCoreControlPlanesOperations,
+    PacketCoreDataPlanesOperations,
+    ServicesOperations,
+    SimGroupsOperations,
+    SimPoliciesOperations,
+    SimsOperations,
+    SitesOperations,
+    SlicesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attributes
-    """The resources in this swagger specification will be used to manage attached data network
-    resources in mobile network attached to a particular packet core instance.
+
+class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """The resources in this API specification will be used to manage attached data network resources
+    in mobile network attached to a particular packet core instance.
 
     :ivar attached_data_networks: AttachedDataNetworksOperations operations
     :vartype attached_data_networks:
@@ -33,12 +47,6 @@ class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attr
     :vartype data_networks: azure.mgmt.mobilenetwork.operations.DataNetworksOperations
     :ivar mobile_networks: MobileNetworksOperations operations
     :vartype mobile_networks: azure.mgmt.mobilenetwork.operations.MobileNetworksOperations
-    :ivar sites: SitesOperations operations
-    :vartype sites: azure.mgmt.mobilenetwork.operations.SitesOperations
-    :ivar sim_groups: SimGroupsOperations operations
-    :vartype sim_groups: azure.mgmt.mobilenetwork.operations.SimGroupsOperations
-    :ivar sims: SimsOperations operations
-    :vartype sims: azure.mgmt.mobilenetwork.operations.SimsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.mobilenetwork.operations.Operations
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
@@ -52,18 +60,24 @@ class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attr
      azure.mgmt.mobilenetwork.operations.PacketCoreDataPlanesOperations
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.mobilenetwork.operations.ServicesOperations
+    :ivar sims: SimsOperations operations
+    :vartype sims: azure.mgmt.mobilenetwork.operations.SimsOperations
+    :ivar sim_groups: SimGroupsOperations operations
+    :vartype sim_groups: azure.mgmt.mobilenetwork.operations.SimGroupsOperations
     :ivar sim_policies: SimPoliciesOperations operations
     :vartype sim_policies: azure.mgmt.mobilenetwork.operations.SimPoliciesOperations
+    :ivar sites: SitesOperations operations
+    :vartype sites: azure.mgmt.mobilenetwork.operations.SitesOperations
     :ivar slices: SlicesOperations operations
     :vartype slices: azure.mgmt.mobilenetwork.operations.SlicesOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-04-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -76,34 +90,21 @@ class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attr
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MobileNetworkManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = MobileNetworkManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.attached_data_networks = AttachedDataNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.data_networks = DataNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.mobile_networks = MobileNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sites = SitesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sim_groups = SimGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sims = SimsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.data_networks = DataNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.mobile_networks = MobileNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.packet_core_control_planes = PacketCoreControlPlanesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -113,22 +114,14 @@ class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attr
         self.packet_core_data_planes = PacketCoreDataPlanesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.services = ServicesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sim_policies = SimPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.slices = SlicesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sims = SimsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sim_groups = SimGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sim_policies = SimPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.slices = SlicesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -137,7 +130,7 @@ class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attr
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -150,15 +143,12 @@ class MobileNetworkManagementClient:    # pylint: disable=too-many-instance-attr
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> MobileNetworkManagementClient
+    def __enter__(self) -> "MobileNetworkManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

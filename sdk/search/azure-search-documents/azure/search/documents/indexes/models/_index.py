@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-import msrest.serialization
+from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-class SearchField(msrest.serialization.Model):
+class SearchField(_serialization.Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
@@ -479,7 +479,7 @@ def ComplexField(**kw):
     return SearchField(**result)
 
 
-class SearchIndex(msrest.serialization.Model):
+class SearchIndex(_serialization.Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 

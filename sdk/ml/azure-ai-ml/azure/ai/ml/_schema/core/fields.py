@@ -11,23 +11,17 @@ import re
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
 from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_ARM_id_for_resource,
-    parse_name_label,
-    parse_name_version,
-)
-from azure.ai.ml._utils._experimental import _is_warning_cached
-from azure.ai.ml._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
-from azure.ai.ml.constants._common import (
+from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
+from ..._utils._experimental import _is_warning_cached
+from ..._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
+from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
@@ -38,12 +32,15 @@ from azure.ai.ml.constants._common import (
     FILE_PREFIX,
     INTERNAL_REGISTRY_URI_FORMAT,
     LOCAL_COMPUTE_TARGET,
+    LOCAL_PATH,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
+    SERVERLESS_COMPUTE,
     AzureMLResourceType,
 )
-from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
-from azure.ai.ml.exceptions import ValidationException
+from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ...exceptions import ValidationException
+from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -53,6 +50,7 @@ class StringTransformedEnum(Field):
         # pop marshmallow unknown args to avoid warnings
         self.allowed_values = kwargs.pop("allowed_values", None)
         self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
+        self.pass_original = kwargs.pop("pass_original", False)
         super().__init__(**kwargs)
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
@@ -70,12 +68,12 @@ class StringTransformedEnum(Field):
         if not value:
             return
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
+            return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
+            return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
@@ -92,57 +90,78 @@ class LocalPathField(fields.Str):
     Can only be used as fields of PathAwareSchema.
     """
 
-    def __init__(self, allow_dir=True, allow_file=True):
+    default_error_messages = {
+        "invalid_path": "The filename, directory name, or volume label syntax is incorrect.",
+        "path_not_exist": "Can't find {allow_type} in resolved absolute path: {path}.",
+    }
+
+    def __init__(self, allow_dir=True, allow_file=True, **kwargs):
         self._allow_dir = allow_dir
         self._allow_file = allow_file
+        self._pattern = kwargs.get("pattern", None)
         super().__init__()
 
     def _jsonschema_type_mapping(self):
-        schema = {"type": "string"}
+        schema = {"type": "string", "arm_type": LOCAL_PATH}
         if self.name is not None:
             schema["title"] = self.name
         if self.dump_only:
             schema["readonly"] = True
+        if self._pattern:
+            schema["pattern"] = self._pattern
         return schema
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
-        if value is None:
-            return None
-        self._validate(value)
-        return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
+    def _resolve_path(self, value) -> Path:
+        """Resolve path to absolute path based on base_path in context.
+
+        Will resolve the path if it's already an absolute path.
+        """
+        try:
+            result = Path(value)
+            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            if not result.is_absolute():
+                result = base_path / result
+
+            # for non-path string like "azureml:/xxx", OSError can be raised in either
+            # resolve() or is_dir() or is_file()
+            result = result.resolve()
+            if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
+                return result
+        except OSError:
+            raise self.make_error("invalid_path")
+        raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
+
+    @property
+    def allowed_path_type(self) -> str:
+        if self._allow_dir and self._allow_file:
+            return "directory or file"
+        if self._allow_dir:
+            return "directory"
+        return "file"
 
     def _validate(self, value):
-        base_path_err_msg = ""
-        try:
-            path = Path(value)
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-            if not path.is_absolute():
-                path = base_path / path
-                path.resolve()
-                base_path_err_msg = f" Resolved absolute path: {path.absolute()}"
-            if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
-                return super(LocalPathField, self)._validate(value)
-        except OSError:
-            pass
-        if self._allow_dir and self._allow_file:
-            allow_type = "directory or file"
-        elif self._allow_dir:
-            allow_type = "directory"
-        else:
-            allow_type = "file"
-        raise ValidationError(f"Value {value!r} passed is not a valid "
-                              f"{allow_type} path.{base_path_err_msg}")
+        # inherited validations like required, allow_none, etc.
+        super(LocalPathField, self)._validate(value)
+
+        if value is None:
+            return
+        self._resolve_path(value)
+
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        # do not block serializing None even if required or not allow_none.
+        if value is None:
+            return None
+        # always dump path as absolute path in string as base_path will be dropped after serialization
+        return super(LocalPathField, self)._serialize(self._resolve_path(value).as_posix(), attr, obj, **kwargs)
 
 
 class SerializeValidatedUrl(fields.Url):
-    """This field will validate if value is an url during serialization, so
-    that only valid urls can be serialized as this schema.
+    """This field will validate if value is an url during serialization, so that only valid urls can be serialized as
+    this schema.
 
-    Use this schema instead of fields.Url when unioned with ArmStr or
-    its subclasses like ArmVersionedStr, so that the field can be
-    serialized correctly after deserialization. azureml:xxx => xxx =>
-    azureml:xxx e.g. The field will still always be serializable as any
-    string can be serialized as an ArmStr.
+    Use this schema instead of fields.Url when unioned with ArmStr or its subclasses like ArmVersionedStr, so that the
+    field can be serialized correctly after deserialization. azureml:xxx => xxx => azureml:xxx e.g. The field will still
+    always be serializable as any string can be serialized as an ArmStr.
     """
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
@@ -230,7 +249,7 @@ class DateTimeStr(fields.Str):
 class ArmStr(Field):
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
-        self.pattern = kwargs.pop("pattern", "^azureml:.*")
+        self.pattern = kwargs.pop("pattern", r"^azureml:.+")
         super().__init__(**kwargs)
 
     def _jsonschema_type_mapping(self):
@@ -246,9 +265,9 @@ class ArmStr(Field):
         return schema
 
     def _serialize(self, value, attr, obj, **kwargs):
-        # TODO: (1795017) Improve pre-serialization checks
         if isinstance(value, str):
-            return f"{ARM_ID_PREFIX}{value}"
+            serialized_value = value if value.startswith(ARM_ID_PREFIX) else f"{ARM_ID_PREFIX}{value}"
+            return serialized_value
         if value is None and not self.required:
             return None
         raise ValidationError(f"Non-string passed to ArmStr for {attr}")
@@ -258,7 +277,10 @@ class ArmStr(Field):
             name = value[len(ARM_ID_PREFIX) :]
             return name
         formatted_resource_id = RESOURCE_ID_FORMAT.format(
-            "<subscription_id>", "<resource_group>", AZUREML_RESOURCE_PROVIDER, "<workspace_name>/"
+            "<subscription_id>",
+            "<resource_group>",
+            AZUREML_RESOURCE_PROVIDER,
+            "<workspace_name>/",
         )
         if self.azureml_type is not None:
             azureml_type_suffix = self.azureml_type
@@ -280,11 +302,6 @@ class ArmVersionedStr(ArmStr):
     def __init__(self, **kwargs):
         self.allow_default_version = kwargs.pop("allow_default_version", False)
         super().__init__(**kwargs)
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        if isinstance(value, str) and value.startswith(ARM_ID_PREFIX):
-            return value
-        return super()._serialize(value, attr, obj, **kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
         arm_id = super()._deserialize(value, attr, data, **kwargs)
@@ -384,8 +401,7 @@ class RefField(Field):
 
 
 class NestedField(Nested):
-    """anticipates the default coming in next marshmallow version,
-    unknown=True."""
+    """anticipates the default coming in next marshmallow version, unknown=True."""
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("unknown") is None:
@@ -393,6 +409,11 @@ class NestedField(Nested):
         super().__init__(*args, **kwargs)
 
 
+# Note: Currently contains a bug where the order in which fields are inputted can potentially cause a bug
+# Example, the first line below works, but the second one fails upon calling load_from_dict
+# with the error " AttributeError: 'list' object has no attribute 'get'"
+# inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
+# inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)
@@ -400,6 +421,7 @@ class UnionField(fields.Field):
             # add the validation and make sure union_fields must be subclasses or instances of
             # marshmallow.base.FieldABC
             self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
+            # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
@@ -470,21 +492,19 @@ class UnionField(fields.Field):
 
 
 class TypeSensitiveUnionField(UnionField):
-    """Union field which will try to simplify error messages based on type
-    field in failed serialization/deserialization.
+    """Union field which will try to simplify error messages based on type field in failed
+    serialization/deserialization.
 
-    If value doesn't have type, will skip error messages from fields
-    with type field If value has type & its type doesn't match any
-    allowed types, raise "Value {} not in set {}" If value has type &
-    its type matches at least 1 allowed value, it will raise the first
-    matched error.
+    If value doesn't have type, will skip error messages from fields with type field If value has type & its type
+    doesn't match any allowed types, raise "Value {} not in set {}" If value has type & its type matches at least 1
+    allowed value, it will raise the first matched error.
     """
 
     def __init__(
         self,
         type_sensitive_fields_dict: typing.Dict[str, List[fields.Field]],
         *,
-        plain_union_fields: List[fields.Field] = None,
+        plain_union_fields: Optional[List[fields.Field]] = None,
         allow_load_from_file: bool = True,
         type_field_name="type",
         **kwargs,
@@ -533,10 +553,11 @@ class TypeSensitiveUnionField(UnionField):
         self.insert_union_field(field)
 
     def _raise_simplified_error_base_on_type(self, e, value, attr):
-        """If value doesn't have type, raise original error; If value has type
-        & its type doesn't match any allowed types, raise "Value {} not in set
-        {}"; If value has type & its type matches at least 1 field, return the
-        first matched error message;"""
+        """If value doesn't have type, raise original error; If value has type.
+
+        & its type doesn't match any allowed types, raise "Value {} not in set {}"; If value has type & its type matches
+        at least 1 field, return the first matched error message;
+        """
         value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
         if value_type is None:
             # if value has no type field, raise original error
@@ -611,7 +632,7 @@ def ComputeField(**kwargs):
     """
     return UnionField(
         [
-            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET]),
+            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET, SERVERLESS_COMPUTE]),
             ArmStr(azureml_type=AzureMLResourceType.COMPUTE),
             # Case for virtual clusters
             fields.Str(),
@@ -708,7 +729,14 @@ class DumpableIntegerField(fields.Integer):
 
 
 class DumpableFloatField(fields.Float):
-    def __init__(self, *, strict: bool = False, allow_nan: bool = False, as_string: bool = False, **kwargs):
+    def __init__(
+        self,
+        *,
+        strict: bool = False,
+        allow_nan: bool = False,
+        as_string: bool = False,
+        **kwargs,
+    ):
         self.strict = strict
         super().__init__(allow_nan=allow_nan, as_string=as_string, **kwargs)
 
@@ -738,6 +766,10 @@ class ExperimentalField(fields.Field):
             raise ValueError(
                 '"experimental_field" must be subclasses or ' "instances of marshmallow.base.FieldABC."
             ) from error
+
+    @property
+    def experimental_field(self):
+        return self._experimental_field
 
     # This sets the parent for the schema and also handles nesting.
     def _bind_to_schema(self, field_name, schema):

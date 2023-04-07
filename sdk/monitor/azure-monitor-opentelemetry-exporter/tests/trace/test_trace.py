@@ -23,6 +23,10 @@ from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     _check_instrumentation_span,
     _get_trace_export_result,
 )
+from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_SDK_NAMESPACE_NAME,
+    _AZURE_SDK_OPENTELEMETRY_NAME,
+)
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -843,7 +847,16 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         
-        
+        # success
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+            "http.status_code": 400,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+
+
         # location
         span._attributes = {
             "http.method": "GET",
@@ -1203,6 +1216,59 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
+    def test_span_events_to_envelopes_sample_rate(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=SpanContext(
+                trace_id=36873507687745823477771305566750195432,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+            attributes={
+                "_MS.sampleRate": 50,
+            }
+        )
+        attributes = {
+            "test": "asd",
+            "_MS.sampleRate": 75,
+        }
+        span.add_event("test event", attributes, time)
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+  
+        self.assertEqual(len(envelopes), 1)
+        envelope = envelopes[0]
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Message"
+        )
+        self.assertEqual(envelope.sample_rate, 50)
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
+        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
+        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
+        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
+        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties["test"], "asd")
+        self.assertEqual(envelope.data.base_data.message, "test event")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+
 
 class TestAzureTraceExporterUtils(unittest.TestCase):
     def test_get_trace_export_result(self):
@@ -1222,6 +1288,7 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span(self):
         span = mock.Mock()
+        span.attributes = {}
         span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
@@ -1231,9 +1298,20 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span_not_instrumentation(self):
         span = mock.Mock()
+        span.attributes = {}
         span.instrumentation_scope.name = "__main__"
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
         ) as add:
             _check_instrumentation_span(span)
             add.assert_not_called()
+
+    def test_check_instrumentation_span_azure_sdk(self):
+        span = mock.Mock()
+        span.attributes = {_AZURE_SDK_NAMESPACE_NAME: "Microsoft.EventHub"}
+        span.instrumentation_scope.name = "__main__"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)

@@ -8,9 +8,11 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerDetails,
     ComponentVersionData,
     ComponentVersionDetails,
+    SystemData,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.operations import ComponentOperations
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -21,7 +23,7 @@ def mock_component_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
-    mock_machinelearning_client: Mock
+    mock_machinelearning_client: Mock,
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,
@@ -82,11 +84,6 @@ class TestComponentOperation:
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
 
-        mock_component_operation._container_operation.get.assert_called_once_with(
-            name=component.name,
-            resource_group_name=mock_component_operation._operation_scope.resource_group_name,
-            workspace_name=mock_component_operation._operation_scope.workspace_name,
-        )
         mock_component_operation._version_operation.create_or_update.assert_called_once_with(
             name=component.name,
             version=mock_component_operation._container_operation.get().properties.next_version,
@@ -175,3 +172,23 @@ class TestComponentOperation:
             body=component,
             resource_group_name=mock_component_operation._resource_group_name,
         )
+
+    def test_list_with_latest_version(self, mock_component_operation: ComponentOperations) -> None:
+        def create_component_with_latest_version(latest_version):
+            component_container_detail = ComponentContainerDetails()
+            component_container_detail.latest_version = latest_version
+
+            component_container_data = ComponentContainerData(properties=component_container_detail)
+            component_container_data.system_data = SystemData()
+
+            component = Component._from_container_rest_object(component_container_data)
+            return component
+
+        component_1 = create_component_with_latest_version("1")
+        component_2 = create_component_with_latest_version("2")
+        component_3 = create_component_with_latest_version("3")
+        mock_component_operation._container_operation.list.return_value = [component_1, component_2, component_3]
+        result = mock_component_operation.list()
+
+        latest_version_list = [item.latest_version for item in result]
+        assert latest_version_list == ["1", "2", "3"]

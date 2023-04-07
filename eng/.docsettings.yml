@@ -9,6 +9,7 @@ omitted_paths:
   - sdk/**/samples/*
   - sdk/identity/azure-identity/tests/*
   - sdk/**/tests/perfstress_tests/*
+  - sdk/**/tests/perf_tests/*
   - sdk/nspkg/*
   - sdk/**/swagger/*
   - sdk/ml/azure-ai-ml/tests/*

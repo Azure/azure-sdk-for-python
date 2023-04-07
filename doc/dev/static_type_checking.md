@@ -109,10 +109,10 @@ given the expressiveness of Python as a language. So, in practice, what should y
    type checker, follow the steps per [PEP 561](https://mypy.readthedocs.io/en/stable/installed_packages.html#creating-pep-561-compatible-packages) below:
 
     - add an empty `py.typed` file to your package directory. E.g. `.../sdk/azure-core/azure/core/py.typed`
-    - include the `py.typed` file in the
+    - include the path to the `py.typed` in the
       MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in)).
       This is important as it ensures the `py.typed` is included in both the sdist/bdist.
-    - include `py.typed` under `package_data` in your setup.py (`package_data={"azure.core": ["py.typed"]}`).
+    - set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` in the setup.py.
       Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
@@ -181,7 +181,7 @@ environment run in CI and brings in the third party stub packages necessary. To 
 
 ### Run mypy
 
-mypy is currently pinned to version [0.931](https://pypi.org/project/mypy/0.931/).
+mypy is currently pinned to version [1.0.0](https://pypi.org/project/mypy/1.0.0/).
 
 To run mypy on your library, run the tox mypy env at the package level:
 
@@ -189,7 +189,7 @@ To run mypy on your library, run the tox mypy env at the package level:
 
 If you don't want to use `tox` you can also install and run mypy on its own:
 
-`pip install mypy==0.931`
+`pip install mypy==1.0.0`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
@@ -211,7 +211,7 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-We pin the version of pyright to version [1.1.274](https://github.com/microsoft/pyright).
+We pin the version of pyright to version [1.1.287](https://github.com/microsoft/pyright).
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
@@ -221,7 +221,7 @@ To run pyright on your library, run the tox pyright env at the package level:
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
-`pip install pyright==1.1.274`
+`pip install pyright==1.1.287`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -253,7 +253,7 @@ To run verifytypes on your library, run the tox verifytypes env at the package l
 
 If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
 
-`pip install pyright==1.1.274`
+`pip install pyright==1.1.287`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright --verifytypes azure.ai.textanalytics --ignoreexternal`
 
@@ -295,10 +295,9 @@ official [mypy docs](https://mypy.readthedocs.io/en/stable/type_inference_and_an
 ### How to opt out of type checking
 
 All client libraries in the Python SDK repo are automatically opted in to running type checking. If there is a
-reason why a particular library should not run type checking, it is possible to add that library to a block list to prevent mypy/pyright
-from running checks.
+reason why a particular library should not run type checking, it is possible to disable mypy/pyright from running in CI.
 
-1) Place the package name on the appropriate block list: [tools/azure-sdk-tools/ci_tools/environment_exclusions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/ci_tools/environment_exclusions.py).
+1) Disable the check in the library's `pyproject.toml` file following the instructions in [doc/eng_sys_checks.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml).
 2) Open an issue tracking that "library-name" should be opted in to running type checking
 
 > Note: Blocking your library from type checking is a *temporary* state. It is expected that checks are re-enabled as soon as possible.

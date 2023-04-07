@@ -51,7 +51,7 @@ role_name = "customRole"
 scope = KeyVaultRoleScope.GLOBAL
 permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
 role_definition = client.set_role_definition(scope=scope, role_name=role_name, permissions=permissions)
-print("Role definition '{}' created successfully.".format(role_definition.role_name))
+print(f"Role definition '{role_definition.role_name}' created successfully.")
 
 # Let's update our role definition to allow reading keys, but not allow creating keys.
 # To update an existing definition, pass the name keyword argument to set_role_definition. This is the unique name
@@ -67,7 +67,7 @@ unique_definition_name = role_definition.name
 updated_definition = client.set_role_definition(
     scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
 )
-print("Role definition '{}' updated successfully.".format(updated_definition.role_name))
+print(f"Role definition '{updated_definition.role_name}' updated successfully.")
 
 # Now let's create a role assignment to apply our role definition to our service principal.
 # Since we don't provide the name keyword argument to create_role_definition, a unique role assignment name (a GUID)

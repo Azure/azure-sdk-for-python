@@ -4,9 +4,7 @@ This package contains a Python SDK for Azure Communication Services for Email.
 
 ## Key concepts
 
-The Azure Communication Email package is used to do following:
-- Send emails to multiple types of recipients
-- Query the status of a sent email message
+The Azure Communication Email package is used to send emails to multiple types of recipients.
 
 ## Getting started
 
@@ -26,7 +24,7 @@ pip install azure-communication-email
 
 ## Examples
 
-`EmailClient` provides the functionality to send email messages .
+`EmailClient` provides the functionality to send email messages.
 
 ## Authentication
 
@@ -37,6 +35,17 @@ from azure.communication.email import EmailClient
 
 connection_string = "endpoint=https://<resource-name>.communication.azure.com/;accessKey=<Base64-Encoded-Key>"
 client = EmailClient.from_connection_string(connection_string);
+```
+
+Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
+
+```python
+from azure.communication.email import EmailClient
+from azure.identity import DefaultAzureCredential
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+endpoint = "https://<resource-name>.communication.azure.com"
+client = EmailClient(endpoint, DefaultAzureCredential())
 ```
 
 Email clients can also be authenticated using an [AzureKeyCredential][azure-key-credential].
@@ -52,24 +61,28 @@ client = EmailClient(endpoint, credential);
 
 ### Send an Email Message
 
-To send an email message, call the `send` function from the `EmailClient`.
+To send an email message, call the `begin_send` function from the `EmailClient`. This will return a poller. You can use this poller to check on the status of the operation and retrieve the result once it's finished.
 
 ```python
-content = EmailContent(
-    subject="This is the subject",
-    plain_text="This is the body",
-    html= "<html><h1>This is the body</h1></html>",
-)
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "html><h1>This is the body</h1></html>"
+    },
+    "recipients": {
+        "to": [
+            {
+                "address": "customer@domain.com",
+                "displayName": "Customer Name"
+            }
+        ]
+    },
+    "senderAddress": "sender@contoso.com"
+}
 
-address = EmailAddress(email="customer@domain.com", display_name="Customer Name")
-
-message = EmailMessage(
-            sender="sender@contoso.com",
-            content=content,
-            recipients=EmailRecipients(to=[address])
-        )
-
-response = client.send(message)
+poller = email_client.begin_send(message)
+result = poller.result()
 ```
 
 ### Send an Email Message to Multiple Recipients
@@ -77,29 +90,31 @@ response = client.send(message)
 To send an email message to multiple recipients, add a object for each recipient type and an object for each recipient.
 
 ```python
-content = EmailContent(
-    subject="This is the subject",
-    plain_text="This is the body",
-    html= "<html><h1>This is the body</h1></html>",
-)
-
-recipients = EmailRecipients(
-        to=[
-            EmailAddress(email="customer@domain.com", display_name="Customer Name"),
-            EmailAddress(email="customer2@domain.com", display_name="Customer Name 2"),
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "html><h1>This is the body</h1></html>"
+    },
+    "recipients": {
+        "to": [
+            {"address": "customer@domain.com", "displayName": "Customer Name"},
+            {"address": "customer2@domain.com", "displayName": "Customer Name 2"}
         ],
-        cc=[
-            EmailAddress(email="ccCustomer@domain.com", display_name="CC Customer Name"),
-            EmailAddress(email="ccCustomer2@domain.com", display_name="CC Customer Name 2"),
+        "cc": [
+            {"address": "ccCustomer@domain.com", "displayName": "CC Customer Name"},
+            {"address": "ccCustomer2@domain.com", "displayName": "CC Customer Name 2"}
         ],
-        bcc=[
-            EmailAddress(email="bccCustomer@domain.com", display_name="BCC Customer Name"),
-            EmailAddress(email="bccCustomer2@domain.com", display_name="BCC Customer Name 2"),
+        "bcc": [
+            {"address": "bccCustomer@domain.com", "displayName": "BCC Customer Name"},
+            {"address": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
         ]
-    )
+    },
+    "senderAddress": "sender@contoso.com"
+}
 
-message = EmailMessage(sender="sender@contoso.com", content=content, recipients=recipients)
-response = client.send(message)
+poller = email_client.begin_send(message)
+result = poller.result()
 ```
 
 ### Send Email with Attachments
@@ -109,49 +124,44 @@ Azure Communication Services support sending email with attachments.
 ```python
 import base64
 
-content = EmailContent(
-    subject="This is the subject",
-    plain_text="This is the body",
-    html= "<html><h1>This is the body</h1></html>",
-)
-
-address = EmailAddress(email="customer@domain.com", display_name="Customer Name")
-
 with open("C://readme.txt", "r") as file:
     file_contents = file.read()
 
 file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
 
-attachment = EmailAttachment(
-    name="attachment.txt",
-    attachment_type="txt",
-    content_bytes_base64=file_bytes_b64.decode()
-)
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "html><h1>This is the body</h1></html>"
+    },
+    "recipients": {
+        "to": [
+            {
+                "address": "customer@domain.com",
+                "displayName": "Customer Name"
+            }
+        ]
+    },
+    "senderAddress": "sender@contoso.com",
+    "attachments": [
+        {
+            "name": "attachment.txt",
+            "attachmentType": "text/plain",
+            "contentInBase64": file_bytes_b64.decode()
+        }
+    ]
+}
 
-message = EmailMessage(
-            sender="sender@contoso.com",
-            content=content,
-            recipients=EmailRecipients(to=[address]),
-            attachments=[attachment]
-        )
-
-response = client.send(message)
-```
-
-### Get Email Message Status
-
-The result from the `send` call contains a `message_id` which can be used to query the status of the email.
-
-```python
-response = client.send(message)
-status = client.get_send_status(response.message_id)
+poller = email_client.begin_send(message)
+result = poller.result()
 ```
 
 ## Troubleshooting
 
 Email operations will throw an exception if the request to the server fails. The Email client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
-```Python
+```python
 from azure.core.exceptions import HttpResponseError
 
 try:

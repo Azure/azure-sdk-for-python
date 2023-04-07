@@ -12,55 +12,27 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import SecurityCenterConfiguration
-from .operations import (
-    GovernanceAssignmentsOperations,
-    GovernanceRuleOperations,
-    GovernanceRulesOperations,
-    SecurityConnectorGovernanceRuleOperations,
-    SecurityConnectorGovernanceRulesExecuteStatusOperations,
-    SecurityConnectorGovernanceRulesOperations,
-    SubscriptionGovernanceRulesExecuteStatusOperations,
-)
+from .operations import GovernanceAssignmentsOperations, GovernanceRulesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
-    :ivar governance_rule: GovernanceRuleOperations operations
-    :vartype governance_rule:
-     azure.mgmt.security.v2022_01_01_preview.aio.operations.GovernanceRuleOperations
     :ivar governance_rules: GovernanceRulesOperations operations
     :vartype governance_rules:
      azure.mgmt.security.v2022_01_01_preview.aio.operations.GovernanceRulesOperations
-    :ivar security_connector_governance_rule: SecurityConnectorGovernanceRuleOperations operations
-    :vartype security_connector_governance_rule:
-     azure.mgmt.security.v2022_01_01_preview.aio.operations.SecurityConnectorGovernanceRuleOperations
-    :ivar security_connector_governance_rules: SecurityConnectorGovernanceRulesOperations
-     operations
-    :vartype security_connector_governance_rules:
-     azure.mgmt.security.v2022_01_01_preview.aio.operations.SecurityConnectorGovernanceRulesOperations
-    :ivar subscription_governance_rules_execute_status:
-     SubscriptionGovernanceRulesExecuteStatusOperations operations
-    :vartype subscription_governance_rules_execute_status:
-     azure.mgmt.security.v2022_01_01_preview.aio.operations.SubscriptionGovernanceRulesExecuteStatusOperations
-    :ivar security_connector_governance_rules_execute_status:
-     SecurityConnectorGovernanceRulesExecuteStatusOperations operations
-    :vartype security_connector_governance_rules_execute_status:
-     azure.mgmt.security.v2022_01_01_preview.aio.operations.SecurityConnectorGovernanceRulesExecuteStatusOperations
     :ivar governance_assignments: GovernanceAssignmentsOperations operations
     :vartype governance_assignments:
      azure.mgmt.security.v2022_01_01_preview.aio.operations.GovernanceAssignmentsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Azure subscription ID. Required.
-    :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2022-01-01-preview". Note that overriding
@@ -71,36 +43,17 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
-        self._config = SecurityCenterConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = SecurityCenterConfiguration(credential=credential, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.governance_rule = GovernanceRuleOperations(self._client, self._config, self._serialize, self._deserialize)
         self.governance_rules = GovernanceRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
-        )
-        self.security_connector_governance_rule = SecurityConnectorGovernanceRuleOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.security_connector_governance_rules = SecurityConnectorGovernanceRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.subscription_governance_rules_execute_status = SubscriptionGovernanceRulesExecuteStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.security_connector_governance_rules_execute_status = (
-            SecurityConnectorGovernanceRulesExecuteStatusOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
         )
         self.governance_assignments = GovernanceAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -135,5 +88,5 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

@@ -62,6 +62,7 @@ async def sample_copy_model_to_async(custom_model_id):
     print("Model ID: {}".format(copied_over_model.model_id))
     print("Description: {}".format(copied_over_model.description))
     print("Model created on: {}\n".format(copied_over_model.created_on))
+    print("Model expires on: {}".format(copied_over_model.expires_on))
     print("Doc types the model can recognize:")
     for name, doc_type in copied_over_model.doc_types.items():
         print("\nDoc Type: '{}' which has the following fields:".format(name))
@@ -90,10 +91,34 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            model = await (await document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL"))).result()
-            model_id = model.model_id
+            blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
+            if blob_container_sas_url is not None:
+                model = await (
+                    await document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url)
+                ).result()
+                model_id = model.model_id
 
     await sample_copy_model_to_async(model_id)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        asyncio.run(main())
+    except HttpResponseError as error:
+        print("For more information about troubleshooting errors, see the following guide: "
+              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
+        # If the inner error is None and then it is possible to check the message to get more information:
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

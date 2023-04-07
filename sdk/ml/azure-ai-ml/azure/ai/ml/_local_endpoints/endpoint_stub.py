@@ -13,12 +13,10 @@ from azure.ai.ml.entities._load_functions import load_online_endpoint
 
 
 class EndpointStub:
-    """EndpointStub is a class for representing local endpoints which do not
-    have deployments created under them yet.
+    """EndpointStub is a class for representing local endpoints which do not have deployments created under them yet.
 
-    To maintain a catalog of local endpoints, it writes a yaml file with
-    the endpoint specification to the user's machine in an idempotent,
-    well-known location.
+    To maintain a catalog of local endpoints, it writes a yaml file with the endpoint specification to the user's
+    machine in an idempotent, well-known location.
     """
 
     def create_or_update(self, endpoint: OnlineEndpoint):
@@ -54,12 +52,12 @@ class EndpointStub:
         """
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
         shutil.rmtree(build_directory)
+
     # pylint: disable=no-self-use
     def invoke(self):
         """Invoke a local endpoint.
 
-        For an EndpointStub, it cannot invoke, so we return a helper
-        message.
+        For an EndpointStub, it cannot invoke, so we return a helper message.
         """
         return (
             "This local endpoint does not have any deployments, so it cannot be invoked."
@@ -102,6 +100,7 @@ class EndpointStub:
         :returns Path: path to endpoint build directory.
         """
         return Path(self._get_inferencing_cache_dir(), endpoint_name)
+
     @classmethod
     def _get_inferencing_cache_dir(cls) -> Path:
         """Get a local inferencing directory. Idempotent.

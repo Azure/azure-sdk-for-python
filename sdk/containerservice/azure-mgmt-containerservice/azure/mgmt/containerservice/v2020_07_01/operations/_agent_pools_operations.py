@@ -49,7 +49,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_list_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -87,7 +87,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_get_request(
         "agentPoolName": _SERIALIZER.url("agent_pool_name", agent_pool_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -126,8 +126,8 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -149,7 +149,7 @@ def build_create_or_update_request(
         "agentPoolName": _SERIALIZER.url("agent_pool_name", agent_pool_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -168,7 +168,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +190,7 @@ def build_delete_request(
         "agentPoolName": _SERIALIZER.url("agent_pool_name", agent_pool_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -207,7 +207,7 @@ def build_get_upgrade_profile_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,7 +229,7 @@ def build_get_upgrade_profile_request(
         "agentPoolName": _SERIALIZER.url("agent_pool_name", agent_pool_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -246,7 +246,7 @@ def build_get_available_agent_pool_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +267,7 @@ def build_get_available_agent_pool_versions_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -284,7 +284,7 @@ def build_upgrade_node_image_version_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
+    api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -306,7 +306,7 @@ def build_upgrade_node_image_version_request(
         "agentPoolName": _SERIALIZER.url("agent_pool_name", agent_pool_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -355,8 +355,8 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AgentPoolListResult]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[_models.AgentPoolListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -379,7 +379,7 @@ class AgentPoolsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -395,7 +395,7 @@ class AgentPoolsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -403,14 +403,15 @@ class AgentPoolsOperations:
             deserialized = self._deserialize("AgentPoolListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -422,7 +423,9 @@ class AgentPoolsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools"
+    }
 
     @distributed_trace
     def get(
@@ -454,8 +457,8 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AgentPool]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[_models.AgentPool] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -468,10 +471,11 @@ class AgentPoolsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -487,7 +491,9 @@ class AgentPoolsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
+    }
 
     def _create_or_update_initial(
         self,
@@ -508,9 +514,9 @@ class AgentPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AgentPool]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentPool] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -534,10 +540,11 @@ class AgentPoolsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -553,11 +560,13 @@ class AgentPoolsOperations:
             deserialized = self._deserialize("AgentPool", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
+    }
 
     @overload
     def begin_create_or_update(
@@ -661,7 +670,7 @@ class AgentPoolsOperations:
         :param agent_pool_name: The name of the agent pool. Required.
         :type agent_pool_name: str
         :param parameters: Parameters supplied to the Create or Update an agent pool operation. Is
-         either a model type or a IO type. Required.
+         either a AgentPool type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2020_07_01.models.AgentPool or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -682,14 +691,14 @@ class AgentPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AgentPool]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentPool] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_initial(  # type: ignore
+            raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 agent_pool_name=agent_pool_name,
@@ -710,7 +719,7 @@ class AgentPoolsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -722,9 +731,11 @@ class AgentPoolsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
+    }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -740,8 +751,8 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -754,10 +765,11 @@ class AgentPoolsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -769,7 +781,9 @@ class AgentPoolsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
+    }
 
     @distributed_trace
     def begin_delete(
@@ -800,11 +814,11 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -823,7 +837,7 @@ class AgentPoolsOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -835,9 +849,11 @@ class AgentPoolsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
+    }
 
     @distributed_trace
     def get_upgrade_profile(
@@ -870,8 +886,8 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AgentPoolUpgradeProfile]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[_models.AgentPoolUpgradeProfile] = kwargs.pop("cls", None)
 
         request = build_get_upgrade_profile_request(
             resource_group_name=resource_group_name,
@@ -884,10 +900,11 @@ class AgentPoolsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -903,7 +920,9 @@ class AgentPoolsOperations:
 
         return deserialized
 
-    get_upgrade_profile.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeProfiles/default"}  # type: ignore
+    get_upgrade_profile.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeProfiles/default"
+    }
 
     @distributed_trace
     def get_available_agent_pool_versions(
@@ -933,8 +952,8 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AgentPoolAvailableVersions]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[_models.AgentPoolAvailableVersions] = kwargs.pop("cls", None)
 
         request = build_get_available_agent_pool_versions_request(
             resource_group_name=resource_group_name,
@@ -946,10 +965,11 @@ class AgentPoolsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -965,7 +985,9 @@ class AgentPoolsOperations:
 
         return deserialized
 
-    get_available_agent_pool_versions.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/availableAgentPoolVersions"}  # type: ignore
+    get_available_agent_pool_versions.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/availableAgentPoolVersions"
+    }
 
     def _upgrade_node_image_version_initial(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -981,8 +1003,8 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.AgentPool]]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[Optional[_models.AgentPool]] = kwargs.pop("cls", None)
 
         request = build_upgrade_node_image_version_request(
             resource_group_name=resource_group_name,
@@ -995,10 +1017,11 @@ class AgentPoolsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1016,12 +1039,14 @@ class AgentPoolsOperations:
 
         return deserialized
 
-    _upgrade_node_image_version_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeNodeImageVersion"}  # type: ignore
+    _upgrade_node_image_version_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeNodeImageVersion"
+    }
 
     @distributed_trace
     def begin_upgrade_node_image_version(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.AgentPool]:
         """Upgrade node image version of an agent pool to the latest.
 
         Upgrade node image version of an agent pool to the latest.
@@ -1048,13 +1073,13 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))  # type: Literal["2020-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2020-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._upgrade_node_image_version_initial(  # type: ignore
+            raw_result = self._upgrade_node_image_version_initial(
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 agent_pool_name=agent_pool_name,
@@ -1073,7 +1098,7 @@ class AgentPoolsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1085,6 +1110,8 @@ class AgentPoolsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_upgrade_node_image_version.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeNodeImageVersion"}  # type: ignore
+    begin_upgrade_node_image_version.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeNodeImageVersion"
+    }

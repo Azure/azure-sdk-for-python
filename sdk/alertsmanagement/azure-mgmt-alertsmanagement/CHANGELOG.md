@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b2 (2022-12-26)
+
+### Features Added
+
+  - Added operation group PrometheusRuleGroupsOperations
+
 ## 2.0.0b1 (2022-08-22)
 
 ### Features Added

@@ -12,13 +12,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -47,7 +48,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -83,7 +84,7 @@ class AscLocation(Resource):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, *, properties: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, properties: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword properties: An empty set of properties.
         :paramtype properties: JSON
@@ -113,7 +114,7 @@ class AscLocationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -154,7 +155,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -185,7 +186,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -216,7 +217,7 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Security operation display.
         :paramtype display: ~azure.mgmt.security.v2015_06_01_preview.models.OperationDisplay
@@ -256,7 +257,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -285,7 +286,7 @@ class OperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Security operations.
         :paramtype value: list[~azure.mgmt.security.v2015_06_01_preview.models.Operation]
@@ -341,7 +342,9 @@ class SecurityTask(Resource):
         "sub_state": {"key": "properties.subState", "type": "str"},
     }
 
-    def __init__(self, *, security_task_parameters: Optional["_models.SecurityTaskParameters"] = None, **kwargs):
+    def __init__(
+        self, *, security_task_parameters: Optional["_models.SecurityTaskParameters"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword security_task_parameters: Changing set of properties, depending on the task type that
          is derived from the name field.
@@ -377,7 +380,7 @@ class SecurityTaskList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -405,7 +408,7 @@ class SecurityTaskParameters(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.

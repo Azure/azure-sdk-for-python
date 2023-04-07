@@ -91,10 +91,10 @@ class MaintenanceWindowsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MaintenanceWindows]
+        )
+        cls: ClsType[_models.MaintenanceWindows] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -108,10 +108,11 @@ class MaintenanceWindowsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -127,7 +128,9 @@ class MaintenanceWindowsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindows/current"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindows/current"
+    }
 
     @overload
     async def create_or_update(  # pylint: disable=inconsistent-return-statements
@@ -218,7 +221,7 @@ class MaintenanceWindowsOperations:
         :type database_name: str
         :param maintenance_window_name: Maintenance window name. Required.
         :type maintenance_window_name: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a MaintenanceWindows type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.MaintenanceWindows or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -239,11 +242,11 @@ class MaintenanceWindowsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -268,10 +271,11 @@ class MaintenanceWindowsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -283,4 +287,6 @@ class MaintenanceWindowsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindows/current"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/maintenanceWindows/current"
+    }

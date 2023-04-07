@@ -6,12 +6,13 @@
 # pylint: disable=no-self-use
 
 import asyncio
+import inspect
 import threading
 from asyncio import Lock
+from io import UnsupportedOperation
 from itertools import islice
 from math import ceil
-
-import six
+from typing import AsyncGenerator, Union
 
 from . import encode_base64, url_quote
 from .request_handlers import get_length
@@ -186,11 +187,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             while True:
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
-                if asyncio.iscoroutinefunction(self.stream.read):
-                    temp = await self.stream.read(read_size)
-                else:
-                    temp = self.stream.read(read_size)
-                if not isinstance(temp, six.binary_type):
+                temp = self.stream.read(read_size)
+                if inspect.isawaitable(temp):
+                    temp = await temp
+                if not isinstance(temp, bytes):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""
 
@@ -294,7 +294,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{index/self.chunk_size:05d}'
+            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -421,3 +421,41 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
     # TODO: Implement this method.
     async def _upload_substream_block(self, index, block_stream):
         pass
+
+
+class AsyncIterStreamer():
+    """
+    File-like streaming object for AsyncGenerators.
+    """
+    def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
+        self.iterator = generator.__aiter__()
+        self.leftover = b""
+        self.encoding = encoding
+
+    def seekable(self):
+        return False
+
+    def tell(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator does not support tell.")
+
+    def seek(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator is not seekable.")
+
+    async def read(self, size: int) -> bytes:
+        data = self.leftover
+        count = len(self.leftover)
+        try:
+            while count < size:
+                chunk = await self.iterator.__anext__()
+                if isinstance(chunk, str):
+                    chunk = chunk.encode(self.encoding)
+                data += chunk
+                count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
+        except StopAsyncIteration:
+            self.leftover = b""
+
+        if count >= size:
+            self.leftover = data[size:]
+
+        return data[:size]

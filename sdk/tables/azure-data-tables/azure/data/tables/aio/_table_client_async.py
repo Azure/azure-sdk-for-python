@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -13,6 +13,7 @@ except ImportError:
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -20,10 +21,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import TableAccessPolicy, TableItem
-from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
-from .._deserialize import deserialize_iso, _return_headers_and_deserialized
+from .._generated.models import SignedIdentifier, TableProperties
+from .._models import TableAccessPolicy, TableItem, UpdateMode
+from .._serialize import(
+    serialize_iso, _parameter_filter_substitution, _prepare_key, _add_entity_properties, _get_match_headers
+)
+from .._deserialize import(
+    deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
+)
 from .._error import (
     _decode_error,
     _process_table_error,
@@ -31,19 +36,13 @@ from .._error import (
     _reraise_error,
     _validate_tablename_error
 )
-from .._models import UpdateMode
-from .._deserialize import _convert_to_entity, _trim_service_metadata
-from .._serialize import _add_entity_properties, _get_match_headers
 from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
-
-class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(AsyncTablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -51,12 +50,12 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
@@ -66,11 +65,14 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-            AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+            AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
         :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential` or
-            :class:`~azure.core.credentials.TokenCredential`
+            :class:`~azure.core.credentials.AsyncTokenCredential`
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
 
         :returns: None
         """
@@ -108,17 +110,17 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 :dedent: 8
                 :caption: Creating the TableClient from a connection string.
         """
-        endpoint, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, keyword_args=kwargs
-        )
+        endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
     def from_table_url(
         cls,
         table_url: str,
+        *,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
         **kwargs
-    ) -> 'TableClient':
+    ) -> "TableClient":
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
@@ -159,7 +161,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(endpoint, table_name=table_name, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(self, **kwargs) -> Mapping[str, Optional[TableAccessPolicy]]:
@@ -286,15 +288,15 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 raise
 
     @overload
-    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs) -> None:
         ...
 
     @overload
-    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs) -> None:
         ...
 
     @distributed_trace_async
-    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -328,10 +330,10 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             row_key = entity['RowKey']
         except (TypeError, IndexError):
             partition_key = kwargs.pop('partition_key', None)
-            if not partition_key:
+            if partition_key is None:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
-            if not row_key:
+            if row_key is None:
                 row_key = args[1]
 
         match_condition = kwargs.pop("match_condition", None)
@@ -595,7 +597,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                query_options=QueryOptions(select=user_select),
+                select=user_select,
                 **kwargs
             )
             properties = _convert_to_entity(entity)

@@ -15,26 +15,21 @@ from azure.core.exceptions import HttpResponseError
 from testcase import DevcenterPowerShellPreparer
 
 class TestDevcenter(AzureRecordedTestCase):
-    def create_client(self, dev_center_name, devcenter_tenant_id):
+    def create_client(self, endpoint):
         credential = self.get_credential(DevCenterClient)
-        return DevCenterClient(
-            devcenter_tenant_id,
-            dev_center_name,
-            credential=credential
-        )
+        return DevCenterClient(endpoint, credential=credential)
     
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
     def test_devbox_operations(self, **kwargs):
         self.logger = logging.getLogger(__name__)
-        devcenter_name = kwargs.pop("devcenter_name")
-        azure_tenant_id = kwargs.pop("devcenter_tenant_id")
+        endpoint = kwargs.pop("devcenter_endpoint")
         default_project_name = kwargs.pop("devcenter_project_name")
         default_pool_name = kwargs.pop("devcenter_pool_name")
         static_test_user_id = kwargs.pop("devcenter_test_user_id")
 
-        client = self.create_client(devcenter_name, azure_tenant_id)
-        
+        client = self.create_client(endpoint)
+
         # Fetch control plane resource dependencies
 
         # Stand up a new dev box
@@ -53,15 +48,14 @@ class TestDevcenter(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_environment_operations(self, **kwargs):
         self.logger = logging.getLogger(__name__)
-        devcenter_name = kwargs.pop("devcenter_name")
-        azure_tenant_id = kwargs.pop("devcenter_tenant_id")
+        endpoint = kwargs.pop("devcenter_endpoint")
         default_project_name = kwargs.pop("devcenter_project_name")
         default_environment_type_name = kwargs.pop("devcenter_environment_type_name")
         default_catalog_name = kwargs.pop("devcenter_catalog_name")
         default_catalog_item_name = kwargs.pop("devcenter_catalog_item_name")
 
-        client = self.create_client(devcenter_name, azure_tenant_id)
-        
+        client = self.create_client(endpoint)
+
         # Fetch control plane resource dependencies
         create_response = client.environments.begin_create_or_update_environment(default_project_name,
                                                            "Dev_Environment",

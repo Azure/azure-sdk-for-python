@@ -85,3 +85,9 @@ class KeyVaultDataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READ_HSM_RESTORE_STATUS = "Microsoft.KeyVault/managedHsm/restore/status/action"
     #: Generate random numbers.
     RANDOM_NUMBERS_GENERATE = "Microsoft.KeyVault/managedHsm/rng/action"
+
+
+class KeyVaultSettingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type specifier of the setting value."""
+
+    BOOLEAN = "boolean"

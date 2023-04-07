@@ -14,9 +14,8 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -25,14 +24,14 @@ from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.exceptions import(
+from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     JobException,
-    ValidationErrorType,
-    ValidationException,
     JobParsingError,
     PipelineChildJobError,
+    ValidationErrorType,
+    ValidationException,
 )
 
 from ._studio_url_from_job_id import studio_url_from_job_id
@@ -73,14 +72,14 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     def __init__(
         self,
-        name: str = None,
-        display_name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        experiment_name: str = None,
-        compute: str = None,
-        services: Dict[str, JobService] = None,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        experiment_name: Optional[str] = None,
+        compute: Optional[str] = None,
+        services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", JobType.COMMAND)
@@ -158,7 +157,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         if self.services and (JobServices.STUDIO in self.services.keys()):
             return self.services[JobServices.STUDIO].endpoint
 
-        return studio_url_from_job_id(self.id)
+        return studio_url_from_job_id(self.id) if self.id else None
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the job content into a file in yaml format.
@@ -237,9 +236,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Job":
         """Load a job object from a yaml file.
@@ -296,7 +295,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
-                if obj.properties.compute_id.endswith("/" + ComputeType.ADF):
+                if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
                     return ImportJob._load_from_rest(obj)
 
                 return Command._load_from_rest_job(obj)

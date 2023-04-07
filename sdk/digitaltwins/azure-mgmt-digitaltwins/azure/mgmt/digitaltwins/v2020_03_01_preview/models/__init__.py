@@ -26,38 +26,40 @@ from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import ServiceBus
 
-
-from ._azure_digital_twins_management_client_enums import (
-    DigitalTwinsSku,
-    EndpointProvisioningState,
-    EndpointType,
-    ProvisioningState,
-    Reason,
-)
+from ._azure_digital_twins_management_client_enums import DigitalTwinsSku
+from ._azure_digital_twins_management_client_enums import EndpointProvisioningState
+from ._azure_digital_twins_management_client_enums import EndpointType
+from ._azure_digital_twins_management_client_enums import ProvisioningState
+from ._azure_digital_twins_management_client_enums import Reason
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CheckNameRequest',
-    'CheckNameResult',
-    'DigitalTwinsDescription',
-    'DigitalTwinsDescriptionListResult',
-    'DigitalTwinsEndpointResource',
-    'DigitalTwinsEndpointResourceListResult',
-    'DigitalTwinsEndpointResourceProperties',
-    'DigitalTwinsPatchDescription',
-    'DigitalTwinsResource',
-    'DigitalTwinsSkuInfo',
-    'ErrorDefinition',
-    'ErrorResponse',
-    'EventGrid',
-    'EventHub',
-    'ExternalResource',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'ServiceBus',
-    'DigitalTwinsSku',
-    'EndpointProvisioningState',
-    'EndpointType',
-    'ProvisioningState',
-    'Reason',
+    "CheckNameRequest",
+    "CheckNameResult",
+    "DigitalTwinsDescription",
+    "DigitalTwinsDescriptionListResult",
+    "DigitalTwinsEndpointResource",
+    "DigitalTwinsEndpointResourceListResult",
+    "DigitalTwinsEndpointResourceProperties",
+    "DigitalTwinsPatchDescription",
+    "DigitalTwinsResource",
+    "DigitalTwinsSkuInfo",
+    "ErrorDefinition",
+    "ErrorResponse",
+    "EventGrid",
+    "EventHub",
+    "ExternalResource",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "ServiceBus",
+    "DigitalTwinsSku",
+    "EndpointProvisioningState",
+    "EndpointType",
+    "ProvisioningState",
+    "Reason",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

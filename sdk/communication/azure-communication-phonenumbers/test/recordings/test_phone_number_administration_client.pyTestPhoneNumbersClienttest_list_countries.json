@@ -1,0 +1,68 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries?skip=0\u0026api-version=2022-12-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-12-01",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "1822ms"
+      },
+      "ResponseBody": {
+        "countries": [
+          {
+            "localizedName": "Canada",
+            "countryCode": "CA"
+          },
+          {
+            "localizedName": "Denmark",
+            "countryCode": "DK"
+          },
+          {
+            "localizedName": "Ireland",
+            "countryCode": "IE"
+          },
+          {
+            "localizedName": "Italy",
+            "countryCode": "IT"
+          },
+          {
+            "localizedName": "Puerto Rico",
+            "countryCode": "PR"
+          },
+          {
+            "localizedName": "Sweden",
+            "countryCode": "SE"
+          },
+          {
+            "localizedName": "United Kingdom",
+            "countryCode": "GB"
+          },
+          {
+            "localizedName": "United States",
+            "countryCode": "US"
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}

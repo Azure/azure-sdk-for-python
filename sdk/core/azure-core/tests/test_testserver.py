@@ -26,7 +26,9 @@
 from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS
 import pytest
+
 """This file does a simple call to the testserver to make sure we can use the testserver"""
+
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_smoke(port, http_request):

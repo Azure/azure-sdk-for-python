@@ -11,8 +11,6 @@ import uuid
 import logging
 from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
-import six
-
 import uamqp.errors
 import uamqp.message
 
@@ -211,7 +209,7 @@ class ServiceBusMessage(
 
     def _build_message(self, body):
         if not (
-            isinstance(body, (six.string_types, six.binary_type)) or (body is None)
+            isinstance(body, (str, bytes)) or (body is None)
         ):
             raise TypeError(
                 "ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
@@ -691,13 +689,15 @@ class ServiceBusMessageBatch(object):
         # type: () -> int
         return self._count
 
-    def _from_list(self, messages, parent_span=None):
-        # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
+    def _from_list(self, messages: Iterable[ServiceBusMessage], parent_span: Optional["AbstractSpan"] = None) -> None:
         for message in messages:
             self._add(message, parent_span)
 
-    def _add(self, add_message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage], AbstractSpan) -> None
+    def _add(
+        self,
+        add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
+        parent_span: Optional["AbstractSpan"] = None
+    ) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_if_needed(add_message, ServiceBusMessage)
         message = cast(ServiceBusMessage, message)

@@ -555,7 +555,7 @@ class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-
     :ivar remaining_retention_days:
     :vartype remaining_retention_days: int
     :ivar access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
-     "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Premium".
+     "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and "Cold".
     :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred:
     :vartype access_tier_inferred: bool
@@ -737,7 +737,7 @@ class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-
         :keyword remaining_retention_days:
         :paramtype remaining_retention_days: int
         :keyword access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
-         "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Premium".
+         "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and "Cold".
         :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword access_tier_inferred:
         :paramtype access_tier_inferred: bool

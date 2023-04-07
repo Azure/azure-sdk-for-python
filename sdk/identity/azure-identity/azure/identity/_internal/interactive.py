@@ -10,8 +10,8 @@ import json
 import logging
 import time
 from typing import Any, Optional
-
 import six
+
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -78,9 +78,14 @@ def _build_auth_record(response):
 
 
 class InteractiveCredential(MsalCredential, ABC):
-    def __init__(self, **kwargs):
-        self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+    def __init__(
+            self,
+            *,
+            authentication_record: Optional[AuthenticationRecord] = None,
+            disable_automatic_authentication: bool = False,
+            **kwargs: Any) -> None:
+        self._disable_automatic_authentication = disable_automatic_authentication
+        self._auth_record = authentication_record
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
             tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -93,19 +98,18 @@ class InteractiveCredential(MsalCredential, ABC):
         else:
             super(InteractiveCredential, self).__init__(**kwargs)
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
           claims challenge following an authorization failure
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -157,8 +161,7 @@ class InteractiveCredential(MsalCredential, ABC):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def authenticate(self, **kwargs):
-        # type: (**Any) -> AuthenticationRecord
+    def authenticate(self, **kwargs: Any) -> AuthenticationRecord:
         """Interactively authenticate a user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
@@ -185,8 +188,7 @@ class InteractiveCredential(MsalCredential, ABC):
         return self._auth_record  # type: ignore
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
         result = None
         claims = kwargs.get("claims")
         if self._auth_record:

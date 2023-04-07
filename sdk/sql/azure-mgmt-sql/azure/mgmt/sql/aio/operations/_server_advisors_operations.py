@@ -88,10 +88,10 @@ class ServerAdvisorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[List[_models.Advisor]]
+        )
+        cls: ClsType[List[_models.Advisor]] = kwargs.pop("cls", None)
 
         request = build_list_by_server_request(
             resource_group_name=resource_group_name,
@@ -104,10 +104,11 @@ class ServerAdvisorsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -123,7 +124,9 @@ class ServerAdvisorsOperations:
 
         return deserialized
 
-    list_by_server.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/advisors"}  # type: ignore
+    list_by_server.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/advisors"
+    }
 
     @distributed_trace_async
     async def get(
@@ -154,10 +157,10 @@ class ServerAdvisorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Advisor]
+        )
+        cls: ClsType[_models.Advisor] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -170,10 +173,11 @@ class ServerAdvisorsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -189,7 +193,9 @@ class ServerAdvisorsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/advisors/{advisorName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/advisors/{advisorName}"
+    }
 
     @overload
     async def update(
@@ -271,7 +277,7 @@ class ServerAdvisorsOperations:
         :type server_name: str
         :param advisor_name: The name of the Server Advisor. Required.
         :type advisor_name: str
-        :param parameters: The requested advisor resource state. Is either a model type or a IO type.
+        :param parameters: The requested advisor resource state. Is either a Advisor type or a IO type.
          Required.
         :type parameters: ~azure.mgmt.sql.models.Advisor or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -293,11 +299,11 @@ class ServerAdvisorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Advisor]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Advisor] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -321,10 +327,11 @@ class ServerAdvisorsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -340,4 +347,6 @@ class ServerAdvisorsOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/advisors/{advisorName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/advisors/{advisorName}"
+    }

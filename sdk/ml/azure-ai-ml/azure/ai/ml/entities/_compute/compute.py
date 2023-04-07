@@ -28,20 +28,23 @@ class Compute(Resource, RestTranslatableMixin):
     :type type: str
     :param name: Name of the compute
     :type name: str
-    :param location: The resource location, defaults to None
+    :param location: The resource location, defaults to workspace location.
     :type location: Optional[str], optional
     :param description: Description of the resource.
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute.
     :type resource_id: str, optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     """
 
     def __init__(
         self,
         name: str,
         location: Optional[str] = None,
-        description: str = None,
-        resource_id: str = None,
+        description: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        tags: Optional[dict] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
@@ -55,11 +58,12 @@ class Compute(Resource, RestTranslatableMixin):
         super().__init__(name=name, description=description, **kwargs)
         self.resource_id = resource_id
         self.location = location
+        self.tags = tags
 
     @property
     def type(self) -> Optional[str]:
-        """The type of the compute, possible values are ["amlcompute",
-        "computeinstance", "virtualmachine", "kubernetes", "synapsespark"]
+        """The type of the compute, possible values are ["amlcompute", "computeinstance", "virtualmachine",
+        "kubernetes", "synapsespark"]
 
         :return: The type of the compute
         :rtype: Optional[str]
@@ -150,9 +154,9 @@ class Compute(Resource, RestTranslatableMixin):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Compute":
         data = data or {}
@@ -199,8 +203,8 @@ class NetworkSettings:
     def __init__(
         self,
         *,
-        vnet_name: str = None,
-        subnet: str = None,
+        vnet_name: Optional[str] = None,
+        subnet: Optional[str] = None,
         **kwargs,
     ):
         """Network settings for a compute.

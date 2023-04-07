@@ -28,10 +28,10 @@ def text_document_statistics():
 def text_analytics_warning():
     model = _models.TextAnalyticsWarning(
         code="LongWordsInDocument",
-        message="The document contains very long words."
+        message="warning"
     )
     model_repr = (
-        "TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words.)"
+        "TextAnalyticsWarning(code=LongWordsInDocument, message=warning)"
     )
     assert repr(model) == model_repr
     return model, model_repr
@@ -71,11 +71,12 @@ def categorized_entity():
         subcategory="Age",
         length=10,
         offset=0,
-        confidence_score=0.899
+        confidence_score=0.899,
+        resolutions=[]
     )
     model_repr = (
         "CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, "
-        "length=10, offset=0, confidence_score=0.899)"
+        "length=10, offset=0, confidence_score=0.899, resolutions=[])"
     )
     assert repr(model) == model_repr
     return model, model_repr
@@ -146,7 +147,8 @@ def sentiment_confidence_scores():
 def target_assessment_confidence_score():
     model = _models.SentimentConfidenceScores(
         positive=0.5,
-        negative=0.5
+        negative=0.5,
+        neutral=0.0
     )
     model_repr = "SentimentConfidenceScores(positive=0.5, neutral=0.0, negative=0.5)"
     assert repr(model) == model_repr
@@ -196,7 +198,7 @@ def mined_opinion(target_sentiment, assessment_sentiment):
 @pytest.fixture
 def sentence_sentiment(sentiment_confidence_scores, mined_opinion):
     model = _models.SentenceSentiment(
-        text="This is a sentence.",
+        text="sentence.",
         sentiment="neutral",
         confidence_scores=sentiment_confidence_scores[0],
         length=19,
@@ -204,7 +206,7 @@ def sentence_sentiment(sentiment_confidence_scores, mined_opinion):
         mined_opinions=[mined_opinion[0]]
     )
     model_repr = (
-        "SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores={}, "\
+        "SentenceSentiment(text=sentence., sentiment=neutral, confidence_scores={}, "
         "length=19, offset=0, mined_opinions=[{}])".format(
             sentiment_confidence_scores[1], mined_opinion[1]
         )
@@ -220,10 +222,9 @@ def recognize_pii_entities_result(pii_entity, text_analytics_warning, text_docum
         redacted_text="***********",
         warnings=[text_analytics_warning[0]],
         statistics=text_document_statistics[0],
-        is_error=False
     )
     model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
-    "statistics={}, is_error=False)".format(
+    "statistics={}, is_error=False, kind=PiiEntityRecognition)".format(
         pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
     )
 
@@ -237,9 +238,8 @@ def recognize_entities_result(categorized_entity, text_analytics_warning, text_d
         entities=[categorized_entity[0]],
         warnings=[text_analytics_warning[0]],
         statistics=text_document_statistics[0],
-        is_error=False
     )
-    model_repr = "RecognizeEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+    model_repr = "RecognizeEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False, kind=EntityRecognition)".format(
         categorized_entity[1], text_analytics_warning[1], text_document_statistics[1]
     )
 
@@ -253,9 +253,8 @@ def extract_key_phrases_result(text_analytics_warning, text_document_statistics)
         key_phrases=["dog", "cat", "bird"],
         warnings=[text_analytics_warning[0]],
         statistics=text_document_statistics[0],
-        is_error=False
     )
-    model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False)".format(
+    model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False, kind=KeyPhraseExtraction)".format(
         text_analytics_warning[1], text_document_statistics[1]
     )
 
@@ -356,9 +355,8 @@ class TestRepr():
         model = _models.DocumentError(
             id="1",
             error=text_analytics_error[0],
-            is_error=True
         )
-        model_repr = f"DocumentError(id=1, error={text_analytics_error[1]}, is_error=True)"
+        model_repr = f"DocumentError(id=1, error={text_analytics_error[1]}, is_error=True, kind=DocumentError)"
 
         assert repr(model) == model_repr
 
@@ -382,9 +380,8 @@ class TestRepr():
             primary_language=detected_language[0],
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
-            is_error=False
         )
-        model_repr = "DetectLanguageResult(id=1, primary_language={}, warnings=[{}], statistics={}, is_error=False)".format(
+        model_repr = "DetectLanguageResult(id=1, primary_language={}, warnings=[{}], statistics={}, is_error=False, kind=LanguageDetection)".format(
             detected_language[1], text_analytics_warning[1], text_document_statistics[1]
         )
 
@@ -396,10 +393,9 @@ class TestRepr():
             entities=[linked_entity[0]],
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
-            detected_language=detected_language[0],
-            is_error=False
+            detected_language=detected_language[0]
         )
-        model_repr = "RecognizeLinkedEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, detected_language={}, is_error=False)".format(
+        model_repr = "RecognizeLinkedEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, detected_language={}, is_error=False, kind=EntityLinking)".format(
             linked_entity[1], text_analytics_warning[1], text_document_statistics[1], detected_language[1]
         )
 
@@ -416,11 +412,10 @@ class TestRepr():
             confidence_scores=sentiment_confidence_scores[0],
             sentences=[sentence_sentiment[0]],
             detected_language=detected_language[0],
-            is_error=False
         )
         model_repr = (
             "AnalyzeSentimentResult(id=1, sentiment=positive, warnings=[{}], statistics={}, confidence_scores={}, "
-            "sentences=[{}], detected_language={}, is_error=False)".format(
+            "sentences=[{}], detected_language={}, is_error=False, kind=SentimentAnalysis)".format(
                 text_analytics_warning[1], text_document_statistics[1], sentiment_confidence_scores[1], sentence_sentiment[1], detected_language[1]
             )
         )
@@ -447,19 +442,19 @@ class TestRepr():
         self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
     ):
         model = _models.AnalyzeHealthcareEntitiesResult(
-            id=1,
+            id="1",
             entities=[healthcare_entity[0]],
             entity_relations=[healthcare_relation[0]],
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
-            fhir_bundle="{}",
-            is_error=False
+            detected_language="",
+            fhir_bundle={},
         )
 
         model_repr = (
-            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, fhir_bundle={}, is_error=False)".format(
+            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, fhir_bundle={}, detected_language='en', is_error=False, kind=Healthcare)".format(
                 healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1], "{}"
             )
         )
 
-        assert repr(model) == model_repr[:1024]
+        assert repr(model)[:1024] == model_repr[:1024]

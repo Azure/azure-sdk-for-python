@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoPauseProperties,
@@ -14,15 +14,21 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import Compute
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._util import load_from_dict
 
 
 class AutoScaleSettings:
-    """Auto scale settings for synapse spark compute"""
+    """Auto scale settings for synapse spark compute."""
 
-    def __init__(self, *, min_node_count: int = None, max_node_count: int = None, enabled: bool = None):
-        """Auto scale settings for synapse spark compute
+    def __init__(
+        self,
+        *,
+        min_node_count: Optional[int] = None,
+        max_node_count: Optional[int] = None,
+        enabled: Optional[bool] = None,
+    ):
+        """Auto scale settings for synapse spark compute.
 
         :param min_node_count: Min node count
         :type min_node_count: int
@@ -52,10 +58,10 @@ class AutoScaleSettings:
 
 
 class AutoPauseSettings:
-    """Auto pause settings for synapse spark compute"""
+    """Auto pause settings for synapse spark compute."""
 
-    def __init__(self, *, delay_in_minutes: int = None, enabled: bool = None):
-        """Auto pause settings for synapse spark compute
+    def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None):
+        """Auto pause settings for synapse spark compute.
 
         :param delay_in_minutes: ideal time delay in minutes before pause cluster
         :type delay_in_minutes: int
@@ -81,7 +87,7 @@ class AutoPauseSettings:
 
 @experimental
 class SynapseSparkCompute(Compute):
-    """SynapseSpark Compute resource
+    """SynapseSpark Compute resource.
 
     :param name: Name of the compute
     :type name: str
@@ -91,6 +97,8 @@ class SynapseSparkCompute(Compute):
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute, defaults to None
     :type resource_id: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
     """
@@ -99,18 +107,19 @@ class SynapseSparkCompute(Compute):
         self,
         *,
         name: str,
-        description: str = None,
-        node_count: int = None,
-        node_family: str = None,
-        node_size: str = None,
-        spark_version: str = None,
-        identity: IdentityConfiguration = None,
-        scale_settings: AutoScaleSettings = None,
-        auto_pause_settings: AutoPauseSettings = None,
+        description: Optional[str] = None,
+        tags: Optional[dict] = None,
+        node_count: Optional[int] = None,
+        node_family: Optional[str] = None,
+        node_size: Optional[str] = None,
+        spark_version: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        scale_settings: Optional[AutoScaleSettings] = None,
+        auto_pause_settings: Optional[AutoPauseSettings] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(name=name, description=description, location=kwargs.pop("location", None), **kwargs)
+        super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family
@@ -142,6 +151,7 @@ class SynapseSparkCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             created_on=prop.created_on if prop.properties else None,
             node_count=prop.properties.node_count if prop.properties else None,
             node_family=prop.properties.node_size_family if prop.properties else None,
@@ -179,6 +189,9 @@ class SynapseSparkCompute(Compute):
             name=self.name,
             identity=(
                 # pylint: disable=protected-access
-                self.identity._to_compute_rest_object() if self.identity else None
+                self.identity._to_compute_rest_object()
+                if self.identity
+                else None
             ),
+            tags=self.tags,
         )

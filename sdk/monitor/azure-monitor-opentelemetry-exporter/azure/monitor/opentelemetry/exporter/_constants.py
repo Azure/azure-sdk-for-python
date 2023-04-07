@@ -55,6 +55,10 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
 
 # Instrumentations
 
+# Special constant for azure-sdk opentelemetry instrumentation
+_AZURE_SDK_OPENTELEMETRY_NAME = "azure-sdk-opentelemetry"
+_AZURE_SDK_NAMESPACE_NAME = "az.namespace"
+
 _BASE = 2
 
 _INSTRUMENTATIONS_LIST = [
@@ -96,6 +100,7 @@ _INSTRUMENTATIONS_LIST = [
     "tornado",
     "urllib",
     "urllib3",
+    _AZURE_SDK_OPENTELEMETRY_NAME,
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -122,7 +127,10 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry.instrumentation.flask",
     "opentelemetry.instrumentation.pyramid",
     "opentelemetry.instrumentation.requests",
+    "opentelemetry-instrumentation-sqlalchemy",
     "opentelemetry.instrumentation.starlette",
+    "opentelemetry-instrumentation-tornado",
+    "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
     "opentelemetry.instrumentation.wsgi",
 )

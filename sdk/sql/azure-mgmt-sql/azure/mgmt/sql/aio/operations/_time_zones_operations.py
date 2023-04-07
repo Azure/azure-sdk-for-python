@@ -71,10 +71,10 @@ class TimeZonesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TimeZoneListResult]
+        )
+        cls: ClsType[_models.TimeZoneListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -96,12 +96,12 @@ class TimeZonesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -109,14 +109,15 @@ class TimeZonesOperations:
             deserialized = self._deserialize("TimeZoneListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -128,7 +129,9 @@ class TimeZonesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_location.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/timeZones"}  # type: ignore
+    list_by_location.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/timeZones"
+    }
 
     @distributed_trace_async
     async def get(self, location_name: str, time_zone_id: str, **kwargs: Any) -> _models.TimeZone:
@@ -154,10 +157,10 @@ class TimeZonesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )  # type: Literal["2020-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TimeZone]
+        )
+        cls: ClsType[_models.TimeZone] = kwargs.pop("cls", None)
 
         request = build_get_request(
             location_name=location_name,
@@ -169,10 +172,11 @@ class TimeZonesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -188,4 +192,6 @@ class TimeZonesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/timeZones/{timeZoneId}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/timeZones/{timeZoneId}"
+    }

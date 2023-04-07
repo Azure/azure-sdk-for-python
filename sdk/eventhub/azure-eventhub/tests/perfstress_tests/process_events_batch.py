@@ -28,7 +28,7 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
                             pass
                 
                 # Consume properties and body.
-                _ = [(e.properties, e.body) for e in events]
+                _ = [(list(e.body), str(e)) for e in events]
 
                 if self.args.checkpoint_interval:
                     self._partition_event_count[partition_context.partition_id] += len(events)
@@ -51,9 +51,9 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
                         starttime = time.time()
                         while (time.time() - starttime) < delay_in_seconds:
                             pass
-                
+
                 # Consume properties and body.
-                _ = [(e.properties, e.body) for e in events]
+                _ = [(list(e.body), str(e)) for e in events]
 
                 if self.args.checkpoint_interval:
                     self._partition_event_count[partition_context.partition_id] += len(events)
@@ -66,9 +66,11 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
             await self.error_raised_async(e)
 
     def process_error_sync(self, _, error):
+        print(error)
         self.error_raised_sync(error)
 
     async def process_error_async(self, _, error):
+        print(error)
         await self.error_raised_async(error)
 
     def start_events_sync(self) -> None:

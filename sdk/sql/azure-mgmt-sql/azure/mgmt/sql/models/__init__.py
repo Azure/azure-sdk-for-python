@@ -37,6 +37,7 @@ from ._models_py3 import DatabaseColumn
 from ._models_py3 import DatabaseColumnListResult
 from ._models_py3 import DatabaseExtensions
 from ._models_py3 import DatabaseIdentity
+from ._models_py3 import DatabaseKey
 from ._models_py3 import DatabaseListResult
 from ._models_py3 import DatabaseOperation
 from ._models_py3 import DatabaseOperationListResult
@@ -84,6 +85,8 @@ from ._models_py3 import EncryptionProtector
 from ._models_py3 import EncryptionProtectorListResult
 from ._models_py3 import EndpointCertificate
 from ._models_py3 import EndpointCertificateListResult
+from ._models_py3 import EndpointDependency
+from ._models_py3 import EndpointDetail
 from ._models_py3 import ExportDatabaseDefinition
 from ._models_py3 import ExtendedDatabaseBlobAuditingPolicy
 from ._models_py3 import ExtendedDatabaseBlobAuditingPolicyListResult
@@ -216,6 +219,8 @@ from ._models_py3 import ManagedInstanceVcoresCapability
 from ._models_py3 import ManagedInstanceVersionCapability
 from ._models_py3 import ManagedInstanceVulnerabilityAssessment
 from ._models_py3 import ManagedInstanceVulnerabilityAssessmentListResult
+from ._models_py3 import ManagedLedgerDigestUploads
+from ._models_py3 import ManagedLedgerDigestUploadsListResult
 from ._models_py3 import ManagedServerDnsAlias
 from ._models_py3 import ManagedServerDnsAliasAcquisition
 from ._models_py3 import ManagedServerDnsAliasCreation
@@ -240,6 +245,8 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationImpact
 from ._models_py3 import OperationListResult
+from ._models_py3 import OutboundEnvironmentEndpoint
+from ._models_py3 import OutboundEnvironmentEndpointCollection
 from ._models_py3 import OutboundFirewallRule
 from ._models_py3 import OutboundFirewallRuleListResult
 from ._models_py3 import PartnerInfo
@@ -274,6 +281,7 @@ from ._models_py3 import RecoverableDatabase
 from ._models_py3 import RecoverableDatabaseListResult
 from ._models_py3 import RecoverableManagedDatabase
 from ._models_py3 import RecoverableManagedDatabaseListResult
+from ._models_py3 import RefreshExternalGovernanceStatusOperationResult
 from ._models_py3 import Remediation
 from ._models_py3 import ReplicationLink
 from ._models_py3 import ReplicationLinkListResult
@@ -288,6 +296,7 @@ from ._models_py3 import RestorableDroppedManagedDatabaseListResult
 from ._models_py3 import RestorePoint
 from ._models_py3 import RestorePointListResult
 from ._models_py3 import SQLVulnerabilityAssessmentScanListResult
+from ._models_py3 import ScheduleItem
 from ._models_py3 import SecurityEvent
 from ._models_py3 import SecurityEventCollection
 from ._models_py3 import SecurityEventSqlInjectionAdditionalProperties
@@ -305,6 +314,8 @@ from ._models_py3 import ServerBlobAuditingPolicy
 from ._models_py3 import ServerBlobAuditingPolicyListResult
 from ._models_py3 import ServerCommunicationLink
 from ._models_py3 import ServerCommunicationLinkListResult
+from ._models_py3 import ServerConfigurationOption
+from ._models_py3 import ServerConfigurationOptionListResult
 from ._models_py3 import ServerConnectionPolicy
 from ._models_py3 import ServerConnectionPolicyListResult
 from ._models_py3 import ServerDevOpsAuditSettingsListResult
@@ -344,6 +355,8 @@ from ._models_py3 import SqlVulnerabilityAssessmentScanError
 from ._models_py3 import SqlVulnerabilityAssessmentScanRecord
 from ._models_py3 import SqlVulnerabilityAssessmentScanRecordListResult
 from ._models_py3 import SqlVulnerabilityAssessmentScanResults
+from ._models_py3 import StartStopManagedInstanceSchedule
+from ._models_py3 import StartStopManagedInstanceScheduleListResult
 from ._models_py3 import StorageCapability
 from ._models_py3 import SubscriptionUsage
 from ._models_py3 import SubscriptionUsageListResult
@@ -405,6 +418,7 @@ from ._sql_management_client_enums import AdvancedThreatProtectionName
 from ._sql_management_client_enums import AdvancedThreatProtectionState
 from ._sql_management_client_enums import AdvisorStatus
 from ._sql_management_client_enums import AggregationFunctionType
+from ._sql_management_client_enums import AlwaysEncryptedEnclaveType
 from ._sql_management_client_enums import AuthenticationName
 from ._sql_management_client_enums import AutoExecuteStatus
 from ._sql_management_client_enums import AutoExecuteStatusInheritedFrom
@@ -414,6 +428,7 @@ from ._sql_management_client_enums import AutomaticTuningOptionModeActual
 from ._sql_management_client_enums import AutomaticTuningOptionModeDesired
 from ._sql_management_client_enums import AutomaticTuningServerMode
 from ._sql_management_client_enums import AutomaticTuningServerReason
+from ._sql_management_client_enums import AvailabilityZoneType
 from ._sql_management_client_enums import BackupStorageRedundancy
 from ._sql_management_client_enums import BaselineName
 from ._sql_management_client_enums import BlobAuditingPolicyState
@@ -431,6 +446,7 @@ from ._sql_management_client_enums import DataMaskingRuleState
 from ._sql_management_client_enums import DataMaskingState
 from ._sql_management_client_enums import DataWarehouseUserActivityName
 from ._sql_management_client_enums import DatabaseIdentityType
+from ._sql_management_client_enums import DatabaseKeyType
 from ._sql_management_client_enums import DatabaseLicenseType
 from ._sql_management_client_enums import DatabaseReadScale
 from ._sql_management_client_enums import DatabaseState
@@ -442,6 +458,7 @@ from ._sql_management_client_enums import DtcName
 from ._sql_management_client_enums import ElasticPoolLicenseType
 from ._sql_management_client_enums import ElasticPoolState
 from ._sql_management_client_enums import EncryptionProtectorName
+from ._sql_management_client_enums import ExternalGovernanceStatus
 from ._sql_management_client_enums import FailoverGroupReplicationRole
 from ._sql_management_client_enums import GeoBackupPolicyName
 from ._sql_management_client_enums import GeoBackupPolicyState
@@ -469,6 +486,8 @@ from ._sql_management_client_enums import ManagedInstanceLicenseType
 from ._sql_management_client_enums import ManagedInstanceLongTermRetentionPolicyName
 from ._sql_management_client_enums import ManagedInstancePropertiesProvisioningState
 from ._sql_management_client_enums import ManagedInstanceProxyOverride
+from ._sql_management_client_enums import ManagedLedgerDigestUploadsName
+from ._sql_management_client_enums import ManagedLedgerDigestUploadsState
 from ._sql_management_client_enums import ManagedServerCreateMode
 from ._sql_management_client_enums import ManagedShortTermRetentionPolicyName
 from ._sql_management_client_enums import ManagementOperationState
@@ -504,6 +523,7 @@ from ._sql_management_client_enums import RuleStatus
 from ._sql_management_client_enums import RuleType
 from ._sql_management_client_enums import SQLVulnerabilityAssessmentName
 from ._sql_management_client_enums import SampleName
+from ._sql_management_client_enums import SecondaryInstanceType
 from ._sql_management_client_enums import SecondaryType
 from ._sql_management_client_enums import SecurityAlertPolicyName
 from ._sql_management_client_enums import SecurityAlertPolicyState
@@ -512,9 +532,11 @@ from ._sql_management_client_enums import SecurityEventType
 from ._sql_management_client_enums import SensitivityLabelRank
 from ._sql_management_client_enums import SensitivityLabelSource
 from ._sql_management_client_enums import SensitivityLabelUpdateKind
+from ._sql_management_client_enums import ServerConfigurationOptionName
 from ._sql_management_client_enums import ServerConnectionType
 from ._sql_management_client_enums import ServerKeyType
 from ._sql_management_client_enums import ServerNetworkAccessFlag
+from ._sql_management_client_enums import ServerPublicNetworkAccessFlag
 from ._sql_management_client_enums import ServerTrustGroupPropertiesTrustScopesItem
 from ._sql_management_client_enums import ServerWorkspaceFeature
 from ._sql_management_client_enums import ServiceObjectiveName
@@ -523,6 +545,7 @@ from ._sql_management_client_enums import ShortTermRetentionPolicyName
 from ._sql_management_client_enums import SqlAgentConfigurationPropertiesState
 from ._sql_management_client_enums import SqlVulnerabilityAssessmentName
 from ._sql_management_client_enums import SqlVulnerabilityAssessmentState
+from ._sql_management_client_enums import StartStopScheduleName
 from ._sql_management_client_enums import StorageCapabilityStorageAccountType
 from ._sql_management_client_enums import StorageKeyType
 from ._sql_management_client_enums import SyncAgentState
@@ -545,7 +568,7 @@ from ._sql_management_client_enums import VulnerabilityAssessmentPolicyBaselineN
 from ._sql_management_client_enums import VulnerabilityAssessmentScanState
 from ._sql_management_client_enums import VulnerabilityAssessmentScanTriggerType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -580,6 +603,7 @@ __all__ = [
     "DatabaseColumnListResult",
     "DatabaseExtensions",
     "DatabaseIdentity",
+    "DatabaseKey",
     "DatabaseListResult",
     "DatabaseOperation",
     "DatabaseOperationListResult",
@@ -627,6 +651,8 @@ __all__ = [
     "EncryptionProtectorListResult",
     "EndpointCertificate",
     "EndpointCertificateListResult",
+    "EndpointDependency",
+    "EndpointDetail",
     "ExportDatabaseDefinition",
     "ExtendedDatabaseBlobAuditingPolicy",
     "ExtendedDatabaseBlobAuditingPolicyListResult",
@@ -759,6 +785,8 @@ __all__ = [
     "ManagedInstanceVersionCapability",
     "ManagedInstanceVulnerabilityAssessment",
     "ManagedInstanceVulnerabilityAssessmentListResult",
+    "ManagedLedgerDigestUploads",
+    "ManagedLedgerDigestUploadsListResult",
     "ManagedServerDnsAlias",
     "ManagedServerDnsAliasAcquisition",
     "ManagedServerDnsAliasCreation",
@@ -783,6 +811,8 @@ __all__ = [
     "OperationDisplay",
     "OperationImpact",
     "OperationListResult",
+    "OutboundEnvironmentEndpoint",
+    "OutboundEnvironmentEndpointCollection",
     "OutboundFirewallRule",
     "OutboundFirewallRuleListResult",
     "PartnerInfo",
@@ -817,6 +847,7 @@ __all__ = [
     "RecoverableDatabaseListResult",
     "RecoverableManagedDatabase",
     "RecoverableManagedDatabaseListResult",
+    "RefreshExternalGovernanceStatusOperationResult",
     "Remediation",
     "ReplicationLink",
     "ReplicationLinkListResult",
@@ -831,6 +862,7 @@ __all__ = [
     "RestorePoint",
     "RestorePointListResult",
     "SQLVulnerabilityAssessmentScanListResult",
+    "ScheduleItem",
     "SecurityEvent",
     "SecurityEventCollection",
     "SecurityEventSqlInjectionAdditionalProperties",
@@ -848,6 +880,8 @@ __all__ = [
     "ServerBlobAuditingPolicyListResult",
     "ServerCommunicationLink",
     "ServerCommunicationLinkListResult",
+    "ServerConfigurationOption",
+    "ServerConfigurationOptionListResult",
     "ServerConnectionPolicy",
     "ServerConnectionPolicyListResult",
     "ServerDevOpsAuditSettingsListResult",
@@ -887,6 +921,8 @@ __all__ = [
     "SqlVulnerabilityAssessmentScanRecord",
     "SqlVulnerabilityAssessmentScanRecordListResult",
     "SqlVulnerabilityAssessmentScanResults",
+    "StartStopManagedInstanceSchedule",
+    "StartStopManagedInstanceScheduleListResult",
     "StorageCapability",
     "SubscriptionUsage",
     "SubscriptionUsageListResult",
@@ -947,6 +983,7 @@ __all__ = [
     "AdvancedThreatProtectionState",
     "AdvisorStatus",
     "AggregationFunctionType",
+    "AlwaysEncryptedEnclaveType",
     "AuthenticationName",
     "AutoExecuteStatus",
     "AutoExecuteStatusInheritedFrom",
@@ -956,6 +993,7 @@ __all__ = [
     "AutomaticTuningOptionModeDesired",
     "AutomaticTuningServerMode",
     "AutomaticTuningServerReason",
+    "AvailabilityZoneType",
     "BackupStorageRedundancy",
     "BaselineName",
     "BlobAuditingPolicyState",
@@ -973,6 +1011,7 @@ __all__ = [
     "DataMaskingState",
     "DataWarehouseUserActivityName",
     "DatabaseIdentityType",
+    "DatabaseKeyType",
     "DatabaseLicenseType",
     "DatabaseReadScale",
     "DatabaseState",
@@ -984,6 +1023,7 @@ __all__ = [
     "ElasticPoolLicenseType",
     "ElasticPoolState",
     "EncryptionProtectorName",
+    "ExternalGovernanceStatus",
     "FailoverGroupReplicationRole",
     "GeoBackupPolicyName",
     "GeoBackupPolicyState",
@@ -1011,6 +1051,8 @@ __all__ = [
     "ManagedInstanceLongTermRetentionPolicyName",
     "ManagedInstancePropertiesProvisioningState",
     "ManagedInstanceProxyOverride",
+    "ManagedLedgerDigestUploadsName",
+    "ManagedLedgerDigestUploadsState",
     "ManagedServerCreateMode",
     "ManagedShortTermRetentionPolicyName",
     "ManagementOperationState",
@@ -1046,6 +1088,7 @@ __all__ = [
     "RuleType",
     "SQLVulnerabilityAssessmentName",
     "SampleName",
+    "SecondaryInstanceType",
     "SecondaryType",
     "SecurityAlertPolicyName",
     "SecurityAlertPolicyState",
@@ -1054,9 +1097,11 @@ __all__ = [
     "SensitivityLabelRank",
     "SensitivityLabelSource",
     "SensitivityLabelUpdateKind",
+    "ServerConfigurationOptionName",
     "ServerConnectionType",
     "ServerKeyType",
     "ServerNetworkAccessFlag",
+    "ServerPublicNetworkAccessFlag",
     "ServerTrustGroupPropertiesTrustScopesItem",
     "ServerWorkspaceFeature",
     "ServiceObjectiveName",
@@ -1065,6 +1110,7 @@ __all__ = [
     "SqlAgentConfigurationPropertiesState",
     "SqlVulnerabilityAssessmentName",
     "SqlVulnerabilityAssessmentState",
+    "StartStopScheduleName",
     "StorageCapabilityStorageAccountType",
     "StorageKeyType",
     "SyncAgentState",

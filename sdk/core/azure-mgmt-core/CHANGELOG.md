@@ -1,5 +1,15 @@
 # Release History
 
+## 1.4.0 (2023-04-06)
+
+### Features
+
+- Added AuxiliaryAuthenticationPolicy
+
+### Other Changes
+
+- Rename "DEFAULT_HEADERS_WHITELIST" to "DEFAULT_HEADERS_ALLOWLIST". Added a backward compatible alias.
+
 ## 1.3.2 (2022-08-11)
 
 ### Other Changes

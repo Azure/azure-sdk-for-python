@@ -5,7 +5,7 @@
 import os
 import platform
 import time
-from typing import Dict
+from typing import Dict, Optional, Any
 
 from msal import PublicClientApplication
 
@@ -18,25 +18,28 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
+from .._constants import EnvironmentVariables
 from .. import AuthenticationRecord
 
 
-class SilentAuthenticationCredential(object):
+class SilentAuthenticationCredential:
     """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
 
     def __init__(
             self,
             authentication_record: AuthenticationRecord,
+            *,
+            tenant_id: Optional[str] = None,
             **kwargs
     ) -> None:
         self._auth_record = authentication_record
 
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
-        self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+        self._tenant_id = tenant_id or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
         self._cache = kwargs.pop("_cache", None)
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
-        self._client_applications = {}  # type: Dict[str, PublicClientApplication]
+        self._client_applications: Dict[str, PublicClientApplication] = {}
         self._additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", [])
         self._client = MsalClient(**kwargs)
         self._initialized = False
@@ -48,7 +51,7 @@ class SilentAuthenticationCredential(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
@@ -75,7 +78,7 @@ class SilentAuthenticationCredential(object):
 
         self._initialized = True
 
-    def _get_client_application(self, **kwargs):
+    def _get_client_application(self, **kwargs: Any):
         tenant_id = resolve_tenant(
             self._tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
@@ -83,7 +86,7 @@ class SilentAuthenticationCredential(object):
         )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
-            capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
+            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
             self._client_applications[tenant_id] = PublicClientApplication(
                 client_id=self._auth_record.client_id,
                 authority="https://{}/{}".format(self._auth_record.authority, tenant_id),
@@ -94,7 +97,7 @@ class SilentAuthenticationCredential(object):
         return self._client_applications[tenant_id]
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes: str, **kwargs) -> AccessToken:
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Silently acquire a token from MSAL."""
 
         result = None

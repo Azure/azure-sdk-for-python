@@ -21,7 +21,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
             storage_name = os.environ.get("BLOB_STORAGE_ACCOUNT_NAME")
             storage_endpoint_suffix = os.environ.get("KEYVAULT_STORAGE_ENDPOINT_SUFFIX")
             container_name = os.environ.get("BLOB_CONTAINER_NAME")
-            self.container_uri = "https://{}.blob.{}/{}".format(storage_name, storage_endpoint_suffix, container_name)
+            self.container_uri = f"https://{storage_name}.blob.{storage_endpoint_suffix}/{container_name}"
 
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
             
@@ -43,7 +43,6 @@ class BaseClientPreparer(AzureRecordedTestCase):
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
-
 
 
 class KeyVaultBackupClientPreparer(BaseClientPreparer):
@@ -87,6 +86,25 @@ class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
             KeyVaultAccessControlClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
 
+
+class KeyVaultSettingsClientPreparer(BaseClientPreparer):
+    def __call__(self, fn):
+        async def _preparer(test_class, api_version, **kwargs):
+            self._skip_if_not_configured(api_version)
+            client = self.create_access_control_client(api_version=api_version, **kwargs)
+
+            async with client:
+                await fn(test_class, client, **kwargs)
+        return _preparer
+
+    def create_access_control_client(self, **kwargs):
+        from azure.keyvault.administration.aio import \
+            KeyVaultSettingsClient
+
+        credential = self.get_credential(KeyVaultSettingsClient, is_async=True)
+        return self.create_client_from_credential(
+            KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+        )
 
 
 def get_decorator(**kwargs):

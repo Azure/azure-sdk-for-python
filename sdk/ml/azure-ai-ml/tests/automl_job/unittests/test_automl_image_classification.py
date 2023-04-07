@@ -5,22 +5,19 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ClassificationPrimaryMetrics,
     LearningRateScheduler,
     MLTableJobInput,
     SamplingAlgorithmType,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import image_classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import (
-    ImageClassificationJob,
-    ImageModelSettingsClassification
-)
+from azure.ai.ml.entities._job.automl.image import ImageClassificationJob, ImageModelSettingsClassification
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 

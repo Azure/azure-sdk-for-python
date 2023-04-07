@@ -5,7 +5,7 @@ import yaml
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
-from azure.ai.ml._restclient.v2021_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -25,7 +25,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
 
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestDeploymentSanity:
     def test_instantiate_OnlineEndpoint_fail(self) -> None:
@@ -211,7 +211,7 @@ class TestBatchDeploymentSDK:
             code_path="tests/test_configs/deployments/model-1/onlinescoring",
             scoring_script="score.py",
             environment="env",
-            compute="batch-cluster",
+            compute="cpu-cluster",
             instance_count=2,
             max_concurrency_per_instance=2,
             mini_batch_size=10,
@@ -222,7 +222,7 @@ class TestBatchDeploymentSDK:
 
         assert isinstance(deployment.code_configuration, CodeConfiguration)
         assert deployment.code_configuration.scoring_script == "score.py"
-        assert deployment.compute == "batch-cluster"
+        assert deployment.compute == "cpu-cluster"
 
     def test_batch_deployment_regular_properties(self) -> None:
         deployment = BatchDeployment(
@@ -234,7 +234,7 @@ class TestBatchDeploymentSDK:
                 code="tests/test_configs/deployments/model-2/onlinescoring", scoring_script="score1.py"
             ),
             environment="env",
-            compute="batch-cluster",
+            compute="cpu-cluster",
             instance_count=2,
             max_concurrency_per_instance=2,
             mini_batch_size=10,
@@ -245,7 +245,7 @@ class TestBatchDeploymentSDK:
 
         assert isinstance(deployment.code_configuration, CodeConfiguration)
         assert deployment.code_configuration.scoring_script == "score1.py"
-        assert deployment.compute == "batch-cluster"
+        assert deployment.compute == "cpu-cluster"
 
     def test_batch_deployment_except_promoted_proterties(self) -> None:
         with pytest.raises(Exception):
@@ -260,7 +260,7 @@ class TestBatchDeploymentSDK:
                 code_path="tests/test_configs/deployments/model-1/onlinescoring",
                 scoring_script="score2.py",
                 environment="env",
-                compute="batch-cluster",
+                compute="cpu-cluster",
                 instance_count=2,
                 max_concurrency_per_instance=2,
                 mini_batch_size=10,

@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import os
 import re
-import json
-from typing import Any, Dict, Union, List
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -17,7 +18,6 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 
 from ..._schema import PathAwareSchema
 from .._util import validate_attribute_type
@@ -82,25 +82,25 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        display_name: str = None,
-        retry_settings: RetrySettings = None,
-        logging_level: str = None,
-        max_concurrency_per_instance: int = None,
-        error_threshold: int = None,
-        mini_batch_error_threshold: int = None,
-        task: ParallelTask = None,
-        mini_batch_size: str = None,
-        partition_keys: List = None,
-        input_data: str = None,
-        resources: JobResourceConfiguration = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        code: str = None,  # promoted property from task.code
-        instance_count: int = None,  # promoted property from resources.instance_count
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        display_name: Optional[str] = None,
+        retry_settings: Optional[RetrySettings] = None,
+        logging_level: Optional[str] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        error_threshold: Optional[int] = None,
+        mini_batch_error_threshold: Optional[int] = None,
+        task: Optional[ParallelTask] = None,
+        mini_batch_size: Optional[str] = None,
+        partition_keys: Optional[List] = None,
+        input_data: Optional[str] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        code: Optional[str] = None,  # promoted property from task.code
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
         **kwargs,
     ):
@@ -235,16 +235,15 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             "resources": (dict, JobResourceConfiguration),
         }
 
-    def _to_rest_object(self) -> ComponentVersionData:
+    def _to_rest_object(self) -> ComponentVersion:
         rest_object = super()._to_rest_object()
         # schema required list while backend accept json string
         if self.partition_keys:
-            rest_object.properties.component_spec["partition_keys"] = \
-                json.dumps(self.partition_keys)
+            rest_object.properties.component_spec["partition_keys"] = json.dumps(self.partition_keys)
         return rest_object
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # schema required list while backend accept json string
         # update rest obj as it will be
         partition_keys = obj.properties.component_spec.get("partition_keys", None)

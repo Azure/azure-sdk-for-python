@@ -5,13 +5,13 @@
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2022_10_01.models import JobScheduleAction
-from azure.ai.ml._restclient.v2022_10_01.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_10_01.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2022_10_01.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -22,11 +22,11 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, 
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
-from .. import CommandJob
-from .._builders import BaseNode
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from .. import CommandJob, SparkJob
+from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
@@ -37,8 +37,8 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     :type name: str
     :param trigger: Trigger of the schedule.
     :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param create_job: The schedule action job definition.
-    :type create_job: Job
+    :param create_job: The schedule action job definition, or the existing job name.
+    :type create_job: Union[Job, str]
     :param display_name: Display name of the schedule.
     :type display_name: str
     :param description: Description of the schedule, defaults to None
@@ -54,11 +54,11 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         *,
         name: str,
         trigger: Union[CronTrigger, RecurrenceTrigger],
-        create_job: Job,
-        display_name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        create_job: Union[Job, str],
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         is_enabled = kwargs.pop("is_enabled", None)
@@ -94,9 +94,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "JobSchedule":
         data = data or {}
@@ -113,9 +113,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     @classmethod
     def _load_from_rest_dict(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "JobSchedule":
         """
@@ -220,7 +220,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
-        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND]:
+        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND, JobType.SPARK]:
             msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
             raise ScheduleException(
                 message=msg.format(obj.name),
@@ -261,13 +261,15 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             job_definition = self.create_job._to_rest_object().properties
             # Set the source job id, as it is used only for schedule scenario.
             job_definition.source_job_id = self.create_job.id
-        elif private_enabled and isinstance(self.create_job, CommandJob):
+        elif private_enabled and isinstance(self.create_job, (CommandJob, SparkJob)):
             job_definition = self.create_job._to_rest_object().properties
             # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
             # job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
             # TODO: Update this after source job id move to JobBaseProperties
-            job_definition = RestPipelineJob(source_job_id=self.create_job)
+            # Rest pipeline job will hold a 'Default' as experiment_name,
+            # MFE will add default if None, so pass an empty string here.
+            job_definition = RestPipelineJob(source_job_id=self.create_job, experiment_name="")
         else:
             msg = "Unsupported job type '{}' in schedule {}."
             raise ValidationException(

@@ -9,10 +9,10 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthMode,
-    OnlineEndpointData,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
@@ -25,14 +25,10 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthKeys as RestEndpointAuthKeys,
-    EndpointAuthToken as RestEndpointAuthToken
-)
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -43,49 +39,83 @@ module_logger = logging.getLogger(__name__)
 class OnlineEndpoint(Endpoint):
     """Online endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str, optional
-    :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
-    :param location: defaults to None
-    :type location: str, optional
-    :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
-    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
-    :type mirror_traffic: Dict[str, int], optional
-    :param provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: str, optional
-    :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration, optional
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints,
-        defaults to None.
-    :type kind: str, optional
+    :keyword name: Name of the resource, defaults to None
+    :type name: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :type auth_mode: typing.Optional[str]
+    :keyword description: Description of the inference endpoint, defaults to None
+    :type description: typing.Optional[str]
+    :keyword location: Location of the resource, defaults to None
+    :type location: typing.Optional[str]
+    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword identity: Identity Configuration, defaults to SystemAssigned
+    :type identity: typing.Optional[IdentityConfiguration]
+    :keyword scoring_uri: Scoring URI, defaults to None
+    :type scoring_uri: typing.Optional[str]
+    :keyword openapi_uri: OpenAPI URI, defaults to None
+    :type openapi_uri: typing.Optional[str]
+    :keyword provisioning_state: Provisioning state of an endpoint, defaults to None
+    :type provisioning_state: typing.Optional[str]
+    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+    :type kind: typing.Optional[str]
     """
 
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        identity: IdentityConfiguration = None,
-        scoring_uri: str = None,
-        openapi_uri: str = None,
-        provisioning_state: str = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        scoring_uri: Optional[str] = None,
+        openapi_uri: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
+        """Online endpoint entity.
+
+        Constructor for an Online endpoint entity.
+
+        :keyword name: Name of the resource, defaults to None
+        :type name: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated. defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :type auth_mode: typing.Optional[str]
+        :keyword description: Description of the inference endpoint, defaults to None
+        :type description: typing.Optional[str]
+        :keyword location: Location of the resource, defaults to None
+        :type location: typing.Optional[str]
+        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword identity: Identity Configuration, defaults to SystemAssigned
+        :type identity: typing.Optional[IdentityConfiguration]
+        :keyword scoring_uri: Scoring URI, defaults to None
+        :type scoring_uri: typing.Optional[str]
+        :keyword openapi_uri: OpenAPI URI, defaults to None
+        :type openapi_uri: typing.Optional[str]
+        :keyword provisioning_state: Provisioning state of an endpoint, defaults to None
+        :type provisioning_state: typing.Optional[str]
+        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+        :type kind: typing.Optional[str]
+        """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
         super(OnlineEndpoint, self).__init__(
@@ -111,7 +141,7 @@ class OnlineEndpoint(Endpoint):
         """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._provisioning_state
 
@@ -186,8 +216,9 @@ class OnlineEndpoint(Endpoint):
     def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
         # pylint: disable=protected-access
-        identity = IdentityConfiguration._from_online_endpoint_rest_object(
-            resource.identity) if resource.identity else None
+        identity = (
+            IdentityConfiguration._from_online_endpoint_rest_object(resource.identity) if resource.identity else None
+        )
         if resource.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=resource.id,
@@ -246,9 +277,9 @@ class OnlineEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Endpoint":
         data = data or {}
@@ -267,44 +298,73 @@ class OnlineEndpoint(Endpoint):
 class KubernetesOnlineEndpoint(OnlineEndpoint):
     """K8s Online endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str, optional
-    :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
-    :param location: defaults to None
-    :type location: str, optional
-    :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
-    :param compute: Compute cluster id.
-    :type compute: str, optional
-    :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration, optional
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional
+    :keyword name: Name of the resource, defaults to None
+    :type name: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :type auth_mode: typing.Optional[str]
+    :keyword description: Description of the inference endpoint, defaults to None
+    :type description: typing.Optional[str]
+    :keyword location: Location of the resource, defaults to None
+    :type location: typing.Optional[str]
+    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword compute: Compute cluster id, defaults to None
+    :type compute: typing.Optional[str]
+    :keyword identity: Identity Configuration, defaults to SystemAssigned
+    :type identity: typing.Optional[IdentityConfiguration]
+    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+    :type kind: typing.Optional[str]
     """
 
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        compute: str = None,
-        identity: IdentityConfiguration = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        compute: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
+        """K8s Online endpoint entity.
+
+        Constructor for K8s Online endpoint entity.
+
+        :keyword name: Name of the resource, defaults to None
+        :type name: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :type auth_mode: typing.Optional[str]
+        :keyword description: Description of the inference endpoint, defaults to None
+        :type description: typing.Optional[str]
+        :keyword location: Location of the resource, defaults to None
+        :type location: typing.Optional[str]
+        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword compute: Compute cluster id, defaults to None
+        :type compute: typing.Optional[str]
+        :keyword identity: Identity Configuration, defaults to SystemAssigned
+        :type identity: typing.Optional[IdentityConfiguration]
+        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+        :type kind: typing.Optional[str]
+        """
         super(KubernetesOnlineEndpoint, self).__init__(
             name=name,
             properties=properties,
@@ -323,7 +383,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -360,45 +420,75 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 class ManagedOnlineEndpoint(OnlineEndpoint):
     """Managed Online endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str, optional
-    :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
-    :param location: defaults to None
-    :type location: str, optional
-    :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
-    :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration, optional
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional,
-    :param public_network_access: Whether to allow public endpoint connectivity
+    :keyword name: Name of the resource, defaults to None
+    :type name: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :type auth_mode: str
+    :keyword description: Description of the inference endpoint, defaults to None
+    :type description: typing.Optional[str]
+    :keyword location: Location of the resource, defaults to None
+    :type location: typing.Optional[str]
+    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword identity: Identity Configuration, defaults to SystemAssigned
+    :type identity: typing.Optional[IdentityConfiguration]
+    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
+    :type kind: typing.Optional[str]
+    :keyword public_network_access: Whether to allow public endpoint connectivity, defaults to None
         Allowed values are: "enabled", "disabled"
-    :type public_network_access: str
+    :type public_network_access: typing.Optional[str]
     """
 
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        identity: IdentityConfiguration = None,
-        kind: str = None,
-        public_network_access = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        kind: Optional[str] = None,
+        public_network_access: Optional[str] = None,
         **kwargs,
     ):
+        """Managed Online endpoint entity.
+
+        Constructor for Managed Online endpoint entity.
+
+        :keyword name: Name of the resource, defaults to None
+        :type name: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :type auth_mode: str
+        :keyword description: Description of the inference endpoint, defaults to None
+        :type description: typing.Optional[str]
+        :keyword location: Location of the resource, defaults to None
+        :type location: typing.Optional[str]
+        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword identity: Identity Configuration, defaults to SystemAssigned
+        :type identity: typing.Optional[IdentityConfiguration]
+        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
+        :type kind: typing.Optional[str]
+        :keyword public_network_access: Whether to allow public endpoint connectivity, defaults to None
+            Allowed values are: "enabled", "disabled"
+        :type public_network_access: typing.Optional[str]
+        """
         self.public_network_access = public_network_access
 
         super(ManagedOnlineEndpoint, self).__init__(
@@ -417,7 +507,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -436,31 +526,23 @@ class EndpointAuthKeys(RestTranslatableMixin):
     :vartype secondary_key: str
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
+    def __init__(self, **kwargs):
+        """Constructor for keys for endpoint authentication.
+
         :keyword primary_key: The primary key.
         :paramtype primary_key: str
         :keyword secondary_key: The secondary key.
         :paramtype secondary_key: str
         """
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
+        self.primary_key = kwargs.get("primary_key", None)
+        self.secondary_key = kwargs.get("secondary_key", None)
 
     @classmethod
     def _from_rest_object(cls, obj: RestEndpointAuthKeys) -> "EndpointAuthKeys":
-        return cls(
-            primary_key=obj.primary_key,
-            secondary_key=obj.secondary_key
-        )
+        return cls(primary_key=obj.primary_key, secondary_key=obj.secondary_key)
 
     def _to_rest_object(self) -> RestEndpointAuthKeys:
-        return RestEndpointAuthKeys(
-            primary_key=self.primary_key,
-            secondary_key=self.secondary_key
-        )
+        return RestEndpointAuthKeys(primary_key=self.primary_key, secondary_key=self.secondary_key)
 
 
 class EndpointAuthToken(RestTranslatableMixin):
@@ -469,31 +551,29 @@ class EndpointAuthToken(RestTranslatableMixin):
     :ivar access_token: Access token for endpoint authentication.
     :vartype access_token: str
     :ivar expiry_time_utc: Access token expiry time (UTC).
-    :vartype expiry_time_utc: long
+    :vartype expiry_time_utc: float
     :ivar refresh_after_time_utc: Refresh access token after time (UTC).
-    :vartype refresh_after_time_utc: long
+    :vartype refresh_after_time_utc: float
     :ivar token_type: Access token type.
     :vartype token_type: str
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
+    def __init__(self, **kwargs):
+        """Constuctor for Endpoint authentication token.
+
         :keyword access_token: Access token for endpoint authentication.
         :paramtype access_token: str
         :keyword expiry_time_utc: Access token expiry time (UTC).
-        :paramtype expiry_time_utc: long
+        :paramtype expiry_time_utc: float
         :keyword refresh_after_time_utc: Refresh access token after time (UTC).
-        :paramtype refresh_after_time_utc: long
+        :paramtype refresh_after_time_utc: float
         :keyword token_type: Access token type.
         :paramtype token_type: str
         """
-        self.access_token = kwargs.get('access_token', None)
-        self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
-        self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
-        self.token_type = kwargs.get('token_type', None)
+        self.access_token = kwargs.get("access_token", None)
+        self.expiry_time_utc = kwargs.get("expiry_time_utc", 0)
+        self.refresh_after_time_utc = kwargs.get("refresh_after_time_utc", 0)
+        self.token_type = kwargs.get("token_type", None)
 
     @classmethod
     def _from_rest_object(cls, obj: RestEndpointAuthToken) -> "EndpointAuthToken":

@@ -44,7 +44,7 @@ from azure.ai.textanalytics import (
     AnalyzeHealthcareEntitiesAction,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
+    AbstractiveSummaryAction,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -242,7 +242,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert 4 == food_target.offset
 
                     assert 'service' == service_target.text
-                    assert 'positive' == service_target.sentiment
+                    assert 'negative' == service_target.sentiment
                     assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
                     assert 13 == service_target.offset
@@ -2091,7 +2091,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
         poller = await client.begin_analyze_actions(
             docs,
-            actions=[AbstractSummaryAction()],
+            actions=[AbstractiveSummaryAction()],
             show_stats=True,
             polling_interval=self._interval(),
         )
@@ -2119,8 +2119,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             RecognizePiiEntitiesAction(),
             # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
             AnalyzeSentimentAction(),
-            # AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
-            ExtractSummaryAction(),
+            AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+            # ExtractSummaryAction(),  https://github.com/Azure/azure-sdk-for-python/issues/27727
         ]
         async with client:
             poller = await client.begin_analyze_actions(
@@ -2132,10 +2132,15 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             result = await poller.result()
             async for res in result:
                 for doc in res:
-                    if doc.id == "1":
-                        assert doc.detected_language.iso6391_name == "en"
+                    # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+                    if doc.kind == "Healthcare":
+                        if doc.id == "1":
+                            assert doc.detected_language == "en"
                     else:
-                        assert doc.detected_language.iso6391_name == "es"
+                        if doc.id == "1":
+                            assert doc.detected_language.iso6391_name == "en"
+                        elif doc.id == "2" and not doc.is_error:
+                            assert doc.detected_language.iso6391_name == "es"
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
@@ -2188,7 +2193,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_autodetect_with_default(self, client):
+    async def test_autodetect_language(self, client):
         docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),
@@ -2201,7 +2206,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             docs,
             actions,
             language="auto",
-            autodetect_default_language="es",
             polling_interval=self._interval(),
         )
 

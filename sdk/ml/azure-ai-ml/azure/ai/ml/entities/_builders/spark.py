@@ -6,44 +6,47 @@
 import copy
 import logging
 from enum import Enum
-from os import PathLike
+from os import PathLike, path
+from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as JobBaseData
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    SparkResourceConfiguration as RestSparkResourceConfiguration,
+from ..._restclient.v2023_02_01_preview.models import JobBase as JobBaseData
+from ..._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
+from ..._schema import NestedField, PathAwareSchema, UnionField
+from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
+from ..._schema.job.spark_job import SparkJobSchema
+from ..._utils.utils import is_url
+from ...constants._common import (
+    ARM_ID_PREFIX,
+    BASE_PATH_CONTEXT_KEY,
+    REGISTRY_URI_FORMAT,
+    SPARK_ENVIRONMENT_WARNING_MESSAGE,
 )
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
-from azure.ai.ml._schema.job.spark_job import SparkJobSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, SPARK_ENVIRONMENT_WARNING_MESSAGE
-from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.constants._job.job import SparkConfKey
-from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import (
+from ...constants._component import NodeType
+from ...constants._job.job import SparkConfKey
+from ...entities._assets import Environment
+from ...entities._component.component import Component
+from ...entities._component.spark_component import SparkComponent
+from ...entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
+from ...entities._inputs_outputs import Input, Output
+from ...entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
     validate_inputs_for_args,
 )
-from azure.ai.ml.entities._credentials import (
-    AmlTokenConfiguration,
-    UserIdentityConfiguration,
-    ManagedIdentityConfiguration,
-    _BaseJobIdentityConfiguration
-)
-from azure.ai.ml.entities._job.spark_job import SparkJob
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-
-from ..._schema import NestedField, PathAwareSchema, UnionField
+from ...entities._job.spark_job import SparkJob
+from ...entities._job.spark_job_entry import SparkJobEntryType
+from ...entities._job.spark_resource_configuration import SparkResourceConfiguration
+from ...entities._validation import MutableValidationResult
+from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._job.pipeline._io import NodeOutput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
@@ -117,42 +120,42 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self,
         *,
         component: Union[str, SparkComponent],
-        identity: Union[
-            Dict[str, str],
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
-        driver_cores: int = None,
-        driver_memory: str = None,
-        executor_cores: int = None,
-        executor_memory: str = None,
-        executor_instances: int = None,
-        dynamic_allocation_enabled: bool = None,
-        dynamic_allocation_min_executors: int = None,
-        dynamic_allocation_max_executors: int = None,
-        conf: Optional[Dict[str, str]] = None,
-        inputs: Dict[
-            str,
-            Union[
-                NodeOutput,
-                Input,
-                str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+        identity: Optional[
+            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        compute: str = None,
-        resources: Union[Dict, SparkResourceConfiguration] = None,
+        driver_cores: Optional[int] = None,
+        driver_memory: Optional[str] = None,
+        executor_cores: Optional[int] = None,
+        executor_memory: Optional[str] = None,
+        executor_instances: Optional[int] = None,
+        dynamic_allocation_enabled: Optional[bool] = None,
+        dynamic_allocation_min_executors: Optional[int] = None,
+        dynamic_allocation_max_executors: Optional[int] = None,
+        conf: Optional[Dict[str, str]] = None,
+        inputs: Optional[
+            Dict[
+                str,
+                Union[
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
+        ] = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        compute: Optional[str] = None,
+        resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
         entry: Union[Dict[str, str], SparkJobEntry, None] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
-        args: str = None,
+        args: Optional[str] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -165,6 +168,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         # init mark for _AttrDict
         self._init = True
+        SparkJobEntryMixin.__init__(self, entry=entry)
         self.conf = conf
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
@@ -177,7 +181,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         is_spark_component = isinstance(component, SparkComponent)
         if is_spark_component:
-            self.conf = self.conf or component.conf
+            # conf is dict and we need copy component conf here, otherwise node conf setting will affect component
+            # setting
+            self.conf = self.conf or copy.copy(component.conf)
             self.driver_cores = self.driver_cores or component.driver_cores
             self.driver_memory = self.driver_memory or component.driver_memory
             self.executor_cores = self.executor_cores or component.executor_cores
@@ -190,7 +196,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             self.dynamic_allocation_max_executors = (
                 self.dynamic_allocation_max_executors or component.dynamic_allocation_max_executors
             )
-
+        if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
+            self.executor_instances = self.dynamic_allocation_min_executors
         # When create standalone job or pipeline job, following fields will always get value from component or get
         # default None, because we will not pass those fields to Spark. But in following cases, we expect to get
         # correct value from spark._from_rest_object() and then following fields will get from their respective
@@ -250,11 +257,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return self._identity
 
     @identity.setter
-    def identity(self, value: Union[
-                                Dict[str, str],
-                                ManagedIdentityConfiguration,
-                                AmlTokenConfiguration,
-                                UserIdentityConfiguration, None]):
+    def identity(
+        self,
+        value: Union[
+            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
+        ],
+    ):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -288,16 +296,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
         obj = super()._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestSparkResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = SparkResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = SparkResourceConfiguration._from_rest_object(obj["resources"])
 
         if "identity" in obj and obj["identity"]:
-            identity = IdentityConfiguration.from_dict(obj["identity"])
-            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(identity)
+            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(obj["identity"])
 
         if "entry" in obj and obj["entry"]:
-            entry = RestSparkJobEntry.from_dict(obj["entry"])
-            obj["entry"] = SparkJobEntry._from_rest_object(entry)
+            obj["entry"] = SparkJobEntry._from_rest_object(obj["entry"])
         if "conf" in obj and obj["conf"]:
             identify_schema = UnionField(
                 [
@@ -351,8 +356,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                rest_spark_job.identity) if rest_spark_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+            if rest_spark_job.identity
+            else None,
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(
@@ -374,7 +380,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, SparkComponent),
+            # hack: allow use InternalSparkComponent as component
+            # "component": (str, SparkComponent),
             "environment": (str, Environment),
             "resources": (dict, SparkResourceConfiguration),
             "code": (str, PathLike),
@@ -385,7 +392,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return self.resources is not None
 
     def _to_job(self) -> SparkJob:
-
         return SparkJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -439,7 +445,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
-        self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
@@ -463,7 +468,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return built_inputs
 
     def _customized_validate(self):
-        self._validate_entry_exist()
         result = super()._customized_validate()
         if (
             isinstance(self.component, SparkComponent)
@@ -474,7 +478,48 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 yaml_path="environment.image",
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
+        result.merge_with(self._validate_entry_exist(raise_error=False))
+        try:
+            self._validate_fields()
+        except ValidationException as e:
+            result.append_error(yaml_path="*", message=str(e))
         return result
+
+    def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
+        is_remote_code = isinstance(self.code, str) and (
+            self.code.startswith("git+")
+            or self.code.startswith(REGISTRY_URI_FORMAT)
+            or self.code.startswith(ARM_ID_PREFIX)
+            or is_url(self.code)
+            or bool(self.CODE_ID_RE_PATTERN.match(self.code))
+        )
+        validation_result = self._create_empty_validation_result()
+        # validate whether component entry exists to ensure code path is correct, especially when code is default value
+        if self.code is None or is_remote_code or not isinstance(self.entry, SparkJobEntry):
+            # skip validate when code is not a local path or code is None, or self.entry is not SparkJobEntry object
+            pass
+        else:
+            if not path.isabs(self.code):
+                code_path = Path(self.component.base_path) / self.code
+                if code_path.exists():
+                    code_path = code_path.resolve().absolute()
+                else:
+                    validation_result.append_error(
+                        message=f"Code path {code_path} doesn't exist.", yaml_path="component.code"
+                    )
+                entry_path = code_path / self.entry.entry
+            else:
+                entry_path = Path(self.code) / self.entry.entry
+
+            if (
+                isinstance(self.entry, SparkJobEntry)
+                and self.entry.entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY
+            ):
+                if not entry_path.exists():
+                    validation_result.append_error(
+                        message=f"Entry {entry_path} doesn't exist.", yaml_path="component.entry"
+                    )
+        return validation_result.try_raise(error_target=self._get_validation_error_target(), raise_error=raise_error)
 
     def _validate_fields(self) -> None:
         _validate_compute_or_resources(self.compute, self.resources)

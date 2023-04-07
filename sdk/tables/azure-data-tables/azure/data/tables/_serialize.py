@@ -9,7 +9,6 @@ from uuid import UUID
 from datetime import datetime
 from math import isnan
 from enum import Enum
-import sys
 
 import six
 from azure.core import MatchConditions
@@ -40,8 +39,7 @@ def _prepare_key(keyvalue):
         raise TypeError('PartitionKey or RowKey must be of type string.')
 
 
-def _parameter_filter_substitution(parameters, query_filter):
-    # type: (Dict[str, str], str) -> str
+def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
     """Replace user defined parameter in filter
     :param parameters: User defined parameters
     :param str query_filter: Filter for querying
@@ -122,10 +120,7 @@ def _to_entity_int32(value):
 
 
 def _to_entity_int64(value):
-    if sys.version_info < (3,):
-        int_value = int(value)
-    else:
-        int_value = int(value)
+    int_value = int(value)
     if int_value >= 2 ** 63 or int_value < -(2 ** 63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)

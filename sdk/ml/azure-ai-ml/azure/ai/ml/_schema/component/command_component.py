@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load, post_dump
+from marshmallow import INCLUDE, fields, post_dump, post_load
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -44,7 +44,7 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
         values=UnionField(
             [
                 NestedField(OutputPortSchema),
-                NestedField(PrimitiveOutputSchema),
+                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
             ]
         ),
     )
@@ -59,8 +59,8 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
 
 
 class RestCommandComponentSchema(CommandComponentSchema):
-    """When component load from rest, won't validate on name since there might
-    be existing component with invalid name."""
+    """When component load from rest, won't validate on name since there might be existing component with invalid
+    name."""
 
     name = fields.Str(required=True)
 
@@ -68,10 +68,8 @@ class RestCommandComponentSchema(CommandComponentSchema):
 class AnonymousCommandComponentSchema(AnonymousAssetSchema, CommandComponentSchema):
     """Anonymous command component schema.
 
-    Note inheritance follows order: AnonymousAssetSchema,
-    CommandComponentSchema because we need name and version to be
-    dump_only(marshmallow collects fields follows method resolution
-    order).
+    Note inheritance follows order: AnonymousAssetSchema, CommandComponentSchema because we need name and version to be
+    dump_only(marshmallow collects fields follows method resolution order).
     """
 
     @post_load

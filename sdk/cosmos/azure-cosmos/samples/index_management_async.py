@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import azure.cosmos.documents as documents
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import urllib3
@@ -49,7 +49,7 @@ def obtain_client():
     # connection_policy.SSLConfiguration.SSLCaCerts = CaCertPath
     # Else, disable verification
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    return cosmos_client.CosmosClient(HOST, MASTER_KEY)
+    return CosmosClient(HOST, MASTER_KEY)
 
 
 # Query for Entity / Entities

@@ -30,50 +30,54 @@ from ._models_py3 import TrafficManagerGeographicHierarchy
 from ._models_py3 import TrafficManagerNameAvailability
 from ._models_py3 import UserMetricsModel
 
-
-from ._traffic_manager_management_client_enums import (
-    AllowedEndpointRecordType,
-    EndpointMonitorStatus,
-    EndpointStatus,
-    EndpointType,
-    MonitorProtocol,
-    ProfileMonitorStatus,
-    ProfileStatus,
-    TrafficRoutingMethod,
-    TrafficViewEnrollmentStatus,
-)
+from ._traffic_manager_management_client_enums import AllowedEndpointRecordType
+from ._traffic_manager_management_client_enums import AlwaysServe
+from ._traffic_manager_management_client_enums import EndpointMonitorStatus
+from ._traffic_manager_management_client_enums import EndpointStatus
+from ._traffic_manager_management_client_enums import EndpointType
+from ._traffic_manager_management_client_enums import MonitorProtocol
+from ._traffic_manager_management_client_enums import ProfileMonitorStatus
+from ._traffic_manager_management_client_enums import ProfileStatus
+from ._traffic_manager_management_client_enums import TrafficRoutingMethod
+from ._traffic_manager_management_client_enums import TrafficViewEnrollmentStatus
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CheckTrafficManagerRelativeDnsNameAvailabilityParameters',
-    'CloudErrorBody',
-    'DeleteOperationResult',
-    'DnsConfig',
-    'Endpoint',
-    'EndpointPropertiesCustomHeadersItem',
-    'EndpointPropertiesSubnetsItem',
-    'HeatMapEndpoint',
-    'HeatMapModel',
-    'MonitorConfig',
-    'MonitorConfigCustomHeadersItem',
-    'MonitorConfigExpectedStatusCodeRangesItem',
-    'Profile',
-    'ProfileListResult',
-    'ProxyResource',
-    'QueryExperience',
-    'Region',
-    'Resource',
-    'TrackedResource',
-    'TrafficFlow',
-    'TrafficManagerGeographicHierarchy',
-    'TrafficManagerNameAvailability',
-    'UserMetricsModel',
-    'AllowedEndpointRecordType',
-    'EndpointMonitorStatus',
-    'EndpointStatus',
-    'EndpointType',
-    'MonitorProtocol',
-    'ProfileMonitorStatus',
-    'ProfileStatus',
-    'TrafficRoutingMethod',
-    'TrafficViewEnrollmentStatus',
+    "CheckTrafficManagerRelativeDnsNameAvailabilityParameters",
+    "CloudErrorBody",
+    "DeleteOperationResult",
+    "DnsConfig",
+    "Endpoint",
+    "EndpointPropertiesCustomHeadersItem",
+    "EndpointPropertiesSubnetsItem",
+    "HeatMapEndpoint",
+    "HeatMapModel",
+    "MonitorConfig",
+    "MonitorConfigCustomHeadersItem",
+    "MonitorConfigExpectedStatusCodeRangesItem",
+    "Profile",
+    "ProfileListResult",
+    "ProxyResource",
+    "QueryExperience",
+    "Region",
+    "Resource",
+    "TrackedResource",
+    "TrafficFlow",
+    "TrafficManagerGeographicHierarchy",
+    "TrafficManagerNameAvailability",
+    "UserMetricsModel",
+    "AllowedEndpointRecordType",
+    "AlwaysServe",
+    "EndpointMonitorStatus",
+    "EndpointStatus",
+    "EndpointType",
+    "MonitorProtocol",
+    "ProfileMonitorStatus",
+    "ProfileStatus",
+    "TrafficRoutingMethod",
+    "TrafficViewEnrollmentStatus",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

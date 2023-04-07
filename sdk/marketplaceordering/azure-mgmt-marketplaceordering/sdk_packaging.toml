@@ -5,4 +5,5 @@ package_pprint_name = "Market Place Ordering"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-sample_link = "marketplaceordering"
+sample_link = ""
+title = "MarketplaceOrderingAgreements"

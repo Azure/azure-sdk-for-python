@@ -24,7 +24,7 @@ from azure.monitor.query import LogsQueryClient
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
-credential  = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 

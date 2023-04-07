@@ -84,10 +84,10 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExtendedDatabaseBlobAuditingPolicyListResult]
+        )
+        cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -111,12 +111,12 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -124,14 +124,15 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             deserialized = self._deserialize("ExtendedDatabaseBlobAuditingPolicyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -143,7 +144,9 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_database.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings"}  # type: ignore
+    list_by_database.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings"
+    }
 
     @distributed_trace_async
     async def get(
@@ -177,11 +180,11 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy]
+        )
+        cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -195,10 +198,11 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -214,7 +218,9 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}"
+    }
 
     @overload
     async def create_or_update(
@@ -302,8 +308,8 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The extended database blob auditing policy. Is either a model type or a IO
-         type. Required.
+        :param parameters: The extended database blob auditing policy. Is either a
+         ExtendedDatabaseBlobAuditingPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or IO
         :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
          "default". Note that overriding this default value may result in unsupported behavior.
@@ -327,12 +333,12 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -357,10 +363,11 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -376,8 +383,10 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             deserialized = self._deserialize("ExtendedDatabaseBlobAuditingPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}"
+    }

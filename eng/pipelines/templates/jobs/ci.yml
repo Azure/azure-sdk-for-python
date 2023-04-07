@@ -61,12 +61,17 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: GenerateApiReviewForManualOnly
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
     timeoutInMinutes: 90
     variables:
-    - template: ../variables/globals.yml
+      Codeql.Enabled: true
+      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -95,9 +100,6 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-
-    variables:
-    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
@@ -133,11 +135,12 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - job: Compliance
     pool:
-      name: azsdk-pool-mms-win-2019-general
-      vmImage: MMS2019
+      name: azsdk-pool-mms-win-2022-general
+      vmImage: MMS2022
     steps:
       - template: /eng/common/pipelines/templates/steps/credscan.yml
         parameters:
@@ -167,30 +170,6 @@ jobs:
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
         TestProxy: ${{ parameters.TestProxy }}
 
-  - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
-    - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-      parameters:
-        JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
-        GenerateJobName: generate_conda_matrix
-        DependsOn:
-          - 'Build'
-        MatrixConfigs:
-            - Name: Python_ci_conda_envs
-              Path: eng/pipelines/templates/stages/platform-matrix-conda-support.json
-              Selection: sparse
-              GenerateVMJobs: true
-        MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
-        CloudConfig:
-          Cloud: Public
-        AdditionalParameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-          CondaArtifacts: ${{ parameters.CondaArtifacts}}
-          TestProxy: ${{ parameters.TestProxy }}
-
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
@@ -203,7 +182,7 @@ jobs:
             GenerateVMJobs: true
       PreGenerationSteps:
         - pwsh: |
-            pip install "./tools/azure-sdk-tools[build]"
+            python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:

@@ -4,12 +4,13 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-from typing import Union, Any, List, Dict, cast
+from typing import Union, Any, List, Dict, cast, Optional
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from .._base_client import TextAnalyticsApiVersion
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import (
     _validate_input,
@@ -25,9 +26,9 @@ from .._response_handlers import (
     language_result,
     pii_entities_result,
     _get_result_from_continuation_token,
-    dynamic_classification_result,
 )
 from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
+from .._generated.models import HealthcareDocumentType
 from .._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -53,9 +54,10 @@ from .._models import (
     AnalyzeHealthcareEntitiesAction,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
-    AbstractSummaryResult,
-    DynamicClassificationResult,
+    AbstractiveSummaryAction,
+    AbstractiveSummaryResult,
+    PiiEntityDomain,
+    PiiEntityCategory,
 )
 from .._check import is_language_api, string_index_type_compatibility
 from .._lro import TextAnalyticsOperationResourcePolling
@@ -81,7 +83,7 @@ AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 ExtractSummaryResult,
-                AbstractSummaryResult,
+                AbstractiveSummaryResult,
                 DocumentError,
             ]
         ]
@@ -133,16 +135,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+        *,
+        default_language: Optional[str] = None,
+        default_country_hint: Optional[str] = None,
+        api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
-            endpoint=endpoint, credential=credential, **kwargs
+            endpoint=endpoint, credential=credential, api_version=api_version, **kwargs
         )
-
-        self._default_language = kwargs.pop("default_language", "en")
-        self._default_country_hint = kwargs.pop("default_country_hint", "US")
+        self._default_language = default_language if default_language is not None else "en"
+        self._default_country_hint = default_country_hint if default_country_hint is not None else "US"
         self._string_code_unit = (
-            None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+            None if api_version == "v3.0" else "UnicodeCodePoint"
         )
 
     @distributed_trace_async
@@ -153,6 +158,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
+        *,
+        country_hint: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detect language for a batch of documents.
@@ -206,16 +216,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Detecting language in a batch of documents.
         """
-        country_hint_arg = kwargs.pop("country_hint", None)
-        country_hint = (
-            country_hint_arg
-            if country_hint_arg is not None
+
+        country_hint_arg = (
+            country_hint
+            if country_hint is not None
             else self._default_country_hint
         )
-        docs = _validate_input(documents, "country_hint", country_hint)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        docs = _validate_input(documents, "country_hint", country_hint_arg)
 
         try:
             if is_language_api(self._api_version):
@@ -259,6 +266,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        disable_service_logs: Optional[bool] = None,
+        language: Optional[str] = None,
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = None,
+        string_index_type: Optional[str] = None,
         **kwargs: Any,
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Recognize entities for a batch of documents.
@@ -317,13 +330,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize entities in a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+
+        language_arg = language if language is not None else self._default_language
+        docs = _validate_input(documents, "language", language_arg)
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
 
         try:
             if is_language_api(self._api_version):
@@ -336,7 +346,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             parameters=models.EntitiesTaskParameters(
                                 logging_opt_out=disable_service_logs,
                                 model_version=model_version,
-                                string_index_type=string_index_type_compatibility(string_index_type)
+                                string_index_type=string_index_type_compatibility(string_index_type_arg)
                             )
                         ),
                         show_stats=show_stats,
@@ -352,7 +362,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    string_index_type=string_index_type,
+                    string_index_type=string_index_type_arg,
                     logging_opt_out=disable_service_logs,
                     cls=kwargs.pop("cls", entities_result),
                     **kwargs,
@@ -368,13 +378,21 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
+        disable_service_logs: Optional[bool] = None,
+        domain_filter: Optional[Union[str, PiiEntityDomain]] = None,
+        language: Optional[str] = None,
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = None,
+        string_index_type: Optional[str] = None,
         **kwargs: Any,
     ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
 
         Returns a list of personal information entities ("SSN",
         "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii
+        check https://aka.ms/azsdk/language/pii
 
         See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
@@ -398,7 +416,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
-            See https://aka.ms/tanerpii for more information.
+            See https://aka.ms/azsdk/language/pii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomain
         :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
@@ -434,15 +452,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        domain_filter = kwargs.pop("domain_filter", None)
-        categories_filter = kwargs.pop("categories_filter", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        language_arg = language if language is not None else self._default_language
+        docs = _validate_input(documents, "language", language_arg)
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
 
         try:
             if is_language_api(self._api_version):
@@ -457,7 +469,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                 model_version=model_version,
                                 domain=domain_filter,
                                 pii_categories=categories_filter,
-                                string_index_type=string_index_type_compatibility(string_index_type)
+                                string_index_type=string_index_type_compatibility(string_index_type_arg)
                             )
                         ),
                         show_stats=show_stats,
@@ -476,7 +488,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     domain=domain_filter,
                     pii_categories=categories_filter,
                     logging_opt_out=disable_service_logs,
-                    string_index_type=string_index_type,
+                    string_index_type=string_index_type_arg,
                     cls=kwargs.pop("cls", pii_entities_result),
                     **kwargs
                 )
@@ -492,6 +504,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        disable_service_logs: Optional[bool] = None,
+        language: Optional[str] = None,
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = None,
+        string_index_type: Optional[str] = None,
         **kwargs: Any,
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
@@ -551,13 +569,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize linked entities in a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+
+        language_arg = language if language is not None else self._default_language
+        docs = _validate_input(documents, "language", language_arg)
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
 
         try:
             if is_language_api(self._api_version):
@@ -570,7 +585,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             parameters=models.EntityLinkingTaskParameters(
                                 logging_opt_out=disable_service_logs,
                                 model_version=model_version,
-                                string_index_type=string_index_type_compatibility(string_index_type)
+                                string_index_type=string_index_type_compatibility(string_index_type_arg)
                             )
                         ),
                         show_stats=show_stats,
@@ -586,7 +601,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     documents=docs,
                     logging_opt_out=disable_service_logs,
                     model_version=model_version,
-                    string_index_type=string_index_type,
+                    string_index_type=string_index_type_arg,
                     show_stats=show_stats,
                     cls=kwargs.pop("cls", linked_entities_result),
                     **kwargs
@@ -603,7 +618,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any,
+        *,
+        disable_service_logs: Optional[bool] = None,
+        language: Optional[str] = None,
+        model_version: Optional[str] = None,
+        show_stats: Optional[bool] = None,
+        **kwargs: Any
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract key phrases from a batch of documents.
 
@@ -658,12 +678,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Extract the key phrases in a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
+
+        language_arg = language if language is not None else self._default_language
+        docs = _validate_input(documents, "language", language_arg)
 
         try:
             if is_language_api(self._api_version):
@@ -707,6 +724,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        disable_service_logs: Optional[bool] = None,
+        language: Optional[str] = None,
+        model_version: Optional[str] = None,
+        show_opinion_mining: Optional[bool] = None,
+        show_stats: Optional[bool] = None,
+        string_index_type: Optional[str] = None,
         **kwargs: Any,
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
@@ -771,14 +795,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Analyze sentiment in a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+
+        language_arg = language if language is not None else self._default_language
+        docs = _validate_input(documents, "language", language_arg)
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
 
         try:
             if is_language_api(self._api_version):
@@ -791,7 +811,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             parameters=models.SentimentAnalysisTaskParameters(
                                 logging_opt_out=disable_service_logs,
                                 model_version=model_version,
-                                string_index_type=string_index_type_compatibility(string_index_type),
+                                string_index_type=string_index_type_compatibility(string_index_type_arg),
                                 opinion_mining=show_opinion_mining,
                             )
                         ),
@@ -808,7 +828,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     documents=docs,
                     logging_opt_out=disable_service_logs,
                     model_version=model_version,
-                    string_index_type=string_index_type,
+                    string_index_type=string_index_type_arg,
                     opinion_mining=show_opinion_mining,
                     show_stats=show_stats,
                     cls=kwargs.pop("cls", sentiment_result),
@@ -839,13 +859,24 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="v3.1",
         args_mapping={
-            "2022-10-01-preview": ["fhir_version", "document_type", "autodetect_default_language"],
+            "2022-10-01-preview": ["fhir_version", "document_type"],
             "2022-05-01": ["display_name"]
         }
     )
     async def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        document_type: Optional[Union[str, HealthcareDocumentType]] = None,
+        fhir_version: Optional[str] = None,
+        language: Optional[str] = None,
+        model_version: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
+        string_index_type: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[
         AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
@@ -876,8 +907,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
@@ -917,7 +946,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-05-01
             The *display_name* keyword argument.
         .. versionadded:: 2022-10-01-preview
-            The *fhir_version*, *document_type*, and *autodetect_default_language* keyword arguments.
+            The *fhir_version* and *document_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -928,18 +957,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Analyze healthcare entities in a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        polling_interval = kwargs.pop("polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        display_name = kwargs.pop("display_name", None)
-        fhir_version = kwargs.pop("fhir_version", None)
-        document_type = kwargs.pop("document_type", None)
-        autodetect_default_language = kwargs.pop("autodetect_default_language", None)
+
+        language_arg = language if language is not None else self._default_language
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
 
         if continuation_token:
             return cast(
@@ -952,14 +973,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AsyncAnalyzeHealthcareEntitiesLROPoller,
                     AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                         text_analytics_client=self._client,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         **kwargs
                     ),
                     self._healthcare_result_callback
                 )
             )
 
-        docs = _validate_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language_arg)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
@@ -971,8 +992,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         try:
             if is_language_api(self._api_version):
-                docs = models.MultiLanguageAnalysisInput(
-                    documents=_validate_input(documents, "language", language)
+                input_docs = models.MultiLanguageAnalysisInput(
+                    documents=docs
                 )
                 return cast(
                     AsyncAnalyzeHealthcareEntitiesLROPoller[
@@ -980,16 +1001,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ],
                     await self._client.begin_analyze_text_submit_job(  # type: ignore
                         body=models.AnalyzeTextJobsInput(
-                            analysis_input=docs,
+                            analysis_input=input_docs,
                             display_name=display_name,
-                            default_language=autodetect_default_language,
                             tasks=[
                                 models.HealthcareLROTask(
                                     task_name="0",
                                     parameters=models.HealthcareTaskParameters(
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
-                                        string_index_type=string_index_type_compatibility(string_index_type),
+                                        string_index_type=string_index_type_compatibility(string_index_type_arg),
                                         fhir_version=fhir_version,
                                         document_type=document_type,
                                     )
@@ -999,7 +1019,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         cls=my_cls,
                         polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                             text_analytics_client=self._client,
-                            timeout=polling_interval,
+                            timeout=polling_interval_arg,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
                             lro_algorithms=[
@@ -1023,14 +1043,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 await self._client.begin_health(
                     docs,
                     model_version=model_version,
-                    string_index_type=string_index_type,
+                    string_index_type=string_index_type_arg,
                     logging_opt_out=disable_service_logs,
                     cls=my_cls,
                     polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
                         text_analytics_client=self._client,
                         doc_id_order=doc_id_order,
                         show_stats=show_stats,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         lro_algorithms=[
                             TextAnalyticsOperationResourcePolling(
                                 show_stats=show_stats,
@@ -1067,9 +1087,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="v3.1",
         custom_wrapper=check_for_unsupported_actions_types,
-        args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
-        }
     )
     async def begin_analyze_actions(
         self,
@@ -1086,9 +1103,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
                 ExtractSummaryAction,
-                AbstractSummaryAction,
+                AbstractiveSummaryAction,
             ]
         ],
+        *,
+        continuation_token: Optional[str] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
         **kwargs: Any,
     ) -> AsyncTextAnalysisLROPoller[
         AsyncItemPaged[
@@ -1103,7 +1126,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     ExtractSummaryResult,
-                    AbstractSummaryResult,
+                    AbstractiveSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1136,7 +1159,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
             MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or
-            AbstractSummaryAction or ExtractSummaryAction]
+            AbstractiveSummaryAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1144,8 +1167,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -1169,7 +1190,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
             or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
-            or AbstractSummaryResult or DocumentError]]]
+            or AbstractiveSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1182,7 +1203,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-10-01-preview
             The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
             *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
-            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1195,15 +1215,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     a batch of documents.
         """
 
-        display_name = kwargs.pop("display_name", None)
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-
-        show_stats = kwargs.pop("show_stats", None)
-        polling_interval = kwargs.pop("polling_interval", 5)
-        continuation_token = kwargs.pop("continuation_token", None)
+        language_arg = language if language is not None else self._default_language
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
         bespoke = kwargs.pop("bespoke", False)
-        autodetect_default_language = kwargs.pop("autodetect_default_language", None)
 
         if continuation_token:
             return cast(
@@ -1214,7 +1228,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
                         text_analytics_client=self._client,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         **kwargs
                     ),
                     self._analyze_result_callback,
@@ -1227,7 +1241,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         input_model_cls = \
             models.MultiLanguageAnalysisInput if is_language_api(self._api_version) else models.MultiLanguageBatchInput
         docs = input_model_cls(
-            documents=_validate_input(documents, "language", language)
+            documents=_validate_input(documents, "language", language_arg)
         )
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
@@ -1260,13 +1274,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         body=models.AnalyzeTextJobsInput(
                             analysis_input=docs,
                             display_name=display_name,
-                            default_language=autodetect_default_language,
                             tasks=generated_tasks
                         ),
                         cls=response_cls,
                         polling=AsyncAnalyzeActionsLROPollingMethod(
                             text_analytics_client=self._client,
-                            timeout=polling_interval,
+                            timeout=polling_interval_arg,
                             show_stats=show_stats,
                             doc_id_order=doc_id_order,
                             task_id_order=task_order,
@@ -1315,7 +1328,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     cls=response_cls,
                     polling=AsyncAnalyzeActionsLROPollingMethod(
                         text_analytics_client=self._client,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         show_stats=show_stats,
                         doc_id_order=doc_id_order,
                         task_id_order=task_order,
@@ -1336,15 +1349,20 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="2022-05-01",
-        args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
-        }
     )
     async def begin_recognize_custom_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         project_name: str,
         deployment_name: str,
+        *,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
+        string_index_type: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
         """Start a long-running custom named entity recognition operation.
@@ -1367,8 +1385,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1400,8 +1416,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: 2022-05-01
             The *begin_recognize_custom_entities* client method.
-        .. versionadded:: 2022-10-01-preview
-            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1413,10 +1427,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :caption: Recognize custom entities in a batch of documents.
         """
 
-        continuation_token = kwargs.pop("continuation_token", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        polling_interval = kwargs.pop("polling_interval", 5)
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
 
         if continuation_token:
             return cast(
@@ -1427,7 +1439,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
                         text_analytics_client=self._client,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         **kwargs
                     ),
                     self._analyze_result_callback,
@@ -1446,11 +1458,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         RecognizeCustomEntitiesAction(
                             project_name=project_name,
                             deployment_name=deployment_name,
-                            string_index_type=string_index_type,
+                            string_index_type=string_index_type_arg,
                             disable_service_logs=disable_service_logs
                         )
                     ],
-                    polling_interval=polling_interval,
+                    display_name=display_name,
+                    show_stats=show_stats,
+                    language=language,
+                    polling_interval=polling_interval_arg,
                     bespoke=True,
                     **kwargs
                 )
@@ -1462,15 +1477,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="2022-05-01",
-        args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
-        }
     )
     async def begin_single_label_classify(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         project_name: str,
         deployment_name: str,
+        *,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
         **kwargs: Any,
     ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]]:
         """Start a long-running custom single label classification operation.
@@ -1493,8 +1512,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1522,8 +1539,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: 2022-05-01
             The *begin_single_label_classify* client method.
-        .. versionadded:: 2022-10-01-preview
-            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1535,9 +1550,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :caption: Perform single label classification on a batch of documents.
         """
 
-        continuation_token = kwargs.pop("continuation_token", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        polling_interval = kwargs.pop("polling_interval", 5)
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
 
         if continuation_token:
             return cast(
@@ -1548,7 +1561,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
                         text_analytics_client=self._client,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         **kwargs
                     ),
                     self._analyze_result_callback,
@@ -1570,7 +1583,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             disable_service_logs=disable_service_logs
                         )
                     ],
-                    polling_interval=polling_interval,
+                    polling_interval=polling_interval_arg,
+                    display_name=display_name,
+                    show_stats=show_stats,
+                    language=language,
                     bespoke=True,
                     **kwargs
                 )
@@ -1582,15 +1598,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="2022-05-01",
-        args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
-        }
     )
     async def begin_multi_label_classify(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         project_name: str,
         deployment_name: str,
+        *,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
         **kwargs: Any,
     ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]]:
         """Start a long-running custom multi label classification operation.
@@ -1613,8 +1633,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1642,8 +1660,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: 2022-05-01
             The *begin_multi_label_classify* client method.
-        .. versionadded:: 2022-10-01-preview
-            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1655,9 +1671,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :caption: Perform multi label classification on a batch of documents.
         """
 
-        continuation_token = kwargs.pop("continuation_token", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        polling_interval = kwargs.pop("polling_interval", 5)
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
 
         if continuation_token:
             return cast(
@@ -1668,7 +1682,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
                         text_analytics_client=self._client,
-                        timeout=polling_interval,
+                        timeout=polling_interval_arg,
                         **kwargs
                     ),
                     self._analyze_result_callback,
@@ -1690,7 +1704,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             disable_service_logs=disable_service_logs
                         )
                     ],
-                    polling_interval=polling_interval,
+                    polling_interval=polling_interval_arg,
+                    display_name=display_name,
+                    show_stats=show_stats,
+                    language=language,
                     bespoke=True,
                     **kwargs
                 )
@@ -1701,48 +1718,47 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     @distributed_trace_async
     @validate_multiapi_args(
-        version_method_added="2022-10-01-preview",
+        version_method_added="2022-10-01-preview"
     )
-    async def dynamic_classification(
+    async def begin_extract_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        categories: List[str],
+        *,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        max_sentence_count: Optional[int] = None,
+        order_by: Optional[str] = None,
         **kwargs: Any,
-    ) -> List[Union[DynamicClassificationResult, DocumentError]]:
-        """Perform dynamic classification on a batch of documents.
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]]:
+        """Start a long-running extractive summarization operation.
 
-        On the fly classification of the input documents into one or multiple categories.
-        Assigns either one or multiple categories per document. This type of classification
-        doesn't require model training.
-
-        .. note:: The dynamic classification feature is part of a gated preview. Request access here:
-            https://aka.ms/applyforgatedlanguagefeature
-
-        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
+        For a conceptual discussion of extractive summarization, see the service documentation:
+        https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list
-            of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
-            like `{"id": "1", "language": "en", "text": "hello world"}`.
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
-        :param list[str] categories: A list of categories to which input is classified to.
-        :keyword classification_type: Specifies either one or multiple categories per document. Defaults
-            to multi classification which may return more than one class for each document. Known values
-            are: "Single" and "Multi".
-        :paramtype classification_type: str or ~azure.ai.textanalytics.ClassificationType
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-            See here for more info: https://aka.ms/text-analytics-model-versioning
-        :keyword bool show_stats: If set to true, response will contain document
-            level statistics in the `statistics` field of the document-level response.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+        :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+        :keyword Optional[str] model_version: The model version to use for the analysis.
+        :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -1751,50 +1767,207 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        :return: The combined list of :class:`~azure.ai.textanalytics.DynamicClassificationResult` and
-            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
-            were passed in.
-        :rtype: list[~azure.ai.textanalytics.DynamicClassificationResult or ~azure.ai.textanalytics.DocumentError]
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2022-10-01-preview
-            The *dynamic_classification* client method.
+            The *begin_extract_summary* client method.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_dynamic_classification_async.py
-                :start-after: [START dynamic_classification_async]
-                :end-before: [END dynamic_classification_async]
+            .. literalinclude:: ../samples/async_samples/sample_extract_summary_async.py
+                :start-after: [START extract_summary_async]
+                :end-before: [END extract_summary_async]
                 :language: python
                 :dedent: 4
-                :caption: Perform dynamic classification on a batch of documents.
+                :caption: Perform extractive summarization on a batch of documents.
         """
-        language_arg = kwargs.pop("language", None)
-        language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
-        model_version = kwargs.pop("model_version", None)
-        show_stats = kwargs.pop("show_stats", None)
-        disable_service_logs = kwargs.pop("disable_service_logs", None)
-        classification_type = kwargs.pop("classification_type", None)
+
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
+
+        if continuation_token:
+            return cast(
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeActionsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval_arg,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
 
         try:
-            models = self._client.models(api_version=self._api_version)
             return cast(
-                List[Union[DynamicClassificationResult, DocumentError]],
-                await self._client.analyze_text(
-                    body=models.AnalyzeTextDynamicClassificationInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.DynamicClassificationTaskParameters(
-                            categories=categories,
-                            logging_opt_out=disable_service_logs,
+                AsyncTextAnalysisLROPoller[
+                    AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]
+                ],
+                await self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        ExtractSummaryAction(
                             model_version=model_version,
-                            classification_type=classification_type,
+                            string_index_type=string_index_type_arg,
+                            max_sentence_count=max_sentence_count,
+                            order_by=order_by,
+                            disable_service_logs=disable_service_logs,
                         )
-                    ),
+                    ],
+                    polling_interval=polling_interval_arg,
+                    display_name=display_name,
                     show_stats=show_stats,
-                    cls=kwargs.pop("cls", dynamic_classification_result),
+                    language=language,
+                    bespoke=True,
                     **kwargs
                 )
             )
+
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+    @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="2022-10-01-preview"
+    )
+    async def begin_abstractive_summary(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        sentence_count: Optional[int] = None,
+        **kwargs: Any,
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]]:
+        """Start a long-running abstractive summarization operation.
+
+        For a conceptual discussion of abstractive summarization, see the service documentation:
+        https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
+
+        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedsummarizationfeatures
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+        :keyword Optional[str] model_version: The model version to use for the analysis.
+        :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.AbstractiveSummaryResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AbstractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-10-01-preview
+            The *begin_abstractive_summary* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_abstractive_summary_async.py
+                :start-after: [START abstractive_summary_async]
+                :end-before: [END abstractive_summary_async]
+                :language: python
+                :dedent: 4
+                :caption: Perform abstractive summarization on a batch of documents.
+        """
+
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_code_unit
+
+        if continuation_token:
+            return cast(
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AsyncAnalyzeActionsLROPoller,
+                    AsyncAnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval_arg,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                AsyncTextAnalysisLROPoller[
+                    AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]
+                ],
+                await self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        AbstractiveSummaryAction(
+                            model_version=model_version,
+                            string_index_type=string_index_type_arg,
+                            sentence_count=sentence_count,
+                            disable_service_logs=disable_service_logs,
+                        )
+                    ],
+                    polling_interval=polling_interval_arg,
+                    display_name=display_name,
+                    show_stats=show_stats,
+                    language=language,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
         except HttpResponseError as error:
             return process_http_response_error(error)

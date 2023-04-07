@@ -25,6 +25,7 @@ from ._models_py3 import SourceModifiedAccessConditions
 from ._models_py3 import StorageError
 from ._models_py3 import StorageErrorError
 
+from ._azure_data_lake_storage_restapi_enums import LeaseAction
 from ._azure_data_lake_storage_restapi_enums import ListBlobsIncludeItem
 from ._azure_data_lake_storage_restapi_enums import PathExpiryOptions
 from ._azure_data_lake_storage_restapi_enums import PathGetPropertiesAction
@@ -34,7 +35,7 @@ from ._azure_data_lake_storage_restapi_enums import PathResourceType
 from ._azure_data_lake_storage_restapi_enums import PathSetAccessControlRecursiveMode
 from ._azure_data_lake_storage_restapi_enums import PathUpdateAction
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -56,6 +57,7 @@ __all__ = [
     "SourceModifiedAccessConditions",
     "StorageError",
     "StorageErrorError",
+    "LeaseAction",
     "ListBlobsIncludeItem",
     "PathExpiryOptions",
     "PathGetPropertiesAction",

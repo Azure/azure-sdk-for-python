@@ -65,7 +65,7 @@ if __name__ == "__main__":
     print("Folder for search {}".format(args.wheel_folder))
 
     target_glob = os.path.join(os.path.abspath(args.wheel_folder), "*.whl")
-    sdk_setup_sh = os.path.join(os.path.abspath(args.ml_root), "sdk", "setup.sh")
+    sdk_setup_sh = os.path.join(os.path.abspath(args.ml_root), "sdk", "python", "setup.sh")
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     container_client = blob_service_client.get_container_client(DEFAULT_CONTAINER)
     to_be_installed = []

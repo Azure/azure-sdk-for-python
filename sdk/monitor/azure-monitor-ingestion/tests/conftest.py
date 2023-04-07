@@ -23,21 +23,46 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import platform
-import sys
-import pytest
-from devtools_testutils import test_proxy
-from devtools_testutils.sanitizers import add_body_key_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
+from datetime import datetime
 
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
-    collect_ignore_glob.append("test_cncf*")
+import pytest
+
+from devtools_testutils.sanitizers import (
+    add_body_key_sanitizer,
+    add_general_regex_sanitizer,
+    add_header_regex_sanitizer,
+    set_custom_default_matcher,
+    add_oauth_response_sanitizer
+)
+
+
+# Environment variable keys
+ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
+ENV_DCE = "AZURE_MONITOR_DCE"
+ENV_DCR_ID = "AZURE_MONITOR_DCR_ID"
+ENV_STREAM_NAME = "AZURE_MONITOR_STREAM_NAME"
+ENV_TENANT_ID = "AZURE_TENANT_ID"
+ENV_CLIENT_ID = "AZURE_CLIENT_ID"
+ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
+
+# Fake values
+TEST_ID = "00000000-0000-0000-0000-000000000000"
+TEST_DCE = "https://fake.ingest.monitor.azure.com"
+TEST_STREAM_NAME = "test-stream"
+
 
 @pytest.fixture(scope="session", autouse=True)
-def add_aeg_sanitizer(test_proxy):
-    # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+def add_sanitizers(test_proxy, environment_variables):
+    sanitization_mapping = {
+        ENV_SUBSCRIPTION_ID: TEST_ID,
+        ENV_TENANT_ID: TEST_ID,
+        ENV_CLIENT_ID: TEST_ID,
+        ENV_CLIENT_SECRET: TEST_ID,
+        ENV_DCE: TEST_DCE,
+        ENV_STREAM_NAME: TEST_STREAM_NAME,
+        ENV_DCR_ID: TEST_ID
+    }
+    environment_variables.sanitize_batch(sanitization_mapping)
     set_custom_default_matcher(
         compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
     )
@@ -45,6 +70,29 @@ def add_aeg_sanitizer(test_proxy):
         value="fakeresource",
         regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.ingest\\.monitor\\.azure\\.com)"
     )
-    add_body_key_sanitizer(
-        json_path="access_token", value="fakekey"
-    )
+    add_body_key_sanitizer(json_path="access_token", value="fakekey")
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_oauth_response_sanitizer()
+
+
+@pytest.fixture(scope="session")
+def monitor_info(environment_variables):
+    yield {
+        "stream_name": environment_variables.get(ENV_STREAM_NAME),
+        "dce": environment_variables.get(ENV_DCE),
+        "dcr_id": environment_variables.get(ENV_DCR_ID)
+    }
+
+
+@pytest.fixture(scope="session")
+def large_data():
+    logs = []
+    content = "a" * (1024 * 100) # 100 KiB string
+
+    # Ensure total size is > 2 MiB data
+    for i in range(24):
+        logs.append({
+            "Time": datetime.now().isoformat(),
+            "AdditionalContext": content
+        })
+    return logs

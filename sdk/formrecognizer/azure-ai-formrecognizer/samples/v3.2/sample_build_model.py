@@ -46,6 +46,7 @@ def sample_build_model():
     print("Model ID: {}".format(model.model_id))
     print("Description: {}".format(model.description))
     print("Model created on: {}\n".format(model.created_on))
+    print("Model expires on: {}\n".format(model.expires_on))
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print("\nDoc Type: '{}' built with '{}' mode which has the following fields:".format(name, doc_type.build_mode))
@@ -57,4 +58,24 @@ def sample_build_model():
 
 
 if __name__ == '__main__':
-    sample_build_model()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        sample_build_model()
+    except HttpResponseError as error:
+        print("For more information about troubleshooting errors, see the following guide: "
+              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
+        # If the inner error is None and then it is possible to check the message to get more information:
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

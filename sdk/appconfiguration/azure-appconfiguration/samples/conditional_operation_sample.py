@@ -35,6 +35,8 @@ def main():
 
     # Unconditional get
     first_get = client.get_configuration_setting(key="MyKey")
+    if first_get is None:
+        return print("Error, unconditional set failed.")
     print_configuration_setting(first_get)
 
     # Conditional get, expect to return None because it is not modified

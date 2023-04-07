@@ -26,9 +26,9 @@ class ManagedServiceIdentityClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Id of the Subscription to which the identity belongs.
+    :param subscription_id: The Id of the Subscription to which the identity belongs. Required.
     :type subscription_id: str
     """
 
@@ -36,7 +36,7 @@ class ManagedServiceIdentityClientConfiguration(Configuration):
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

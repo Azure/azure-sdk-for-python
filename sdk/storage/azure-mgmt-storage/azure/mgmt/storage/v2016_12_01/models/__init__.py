@@ -30,66 +30,68 @@ from ._models_py3 import Usage
 from ._models_py3 import UsageListResult
 from ._models_py3 import UsageName
 
-
-from ._storage_management_enums import (
-    AccessTier,
-    AccountSasParametersSignedPermission,
-    AccountSasParametersSignedResourceTypes,
-    AccountSasParametersSignedServices,
-    AccountStatus,
-    HttpProtocol,
-    KeyPermission,
-    Kind,
-    Permissions,
-    ProvisioningState,
-    Reason,
-    SignedResource,
-    SkuName,
-    SkuTier,
-    UsageUnit,
-)
+from ._storage_management_enums import AccessTier
+from ._storage_management_enums import AccountSasParametersSignedPermission
+from ._storage_management_enums import AccountSasParametersSignedResourceTypes
+from ._storage_management_enums import AccountSasParametersSignedServices
+from ._storage_management_enums import AccountStatus
+from ._storage_management_enums import EncryptionKeySource
+from ._storage_management_enums import HttpProtocol
+from ._storage_management_enums import KeyPermission
+from ._storage_management_enums import Kind
+from ._storage_management_enums import Permissions
+from ._storage_management_enums import ProvisioningState
+from ._storage_management_enums import Reason
+from ._storage_management_enums import SignedResource
+from ._storage_management_enums import SkuName
+from ._storage_management_enums import SkuTier
+from ._storage_management_enums import StorageAccountCheckNameAvailabilityParametersType
+from ._storage_management_enums import UsageUnit
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountSasParameters',
-    'CheckNameAvailabilityResult',
-    'CustomDomain',
-    'Encryption',
-    'EncryptionService',
-    'EncryptionServices',
-    'Endpoints',
-    'ListAccountSasResponse',
-    'ListServiceSasResponse',
-    'Resource',
-    'ServiceSasParameters',
-    'Sku',
-    'StorageAccount',
-    'StorageAccountCheckNameAvailabilityParameters',
-    'StorageAccountCreateParameters',
-    'StorageAccountKey',
-    'StorageAccountListKeysResult',
-    'StorageAccountListResult',
-    'StorageAccountRegenerateKeyParameters',
-    'StorageAccountUpdateParameters',
-    'Usage',
-    'UsageListResult',
-    'UsageName',
-    'AccessTier',
-    'AccountSasParametersSignedPermission',
-    'AccountSasParametersSignedResourceTypes',
-    'AccountSasParametersSignedServices',
-    'AccountStatus',
-    'HttpProtocol',
-    'KeyPermission',
-    'Kind',
-    'Permissions',
-    'ProvisioningState',
-    'Reason',
-    'SignedResource',
-    'SkuName',
-    'SkuTier',
-    'UsageUnit',
+    "AccountSasParameters",
+    "CheckNameAvailabilityResult",
+    "CustomDomain",
+    "Encryption",
+    "EncryptionService",
+    "EncryptionServices",
+    "Endpoints",
+    "ListAccountSasResponse",
+    "ListServiceSasResponse",
+    "Resource",
+    "ServiceSasParameters",
+    "Sku",
+    "StorageAccount",
+    "StorageAccountCheckNameAvailabilityParameters",
+    "StorageAccountCreateParameters",
+    "StorageAccountKey",
+    "StorageAccountListKeysResult",
+    "StorageAccountListResult",
+    "StorageAccountRegenerateKeyParameters",
+    "StorageAccountUpdateParameters",
+    "Usage",
+    "UsageListResult",
+    "UsageName",
+    "AccessTier",
+    "AccountSasParametersSignedPermission",
+    "AccountSasParametersSignedResourceTypes",
+    "AccountSasParametersSignedServices",
+    "AccountStatus",
+    "EncryptionKeySource",
+    "HttpProtocol",
+    "KeyPermission",
+    "Kind",
+    "Permissions",
+    "ProvisioningState",
+    "Reason",
+    "SignedResource",
+    "SkuName",
+    "SkuTier",
+    "StorageAccountCheckNameAvailabilityParametersType",
+    "UsageUnit",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

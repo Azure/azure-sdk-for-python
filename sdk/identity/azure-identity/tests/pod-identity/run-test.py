@@ -47,18 +47,20 @@ def run_command(command, exit_on_failure=True):
 helm_install = [
     "helm",
     "install",
-    os.path.join(os.path.dirname(__file__), "test-pod-identity"),
-    "-n",
     HELM_APP_NAME,
-    "--set",
-    "aad-pod-identity.azureIdentity.resourceID={},aad-pod-identity.azureIdentity.clientID={}".format(
-        args.resource_id, args.client_id
-    ),
+    os.path.join(os.path.dirname(__file__), "test-pod-identity"),
     "--set",
     "vaultUrl=" + args.vault_url,
     "--set",
     "image.repository={},image.name={},image.tag={}".format(args.repository, args.image_name, args.image_tag),
+    "--set",
+    "aad-pod-identity.azureIdentities.pod-identity-test-identity.clientID={}".format(args.client_id),
+    "--set",
+    "aad-pod-identity.azureIdentities.pod-identity-test-identity.resourceID={}".format(args.resource_id),
+    "--debug"
 ]
+
+print(f"Running command: {' '.join(helm_install)}")
 run_command(helm_install)
 
 # get the name of the test pod
@@ -82,7 +84,7 @@ for _ in range(10):
 print(logs)
 
 # uninstall the chart
-run_command(["helm", "del", "--purge", HELM_APP_NAME])
+run_command(["helm", "uninstall", HELM_APP_NAME])
 
 # delete CRDs because Helm didn't
 pod_identity_CRDs = [

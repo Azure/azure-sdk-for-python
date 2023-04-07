@@ -11,39 +11,45 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
+class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that discriminates between filter types. Currently only ``Simple`` type is supported."""
+
+    SIMPLE = "Simple"
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """String of the resource identity type.
-    """
+    """String of the resource identity type."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
 
+
 class SelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum of the selector type.
-    """
+    """Enum of the selector type."""
 
     PERCENT = "Percent"
     RANDOM = "Random"

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import base64
 import random
+import tempfile
 import uuid
 from io import BytesIO
 from math import ceil
@@ -47,13 +48,6 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
             blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
             await blob.upload_blob(self.byte_data, overwrite=True)
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
-            except:
-                pass
 
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
@@ -338,17 +332,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_to_stream_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == len(self.byte_data)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == len(self.byte_data)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -369,11 +361,10 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_to_stream_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(max_concurrency=2, raw_response_hook=callback)
             with pytest.raises(ValueError):
-                await downloader.readinto(stream)
+                await downloader.readinto(temp_file)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -394,21 +385,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        FILE_PATH = 'blob_to_stream_with_progress_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
-        # Assert
-        assert read_bytes == len(self.byte_data)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            read_bytes = await downloader.readinto(temp_file)
+            # Assert
+            assert read_bytes == len(self.byte_data)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.config.max_chunk_get_size,
-            self.config.max_single_get_size,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -427,22 +412,16 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        FILE_PATH = 'blob_to_stream_non_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(raw_response_hook=callback, max_concurrency=1)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == len(self.byte_data)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == len(self.byte_data)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data),
-            self.config.max_chunk_get_size,
-            self.config.max_single_get_size,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -466,22 +445,16 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
 
         # Act
-        FILE_PATH = 'blob_to_stream_small_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == 1024
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == 1024
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert blob_data == actual
-        self.assert_download_progress(
-            len(blob_data),
-            self.config.max_chunk_get_size,
-            self.config.max_single_get_size,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -498,16 +471,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # Act
         end_range = self.config.max_single_get_size
         FILE_PATH = 'ranged_get_blob_to_path_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=end_range-1, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == end_range - 1
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == end_range - 1
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[1:end_range] == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -530,26 +502,20 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # Act
         start_range = 3
         end_range = self.config.max_single_get_size + 1024
-        FILE_PATH = 'get_blob_to_path_with_progress_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(
                 offset=start_range,
                 length=end_range,
                 raw_response_hook=callback,
                 max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == self.config.max_single_get_size + 1024
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == self.config.max_single_get_size + 1024
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[start_range:end_range + start_range] == actual
-        self.assert_download_progress(
-            end_range,
-            self.config.max_chunk_get_size,
-            self.config.max_single_get_size,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(end_range, self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -562,17 +528,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_to_path_small_asyncc.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=4, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == 4
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == 4
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[1:5] == actual
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -585,17 +549,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'granged_get_blob_to_path_non_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=3, max_concurrency=1)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == 3
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == 3
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data[1:4] == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -616,16 +578,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # Act
         FILE_PATH = 'path_invalid_range_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
         end_range = 2 * self.config.max_single_get_size
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=end_range, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == blob_size
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == blob_size
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert blob_data[1:blob_size] == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -645,18 +606,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
         # Act
         end_range = 2 * self.config.max_single_get_size
-        FILE_PATH = 'path_invalid_range_non_parallel_asy.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=end_range, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == blob_size
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
-            assert blob_data[1:blob_size] == actual
-        self._teardown(FILE_PATH)
             # Assert
+            assert read_bytes == blob_size
+            temp_file.seek(0)
+            actual = temp_file.read()
+            assert blob_data[1:blob_size] == actual
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -847,18 +805,16 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'get_blob_non_seekable_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = TestStorageGetBlobTest.NonSeekableFile(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            non_seekable_stream = TestStorageGetBlobTest.NonSeekableFile(temp_file)
             downloader = await blob.download_blob(max_concurrency=1)
             read_bytes = await downloader.readinto(non_seekable_stream)
 
-        # Assert
-        assert read_bytes == len(self.byte_data)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == len(self.byte_data)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -873,14 +829,12 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'et_blob_non_seekable_parallel_asyn.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = TestStorageGetBlobTest.NonSeekableFile(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            non_seekable_stream = TestStorageGetBlobTest.NonSeekableFile(temp_file)
 
             with pytest.raises(ValueError):
                 downloader = await blob.download_blob(max_concurrency=2)
                 properties = await downloader.readinto(non_seekable_stream)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -903,21 +857,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        FILE_PATH = 'stream_exact_get_size_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            properties = await downloader.readinto(stream)
+            properties = await downloader.readinto(temp_file)
 
-        # Assert
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert byte_data == actual
-        self.assert_download_progress(
-            len(byte_data),
-            self.config.max_chunk_get_size,
-            self.config.max_single_get_size,
-            progress)
-        self._teardown(FILE_PATH)
+        self.assert_download_progress(len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -996,17 +944,15 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        FILE_PATH = 'lob_to_stream_with_md5_asyncc.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(validate_content=True, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
-        # Assert
-        assert read_bytes == len(self.byte_data)
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            assert read_bytes == len(self.byte_data)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert self.byte_data == actual
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1042,16 +988,14 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         await blob.set_http_headers(props.content_settings)
 
         # Act
-        FILE_PATH = 'range_to_stream_with_overall_md5_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=0, length=1024, validate_content=True, max_concurrency=2)
-            read_bytes = await downloader.readinto(stream)
+            read_bytes = await downloader.readinto(temp_file)
 
         # Assert
         assert read_bytes == 1024
         assert b'MDAwMDAwMDA=' == downloader.properties.content_settings.content_md5
         assert downloader.size == 1024
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async

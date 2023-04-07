@@ -7,45 +7,36 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CheckNameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason why the given name is not available.
-    """
-
-    INVALID = "Invalid"
-    ALREADY_EXISTS = "AlreadyExists"
-
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class LedgerRoleName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """LedgerRole associated with the Security Principal of Ledger
-    """
+
+class LedgerRoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LedgerRole associated with the Security Principal of Ledger."""
 
     READER = "Reader"
     CONTRIBUTOR = "Contributor"
     ADMINISTRATOR = "Administrator"
 
-class LedgerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the ledger. Private means transaction data is encrypted.
-    """
+
+class LedgerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the ledger. Private means transaction data is encrypted."""
 
     UNKNOWN = "Unknown"
     PUBLIC = "Public"
     PRIVATE = "Private"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Object representing ProvisioningState for Confidential Ledger.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Object representing ProvisioningState for Confidential Ledger."""
 
     UNKNOWN = "Unknown"
     SUCCEEDED = "Succeeded"

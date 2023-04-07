@@ -3,3 +3,4 @@ package_name = "azure-mgmt-azurestack"
 package_pprint_name = "Azure Stack Management"
 package_doc_id = ""
 is_stable = false
+title = "AzureStackManagementClient"

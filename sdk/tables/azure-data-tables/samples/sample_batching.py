@@ -24,7 +24,6 @@ USAGE:
 
 
 import os
-import sys
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -71,7 +70,7 @@ class CreateClients(object):
             ("update", entity4, {"mode": "replace"}),
         ]
         try:
-            self.table_client.submit_transaction(operations)
+            self.table_client.submit_transaction(operations) # type: ignore[arg-type]
         except TableTransactionError as e:
             print("There was an error with the transaction operation")
             print(e)
@@ -83,9 +82,8 @@ class CreateClients(object):
 
 
 if __name__ == "__main__":
-    if sys.version_info > (3, 5):
-        sample = CreateClients()
-        try:
-            sample.sample_transaction()
-        finally:
-            sample.clean_up()
+    sample = CreateClients()
+    try:
+        sample.sample_transaction()
+    finally:
+        sample.clean_up()

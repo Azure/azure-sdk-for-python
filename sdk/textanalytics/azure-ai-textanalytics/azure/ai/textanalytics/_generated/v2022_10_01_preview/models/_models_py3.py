@@ -890,18 +890,17 @@ class BaseResolution(_serialization.Model):
     """The abstract base class for entity resolutions.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AgeResolution, AreaResolution, BooleanResolution, CurrencyResolution, DateTimeResolution,
-    InformationResolution, LengthResolution, NumberResolution, NumericRangeResolution,
-    OrdinalResolution, SpeedResolution, TemperatureResolution, TemporalSpanResolution,
-    VolumeResolution, WeightResolution
+    AgeResolution, AreaResolution, CurrencyResolution, DateTimeResolution, InformationResolution,
+    LengthResolution, NumberResolution, NumericRangeResolution, OrdinalResolution, SpeedResolution,
+    TemperatureResolution, TemporalSpanResolution, VolumeResolution, WeightResolution
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     """
@@ -915,7 +914,7 @@ class BaseResolution(_serialization.Model):
     }
 
     _subtype_map = {
-        'resolution_kind': {'AgeResolution': 'AgeResolution', 'AreaResolution': 'AreaResolution', 'BooleanResolution': 'BooleanResolution', 'CurrencyResolution': 'CurrencyResolution', 'DateTimeResolution': 'DateTimeResolution', 'InformationResolution': 'InformationResolution', 'LengthResolution': 'LengthResolution', 'NumberResolution': 'NumberResolution', 'NumericRangeResolution': 'NumericRangeResolution', 'OrdinalResolution': 'OrdinalResolution', 'SpeedResolution': 'SpeedResolution', 'TemperatureResolution': 'TemperatureResolution', 'TemporalSpanResolution': 'TemporalSpanResolution', 'VolumeResolution': 'VolumeResolution', 'WeightResolution': 'WeightResolution'}
+        'resolution_kind': {'AgeResolution': 'AgeResolution', 'AreaResolution': 'AreaResolution', 'CurrencyResolution': 'CurrencyResolution', 'DateTimeResolution': 'DateTimeResolution', 'InformationResolution': 'InformationResolution', 'LengthResolution': 'LengthResolution', 'NumberResolution': 'NumberResolution', 'NumericRangeResolution': 'NumericRangeResolution', 'OrdinalResolution': 'OrdinalResolution', 'SpeedResolution': 'SpeedResolution', 'TemperatureResolution': 'TemperatureResolution', 'TemporalSpanResolution': 'TemporalSpanResolution', 'VolumeResolution': 'VolumeResolution', 'WeightResolution': 'WeightResolution'}
     }
 
     def __init__(
@@ -936,10 +935,10 @@ class AgeResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The Age Unit of measurement. Required. Known values are: "Unspecified", "Year",
@@ -983,16 +982,15 @@ class AnalyzeTextTask(_serialization.Model):
     """AnalyzeTextTask.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AnalyzeTextDynamicClassificationInput, AnalyzeTextEntityLinkingInput,
-    AnalyzeTextEntityRecognitionInput, AnalyzeTextKeyPhraseExtractionInput,
-    AnalyzeTextLanguageDetectionInput, AnalyzeTextPiiEntitiesRecognitionInput,
-    AnalyzeTextSentimentAnalysisInput
+    AnalyzeTextEntityLinkingInput, AnalyzeTextEntityRecognitionInput,
+    AnalyzeTextKeyPhraseExtractionInput, AnalyzeTextLanguageDetectionInput,
+    AnalyzeTextPiiEntitiesRecognitionInput, AnalyzeTextSentimentAnalysisInput
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     """
 
@@ -1005,7 +1003,7 @@ class AnalyzeTextTask(_serialization.Model):
     }
 
     _subtype_map = {
-        'kind': {'DynamicClassification': 'AnalyzeTextDynamicClassificationInput', 'EntityLinking': 'AnalyzeTextEntityLinkingInput', 'EntityRecognition': 'AnalyzeTextEntityRecognitionInput', 'KeyPhraseExtraction': 'AnalyzeTextKeyPhraseExtractionInput', 'LanguageDetection': 'AnalyzeTextLanguageDetectionInput', 'PiiEntityRecognition': 'AnalyzeTextPiiEntitiesRecognitionInput', 'SentimentAnalysis': 'AnalyzeTextSentimentAnalysisInput'}
+        'kind': {'EntityLinking': 'AnalyzeTextEntityLinkingInput', 'EntityRecognition': 'AnalyzeTextEntityRecognitionInput', 'KeyPhraseExtraction': 'AnalyzeTextKeyPhraseExtractionInput', 'LanguageDetection': 'AnalyzeTextLanguageDetectionInput', 'PiiEntityRecognition': 'AnalyzeTextPiiEntitiesRecognitionInput', 'SentimentAnalysis': 'AnalyzeTextSentimentAnalysisInput'}
     }
 
     def __init__(
@@ -1018,54 +1016,6 @@ class AnalyzeTextTask(_serialization.Model):
         self.kind = None  # type: Optional[str]
 
 
-class AnalyzeTextDynamicClassificationInput(AnalyzeTextTask):
-    """AnalyzeTextDynamicClassificationInput.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
-     "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
-    :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
-    :ivar analysis_input:
-    :vartype analysis_input:
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.MultiLanguageAnalysisInput
-    :ivar parameters: Supported parameters for a Zero Shot Classification task.
-    :vartype parameters:
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationTaskParameters
-    """
-
-    _validation = {
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "analysis_input": {"key": "analysisInput", "type": "MultiLanguageAnalysisInput"},
-        "parameters": {"key": "parameters", "type": "DynamicClassificationTaskParameters"},
-    }
-
-    def __init__(
-        self,
-        *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.DynamicClassificationTaskParameters"] = None,
-        **kwargs
-    ):
-        """
-        :keyword analysis_input:
-        :paramtype analysis_input:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.MultiLanguageAnalysisInput
-        :keyword parameters: Supported parameters for a Zero Shot Classification task.
-        :paramtype parameters:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationTaskParameters
-        """
-        super().__init__(**kwargs)
-        self.kind = 'DynamicClassification'  # type: str
-        self.analysis_input = analysis_input
-        self.parameters = parameters
-
-
 class AnalyzeTextEntityLinkingInput(AnalyzeTextTask):
     """AnalyzeTextEntityLinkingInput.
 
@@ -1073,7 +1023,7 @@ class AnalyzeTextEntityLinkingInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1121,7 +1071,7 @@ class AnalyzeTextEntityRecognitionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1474,7 +1424,7 @@ class AnalyzeTextKeyPhraseExtractionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1521,7 +1471,7 @@ class AnalyzeTextLanguageDetectionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1569,7 +1519,7 @@ class AnalyzeTextPiiEntitiesRecognitionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1615,7 +1565,7 @@ class AnalyzeTextSentimentAnalysisInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1660,15 +1610,14 @@ class AnalyzeTextTaskResult(_serialization.Model):
     """AnalyzeTextTaskResult.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DynamicClassificationTaskResult, EntityLinkingTaskResult, EntitiesTaskResult,
-    KeyPhraseTaskResult, LanguageDetectionTaskResult, PiiTaskResult, SentimentTaskResult
+    EntityLinkingTaskResult, EntitiesTaskResult, KeyPhraseTaskResult, LanguageDetectionTaskResult,
+    PiiTaskResult, SentimentTaskResult
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     """
@@ -1682,7 +1631,7 @@ class AnalyzeTextTaskResult(_serialization.Model):
     }
 
     _subtype_map = {
-        'kind': {'DynamicClassificationResults': 'DynamicClassificationTaskResult', 'EntityLinkingResults': 'EntityLinkingTaskResult', 'EntityRecognitionResults': 'EntitiesTaskResult', 'KeyPhraseExtractionResults': 'KeyPhraseTaskResult', 'LanguageDetectionResults': 'LanguageDetectionTaskResult', 'PiiEntityRecognitionResults': 'PiiTaskResult', 'SentimentAnalysisResults': 'SentimentTaskResult'}
+        'kind': {'EntityLinkingResults': 'EntityLinkingTaskResult', 'EntityRecognitionResults': 'EntitiesTaskResult', 'KeyPhraseExtractionResults': 'KeyPhraseTaskResult', 'LanguageDetectionResults': 'LanguageDetectionTaskResult', 'PiiEntityRecognitionResults': 'PiiTaskResult', 'SentimentAnalysisResults': 'SentimentTaskResult'}
     }
 
     def __init__(
@@ -1703,10 +1652,10 @@ class AreaResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The area Unit of measurement. Required. Known values are: "Unspecified",
@@ -1748,47 +1697,6 @@ class AreaResolution(BaseResolution, QuantityResolution):
         self.value = value
         self.resolution_kind = 'AreaResolution'  # type: str
         self.unit = unit
-
-
-class BooleanResolution(BaseResolution):
-    """A resolution for boolean expressions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
-    :ivar value: Required.
-    :vartype value: bool
-    """
-
-    _validation = {
-        'resolution_kind': {'required': True},
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        "resolution_kind": {"key": "resolutionKind", "type": "str"},
-        "value": {"key": "value", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: bool,
-        **kwargs
-    ):
-        """
-        :keyword value: Required.
-        :paramtype value: bool
-        """
-        super().__init__(**kwargs)
-        self.resolution_kind = 'BooleanResolution'  # type: str
-        self.value = value
 
 
 class ClassificationDocumentResult(DocumentResult):
@@ -1893,10 +1801,10 @@ class CurrencyResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
@@ -1917,7 +1825,7 @@ class CurrencyResolution(BaseResolution, QuantityResolution):
     _attribute_map = {
         "value": {"key": "value", "type": "float"},
         "resolution_kind": {"key": "resolutionKind", "type": "str"},
-        "iso4217": {"key": "ISO4217", "type": "str"},
+        "iso4217": {"key": "iso4217", "type": "str"},
         "unit": {"key": "unit", "type": "str"},
     }
 
@@ -2860,10 +2768,10 @@ class DateTimeResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar timex: An extended ISO 8601 date/time representation as described in
@@ -2988,6 +2896,35 @@ class DetectedLanguage(_serialization.Model):
         self.iso6391_name = iso6391_name
         self.confidence_score = confidence_score
         self.script = script
+
+
+class DocumentDetectedLanguageString(_serialization.Model):
+    """DocumentDetectedLanguageString.
+
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: str
+    """
+
+    _attribute_map = {
+        "detected_language": {"key": "detectedLanguage", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        detected_language: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
+         field will contain a 2 letter ISO 639-1 representation of the language detected for this
+         document.
+        :paramtype detected_language: str
+        """
+        super().__init__(**kwargs)
+        self.detected_language = detected_language
 
 
 class DocumentError(_serialization.Model):
@@ -3247,213 +3184,6 @@ class DocumentWarning(_serialization.Model):
         self.target_ref = target_ref
 
 
-class DynamicClassificationResult(PreBuiltResult):
-    """DynamicClassificationResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.textanalytics.v2022_10_01_preview.models.InputError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
-    :vartype model_version: str
-    :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResultDocumentsItem]
-    """
-
-    _validation = {
-        'errors': {'required': True},
-        'model_version': {'required': True},
-        'documents': {'required': True},
-    }
-
-    _attribute_map = {
-        "errors": {"key": "errors", "type": "[InputError]"},
-        "statistics": {"key": "statistics", "type": "RequestStatistics"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[DynamicClassificationResultDocumentsItem]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        errors: List["_models.InputError"],
-        model_version: str,
-        documents: List["_models.DynamicClassificationResultDocumentsItem"],
-        statistics: Optional["_models.RequestStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword errors: Errors by document id. Required.
-        :paramtype errors: list[~azure.ai.textanalytics.v2022_10_01_preview.models.InputError]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the request payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.RequestStatistics
-        :keyword model_version: This field indicates which model is used for scoring. Required.
-        :paramtype model_version: str
-        :keyword documents: Response by document. Required.
-        :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResultDocumentsItem]
-        """
-        super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
-        self.documents = documents
-
-
-class DynamicClassificationResultDocumentsItem(ClassificationDocumentResult):
-    """DynamicClassificationResultDocumentsItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar class_property: Required.
-    :vartype class_property:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'class_property': {'required': True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "class_property": {"key": "class", "type": "[ClassificationResult]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        class_property: List["_models.ClassificationResult"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword class_property: Required.
-        :paramtype class_property:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, class_property=class_property, **kwargs)
-
-
-class DynamicClassificationTaskParameters(PreBuiltTaskParameters):
-    """Supported parameters for a Zero Shot Classification task.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar logging_opt_out:
-    :vartype logging_opt_out: bool
-    :ivar model_version:
-    :vartype model_version: str
-    :ivar classification_type: Specifies either one or multiple categories per document. Defaults
-     to multi classification which may return more than one class for each document. Known values
-     are: "Single" and "Multi".
-    :vartype classification_type: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationType
-    :ivar categories: a list of categories to which input is classified to. Required.
-    :vartype categories: list[str]
-    """
-
-    _validation = {
-        'categories': {'required': True},
-    }
-
-    _attribute_map = {
-        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "classification_type": {"key": "classificationType", "type": "str"},
-        "categories": {"key": "categories", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        categories: List[str],
-        logging_opt_out: bool = False,
-        model_version: str = "latest",
-        classification_type: Union[str, "_models.ClassificationType"] = "Multi",
-        **kwargs
-    ):
-        """
-        :keyword logging_opt_out:
-        :paramtype logging_opt_out: bool
-        :keyword model_version:
-        :paramtype model_version: str
-        :keyword classification_type: Specifies either one or multiple categories per document.
-         Defaults to multi classification which may return more than one class for each document. Known
-         values are: "Single" and "Multi".
-        :paramtype classification_type: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationType
-        :keyword categories: a list of categories to which input is classified to. Required.
-        :paramtype categories: list[str]
-        """
-        super().__init__(logging_opt_out=logging_opt_out, model_version=model_version, **kwargs)
-        self.classification_type = classification_type
-        self.categories = categories
-
-
-class DynamicClassificationTaskResult(AnalyzeTextTaskResult):
-    """DynamicClassificationTaskResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
-     "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
-    :vartype kind: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results: Required.
-    :vartype results:
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResult
-    """
-
-    _validation = {
-        'kind': {'required': True},
-        'results': {'required': True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "results": {"key": "results", "type": "DynamicClassificationResult"},
-    }
-
-    def __init__(
-        self,
-        *,
-        results: "_models.DynamicClassificationResult",
-        **kwargs
-    ):
-        """
-        :keyword results: Required.
-        :paramtype results:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResult
-        """
-        super().__init__(**kwargs)
-        self.kind = 'DynamicClassificationResults'  # type: str
-        self.results = results
-
-
 class EntitiesLROTask(AnalyzeTextLROTask):
     """An object representing the task definition for an Entities Recognition task.
 
@@ -3514,7 +3244,7 @@ class EntitiesResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -3527,7 +3257,7 @@ class EntitiesResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[EntitiesResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[EntitiesResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -3535,7 +3265,7 @@ class EntitiesResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.EntitiesResultDocumentsItem"],
+        documents: List["_models.EntitiesResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -3549,14 +3279,14 @@ class EntitiesResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
 
 
-class EntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetectedLanguage):
-    """EntitiesResultDocumentsItem.
+class EntitiesResultWithDetectedLanguage(EntitiesDocumentResult, DocumentDetectedLanguage):
+    """EntitiesResultWithDetectedLanguage.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3677,8 +3407,7 @@ class EntitiesTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -3911,7 +3640,7 @@ class EntityLinkingResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -3924,7 +3653,7 @@ class EntityLinkingResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[EntityLinkingResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[EntityLinkingResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -3932,7 +3661,7 @@ class EntityLinkingResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.EntityLinkingResultDocumentsItem"],
+        documents: List["_models.EntityLinkingResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -3946,7 +3675,7 @@ class EntityLinkingResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
@@ -4005,8 +3734,8 @@ class LinkedEntitiesDocumentResult(DocumentResult):
         self.entities = entities
 
 
-class EntityLinkingResultDocumentsItem(LinkedEntitiesDocumentResult, DocumentDetectedLanguage):
-    """EntityLinkingResultDocumentsItem.
+class EntityLinkingResultWithDetectedLanguage(LinkedEntitiesDocumentResult, DocumentDetectedLanguage):
+    """EntityLinkingResultWithDetectedLanguage.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4125,8 +3854,7 @@ class EntityLinkingTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -4946,6 +4674,91 @@ class HealthcareEntitiesDocumentResult(DocumentResult):
         self.fhir_bundle = fhir_bundle
 
 
+class HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage(HealthcareEntitiesDocumentResult, DocumentDetectedLanguageString):
+    """HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: str
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+    :ivar entities: Healthcare entities. Required.
+    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
+    :ivar relations: Healthcare entity relations. Required.
+    :vartype relations: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
+    :ivar fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
+     Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
+    :vartype fhir_bundle: dict[str, any]
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'warnings': {'required': True},
+        'entities': {'required': True},
+        'relations': {'required': True},
+    }
+
+    _attribute_map = {
+        "detected_language": {"key": "detectedLanguage", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
+        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
+        "entities": {"key": "entities", "type": "[HealthcareEntity]"},
+        "relations": {"key": "relations", "type": "[HealthcareRelation]"},
+        "fhir_bundle": {"key": "fhirBundle", "type": "{object}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        entities: List["_models.HealthcareEntity"],
+        relations: List["_models.HealthcareRelation"],
+        detected_language: Optional[str] = None,
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        fhir_bundle: Optional[Dict[str, Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
+         field will contain a 2 letter ISO 639-1 representation of the language detected for this
+         document.
+        :paramtype detected_language: str
+        :keyword id: Unique, non-empty document identifier. Required.
+        :paramtype id: str
+        :keyword warnings: Warnings encountered while processing document. Required.
+        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+        :keyword statistics: if showStats=true was specified in the request this field will contain
+         information about the document payload.
+        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+        :keyword entities: Healthcare entities. Required.
+        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
+        :keyword relations: Healthcare entity relations. Required.
+        :paramtype relations:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
+        :keyword fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
+         Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
+        :paramtype fhir_bundle: dict[str, any]
+        """
+        super().__init__(id=id, warnings=warnings, statistics=statistics, entities=entities, relations=relations, fhir_bundle=fhir_bundle, detected_language=detected_language, **kwargs)
+        self.detected_language = detected_language
+        self.id = id
+        self.warnings = warnings
+        self.statistics = statistics
+        self.entities = entities
+        self.relations = relations
+        self.fhir_bundle = fhir_bundle
+
+
 class HealthcareEntity(_serialization.Model):
     """HealthcareEntity.
 
@@ -5327,7 +5140,7 @@ class HealthcareResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]
     """
 
     _validation = {
@@ -5340,7 +5153,7 @@ class HealthcareResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[HealthcareResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]"},
     }
 
     def __init__(
@@ -5348,7 +5161,7 @@ class HealthcareResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.HealthcareResultDocumentsItem"],
+        documents: List["_models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -5362,96 +5175,10 @@ class HealthcareResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
-
-
-class HealthcareResultDocumentsItem(HealthcareEntitiesDocumentResult, DocumentDetectedLanguage):
-    """HealthcareResultDocumentsItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar entities: Healthcare entities. Required.
-    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
-    :ivar relations: Healthcare entity relations. Required.
-    :vartype relations: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
-    :ivar fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
-     Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
-    :vartype fhir_bundle: dict[str, any]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'entities': {'required': True},
-        'relations': {'required': True},
-    }
-
-    _attribute_map = {
-        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "entities": {"key": "entities", "type": "[HealthcareEntity]"},
-        "relations": {"key": "relations", "type": "[HealthcareRelation]"},
-        "fhir_bundle": {"key": "fhirBundle", "type": "{object}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        entities: List["_models.HealthcareEntity"],
-        relations: List["_models.HealthcareRelation"],
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        fhir_bundle: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
-        """
-        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
-         field will contain a 2 letter ISO 639-1 representation of the language detected for this
-         document.
-        :paramtype detected_language:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword entities: Healthcare entities. Required.
-        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
-        :keyword relations: Healthcare entity relations. Required.
-        :paramtype relations:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
-        :keyword fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
-         Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
-        :paramtype fhir_bundle: dict[str, any]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, entities=entities, relations=relations, fhir_bundle=fhir_bundle, detected_language=detected_language, **kwargs)
-        self.detected_language = detected_language
-        self.id = id
-        self.warnings = warnings
-        self.statistics = statistics
-        self.entities = entities
-        self.relations = relations
-        self.fhir_bundle = fhir_bundle
 
 
 class HealthcareTaskParameters(PreBuiltTaskParameters):
@@ -5531,10 +5258,10 @@ class InformationResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The information (data) Unit of measurement. Required. Known values are:
@@ -6016,8 +5743,7 @@ class KeyPhraseTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -6220,8 +5946,7 @@ class LanguageDetectionTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -6307,10 +6032,10 @@ class LengthResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The length Unit of measurement. Required. Known values are: "Unspecified",
@@ -6569,17 +6294,17 @@ class NumberResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar number_kind: The type of the extracted number entity. Required. Known values are:
      "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
     :vartype number_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.NumberKind
     :ivar value: A numeric representation of what the extracted text denotes. Required.
-    :vartype value: str
+    :vartype value: float
     """
 
     _validation = {
@@ -6591,14 +6316,14 @@ class NumberResolution(BaseResolution):
     _attribute_map = {
         "resolution_kind": {"key": "resolutionKind", "type": "str"},
         "number_kind": {"key": "numberKind", "type": "str"},
-        "value": {"key": "value", "type": "str"},
+        "value": {"key": "value", "type": "float"},
     }
 
     def __init__(
         self,
         *,
         number_kind: Union[str, "_models.NumberKind"],
-        value: str,
+        value: float,
         **kwargs
     ):
         """
@@ -6606,7 +6331,7 @@ class NumberResolution(BaseResolution):
          "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
         :paramtype number_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.NumberKind
         :keyword value: A numeric representation of what the extracted text denotes. Required.
-        :paramtype value: str
+        :paramtype value: float
         """
         super().__init__(**kwargs)
         self.resolution_kind = 'NumberResolution'  # type: str
@@ -6620,10 +6345,10 @@ class NumericRangeResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar range_kind: The kind of range that the resolution object represents. Required. Known
@@ -6681,10 +6406,10 @@ class OrdinalResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar offset: The offset With respect to the reference (e.g., offset = -1 in "show me the
@@ -6947,7 +6672,7 @@ class PiiResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.PiiResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.PIIResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -6960,7 +6685,7 @@ class PiiResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[PiiResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[PIIResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -6968,7 +6693,7 @@ class PiiResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.PiiResultDocumentsItem"],
+        documents: List["_models.PIIResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -6982,14 +6707,14 @@ class PiiResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.PiiResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.PIIResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
 
 
-class PiiResultDocumentsItem(PiiEntitiesDocumentResult, DocumentDetectedLanguage):
-    """PiiResultDocumentsItem.
+class PIIResultWithDetectedLanguage(PiiEntitiesDocumentResult, DocumentDetectedLanguage):
+    """PIIResultWithDetectedLanguage.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7138,8 +6863,7 @@ class PiiTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -7861,8 +7585,7 @@ class SentimentTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -7902,16 +7625,16 @@ class SpeedResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
-     "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
-     "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
-     "MetersPerMillisecond", "CentimetersPerMillisecond", and "KilometersPerMillisecond".
+     "MeterPerSecond", "KilometerPerHour", "KilometerPerMinute", "KilometerPerSecond",
+     "MilePerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardPerMinute", "YardPerSecond",
+     "MeterPerMillisecond", "CentimeterPerMillisecond", and "KilometerPerMillisecond".
     :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.SpeedUnit
     """
 
@@ -7938,9 +7661,9 @@ class SpeedResolution(BaseResolution, QuantityResolution):
         :keyword value: The numeric value that the extracted text denotes. Required.
         :paramtype value: float
         :keyword unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
-         "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
-         "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
-         "MetersPerMillisecond", "CentimetersPerMillisecond", and "KilometersPerMillisecond".
+         "MeterPerSecond", "KilometerPerHour", "KilometerPerMinute", "KilometerPerSecond",
+         "MilePerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardPerMinute", "YardPerSecond",
+         "MeterPerMillisecond", "CentimeterPerMillisecond", and "KilometerPerMillisecond".
         :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.SpeedUnit
         """
         super().__init__(value=value, **kwargs)
@@ -8144,10 +7867,10 @@ class TemperatureResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The temperature Unit of measurement. Required. Known values are: "Unspecified",
@@ -8193,10 +7916,10 @@ class TemporalSpanResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar begin: An extended ISO 8601 date/time representation as described in
@@ -8277,10 +8000,10 @@ class VolumeResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The Volume Unit of measurement. Required. Known values are: "Unspecified",
@@ -8334,10 +8057,10 @@ class WeightResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The weight Unit of measurement. Required. Known values are: "Unspecified",

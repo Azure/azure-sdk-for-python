@@ -24,6 +24,7 @@ class ComputeSchema(PathAwareSchema):
     created_on = fields.Str(dump_only=True)
     provisioning_state = fields.Str(dump_only=True)
     resource_id = fields.Str()
+    tags = fields.Dict(keys=fields.Str(), values=fields.Str())
 
 
 class NetworkSettingsSchema(PathAwareSchema):
@@ -68,6 +69,7 @@ class IdentitySchema(PathAwareSchema):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import IdentityConfiguration
+
         user_assigned_identities_list = []
         user_assigned_identities = data.pop("user_assigned_identities", None)
         if user_assigned_identities:
@@ -76,7 +78,7 @@ class IdentitySchema(PathAwareSchema):
                     ManagedIdentityConfiguration(
                         resource_id=identity.get("resource_id", None),
                         client_id=identity.get("client_id", None),
-                        object_id=identity.get("object_id", None)
+                        object_id=identity.get("object_id", None),
                     )
                 )
             data["user_assigned_identities"] = user_assigned_identities_list

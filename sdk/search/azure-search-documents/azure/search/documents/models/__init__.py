@@ -38,7 +38,7 @@ from .._generated.models import (
     ScoringStatistics,
     SearchMode
 )
-from .._search_client import odata
+from .._utils import odata
 
 
 __all__ = (

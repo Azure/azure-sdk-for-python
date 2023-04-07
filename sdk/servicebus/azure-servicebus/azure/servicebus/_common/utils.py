@@ -24,7 +24,7 @@ from typing import (
     cast
 )
 from contextlib import contextmanager
-from msrest.serialization import TZ_UTC
+from datetime import timezone
 
 try:
     from urlparse import urlparse
@@ -81,11 +81,11 @@ _log = logging.getLogger(__name__)
 
 
 def utc_from_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
+    return datetime.datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
 
 def utc_now():
-    return datetime.datetime.now(TZ_UTC)
+    return datetime.datetime.now(timezone.utc)
 
 
 def build_uri(address, entity):
@@ -276,8 +276,11 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
 
 
 @contextmanager
-def receive_trace_context_manager(receiver, span_name=SPAN_NAME_RECEIVE, links=None):
-    # type: (ReceiverMixin, str, List[Link]) -> Iterator[None]
+def receive_trace_context_manager(
+    receiver: "ReceiverMixin",
+    span_name: str = SPAN_NAME_RECEIVE,
+    links: Optional[List[Link]] = None
+) -> Iterator[None]:
     """Tracing"""
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None:

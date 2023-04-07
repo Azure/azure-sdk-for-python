@@ -1,2 +1,3 @@
 [packaging]
 auto_update = false
+title = "DocumentDB"

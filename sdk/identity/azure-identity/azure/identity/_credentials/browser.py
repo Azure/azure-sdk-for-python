@@ -2,18 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import platform
 import socket
-import subprocess
-import webbrowser
-from typing import Dict
+from typing import Dict, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
+from .._internal import InteractiveCredential, wrap_exceptions
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -45,7 +42,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :raises ValueError: invalid **redirect_uri**
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         redirect_uri = kwargs.pop("redirect_uri", None)
         if redirect_uri:
             self._parsed_url = urlparse(redirect_uri)
@@ -56,78 +53,31 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
-        self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs) -> Dict:
-
-        # start an HTTP server to receive the redirect
-        server = None
-        if self._parsed_url:
-            try:
-                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
-                server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
-            except socket.error:
-                raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri)
-        else:
-            for port in range(8400, 9000):
-                try:
-                    server = self._server_class("localhost", port, timeout=self._timeout)
-                    redirect_uri = "http://localhost:{}".format(port)
-                    break
-                except socket.error:
-                    continue  # keep looking for an open port
-
-        if not server:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server on localhost")
-
-        # get the url the user must visit to authenticate
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
         app = self._get_app(**kwargs)
-        flow = app.initiate_auth_code_flow(
-            scopes,
-            redirect_uri=redirect_uri,
-            prompt="select_account",
-            claims_challenge=claims,
-            login_hint=self._login_hint,
-        )
-        if "auth_uri" not in flow:
-            raise CredentialUnavailableError("Failed to begin authentication flow")
+        port = self._parsed_url.port if self._parsed_url else None
 
-        if not _open_browser(flow["auth_uri"]):
-            raise CredentialUnavailableError(message="Failed to open a browser")
-
-        # block until the server times out or receives the post-authentication redirect
-        response = server.wait_for_redirect()
-        if not response:
-            raise ClientAuthenticationError(
-                message="Timed out after waiting {} seconds for the user to authenticate".format(self._timeout)
+        try:
+            result = app.acquire_token_interactive(
+                scopes=scopes,
+                login_hint=self._login_hint,
+                claims_challenge=claims,
+                timeout=self._timeout,
+                prompt="select_account",
+                port=port
             )
+        except socket.error:
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server.")
+        if "access_token" not in result and "error_description" in result:
+            raise ClientAuthenticationError(message=result.get("error_description"))
+        if "access_token" not in result:
+            raise ClientAuthenticationError(message="Failed to authenticate user")
 
-        # redeem the authorization code for a token
-        return app.acquire_token_by_auth_code_flow(flow, response, scopes=scopes, claims_challenge=claims)
-
-
-def _open_browser(url):
-    opened = webbrowser.open(url)
-    if not opened:
-        uname = platform.uname()
-        system = uname[0].lower()
-        release = uname[2].lower()
-        if "microsoft" in release and system == "linux":
-            kwargs = {}
-            if platform.python_version() >= "3.3":
-                kwargs["timeout"] = 5
-
-            try:
-                exit_code = subprocess.call(
-                    ["powershell.exe", "-NoProfile", "-Command", 'Start-Process "{}"'.format(url)], **kwargs
-                )
-                opened = exit_code == 0
-            except Exception:  # pylint:disable=broad-except
-                # powershell.exe isn't available, or the subprocess timed out
-                pass
-    return opened
+        # base class will raise for other errors
+        return result

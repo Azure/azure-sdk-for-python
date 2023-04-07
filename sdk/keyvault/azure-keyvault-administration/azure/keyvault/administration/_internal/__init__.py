@@ -23,21 +23,21 @@ __all__ = [
 _VaultId = namedtuple("_VaultId", ["vault_url", "collection", "name", "version"])
 
 
-def parse_vault_id(url):
+def parse_vault_id(url: str) -> "_VaultId":
     try:
         parsed_uri = urlparse(url)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not a valid url".format(url))
+        raise ValueError(f"'{url}' is not a valid url")
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not a valid url".format(url))
+        raise ValueError(f"'{url}' is not a valid url")
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not a valid vault url".format(url))
+        raise ValueError(f"'{url}' is not a valid vault url")
 
     return _VaultId(
-        vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
+        vault_url=f"{parsed_uri.scheme}://{parsed_uri.hostname}",
         collection=path[0],
         name=path[1],
         version=path[2] if len(path) == 3 else None,
@@ -47,8 +47,7 @@ def parse_vault_id(url):
 BackupLocation = namedtuple("BackupLocation", ["container_url", "folder_name"])
 
 
-def parse_folder_url(folder_url):
-    # type: (str) -> BackupLocation
+def parse_folder_url(folder_url: str) -> "BackupLocation":
     """Parse the blob container URL and folder name from a backup's blob storage URL.
 
     For example, https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313 parses to
@@ -66,7 +65,7 @@ def parse_folder_url(folder_url):
         folder_name = stripped_path[len(container) + 1 :]
 
         # this intentionally discards any SAS token in the URL--methods require the SAS token as a separate parameter
-        container_url = "{}://{}/{}".format(parsed.scheme, parsed.netloc, container)
+        container_url = f"{parsed.scheme}://{parsed.netloc}/{container}"
 
         return BackupLocation(container_url, folder_name)
     except:  # pylint:disable=broad-except

@@ -3,14 +3,17 @@
 # ---------------------------------------------------------
 
 
+from typing import Optional
+
+
 class CustomerManagedKey:
     def __init__(
         self,
-        key_vault: str = None,
-        key_uri: str = None,
-        cosmosdb_id: str = None,
-        storage_id: str = None,
-        search_id: str = None,
+        key_vault: Optional[str] = None,
+        key_uri: Optional[str] = None,
+        cosmosdb_id: Optional[str] = None,
+        storage_id: Optional[str] = None,
+        search_id: Optional[str] = None,
     ):
         self.key_vault = key_vault
         self.key_uri = key_uri

@@ -5,7 +5,7 @@
 import logging
 import re
 from collections import OrderedDict
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from marshmallow.exceptions import ValidationError
 
@@ -23,7 +23,7 @@ def validate_arm_str(arm_str: str) -> bool:
     raise ValidationError(f"ARM string {arm_str} is not formatted correctly.")
 
 
-def get_subnet_str(vnet_name: str, subnet: str, sub_id: str = None, rg: str = None) -> str:
+def get_subnet_str(vnet_name: str, subnet: str, sub_id: Optional[str] = None, rg: Optional[str] = None) -> str:
     if vnet_name and not subnet:
         raise ValidationError("Subnet is required when vnet name is specified.")
     try:

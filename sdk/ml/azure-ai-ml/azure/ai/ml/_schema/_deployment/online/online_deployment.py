@@ -48,6 +48,7 @@ class OnlineDeploymentSchema(DeploymentSchema):
     )
     model_mount_path = fields.Str()
     instance_type = fields.Str()
+    data_collector = ExperimentalField(NestedField(DataCollectorSchema))
 
 
 class KubernetesOnlineDeploymentSchema(OnlineDeploymentSchema):
@@ -66,7 +67,6 @@ class ManagedOnlineDeploymentSchema(OnlineDeploymentSchema):
     egress_public_network_access = StringTransformedEnum(
         allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED]
     )
-    data_collector = ExperimentalField(NestedField(DataCollectorSchema))
     private_network_connection = ExperimentalField(fields.Bool())
 
     @post_load

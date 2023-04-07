@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -13,6 +14,11 @@ from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
 
 from .._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +42,7 @@ class ResourceManagementClientConfiguration(Configuration):  # pylint: disable=t
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ResourceManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2016-09-01")  # type: str
+        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", "2016-09-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

@@ -84,10 +84,10 @@ class ServerBlobAuditingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServerBlobAuditingPolicyListResult]
+        )
+        cls: ClsType[_models.ServerBlobAuditingPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -110,12 +110,12 @@ class ServerBlobAuditingPoliciesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -123,14 +123,15 @@ class ServerBlobAuditingPoliciesOperations:
             deserialized = self._deserialize("ServerBlobAuditingPolicyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -142,7 +143,9 @@ class ServerBlobAuditingPoliciesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_server.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings"}  # type: ignore
+    list_by_server.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings"
+    }
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, server_name: str, **kwargs: Any) -> _models.ServerBlobAuditingPolicy:
@@ -172,11 +175,11 @@ class ServerBlobAuditingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServerBlobAuditingPolicy]
+        )
+        cls: ClsType[_models.ServerBlobAuditingPolicy] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -189,10 +192,11 @@ class ServerBlobAuditingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -208,7 +212,9 @@ class ServerBlobAuditingPoliciesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings/{blobAuditingPolicyName}"
+    }
 
     async def _create_or_update_initial(
         self,
@@ -228,12 +234,12 @@ class ServerBlobAuditingPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ServerBlobAuditingPolicy]]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ServerBlobAuditingPolicy]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -257,10 +263,11 @@ class ServerBlobAuditingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -278,7 +285,9 @@ class ServerBlobAuditingPoliciesOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings/{blobAuditingPolicyName}"
+    }
 
     @overload
     async def begin_create_or_update(
@@ -373,8 +382,8 @@ class ServerBlobAuditingPoliciesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Properties of blob auditing policy. Is either a model type or a IO type.
-         Required.
+        :param parameters: Properties of blob auditing policy. Is either a ServerBlobAuditingPolicy
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerBlobAuditingPolicy or IO
         :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
          "default". Note that overriding this default value may result in unsupported behavior.
@@ -398,17 +407,17 @@ class ServerBlobAuditingPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServerBlobAuditingPolicy]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServerBlobAuditingPolicy] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 parameters=parameters,
@@ -429,7 +438,7 @@ class ServerBlobAuditingPoliciesOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -441,6 +450,8 @@ class ServerBlobAuditingPoliciesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/auditingSettings/{blobAuditingPolicyName}"
+    }

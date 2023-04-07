@@ -1,5 +1,20 @@
 # Release History
 
+## 2.3.0 (2023-02-15)
+
+### Other Changes
+
+  - Upgraded api-version to `2023-01-01`
+
+## 2.2.0 (2022-11-30)
+
+### Features Added
+
+  - Added operation RecoveryServicesOperations.capabilities
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model VaultProperties has a new parameter public_network_access
+  - Model VaultProperties has a new parameter security_settings
+
 ## 2.1.0 (2022-07-28)
 
 **Features**

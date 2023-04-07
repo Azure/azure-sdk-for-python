@@ -10,7 +10,7 @@ import uuid
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from preparers import FormRecognizerPreparer
@@ -28,17 +28,19 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_copy_document_model_to(model_id=None, target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_copy_document_model_to(model_id="", target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()

@@ -165,6 +165,17 @@ class ForwardProxyConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
 
 
+class IngressClientCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Client certificate mode for mTLS authentication. Ignore indicates server drops client
+    certificate on forwarding. Accept indicates server forwards client certificate but does not
+    require a client certificate. Require indicates server requires a client certificate.
+    """
+
+    IGNORE = "ignore"
+    ACCEPT = "accept"
+    REQUIRE = "require"
+
+
 class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ingress transport protocol."""
 
@@ -231,10 +242,10 @@ class Scheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the Sku."""
 
-    #: Consumption SKU of Managed Environment.
     CONSUMPTION = "Consumption"
-    #: Premium SKU of Managed Environment.
+    """Consumption SKU of Managed Environment."""
     PREMIUM = "Premium"
+    """Premium SKU of Managed Environment."""
 
 
 class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

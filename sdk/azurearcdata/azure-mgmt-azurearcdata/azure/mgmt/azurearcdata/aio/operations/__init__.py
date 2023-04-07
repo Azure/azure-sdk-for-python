@@ -10,10 +10,20 @@ from ._operations import Operations
 from ._sql_managed_instances_operations import SqlManagedInstancesOperations
 from ._sql_server_instances_operations import SqlServerInstancesOperations
 from ._data_controllers_operations import DataControllersOperations
+from ._active_directory_connectors_operations import ActiveDirectoryConnectorsOperations
+from ._postgres_instances_operations import PostgresInstancesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Operations',
-    'SqlManagedInstancesOperations',
-    'SqlServerInstancesOperations',
-    'DataControllersOperations',
+    "Operations",
+    "SqlManagedInstancesOperations",
+    "SqlServerInstancesOperations",
+    "DataControllersOperations",
+    "ActiveDirectoryConnectorsOperations",
+    "PostgresInstancesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

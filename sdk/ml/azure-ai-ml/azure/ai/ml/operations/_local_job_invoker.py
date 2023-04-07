@@ -18,9 +18,9 @@ from pathlib import Path
 from threading import Thread
 from typing import Dict, Optional, Tuple
 
-
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
@@ -31,7 +31,6 @@ from azure.ai.ml.constants._common import (
     LOCAL_JOB_FAILURE_MSG,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.ai.ml._utils.utils import DockerProxy
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import AzureError
 
@@ -147,7 +146,7 @@ def get_execution_service_response(
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
         body = json.loads(body)
-        response = requests_pipeline.post(url=url, json=body, headers={"Authorization": "Bearer " + token})
+        response = requests_pipeline.post(url, json=body, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
         return (response.content, body.get("SnapshotId", None))
     except AzureError as err:
@@ -168,7 +167,6 @@ def is_local_run(job_definition: JobBaseData) -> bool:
 
 
 class CommonRuntimeHelper:
-
     COMMON_RUNTIME_BOOTSTRAPPER_INFO = "common_runtime_bootstrapper_info.json"
     COMMON_RUNTIME_JOB_SPEC = "common_runtime_job_spec.json"
     VM_BOOTSTRAPPER_FILE_NAME = "vm-bootstrapper"
@@ -296,8 +294,7 @@ class CommonRuntimeHelper:
         return bootstrapper_json, job_spec
 
     def get_bootstrapper_binary(self, bootstrapper_info: Dict[str, str]) -> None:
-        """Copy bootstrapper binary from the bootstrapper image to local
-        machine.
+        """Copy bootstrapper binary from the bootstrapper image to local machine.
 
         :param bootstrapper_info:
         :type bootstrapper: Dict[str, str]
@@ -331,14 +328,11 @@ class CommonRuntimeHelper:
         boot_container.remove()
 
     def execute_bootstrapper(self, bootstrapper_binary: str, job_spec: str) -> subprocess.Popen:
-        """Runs vm-bootstrapper with the job specification passed to it. This
-        will build the Docker container, create all necessary files and
-        directories, and run the job locally. Command args are defined by
-        Common Runtime team here:
-        https://msdata.visualstudio.com/Vienna/_git/vienna?path=/src/azureml-
-        job-runtime/common-runtime/bootstrapper/vm-bootstrapper/src/main.rs&ver
-        sion=GBmaster&line=764&lineEnd=845&lineStartColumn=1&lineEndColumn=6&li
-        neStyle=plain&_a=contents.
+        """Runs vm-bootstrapper with the job specification passed to it. This will build the Docker container, create
+        all necessary files and directories, and run the job locally. Command args are defined by Common Runtime team
+        here: https://msdata.visualstudio.com/Vienna/_git/vienna?path=/src/azureml- job-runtime/common-
+        runtime/bootstrapper/vm-bootstrapper/src/main.rs&ver
+        sion=GBmaster&line=764&lineEnd=845&lineStartColumn=1&lineEndColumn=6&li neStyle=plain&_a=contents.
 
         :param bootstrapper_binary: Binary file path for VM bootstrapper
             (".azureml-common-runtime/<job_name>/vm-bootstrapper")
@@ -398,9 +392,8 @@ def start_run_if_local(
     ws_base_url: str,
     requests_pipeline: HttpPipeline,
 ) -> str:
-    """Request execution bundle from ES and run job. If Linux or WSL
-    environment, unzip and invoke job using job spec and bootstrapper.
-    Otherwise, invoke command locally.
+    """Request execution bundle from ES and run job. If Linux or WSL environment, unzip and invoke job using job spec
+    and bootstrapper. Otherwise, invoke command locally.
 
     :param job_definition: Job definition data
     :type job_definition: JobBaseData

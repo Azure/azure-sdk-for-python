@@ -4,9 +4,9 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
-from typing import List, Union
+from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     AutoForecastHorizon,
     AutoSeasonality,
     AutoTargetLags,
@@ -17,8 +17,8 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingSettings as RestForecastingSettings
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
@@ -66,19 +66,19 @@ class ForecastingSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        country_or_region_for_holidays: str = None,
-        cv_step_size: int = None,
-        forecast_horizon: Union[str, int] = None,
-        target_lags: Union[str, int, List[int]] = None,
-        target_rolling_window_size: Union[str, int] = None,
-        frequency: str = None,
-        feature_lags: str = None,
-        seasonality: Union[str, int] = None,
-        use_stl: str = None,
-        short_series_handling_config: str = None,
-        target_aggregate_function: str = None,
-        time_column_name: str = None,
-        time_series_id_column_names: Union[str, List[str]] = None,
+        country_or_region_for_holidays: Optional[str] = None,
+        cv_step_size: Optional[int] = None,
+        forecast_horizon: Optional[Union[str, int]] = None,
+        target_lags: Optional[Union[str, int, List[int]]] = None,
+        target_rolling_window_size: Optional[Union[str, int]] = None,
+        frequency: Optional[str] = None,
+        feature_lags: Optional[str] = None,
+        seasonality: Optional[Union[str, int]] = None,
+        use_stl: Optional[str] = None,
+        short_series_handling_config: Optional[str] = None,
+        target_aggregate_function: Optional[str] = None,
+        time_column_name: Optional[str] = None,
+        time_series_id_column_names: Optional[Union[str, List[str]]] = None,
     ):
         self.country_or_region_for_holidays = country_or_region_for_holidays
         self.cv_step_size = cv_step_size

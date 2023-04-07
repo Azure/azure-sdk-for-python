@@ -14,7 +14,6 @@ inputs:
   component_in_number:
     description: A number
     type: number
-    default: 10.99
   component_in_path:
     description: A path
     type: uri_folder
@@ -29,4 +28,4 @@ command: >-
   echo ${{inputs.component_in_path}} &
   echo ${{outputs.component_out_path}}
 
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

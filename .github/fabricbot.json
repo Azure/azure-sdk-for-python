@@ -1070,6 +1070,15 @@
             ]
           },
           {
+            "label": "Machine Learning",
+            "pathFilter": [
+              "sdk/ml/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "ML-AutoML",
             "pathFilter": [
               "/sdk/ml/automl.tests.yml",
@@ -1188,7 +1197,7 @@
             "pathFilter": [
               "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace",
               "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace",
-              "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py"
             ],
             "exclude": [
               ""
@@ -1725,9 +1734,8 @@
               "Azure Stack"
             ],
             "mentionees": [
-              "sijuman",
+              "TheOnlyWei",
               "sarathys",
-              "bganapa",
               "rakku-ms"
             ]
           },
@@ -2079,7 +2087,7 @@
               "simorenoh",
               "gahl-levy",
               "pjohari-ms",
-              "JericHunter"
+              "bambriz"
             ]
           },
           {
@@ -2090,7 +2098,7 @@
             "mentionees": [
               "simorenoh",
               "gahl-levy",
-              "JericHunter"
+              "bambriz"
             ]
           },
           {
@@ -2869,7 +2877,6 @@
               "Search"
             ],
             "mentionees": [
-              "brjohnstmsft",
               "bleroy",
               "tjacobhi",
               "markheff",

@@ -61,11 +61,16 @@ async def sample_get_operations_async():
             if operation_info.status == "succeeded":
                 print("My {} operation is completed.".format(operation_info.kind))
                 result = operation_info.result
-                print("Model ID: {}".format(result.model_id))
+                if result is not None:
+                    if operation_info.kind == "documentClassifierBuild":
+                        print(f"Classifier ID: {result.classifier_id}")
+                    else:
+                        print("Model ID: {}".format(result.model_id))
             elif operation_info.status == "failed":
                 print("My {} operation failed.".format(operation_info.kind))
                 error = operation_info.error
-                print("{}: {}".format(error.code, error.message))
+                if error is not None:
+                    print("{}: {}".format(error.code, error.message))
             else:
                 print("My operation status is {}".format(operation_info.status))
         except StopAsyncIteration:
@@ -77,4 +82,24 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        asyncio.run(main())
+    except HttpResponseError as error:
+        print("For more information about troubleshooting errors, see the following guide: "
+              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
+        # If the inner error is None and then it is possible to check the message to get more information:
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

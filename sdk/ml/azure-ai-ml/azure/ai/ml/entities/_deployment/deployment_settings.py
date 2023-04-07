@@ -5,10 +5,11 @@
 # pylint: disable=arguments-renamed
 
 import logging
+from typing import Optional
 
-from azure.ai.ml._restclient.v2021_10_01.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2021_10_01.models import OnlineRequestSettings as RestOnlineRequestSettings
-from azure.ai.ml._restclient.v2021_10_01.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.v2022_05_01.models import OnlineRequestSettings as RestOnlineRequestSettings
+from azure.ai.ml._restclient.v2022_05_01.models import ProbeSettings as RestProbeSettings
 from azure.ai.ml._utils.utils import (
     from_iso_duration_format,
     from_iso_duration_format_ms,
@@ -29,7 +30,7 @@ class BatchRetrySettings(RestTranslatableMixin):
     :type timeout: int, optional
     """
 
-    def __init__(self, *, max_retries: int = None, timeout: int = None):
+    def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
         self.max_retries = max_retries
         self.timeout = timeout
 
@@ -41,7 +42,6 @@ class BatchRetrySettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: RestBatchRetrySettings) -> "BatchRetrySettings":
-
         return (
             BatchRetrySettings(
                 max_retries=settings.max_retries,
@@ -70,9 +70,9 @@ class OnlineRequestSettings(RestTranslatableMixin):
 
     def __init__(
         self,
-        max_concurrent_requests_per_instance: int = None,
-        request_timeout_ms: int = None,
-        max_queue_wait_ms: int = None,
+        max_concurrent_requests_per_instance: Optional[int] = None,
+        request_timeout_ms: Optional[int] = None,
+        max_queue_wait_ms: Optional[int] = None,
     ):
         self.request_timeout_ms = request_timeout_ms
         self.max_concurrent_requests_per_instance = max_concurrent_requests_per_instance
@@ -95,7 +95,6 @@ class OnlineRequestSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> "OnlineRequestSettings":
-
         return (
             OnlineRequestSettings(
                 request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),
@@ -126,11 +125,11 @@ class ProbeSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        failure_threshold: int = None,
-        success_threshold: int = None,
-        timeout: int = None,
-        period: int = None,
-        initial_delay: int = None,
+        failure_threshold: Optional[int] = None,
+        success_threshold: Optional[int] = None,
+        timeout: Optional[int] = None,
+        period: Optional[int] = None,
+        initial_delay: Optional[int] = None,
     ):
         """Settings on how to probe an endpoint.
 

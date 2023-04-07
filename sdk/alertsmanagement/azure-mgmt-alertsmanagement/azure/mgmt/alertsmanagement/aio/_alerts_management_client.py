@@ -12,10 +12,16 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AlertsManagementClientConfiguration
-from .operations import AlertProcessingRulesOperations, AlertsOperations, Operations, SmartGroupsOperations
+from .operations import (
+    AlertProcessingRulesOperations,
+    AlertsOperations,
+    Operations,
+    PrometheusRuleGroupsOperations,
+    SmartGroupsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,6 +34,9 @@ class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar alert_processing_rules: AlertProcessingRulesOperations operations
     :vartype alert_processing_rules:
      azure.mgmt.alertsmanagement.aio.operations.AlertProcessingRulesOperations
+    :ivar prometheus_rule_groups: PrometheusRuleGroupsOperations operations
+    :vartype prometheus_rule_groups:
+     azure.mgmt.alertsmanagement.aio.operations.PrometheusRuleGroupsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.alertsmanagement.aio.operations.Operations
     :ivar alerts: AlertsOperations operations
@@ -54,11 +63,14 @@ class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.alert_processing_rules = AlertProcessingRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.prometheus_rule_groups = PrometheusRuleGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)

@@ -12,7 +12,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
@@ -21,7 +21,9 @@ from servicebus_preparer import (
     ServiceBusNamespacePreparer,
     ServiceBusTopicPreparer,
     CachedServiceBusNamespacePreparer,
-    CachedServiceBusTopicPreparer
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusResourceGroupPreparer,
+    SERVICEBUS_ENDPOINT_SUFFIX
 )
 from utilities import get_logger, print_message
 
@@ -29,9 +31,10 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     async def test_topic_by_servicebus_client_conn_str_send_basic(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
@@ -44,13 +47,14 @@ class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
                 message = ServiceBusMessage(b"Sample topic message")
                 await sender.send_messages(message)
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     async def test_topic_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         async with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(

@@ -4,10 +4,10 @@
 
 # pylint: disable=protected-access
 
-from typing import Union
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -37,7 +37,7 @@ class ImageSweepSettings(RestTranslatableMixin):
         sampling_algorithm: Union[
             str, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN, SamplingAlgorithmType.RANDOM
         ],
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
@@ -45,8 +45,7 @@ class ImageSweepSettings(RestTranslatableMixin):
     def _to_rest_object(self) -> RestImageSweepSettings:
         return RestImageSweepSettings(
             sampling_algorithm=self.sampling_algorithm,
-            early_termination=self.early_termination._to_rest_object()
-            if self.early_termination else None,
+            early_termination=self.early_termination._to_rest_object() if self.early_termination else None,
         )
 
     @classmethod

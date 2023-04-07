@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,42 +8,49 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._hd_insight_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AaddsResourceDetails(msrest.serialization.Model):
+class AaddsResourceDetails(_serialization.Model):
     """The Azure active directory domain service resource details.
 
-    :param domain_name: The Azure active directory domain service name.
-    :type domain_name: str
-    :param initial_sync_complete: This indicates whether initial sync complete or not.
-    :type initial_sync_complete: bool
-    :param ldaps_enabled: This indicates whether enable ldaps or not.
-    :type ldaps_enabled: bool
-    :param ldaps_public_certificate_in_base64: The base 64 format string of public ldap
-     certificate.
-    :type ldaps_public_certificate_in_base64: str
-    :param resource_id: The resource id of azure active directory domain service.
-    :type resource_id: str
-    :param subnet_id: The subnet resource id.
-    :type subnet_id: str
-    :param tenant_id: The tenant id of azure active directory domain service .
-    :type tenant_id: str
+    :ivar domain_name: The Azure active directory domain service name.
+    :vartype domain_name: str
+    :ivar initial_sync_complete: This indicates whether initial sync complete or not.
+    :vartype initial_sync_complete: bool
+    :ivar ldaps_enabled: This indicates whether enable ldaps or not.
+    :vartype ldaps_enabled: bool
+    :ivar ldaps_public_certificate_in_base64: The base 64 format string of public ldap certificate.
+    :vartype ldaps_public_certificate_in_base64: str
+    :ivar resource_id: The resource id of azure active directory domain service.
+    :vartype resource_id: str
+    :ivar subnet_id: The subnet resource id.
+    :vartype subnet_id: str
+    :ivar tenant_id: The tenant id of azure active directory domain service .
+    :vartype tenant_id: str
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'initial_sync_complete': {'key': 'initialSyncComplete', 'type': 'bool'},
-        'ldaps_enabled': {'key': 'ldapsEnabled', 'type': 'bool'},
-        'ldaps_public_certificate_in_base64': {'key': 'ldapsPublicCertificateInBase64', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "domain_name": {"key": "domainName", "type": "str"},
+        "initial_sync_complete": {"key": "initialSyncComplete", "type": "bool"},
+        "ldaps_enabled": {"key": "ldapsEnabled", "type": "bool"},
+        "ldaps_public_certificate_in_base64": {"key": "ldapsPublicCertificateInBase64", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
@@ -57,7 +65,24 @@ class AaddsResourceDetails(msrest.serialization.Model):
         tenant_id: Optional[str] = None,
         **kwargs
     ):
-        super(AaddsResourceDetails, self).__init__(**kwargs)
+        """
+        :keyword domain_name: The Azure active directory domain service name.
+        :paramtype domain_name: str
+        :keyword initial_sync_complete: This indicates whether initial sync complete or not.
+        :paramtype initial_sync_complete: bool
+        :keyword ldaps_enabled: This indicates whether enable ldaps or not.
+        :paramtype ldaps_enabled: bool
+        :keyword ldaps_public_certificate_in_base64: The base 64 format string of public ldap
+         certificate.
+        :paramtype ldaps_public_certificate_in_base64: str
+        :keyword resource_id: The resource id of azure active directory domain service.
+        :paramtype resource_id: str
+        :keyword subnet_id: The subnet resource id.
+        :paramtype subnet_id: str
+        :keyword tenant_id: The tenant id of azure active directory domain service .
+        :paramtype tenant_id: str
+        """
+        super().__init__(**kwargs)
         self.domain_name = domain_name
         self.initial_sync_complete = initial_sync_complete
         self.ldaps_enabled = ldaps_enabled
@@ -67,7 +92,7 @@ class AaddsResourceDetails(msrest.serialization.Model):
         self.tenant_id = tenant_id
 
 
-class ResourceAutoGenerated(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -83,28 +108,26 @@ class ResourceAutoGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceAutoGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class ProxyResource(ResourceAutoGenerated):
+class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -120,22 +143,20 @@ class ProxyResource(ResourceAutoGenerated):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class Application(ProxyResource):
@@ -151,31 +172,31 @@ class Application(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param etag: The ETag for the application.
-    :type etag: str
-    :param tags: A set of tags. The tags for the application.
-    :type tags: dict[str, str]
-    :param properties: The properties of the application.
-    :type properties: ~azure.mgmt.hdinsight.models.ApplicationProperties
+    :ivar etag: The ETag for the application.
+    :vartype etag: str
+    :ivar tags: The tags for the application.
+    :vartype tags: dict[str, str]
+    :ivar properties: The properties of the application.
+    :vartype properties: ~azure.mgmt.hdinsight.models.ApplicationProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.hdinsight.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ApplicationProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "ApplicationProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -183,34 +204,42 @@ class Application(ProxyResource):
         *,
         etag: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["ApplicationProperties"] = None,
+        properties: Optional["_models.ApplicationProperties"] = None,
         **kwargs
     ):
-        super(Application, self).__init__(**kwargs)
+        """
+        :keyword etag: The ETag for the application.
+        :paramtype etag: str
+        :keyword tags: The tags for the application.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The properties of the application.
+        :paramtype properties: ~azure.mgmt.hdinsight.models.ApplicationProperties
+        """
+        super().__init__(**kwargs)
         self.etag = etag
         self.tags = tags
         self.properties = properties
         self.system_data = None
 
 
-class ApplicationGetEndpoint(msrest.serialization.Model):
+class ApplicationGetEndpoint(_serialization.Model):
     """Gets the application SSH endpoint.
 
-    :param location: The location of the endpoint.
-    :type location: str
-    :param destination_port: The destination port to connect to.
-    :type destination_port: int
-    :param public_port: The public port to connect to.
-    :type public_port: int
-    :param private_ip_address: The private ip address of the endpoint.
-    :type private_ip_address: str
+    :ivar location: The location of the endpoint.
+    :vartype location: str
+    :ivar destination_port: The destination port to connect to.
+    :vartype destination_port: int
+    :ivar public_port: The public port to connect to.
+    :vartype public_port: int
+    :ivar private_ip_address: The private ip address of the endpoint.
+    :vartype private_ip_address: str
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'destination_port': {'key': 'destinationPort', 'type': 'int'},
-        'public_port': {'key': 'publicPort', 'type': 'int'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "destination_port": {"key": "destinationPort", "type": "int"},
+        "public_port": {"key": "publicPort", "type": "int"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
     }
 
     def __init__(
@@ -222,47 +251,57 @@ class ApplicationGetEndpoint(msrest.serialization.Model):
         private_ip_address: Optional[str] = None,
         **kwargs
     ):
-        super(ApplicationGetEndpoint, self).__init__(**kwargs)
+        """
+        :keyword location: The location of the endpoint.
+        :paramtype location: str
+        :keyword destination_port: The destination port to connect to.
+        :paramtype destination_port: int
+        :keyword public_port: The public port to connect to.
+        :paramtype public_port: int
+        :keyword private_ip_address: The private ip address of the endpoint.
+        :paramtype private_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.destination_port = destination_port
         self.public_port = public_port
         self.private_ip_address = private_ip_address
 
 
-class ApplicationGetHttpsEndpoint(msrest.serialization.Model):
+class ApplicationGetHttpsEndpoint(_serialization.Model):
     """Gets the application HTTP endpoints.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param access_modes: The list of access modes for the application.
-    :type access_modes: list[str]
+    :ivar access_modes: The list of access modes for the application.
+    :vartype access_modes: list[str]
     :ivar location: The location of the endpoint.
     :vartype location: str
-    :param destination_port: The destination port to connect to.
-    :type destination_port: int
+    :ivar destination_port: The destination port to connect to.
+    :vartype destination_port: int
     :ivar public_port: The public port to connect to.
     :vartype public_port: int
-    :param private_ip_address: The private ip address of the endpoint.
-    :type private_ip_address: str
-    :param sub_domain_suffix: The subdomain suffix of the application.
-    :type sub_domain_suffix: str
-    :param disable_gateway_auth: The value indicates whether to disable GatewayAuth.
-    :type disable_gateway_auth: bool
+    :ivar private_ip_address: The private ip address of the endpoint.
+    :vartype private_ip_address: str
+    :ivar sub_domain_suffix: The subdomain suffix of the application.
+    :vartype sub_domain_suffix: str
+    :ivar disable_gateway_auth: The value indicates whether to disable GatewayAuth.
+    :vartype disable_gateway_auth: bool
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'public_port': {'readonly': True},
+        "location": {"readonly": True},
+        "public_port": {"readonly": True},
     }
 
     _attribute_map = {
-        'access_modes': {'key': 'accessModes', 'type': '[str]'},
-        'location': {'key': 'location', 'type': 'str'},
-        'destination_port': {'key': 'destinationPort', 'type': 'int'},
-        'public_port': {'key': 'publicPort', 'type': 'int'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
-        'sub_domain_suffix': {'key': 'subDomainSuffix', 'type': 'str'},
-        'disable_gateway_auth': {'key': 'disableGatewayAuth', 'type': 'bool'},
+        "access_modes": {"key": "accessModes", "type": "[str]"},
+        "location": {"key": "location", "type": "str"},
+        "destination_port": {"key": "destinationPort", "type": "int"},
+        "public_port": {"key": "publicPort", "type": "int"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
+        "sub_domain_suffix": {"key": "subDomainSuffix", "type": "str"},
+        "disable_gateway_auth": {"key": "disableGatewayAuth", "type": "bool"},
     }
 
     def __init__(
@@ -275,7 +314,19 @@ class ApplicationGetHttpsEndpoint(msrest.serialization.Model):
         disable_gateway_auth: Optional[bool] = None,
         **kwargs
     ):
-        super(ApplicationGetHttpsEndpoint, self).__init__(**kwargs)
+        """
+        :keyword access_modes: The list of access modes for the application.
+        :paramtype access_modes: list[str]
+        :keyword destination_port: The destination port to connect to.
+        :paramtype destination_port: int
+        :keyword private_ip_address: The private ip address of the endpoint.
+        :paramtype private_ip_address: str
+        :keyword sub_domain_suffix: The subdomain suffix of the application.
+        :paramtype sub_domain_suffix: str
+        :keyword disable_gateway_auth: The value indicates whether to disable GatewayAuth.
+        :paramtype disable_gateway_auth: bool
+        """
+        super().__init__(**kwargs)
         self.access_modes = access_modes
         self.location = None
         self.destination_port = destination_port
@@ -285,104 +336,123 @@ class ApplicationGetHttpsEndpoint(msrest.serialization.Model):
         self.disable_gateway_auth = disable_gateway_auth
 
 
-class ApplicationListResult(msrest.serialization.Model):
+class ApplicationListResult(_serialization.Model):
     """Result of the request to list cluster Applications. It contains a list of operations and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of HDInsight applications installed on HDInsight cluster.
-    :type value: list[~azure.mgmt.hdinsight.models.Application]
+    :ivar value: The list of HDInsight applications installed on HDInsight cluster.
+    :vartype value: list[~azure.mgmt.hdinsight.models.Application]
     :ivar next_link: The URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Application]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Application]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Application"]] = None,
-        **kwargs
-    ):
-        super(ApplicationListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Application"]] = None, **kwargs):
+        """
+        :keyword value: The list of HDInsight applications installed on HDInsight cluster.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.Application]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ApplicationProperties(msrest.serialization.Model):
+class ApplicationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The HDInsight cluster application GET response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param compute_profile: The list of roles in the cluster.
-    :type compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
-    :param install_script_actions: The list of install script actions.
-    :type install_script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
-    :param uninstall_script_actions: The list of uninstall script actions.
-    :type uninstall_script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
-    :param https_endpoints: The list of application HTTPS endpoints.
-    :type https_endpoints: list[~azure.mgmt.hdinsight.models.ApplicationGetHttpsEndpoint]
-    :param ssh_endpoints: The list of application SSH endpoints.
-    :type ssh_endpoints: list[~azure.mgmt.hdinsight.models.ApplicationGetEndpoint]
+    :ivar compute_profile: The list of roles in the cluster.
+    :vartype compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
+    :ivar install_script_actions: The list of install script actions.
+    :vartype install_script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+    :ivar uninstall_script_actions: The list of uninstall script actions.
+    :vartype uninstall_script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+    :ivar https_endpoints: The list of application HTTPS endpoints.
+    :vartype https_endpoints: list[~azure.mgmt.hdinsight.models.ApplicationGetHttpsEndpoint]
+    :ivar ssh_endpoints: The list of application SSH endpoints.
+    :vartype ssh_endpoints: list[~azure.mgmt.hdinsight.models.ApplicationGetEndpoint]
     :ivar provisioning_state: The provisioning state of the application.
     :vartype provisioning_state: str
-    :param application_type: The application type.
-    :type application_type: str
+    :ivar application_type: The application type.
+    :vartype application_type: str
     :ivar application_state: The application state.
     :vartype application_state: str
-    :param errors: The list of errors.
-    :type errors: list[~azure.mgmt.hdinsight.models.Errors]
+    :ivar errors: The list of errors.
+    :vartype errors: list[~azure.mgmt.hdinsight.models.Errors]
     :ivar created_date: The application create date time.
     :vartype created_date: str
     :ivar marketplace_identifier: The marketplace identifier.
     :vartype marketplace_identifier: str
-    :param private_link_configurations: The private link configurations.
-    :type private_link_configurations: list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
+    :ivar private_link_configurations: The private link configurations.
+    :vartype private_link_configurations:
+     list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'application_state': {'readonly': True},
-        'created_date': {'readonly': True},
-        'marketplace_identifier': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "application_state": {"readonly": True},
+        "created_date": {"readonly": True},
+        "marketplace_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
-        'install_script_actions': {'key': 'installScriptActions', 'type': '[RuntimeScriptAction]'},
-        'uninstall_script_actions': {'key': 'uninstallScriptActions', 'type': '[RuntimeScriptAction]'},
-        'https_endpoints': {'key': 'httpsEndpoints', 'type': '[ApplicationGetHttpsEndpoint]'},
-        'ssh_endpoints': {'key': 'sshEndpoints', 'type': '[ApplicationGetEndpoint]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'application_type': {'key': 'applicationType', 'type': 'str'},
-        'application_state': {'key': 'applicationState', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[Errors]'},
-        'created_date': {'key': 'createdDate', 'type': 'str'},
-        'marketplace_identifier': {'key': 'marketplaceIdentifier', 'type': 'str'},
-        'private_link_configurations': {'key': 'privateLinkConfigurations', 'type': '[PrivateLinkConfiguration]'},
+        "compute_profile": {"key": "computeProfile", "type": "ComputeProfile"},
+        "install_script_actions": {"key": "installScriptActions", "type": "[RuntimeScriptAction]"},
+        "uninstall_script_actions": {"key": "uninstallScriptActions", "type": "[RuntimeScriptAction]"},
+        "https_endpoints": {"key": "httpsEndpoints", "type": "[ApplicationGetHttpsEndpoint]"},
+        "ssh_endpoints": {"key": "sshEndpoints", "type": "[ApplicationGetEndpoint]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "application_type": {"key": "applicationType", "type": "str"},
+        "application_state": {"key": "applicationState", "type": "str"},
+        "errors": {"key": "errors", "type": "[Errors]"},
+        "created_date": {"key": "createdDate", "type": "str"},
+        "marketplace_identifier": {"key": "marketplaceIdentifier", "type": "str"},
+        "private_link_configurations": {"key": "privateLinkConfigurations", "type": "[PrivateLinkConfiguration]"},
     }
 
     def __init__(
         self,
         *,
-        compute_profile: Optional["ComputeProfile"] = None,
-        install_script_actions: Optional[List["RuntimeScriptAction"]] = None,
-        uninstall_script_actions: Optional[List["RuntimeScriptAction"]] = None,
-        https_endpoints: Optional[List["ApplicationGetHttpsEndpoint"]] = None,
-        ssh_endpoints: Optional[List["ApplicationGetEndpoint"]] = None,
+        compute_profile: Optional["_models.ComputeProfile"] = None,
+        install_script_actions: Optional[List["_models.RuntimeScriptAction"]] = None,
+        uninstall_script_actions: Optional[List["_models.RuntimeScriptAction"]] = None,
+        https_endpoints: Optional[List["_models.ApplicationGetHttpsEndpoint"]] = None,
+        ssh_endpoints: Optional[List["_models.ApplicationGetEndpoint"]] = None,
         application_type: Optional[str] = None,
-        errors: Optional[List["Errors"]] = None,
-        private_link_configurations: Optional[List["PrivateLinkConfiguration"]] = None,
+        errors: Optional[List["_models.Errors"]] = None,
+        private_link_configurations: Optional[List["_models.PrivateLinkConfiguration"]] = None,
         **kwargs
     ):
-        super(ApplicationProperties, self).__init__(**kwargs)
+        """
+        :keyword compute_profile: The list of roles in the cluster.
+        :paramtype compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
+        :keyword install_script_actions: The list of install script actions.
+        :paramtype install_script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+        :keyword uninstall_script_actions: The list of uninstall script actions.
+        :paramtype uninstall_script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+        :keyword https_endpoints: The list of application HTTPS endpoints.
+        :paramtype https_endpoints: list[~azure.mgmt.hdinsight.models.ApplicationGetHttpsEndpoint]
+        :keyword ssh_endpoints: The list of application SSH endpoints.
+        :paramtype ssh_endpoints: list[~azure.mgmt.hdinsight.models.ApplicationGetEndpoint]
+        :keyword application_type: The application type.
+        :paramtype application_type: str
+        :keyword errors: The list of errors.
+        :paramtype errors: list[~azure.mgmt.hdinsight.models.Errors]
+        :keyword private_link_configurations: The private link configurations.
+        :paramtype private_link_configurations:
+         list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
+        """
+        super().__init__(**kwargs)
         self.compute_profile = compute_profile
         self.install_script_actions = install_script_actions
         self.uninstall_script_actions = uninstall_script_actions
@@ -397,173 +467,193 @@ class ApplicationProperties(msrest.serialization.Model):
         self.private_link_configurations = private_link_configurations
 
 
-class AsyncOperationResult(msrest.serialization.Model):
+class AsyncOperationResult(_serialization.Model):
     """The azure async operation response.
 
-    :param status: The async operation state. Possible values include: "InProgress", "Succeeded",
+    :ivar status: The async operation state. Known values are: "InProgress", "Succeeded", and
      "Failed".
-    :type status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
-    :param error: The operation error information.
-    :type error: ~azure.mgmt.hdinsight.models.Errors
+    :vartype status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
+    :ivar error: The operation error information.
+    :vartype error: ~azure.mgmt.hdinsight.models.Errors
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'Errors'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "Errors"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "AsyncOperationState"]] = None,
-        error: Optional["Errors"] = None,
+        status: Optional[Union[str, "_models.AsyncOperationState"]] = None,
+        error: Optional["_models.Errors"] = None,
         **kwargs
     ):
-        super(AsyncOperationResult, self).__init__(**kwargs)
+        """
+        :keyword status: The async operation state. Known values are: "InProgress", "Succeeded", and
+         "Failed".
+        :paramtype status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
+        :keyword error: The operation error information.
+        :paramtype error: ~azure.mgmt.hdinsight.models.Errors
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.error = error
 
 
-class Autoscale(msrest.serialization.Model):
+class Autoscale(_serialization.Model):
     """The autoscale request parameters.
 
-    :param capacity: Parameters for load-based autoscale.
-    :type capacity: ~azure.mgmt.hdinsight.models.AutoscaleCapacity
-    :param recurrence: Parameters for schedule-based autoscale.
-    :type recurrence: ~azure.mgmt.hdinsight.models.AutoscaleRecurrence
+    :ivar capacity: Parameters for load-based autoscale.
+    :vartype capacity: ~azure.mgmt.hdinsight.models.AutoscaleCapacity
+    :ivar recurrence: Parameters for schedule-based autoscale.
+    :vartype recurrence: ~azure.mgmt.hdinsight.models.AutoscaleRecurrence
     """
 
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'AutoscaleCapacity'},
-        'recurrence': {'key': 'recurrence', 'type': 'AutoscaleRecurrence'},
+        "capacity": {"key": "capacity", "type": "AutoscaleCapacity"},
+        "recurrence": {"key": "recurrence", "type": "AutoscaleRecurrence"},
     }
 
     def __init__(
         self,
         *,
-        capacity: Optional["AutoscaleCapacity"] = None,
-        recurrence: Optional["AutoscaleRecurrence"] = None,
+        capacity: Optional["_models.AutoscaleCapacity"] = None,
+        recurrence: Optional["_models.AutoscaleRecurrence"] = None,
         **kwargs
     ):
-        super(Autoscale, self).__init__(**kwargs)
+        """
+        :keyword capacity: Parameters for load-based autoscale.
+        :paramtype capacity: ~azure.mgmt.hdinsight.models.AutoscaleCapacity
+        :keyword recurrence: Parameters for schedule-based autoscale.
+        :paramtype recurrence: ~azure.mgmt.hdinsight.models.AutoscaleRecurrence
+        """
+        super().__init__(**kwargs)
         self.capacity = capacity
         self.recurrence = recurrence
 
 
-class AutoscaleCapacity(msrest.serialization.Model):
+class AutoscaleCapacity(_serialization.Model):
     """The load-based autoscale request parameters.
 
-    :param min_instance_count: The minimum instance count of the cluster.
-    :type min_instance_count: int
-    :param max_instance_count: The maximum instance count of the cluster.
-    :type max_instance_count: int
+    :ivar min_instance_count: The minimum instance count of the cluster.
+    :vartype min_instance_count: int
+    :ivar max_instance_count: The maximum instance count of the cluster.
+    :vartype max_instance_count: int
     """
 
     _attribute_map = {
-        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
-        'max_instance_count': {'key': 'maxInstanceCount', 'type': 'int'},
+        "min_instance_count": {"key": "minInstanceCount", "type": "int"},
+        "max_instance_count": {"key": "maxInstanceCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        min_instance_count: Optional[int] = None,
-        max_instance_count: Optional[int] = None,
-        **kwargs
-    ):
-        super(AutoscaleCapacity, self).__init__(**kwargs)
+    def __init__(self, *, min_instance_count: Optional[int] = None, max_instance_count: Optional[int] = None, **kwargs):
+        """
+        :keyword min_instance_count: The minimum instance count of the cluster.
+        :paramtype min_instance_count: int
+        :keyword max_instance_count: The maximum instance count of the cluster.
+        :paramtype max_instance_count: int
+        """
+        super().__init__(**kwargs)
         self.min_instance_count = min_instance_count
         self.max_instance_count = max_instance_count
 
 
-class AutoscaleConfigurationUpdateParameter(msrest.serialization.Model):
+class AutoscaleConfigurationUpdateParameter(_serialization.Model):
     """The autoscale configuration update parameter.
 
-    :param autoscale: The autoscale configuration.
-    :type autoscale: ~azure.mgmt.hdinsight.models.Autoscale
+    :ivar autoscale: The autoscale configuration.
+    :vartype autoscale: ~azure.mgmt.hdinsight.models.Autoscale
     """
 
     _attribute_map = {
-        'autoscale': {'key': 'autoscale', 'type': 'Autoscale'},
+        "autoscale": {"key": "autoscale", "type": "Autoscale"},
     }
 
-    def __init__(
-        self,
-        *,
-        autoscale: Optional["Autoscale"] = None,
-        **kwargs
-    ):
-        super(AutoscaleConfigurationUpdateParameter, self).__init__(**kwargs)
+    def __init__(self, *, autoscale: Optional["_models.Autoscale"] = None, **kwargs):
+        """
+        :keyword autoscale: The autoscale configuration.
+        :paramtype autoscale: ~azure.mgmt.hdinsight.models.Autoscale
+        """
+        super().__init__(**kwargs)
         self.autoscale = autoscale
 
 
-class AutoscaleRecurrence(msrest.serialization.Model):
+class AutoscaleRecurrence(_serialization.Model):
     """Schedule-based autoscale request parameters.
 
-    :param time_zone: The time zone for the autoscale schedule times.
-    :type time_zone: str
-    :param schedule: Array of schedule-based autoscale rules.
-    :type schedule: list[~azure.mgmt.hdinsight.models.AutoscaleSchedule]
+    :ivar time_zone: The time zone for the autoscale schedule times.
+    :vartype time_zone: str
+    :ivar schedule: Array of schedule-based autoscale rules.
+    :vartype schedule: list[~azure.mgmt.hdinsight.models.AutoscaleSchedule]
     """
 
     _attribute_map = {
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': '[AutoscaleSchedule]'},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "schedule": {"key": "schedule", "type": "[AutoscaleSchedule]"},
     }
 
     def __init__(
-        self,
-        *,
-        time_zone: Optional[str] = None,
-        schedule: Optional[List["AutoscaleSchedule"]] = None,
-        **kwargs
+        self, *, time_zone: Optional[str] = None, schedule: Optional[List["_models.AutoscaleSchedule"]] = None, **kwargs
     ):
-        super(AutoscaleRecurrence, self).__init__(**kwargs)
+        """
+        :keyword time_zone: The time zone for the autoscale schedule times.
+        :paramtype time_zone: str
+        :keyword schedule: Array of schedule-based autoscale rules.
+        :paramtype schedule: list[~azure.mgmt.hdinsight.models.AutoscaleSchedule]
+        """
+        super().__init__(**kwargs)
         self.time_zone = time_zone
         self.schedule = schedule
 
 
-class AutoscaleSchedule(msrest.serialization.Model):
+class AutoscaleSchedule(_serialization.Model):
     """Parameters for a schedule-based autoscale rule, consisting of an array of days + a time and capacity.
 
-    :param days: Days of the week for a schedule-based autoscale rule.
-    :type days: list[str or ~azure.mgmt.hdinsight.models.DaysOfWeek]
-    :param time_and_capacity: Time and capacity for a schedule-based autoscale rule.
-    :type time_and_capacity: ~azure.mgmt.hdinsight.models.AutoscaleTimeAndCapacity
+    :ivar days: Days of the week for a schedule-based autoscale rule.
+    :vartype days: list[str or ~azure.mgmt.hdinsight.models.DaysOfWeek]
+    :ivar time_and_capacity: Time and capacity for a schedule-based autoscale rule.
+    :vartype time_and_capacity: ~azure.mgmt.hdinsight.models.AutoscaleTimeAndCapacity
     """
 
     _attribute_map = {
-        'days': {'key': 'days', 'type': '[str]'},
-        'time_and_capacity': {'key': 'timeAndCapacity', 'type': 'AutoscaleTimeAndCapacity'},
+        "days": {"key": "days", "type": "[str]"},
+        "time_and_capacity": {"key": "timeAndCapacity", "type": "AutoscaleTimeAndCapacity"},
     }
 
     def __init__(
         self,
         *,
-        days: Optional[List[Union[str, "DaysOfWeek"]]] = None,
-        time_and_capacity: Optional["AutoscaleTimeAndCapacity"] = None,
+        days: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
+        time_and_capacity: Optional["_models.AutoscaleTimeAndCapacity"] = None,
         **kwargs
     ):
-        super(AutoscaleSchedule, self).__init__(**kwargs)
+        """
+        :keyword days: Days of the week for a schedule-based autoscale rule.
+        :paramtype days: list[str or ~azure.mgmt.hdinsight.models.DaysOfWeek]
+        :keyword time_and_capacity: Time and capacity for a schedule-based autoscale rule.
+        :paramtype time_and_capacity: ~azure.mgmt.hdinsight.models.AutoscaleTimeAndCapacity
+        """
+        super().__init__(**kwargs)
         self.days = days
         self.time_and_capacity = time_and_capacity
 
 
-class AutoscaleTimeAndCapacity(msrest.serialization.Model):
+class AutoscaleTimeAndCapacity(_serialization.Model):
     """Time and capacity request parameters.
 
-    :param time: 24-hour time in the form xx:xx.
-    :type time: str
-    :param min_instance_count: The minimum instance count of the cluster.
-    :type min_instance_count: int
-    :param max_instance_count: The maximum instance count of the cluster.
-    :type max_instance_count: int
+    :ivar time: 24-hour time in the form xx:xx.
+    :vartype time: str
+    :ivar min_instance_count: The minimum instance count of the cluster.
+    :vartype min_instance_count: int
+    :ivar max_instance_count: The maximum instance count of the cluster.
+    :vartype max_instance_count: int
     """
 
     _attribute_map = {
-        'time': {'key': 'time', 'type': 'str'},
-        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
-        'max_instance_count': {'key': 'maxInstanceCount', 'type': 'int'},
+        "time": {"key": "time", "type": "str"},
+        "min_instance_count": {"key": "minInstanceCount", "type": "int"},
+        "max_instance_count": {"key": "maxInstanceCount", "type": "int"},
     }
 
     def __init__(
@@ -574,27 +664,36 @@ class AutoscaleTimeAndCapacity(msrest.serialization.Model):
         max_instance_count: Optional[int] = None,
         **kwargs
     ):
-        super(AutoscaleTimeAndCapacity, self).__init__(**kwargs)
+        """
+        :keyword time: 24-hour time in the form xx:xx.
+        :paramtype time: str
+        :keyword min_instance_count: The minimum instance count of the cluster.
+        :paramtype min_instance_count: int
+        :keyword max_instance_count: The maximum instance count of the cluster.
+        :paramtype max_instance_count: int
+        """
+        super().__init__(**kwargs)
         self.time = time
         self.min_instance_count = min_instance_count
         self.max_instance_count = max_instance_count
 
 
-class AzureMonitorRequest(msrest.serialization.Model):
+class AzureMonitorRequest(_serialization.Model):
     """The azure monitor parameters.
 
-    :param workspace_id: The Log Analytics workspace ID.
-    :type workspace_id: str
-    :param primary_key: The Log Analytics workspace key.
-    :type primary_key: str
-    :param selected_configurations: The selected configurations.
-    :type selected_configurations: ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
+    :ivar workspace_id: The Log Analytics workspace ID.
+    :vartype workspace_id: str
+    :ivar primary_key: The Log Analytics workspace key.
+    :vartype primary_key: str
+    :ivar selected_configurations: The selected configurations.
+    :vartype selected_configurations:
+     ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
     """
 
     _attribute_map = {
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'selected_configurations': {'key': 'selectedConfigurations', 'type': 'AzureMonitorSelectedConfigurations'},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "selected_configurations": {"key": "selectedConfigurations", "type": "AzureMonitorSelectedConfigurations"},
     }
 
     def __init__(
@@ -602,30 +701,40 @@ class AzureMonitorRequest(msrest.serialization.Model):
         *,
         workspace_id: Optional[str] = None,
         primary_key: Optional[str] = None,
-        selected_configurations: Optional["AzureMonitorSelectedConfigurations"] = None,
+        selected_configurations: Optional["_models.AzureMonitorSelectedConfigurations"] = None,
         **kwargs
     ):
-        super(AzureMonitorRequest, self).__init__(**kwargs)
+        """
+        :keyword workspace_id: The Log Analytics workspace ID.
+        :paramtype workspace_id: str
+        :keyword primary_key: The Log Analytics workspace key.
+        :paramtype primary_key: str
+        :keyword selected_configurations: The selected configurations.
+        :paramtype selected_configurations:
+         ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
+        """
+        super().__init__(**kwargs)
         self.workspace_id = workspace_id
         self.primary_key = primary_key
         self.selected_configurations = selected_configurations
 
 
-class AzureMonitorResponse(msrest.serialization.Model):
+class AzureMonitorResponse(_serialization.Model):
     """The azure monitor status response.
 
-    :param cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
-    :type cluster_monitoring_enabled: bool
-    :param workspace_id: The workspace ID of the monitor on the HDInsight cluster.
-    :type workspace_id: str
-    :param selected_configurations: The selected configurations.
-    :type selected_configurations: ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
+    :ivar cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
+    :vartype cluster_monitoring_enabled: bool
+    :ivar workspace_id: The workspace ID of the monitor on the HDInsight cluster.
+    :vartype workspace_id: str
+    :ivar selected_configurations: The selected configurations.
+    :vartype selected_configurations:
+     ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
     """
 
     _attribute_map = {
-        'cluster_monitoring_enabled': {'key': 'clusterMonitoringEnabled', 'type': 'bool'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'selected_configurations': {'key': 'selectedConfigurations', 'type': 'AzureMonitorSelectedConfigurations'},
+        "cluster_monitoring_enabled": {"key": "clusterMonitoringEnabled", "type": "bool"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "selected_configurations": {"key": "selectedConfigurations", "type": "AzureMonitorSelectedConfigurations"},
     }
 
     def __init__(
@@ -633,30 +742,39 @@ class AzureMonitorResponse(msrest.serialization.Model):
         *,
         cluster_monitoring_enabled: Optional[bool] = None,
         workspace_id: Optional[str] = None,
-        selected_configurations: Optional["AzureMonitorSelectedConfigurations"] = None,
+        selected_configurations: Optional["_models.AzureMonitorSelectedConfigurations"] = None,
         **kwargs
     ):
-        super(AzureMonitorResponse, self).__init__(**kwargs)
+        """
+        :keyword cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
+        :paramtype cluster_monitoring_enabled: bool
+        :keyword workspace_id: The workspace ID of the monitor on the HDInsight cluster.
+        :paramtype workspace_id: str
+        :keyword selected_configurations: The selected configurations.
+        :paramtype selected_configurations:
+         ~azure.mgmt.hdinsight.models.AzureMonitorSelectedConfigurations
+        """
+        super().__init__(**kwargs)
         self.cluster_monitoring_enabled = cluster_monitoring_enabled
         self.workspace_id = workspace_id
         self.selected_configurations = selected_configurations
 
 
-class AzureMonitorSelectedConfigurations(msrest.serialization.Model):
+class AzureMonitorSelectedConfigurations(_serialization.Model):
     """The selected configurations for azure monitor.
 
-    :param configuration_version: The configuration version.
-    :type configuration_version: str
-    :param global_configurations: The global configurations of selected configurations.
-    :type global_configurations: dict[str, str]
-    :param table_list: The table list.
-    :type table_list: list[~azure.mgmt.hdinsight.models.AzureMonitorTableConfiguration]
+    :ivar configuration_version: The configuration version.
+    :vartype configuration_version: str
+    :ivar global_configurations: The global configurations of selected configurations.
+    :vartype global_configurations: dict[str, str]
+    :ivar table_list: The table list.
+    :vartype table_list: list[~azure.mgmt.hdinsight.models.AzureMonitorTableConfiguration]
     """
 
     _attribute_map = {
-        'configuration_version': {'key': 'configurationVersion', 'type': 'str'},
-        'global_configurations': {'key': 'globalConfigurations', 'type': '{str}'},
-        'table_list': {'key': 'tableList', 'type': '[AzureMonitorTableConfiguration]'},
+        "configuration_version": {"key": "configurationVersion", "type": "str"},
+        "global_configurations": {"key": "globalConfigurations", "type": "{str}"},
+        "table_list": {"key": "tableList", "type": "[AzureMonitorTableConfiguration]"},
     }
 
     def __init__(
@@ -664,51 +782,58 @@ class AzureMonitorSelectedConfigurations(msrest.serialization.Model):
         *,
         configuration_version: Optional[str] = None,
         global_configurations: Optional[Dict[str, str]] = None,
-        table_list: Optional[List["AzureMonitorTableConfiguration"]] = None,
+        table_list: Optional[List["_models.AzureMonitorTableConfiguration"]] = None,
         **kwargs
     ):
-        super(AzureMonitorSelectedConfigurations, self).__init__(**kwargs)
+        """
+        :keyword configuration_version: The configuration version.
+        :paramtype configuration_version: str
+        :keyword global_configurations: The global configurations of selected configurations.
+        :paramtype global_configurations: dict[str, str]
+        :keyword table_list: The table list.
+        :paramtype table_list: list[~azure.mgmt.hdinsight.models.AzureMonitorTableConfiguration]
+        """
+        super().__init__(**kwargs)
         self.configuration_version = configuration_version
         self.global_configurations = global_configurations
         self.table_list = table_list
 
 
-class AzureMonitorTableConfiguration(msrest.serialization.Model):
+class AzureMonitorTableConfiguration(_serialization.Model):
     """The table configuration for the Log Analytics integration.
 
-    :param name: The name.
-    :type name: str
+    :ivar name: The name.
+    :vartype name: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
-        super(AzureMonitorTableConfiguration, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
 
 
-class BillingMeters(msrest.serialization.Model):
+class BillingMeters(_serialization.Model):
     """The billing meters.
 
-    :param meter_parameter: The virtual machine sizes.
-    :type meter_parameter: str
-    :param meter: The HDInsight meter guid.
-    :type meter: str
-    :param unit: The unit of meter, VMHours or CoreHours.
-    :type unit: str
+    :ivar meter_parameter: The virtual machine sizes.
+    :vartype meter_parameter: str
+    :ivar meter: The HDInsight meter guid.
+    :vartype meter: str
+    :ivar unit: The unit of meter, VMHours or CoreHours.
+    :vartype unit: str
     """
 
     _attribute_map = {
-        'meter_parameter': {'key': 'meterParameter', 'type': 'str'},
-        'meter': {'key': 'meter', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "meter_parameter": {"key": "meterParameter", "type": "str"},
+        "meter": {"key": "meter", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
     def __init__(
@@ -719,71 +844,87 @@ class BillingMeters(msrest.serialization.Model):
         unit: Optional[str] = None,
         **kwargs
     ):
-        super(BillingMeters, self).__init__(**kwargs)
+        """
+        :keyword meter_parameter: The virtual machine sizes.
+        :paramtype meter_parameter: str
+        :keyword meter: The HDInsight meter guid.
+        :paramtype meter: str
+        :keyword unit: The unit of meter, VMHours or CoreHours.
+        :paramtype unit: str
+        """
+        super().__init__(**kwargs)
         self.meter_parameter = meter_parameter
         self.meter = meter
         self.unit = unit
 
 
-class BillingResources(msrest.serialization.Model):
+class BillingResources(_serialization.Model):
     """The billing resources.
 
-    :param region: The region or location.
-    :type region: str
-    :param billing_meters: The billing meter information.
-    :type billing_meters: list[~azure.mgmt.hdinsight.models.BillingMeters]
-    :param disk_billing_meters: The managed disk billing information.
-    :type disk_billing_meters: list[~azure.mgmt.hdinsight.models.DiskBillingMeters]
+    :ivar region: The region or location.
+    :vartype region: str
+    :ivar billing_meters: The billing meter information.
+    :vartype billing_meters: list[~azure.mgmt.hdinsight.models.BillingMeters]
+    :ivar disk_billing_meters: The managed disk billing information.
+    :vartype disk_billing_meters: list[~azure.mgmt.hdinsight.models.DiskBillingMeters]
     """
 
     _attribute_map = {
-        'region': {'key': 'region', 'type': 'str'},
-        'billing_meters': {'key': 'billingMeters', 'type': '[BillingMeters]'},
-        'disk_billing_meters': {'key': 'diskBillingMeters', 'type': '[DiskBillingMeters]'},
+        "region": {"key": "region", "type": "str"},
+        "billing_meters": {"key": "billingMeters", "type": "[BillingMeters]"},
+        "disk_billing_meters": {"key": "diskBillingMeters", "type": "[DiskBillingMeters]"},
     }
 
     def __init__(
         self,
         *,
         region: Optional[str] = None,
-        billing_meters: Optional[List["BillingMeters"]] = None,
-        disk_billing_meters: Optional[List["DiskBillingMeters"]] = None,
+        billing_meters: Optional[List["_models.BillingMeters"]] = None,
+        disk_billing_meters: Optional[List["_models.DiskBillingMeters"]] = None,
         **kwargs
     ):
-        super(BillingResources, self).__init__(**kwargs)
+        """
+        :keyword region: The region or location.
+        :paramtype region: str
+        :keyword billing_meters: The billing meter information.
+        :paramtype billing_meters: list[~azure.mgmt.hdinsight.models.BillingMeters]
+        :keyword disk_billing_meters: The managed disk billing information.
+        :paramtype disk_billing_meters: list[~azure.mgmt.hdinsight.models.DiskBillingMeters]
+        """
+        super().__init__(**kwargs)
         self.region = region
         self.billing_meters = billing_meters
         self.disk_billing_meters = disk_billing_meters
 
 
-class BillingResponseListResult(msrest.serialization.Model):
+class BillingResponseListResult(_serialization.Model):
     """The response for the operation to get regional billingSpecs for a subscription.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param vm_sizes: The virtual machine sizes to include or exclude.
-    :type vm_sizes: list[str]
-    :param vm_sizes_with_encryption_at_host: The vm sizes which enable encryption at host.
-    :type vm_sizes_with_encryption_at_host: list[str]
-    :param vm_size_filters: The virtual machine filtering mode. Effectively this can enabling or
+    :ivar vm_sizes: The virtual machine sizes to include or exclude.
+    :vartype vm_sizes: list[str]
+    :ivar vm_sizes_with_encryption_at_host: The vm sizes which enable encryption at host.
+    :vartype vm_sizes_with_encryption_at_host: list[str]
+    :ivar vm_size_filters: The virtual machine filtering mode. Effectively this can enabling or
      disabling the virtual machine sizes in a particular set.
-    :type vm_size_filters: list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
+    :vartype vm_size_filters: list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
     :ivar vm_size_properties: The vm size properties.
     :vartype vm_size_properties: list[~azure.mgmt.hdinsight.models.VmSizeProperty]
-    :param billing_resources: The billing and managed disk billing resources for a region.
-    :type billing_resources: list[~azure.mgmt.hdinsight.models.BillingResources]
+    :ivar billing_resources: The billing and managed disk billing resources for a region.
+    :vartype billing_resources: list[~azure.mgmt.hdinsight.models.BillingResources]
     """
 
     _validation = {
-        'vm_size_properties': {'readonly': True},
+        "vm_size_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
-        'vm_sizes_with_encryption_at_host': {'key': 'vmSizesWithEncryptionAtHost', 'type': '[str]'},
-        'vm_size_filters': {'key': 'vmSizeFilters', 'type': '[VmSizeCompatibilityFilterV2]'},
-        'vm_size_properties': {'key': 'vmSizeProperties', 'type': '[VmSizeProperty]'},
-        'billing_resources': {'key': 'billingResources', 'type': '[BillingResources]'},
+        "vm_sizes": {"key": "vmSizes", "type": "[str]"},
+        "vm_sizes_with_encryption_at_host": {"key": "vmSizesWithEncryptionAtHost", "type": "[str]"},
+        "vm_size_filters": {"key": "vmSizeFilters", "type": "[VmSizeCompatibilityFilterV2]"},
+        "vm_size_properties": {"key": "vmSizeProperties", "type": "[VmSizeProperty]"},
+        "billing_resources": {"key": "billingResources", "type": "[BillingResources]"},
     }
 
     def __init__(
@@ -791,11 +932,22 @@ class BillingResponseListResult(msrest.serialization.Model):
         *,
         vm_sizes: Optional[List[str]] = None,
         vm_sizes_with_encryption_at_host: Optional[List[str]] = None,
-        vm_size_filters: Optional[List["VmSizeCompatibilityFilterV2"]] = None,
-        billing_resources: Optional[List["BillingResources"]] = None,
+        vm_size_filters: Optional[List["_models.VmSizeCompatibilityFilterV2"]] = None,
+        billing_resources: Optional[List["_models.BillingResources"]] = None,
         **kwargs
     ):
-        super(BillingResponseListResult, self).__init__(**kwargs)
+        """
+        :keyword vm_sizes: The virtual machine sizes to include or exclude.
+        :paramtype vm_sizes: list[str]
+        :keyword vm_sizes_with_encryption_at_host: The vm sizes which enable encryption at host.
+        :paramtype vm_sizes_with_encryption_at_host: list[str]
+        :keyword vm_size_filters: The virtual machine filtering mode. Effectively this can enabling or
+         disabling the virtual machine sizes in a particular set.
+        :paramtype vm_size_filters: list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilterV2]
+        :keyword billing_resources: The billing and managed disk billing resources for a region.
+        :paramtype billing_resources: list[~azure.mgmt.hdinsight.models.BillingResources]
+        """
+        super().__init__(**kwargs)
         self.vm_sizes = vm_sizes
         self.vm_sizes_with_encryption_at_host = vm_sizes_with_encryption_at_host
         self.vm_size_filters = vm_size_filters
@@ -803,74 +955,82 @@ class BillingResponseListResult(msrest.serialization.Model):
         self.billing_resources = billing_resources
 
 
-class CapabilitiesResult(msrest.serialization.Model):
+class CapabilitiesResult(_serialization.Model):
     """The Get Capabilities operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param versions: The version capability.
-    :type versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
-    :param regions: The virtual machine size compatibility features.
-    :type regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
-    :param features: The capability features.
-    :type features: list[str]
+    :ivar versions: The version capability.
+    :vartype versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
+    :ivar regions: The virtual machine size compatibility features.
+    :vartype regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
+    :ivar features: The capability features.
+    :vartype features: list[str]
     :ivar quota: The quota capability.
     :vartype quota: ~azure.mgmt.hdinsight.models.QuotaCapability
     """
 
     _validation = {
-        'quota': {'readonly': True},
+        "quota": {"readonly": True},
     }
 
     _attribute_map = {
-        'versions': {'key': 'versions', 'type': '{VersionsCapability}'},
-        'regions': {'key': 'regions', 'type': '{RegionsCapability}'},
-        'features': {'key': 'features', 'type': '[str]'},
-        'quota': {'key': 'quota', 'type': 'QuotaCapability'},
+        "versions": {"key": "versions", "type": "{VersionsCapability}"},
+        "regions": {"key": "regions", "type": "{RegionsCapability}"},
+        "features": {"key": "features", "type": "[str]"},
+        "quota": {"key": "quota", "type": "QuotaCapability"},
     }
 
     def __init__(
         self,
         *,
-        versions: Optional[Dict[str, "VersionsCapability"]] = None,
-        regions: Optional[Dict[str, "RegionsCapability"]] = None,
+        versions: Optional[Dict[str, "_models.VersionsCapability"]] = None,
+        regions: Optional[Dict[str, "_models.RegionsCapability"]] = None,
         features: Optional[List[str]] = None,
         **kwargs
     ):
-        super(CapabilitiesResult, self).__init__(**kwargs)
+        """
+        :keyword versions: The version capability.
+        :paramtype versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
+        :keyword regions: The virtual machine size compatibility features.
+        :paramtype regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
+        :keyword features: The capability features.
+        :paramtype features: list[str]
+        """
+        super().__init__(**kwargs)
         self.versions = versions
         self.regions = regions
         self.features = features
         self.quota = None
 
 
-class ClientGroupInfo(msrest.serialization.Model):
+class ClientGroupInfo(_serialization.Model):
     """The information of AAD security group.
 
-    :param group_name: The AAD security group name.
-    :type group_name: str
-    :param group_id: The AAD security group id.
-    :type group_id: str
+    :ivar group_name: The AAD security group name.
+    :vartype group_name: str
+    :ivar group_id: The AAD security group id.
+    :vartype group_id: str
     """
 
     _attribute_map = {
-        'group_name': {'key': 'groupName', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
+        "group_name": {"key": "groupName", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        group_name: Optional[str] = None,
-        group_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ClientGroupInfo, self).__init__(**kwargs)
+    def __init__(self, *, group_name: Optional[str] = None, group_id: Optional[str] = None, **kwargs):
+        """
+        :keyword group_name: The AAD security group name.
+        :paramtype group_name: str
+        :keyword group_id: The AAD security group id.
+        :paramtype group_id: str
+        """
+        super().__init__(**kwargs)
         self.group_name = group_name
         self.group_id = group_id
 
 
-class Resource(msrest.serialization.Model):
+class ResourceAutoGenerated(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -886,28 +1046,26 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class TrackedResource(Resource):
+class TrackedResource(ResourceAutoGenerated):
     """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -922,35 +1080,35 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
@@ -970,41 +1128,41 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param etag: The ETag for the resource.
-    :type etag: str
-    :param zones: The availability zones.
-    :type zones: list[str]
-    :param properties: The properties of the cluster.
-    :type properties: ~azure.mgmt.hdinsight.models.ClusterGetProperties
-    :param identity: The identity of the cluster, if configured.
-    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: The ETag for the resource.
+    :vartype etag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar properties: The properties of the cluster.
+    :vartype properties: ~azure.mgmt.hdinsight.models.ClusterGetProperties
+    :ivar identity: The identity of the cluster, if configured.
+    :vartype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.hdinsight.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': 'ClusterGetProperties'},
-        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "properties": {"key": "properties", "type": "ClusterGetProperties"},
+        "identity": {"key": "identity", "type": "ClusterIdentity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -1014,11 +1172,25 @@ class Cluster(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         zones: Optional[List[str]] = None,
-        properties: Optional["ClusterGetProperties"] = None,
-        identity: Optional["ClusterIdentity"] = None,
+        properties: Optional["_models.ClusterGetProperties"] = None,
+        identity: Optional["_models.ClusterIdentity"] = None,
         **kwargs
     ):
-        super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword etag: The ETag for the resource.
+        :paramtype etag: str
+        :keyword zones: The availability zones.
+        :paramtype zones: list[str]
+        :keyword properties: The properties of the cluster.
+        :paramtype properties: ~azure.mgmt.hdinsight.models.ClusterGetProperties
+        :keyword identity: The identity of the cluster, if configured.
+        :paramtype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.zones = zones
         self.properties = properties
@@ -1026,49 +1198,49 @@ class Cluster(TrackedResource):
         self.system_data = None
 
 
-class ClusterConfigurations(msrest.serialization.Model):
+class ClusterConfigurations(_serialization.Model):
     """The configuration object for the specified cluster.
 
-    :param configurations: The configuration object for the specified configuration for the
+    :ivar configurations: The configuration object for the specified configuration for the
      specified cluster.
-    :type configurations: dict[str, dict[str, str]]
+    :vartype configurations: dict[str, dict[str, str]]
     """
 
     _attribute_map = {
-        'configurations': {'key': 'configurations', 'type': '{{str}}'},
+        "configurations": {"key": "configurations", "type": "{{str}}"},
     }
 
-    def __init__(
-        self,
-        *,
-        configurations: Optional[Dict[str, Dict[str, str]]] = None,
-        **kwargs
-    ):
-        super(ClusterConfigurations, self).__init__(**kwargs)
+    def __init__(self, *, configurations: Optional[Dict[str, Dict[str, str]]] = None, **kwargs):
+        """
+        :keyword configurations: The configuration object for the specified configuration for the
+         specified cluster.
+        :paramtype configurations: dict[str, dict[str, str]]
+        """
+        super().__init__(**kwargs)
         self.configurations = configurations
 
 
-class ClusterCreateParametersExtended(msrest.serialization.Model):
+class ClusterCreateParametersExtended(_serialization.Model):
     """The CreateCluster request parameters.
 
-    :param location: The location of the cluster.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param zones: The availability zones.
-    :type zones: list[str]
-    :param properties: The cluster create parameters.
-    :type properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
-    :param identity: The identity of the cluster, if configured.
-    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+    :ivar location: The location of the cluster.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar properties: The cluster create parameters.
+    :vartype properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+    :ivar identity: The identity of the cluster, if configured.
+    :vartype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': 'ClusterCreateProperties'},
-        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "properties": {"key": "properties", "type": "ClusterCreateProperties"},
+        "identity": {"key": "identity", "type": "ClusterIdentity"},
     }
 
     def __init__(
@@ -1077,11 +1249,23 @@ class ClusterCreateParametersExtended(msrest.serialization.Model):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
-        properties: Optional["ClusterCreateProperties"] = None,
-        identity: Optional["ClusterIdentity"] = None,
+        properties: Optional["_models.ClusterCreateProperties"] = None,
+        identity: Optional["_models.ClusterIdentity"] = None,
         **kwargs
     ):
-        super(ClusterCreateParametersExtended, self).__init__(**kwargs)
+        """
+        :keyword location: The location of the cluster.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The availability zones.
+        :paramtype zones: list[str]
+        :keyword properties: The cluster create parameters.
+        :paramtype properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+        :keyword identity: The identity of the cluster, if configured.
+        :paramtype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.zones = zones
@@ -1089,77 +1273,114 @@ class ClusterCreateParametersExtended(msrest.serialization.Model):
         self.identity = identity
 
 
-class ClusterCreateProperties(msrest.serialization.Model):
+class ClusterCreateProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The cluster create parameters.
 
-    :param cluster_version: The version of the cluster.
-    :type cluster_version: str
-    :param os_type: The type of operating system. Possible values include: "Windows", "Linux".
-    :type os_type: str or ~azure.mgmt.hdinsight.models.OSType
-    :param tier: The cluster tier. Possible values include: "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.hdinsight.models.Tier
-    :param cluster_definition: The cluster definition.
-    :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
-    :param kafka_rest_properties: The cluster kafka rest proxy configuration.
-    :type kafka_rest_properties: ~azure.mgmt.hdinsight.models.KafkaRestProperties
-    :param security_profile: The security profile.
-    :type security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
-    :param compute_profile: The compute profile.
-    :type compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
-    :param storage_profile: The storage profile.
-    :type storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
-    :param disk_encryption_properties: The disk encryption properties.
-    :type disk_encryption_properties: ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
-    :param encryption_in_transit_properties: The encryption-in-transit properties.
-    :type encryption_in_transit_properties:
+    :ivar cluster_version: The version of the cluster.
+    :vartype cluster_version: str
+    :ivar os_type: The type of operating system. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.hdinsight.models.OSType
+    :ivar tier: The cluster tier. Known values are: "Standard" and "Premium".
+    :vartype tier: str or ~azure.mgmt.hdinsight.models.Tier
+    :ivar cluster_definition: The cluster definition.
+    :vartype cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
+    :ivar kafka_rest_properties: The cluster kafka rest proxy configuration.
+    :vartype kafka_rest_properties: ~azure.mgmt.hdinsight.models.KafkaRestProperties
+    :ivar security_profile: The security profile.
+    :vartype security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
+    :ivar compute_profile: The compute profile.
+    :vartype compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
+    :ivar storage_profile: The storage profile.
+    :vartype storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
+    :ivar disk_encryption_properties: The disk encryption properties.
+    :vartype disk_encryption_properties: ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :ivar encryption_in_transit_properties: The encryption-in-transit properties.
+    :vartype encryption_in_transit_properties:
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
-    :param min_supported_tls_version: The minimal supported tls version.
-    :type min_supported_tls_version: str
-    :param network_properties: The network properties.
-    :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
-    :param compute_isolation_properties: The compute isolation properties.
-    :type compute_isolation_properties: ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
-    :param private_link_configurations: The private link configurations.
-    :type private_link_configurations: list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
+    :ivar min_supported_tls_version: The minimal supported tls version.
+    :vartype min_supported_tls_version: str
+    :ivar network_properties: The network properties.
+    :vartype network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+    :ivar compute_isolation_properties: The compute isolation properties.
+    :vartype compute_isolation_properties: ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
+    :ivar private_link_configurations: The private link configurations.
+    :vartype private_link_configurations:
+     list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
     """
 
     _attribute_map = {
-        'cluster_version': {'key': 'clusterVersion', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'cluster_definition': {'key': 'clusterDefinition', 'type': 'ClusterDefinition'},
-        'kafka_rest_properties': {'key': 'kafkaRestProperties', 'type': 'KafkaRestProperties'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
-        'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
-        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
-        'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
-        'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
-        'private_link_configurations': {'key': 'privateLinkConfigurations', 'type': '[PrivateLinkConfiguration]'},
+        "cluster_version": {"key": "clusterVersion", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "cluster_definition": {"key": "clusterDefinition", "type": "ClusterDefinition"},
+        "kafka_rest_properties": {"key": "kafkaRestProperties", "type": "KafkaRestProperties"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "compute_profile": {"key": "computeProfile", "type": "ComputeProfile"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "disk_encryption_properties": {"key": "diskEncryptionProperties", "type": "DiskEncryptionProperties"},
+        "encryption_in_transit_properties": {
+            "key": "encryptionInTransitProperties",
+            "type": "EncryptionInTransitProperties",
+        },
+        "min_supported_tls_version": {"key": "minSupportedTlsVersion", "type": "str"},
+        "network_properties": {"key": "networkProperties", "type": "NetworkProperties"},
+        "compute_isolation_properties": {"key": "computeIsolationProperties", "type": "ComputeIsolationProperties"},
+        "private_link_configurations": {"key": "privateLinkConfigurations", "type": "[PrivateLinkConfiguration]"},
     }
 
     def __init__(
         self,
         *,
         cluster_version: Optional[str] = None,
-        os_type: Optional[Union[str, "OSType"]] = None,
-        tier: Optional[Union[str, "Tier"]] = None,
-        cluster_definition: Optional["ClusterDefinition"] = None,
-        kafka_rest_properties: Optional["KafkaRestProperties"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        compute_profile: Optional["ComputeProfile"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        disk_encryption_properties: Optional["DiskEncryptionProperties"] = None,
-        encryption_in_transit_properties: Optional["EncryptionInTransitProperties"] = None,
+        os_type: Optional[Union[str, "_models.OSType"]] = None,
+        tier: Optional[Union[str, "_models.Tier"]] = None,
+        cluster_definition: Optional["_models.ClusterDefinition"] = None,
+        kafka_rest_properties: Optional["_models.KafkaRestProperties"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        compute_profile: Optional["_models.ComputeProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        disk_encryption_properties: Optional["_models.DiskEncryptionProperties"] = None,
+        encryption_in_transit_properties: Optional["_models.EncryptionInTransitProperties"] = None,
         min_supported_tls_version: Optional[str] = None,
-        network_properties: Optional["NetworkProperties"] = None,
-        compute_isolation_properties: Optional["ComputeIsolationProperties"] = None,
-        private_link_configurations: Optional[List["PrivateLinkConfiguration"]] = None,
+        network_properties: Optional["_models.NetworkProperties"] = None,
+        compute_isolation_properties: Optional["_models.ComputeIsolationProperties"] = None,
+        private_link_configurations: Optional[List["_models.PrivateLinkConfiguration"]] = None,
         **kwargs
     ):
-        super(ClusterCreateProperties, self).__init__(**kwargs)
+        """
+        :keyword cluster_version: The version of the cluster.
+        :paramtype cluster_version: str
+        :keyword os_type: The type of operating system. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.hdinsight.models.OSType
+        :keyword tier: The cluster tier. Known values are: "Standard" and "Premium".
+        :paramtype tier: str or ~azure.mgmt.hdinsight.models.Tier
+        :keyword cluster_definition: The cluster definition.
+        :paramtype cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
+        :keyword kafka_rest_properties: The cluster kafka rest proxy configuration.
+        :paramtype kafka_rest_properties: ~azure.mgmt.hdinsight.models.KafkaRestProperties
+        :keyword security_profile: The security profile.
+        :paramtype security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
+        :keyword compute_profile: The compute profile.
+        :paramtype compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
+        :keyword storage_profile: The storage profile.
+        :paramtype storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
+        :keyword disk_encryption_properties: The disk encryption properties.
+        :paramtype disk_encryption_properties: ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+        :keyword encryption_in_transit_properties: The encryption-in-transit properties.
+        :paramtype encryption_in_transit_properties:
+         ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
+        :keyword min_supported_tls_version: The minimal supported tls version.
+        :paramtype min_supported_tls_version: str
+        :keyword network_properties: The network properties.
+        :paramtype network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+        :keyword compute_isolation_properties: The compute isolation properties.
+        :paramtype compute_isolation_properties:
+         ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
+        :keyword private_link_configurations: The private link configurations.
+        :paramtype private_link_configurations:
+         list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
+        """
+        super().__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
         self.tier = tier
@@ -1179,36 +1400,36 @@ class ClusterCreateProperties(msrest.serialization.Model):
 class ClusterCreateRequestValidationParameters(ClusterCreateParametersExtended):
     """The cluster create request specification.
 
-    :param location: The location of the cluster.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param zones: The availability zones.
-    :type zones: list[str]
-    :param properties: The cluster create parameters.
-    :type properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
-    :param identity: The identity of the cluster, if configured.
-    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
-    :param name: The cluster name.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
-    :param tenant_id: The tenant id.
-    :type tenant_id: str
-    :param fetch_aadds_resource: This indicates whether fetch Aadds resource or not.
-    :type fetch_aadds_resource: bool
+    :ivar location: The location of the cluster.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar properties: The cluster create parameters.
+    :vartype properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+    :ivar identity: The identity of the cluster, if configured.
+    :vartype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+    :ivar name: The cluster name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar tenant_id: The tenant id.
+    :vartype tenant_id: str
+    :ivar fetch_aadds_resource: This indicates whether fetch Aadds resource or not.
+    :vartype fetch_aadds_resource: bool
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': 'ClusterCreateProperties'},
-        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'fetch_aadds_resource': {'key': 'fetchAaddsResource', 'type': 'bool'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "properties": {"key": "properties", "type": "ClusterCreateProperties"},
+        "identity": {"key": "identity", "type": "ClusterIdentity"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "fetch_aadds_resource": {"key": "fetchAaddsResource", "type": "bool"},
     }
 
     def __init__(
@@ -1217,75 +1438,105 @@ class ClusterCreateRequestValidationParameters(ClusterCreateParametersExtended):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
-        properties: Optional["ClusterCreateProperties"] = None,
-        identity: Optional["ClusterIdentity"] = None,
+        properties: Optional["_models.ClusterCreateProperties"] = None,
+        identity: Optional["_models.ClusterIdentity"] = None,
         name: Optional[str] = None,
         type: Optional[str] = None,
         tenant_id: Optional[str] = None,
         fetch_aadds_resource: Optional[bool] = None,
         **kwargs
     ):
-        super(ClusterCreateRequestValidationParameters, self).__init__(location=location, tags=tags, zones=zones, properties=properties, identity=identity, **kwargs)
+        """
+        :keyword location: The location of the cluster.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The availability zones.
+        :paramtype zones: list[str]
+        :keyword properties: The cluster create parameters.
+        :paramtype properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+        :keyword identity: The identity of the cluster, if configured.
+        :paramtype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+        :keyword name: The cluster name.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        :keyword tenant_id: The tenant id.
+        :paramtype tenant_id: str
+        :keyword fetch_aadds_resource: This indicates whether fetch Aadds resource or not.
+        :paramtype fetch_aadds_resource: bool
+        """
+        super().__init__(location=location, tags=tags, zones=zones, properties=properties, identity=identity, **kwargs)
         self.name = name
         self.type = type
         self.tenant_id = tenant_id
         self.fetch_aadds_resource = fetch_aadds_resource
 
 
-class ClusterCreateValidationResult(msrest.serialization.Model):
+class ClusterCreateValidationResult(_serialization.Model):
     """The response of cluster create request validation.
 
-    :param validation_errors: The validation errors.
-    :type validation_errors: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
-    :param validation_warnings: The validation warnings.
-    :type validation_warnings: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
-    :param estimated_creation_duration: The estimated creation duration.
-    :type estimated_creation_duration: ~datetime.timedelta
-    :param aadds_resources_details: The Azure active directory domain service resource details.
-    :type aadds_resources_details: list[~azure.mgmt.hdinsight.models.AaddsResourceDetails]
+    :ivar validation_errors: The validation errors.
+    :vartype validation_errors: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+    :ivar validation_warnings: The validation warnings.
+    :vartype validation_warnings: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+    :ivar estimated_creation_duration: The estimated creation duration.
+    :vartype estimated_creation_duration: ~datetime.timedelta
+    :ivar aadds_resources_details: The Azure active directory domain service resource details.
+    :vartype aadds_resources_details: list[~azure.mgmt.hdinsight.models.AaddsResourceDetails]
     """
 
     _attribute_map = {
-        'validation_errors': {'key': 'validationErrors', 'type': '[ValidationErrorInfo]'},
-        'validation_warnings': {'key': 'validationWarnings', 'type': '[ValidationErrorInfo]'},
-        'estimated_creation_duration': {'key': 'estimatedCreationDuration', 'type': 'duration'},
-        'aadds_resources_details': {'key': 'aaddsResourcesDetails', 'type': '[AaddsResourceDetails]'},
+        "validation_errors": {"key": "validationErrors", "type": "[ValidationErrorInfo]"},
+        "validation_warnings": {"key": "validationWarnings", "type": "[ValidationErrorInfo]"},
+        "estimated_creation_duration": {"key": "estimatedCreationDuration", "type": "duration"},
+        "aadds_resources_details": {"key": "aaddsResourcesDetails", "type": "[AaddsResourceDetails]"},
     }
 
     def __init__(
         self,
         *,
-        validation_errors: Optional[List["ValidationErrorInfo"]] = None,
-        validation_warnings: Optional[List["ValidationErrorInfo"]] = None,
+        validation_errors: Optional[List["_models.ValidationErrorInfo"]] = None,
+        validation_warnings: Optional[List["_models.ValidationErrorInfo"]] = None,
         estimated_creation_duration: Optional[datetime.timedelta] = None,
-        aadds_resources_details: Optional[List["AaddsResourceDetails"]] = None,
+        aadds_resources_details: Optional[List["_models.AaddsResourceDetails"]] = None,
         **kwargs
     ):
-        super(ClusterCreateValidationResult, self).__init__(**kwargs)
+        """
+        :keyword validation_errors: The validation errors.
+        :paramtype validation_errors: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+        :keyword validation_warnings: The validation warnings.
+        :paramtype validation_warnings: list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+        :keyword estimated_creation_duration: The estimated creation duration.
+        :paramtype estimated_creation_duration: ~datetime.timedelta
+        :keyword aadds_resources_details: The Azure active directory domain service resource details.
+        :paramtype aadds_resources_details: list[~azure.mgmt.hdinsight.models.AaddsResourceDetails]
+        """
+        super().__init__(**kwargs)
         self.validation_errors = validation_errors
         self.validation_warnings = validation_warnings
         self.estimated_creation_duration = estimated_creation_duration
         self.aadds_resources_details = aadds_resources_details
 
 
-class ClusterDefinition(msrest.serialization.Model):
+class ClusterDefinition(_serialization.Model):
     """The cluster definition.
 
-    :param blueprint: The link to the blueprint.
-    :type blueprint: str
-    :param kind: The type of cluster.
-    :type kind: str
-    :param component_version: The versions of different services in the cluster.
-    :type component_version: dict[str, str]
-    :param configurations: The cluster configurations.
-    :type configurations: any
+    :ivar blueprint: The link to the blueprint.
+    :vartype blueprint: str
+    :ivar kind: The type of cluster.
+    :vartype kind: str
+    :ivar component_version: The versions of different services in the cluster.
+    :vartype component_version: dict[str, str]
+    :ivar configurations: The cluster configurations.
+    :vartype configurations: JSON
     """
 
     _attribute_map = {
-        'blueprint': {'key': 'blueprint', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'component_version': {'key': 'componentVersion', 'type': '{str}'},
-        'configurations': {'key': 'configurations', 'type': 'object'},
+        "blueprint": {"key": "blueprint", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "component_version": {"key": "componentVersion", "type": "{str}"},
+        "configurations": {"key": "configurations", "type": "object"},
     }
 
     def __init__(
@@ -1294,32 +1545,42 @@ class ClusterDefinition(msrest.serialization.Model):
         blueprint: Optional[str] = None,
         kind: Optional[str] = None,
         component_version: Optional[Dict[str, str]] = None,
-        configurations: Optional[Any] = None,
+        configurations: Optional[JSON] = None,
         **kwargs
     ):
-        super(ClusterDefinition, self).__init__(**kwargs)
+        """
+        :keyword blueprint: The link to the blueprint.
+        :paramtype blueprint: str
+        :keyword kind: The type of cluster.
+        :paramtype kind: str
+        :keyword component_version: The versions of different services in the cluster.
+        :paramtype component_version: dict[str, str]
+        :keyword configurations: The cluster configurations.
+        :paramtype configurations: JSON
+        """
+        super().__init__(**kwargs)
         self.blueprint = blueprint
         self.kind = kind
         self.component_version = component_version
         self.configurations = configurations
 
 
-class ClusterDiskEncryptionParameters(msrest.serialization.Model):
+class ClusterDiskEncryptionParameters(_serialization.Model):
     """The Disk Encryption Cluster request parameters.
 
-    :param vault_uri: Base key vault URI where the customers key is located eg.
+    :ivar vault_uri: Base key vault URI where the customers key is located eg.
      https://myvault.vault.azure.net.
-    :type vault_uri: str
-    :param key_name: Key name that is used for enabling disk encryption.
-    :type key_name: str
-    :param key_version: Specific key version that is used for enabling disk encryption.
-    :type key_version: str
+    :vartype vault_uri: str
+    :ivar key_name: Key name that is used for enabling disk encryption.
+    :vartype key_name: str
+    :ivar key_version: Specific key version that is used for enabling disk encryption.
+    :vartype key_version: str
     """
 
     _attribute_map = {
-        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        "vault_uri": {"key": "vaultUri", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
     }
 
     def __init__(
@@ -1330,133 +1591,200 @@ class ClusterDiskEncryptionParameters(msrest.serialization.Model):
         key_version: Optional[str] = None,
         **kwargs
     ):
-        super(ClusterDiskEncryptionParameters, self).__init__(**kwargs)
+        """
+        :keyword vault_uri: Base key vault URI where the customers key is located eg.
+         https://myvault.vault.azure.net.
+        :paramtype vault_uri: str
+        :keyword key_name: Key name that is used for enabling disk encryption.
+        :paramtype key_name: str
+        :keyword key_version: Specific key version that is used for enabling disk encryption.
+        :paramtype key_version: str
+        """
+        super().__init__(**kwargs)
         self.vault_uri = vault_uri
         self.key_name = key_name
         self.key_version = key_version
 
 
-class ClusterGetProperties(msrest.serialization.Model):
+class ClusterGetProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The properties of cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cluster_version: The version of the cluster.
-    :type cluster_version: str
-    :param cluster_hdp_version: The hdp version of the cluster.
-    :type cluster_hdp_version: str
-    :param os_type: The type of operating system. Possible values include: "Windows", "Linux".
-    :type os_type: str or ~azure.mgmt.hdinsight.models.OSType
-    :param tier: The cluster tier. Possible values include: "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.hdinsight.models.Tier
-    :param cluster_id: The cluster id.
-    :type cluster_id: str
-    :param cluster_definition: Required. The cluster definition.
-    :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
-    :param kafka_rest_properties: The cluster kafka rest proxy configuration.
-    :type kafka_rest_properties: ~azure.mgmt.hdinsight.models.KafkaRestProperties
-    :param security_profile: The security profile.
-    :type security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
-    :param compute_profile: The compute profile.
-    :type compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
-    :param provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "InProgress", "Failed", "Succeeded", "Canceled", "Deleting".
-    :type provisioning_state: str or ~azure.mgmt.hdinsight.models.HDInsightClusterProvisioningState
-    :param created_date: The date on which the cluster was created.
-    :type created_date: str
-    :param cluster_state: The state of the cluster.
-    :type cluster_state: str
-    :param quota_info: The quota information.
-    :type quota_info: ~azure.mgmt.hdinsight.models.QuotaInfo
-    :param errors: The list of errors.
-    :type errors: list[~azure.mgmt.hdinsight.models.Errors]
-    :param connectivity_endpoints: The list of connectivity endpoints.
-    :type connectivity_endpoints: list[~azure.mgmt.hdinsight.models.ConnectivityEndpoint]
-    :param disk_encryption_properties: The disk encryption properties.
-    :type disk_encryption_properties: ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
-    :param encryption_in_transit_properties: The encryption-in-transit properties.
-    :type encryption_in_transit_properties:
+    :ivar cluster_version: The version of the cluster.
+    :vartype cluster_version: str
+    :ivar cluster_hdp_version: The hdp version of the cluster.
+    :vartype cluster_hdp_version: str
+    :ivar os_type: The type of operating system. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.hdinsight.models.OSType
+    :ivar tier: The cluster tier. Known values are: "Standard" and "Premium".
+    :vartype tier: str or ~azure.mgmt.hdinsight.models.Tier
+    :ivar cluster_id: The cluster id.
+    :vartype cluster_id: str
+    :ivar cluster_definition: The cluster definition. Required.
+    :vartype cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
+    :ivar kafka_rest_properties: The cluster kafka rest proxy configuration.
+    :vartype kafka_rest_properties: ~azure.mgmt.hdinsight.models.KafkaRestProperties
+    :ivar security_profile: The security profile.
+    :vartype security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
+    :ivar compute_profile: The compute profile.
+    :vartype compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "InProgress", "Failed", "Succeeded", "Canceled", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hdinsight.models.HDInsightClusterProvisioningState
+    :ivar created_date: The date on which the cluster was created.
+    :vartype created_date: str
+    :ivar cluster_state: The state of the cluster.
+    :vartype cluster_state: str
+    :ivar quota_info: The quota information.
+    :vartype quota_info: ~azure.mgmt.hdinsight.models.QuotaInfo
+    :ivar errors: The list of errors.
+    :vartype errors: list[~azure.mgmt.hdinsight.models.Errors]
+    :ivar connectivity_endpoints: The list of connectivity endpoints.
+    :vartype connectivity_endpoints: list[~azure.mgmt.hdinsight.models.ConnectivityEndpoint]
+    :ivar disk_encryption_properties: The disk encryption properties.
+    :vartype disk_encryption_properties: ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :ivar encryption_in_transit_properties: The encryption-in-transit properties.
+    :vartype encryption_in_transit_properties:
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
-    :param storage_profile: The storage profile.
-    :type storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
-    :param min_supported_tls_version: The minimal supported tls version.
-    :type min_supported_tls_version: str
-    :param excluded_services_config: The excluded services config.
-    :type excluded_services_config: ~azure.mgmt.hdinsight.models.ExcludedServicesConfig
-    :param network_properties: The network properties.
-    :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
-    :param compute_isolation_properties: The compute isolation properties.
-    :type compute_isolation_properties: ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
-    :param private_link_configurations: The private link configurations.
-    :type private_link_configurations: list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
+    :ivar storage_profile: The storage profile.
+    :vartype storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
+    :ivar min_supported_tls_version: The minimal supported tls version.
+    :vartype min_supported_tls_version: str
+    :ivar excluded_services_config: The excluded services config.
+    :vartype excluded_services_config: ~azure.mgmt.hdinsight.models.ExcludedServicesConfig
+    :ivar network_properties: The network properties.
+    :vartype network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+    :ivar compute_isolation_properties: The compute isolation properties.
+    :vartype compute_isolation_properties: ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
+    :ivar private_link_configurations: The private link configurations.
+    :vartype private_link_configurations:
+     list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
     :ivar private_endpoint_connections: The list of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.hdinsight.models.PrivateEndpointConnection]
     """
 
     _validation = {
-        'cluster_definition': {'required': True},
-        'private_endpoint_connections': {'readonly': True},
+        "cluster_definition": {"required": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'cluster_version': {'key': 'clusterVersion', 'type': 'str'},
-        'cluster_hdp_version': {'key': 'clusterHdpVersion', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'cluster_id': {'key': 'clusterId', 'type': 'str'},
-        'cluster_definition': {'key': 'clusterDefinition', 'type': 'ClusterDefinition'},
-        'kafka_rest_properties': {'key': 'kafkaRestProperties', 'type': 'KafkaRestProperties'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'created_date': {'key': 'createdDate', 'type': 'str'},
-        'cluster_state': {'key': 'clusterState', 'type': 'str'},
-        'quota_info': {'key': 'quotaInfo', 'type': 'QuotaInfo'},
-        'errors': {'key': 'errors', 'type': '[Errors]'},
-        'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
-        'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
-        'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
-        'excluded_services_config': {'key': 'excludedServicesConfig', 'type': 'ExcludedServicesConfig'},
-        'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
-        'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
-        'private_link_configurations': {'key': 'privateLinkConfigurations', 'type': '[PrivateLinkConfiguration]'},
-        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "cluster_version": {"key": "clusterVersion", "type": "str"},
+        "cluster_hdp_version": {"key": "clusterHdpVersion", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "cluster_id": {"key": "clusterId", "type": "str"},
+        "cluster_definition": {"key": "clusterDefinition", "type": "ClusterDefinition"},
+        "kafka_rest_properties": {"key": "kafkaRestProperties", "type": "KafkaRestProperties"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "compute_profile": {"key": "computeProfile", "type": "ComputeProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "created_date": {"key": "createdDate", "type": "str"},
+        "cluster_state": {"key": "clusterState", "type": "str"},
+        "quota_info": {"key": "quotaInfo", "type": "QuotaInfo"},
+        "errors": {"key": "errors", "type": "[Errors]"},
+        "connectivity_endpoints": {"key": "connectivityEndpoints", "type": "[ConnectivityEndpoint]"},
+        "disk_encryption_properties": {"key": "diskEncryptionProperties", "type": "DiskEncryptionProperties"},
+        "encryption_in_transit_properties": {
+            "key": "encryptionInTransitProperties",
+            "type": "EncryptionInTransitProperties",
+        },
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "min_supported_tls_version": {"key": "minSupportedTlsVersion", "type": "str"},
+        "excluded_services_config": {"key": "excludedServicesConfig", "type": "ExcludedServicesConfig"},
+        "network_properties": {"key": "networkProperties", "type": "NetworkProperties"},
+        "compute_isolation_properties": {"key": "computeIsolationProperties", "type": "ComputeIsolationProperties"},
+        "private_link_configurations": {"key": "privateLinkConfigurations", "type": "[PrivateLinkConfiguration]"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        cluster_definition: "ClusterDefinition",
+        cluster_definition: "_models.ClusterDefinition",
         cluster_version: Optional[str] = None,
         cluster_hdp_version: Optional[str] = None,
-        os_type: Optional[Union[str, "OSType"]] = None,
-        tier: Optional[Union[str, "Tier"]] = None,
+        os_type: Optional[Union[str, "_models.OSType"]] = None,
+        tier: Optional[Union[str, "_models.Tier"]] = None,
         cluster_id: Optional[str] = None,
-        kafka_rest_properties: Optional["KafkaRestProperties"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        compute_profile: Optional["ComputeProfile"] = None,
-        provisioning_state: Optional[Union[str, "HDInsightClusterProvisioningState"]] = None,
+        kafka_rest_properties: Optional["_models.KafkaRestProperties"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        compute_profile: Optional["_models.ComputeProfile"] = None,
+        provisioning_state: Optional[Union[str, "_models.HDInsightClusterProvisioningState"]] = None,
         created_date: Optional[str] = None,
         cluster_state: Optional[str] = None,
-        quota_info: Optional["QuotaInfo"] = None,
-        errors: Optional[List["Errors"]] = None,
-        connectivity_endpoints: Optional[List["ConnectivityEndpoint"]] = None,
-        disk_encryption_properties: Optional["DiskEncryptionProperties"] = None,
-        encryption_in_transit_properties: Optional["EncryptionInTransitProperties"] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        quota_info: Optional["_models.QuotaInfo"] = None,
+        errors: Optional[List["_models.Errors"]] = None,
+        connectivity_endpoints: Optional[List["_models.ConnectivityEndpoint"]] = None,
+        disk_encryption_properties: Optional["_models.DiskEncryptionProperties"] = None,
+        encryption_in_transit_properties: Optional["_models.EncryptionInTransitProperties"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         min_supported_tls_version: Optional[str] = None,
-        excluded_services_config: Optional["ExcludedServicesConfig"] = None,
-        network_properties: Optional["NetworkProperties"] = None,
-        compute_isolation_properties: Optional["ComputeIsolationProperties"] = None,
-        private_link_configurations: Optional[List["PrivateLinkConfiguration"]] = None,
+        excluded_services_config: Optional["_models.ExcludedServicesConfig"] = None,
+        network_properties: Optional["_models.NetworkProperties"] = None,
+        compute_isolation_properties: Optional["_models.ComputeIsolationProperties"] = None,
+        private_link_configurations: Optional[List["_models.PrivateLinkConfiguration"]] = None,
         **kwargs
     ):
-        super(ClusterGetProperties, self).__init__(**kwargs)
+        """
+        :keyword cluster_version: The version of the cluster.
+        :paramtype cluster_version: str
+        :keyword cluster_hdp_version: The hdp version of the cluster.
+        :paramtype cluster_hdp_version: str
+        :keyword os_type: The type of operating system. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.hdinsight.models.OSType
+        :keyword tier: The cluster tier. Known values are: "Standard" and "Premium".
+        :paramtype tier: str or ~azure.mgmt.hdinsight.models.Tier
+        :keyword cluster_id: The cluster id.
+        :paramtype cluster_id: str
+        :keyword cluster_definition: The cluster definition. Required.
+        :paramtype cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
+        :keyword kafka_rest_properties: The cluster kafka rest proxy configuration.
+        :paramtype kafka_rest_properties: ~azure.mgmt.hdinsight.models.KafkaRestProperties
+        :keyword security_profile: The security profile.
+        :paramtype security_profile: ~azure.mgmt.hdinsight.models.SecurityProfile
+        :keyword compute_profile: The compute profile.
+        :paramtype compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
+        :keyword provisioning_state: The provisioning state, which only appears in the response. Known
+         values are: "InProgress", "Failed", "Succeeded", "Canceled", and "Deleting".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.hdinsight.models.HDInsightClusterProvisioningState
+        :keyword created_date: The date on which the cluster was created.
+        :paramtype created_date: str
+        :keyword cluster_state: The state of the cluster.
+        :paramtype cluster_state: str
+        :keyword quota_info: The quota information.
+        :paramtype quota_info: ~azure.mgmt.hdinsight.models.QuotaInfo
+        :keyword errors: The list of errors.
+        :paramtype errors: list[~azure.mgmt.hdinsight.models.Errors]
+        :keyword connectivity_endpoints: The list of connectivity endpoints.
+        :paramtype connectivity_endpoints: list[~azure.mgmt.hdinsight.models.ConnectivityEndpoint]
+        :keyword disk_encryption_properties: The disk encryption properties.
+        :paramtype disk_encryption_properties: ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+        :keyword encryption_in_transit_properties: The encryption-in-transit properties.
+        :paramtype encryption_in_transit_properties:
+         ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
+        :keyword storage_profile: The storage profile.
+        :paramtype storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
+        :keyword min_supported_tls_version: The minimal supported tls version.
+        :paramtype min_supported_tls_version: str
+        :keyword excluded_services_config: The excluded services config.
+        :paramtype excluded_services_config: ~azure.mgmt.hdinsight.models.ExcludedServicesConfig
+        :keyword network_properties: The network properties.
+        :paramtype network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
+        :keyword compute_isolation_properties: The compute isolation properties.
+        :paramtype compute_isolation_properties:
+         ~azure.mgmt.hdinsight.models.ComputeIsolationProperties
+        :keyword private_link_configurations: The private link configurations.
+        :paramtype private_link_configurations:
+         list[~azure.mgmt.hdinsight.models.PrivateLinkConfiguration]
+        """
+        super().__init__(**kwargs)
         self.cluster_version = cluster_version
         self.cluster_hdp_version = cluster_hdp_version
         self.os_type = os_type
@@ -1483,7 +1811,7 @@ class ClusterGetProperties(msrest.serialization.Model):
         self.private_endpoint_connections = None
 
 
-class ClusterIdentity(msrest.serialization.Model):
+class ClusterIdentity(_serialization.Model):
     """Identity for the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1494,266 +1822,275 @@ class ClusterIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant id associated with the cluster. This property will only be provided
      for a system assigned identity.
     :vartype tenant_id: str
-    :param type: The type of identity used for the cluster. The type 'SystemAssigned, UserAssigned'
-     includes both an implicitly created identity and a set of user assigned identities. Possible
-     values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :type type: str or ~azure.mgmt.hdinsight.models.ResourceIdentityType
-    :param user_assigned_identities: The list of user identities associated with the cluster. The
+    :ivar type: The type of identity used for the cluster. The type 'SystemAssigned, UserAssigned'
+     includes both an implicitly created identity and a set of user assigned identities. Known
+     values are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+    :vartype type: str or ~azure.mgmt.hdinsight.models.ResourceIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the cluster. The
      user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.hdinsight.models.UserAssignedIdentity]
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.hdinsight.models.UserAssignedIdentity]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
-        super(ClusterIdentity, self).__init__(**kwargs)
+        """
+        :keyword type: The type of identity used for the cluster. The type 'SystemAssigned,
+         UserAssigned' includes both an implicitly created identity and a set of user assigned
+         identities. Known values are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
+         and "None".
+        :paramtype type: str or ~azure.mgmt.hdinsight.models.ResourceIdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the cluster. The
+         user identity dictionary key references will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.hdinsight.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class ClusterListPersistedScriptActionsResult(msrest.serialization.Model):
+class ClusterListPersistedScriptActionsResult(_serialization.Model):
     """The ListPersistedScriptActions operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Persisted Script Actions.
-    :type value: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+    :ivar value: The list of Persisted Script Actions.
+    :vartype value: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RuntimeScriptAction]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RuntimeScriptAction]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["RuntimeScriptAction"]] = None,
-        **kwargs
-    ):
-        super(ClusterListPersistedScriptActionsResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.RuntimeScriptAction"]] = None, **kwargs):
+        """
+        :keyword value: The list of Persisted Script Actions.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ClusterListResult(msrest.serialization.Model):
+class ClusterListResult(_serialization.Model):
     """The List Cluster operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Clusters.
-    :type value: list[~azure.mgmt.hdinsight.models.Cluster]
+    :ivar value: The list of Clusters.
+    :vartype value: list[~azure.mgmt.hdinsight.models.Cluster]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Cluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Cluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Cluster"]] = None,
-        **kwargs
-    ):
-        super(ClusterListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs):
+        """
+        :keyword value: The list of Clusters.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.Cluster]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ClusterMonitoringRequest(msrest.serialization.Model):
+class ClusterMonitoringRequest(_serialization.Model):
     """The cluster monitor parameters.
 
-    :param workspace_id: The cluster monitor workspace ID.
-    :type workspace_id: str
-    :param primary_key: The cluster monitor workspace key.
-    :type primary_key: str
+    :ivar workspace_id: The cluster monitor workspace ID.
+    :vartype workspace_id: str
+    :ivar primary_key: The cluster monitor workspace key.
+    :vartype primary_key: str
     """
 
     _attribute_map = {
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        workspace_id: Optional[str] = None,
-        primary_key: Optional[str] = None,
-        **kwargs
-    ):
-        super(ClusterMonitoringRequest, self).__init__(**kwargs)
+    def __init__(self, *, workspace_id: Optional[str] = None, primary_key: Optional[str] = None, **kwargs):
+        """
+        :keyword workspace_id: The cluster monitor workspace ID.
+        :paramtype workspace_id: str
+        :keyword primary_key: The cluster monitor workspace key.
+        :paramtype primary_key: str
+        """
+        super().__init__(**kwargs)
         self.workspace_id = workspace_id
         self.primary_key = primary_key
 
 
-class ClusterMonitoringResponse(msrest.serialization.Model):
+class ClusterMonitoringResponse(_serialization.Model):
     """The cluster monitoring status response.
 
-    :param cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
-    :type cluster_monitoring_enabled: bool
-    :param workspace_id: The workspace ID of the monitor on the HDInsight cluster.
-    :type workspace_id: str
+    :ivar cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
+    :vartype cluster_monitoring_enabled: bool
+    :ivar workspace_id: The workspace ID of the monitor on the HDInsight cluster.
+    :vartype workspace_id: str
     """
 
     _attribute_map = {
-        'cluster_monitoring_enabled': {'key': 'clusterMonitoringEnabled', 'type': 'bool'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        "cluster_monitoring_enabled": {"key": "clusterMonitoringEnabled", "type": "bool"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        cluster_monitoring_enabled: Optional[bool] = None,
-        workspace_id: Optional[str] = None,
-        **kwargs
+        self, *, cluster_monitoring_enabled: Optional[bool] = None, workspace_id: Optional[str] = None, **kwargs
     ):
-        super(ClusterMonitoringResponse, self).__init__(**kwargs)
+        """
+        :keyword cluster_monitoring_enabled: The status of the monitor on the HDInsight cluster.
+        :paramtype cluster_monitoring_enabled: bool
+        :keyword workspace_id: The workspace ID of the monitor on the HDInsight cluster.
+        :paramtype workspace_id: str
+        """
+        super().__init__(**kwargs)
         self.cluster_monitoring_enabled = cluster_monitoring_enabled
         self.workspace_id = workspace_id
 
 
-class ClusterPatchParameters(msrest.serialization.Model):
+class ClusterPatchParameters(_serialization.Model):
     """The PatchCluster request parameters.
 
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ClusterPatchParameters, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class ClusterResizeParameters(msrest.serialization.Model):
+class ClusterResizeParameters(_serialization.Model):
     """The Resize Cluster request parameters.
 
-    :param target_instance_count: The target instance count for the operation.
-    :type target_instance_count: int
+    :ivar target_instance_count: The target instance count for the operation.
+    :vartype target_instance_count: int
     """
 
     _attribute_map = {
-        'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        "target_instance_count": {"key": "targetInstanceCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_instance_count: Optional[int] = None,
-        **kwargs
-    ):
-        super(ClusterResizeParameters, self).__init__(**kwargs)
+    def __init__(self, *, target_instance_count: Optional[int] = None, **kwargs):
+        """
+        :keyword target_instance_count: The target instance count for the operation.
+        :paramtype target_instance_count: int
+        """
+        super().__init__(**kwargs)
         self.target_instance_count = target_instance_count
 
 
-class ComputeIsolationProperties(msrest.serialization.Model):
+class ComputeIsolationProperties(_serialization.Model):
     """The compute isolation properties.
 
-    :param enable_compute_isolation: The flag indicates whether enable compute isolation or not.
-    :type enable_compute_isolation: bool
-    :param host_sku: The host sku.
-    :type host_sku: str
+    :ivar enable_compute_isolation: The flag indicates whether enable compute isolation or not.
+    :vartype enable_compute_isolation: bool
+    :ivar host_sku: The host sku.
+    :vartype host_sku: str
     """
 
     _attribute_map = {
-        'enable_compute_isolation': {'key': 'enableComputeIsolation', 'type': 'bool'},
-        'host_sku': {'key': 'hostSku', 'type': 'str'},
+        "enable_compute_isolation": {"key": "enableComputeIsolation", "type": "bool"},
+        "host_sku": {"key": "hostSku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enable_compute_isolation: Optional[bool] = False,
-        host_sku: Optional[str] = None,
-        **kwargs
-    ):
-        super(ComputeIsolationProperties, self).__init__(**kwargs)
+    def __init__(self, *, enable_compute_isolation: bool = False, host_sku: Optional[str] = None, **kwargs):
+        """
+        :keyword enable_compute_isolation: The flag indicates whether enable compute isolation or not.
+        :paramtype enable_compute_isolation: bool
+        :keyword host_sku: The host sku.
+        :paramtype host_sku: str
+        """
+        super().__init__(**kwargs)
         self.enable_compute_isolation = enable_compute_isolation
         self.host_sku = host_sku
 
 
-class ComputeProfile(msrest.serialization.Model):
+class ComputeProfile(_serialization.Model):
     """Describes the compute profile.
 
-    :param roles: The list of roles in the cluster.
-    :type roles: list[~azure.mgmt.hdinsight.models.Role]
+    :ivar roles: The list of roles in the cluster.
+    :vartype roles: list[~azure.mgmt.hdinsight.models.Role]
     """
 
     _attribute_map = {
-        'roles': {'key': 'roles', 'type': '[Role]'},
+        "roles": {"key": "roles", "type": "[Role]"},
     }
 
-    def __init__(
-        self,
-        *,
-        roles: Optional[List["Role"]] = None,
-        **kwargs
-    ):
-        super(ComputeProfile, self).__init__(**kwargs)
+    def __init__(self, *, roles: Optional[List["_models.Role"]] = None, **kwargs):
+        """
+        :keyword roles: The list of roles in the cluster.
+        :paramtype roles: list[~azure.mgmt.hdinsight.models.Role]
+        """
+        super().__init__(**kwargs)
         self.roles = roles
 
 
-class ConnectivityEndpoint(msrest.serialization.Model):
+class ConnectivityEndpoint(_serialization.Model):
     """The connectivity properties.
 
-    :param name: The name of the endpoint.
-    :type name: str
-    :param protocol: The protocol of the endpoint.
-    :type protocol: str
-    :param location: The location of the endpoint.
-    :type location: str
-    :param port: The port to connect to.
-    :type port: int
-    :param private_ip_address: The private ip address of the endpoint.
-    :type private_ip_address: str
+    :ivar name: The name of the endpoint.
+    :vartype name: str
+    :ivar protocol: The protocol of the endpoint.
+    :vartype protocol: str
+    :ivar location: The location of the endpoint.
+    :vartype location: str
+    :ivar port: The port to connect to.
+    :vartype port: int
+    :ivar private_ip_address: The private ip address of the endpoint.
+    :vartype private_ip_address: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
     }
 
     def __init__(
@@ -1766,7 +2103,19 @@ class ConnectivityEndpoint(msrest.serialization.Model):
         private_ip_address: Optional[str] = None,
         **kwargs
     ):
-        super(ConnectivityEndpoint, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the endpoint.
+        :paramtype name: str
+        :keyword protocol: The protocol of the endpoint.
+        :paramtype protocol: str
+        :keyword location: The location of the endpoint.
+        :paramtype location: str
+        :keyword port: The port to connect to.
+        :paramtype port: int
+        :keyword private_ip_address: The private ip address of the endpoint.
+        :paramtype private_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.protocol = protocol
         self.location = location
@@ -1774,13 +2123,13 @@ class ConnectivityEndpoint(msrest.serialization.Model):
         self.private_ip_address = private_ip_address
 
 
-class DataDisksGroups(msrest.serialization.Model):
+class DataDisksGroups(_serialization.Model):
     """The data disks groups for the role.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param disks_per_node: The number of disks per node.
-    :type disks_per_node: int
+    :ivar disks_per_node: The number of disks per node.
+    :vartype disks_per_node: int
     :ivar storage_account_type: ReadOnly. The storage account type. Do not set this value.
     :vartype storage_account_type: str
     :ivar disk_size_gb: ReadOnly. The DiskSize in GB. Do not set this value.
@@ -1788,47 +2137,46 @@ class DataDisksGroups(msrest.serialization.Model):
     """
 
     _validation = {
-        'storage_account_type': {'readonly': True},
-        'disk_size_gb': {'readonly': True},
+        "storage_account_type": {"readonly": True},
+        "disk_size_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'disks_per_node': {'key': 'disksPerNode', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        "disks_per_node": {"key": "disksPerNode", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        disks_per_node: Optional[int] = None,
-        **kwargs
-    ):
-        super(DataDisksGroups, self).__init__(**kwargs)
+    def __init__(self, *, disks_per_node: Optional[int] = None, **kwargs):
+        """
+        :keyword disks_per_node: The number of disks per node.
+        :paramtype disks_per_node: int
+        """
+        super().__init__(**kwargs)
         self.disks_per_node = disks_per_node
         self.storage_account_type = None
         self.disk_size_gb = None
 
 
-class Dimension(msrest.serialization.Model):
+class Dimension(_serialization.Model):
     """The definition of Dimension.
 
-    :param name: The name of the dimension.
-    :type name: str
-    :param display_name: The display name of the dimension.
-    :type display_name: str
-    :param internal_name: The display name of the dimension.
-    :type internal_name: str
-    :param to_be_exported_for_shoebox: The flag indicates whether the metric will be exported for
+    :ivar name: The name of the dimension.
+    :vartype name: str
+    :ivar display_name: The display name of the dimension.
+    :vartype display_name: str
+    :ivar internal_name: The display name of the dimension.
+    :vartype internal_name: str
+    :ivar to_be_exported_for_shoebox: The flag indicates whether the metric will be exported for
      shoebox or not.
-    :type to_be_exported_for_shoebox: bool
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
     def __init__(
@@ -1840,29 +2188,40 @@ class Dimension(msrest.serialization.Model):
         to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
-        super(Dimension, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the dimension.
+        :paramtype name: str
+        :keyword display_name: The display name of the dimension.
+        :paramtype display_name: str
+        :keyword internal_name: The display name of the dimension.
+        :paramtype internal_name: str
+        :keyword to_be_exported_for_shoebox: The flag indicates whether the metric will be exported for
+         shoebox or not.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class DiskBillingMeters(msrest.serialization.Model):
+class DiskBillingMeters(_serialization.Model):
     """The disk billing meters.
 
-    :param disk_rp_meter: The managed disk meter guid.
-    :type disk_rp_meter: str
-    :param sku: The managed disk billing sku, P30 or S30.
-    :type sku: str
-    :param tier: The managed disk billing tier, Standard or Premium. Possible values include:
-     "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.hdinsight.models.Tier
+    :ivar disk_rp_meter: The managed disk meter guid.
+    :vartype disk_rp_meter: str
+    :ivar sku: The managed disk billing sku, P30 or S30.
+    :vartype sku: str
+    :ivar tier: The managed disk billing tier, Standard or Premium. Known values are: "Standard"
+     and "Premium".
+    :vartype tier: str or ~azure.mgmt.hdinsight.models.Tier
     """
 
     _attribute_map = {
-        'disk_rp_meter': {'key': 'diskRpMeter', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "disk_rp_meter": {"key": "diskRpMeter", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
     def __init__(
@@ -1870,41 +2229,51 @@ class DiskBillingMeters(msrest.serialization.Model):
         *,
         disk_rp_meter: Optional[str] = None,
         sku: Optional[str] = None,
-        tier: Optional[Union[str, "Tier"]] = None,
+        tier: Optional[Union[str, "_models.Tier"]] = None,
         **kwargs
     ):
-        super(DiskBillingMeters, self).__init__(**kwargs)
+        """
+        :keyword disk_rp_meter: The managed disk meter guid.
+        :paramtype disk_rp_meter: str
+        :keyword sku: The managed disk billing sku, P30 or S30.
+        :paramtype sku: str
+        :keyword tier: The managed disk billing tier, Standard or Premium. Known values are: "Standard"
+         and "Premium".
+        :paramtype tier: str or ~azure.mgmt.hdinsight.models.Tier
+        """
+        super().__init__(**kwargs)
         self.disk_rp_meter = disk_rp_meter
         self.sku = sku
         self.tier = tier
 
 
-class DiskEncryptionProperties(msrest.serialization.Model):
+class DiskEncryptionProperties(_serialization.Model):
     """The disk encryption properties.
 
-    :param vault_uri: Base key vault URI where the customers key is located eg.
+    :ivar vault_uri: Base key vault URI where the customers key is located eg.
      https://myvault.vault.azure.net.
-    :type vault_uri: str
-    :param key_name: Key name that is used for enabling disk encryption.
-    :type key_name: str
-    :param key_version: Specific key version that is used for enabling disk encryption.
-    :type key_version: str
-    :param encryption_algorithm: Algorithm identifier for encryption, default RSA-OAEP. Possible
-     values include: "RSA-OAEP", "RSA-OAEP-256", "RSA1_5".
-    :type encryption_algorithm: str or ~azure.mgmt.hdinsight.models.JsonWebKeyEncryptionAlgorithm
-    :param msi_resource_id: Resource ID of Managed Identity that is used to access the key vault.
-    :type msi_resource_id: str
-    :param encryption_at_host: Indicates whether or not resource disk encryption is enabled.
-    :type encryption_at_host: bool
+    :vartype vault_uri: str
+    :ivar key_name: Key name that is used for enabling disk encryption.
+    :vartype key_name: str
+    :ivar key_version: Specific key version that is used for enabling disk encryption.
+    :vartype key_version: str
+    :ivar encryption_algorithm: Algorithm identifier for encryption, default RSA-OAEP. Known values
+     are: "RSA-OAEP", "RSA-OAEP-256", and "RSA1_5".
+    :vartype encryption_algorithm: str or
+     ~azure.mgmt.hdinsight.models.JsonWebKeyEncryptionAlgorithm
+    :ivar msi_resource_id: Resource ID of Managed Identity that is used to access the key vault.
+    :vartype msi_resource_id: str
+    :ivar encryption_at_host: Indicates whether or not resource disk encryption is enabled.
+    :vartype encryption_at_host: bool
     """
 
     _attribute_map = {
-        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
-        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
-        'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
-        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
+        "vault_uri": {"key": "vaultUri", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
+        "encryption_algorithm": {"key": "encryptionAlgorithm", "type": "str"},
+        "msi_resource_id": {"key": "msiResourceId", "type": "str"},
+        "encryption_at_host": {"key": "encryptionAtHost", "type": "bool"},
     }
 
     def __init__(
@@ -1913,12 +2282,29 @@ class DiskEncryptionProperties(msrest.serialization.Model):
         vault_uri: Optional[str] = None,
         key_name: Optional[str] = None,
         key_version: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, "JsonWebKeyEncryptionAlgorithm"]] = None,
+        encryption_algorithm: Optional[Union[str, "_models.JsonWebKeyEncryptionAlgorithm"]] = None,
         msi_resource_id: Optional[str] = None,
-        encryption_at_host: Optional[bool] = False,
+        encryption_at_host: bool = False,
         **kwargs
     ):
-        super(DiskEncryptionProperties, self).__init__(**kwargs)
+        """
+        :keyword vault_uri: Base key vault URI where the customers key is located eg.
+         https://myvault.vault.azure.net.
+        :paramtype vault_uri: str
+        :keyword key_name: Key name that is used for enabling disk encryption.
+        :paramtype key_name: str
+        :keyword key_version: Specific key version that is used for enabling disk encryption.
+        :paramtype key_version: str
+        :keyword encryption_algorithm: Algorithm identifier for encryption, default RSA-OAEP. Known
+         values are: "RSA-OAEP", "RSA-OAEP-256", and "RSA1_5".
+        :paramtype encryption_algorithm: str or
+         ~azure.mgmt.hdinsight.models.JsonWebKeyEncryptionAlgorithm
+        :keyword msi_resource_id: Resource ID of Managed Identity that is used to access the key vault.
+        :paramtype msi_resource_id: str
+        :keyword encryption_at_host: Indicates whether or not resource disk encryption is enabled.
+        :paramtype encryption_at_host: bool
+        """
+        super().__init__(**kwargs)
         self.vault_uri = vault_uri
         self.key_name = key_name
         self.key_version = key_version
@@ -1927,92 +2313,92 @@ class DiskEncryptionProperties(msrest.serialization.Model):
         self.encryption_at_host = encryption_at_host
 
 
-class EncryptionInTransitProperties(msrest.serialization.Model):
+class EncryptionInTransitProperties(_serialization.Model):
     """The encryption-in-transit properties.
 
-    :param is_encryption_in_transit_enabled: Indicates whether or not inter cluster node
+    :ivar is_encryption_in_transit_enabled: Indicates whether or not inter cluster node
      communication is encrypted in transit.
-    :type is_encryption_in_transit_enabled: bool
+    :vartype is_encryption_in_transit_enabled: bool
     """
 
     _attribute_map = {
-        'is_encryption_in_transit_enabled': {'key': 'isEncryptionInTransitEnabled', 'type': 'bool'},
+        "is_encryption_in_transit_enabled": {"key": "isEncryptionInTransitEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_encryption_in_transit_enabled: Optional[bool] = False,
-        **kwargs
-    ):
-        super(EncryptionInTransitProperties, self).__init__(**kwargs)
+    def __init__(self, *, is_encryption_in_transit_enabled: bool = False, **kwargs):
+        """
+        :keyword is_encryption_in_transit_enabled: Indicates whether or not inter cluster node
+         communication is encrypted in transit.
+        :paramtype is_encryption_in_transit_enabled: bool
+        """
+        super().__init__(**kwargs)
         self.is_encryption_in_transit_enabled = is_encryption_in_transit_enabled
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class Errors(msrest.serialization.Model):
+class Errors(_serialization.Model):
     """The error message associated with the cluster creation.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(Errors, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ExcludedServicesConfig(msrest.serialization.Model):
+class ExcludedServicesConfig(_serialization.Model):
     """The configuration that services will be excluded when creating cluster.
 
-    :param excluded_services_config_id: The config id of excluded services.
-    :type excluded_services_config_id: str
-    :param excluded_services_list: The list of excluded services.
-    :type excluded_services_list: str
+    :ivar excluded_services_config_id: The config id of excluded services.
+    :vartype excluded_services_config_id: str
+    :ivar excluded_services_list: The list of excluded services.
+    :vartype excluded_services_list: str
     """
 
     _attribute_map = {
-        'excluded_services_config_id': {'key': 'excludedServicesConfigId', 'type': 'str'},
-        'excluded_services_list': {'key': 'excludedServicesList', 'type': 'str'},
+        "excluded_services_config_id": {"key": "excludedServicesConfigId", "type": "str"},
+        "excluded_services_list": {"key": "excludedServicesList", "type": "str"},
     }
 
     def __init__(
@@ -2022,70 +2408,82 @@ class ExcludedServicesConfig(msrest.serialization.Model):
         excluded_services_list: Optional[str] = None,
         **kwargs
     ):
-        super(ExcludedServicesConfig, self).__init__(**kwargs)
+        """
+        :keyword excluded_services_config_id: The config id of excluded services.
+        :paramtype excluded_services_config_id: str
+        :keyword excluded_services_list: The list of excluded services.
+        :paramtype excluded_services_list: str
+        """
+        super().__init__(**kwargs)
         self.excluded_services_config_id = excluded_services_config_id
         self.excluded_services_list = excluded_services_list
 
 
-class ExecuteScriptActionParameters(msrest.serialization.Model):
+class ExecuteScriptActionParameters(_serialization.Model):
     """The parameters for the script actions to execute on a running cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param script_actions: The list of run time script actions.
-    :type script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
-    :param persist_on_success: Required. Gets or sets if the scripts needs to be persisted.
-    :type persist_on_success: bool
+    :ivar script_actions: The list of run time script actions.
+    :vartype script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+    :ivar persist_on_success: Gets or sets if the scripts needs to be persisted. Required.
+    :vartype persist_on_success: bool
     """
 
     _validation = {
-        'persist_on_success': {'required': True},
+        "persist_on_success": {"required": True},
     }
 
     _attribute_map = {
-        'script_actions': {'key': 'scriptActions', 'type': '[RuntimeScriptAction]'},
-        'persist_on_success': {'key': 'persistOnSuccess', 'type': 'bool'},
+        "script_actions": {"key": "scriptActions", "type": "[RuntimeScriptAction]"},
+        "persist_on_success": {"key": "persistOnSuccess", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         persist_on_success: bool,
-        script_actions: Optional[List["RuntimeScriptAction"]] = None,
+        script_actions: Optional[List["_models.RuntimeScriptAction"]] = None,
         **kwargs
     ):
-        super(ExecuteScriptActionParameters, self).__init__(**kwargs)
+        """
+        :keyword script_actions: The list of run time script actions.
+        :paramtype script_actions: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
+        :keyword persist_on_success: Gets or sets if the scripts needs to be persisted. Required.
+        :paramtype persist_on_success: bool
+        """
+        super().__init__(**kwargs)
         self.script_actions = script_actions
         self.persist_on_success = persist_on_success
 
 
-class Extension(msrest.serialization.Model):
+class Extension(_serialization.Model):
     """Cluster monitoring extensions.
 
-    :param workspace_id: The workspace ID for the cluster monitoring extension.
-    :type workspace_id: str
-    :param primary_key: The certificate for the cluster monitoring extensions.
-    :type primary_key: str
+    :ivar workspace_id: The workspace ID for the cluster monitoring extension.
+    :vartype workspace_id: str
+    :ivar primary_key: The certificate for the cluster monitoring extensions.
+    :vartype primary_key: str
     """
 
     _attribute_map = {
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        workspace_id: Optional[str] = None,
-        primary_key: Optional[str] = None,
-        **kwargs
-    ):
-        super(Extension, self).__init__(**kwargs)
+    def __init__(self, *, workspace_id: Optional[str] = None, primary_key: Optional[str] = None, **kwargs):
+        """
+        :keyword workspace_id: The workspace ID for the cluster monitoring extension.
+        :paramtype workspace_id: str
+        :keyword primary_key: The certificate for the cluster monitoring extensions.
+        :paramtype primary_key: str
+        """
+        super().__init__(**kwargs)
         self.workspace_id = workspace_id
         self.primary_key = primary_key
 
 
-class GatewaySettings(msrest.serialization.Model):
+class GatewaySettings(_serialization.Model):
     """Gateway settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2100,64 +2498,61 @@ class GatewaySettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_credential_enabled': {'readonly': True},
-        'user_name': {'readonly': True},
-        'password': {'readonly': True},
+        "is_credential_enabled": {"readonly": True},
+        "user_name": {"readonly": True},
+        "password": {"readonly": True},
     }
 
     _attribute_map = {
-        'is_credential_enabled': {'key': 'restAuthCredential\\.isEnabled', 'type': 'str'},
-        'user_name': {'key': 'restAuthCredential\\.username', 'type': 'str'},
-        'password': {'key': 'restAuthCredential\\.password', 'type': 'str'},
+        "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "str"},
+        "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
+        "password": {"key": "restAuthCredential\\.password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GatewaySettings, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.is_credential_enabled = None
         self.user_name = None
         self.password = None
 
 
-class HardwareProfile(msrest.serialization.Model):
+class HardwareProfile(_serialization.Model):
     """The hardware profile.
 
-    :param vm_size: The size of the VM.
-    :type vm_size: str
+    :ivar vm_size: The size of the VM.
+    :vartype vm_size: str
     """
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
+        "vm_size": {"key": "vmSize", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_size: Optional[str] = None,
-        **kwargs
-    ):
-        super(HardwareProfile, self).__init__(**kwargs)
+    def __init__(self, *, vm_size: Optional[str] = None, **kwargs):
+        """
+        :keyword vm_size: The size of the VM.
+        :paramtype vm_size: str
+        """
+        super().__init__(**kwargs)
         self.vm_size = vm_size
 
 
-class HostInfo(msrest.serialization.Model):
+class HostInfo(_serialization.Model):
     """The cluster host information.
 
-    :param name: The host name.
-    :type name: str
-    :param fqdn: The Fully Qualified Domain Name of host.
-    :type fqdn: str
-    :param effective_disk_encryption_key_url: The effective disk encryption key URL used by the
+    :ivar name: The host name.
+    :vartype name: str
+    :ivar fqdn: The Fully Qualified Domain Name of host.
+    :vartype fqdn: str
+    :ivar effective_disk_encryption_key_url: The effective disk encryption key URL used by the
      host.
-    :type effective_disk_encryption_key_url: str
+    :vartype effective_disk_encryption_key_url: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'effective_disk_encryption_key_url': {'key': 'effectiveDiskEncryptionKeyUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "effective_disk_encryption_key_url": {"key": "effectiveDiskEncryptionKeyUrl", "type": "str"},
     }
 
     def __init__(
@@ -2168,13 +2563,22 @@ class HostInfo(msrest.serialization.Model):
         effective_disk_encryption_key_url: Optional[str] = None,
         **kwargs
     ):
-        super(HostInfo, self).__init__(**kwargs)
+        """
+        :keyword name: The host name.
+        :paramtype name: str
+        :keyword fqdn: The Fully Qualified Domain Name of host.
+        :paramtype fqdn: str
+        :keyword effective_disk_encryption_key_url: The effective disk encryption key URL used by the
+         host.
+        :paramtype effective_disk_encryption_key_url: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.fqdn = fqdn
         self.effective_disk_encryption_key_url = effective_disk_encryption_key_url
 
 
-class IPConfiguration(msrest.serialization.Model):
+class IPConfiguration(_serialization.Model):
     """The ip configurations for the private link service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2183,43 +2587,43 @@ class IPConfiguration(msrest.serialization.Model):
 
     :ivar id: The private link IP configuration id.
     :vartype id: str
-    :param name: Required. The name of private link IP configuration.
-    :type name: str
+    :ivar name: The name of private link IP configuration. Required.
+    :vartype name: str
     :ivar type: The type of the private link IP configuration.
     :vartype type: str
     :ivar provisioning_state: The private link configuration provisioning state, which only appears
-     in the response. Possible values include: "InProgress", "Failed", "Succeeded", "Canceled",
+     in the response. Known values are: "InProgress", "Failed", "Succeeded", "Canceled", and
      "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.hdinsight.models.PrivateLinkConfigurationProvisioningState
-    :param primary: Indicates whether this IP configuration is primary for the corresponding NIC.
-    :type primary: bool
-    :param private_ip_address: The IP address.
-    :type private_ip_address: str
-    :param private_ip_allocation_method: The method that private IP address is allocated. Possible
-     values include: "dynamic", "static".
-    :type private_ip_allocation_method: str or
+    :ivar primary: Indicates whether this IP configuration is primary for the corresponding NIC.
+    :vartype primary: bool
+    :ivar private_ip_address: The IP address.
+    :vartype private_ip_address: str
+    :ivar private_ip_allocation_method: The method that private IP address is allocated. Known
+     values are: "dynamic" and "static".
+    :vartype private_ip_allocation_method: str or
      ~azure.mgmt.hdinsight.models.PrivateIPAllocationMethod
-    :param subnet: The subnet resource id.
-    :type subnet: ~azure.mgmt.hdinsight.models.ResourceId
+    :ivar subnet: The subnet resource id.
+    :vartype subnet: ~azure.mgmt.hdinsight.models.ResourceId
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'required': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"required": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'ResourceId'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "ResourceId"},
     }
 
     def __init__(
@@ -2228,11 +2632,25 @@ class IPConfiguration(msrest.serialization.Model):
         name: str,
         primary: Optional[bool] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "PrivateIPAllocationMethod"]] = None,
-        subnet: Optional["ResourceId"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.PrivateIPAllocationMethod"]] = None,
+        subnet: Optional["_models.ResourceId"] = None,
         **kwargs
     ):
-        super(IPConfiguration, self).__init__(**kwargs)
+        """
+        :keyword name: The name of private link IP configuration. Required.
+        :paramtype name: str
+        :keyword primary: Indicates whether this IP configuration is primary for the corresponding NIC.
+        :paramtype primary: bool
+        :keyword private_ip_address: The IP address.
+        :paramtype private_ip_address: str
+        :keyword private_ip_allocation_method: The method that private IP address is allocated. Known
+         values are: "dynamic" and "static".
+        :paramtype private_ip_allocation_method: str or
+         ~azure.mgmt.hdinsight.models.PrivateIPAllocationMethod
+        :keyword subnet: The subnet resource id.
+        :paramtype subnet: ~azure.mgmt.hdinsight.models.ResourceId
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = name
         self.type = None
@@ -2243,47 +2661,53 @@ class IPConfiguration(msrest.serialization.Model):
         self.subnet = subnet
 
 
-class KafkaRestProperties(msrest.serialization.Model):
+class KafkaRestProperties(_serialization.Model):
     """The kafka rest proxy configuration which contains AAD security group information.
 
-    :param client_group_info: The information of AAD security group.
-    :type client_group_info: ~azure.mgmt.hdinsight.models.ClientGroupInfo
-    :param configuration_override: The configurations that need to be overriden.
-    :type configuration_override: dict[str, str]
+    :ivar client_group_info: The information of AAD security group.
+    :vartype client_group_info: ~azure.mgmt.hdinsight.models.ClientGroupInfo
+    :ivar configuration_override: The configurations that need to be overriden.
+    :vartype configuration_override: dict[str, str]
     """
 
     _attribute_map = {
-        'client_group_info': {'key': 'clientGroupInfo', 'type': 'ClientGroupInfo'},
-        'configuration_override': {'key': 'configurationOverride', 'type': '{str}'},
+        "client_group_info": {"key": "clientGroupInfo", "type": "ClientGroupInfo"},
+        "configuration_override": {"key": "configurationOverride", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        client_group_info: Optional["ClientGroupInfo"] = None,
+        client_group_info: Optional["_models.ClientGroupInfo"] = None,
         configuration_override: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(KafkaRestProperties, self).__init__(**kwargs)
+        """
+        :keyword client_group_info: The information of AAD security group.
+        :paramtype client_group_info: ~azure.mgmt.hdinsight.models.ClientGroupInfo
+        :keyword configuration_override: The configurations that need to be overriden.
+        :paramtype configuration_override: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.client_group_info = client_group_info
         self.configuration_override = configuration_override
 
 
-class LinuxOperatingSystemProfile(msrest.serialization.Model):
+class LinuxOperatingSystemProfile(_serialization.Model):
     """The ssh username, password, and ssh public key.
 
-    :param username: The username.
-    :type username: str
-    :param password: The password.
-    :type password: str
-    :param ssh_profile: The SSH profile.
-    :type ssh_profile: ~azure.mgmt.hdinsight.models.SshProfile
+    :ivar username: The username.
+    :vartype username: str
+    :ivar password: The password.
+    :vartype password: str
+    :ivar ssh_profile: The SSH profile.
+    :vartype ssh_profile: ~azure.mgmt.hdinsight.models.SshProfile
     """
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'ssh_profile': {'key': 'sshProfile', 'type': 'SshProfile'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "ssh_profile": {"key": "sshProfile", "type": "SshProfile"},
     }
 
     def __init__(
@@ -2291,100 +2715,107 @@ class LinuxOperatingSystemProfile(msrest.serialization.Model):
         *,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        ssh_profile: Optional["SshProfile"] = None,
+        ssh_profile: Optional["_models.SshProfile"] = None,
         **kwargs
     ):
-        super(LinuxOperatingSystemProfile, self).__init__(**kwargs)
+        """
+        :keyword username: The username.
+        :paramtype username: str
+        :keyword password: The password.
+        :paramtype password: str
+        :keyword ssh_profile: The SSH profile.
+        :paramtype ssh_profile: ~azure.mgmt.hdinsight.models.SshProfile
+        """
+        super().__init__(**kwargs)
         self.username = username
         self.password = password
         self.ssh_profile = ssh_profile
 
 
-class LocalizedName(msrest.serialization.Model):
+class LocalizedName(_serialization.Model):
     """The details about the localizable name of a type of usage.
 
-    :param value: The name of the used resource.
-    :type value: str
-    :param localized_value: The localized name of the used resource.
-    :type localized_value: str
+    :ivar value: The name of the used resource.
+    :vartype value: str
+    :ivar localized_value: The localized name of the used resource.
+    :vartype localized_value: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
-        super(LocalizedName, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+        """
+        :keyword value: The name of the used resource.
+        :paramtype value: str
+        :keyword localized_value: The localized name of the used resource.
+        :paramtype localized_value: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class MetricSpecifications(msrest.serialization.Model):
+class MetricSpecifications(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The details of metric specifications.
 
-    :param name: The name of the metric specification.
-    :type name: str
-    :param display_name: The display name of the metric specification.
-    :type display_name: str
-    :param display_description: The display description of the metric specification.
-    :type display_description: str
-    :param unit: The unit of the metric specification.
-    :type unit: str
-    :param aggregation_type: The aggregation type of the metric specification.
-    :type aggregation_type: str
-    :param supported_aggregation_types: The supported aggregation types of the metric
-     specification.
-    :type supported_aggregation_types: list[str]
-    :param supported_time_grain_types: The supported time grain types of the metric specification.
-    :type supported_time_grain_types: list[str]
-    :param enable_regional_mdm_account: The flag indicates whether enable regional mdm account or
+    :ivar name: The name of the metric specification.
+    :vartype name: str
+    :ivar display_name: The display name of the metric specification.
+    :vartype display_name: str
+    :ivar display_description: The display description of the metric specification.
+    :vartype display_description: str
+    :ivar unit: The unit of the metric specification.
+    :vartype unit: str
+    :ivar aggregation_type: The aggregation type of the metric specification.
+    :vartype aggregation_type: str
+    :ivar supported_aggregation_types: The supported aggregation types of the metric specification.
+    :vartype supported_aggregation_types: list[str]
+    :ivar supported_time_grain_types: The supported time grain types of the metric specification.
+    :vartype supported_time_grain_types: list[str]
+    :ivar enable_regional_mdm_account: The flag indicates whether enable regional mdm account or
      not.
-    :type enable_regional_mdm_account: bool
-    :param source_mdm_account: The source mdm account.
-    :type source_mdm_account: str
-    :param source_mdm_namespace: The source mdm namespace.
-    :type source_mdm_namespace: str
-    :param metric_filter_pattern: The metric filter pattern.
-    :type metric_filter_pattern: str
-    :param fill_gap_with_zero: The flag indicates whether filling gap with zero.
-    :type fill_gap_with_zero: bool
-    :param category: The category of the metric.
-    :type category: str
-    :param resource_id_dimension_name_override: The override name of resource id dimension name.
-    :type resource_id_dimension_name_override: str
-    :param is_internal: The flag indicates whether the metric is internal or not.
-    :type is_internal: bool
-    :param delegate_metric_name_override: The override name of delegate metric.
-    :type delegate_metric_name_override: str
-    :param dimensions: The dimensions of the metric specification.
-    :type dimensions: list[~azure.mgmt.hdinsight.models.Dimension]
+    :vartype enable_regional_mdm_account: bool
+    :ivar source_mdm_account: The source mdm account.
+    :vartype source_mdm_account: str
+    :ivar source_mdm_namespace: The source mdm namespace.
+    :vartype source_mdm_namespace: str
+    :ivar metric_filter_pattern: The metric filter pattern.
+    :vartype metric_filter_pattern: str
+    :ivar fill_gap_with_zero: The flag indicates whether filling gap with zero.
+    :vartype fill_gap_with_zero: bool
+    :ivar category: The category of the metric.
+    :vartype category: str
+    :ivar resource_id_dimension_name_override: The override name of resource id dimension name.
+    :vartype resource_id_dimension_name_override: str
+    :ivar is_internal: The flag indicates whether the metric is internal or not.
+    :vartype is_internal: bool
+    :ivar delegate_metric_name_override: The override name of delegate metric.
+    :vartype delegate_metric_name_override: str
+    :ivar dimensions: The dimensions of the metric specification.
+    :vartype dimensions: list[~azure.mgmt.hdinsight.models.Dimension]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'category': {'key': 'category', 'type': 'str'},
-        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
-        'is_internal': {'key': 'isInternal', 'type': 'bool'},
-        'delegate_metric_name_override': {'key': 'delegateMetricNameOverride', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "bool"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "metric_filter_pattern": {"key": "metricFilterPattern", "type": "str"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "category": {"key": "category", "type": "str"},
+        "resource_id_dimension_name_override": {"key": "resourceIdDimensionNameOverride", "type": "str"},
+        "is_internal": {"key": "isInternal", "type": "bool"},
+        "delegate_metric_name_override": {"key": "delegateMetricNameOverride", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
     }
 
     def __init__(
@@ -2406,10 +2837,49 @@ class MetricSpecifications(msrest.serialization.Model):
         resource_id_dimension_name_override: Optional[str] = None,
         is_internal: Optional[bool] = None,
         delegate_metric_name_override: Optional[str] = None,
-        dimensions: Optional[List["Dimension"]] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
         **kwargs
     ):
-        super(MetricSpecifications, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the metric specification.
+        :paramtype name: str
+        :keyword display_name: The display name of the metric specification.
+        :paramtype display_name: str
+        :keyword display_description: The display description of the metric specification.
+        :paramtype display_description: str
+        :keyword unit: The unit of the metric specification.
+        :paramtype unit: str
+        :keyword aggregation_type: The aggregation type of the metric specification.
+        :paramtype aggregation_type: str
+        :keyword supported_aggregation_types: The supported aggregation types of the metric
+         specification.
+        :paramtype supported_aggregation_types: list[str]
+        :keyword supported_time_grain_types: The supported time grain types of the metric
+         specification.
+        :paramtype supported_time_grain_types: list[str]
+        :keyword enable_regional_mdm_account: The flag indicates whether enable regional mdm account or
+         not.
+        :paramtype enable_regional_mdm_account: bool
+        :keyword source_mdm_account: The source mdm account.
+        :paramtype source_mdm_account: str
+        :keyword source_mdm_namespace: The source mdm namespace.
+        :paramtype source_mdm_namespace: str
+        :keyword metric_filter_pattern: The metric filter pattern.
+        :paramtype metric_filter_pattern: str
+        :keyword fill_gap_with_zero: The flag indicates whether filling gap with zero.
+        :paramtype fill_gap_with_zero: bool
+        :keyword category: The category of the metric.
+        :paramtype category: str
+        :keyword resource_id_dimension_name_override: The override name of resource id dimension name.
+        :paramtype resource_id_dimension_name_override: str
+        :keyword is_internal: The flag indicates whether the metric is internal or not.
+        :paramtype is_internal: bool
+        :keyword delegate_metric_name_override: The override name of delegate metric.
+        :paramtype delegate_metric_name_override: str
+        :keyword dimensions: The dimensions of the metric specification.
+        :paramtype dimensions: list[~azure.mgmt.hdinsight.models.Dimension]
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -2429,39 +2899,39 @@ class MetricSpecifications(msrest.serialization.Model):
         self.dimensions = dimensions
 
 
-class NameAvailabilityCheckRequestParameters(msrest.serialization.Model):
+class NameAvailabilityCheckRequestParameters(_serialization.Model):
     """The request spec of checking name availability.
 
-    :param name: The resource name.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(NameAvailabilityCheckRequestParameters, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The resource name.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class NameAvailabilityCheckResult(msrest.serialization.Model):
+class NameAvailabilityCheckResult(_serialization.Model):
     """The response spec of checking name availability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name_available: This indicates whether the name is available.
-    :type name_available: bool
+    :ivar name_available: This indicates whether the name is available.
+    :vartype name_available: bool
     :ivar reason: The reason of the result.
     :vartype reason: str
     :ivar message: The related message.
@@ -2469,106 +2939,122 @@ class NameAvailabilityCheckResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name_available: Optional[bool] = None,
-        **kwargs
-    ):
-        super(NameAvailabilityCheckResult, self).__init__(**kwargs)
+    def __init__(self, *, name_available: Optional[bool] = None, **kwargs):
+        """
+        :keyword name_available: This indicates whether the name is available.
+        :paramtype name_available: bool
+        """
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = None
         self.message = None
 
 
-class NetworkProperties(msrest.serialization.Model):
+class NetworkProperties(_serialization.Model):
     """The network properties.
 
-    :param resource_provider_connection: The direction for the resource provider connection.
-     Possible values include: "Inbound", "Outbound".
-    :type resource_provider_connection: str or
+    :ivar resource_provider_connection: The direction for the resource provider connection. Known
+     values are: "Inbound" and "Outbound".
+    :vartype resource_provider_connection: str or
      ~azure.mgmt.hdinsight.models.ResourceProviderConnection
-    :param private_link: Indicates whether or not private link is enabled. Possible values include:
-     "Disabled", "Enabled".
-    :type private_link: str or ~azure.mgmt.hdinsight.models.PrivateLink
+    :ivar private_link: Indicates whether or not private link is enabled. Known values are:
+     "Disabled" and "Enabled".
+    :vartype private_link: str or ~azure.mgmt.hdinsight.models.PrivateLink
     """
 
     _attribute_map = {
-        'resource_provider_connection': {'key': 'resourceProviderConnection', 'type': 'str'},
-        'private_link': {'key': 'privateLink', 'type': 'str'},
+        "resource_provider_connection": {"key": "resourceProviderConnection", "type": "str"},
+        "private_link": {"key": "privateLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        resource_provider_connection: Optional[Union[str, "ResourceProviderConnection"]] = None,
-        private_link: Optional[Union[str, "PrivateLink"]] = None,
+        resource_provider_connection: Optional[Union[str, "_models.ResourceProviderConnection"]] = None,
+        private_link: Optional[Union[str, "_models.PrivateLink"]] = None,
         **kwargs
     ):
-        super(NetworkProperties, self).__init__(**kwargs)
+        """
+        :keyword resource_provider_connection: The direction for the resource provider connection.
+         Known values are: "Inbound" and "Outbound".
+        :paramtype resource_provider_connection: str or
+         ~azure.mgmt.hdinsight.models.ResourceProviderConnection
+        :keyword private_link: Indicates whether or not private link is enabled. Known values are:
+         "Disabled" and "Enabled".
+        :paramtype private_link: str or ~azure.mgmt.hdinsight.models.PrivateLink
+        """
+        super().__init__(**kwargs)
         self.resource_provider_connection = resource_provider_connection
         self.private_link = private_link
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """The HDInsight REST API operation.
 
-    :param name: The operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The display of operation.
-    :type display: ~azure.mgmt.hdinsight.models.OperationDisplay
-    :param properties: The operation properties.
-    :type properties: ~azure.mgmt.hdinsight.models.OperationProperties
+    :ivar name: The operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The display of operation.
+    :vartype display: ~azure.mgmt.hdinsight.models.OperationDisplay
+    :ivar properties: The operation properties.
+    :vartype properties: ~azure.mgmt.hdinsight.models.OperationProperties
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'properties': {'key': 'properties', 'type': 'OperationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "properties": {"key": "properties", "type": "OperationProperties"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        properties: Optional["OperationProperties"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
+        properties: Optional["_models.OperationProperties"] = None,
         **kwargs
     ):
-        super(Operation, self).__init__(**kwargs)
+        """
+        :keyword name: The operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The display of operation.
+        :paramtype display: ~azure.mgmt.hdinsight.models.OperationDisplay
+        :keyword properties: The operation properties.
+        :paramtype properties: ~azure.mgmt.hdinsight.models.OperationProperties
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.properties = properties
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :param provider: The service provider: Microsoft.HDInsight.
-    :type provider: str
-    :param resource: The resource on which the operation is performed: Cluster, Applications, etc.
-    :type resource: str
-    :param operation: The operation type: read, write, delete, etc.
-    :type operation: str
-    :param description: Localized friendly description for the operation.
-    :type description: str
+    :ivar provider: The service provider: Microsoft.HDInsight.
+    :vartype provider: str
+    :ivar resource: The resource on which the operation is performed: Cluster, Applications, etc.
+    :vartype resource: str
+    :ivar operation: The operation type: read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Localized friendly description for the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -2580,103 +3066,115 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: The service provider: Microsoft.HDInsight.
+        :paramtype provider: str
+        :keyword resource: The resource on which the operation is performed: Cluster, Applications,
+         etc.
+        :paramtype resource: str
+        :keyword operation: The operation type: read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Localized friendly description for the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list HDInsight operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: The list of HDInsight operations supported by the HDInsight resource provider.
-    :type value: list[~azure.mgmt.hdinsight.models.Operation]
-    :param next_link: The URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: The list of HDInsight operations supported by the HDInsight resource provider.
+    :vartype value: list[~azure.mgmt.hdinsight.models.Operation]
+    :ivar next_link: The URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: The list of HDInsight operations supported by the HDInsight resource provider.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.Operation]
+        :keyword next_link: The URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationProperties(msrest.serialization.Model):
+class OperationProperties(_serialization.Model):
     """The details of operation.
 
-    :param service_specification: The specification of the service.
-    :type service_specification: ~azure.mgmt.hdinsight.models.ServiceSpecification
+    :ivar service_specification: The specification of the service.
+    :vartype service_specification: ~azure.mgmt.hdinsight.models.ServiceSpecification
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(
-        self,
-        *,
-        service_specification: Optional["ServiceSpecification"] = None,
-        **kwargs
-    ):
-        super(OperationProperties, self).__init__(**kwargs)
+    def __init__(self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs):
+        """
+        :keyword service_specification: The specification of the service.
+        :paramtype service_specification: ~azure.mgmt.hdinsight.models.ServiceSpecification
+        """
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class OsProfile(msrest.serialization.Model):
+class OsProfile(_serialization.Model):
     """The Linux operation systems profile.
 
-    :param linux_operating_system_profile: The Linux OS profile.
-    :type linux_operating_system_profile: ~azure.mgmt.hdinsight.models.LinuxOperatingSystemProfile
+    :ivar linux_operating_system_profile: The Linux OS profile.
+    :vartype linux_operating_system_profile:
+     ~azure.mgmt.hdinsight.models.LinuxOperatingSystemProfile
     """
 
     _attribute_map = {
-        'linux_operating_system_profile': {'key': 'linuxOperatingSystemProfile', 'type': 'LinuxOperatingSystemProfile'},
+        "linux_operating_system_profile": {"key": "linuxOperatingSystemProfile", "type": "LinuxOperatingSystemProfile"},
     }
 
     def __init__(
-        self,
-        *,
-        linux_operating_system_profile: Optional["LinuxOperatingSystemProfile"] = None,
-        **kwargs
+        self, *, linux_operating_system_profile: Optional["_models.LinuxOperatingSystemProfile"] = None, **kwargs
     ):
-        super(OsProfile, self).__init__(**kwargs)
+        """
+        :keyword linux_operating_system_profile: The Linux OS profile.
+        :paramtype linux_operating_system_profile:
+         ~azure.mgmt.hdinsight.models.LinuxOperatingSystemProfile
+        """
+        super().__init__(**kwargs)
         self.linux_operating_system_profile = linux_operating_system_profile
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """The private endpoint.
 
-    :param id: The private endpoint id.
-    :type id: str
+    :ivar id: The private endpoint id.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The private endpoint id.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class PrivateEndpointConnection(ResourceAutoGenerated):
+class PrivateEndpointConnection(Resource):
     """The private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2695,47 +3193,51 @@ class PrivateEndpointConnection(ResourceAutoGenerated):
     :vartype system_data: ~azure.mgmt.hdinsight.models.SystemData
     :ivar private_endpoint: The private endpoint of the private endpoint connection.
     :vartype private_endpoint: ~azure.mgmt.hdinsight.models.PrivateEndpoint
-    :param private_link_service_connection_state: Required. The private link service connection
-     state.
-    :type private_link_service_connection_state:
+    :ivar private_link_service_connection_state: The private link service connection state.
+     Required.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.hdinsight.models.PrivateLinkServiceConnectionState
     :ivar link_identifier: The link identifier.
     :vartype link_identifier: str
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
-     values include: "InProgress", "Updating", "Failed", "Succeeded", "Canceled", "Deleting".
+    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+     values are: "InProgress", "Updating", "Failed", "Succeeded", "Canceled", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.hdinsight.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'private_endpoint': {'readonly': True},
-        'private_link_service_connection_state': {'required': True},
-        'link_identifier': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "private_endpoint": {"readonly": True},
+        "private_link_service_connection_state": {"required": True},
+        "link_identifier": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'link_identifier': {'key': 'properties.linkIdentifier', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "link_identifier": {"key": "properties.linkIdentifier", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        private_link_service_connection_state: "PrivateLinkServiceConnectionState",
-        **kwargs
-    ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+    def __init__(self, *, private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState", **kwargs):
+        """
+        :keyword private_link_service_connection_state: The private link service connection state.
+         Required.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.hdinsight.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(**kwargs)
         self.system_data = None
         self.private_endpoint = None
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -2743,38 +3245,37 @@ class PrivateEndpointConnection(ResourceAutoGenerated):
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """The list private endpoint connections response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of private endpoint connections.
-    :type value: list[~azure.mgmt.hdinsight.models.PrivateEndpointConnection]
+    :ivar value: The list of private endpoint connections.
+    :vartype value: list[~azure.mgmt.hdinsight.models.PrivateEndpointConnection]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+        """
+        :keyword value: The list of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.PrivateEndpointConnection]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class PrivateLinkConfiguration(msrest.serialization.Model):
+class PrivateLinkConfiguration(_serialization.Model):
     """The private link configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2783,49 +3284,51 @@ class PrivateLinkConfiguration(msrest.serialization.Model):
 
     :ivar id: The private link configuration id.
     :vartype id: str
-    :param name: Required. The name of private link configuration.
-    :type name: str
+    :ivar name: The name of private link configuration. Required.
+    :vartype name: str
     :ivar type: The type of the private link configuration.
     :vartype type: str
-    :param group_id: Required. The HDInsight private linkable sub-resource name to apply the
-     private link configuration to. For example, 'headnode', 'gateway', 'edgenode'.
-    :type group_id: str
+    :ivar group_id: The HDInsight private linkable sub-resource name to apply the private link
+     configuration to. For example, 'headnode', 'gateway', 'edgenode'. Required.
+    :vartype group_id: str
     :ivar provisioning_state: The private link configuration provisioning state, which only appears
-     in the response. Possible values include: "InProgress", "Failed", "Succeeded", "Canceled",
+     in the response. Known values are: "InProgress", "Failed", "Succeeded", "Canceled", and
      "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.hdinsight.models.PrivateLinkConfigurationProvisioningState
-    :param ip_configurations: Required. The IP configurations for the private link service.
-    :type ip_configurations: list[~azure.mgmt.hdinsight.models.IPConfiguration]
+    :ivar ip_configurations: The IP configurations for the private link service. Required.
+    :vartype ip_configurations: list[~azure.mgmt.hdinsight.models.IPConfiguration]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'required': True},
-        'type': {'readonly': True},
-        'group_id': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'ip_configurations': {'required': True},
+        "id": {"readonly": True},
+        "name": {"required": True},
+        "type": {"readonly": True},
+        "group_id": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "ip_configurations": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[IPConfiguration]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        group_id: str,
-        ip_configurations: List["IPConfiguration"],
-        **kwargs
-    ):
-        super(PrivateLinkConfiguration, self).__init__(**kwargs)
+    def __init__(self, *, name: str, group_id: str, ip_configurations: List["_models.IPConfiguration"], **kwargs):
+        """
+        :keyword name: The name of private link configuration. Required.
+        :paramtype name: str
+        :keyword group_id: The HDInsight private linkable sub-resource name to apply the private link
+         configuration to. For example, 'headnode', 'gateway', 'edgenode'. Required.
+        :paramtype group_id: str
+        :keyword ip_configurations: The IP configurations for the private link service. Required.
+        :paramtype ip_configurations: list[~azure.mgmt.hdinsight.models.IPConfiguration]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = name
         self.type = None
@@ -2834,7 +3337,7 @@ class PrivateLinkConfiguration(msrest.serialization.Model):
         self.ip_configurations = ip_configurations
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(ResourceAutoGenerated):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2853,116 +3356,123 @@ class PrivateLinkResource(Resource):
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
-    :param required_zone_names: The private link resource Private link DNS zone name.
-    :type required_zone_names: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super().__init__(**kwargs)
         self.system_data = None
         self.group_id = None
         self.required_members = None
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
-    :param value: Array of private link resources.
-    :type value: list[~azure.mgmt.hdinsight.models.PrivateLinkResource]
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.hdinsight.models.PrivateLinkResource]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateLinkResource"]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.PrivateLinkResource]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """The private link service connection state.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The concrete private link service connection. Possible values include:
-     "Approved", "Rejected", "Pending", "Removed".
-    :type status: str or ~azure.mgmt.hdinsight.models.PrivateLinkServiceConnectionStatus
-    :param description: The optional description of the status.
-    :type description: str
-    :param actions_required: Whether there is further actions.
-    :type actions_required: str
+    :ivar status: The concrete private link service connection. Required. Known values are:
+     "Approved", "Rejected", "Pending", and "Removed".
+    :vartype status: str or ~azure.mgmt.hdinsight.models.PrivateLinkServiceConnectionStatus
+    :ivar description: The optional description of the status.
+    :vartype description: str
+    :ivar actions_required: Whether there is further actions.
+    :vartype actions_required: str
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Union[str, "PrivateLinkServiceConnectionStatus"],
+        status: Union[str, "_models.PrivateLinkServiceConnectionStatus"],
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
         **kwargs
     ):
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        """
+        :keyword status: The concrete private link service connection. Required. Known values are:
+         "Approved", "Rejected", "Pending", and "Removed".
+        :paramtype status: str or ~azure.mgmt.hdinsight.models.PrivateLinkServiceConnectionStatus
+        :keyword description: The optional description of the status.
+        :paramtype description: str
+        :keyword actions_required: Whether there is further actions.
+        :paramtype actions_required: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class QuotaCapability(msrest.serialization.Model):
+class QuotaCapability(_serialization.Model):
     """The regional quota capability.
 
-    :param cores_used: The number of cores used in the subscription.
-    :type cores_used: long
-    :param max_cores_allowed: The number of cores that the subscription allowed.
-    :type max_cores_allowed: long
-    :param regional_quotas: The list of region quota capabilities.
-    :type regional_quotas: list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
+    :ivar cores_used: The number of cores used in the subscription.
+    :vartype cores_used: int
+    :ivar max_cores_allowed: The number of cores that the subscription allowed.
+    :vartype max_cores_allowed: int
+    :ivar regional_quotas: The list of region quota capabilities.
+    :vartype regional_quotas: list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
     """
 
     _attribute_map = {
-        'cores_used': {'key': 'coresUsed', 'type': 'long'},
-        'max_cores_allowed': {'key': 'maxCoresAllowed', 'type': 'long'},
-        'regional_quotas': {'key': 'regionalQuotas', 'type': '[RegionalQuotaCapability]'},
+        "cores_used": {"key": "coresUsed", "type": "int"},
+        "max_cores_allowed": {"key": "maxCoresAllowed", "type": "int"},
+        "regional_quotas": {"key": "regionalQuotas", "type": "[RegionalQuotaCapability]"},
     }
 
     def __init__(
@@ -2970,51 +3480,58 @@ class QuotaCapability(msrest.serialization.Model):
         *,
         cores_used: Optional[int] = None,
         max_cores_allowed: Optional[int] = None,
-        regional_quotas: Optional[List["RegionalQuotaCapability"]] = None,
+        regional_quotas: Optional[List["_models.RegionalQuotaCapability"]] = None,
         **kwargs
     ):
-        super(QuotaCapability, self).__init__(**kwargs)
+        """
+        :keyword cores_used: The number of cores used in the subscription.
+        :paramtype cores_used: int
+        :keyword max_cores_allowed: The number of cores that the subscription allowed.
+        :paramtype max_cores_allowed: int
+        :keyword regional_quotas: The list of region quota capabilities.
+        :paramtype regional_quotas: list[~azure.mgmt.hdinsight.models.RegionalQuotaCapability]
+        """
+        super().__init__(**kwargs)
         self.cores_used = cores_used
         self.max_cores_allowed = max_cores_allowed
         self.regional_quotas = regional_quotas
 
 
-class QuotaInfo(msrest.serialization.Model):
+class QuotaInfo(_serialization.Model):
     """The quota properties for the cluster.
 
-    :param cores_used: The cores used by the cluster.
-    :type cores_used: int
+    :ivar cores_used: The cores used by the cluster.
+    :vartype cores_used: int
     """
 
     _attribute_map = {
-        'cores_used': {'key': 'coresUsed', 'type': 'int'},
+        "cores_used": {"key": "coresUsed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        cores_used: Optional[int] = None,
-        **kwargs
-    ):
-        super(QuotaInfo, self).__init__(**kwargs)
+    def __init__(self, *, cores_used: Optional[int] = None, **kwargs):
+        """
+        :keyword cores_used: The cores used by the cluster.
+        :paramtype cores_used: int
+        """
+        super().__init__(**kwargs)
         self.cores_used = cores_used
 
 
-class RegionalQuotaCapability(msrest.serialization.Model):
+class RegionalQuotaCapability(_serialization.Model):
     """The regional quota capacity.
 
-    :param region_name: The region name.
-    :type region_name: str
-    :param cores_used: The number of cores used in the region.
-    :type cores_used: long
-    :param cores_available: The number of cores available in the region.
-    :type cores_available: long
+    :ivar region_name: The region name.
+    :vartype region_name: str
+    :ivar cores_used: The number of cores used in the region.
+    :vartype cores_used: int
+    :ivar cores_available: The number of cores available in the region.
+    :vartype cores_available: int
     """
 
     _attribute_map = {
-        'region_name': {'key': 'regionName', 'type': 'str'},
-        'cores_used': {'key': 'coresUsed', 'type': 'long'},
-        'cores_available': {'key': 'coresAvailable', 'type': 'long'},
+        "region_name": {"key": "regionName", "type": "str"},
+        "cores_used": {"key": "coresUsed", "type": "int"},
+        "cores_available": {"key": "coresAvailable", "type": "int"},
     }
 
     def __init__(
@@ -3025,93 +3542,99 @@ class RegionalQuotaCapability(msrest.serialization.Model):
         cores_available: Optional[int] = None,
         **kwargs
     ):
-        super(RegionalQuotaCapability, self).__init__(**kwargs)
+        """
+        :keyword region_name: The region name.
+        :paramtype region_name: str
+        :keyword cores_used: The number of cores used in the region.
+        :paramtype cores_used: int
+        :keyword cores_available: The number of cores available in the region.
+        :paramtype cores_available: int
+        """
+        super().__init__(**kwargs)
         self.region_name = region_name
         self.cores_used = cores_used
         self.cores_available = cores_available
 
 
-class RegionsCapability(msrest.serialization.Model):
+class RegionsCapability(_serialization.Model):
     """The regions capability.
 
-    :param available: The list of region capabilities.
-    :type available: list[str]
+    :ivar available: The list of region capabilities.
+    :vartype available: list[str]
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[str]'},
+        "available": {"key": "available", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        available: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(RegionsCapability, self).__init__(**kwargs)
+    def __init__(self, *, available: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword available: The list of region capabilities.
+        :paramtype available: list[str]
+        """
+        super().__init__(**kwargs)
         self.available = available
 
 
-class ResourceId(msrest.serialization.Model):
+class ResourceId(_serialization.Model):
     """The azure resource id.
 
-    :param id: The azure resource id.
-    :type id: str
+    :ivar id: The azure resource id.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResourceId, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The azure resource id.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class Role(msrest.serialization.Model):
+class Role(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes a role on the cluster.
 
-    :param name: The name of the role.
-    :type name: str
-    :param min_instance_count: The minimum instance count of the cluster.
-    :type min_instance_count: int
-    :param target_instance_count: The instance count of the cluster.
-    :type target_instance_count: int
-    :param vm_group_name: The name of the virtual machine group.
-    :type vm_group_name: str
-    :param autoscale_configuration: The autoscale configurations.
-    :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
-    :param hardware_profile: The hardware profile.
-    :type hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
-    :param os_profile: The operating system profile.
-    :type os_profile: ~azure.mgmt.hdinsight.models.OsProfile
-    :param virtual_network_profile: The virtual network profile.
-    :type virtual_network_profile: ~azure.mgmt.hdinsight.models.VirtualNetworkProfile
-    :param data_disks_groups: The data disks groups for the role.
-    :type data_disks_groups: list[~azure.mgmt.hdinsight.models.DataDisksGroups]
-    :param script_actions: The list of script actions on the role.
-    :type script_actions: list[~azure.mgmt.hdinsight.models.ScriptAction]
-    :param encrypt_data_disks: Indicates whether encrypt the data disks.
-    :type encrypt_data_disks: bool
+    :ivar name: The name of the role.
+    :vartype name: str
+    :ivar min_instance_count: The minimum instance count of the cluster.
+    :vartype min_instance_count: int
+    :ivar target_instance_count: The instance count of the cluster.
+    :vartype target_instance_count: int
+    :ivar vm_group_name: The name of the virtual machine group.
+    :vartype vm_group_name: str
+    :ivar autoscale_configuration: The autoscale configurations.
+    :vartype autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
+    :ivar hardware_profile: The hardware profile.
+    :vartype hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
+    :ivar os_profile: The operating system profile.
+    :vartype os_profile: ~azure.mgmt.hdinsight.models.OsProfile
+    :ivar virtual_network_profile: The virtual network profile.
+    :vartype virtual_network_profile: ~azure.mgmt.hdinsight.models.VirtualNetworkProfile
+    :ivar data_disks_groups: The data disks groups for the role.
+    :vartype data_disks_groups: list[~azure.mgmt.hdinsight.models.DataDisksGroups]
+    :ivar script_actions: The list of script actions on the role.
+    :vartype script_actions: list[~azure.mgmt.hdinsight.models.ScriptAction]
+    :ivar encrypt_data_disks: Indicates whether encrypt the data disks.
+    :vartype encrypt_data_disks: bool
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
-        'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
-        'vm_group_name': {'key': 'VMGroupName', 'type': 'str'},
-        'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
-        'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
-        'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
-        'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
-        'data_disks_groups': {'key': 'dataDisksGroups', 'type': '[DataDisksGroups]'},
-        'script_actions': {'key': 'scriptActions', 'type': '[ScriptAction]'},
-        'encrypt_data_disks': {'key': 'encryptDataDisks', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "min_instance_count": {"key": "minInstanceCount", "type": "int"},
+        "target_instance_count": {"key": "targetInstanceCount", "type": "int"},
+        "vm_group_name": {"key": "VMGroupName", "type": "str"},
+        "autoscale_configuration": {"key": "autoscale", "type": "Autoscale"},
+        "hardware_profile": {"key": "hardwareProfile", "type": "HardwareProfile"},
+        "os_profile": {"key": "osProfile", "type": "OsProfile"},
+        "virtual_network_profile": {"key": "virtualNetworkProfile", "type": "VirtualNetworkProfile"},
+        "data_disks_groups": {"key": "dataDisksGroups", "type": "[DataDisksGroups]"},
+        "script_actions": {"key": "scriptActions", "type": "[ScriptAction]"},
+        "encrypt_data_disks": {"key": "encryptDataDisks", "type": "bool"},
     }
 
     def __init__(
@@ -3121,16 +3644,40 @@ class Role(msrest.serialization.Model):
         min_instance_count: Optional[int] = None,
         target_instance_count: Optional[int] = None,
         vm_group_name: Optional[str] = None,
-        autoscale_configuration: Optional["Autoscale"] = None,
-        hardware_profile: Optional["HardwareProfile"] = None,
-        os_profile: Optional["OsProfile"] = None,
-        virtual_network_profile: Optional["VirtualNetworkProfile"] = None,
-        data_disks_groups: Optional[List["DataDisksGroups"]] = None,
-        script_actions: Optional[List["ScriptAction"]] = None,
-        encrypt_data_disks: Optional[bool] = False,
+        autoscale_configuration: Optional["_models.Autoscale"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        os_profile: Optional["_models.OsProfile"] = None,
+        virtual_network_profile: Optional["_models.VirtualNetworkProfile"] = None,
+        data_disks_groups: Optional[List["_models.DataDisksGroups"]] = None,
+        script_actions: Optional[List["_models.ScriptAction"]] = None,
+        encrypt_data_disks: bool = False,
         **kwargs
     ):
-        super(Role, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the role.
+        :paramtype name: str
+        :keyword min_instance_count: The minimum instance count of the cluster.
+        :paramtype min_instance_count: int
+        :keyword target_instance_count: The instance count of the cluster.
+        :paramtype target_instance_count: int
+        :keyword vm_group_name: The name of the virtual machine group.
+        :paramtype vm_group_name: str
+        :keyword autoscale_configuration: The autoscale configurations.
+        :paramtype autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
+        :keyword hardware_profile: The hardware profile.
+        :paramtype hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
+        :keyword os_profile: The operating system profile.
+        :paramtype os_profile: ~azure.mgmt.hdinsight.models.OsProfile
+        :keyword virtual_network_profile: The virtual network profile.
+        :paramtype virtual_network_profile: ~azure.mgmt.hdinsight.models.VirtualNetworkProfile
+        :keyword data_disks_groups: The data disks groups for the role.
+        :paramtype data_disks_groups: list[~azure.mgmt.hdinsight.models.DataDisksGroups]
+        :keyword script_actions: The list of script actions on the role.
+        :paramtype script_actions: list[~azure.mgmt.hdinsight.models.ScriptAction]
+        :keyword encrypt_data_disks: Indicates whether encrypt the data disks.
+        :paramtype encrypt_data_disks: bool
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.min_instance_count = min_instance_count
         self.target_instance_count = target_instance_count
@@ -3144,50 +3691,52 @@ class Role(msrest.serialization.Model):
         self.encrypt_data_disks = encrypt_data_disks
 
 
-class RuntimeScriptAction(msrest.serialization.Model):
+class RuntimeScriptAction(_serialization.Model):
     """Describes a script action on a running cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the script action.
-    :type name: str
-    :param uri: Required. The URI to the script.
-    :type uri: str
-    :param parameters: The parameters for the script.
-    :type parameters: str
-    :param roles: Required. The list of roles where script will be executed.
-    :type roles: list[str]
+    :ivar name: The name of the script action. Required.
+    :vartype name: str
+    :ivar uri: The URI to the script. Required.
+    :vartype uri: str
+    :ivar parameters: The parameters for the script.
+    :vartype parameters: str
+    :ivar roles: The list of roles where script will be executed. Required.
+    :vartype roles: list[str]
     :ivar application_name: The application name of the script action, if any.
     :vartype application_name: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'uri': {'required': True},
-        'roles': {'required': True},
-        'application_name': {'readonly': True},
+        "name": {"required": True},
+        "uri": {"required": True},
+        "roles": {"required": True},
+        "application_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
-        'roles': {'key': 'roles', 'type': '[str]'},
-        'application_name': {'key': 'applicationName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "parameters": {"key": "parameters", "type": "str"},
+        "roles": {"key": "roles", "type": "[str]"},
+        "application_name": {"key": "applicationName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        uri: str,
-        roles: List[str],
-        parameters: Optional[str] = None,
-        **kwargs
-    ):
-        super(RuntimeScriptAction, self).__init__(**kwargs)
+    def __init__(self, *, name: str, uri: str, roles: List[str], parameters: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the script action. Required.
+        :paramtype name: str
+        :keyword uri: The URI to the script. Required.
+        :paramtype uri: str
+        :keyword parameters: The parameters for the script.
+        :paramtype parameters: str
+        :keyword roles: The list of roles where script will be executed. Required.
+        :paramtype roles: list[str]
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.uri = uri
         self.parameters = parameters
@@ -3195,25 +3744,25 @@ class RuntimeScriptAction(msrest.serialization.Model):
         self.application_name = None
 
 
-class RuntimeScriptActionDetail(RuntimeScriptAction):
+class RuntimeScriptActionDetail(RuntimeScriptAction):  # pylint: disable=too-many-instance-attributes
     """The execution details of a script action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the script action.
-    :type name: str
-    :param uri: Required. The URI to the script.
-    :type uri: str
-    :param parameters: The parameters for the script.
-    :type parameters: str
-    :param roles: Required. The list of roles where script will be executed.
-    :type roles: list[str]
+    :ivar name: The name of the script action. Required.
+    :vartype name: str
+    :ivar uri: The URI to the script. Required.
+    :vartype uri: str
+    :ivar parameters: The parameters for the script.
+    :vartype parameters: str
+    :ivar roles: The list of roles where script will be executed. Required.
+    :vartype roles: list[str]
     :ivar application_name: The application name of the script action, if any.
     :vartype application_name: str
     :ivar script_execution_id: The execution id of the script action.
-    :vartype script_execution_id: long
+    :vartype script_execution_id: int
     :ivar start_time: The start time of script action execution.
     :vartype start_time: str
     :ivar end_time: The end time of script action execution.
@@ -3229,44 +3778,46 @@ class RuntimeScriptActionDetail(RuntimeScriptAction):
     """
 
     _validation = {
-        'name': {'required': True},
-        'uri': {'required': True},
-        'roles': {'required': True},
-        'application_name': {'readonly': True},
-        'script_execution_id': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'status': {'readonly': True},
-        'operation': {'readonly': True},
-        'execution_summary': {'readonly': True},
-        'debug_information': {'readonly': True},
+        "name": {"required": True},
+        "uri": {"required": True},
+        "roles": {"required": True},
+        "application_name": {"readonly": True},
+        "script_execution_id": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "status": {"readonly": True},
+        "operation": {"readonly": True},
+        "execution_summary": {"readonly": True},
+        "debug_information": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
-        'roles': {'key': 'roles', 'type': '[str]'},
-        'application_name': {'key': 'applicationName', 'type': 'str'},
-        'script_execution_id': {'key': 'scriptExecutionId', 'type': 'long'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'execution_summary': {'key': 'executionSummary', 'type': '[ScriptActionExecutionSummary]'},
-        'debug_information': {'key': 'debugInformation', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "parameters": {"key": "parameters", "type": "str"},
+        "roles": {"key": "roles", "type": "[str]"},
+        "application_name": {"key": "applicationName", "type": "str"},
+        "script_execution_id": {"key": "scriptExecutionId", "type": "int"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "execution_summary": {"key": "executionSummary", "type": "[ScriptActionExecutionSummary]"},
+        "debug_information": {"key": "debugInformation", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        uri: str,
-        roles: List[str],
-        parameters: Optional[str] = None,
-        **kwargs
-    ):
-        super(RuntimeScriptActionDetail, self).__init__(name=name, uri=uri, parameters=parameters, roles=roles, **kwargs)
+    def __init__(self, *, name: str, uri: str, roles: List[str], parameters: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the script action. Required.
+        :paramtype name: str
+        :keyword uri: The URI to the script. Required.
+        :paramtype uri: str
+        :keyword parameters: The parameters for the script.
+        :paramtype parameters: str
+        :keyword roles: The list of roles where script will be executed. Required.
+        :paramtype roles: list[str]
+        """
+        super().__init__(name=name, uri=uri, parameters=parameters, roles=roles, **kwargs)
         self.script_execution_id = None
         self.start_time = None
         self.end_time = None
@@ -3276,46 +3827,47 @@ class RuntimeScriptActionDetail(RuntimeScriptAction):
         self.debug_information = None
 
 
-class ScriptAction(msrest.serialization.Model):
+class ScriptAction(_serialization.Model):
     """Describes a script action on role on the cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the script action.
-    :type name: str
-    :param uri: Required. The URI to the script.
-    :type uri: str
-    :param parameters: Required. The parameters for the script provided.
-    :type parameters: str
+    :ivar name: The name of the script action. Required.
+    :vartype name: str
+    :ivar uri: The URI to the script. Required.
+    :vartype uri: str
+    :ivar parameters: The parameters for the script provided. Required.
+    :vartype parameters: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'uri': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "uri": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "parameters": {"key": "parameters", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        uri: str,
-        parameters: str,
-        **kwargs
-    ):
-        super(ScriptAction, self).__init__(**kwargs)
+    def __init__(self, *, name: str, uri: str, parameters: str, **kwargs):
+        """
+        :keyword name: The name of the script action. Required.
+        :paramtype name: str
+        :keyword uri: The URI to the script. Required.
+        :paramtype uri: str
+        :keyword parameters: The parameters for the script provided. Required.
+        :paramtype parameters: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.uri = uri
         self.parameters = parameters
 
 
-class ScriptActionExecutionHistoryList(msrest.serialization.Model):
+class ScriptActionExecutionHistoryList(_serialization.Model):
     """The list script execution history response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3327,25 +3879,23 @@ class ScriptActionExecutionHistoryList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RuntimeScriptActionDetail]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RuntimeScriptActionDetail]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptActionExecutionHistoryList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ScriptActionExecutionSummary(msrest.serialization.Model):
+class ScriptActionExecutionSummary(_serialization.Model):
     """The execution summary of a script action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3357,45 +3907,43 @@ class ScriptActionExecutionSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'instance_count': {'readonly': True},
+        "status": {"readonly": True},
+        "instance_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
+        "status": {"key": "status", "type": "str"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptActionExecutionSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.instance_count = None
 
 
-class ScriptActionPersistedGetResponseSpec(msrest.serialization.Model):
+class ScriptActionPersistedGetResponseSpec(_serialization.Model):
     """The persisted script action for cluster.
 
-    :param name: The name of script action.
-    :type name: str
-    :param uri: The URI to the script.
-    :type uri: str
-    :param parameters: The parameters for the script provided.
-    :type parameters: str
-    :param roles: The list of roles where script will be executed.
-    :type roles: list[str]
-    :param application_name: The application name for the script action.
-    :type application_name: str
+    :ivar name: The name of script action.
+    :vartype name: str
+    :ivar uri: The URI to the script.
+    :vartype uri: str
+    :ivar parameters: The parameters for the script provided.
+    :vartype parameters: str
+    :ivar roles: The list of roles where script will be executed.
+    :vartype roles: list[str]
+    :ivar application_name: The application name for the script action.
+    :vartype application_name: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
-        'roles': {'key': 'roles', 'type': '[str]'},
-        'application_name': {'key': 'applicationName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "parameters": {"key": "parameters", "type": "str"},
+        "roles": {"key": "roles", "type": "[str]"},
+        "application_name": {"key": "applicationName", "type": "str"},
     }
 
     def __init__(
@@ -3408,7 +3956,19 @@ class ScriptActionPersistedGetResponseSpec(msrest.serialization.Model):
         application_name: Optional[str] = None,
         **kwargs
     ):
-        super(ScriptActionPersistedGetResponseSpec, self).__init__(**kwargs)
+        """
+        :keyword name: The name of script action.
+        :paramtype name: str
+        :keyword uri: The URI to the script.
+        :paramtype uri: str
+        :keyword parameters: The parameters for the script provided.
+        :paramtype parameters: str
+        :keyword roles: The list of roles where script will be executed.
+        :paramtype roles: list[str]
+        :keyword application_name: The application name for the script action.
+        :paramtype application_name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.uri = uri
         self.parameters = parameters
@@ -3416,78 +3976,77 @@ class ScriptActionPersistedGetResponseSpec(msrest.serialization.Model):
         self.application_name = application_name
 
 
-class ScriptActionsList(msrest.serialization.Model):
+class ScriptActionsList(_serialization.Model):
     """The persisted script action for the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of persisted script action details for the cluster.
-    :type value: list[~azure.mgmt.hdinsight.models.RuntimeScriptActionDetail]
+    :ivar value: The list of persisted script action details for the cluster.
+    :vartype value: list[~azure.mgmt.hdinsight.models.RuntimeScriptActionDetail]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RuntimeScriptActionDetail]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RuntimeScriptActionDetail]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["RuntimeScriptActionDetail"]] = None,
-        **kwargs
-    ):
-        super(ScriptActionsList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.RuntimeScriptActionDetail"]] = None, **kwargs):
+        """
+        :keyword value: The list of persisted script action details for the cluster.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.RuntimeScriptActionDetail]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class SecurityProfile(msrest.serialization.Model):
+class SecurityProfile(_serialization.Model):
     """The security profile which contains Ssh public key for the HDInsight cluster.
 
-    :param directory_type: The directory type. Possible values include: "ActiveDirectory".
-    :type directory_type: str or ~azure.mgmt.hdinsight.models.DirectoryType
-    :param domain: The organization's active directory domain.
-    :type domain: str
-    :param organizational_unit_dn: The organizational unit within the Active Directory to place the
+    :ivar directory_type: The directory type. "ActiveDirectory"
+    :vartype directory_type: str or ~azure.mgmt.hdinsight.models.DirectoryType
+    :ivar domain: The organization's active directory domain.
+    :vartype domain: str
+    :ivar organizational_unit_dn: The organizational unit within the Active Directory to place the
      cluster and service accounts.
-    :type organizational_unit_dn: str
-    :param ldaps_urls: The LDAPS protocol URLs to communicate with the Active Directory.
-    :type ldaps_urls: list[str]
-    :param domain_username: The domain user account that will have admin privileges on the cluster.
-    :type domain_username: str
-    :param domain_user_password: The domain admin password.
-    :type domain_user_password: str
-    :param cluster_users_group_d_ns: Optional. The Distinguished Names for cluster user groups.
-    :type cluster_users_group_d_ns: list[str]
-    :param aadds_resource_id: The resource ID of the user's Azure Active Directory Domain Service.
-    :type aadds_resource_id: str
-    :param msi_resource_id: User assigned identity that has permissions to read and create
+    :vartype organizational_unit_dn: str
+    :ivar ldaps_urls: The LDAPS protocol URLs to communicate with the Active Directory.
+    :vartype ldaps_urls: list[str]
+    :ivar domain_username: The domain user account that will have admin privileges on the cluster.
+    :vartype domain_username: str
+    :ivar domain_user_password: The domain admin password.
+    :vartype domain_user_password: str
+    :ivar cluster_users_group_d_ns: Optional. The Distinguished Names for cluster user groups.
+    :vartype cluster_users_group_d_ns: list[str]
+    :ivar aadds_resource_id: The resource ID of the user's Azure Active Directory Domain Service.
+    :vartype aadds_resource_id: str
+    :ivar msi_resource_id: User assigned identity that has permissions to read and create
      cluster-related artifacts in the user's AADDS.
-    :type msi_resource_id: str
+    :vartype msi_resource_id: str
     """
 
     _attribute_map = {
-        'directory_type': {'key': 'directoryType', 'type': 'str'},
-        'domain': {'key': 'domain', 'type': 'str'},
-        'organizational_unit_dn': {'key': 'organizationalUnitDN', 'type': 'str'},
-        'ldaps_urls': {'key': 'ldapsUrls', 'type': '[str]'},
-        'domain_username': {'key': 'domainUsername', 'type': 'str'},
-        'domain_user_password': {'key': 'domainUserPassword', 'type': 'str'},
-        'cluster_users_group_d_ns': {'key': 'clusterUsersGroupDNs', 'type': '[str]'},
-        'aadds_resource_id': {'key': 'aaddsResourceId', 'type': 'str'},
-        'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
+        "directory_type": {"key": "directoryType", "type": "str"},
+        "domain": {"key": "domain", "type": "str"},
+        "organizational_unit_dn": {"key": "organizationalUnitDN", "type": "str"},
+        "ldaps_urls": {"key": "ldapsUrls", "type": "[str]"},
+        "domain_username": {"key": "domainUsername", "type": "str"},
+        "domain_user_password": {"key": "domainUserPassword", "type": "str"},
+        "cluster_users_group_d_ns": {"key": "clusterUsersGroupDNs", "type": "[str]"},
+        "aadds_resource_id": {"key": "aaddsResourceId", "type": "str"},
+        "msi_resource_id": {"key": "msiResourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        directory_type: Optional[Union[str, "DirectoryType"]] = None,
+        directory_type: Optional[Union[str, "_models.DirectoryType"]] = None,
         domain: Optional[str] = None,
         organizational_unit_dn: Optional[str] = None,
         ldaps_urls: Optional[List[str]] = None,
@@ -3498,7 +4057,31 @@ class SecurityProfile(msrest.serialization.Model):
         msi_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(SecurityProfile, self).__init__(**kwargs)
+        """
+        :keyword directory_type: The directory type. "ActiveDirectory"
+        :paramtype directory_type: str or ~azure.mgmt.hdinsight.models.DirectoryType
+        :keyword domain: The organization's active directory domain.
+        :paramtype domain: str
+        :keyword organizational_unit_dn: The organizational unit within the Active Directory to place
+         the cluster and service accounts.
+        :paramtype organizational_unit_dn: str
+        :keyword ldaps_urls: The LDAPS protocol URLs to communicate with the Active Directory.
+        :paramtype ldaps_urls: list[str]
+        :keyword domain_username: The domain user account that will have admin privileges on the
+         cluster.
+        :paramtype domain_username: str
+        :keyword domain_user_password: The domain admin password.
+        :paramtype domain_user_password: str
+        :keyword cluster_users_group_d_ns: Optional. The Distinguished Names for cluster user groups.
+        :paramtype cluster_users_group_d_ns: list[str]
+        :keyword aadds_resource_id: The resource ID of the user's Azure Active Directory Domain
+         Service.
+        :paramtype aadds_resource_id: str
+        :keyword msi_resource_id: User assigned identity that has permissions to read and create
+         cluster-related artifacts in the user's AADDS.
+        :paramtype msi_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.directory_type = directory_type
         self.domain = domain
         self.organizational_unit_dn = organizational_unit_dn
@@ -3510,105 +4093,102 @@ class SecurityProfile(msrest.serialization.Model):
         self.msi_resource_id = msi_resource_id
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """The specification of the service.
 
-    :param metric_specifications: The metric specifications.
-    :type metric_specifications: list[~azure.mgmt.hdinsight.models.MetricSpecifications]
+    :ivar metric_specifications: The metric specifications.
+    :vartype metric_specifications: list[~azure.mgmt.hdinsight.models.MetricSpecifications]
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecifications]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecifications]"},
     }
 
-    def __init__(
-        self,
-        *,
-        metric_specifications: Optional[List["MetricSpecifications"]] = None,
-        **kwargs
-    ):
-        super(ServiceSpecification, self).__init__(**kwargs)
+    def __init__(self, *, metric_specifications: Optional[List["_models.MetricSpecifications"]] = None, **kwargs):
+        """
+        :keyword metric_specifications: The metric specifications.
+        :paramtype metric_specifications: list[~azure.mgmt.hdinsight.models.MetricSpecifications]
+        """
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
 
-class SshProfile(msrest.serialization.Model):
+class SshProfile(_serialization.Model):
     """The list of SSH public keys.
 
-    :param public_keys: The list of SSH public keys.
-    :type public_keys: list[~azure.mgmt.hdinsight.models.SshPublicKey]
+    :ivar public_keys: The list of SSH public keys.
+    :vartype public_keys: list[~azure.mgmt.hdinsight.models.SshPublicKey]
     """
 
     _attribute_map = {
-        'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
+        "public_keys": {"key": "publicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_keys: Optional[List["SshPublicKey"]] = None,
-        **kwargs
-    ):
-        super(SshProfile, self).__init__(**kwargs)
+    def __init__(self, *, public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs):
+        """
+        :keyword public_keys: The list of SSH public keys.
+        :paramtype public_keys: list[~azure.mgmt.hdinsight.models.SshPublicKey]
+        """
+        super().__init__(**kwargs)
         self.public_keys = public_keys
 
 
-class SshPublicKey(msrest.serialization.Model):
+class SshPublicKey(_serialization.Model):
     """The SSH public key for the cluster nodes.
 
-    :param certificate_data: The certificate for SSH.
-    :type certificate_data: str
+    :ivar certificate_data: The certificate for SSH.
+    :vartype certificate_data: str
     """
 
     _attribute_map = {
-        'certificate_data': {'key': 'certificateData', 'type': 'str'},
+        "certificate_data": {"key": "certificateData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate_data: Optional[str] = None,
-        **kwargs
-    ):
-        super(SshPublicKey, self).__init__(**kwargs)
+    def __init__(self, *, certificate_data: Optional[str] = None, **kwargs):
+        """
+        :keyword certificate_data: The certificate for SSH.
+        :paramtype certificate_data: str
+        """
+        super().__init__(**kwargs)
         self.certificate_data = certificate_data
 
 
-class StorageAccount(msrest.serialization.Model):
+class StorageAccount(_serialization.Model):
     """The storage Account.
 
-    :param name: The name of the storage account.
-    :type name: str
-    :param is_default: Whether or not the storage account is the default storage account.
-    :type is_default: bool
-    :param container: The container in the storage account, only to be specified for WASB storage
+    :ivar name: The name of the storage account.
+    :vartype name: str
+    :ivar is_default: Whether or not the storage account is the default storage account.
+    :vartype is_default: bool
+    :ivar container: The container in the storage account, only to be specified for WASB storage
      accounts.
-    :type container: str
-    :param file_system: The filesystem, only to be specified for Azure Data Lake Storage Gen 2.
-    :type file_system: str
-    :param key: The storage account access key.
-    :type key: str
-    :param resource_id: The resource ID of storage account, only to be specified for Azure Data
-     Lake Storage Gen 2.
-    :type resource_id: str
-    :param msi_resource_id: The managed identity (MSI) that is allowed to access the storage
+    :vartype container: str
+    :ivar file_system: The filesystem, only to be specified for Azure Data Lake Storage Gen 2.
+    :vartype file_system: str
+    :ivar key: The storage account access key.
+    :vartype key: str
+    :ivar resource_id: The resource ID of storage account, only to be specified for Azure Data Lake
+     Storage Gen 2.
+    :vartype resource_id: str
+    :ivar msi_resource_id: The managed identity (MSI) that is allowed to access the storage
      account, only to be specified for Azure Data Lake Storage Gen 2.
-    :type msi_resource_id: str
-    :param saskey: The shared access signature key.
-    :type saskey: str
-    :param fileshare: The file share name.
-    :type fileshare: str
+    :vartype msi_resource_id: str
+    :ivar saskey: The shared access signature key.
+    :vartype saskey: str
+    :ivar fileshare: The file share name.
+    :vartype fileshare: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'container': {'key': 'container', 'type': 'str'},
-        'file_system': {'key': 'fileSystem', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
-        'saskey': {'key': 'saskey', 'type': 'str'},
-        'fileshare': {'key': 'fileshare', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "container": {"key": "container", "type": "str"},
+        "file_system": {"key": "fileSystem", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "msi_resource_id": {"key": "msiResourceId", "type": "str"},
+        "saskey": {"key": "saskey", "type": "str"},
+        "fileshare": {"key": "fileshare", "type": "str"},
     }
 
     def __init__(
@@ -3625,7 +4205,30 @@ class StorageAccount(msrest.serialization.Model):
         fileshare: Optional[str] = None,
         **kwargs
     ):
-        super(StorageAccount, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the storage account.
+        :paramtype name: str
+        :keyword is_default: Whether or not the storage account is the default storage account.
+        :paramtype is_default: bool
+        :keyword container: The container in the storage account, only to be specified for WASB storage
+         accounts.
+        :paramtype container: str
+        :keyword file_system: The filesystem, only to be specified for Azure Data Lake Storage Gen 2.
+        :paramtype file_system: str
+        :keyword key: The storage account access key.
+        :paramtype key: str
+        :keyword resource_id: The resource ID of storage account, only to be specified for Azure Data
+         Lake Storage Gen 2.
+        :paramtype resource_id: str
+        :keyword msi_resource_id: The managed identity (MSI) that is allowed to access the storage
+         account, only to be specified for Azure Data Lake Storage Gen 2.
+        :paramtype msi_resource_id: str
+        :keyword saskey: The shared access signature key.
+        :paramtype saskey: str
+        :keyword fileshare: The file share name.
+        :paramtype fileshare: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.is_default = is_default
         self.container = container
@@ -3637,67 +4240,82 @@ class StorageAccount(msrest.serialization.Model):
         self.fileshare = fileshare
 
 
-class StorageProfile(msrest.serialization.Model):
+class StorageProfile(_serialization.Model):
     """The storage profile.
 
-    :param storageaccounts: The list of storage accounts in the cluster.
-    :type storageaccounts: list[~azure.mgmt.hdinsight.models.StorageAccount]
+    :ivar storageaccounts: The list of storage accounts in the cluster.
+    :vartype storageaccounts: list[~azure.mgmt.hdinsight.models.StorageAccount]
     """
 
     _attribute_map = {
-        'storageaccounts': {'key': 'storageaccounts', 'type': '[StorageAccount]'},
+        "storageaccounts": {"key": "storageaccounts", "type": "[StorageAccount]"},
     }
 
-    def __init__(
-        self,
-        *,
-        storageaccounts: Optional[List["StorageAccount"]] = None,
-        **kwargs
-    ):
-        super(StorageProfile, self).__init__(**kwargs)
+    def __init__(self, *, storageaccounts: Optional[List["_models.StorageAccount"]] = None, **kwargs):
+        """
+        :keyword storageaccounts: The list of storage accounts in the cluster.
+        :paramtype storageaccounts: list[~azure.mgmt.hdinsight.models.StorageAccount]
+        """
+        super().__init__(**kwargs)
         self.storageaccounts = storageaccounts
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.hdinsight.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.hdinsight.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.hdinsight.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.hdinsight.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.hdinsight.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.hdinsight.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3706,21 +4324,21 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UpdateClusterIdentityCertificateParameters(msrest.serialization.Model):
+class UpdateClusterIdentityCertificateParameters(_serialization.Model):
     """The update cluster identity certificate request parameters.
 
-    :param application_id: The application id.
-    :type application_id: str
-    :param certificate: The certificate in base64 encoded format.
-    :type certificate: str
-    :param certificate_password: The password of the certificate.
-    :type certificate_password: str
+    :ivar application_id: The application id.
+    :vartype application_id: str
+    :ivar certificate: The certificate in base64 encoded format.
+    :vartype certificate: str
+    :ivar certificate_password: The password of the certificate.
+    :vartype certificate_password: str
     """
 
     _attribute_map = {
-        'application_id': {'key': 'applicationId', 'type': 'str'},
-        'certificate': {'key': 'certificate', 'type': 'str'},
-        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+        "application_id": {"key": "applicationId", "type": "str"},
+        "certificate": {"key": "certificate", "type": "str"},
+        "certificate_password": {"key": "certificatePassword", "type": "str"},
     }
 
     def __init__(
@@ -3731,107 +4349,126 @@ class UpdateClusterIdentityCertificateParameters(msrest.serialization.Model):
         certificate_password: Optional[str] = None,
         **kwargs
     ):
-        super(UpdateClusterIdentityCertificateParameters, self).__init__(**kwargs)
+        """
+        :keyword application_id: The application id.
+        :paramtype application_id: str
+        :keyword certificate: The certificate in base64 encoded format.
+        :paramtype certificate: str
+        :keyword certificate_password: The password of the certificate.
+        :paramtype certificate_password: str
+        """
+        super().__init__(**kwargs)
         self.application_id = application_id
         self.certificate = certificate
         self.certificate_password = certificate_password
 
 
-class UpdateGatewaySettingsParameters(msrest.serialization.Model):
+class UpdateGatewaySettingsParameters(_serialization.Model):
     """The update gateway settings request parameters.
 
-    :param is_credential_enabled: Indicates whether or not the gateway settings based authorization
+    :ivar is_credential_enabled: Indicates whether or not the gateway settings based authorization
      is enabled.
-    :type is_credential_enabled: bool
-    :param user_name: The gateway settings user name.
-    :type user_name: str
-    :param password: The gateway settings user password.
-    :type password: str
+    :vartype is_credential_enabled: bool
+    :ivar user_name: The gateway settings user name.
+    :vartype user_name: str
+    :ivar password: The gateway settings user password.
+    :vartype password: str
     """
 
     _attribute_map = {
-        'is_credential_enabled': {'key': 'restAuthCredential\\.isEnabled', 'type': 'bool'},
-        'user_name': {'key': 'restAuthCredential\\.username', 'type': 'str'},
-        'password': {'key': 'restAuthCredential\\.password', 'type': 'str'},
+        "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "bool"},
+        "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
+        "password": {"key": "restAuthCredential\\.password", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        is_credential_enabled: Optional[bool] = True,
+        is_credential_enabled: bool = True,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
         **kwargs
     ):
-        super(UpdateGatewaySettingsParameters, self).__init__(**kwargs)
+        """
+        :keyword is_credential_enabled: Indicates whether or not the gateway settings based
+         authorization is enabled.
+        :paramtype is_credential_enabled: bool
+        :keyword user_name: The gateway settings user name.
+        :paramtype user_name: str
+        :keyword password: The gateway settings user password.
+        :paramtype password: str
+        """
+        super().__init__(**kwargs)
         self.is_credential_enabled = is_credential_enabled
         self.user_name = user_name
         self.password = password
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """The details about the usage of a particular limited resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param unit: The type of measurement for usage.
-    :type unit: str
-    :param current_value: The current usage.
-    :type current_value: long
-    :param limit: The maximum allowed usage.
-    :type limit: long
+    :ivar unit: The type of measurement for usage.
+    :vartype unit: str
+    :ivar current_value: The current usage.
+    :vartype current_value: int
+    :ivar limit: The maximum allowed usage.
+    :vartype limit: int
     :ivar name: The details about the localizable name of the used resource.
     :vartype name: ~azure.mgmt.hdinsight.models.LocalizedName
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'LocalizedName'},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "LocalizedName"},
     }
 
     def __init__(
-        self,
-        *,
-        unit: Optional[str] = None,
-        current_value: Optional[int] = None,
-        limit: Optional[int] = None,
-        **kwargs
+        self, *, unit: Optional[str] = None, current_value: Optional[int] = None, limit: Optional[int] = None, **kwargs
     ):
-        super(Usage, self).__init__(**kwargs)
+        """
+        :keyword unit: The type of measurement for usage.
+        :paramtype unit: str
+        :keyword current_value: The current usage.
+        :paramtype current_value: int
+        :keyword limit: The maximum allowed usage.
+        :paramtype limit: int
+        """
+        super().__init__(**kwargs)
         self.unit = unit
         self.current_value = current_value
         self.limit = limit
         self.name = None
 
 
-class UsagesListResult(msrest.serialization.Model):
+class UsagesListResult(_serialization.Model):
     """The response for the operation to get regional usages for a subscription.
 
-    :param value: The list of usages.
-    :type value: list[~azure.mgmt.hdinsight.models.Usage]
+    :ivar value: The list of usages.
+    :vartype value: list[~azure.mgmt.hdinsight.models.Usage]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Usage"]] = None,
-        **kwargs
-    ):
-        super(UsagesListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+        """
+        :keyword value: The list of usages.
+        :paramtype value: list[~azure.mgmt.hdinsight.models.Usage]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """The User Assigned Identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3840,51 +4477,50 @@ class UserAssignedIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar client_id: The client id of user assigned identity.
     :vartype client_id: str
-    :param tenant_id: The tenant id of user assigned identity.
-    :type tenant_id: str
+    :ivar tenant_id: The tenant id of user assigned identity.
+    :vartype tenant_id: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tenant_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, *, tenant_id: Optional[str] = None, **kwargs):
+        """
+        :keyword tenant_id: The tenant id of user assigned identity.
+        :paramtype tenant_id: str
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
         self.tenant_id = tenant_id
 
 
-class ValidationErrorInfo(msrest.serialization.Model):
+class ValidationErrorInfo(_serialization.Model):
     """The validation error information.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
-    :param error_resource: The error resource.
-    :type error_resource: str
-    :param message_arguments: The message arguments.
-    :type message_arguments: list[str]
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar error_resource: The error resource.
+    :vartype error_resource: str
+    :ivar message_arguments: The message arguments.
+    :vartype message_arguments: list[str]
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'error_resource': {'key': 'errorResource', 'type': 'str'},
-        'message_arguments': {'key': 'messageArguments', 'type': '[str]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "error_resource": {"key": "errorResource", "type": "str"},
+        "message_arguments": {"key": "messageArguments", "type": "[str]"},
     }
 
     def __init__(
@@ -3896,52 +4532,61 @@ class ValidationErrorInfo(msrest.serialization.Model):
         message_arguments: Optional[List[str]] = None,
         **kwargs
     ):
-        super(ValidationErrorInfo, self).__init__(**kwargs)
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        :keyword error_resource: The error resource.
+        :paramtype error_resource: str
+        :keyword message_arguments: The message arguments.
+        :paramtype message_arguments: list[str]
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.error_resource = error_resource
         self.message_arguments = message_arguments
 
 
-class VersionsCapability(msrest.serialization.Model):
+class VersionsCapability(_serialization.Model):
     """The version capability.
 
-    :param available: The list of version capabilities.
-    :type available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+    :ivar available: The list of version capabilities.
+    :vartype available: list[~azure.mgmt.hdinsight.models.VersionSpec]
     """
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': '[VersionSpec]'},
+        "available": {"key": "available", "type": "[VersionSpec]"},
     }
 
-    def __init__(
-        self,
-        *,
-        available: Optional[List["VersionSpec"]] = None,
-        **kwargs
-    ):
-        super(VersionsCapability, self).__init__(**kwargs)
+    def __init__(self, *, available: Optional[List["_models.VersionSpec"]] = None, **kwargs):
+        """
+        :keyword available: The list of version capabilities.
+        :paramtype available: list[~azure.mgmt.hdinsight.models.VersionSpec]
+        """
+        super().__init__(**kwargs)
         self.available = available
 
 
-class VersionSpec(msrest.serialization.Model):
+class VersionSpec(_serialization.Model):
     """The version properties.
 
-    :param friendly_name: The friendly name.
-    :type friendly_name: str
-    :param display_name: The display name.
-    :type display_name: str
-    :param is_default: Whether or not the version is the default version.
-    :type is_default: bool
-    :param component_versions: The component version property.
-    :type component_versions: dict[str, str]
+    :ivar friendly_name: The friendly name.
+    :vartype friendly_name: str
+    :ivar display_name: The display name.
+    :vartype display_name: str
+    :ivar is_default: Whether or not the version is the default version.
+    :vartype is_default: bool
+    :ivar component_versions: The component version property.
+    :vartype component_versions: dict[str, str]
     """
 
     _attribute_map = {
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'component_versions': {'key': 'componentVersions', 'type': '{str}'},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "component_versions": {"key": "componentVersions", "type": "{str}"},
     }
 
     def __init__(
@@ -3953,92 +4598,127 @@ class VersionSpec(msrest.serialization.Model):
         component_versions: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(VersionSpec, self).__init__(**kwargs)
+        """
+        :keyword friendly_name: The friendly name.
+        :paramtype friendly_name: str
+        :keyword display_name: The display name.
+        :paramtype display_name: str
+        :keyword is_default: Whether or not the version is the default version.
+        :paramtype is_default: bool
+        :keyword component_versions: The component version property.
+        :paramtype component_versions: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.friendly_name = friendly_name
         self.display_name = display_name
         self.is_default = is_default
         self.component_versions = component_versions
 
 
-class VirtualNetworkProfile(msrest.serialization.Model):
+class VirtualNetworkProfile(_serialization.Model):
     """The virtual network properties.
 
-    :param id: The ID of the virtual network.
-    :type id: str
-    :param subnet: The name of the subnet.
-    :type subnet: str
+    :ivar id: The ID of the virtual network.
+    :vartype id: str
+    :ivar subnet: The name of the subnet.
+    :vartype subnet: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "subnet": {"key": "subnet", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        subnet: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, subnet: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
-        super(VirtualNetworkProfile, self).__init__(**kwargs)
+        """
+        :keyword id: The ID of the virtual network.
+        :paramtype id: str
+        :keyword subnet: The name of the subnet.
+        :paramtype subnet: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.subnet = subnet
 
 
-class VmSizeCompatibilityFilterV2(msrest.serialization.Model):
+class VmSizeCompatibilityFilterV2(_serialization.Model):
     """This class represent a single filter object that defines a multidimensional set. The dimensions of this set are Regions, ClusterFlavors, NodeTypes and ClusterVersions. The constraint should be defined based on the following: FilterMode (Exclude vs Include), VMSizes (the vm sizes in affect of exclusion/inclusion) and the ordering of the Filters. Later filters override previous settings if conflicted.
 
-    :param filter_mode: The filtering mode. Effectively this can enabling or disabling the VM sizes
-     in a particular set. Possible values include: "Exclude", "Include", "Recommend", "Default".
-    :type filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
-    :param regions: The list of regions under the effect of the filter.
-    :type regions: list[str]
-    :param cluster_flavors: The list of cluster flavors under the effect of the filter.
-    :type cluster_flavors: list[str]
-    :param node_types: The list of node types affected by the filter.
-    :type node_types: list[str]
-    :param cluster_versions: The list of cluster versions affected in Major.Minor format.
-    :type cluster_versions: list[str]
-    :param os_type: The OSType affected, Windows or Linux.
-    :type os_type: list[str or ~azure.mgmt.hdinsight.models.OSType]
-    :param vm_sizes: The list of virtual machine sizes to include or exclude.
-    :type vm_sizes: list[str]
-    :param esp_applied: Whether apply for ESP cluster. 'true' means only for ESP, 'false' means
-     only for non-ESP, null or empty string or others mean for both.
-    :type esp_applied: str
-    :param compute_isolation_supported: Whether support compute isolation. 'true' means only for
+    :ivar filter_mode: The filtering mode. Effectively this can enabling or disabling the VM sizes
+     in a particular set. Known values are: "Exclude", "Include", "Recommend", and "Default".
+    :vartype filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
+    :ivar regions: The list of regions under the effect of the filter.
+    :vartype regions: list[str]
+    :ivar cluster_flavors: The list of cluster flavors under the effect of the filter.
+    :vartype cluster_flavors: list[str]
+    :ivar node_types: The list of node types affected by the filter.
+    :vartype node_types: list[str]
+    :ivar cluster_versions: The list of cluster versions affected in Major.Minor format.
+    :vartype cluster_versions: list[str]
+    :ivar os_type: The OSType affected, Windows or Linux.
+    :vartype os_type: list[str or ~azure.mgmt.hdinsight.models.OSType]
+    :ivar vm_sizes: The list of virtual machine sizes to include or exclude.
+    :vartype vm_sizes: list[str]
+    :ivar esp_applied: Whether apply for ESP cluster. 'true' means only for ESP, 'false' means only
+     for non-ESP, null or empty string or others mean for both.
+    :vartype esp_applied: str
+    :ivar compute_isolation_supported: Whether support compute isolation. 'true' means only for
      ComputeIsolationEnabled, 'false' means only for regular cluster.
-    :type compute_isolation_supported: str
+    :vartype compute_isolation_supported: str
     """
 
     _attribute_map = {
-        'filter_mode': {'key': 'filterMode', 'type': 'str'},
-        'regions': {'key': 'regions', 'type': '[str]'},
-        'cluster_flavors': {'key': 'clusterFlavors', 'type': '[str]'},
-        'node_types': {'key': 'nodeTypes', 'type': '[str]'},
-        'cluster_versions': {'key': 'clusterVersions', 'type': '[str]'},
-        'os_type': {'key': 'osType', 'type': '[str]'},
-        'vm_sizes': {'key': 'vmSizes', 'type': '[str]'},
-        'esp_applied': {'key': 'espApplied', 'type': 'str'},
-        'compute_isolation_supported': {'key': 'computeIsolationSupported', 'type': 'str'},
+        "filter_mode": {"key": "filterMode", "type": "str"},
+        "regions": {"key": "regions", "type": "[str]"},
+        "cluster_flavors": {"key": "clusterFlavors", "type": "[str]"},
+        "node_types": {"key": "nodeTypes", "type": "[str]"},
+        "cluster_versions": {"key": "clusterVersions", "type": "[str]"},
+        "os_type": {"key": "osType", "type": "[str]"},
+        "vm_sizes": {"key": "vmSizes", "type": "[str]"},
+        "esp_applied": {"key": "espApplied", "type": "str"},
+        "compute_isolation_supported": {"key": "computeIsolationSupported", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        filter_mode: Optional[Union[str, "FilterMode"]] = None,
+        filter_mode: Optional[Union[str, "_models.FilterMode"]] = None,
         regions: Optional[List[str]] = None,
         cluster_flavors: Optional[List[str]] = None,
         node_types: Optional[List[str]] = None,
         cluster_versions: Optional[List[str]] = None,
-        os_type: Optional[List[Union[str, "OSType"]]] = None,
+        os_type: Optional[List[Union[str, "_models.OSType"]]] = None,
         vm_sizes: Optional[List[str]] = None,
         esp_applied: Optional[str] = None,
         compute_isolation_supported: Optional[str] = None,
         **kwargs
     ):
-        super(VmSizeCompatibilityFilterV2, self).__init__(**kwargs)
+        """
+        :keyword filter_mode: The filtering mode. Effectively this can enabling or disabling the VM
+         sizes in a particular set. Known values are: "Exclude", "Include", "Recommend", and "Default".
+        :paramtype filter_mode: str or ~azure.mgmt.hdinsight.models.FilterMode
+        :keyword regions: The list of regions under the effect of the filter.
+        :paramtype regions: list[str]
+        :keyword cluster_flavors: The list of cluster flavors under the effect of the filter.
+        :paramtype cluster_flavors: list[str]
+        :keyword node_types: The list of node types affected by the filter.
+        :paramtype node_types: list[str]
+        :keyword cluster_versions: The list of cluster versions affected in Major.Minor format.
+        :paramtype cluster_versions: list[str]
+        :keyword os_type: The OSType affected, Windows or Linux.
+        :paramtype os_type: list[str or ~azure.mgmt.hdinsight.models.OSType]
+        :keyword vm_sizes: The list of virtual machine sizes to include or exclude.
+        :paramtype vm_sizes: list[str]
+        :keyword esp_applied: Whether apply for ESP cluster. 'true' means only for ESP, 'false' means
+         only for non-ESP, null or empty string or others mean for both.
+        :paramtype esp_applied: str
+        :keyword compute_isolation_supported: Whether support compute isolation. 'true' means only for
+         ComputeIsolationEnabled, 'false' means only for regular cluster.
+        :paramtype compute_isolation_supported: str
+        """
+        super().__init__(**kwargs)
         self.filter_mode = filter_mode
         self.regions = regions
         self.cluster_flavors = cluster_flavors
@@ -4050,46 +4730,46 @@ class VmSizeCompatibilityFilterV2(msrest.serialization.Model):
         self.compute_isolation_supported = compute_isolation_supported
 
 
-class VmSizeProperty(msrest.serialization.Model):
+class VmSizeProperty(_serialization.Model):
     """The vm size property.
 
-    :param name: The vm size name.
-    :type name: str
-    :param cores: The number of cores that the vm size has.
-    :type cores: int
-    :param data_disk_storage_tier: The data disk storage tier of the vm size.
-    :type data_disk_storage_tier: str
-    :param label: The label of the vm size.
-    :type label: str
-    :param max_data_disk_count: The max data disk count of the vm size.
-    :type max_data_disk_count: long
-    :param memory_in_mb: The memory whose unit is MB of the vm size.
-    :type memory_in_mb: long
-    :param supported_by_virtual_machines: This indicates this vm size is supported by virtual
+    :ivar name: The vm size name.
+    :vartype name: str
+    :ivar cores: The number of cores that the vm size has.
+    :vartype cores: int
+    :ivar data_disk_storage_tier: The data disk storage tier of the vm size.
+    :vartype data_disk_storage_tier: str
+    :ivar label: The label of the vm size.
+    :vartype label: str
+    :ivar max_data_disk_count: The max data disk count of the vm size.
+    :vartype max_data_disk_count: int
+    :ivar memory_in_mb: The memory whose unit is MB of the vm size.
+    :vartype memory_in_mb: int
+    :ivar supported_by_virtual_machines: This indicates this vm size is supported by virtual
      machines or not.
-    :type supported_by_virtual_machines: bool
-    :param supported_by_web_worker_roles: The indicates this vm size is supported by web worker
+    :vartype supported_by_virtual_machines: bool
+    :ivar supported_by_web_worker_roles: The indicates this vm size is supported by web worker
      roles or not.
-    :type supported_by_web_worker_roles: bool
-    :param virtual_machine_resource_disk_size_in_mb: The virtual machine resource disk size whose
+    :vartype supported_by_web_worker_roles: bool
+    :ivar virtual_machine_resource_disk_size_in_mb: The virtual machine resource disk size whose
      unit is MB of the vm size.
-    :type virtual_machine_resource_disk_size_in_mb: long
-    :param web_worker_resource_disk_size_in_mb: The web worker resource disk size whose unit is MB
+    :vartype virtual_machine_resource_disk_size_in_mb: int
+    :ivar web_worker_resource_disk_size_in_mb: The web worker resource disk size whose unit is MB
      of the vm size.
-    :type web_worker_resource_disk_size_in_mb: long
+    :vartype web_worker_resource_disk_size_in_mb: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'cores': {'key': 'cores', 'type': 'int'},
-        'data_disk_storage_tier': {'key': 'dataDiskStorageTier', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'long'},
-        'memory_in_mb': {'key': 'memoryInMb', 'type': 'long'},
-        'supported_by_virtual_machines': {'key': 'supportedByVirtualMachines', 'type': 'bool'},
-        'supported_by_web_worker_roles': {'key': 'supportedByWebWorkerRoles', 'type': 'bool'},
-        'virtual_machine_resource_disk_size_in_mb': {'key': 'virtualMachineResourceDiskSizeInMb', 'type': 'long'},
-        'web_worker_resource_disk_size_in_mb': {'key': 'webWorkerResourceDiskSizeInMb', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "cores": {"key": "cores", "type": "int"},
+        "data_disk_storage_tier": {"key": "dataDiskStorageTier", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "max_data_disk_count": {"key": "maxDataDiskCount", "type": "int"},
+        "memory_in_mb": {"key": "memoryInMb", "type": "int"},
+        "supported_by_virtual_machines": {"key": "supportedByVirtualMachines", "type": "bool"},
+        "supported_by_web_worker_roles": {"key": "supportedByWebWorkerRoles", "type": "bool"},
+        "virtual_machine_resource_disk_size_in_mb": {"key": "virtualMachineResourceDiskSizeInMb", "type": "int"},
+        "web_worker_resource_disk_size_in_mb": {"key": "webWorkerResourceDiskSizeInMb", "type": "int"},
     }
 
     def __init__(
@@ -4107,7 +4787,33 @@ class VmSizeProperty(msrest.serialization.Model):
         web_worker_resource_disk_size_in_mb: Optional[int] = None,
         **kwargs
     ):
-        super(VmSizeProperty, self).__init__(**kwargs)
+        """
+        :keyword name: The vm size name.
+        :paramtype name: str
+        :keyword cores: The number of cores that the vm size has.
+        :paramtype cores: int
+        :keyword data_disk_storage_tier: The data disk storage tier of the vm size.
+        :paramtype data_disk_storage_tier: str
+        :keyword label: The label of the vm size.
+        :paramtype label: str
+        :keyword max_data_disk_count: The max data disk count of the vm size.
+        :paramtype max_data_disk_count: int
+        :keyword memory_in_mb: The memory whose unit is MB of the vm size.
+        :paramtype memory_in_mb: int
+        :keyword supported_by_virtual_machines: This indicates this vm size is supported by virtual
+         machines or not.
+        :paramtype supported_by_virtual_machines: bool
+        :keyword supported_by_web_worker_roles: The indicates this vm size is supported by web worker
+         roles or not.
+        :paramtype supported_by_web_worker_roles: bool
+        :keyword virtual_machine_resource_disk_size_in_mb: The virtual machine resource disk size whose
+         unit is MB of the vm size.
+        :paramtype virtual_machine_resource_disk_size_in_mb: int
+        :keyword web_worker_resource_disk_size_in_mb: The web worker resource disk size whose unit is
+         MB of the vm size.
+        :paramtype web_worker_resource_disk_size_in_mb: int
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.cores = cores
         self.data_disk_storage_tier = data_disk_storage_tier

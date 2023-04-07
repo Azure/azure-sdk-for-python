@@ -52,14 +52,14 @@ async def run_sample():
         certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
     )
 
-    print("Certificate with name '{0}' was created.".format(bank_certificate.name))
-    print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+    print(f"Certificate with name '{bank_certificate.name}' was created.")
+    print(f"Certificate with name '{storage_certificate.name}' was created.")
 
     # Let's list the certificates.
     print("\n.. List certificates from the Key Vault")
     certificates = client.list_properties_of_certificates()
     async for certificate in certificates:
-        print("Certificate with name '{0}' was found.".format(certificate.name))
+        print(f"Certificate with name '{certificate.name}' was found.")
 
     # You've decided to add tags to the certificate you created. Calling create_certificate on an existing
     # certificate creates a new version of the certificate in the Key Vault with the new value.
@@ -70,9 +70,8 @@ async def run_sample():
         certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
     )
     print(
-        "Certificate with name '{0}' was created again with tags '{1}'".format(
-            bank_certificate.name, bank_certificate.properties.tags
-        )
+        f"Certificate with name '{bank_certificate.name}' was created again with tags "
+        f"'{bank_certificate.properties.tags}'"
     )
 
     # You need to check all the different tags your bank account certificate had previously. Lets print all the versions of this certificate.
@@ -80,9 +79,8 @@ async def run_sample():
     certificate_versions = client.list_properties_of_certificate_versions(bank_cert_name)
     async for certificate_version in certificate_versions:
         print(
-            "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
-                certificate_version.name, certificate_version.version, certificate_version.tags
-            )
+            f"Bank Certificate with name '{certificate_version.name}' with version '{certificate_version.version}' "
+            f"has tags: '{certificate_version.tags}'."
         )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
@@ -93,11 +91,7 @@ async def run_sample():
     print("\n.. List deleted certificates from the Key Vault")
     deleted_certificates = client.list_deleted_certificates()
     async for deleted_certificate in deleted_certificates:
-        print(
-            "Certificate with name '{0}' has recovery id '{1}'".format(
-                deleted_certificate.name, deleted_certificate.recovery_id
-            )
-        )
+        print(f"Certificate with name '{deleted_certificate.name}' has recovery id '{deleted_certificate.recovery_id}'")
 
     print("\nrun_sample done")
     await credential.close()

@@ -4,16 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+from typing import Optional
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 
 def get_authentication_policy(
-    credential: "AsyncTokenCredential",
-    audience: str = None
+    credential: AsyncTokenCredential,
+    audience: Optional[str] = None
 ) -> AsyncBearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
@@ -30,8 +29,8 @@ def get_authentication_policy(
 
 
 def get_metrics_authentication_policy(
-    credential: "AsyncTokenCredential",
-    audience: str = None
+    credential: AsyncTokenCredential,
+    audience: Optional[str] = None
 ) -> AsyncBearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:

@@ -20,6 +20,13 @@
                 "description": "Friendly name."
             }
         },
+        "kind": {
+            "type": "string",
+            "defaultValue": "Default",
+            "metadata": {
+                "description": "Specifies the Kind of the workspace."
+            }
+        },
         "location": {
             "type": "string",
             "metadata": {
@@ -119,6 +126,20 @@
             ],
             "metadata": {
                 "description": "Determines whether or not new ApplicationInsights should be provisioned."
+            }
+        },
+        "logAnalyticsName": {
+            "type": "string",
+            "defaultValue": "[concat('la', uniqueString(parameters('resourceGroupName'), parameters('workspaceName')))]",
+            "metadata": {
+                "description": "Name of LogAnalytics to be used by ApplicationInsights resource."
+            }
+        },
+        "logAnalyticsArmId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "ARM Id of LogAnalytics to be used by ApplicationInsights resource."
             }
         },
         "applicationInsightsName": {
@@ -310,14 +331,14 @@
                 "description": "Name of the resource group where the private end point is added to"
             }
         },
-        "imageBuildCompute":{
+        "imageBuildCompute": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "The name of the compute target to use for building environment Docker images with the container registry is behind a VNet."
             }
         },
-        "publicNetworkAccess":{
+        "publicNetworkAccess": {
             "type": "string",
             "defaultValue": "Enabled",
             "allowedValues": [
@@ -371,7 +392,7 @@
                 "description": "The Bring-Your-Own search account that customer brings to store data"
             }
         },
-        "identity":{
+        "identity": {
             "type": "object",
             "defaultValue": {
                 "type": "systemAssigned"
@@ -380,11 +401,79 @@
                 "description": "Managed identities assigned to workspace. If not specificed, SystemAssigned managed identity is the default."
             }
         },
-        "primaryUserAssignedIdentity":{
+        "primaryUserAssignedIdentity": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "ARM identifier of primary user assigned managed identity, in case multiple ones are specified. Also the default managed identity for clusterless compute."
+            }
+        },
+        "managedNetwork": {
+            "type": "object",
+            "defaultValue": {
+                "isolationMode": "Disabled"
+            },
+            "metadata": {
+                "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
+            }
+        },
+        "spark_runtime_version": {
+            "type": "string",
+            "metadata": {
+                "description": "spark version to be used by all feature sets"
+            }
+        },
+        "offline_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store config"
+            }
+        },
+        "online_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store config"
+            }
+        },
+        "offline_store_connection_target": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection target"
+            }
+        },
+        "online_store_connection_target": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store connection target"
+            }
+        },
+        "materialization_identity_client_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store materialization credential client id"
+            }
+        },
+        "materialization_identity_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store materialization credential resource id"
+            }
+        },
+        "setup_materialization_store": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to set up materialization store"
             }
         }
     },
@@ -416,7 +505,9 @@
             }
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
-        "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]"
+        "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
+        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
+        "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]"
     },
     "resources": [
         {
@@ -486,6 +577,7 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
                 "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
             }
         },
@@ -529,22 +621,39 @@
         },
         {
             "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.Insights/components",
+            "type": "Microsoft.OperationalInsights/workspaces",
             "tags": "[parameters('tagValues')]",
-            "apiVersion": "2018-05-01-preview",
-            "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap'), equals(toLower(parameters('applicationInsightsLocation')),'westus3')),'southcentralus', if(equals(toLower(parameters('applicationInsightsLocation')),'jioindiawest'), 'centralindia', if(equals(toLower(parameters('applicationInsightsLocation')),'canadaeast'), 'canadacentral', parameters('applicationInsightsLocation'))))]",
+            "apiVersion": "2020-08-01",
+            "name": "[parameters('logAnalyticsName')]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
             "kind": "web",
             "properties": {
                 "Application_Type": "web"
             }
         },
         {
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "type": "Microsoft.Insights/components",
+            "tags": "[parameters('tagValues')]",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[parameters('applicationInsightsName')]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
+            "kind": "web",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+            ],
+            "properties": {
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[parameters('logAnalyticsArmId')]"
+            }
+        },
+        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2022-01-01-preview",
+            "apiVersion": "2022-12-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
+            "kind": "[parameters('kind')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
@@ -561,8 +670,8 @@
                 "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
-                "imageBuildCompute":"[parameters('imageBuildCompute')]",
-                "publicNetworkAccess":"[parameters('publicNetworkAccess')]",
+                "imageBuildCompute": "[parameters('imageBuildCompute')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
                 "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
                 "encryption": {
@@ -575,9 +684,183 @@
                     "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
-                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]"
+                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                "managedNetwork": "[parameters('managedNetwork')]",
+                "featureStoreSettings": {
+                    "computeruntime": {
+                        "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
+                    },
+                    "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
+                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
+                }
             }
         },
+        {
+            "condition":"[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), '')))]",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2022-05-01",
+			"name": "[concat(parameters('workspaceName'), '-update-offline-connection')]",
+			"dependsOn": [
+				"[parameters('workspaceName')]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"parameters": {},
+				"template": {
+					"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+					"contentVersion": "1.0.0.1",
+					"resources": [{
+						"apiVersion": "2022-12-01-preview",
+						"name": "[parameters('workspaceName')]",
+						"location": "[parameters('location')]",
+						"kind": "featurestore",
+						"type": "Microsoft.MachineLearningServices/workspaces",
+						"identity": {
+							"type": "SystemAssigned,UserAssigned",
+							"userAssignedIdentities": {
+							    "[parameters('materialization_identity_resource_id')]": {}
+							}
+						},
+						"properties": {
+                            "friendlyName": "[parameters('friendlyName')]",
+                            "description": "[parameters('description')]",
+                            "storageAccount": "[variables('storageAccount')]",
+                            "keyVault": "[variables('keyVault')]",
+                            "applicationInsights": "[variables('applicationInsights')]",
+                            "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
+                            "hbiWorkspace": "[parameters('confidential_data')]",
+                            "imageBuildCompute": "[parameters('imageBuildCompute')]",
+                            "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                            "encryption": {
+                                "status": "[parameters('encryption_status')]",
+                                "keyVaultProperties": {
+                                    "keyVaultArmId": "[parameters('cmk_keyvault')]",
+                                    "keyIdentifier": "[parameters('resource_cmk_uri')]"
+                                },
+                                "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
+                                "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
+                                "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
+                            },
+                            "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                            "featureStoreSettings": {
+                                "computeruntime": {
+                                    "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
+                                },
+                                "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
+                                "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
+                            }
+						},
+                        "resources": [
+                            {
+                                "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), '')))]",
+                                "type": "connections",
+                                "apiVersion": "2022-05-01",
+                                "name": "[variables('offlineStoreConnectionName')]",
+                                "location": "[parameters('location')]",
+                                "dependsOn": [
+                                    "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                                ],
+                                "identity": {
+                                    "type": "SystemAssigned"
+                                },
+                                "properties": {
+                                    "category": "AzureDataLakeGen2",
+                                    "target": "[parameters('offline_store_connection_target')]",
+                                    "authType": "ManagedIdentity",
+                                    "credentials": {
+                                        "clientid": "[parameters('materialization_identity_client_id')]",
+                                        "resourceid": "[parameters('materialization_identity_resource_id')]"
+                                    }
+                                }
+                            }
+                        ]
+					}]
+				}
+			}
+		},
+        {
+            "condition":"[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), '')))]",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2022-05-01",
+			"name": "[concat(parameters('workspaceName'), '-update-online-connection')]",
+			"dependsOn": [
+				"[parameters('workspaceName')]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"parameters": {},
+				"template": {
+					"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+					"contentVersion": "1.0.0.1",
+					"resources": [{
+						"apiVersion": "2022-12-01-preview",
+						"name": "[parameters('workspaceName')]",
+						"location": "[parameters('location')]",
+						"kind": "featurestore",
+						"type": "Microsoft.MachineLearningServices/workspaces",
+						"identity": {
+							"type": "SystemAssigned,UserAssigned",
+							"userAssignedIdentities": {
+							    "[parameters('materialization_identity_resource_id')]": {}
+							}
+						},
+						"properties": {
+                            "friendlyName": "[parameters('friendlyName')]",
+                            "description": "[parameters('description')]",
+                            "storageAccount": "[variables('storageAccount')]",
+                            "keyVault": "[variables('keyVault')]",
+                            "applicationInsights": "[variables('applicationInsights')]",
+                            "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
+                            "hbiWorkspace": "[parameters('confidential_data')]",
+                            "imageBuildCompute": "[parameters('imageBuildCompute')]",
+                            "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                            "encryption": {
+                                "status": "[parameters('encryption_status')]",
+                                "keyVaultProperties": {
+                                    "keyVaultArmId": "[parameters('cmk_keyvault')]",
+                                    "keyIdentifier": "[parameters('resource_cmk_uri')]"
+                                },
+                                "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
+                                "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
+                                "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
+                            },
+                            "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                            "featureStoreSettings": {
+                                "computeruntime": {
+                                    "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
+                                },
+                                "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
+                                "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
+                            }
+						},
+                        "resources": [
+                            {
+                                "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), '')))]",
+                                "type": "connections",
+                                "apiVersion": "2022-05-01",
+                                "name": "[variables('onlineStoreConnectionName')]",
+                                "location": "[parameters('location')]",
+                                "dependsOn": [
+                                    "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                                ],
+                                "identity": {
+                                    "type": "SystemAssigned"
+                                },
+                                "properties": {
+                                    "category": "Redis",
+                                    "target": "[parameters('online_store_connection_target')]",
+                                    "authType": "ManagedIdentity",
+                                    "credentials": {
+                                        "clientid": "[parameters('materialization_identity_client_id')]",
+                                        "resourceid": "[parameters('materialization_identity_resource_id')]"
+                                    }
+                                }
+                            }
+                        ]
+					}]
+				}
+			}
+		},
         {
             "condition": "[and(variables('enablePE'), not(equals(parameters('privateEndpointType'), 'none')))]",
             "type": "Microsoft.Resources/deployments",

@@ -22,6 +22,7 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
+    DATA_TRANSFER = "data_transfer"
     # Note: container is not a real component type,
     # only used to mark component from container data.
     _CONTAINER = "_container"
@@ -30,6 +31,32 @@ class NodeType(object):
 class ControlFlowType(object):
     DO_WHILE = "do_while"
     IF_ELSE = "if_else"
+    PARALLEL_FOR = "parallel_for"
+
+
+CONTROL_FLOW_TYPES = [getattr(ControlFlowType, k) for k in dir(ControlFlowType) if k.isupper()]
+
+
+class DataTransferTaskType(object):
+    COPY_DATA = "copy_data"
+    IMPORT_DATA = "import_data"
+    EXPORT_DATA = "export_data"
+
+
+class DataCopyMode(object):
+    MERGE_WITH_OVERWRITE = "merge_with_overwrite"
+    FAIL_IF_CONFLICT = "fail_if_conflict"
+
+
+class ExternalDataType(object):
+    FILE_SYSTEM = "file_system"
+    DATABASE = "database"
+
+
+class DataTransferBuiltinComponentUri(object):
+    IMPORT_DATABASE = "azureml://registries/azureml-preview/components/import_data_database/versions/0.0.1"
+    IMPORT_FILE_SYSTEM = "azureml://registries/azureml-preview/components/import_data_file_system/versions/0.0.1"
+    EXPORT_DATABASE = "azureml://registries/azureml-preview/components/export_data_database/versions/0.0.1"
 
 
 class ComponentSource:
@@ -43,6 +70,7 @@ class ComponentSource:
     REMOTE_REGISTRY = "REMOTE.REGISTRY"
     YAML_JOB = "YAML.JOB"
     YAML_COMPONENT = "YAML.COMPONENT"
+    BUILTIN = "BUILTIN"
 
 
 class ParallelTaskType:
@@ -94,5 +122,8 @@ class IOConstants:
         "string": ["default"],
         "boolean": ["default"],
     }
-    GROUP_ATTR_NAME = "__parameter_group__"
+    GROUP_ATTR_NAME = "__dsl_group__"
     GROUP_TYPE_NAME = "group"
+    # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
+    # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
+    VALID_KEY_PATTERN = r"^([a-zA-Z_]+[a-zA-Z0-9_]*)([.]([a-zA-Z_]+[a-zA-Z0-9_]*))*$"

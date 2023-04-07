@@ -8,8 +8,13 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump, pre_load
 
-from azure.ai.ml._restclient.v2022_05_01.models import InferenceContainerProperties, OperatingSystemType, Route
-from azure.ai.ml._schema.core.fields import NestedField, UnionField
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    InferenceContainerProperties,
+    OperatingSystemType,
+    Route,
+)
+from azure.ai.ml._schema.core.fields import NestedField, UnionField, LocalPathField
+
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (
     ANONYMOUS_ENV_NAME,
@@ -27,7 +32,13 @@ module_logger = logging.getLogger(__name__)
 
 class BuildContextSchema(metaclass=PatchedSchemaMeta):
     dockerfile_path = fields.Str()
-    path = fields.Str()
+    path = UnionField(
+        [
+            LocalPathField(),
+            # build context also support http url
+            fields.URL(),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -73,7 +84,13 @@ class _BaseEnvironmentSchema(AssetSchema):
         allowed_values=[OperatingSystemType.Linux, OperatingSystemType.Windows],
         required=False,
     )
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
+    datastore = fields.Str(
+        metadata={
+            "description": "Name of the datastore to upload to.",
+            "arm_type": AzureMLResourceType.DATASTORE,
+        },
+        required=False,
+    )
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -117,13 +134,11 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """trim_dump_only in PathAwareSchema removes all properties which are
-        dump only.
+        """trim_dump_only in PathAwareSchema removes all properties which are dump only.
 
-        By the time we reach this schema name and version properties are
-        removed so no warning is shown. This method overrides
-        trim_dump_only in PathAwareSchema to check for name and version
-        and raise warning if present. And then calls the it
+        By the time we reach this schema name and version properties are removed so no warning is shown. This method
+        overrides trim_dump_only in PathAwareSchema to check for name and version and raise warning if present. And then
+        calls the it
         """
         if isinstance(data, str) or data is None:
             return data
@@ -132,6 +147,7 @@ class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
         # CliV2AnonymousEnvironment is a default name for anonymous environment
         if name is not None and name != ANONYMOUS_ENV_NAME:
             module_logger.warning(
-                "Warning: the provided asset name '%s' will not be used for anonymous registration", name
+                "Warning: the provided asset name '%s' will not be used for anonymous registration",
+                name,
             )
         return super(AnonymousEnvironmentSchema, self).trim_dump_only(data, **kwargs)

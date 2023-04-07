@@ -44,15 +44,54 @@
       }
     },
     "variables": {
-      "apiVersion": "2018-01-01-preview",
-      "schemaRegistryGroup": "azsdk_net_test_group",
-      "schemaRegistryEndpoint": "[format('{0}.servicebus.windows.net', parameters('baseName'))]"
+      "apiVersion": "2022-10-01-preview",
+      "baseNameAvro": "[concat(parameters('baseName'), '-avro')]",
+      "baseNameJson": "[concat(parameters('baseName'), '-json')]",
+      "baseNameCustom": "[concat(parameters('baseName'), '-custom')]",
+      "schemaRegistryEndpointAvro": "[concat(parameters('baseName'), '-avro', '.servicebus.windows.net')]",
+      "schemaRegistryEndpointJson": "[concat(parameters('baseName'), '-json', '.servicebus.windows.net')]",
+      "schemaRegistryEndpointCustom": "[concat(parameters('baseName'), '-custom', '.servicebus.windows.net')]",
+      "schemaRegistryGroup": "azsdk_python_test_group"
     },
     "resources": [
       {
         "type": "Microsoft.EventHub/namespaces",
         "apiVersion": "[variables('apiVersion')]",
-        "name": "[parameters('baseName')]",
+        "name": "[variables('baseNameAvro')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard",
+          "tier": "Standard",
+          "capacity": 5
+        },
+        "properties": {
+          "zoneRedundant": false,
+          "isAutoInflateEnabled": false,
+          "maximumThroughputUnits": 0,
+          "kafkaEnabled": true
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces",
+        "apiVersion": "[variables('apiVersion')]",
+        "name": "[variables('baseNameJson')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard",
+          "tier": "Standard",
+          "capacity": 5
+        },
+        "properties": {
+          "zoneRedundant": false,
+          "isAutoInflateEnabled": false,
+          "maximumThroughputUnits": 0,
+          "kafkaEnabled": true
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces",
+        "apiVersion": "[variables('apiVersion')]",
+        "name": "[variables('baseNameCustom')]",
         "location": "[parameters('location')]",
         "sku": {
           "name": "Standard",
@@ -69,22 +108,62 @@
       {
         "type": "Microsoft.EventHub/namespaces/schemagroups",
         "apiVersion": "[variables('apiVersion')]",
-        "name": "[format('{0}/{1}', parameters('baseName'), variables('schemaRegistryGroup'))]",
+        "name": "[format('{0}/{1}', variables('baseNameAvro'), variables('schemaRegistryGroup'))]",
         "location": "[parameters('location')]",
-        "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces',parameters('baseName'))]"],
+        "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces', variables('baseNameAvro'))]"],
         "properties": {
           "schemaType": "avro"
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces/schemagroups",
+        "apiVersion": "[variables('apiVersion')]",
+        "name": "[format('{0}/{1}', variables('baseNameJson'), variables('schemaRegistryGroup'))]",
+        "location": "[parameters('location')]",
+        "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces', variables('baseNameJson'))]"],
+        "properties": {
+          "schemaType": "json"
+        }
+      },
+      {
+        "type": "Microsoft.EventHub/namespaces/schemagroups",
+        "apiVersion": "[variables('apiVersion')]",
+        "name": "[format('{0}/{1}', variables('baseNameCustom'), variables('schemaRegistryGroup'))]",
+        "location": "[parameters('location')]",
+        "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces', variables('baseNameCustom'))]"],
+        "properties": {
+          "schemaType": "custom"
         }
       }
     ],
     "outputs": {
+      "SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE": {
+        "type": "string",
+        "value": "[variables('schemaRegistryEndpointAvro')]"
+      },
+      "SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE": {
+        "type": "string",
+        "value": "[variables('schemaRegistryEndpointJson')]"
+      },
+      "SCHEMAREGISTRY_CUSTOM_FULLY_QUALIFIED_NAMESPACE": {
+        "type": "string",
+        "value": "[variables('schemaRegistryEndpointCustom')]"
+      },
       "SCHEMAREGISTRY_GROUP": {
         "type": "string",
         "value": "[variables('schemaRegistryGroup')]"
       },
-      "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE": {
+      "AZURE_CLIENT_ID": {
         "type": "string",
-        "value": "[variables('schemaRegistryEndpoint')]"
+        "value": "[parameters('testApplicationId')]"
+      },
+      "AZURE_CLIENT_SECRET": {
+        "type": "string",
+        "value": "[parameters('testApplicationSecret')]"
+      },
+      "AZURE_TENANT_ID": {
+        "type": "string",
+        "value": "[parameters('tenantId')]"
       }
     }
   }

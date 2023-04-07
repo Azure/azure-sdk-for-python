@@ -22,13 +22,14 @@ USAGE:
 """
 
 import os
+import pandas as pd
+
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.core.credentials import AzureKeyCredential
-import pandas as pd
+from azure.ai.anomalydetector.models import *
 
 
 class DetectEntireAnomalySample(object):
-
     def detect_entire_series(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
@@ -44,40 +45,43 @@ class DetectEntireAnomalySample(object):
 
         # <loadDataFile>
         series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
+        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
         for index, row in data_file.iterrows():
-            series.append({"timestamp": row[0], "value": row[1]})
+            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
         # </loadDataFile>
 
         # Create a request from the data file
 
         # <request>
-        request = {
-            "series": series,
-            "granularity": "daily"
-        }
+        request = UnivariateDetectionOptions(
+            series=series,
+            granularity=TimeGranularity.DAILY,
+        )
         # </request>
 
         # detect anomalies throughout the entire time series, as a batch
 
         # <detectAnomaliesBatch>
-        print('Detecting anomalies in the entire time series.')
+        print("Detecting anomalies in the entire time series.")
 
         try:
             response = client.detect_univariate_entire_series(request)
         except Exception as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
 
-        if any(response['isAnomaly']):
-            print('An anomaly was detected at index:')
-            for i, value in enumerate(response['isAnomaly']):
+        if any(response.is_anomaly):
+            print("An anomaly was detected at index:")
+            for i, value in enumerate(response.is_anomaly):
                 if value:
                     print(i)
         else:
-            print('No anomalies were detected in the time series.')
+            print("No anomalies were detected in the time series.")
         # </detectAnomaliesBatch>
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DetectEntireAnomalySample()
     sample.detect_entire_series()

@@ -15,9 +15,9 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-package-version: 1.0.0b1
-tag: package-2021-10-01-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/Email/readme.md
+package-version: 1.0.0
+tag: package-2023-03-31
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ac29c822ecd5f6054cd17c46839e7c04a1114c6d/specification/communication/data-plane/Email/readme.md
 output-folder: ../azure/communication/email/_generated
 namespace: azure.communication.email
 no-namespace-folders: true
@@ -30,13 +30,6 @@ no-async: false
 add-credential: false
 security: Anonymous
 title: Azure Communication Email Service
-```
-
-### Change the bCC property to bcc
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions.EmailRecipients.properties.bCC
-    transform: >
-      $["x-ms-client-name"] = "bcc"
+use-extension:
+  "@autorest/python": "6.1.1"
 ```

@@ -14,7 +14,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 async def get_attestation_token(attestation_uri):
-    request = HttpRequest("GET", "{}/generate-test-token".format(attestation_uri))
+    request = HttpRequest("GET", f"{attestation_uri}/generate-test-token")
     async with AsyncPipeline(transport=AioHttpTransport()) as pipeline:
         response = await pipeline.run(request)
         return json.loads(response.http_response.text())["token"]
@@ -42,7 +42,7 @@ def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
     versions = api_versions or ApiVersion
-    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3}
+    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4}
 
     for api_version in versions:
         if not only_vault and api_version in hsm_supported_versions:

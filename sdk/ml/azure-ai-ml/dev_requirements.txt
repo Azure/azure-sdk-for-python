@@ -13,7 +13,11 @@ pytest
 pydash
 azure-mgmt-msi
 pywin32==304 ; sys_platform == 'win32'
+docker;platform.python_implementation!="PyPy"
 numpy;platform.python_implementation!="PyPy"
 scikit-image;platform.python_implementation!="PyPy"
-# comment this line as simplification is not supported in Python 3.11
-# simplification;platform.python_implementation!="PyPy"
+mldesigner
+azure-mgmt-resourcegraph<9.0.0,>=2.0.0
+azure-mgmt-resource<23.0.0,>=3.0.0
+pytest-reportlog
+python-dotenv

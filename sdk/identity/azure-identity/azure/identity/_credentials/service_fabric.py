@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from azure.core.pipeline.transport import HttpRequest
 
@@ -24,7 +24,7 @@ class ServiceFabricCredential(ManagedIdentityBase):
         return "Service Fabric managed identity configuration not found in environment"
 
 
-def _get_client_args(**kwargs) -> Optional[Dict]:
+def _get_client_args(**kwargs: Any) -> Optional[Dict]:
     url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
     secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
     thumbprint = os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)

@@ -47,7 +47,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))  # type: Literal["2015-01-01"]
+    api_version: Literal["2015-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -56,7 +56,7 @@ def build_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -118,8 +118,8 @@ class ChildResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))  # type: Literal["2015-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AvailabilityStatusListResult]
+        api_version: Literal["2015-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-01-01"))
+        cls: ClsType[_models.AvailabilityStatusListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -142,7 +142,7 @@ class ChildResourcesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -158,7 +158,7 @@ class ChildResourcesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -166,13 +166,13 @@ class ChildResourcesOperations:
             deserialized = self._deserialize("AvailabilityStatusListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -186,4 +186,4 @@ class ChildResourcesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.ResourceHealth/childResources"}  # type: ignore
+    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.ResourceHealth/childResources"}

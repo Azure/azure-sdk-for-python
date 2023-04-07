@@ -63,6 +63,7 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "defaultIdentity": "FirstPartyIdentity",
                 "enableAnalyticalStorage": True,
+                "enableBurstCapacity": True,
                 "enableFreeTier": False,
                 "enableMaterializedViews": False,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
@@ -72,6 +73,7 @@ def main():
                     {"failoverPriority": 0, "isZoneRedundant": False, "locationName": "southcentralus"},
                     {"failoverPriority": 1, "isZoneRedundant": False, "locationName": "eastus"},
                 ],
+                "minimalTlsVersion": "Tls12",
                 "networkAclBypass": "AzureServices",
                 "networkAclBypassResourceIds": [
                     "/subscriptions/subId/resourcegroups/rgName/providers/Microsoft.Synapse/workspaces/workspaceName"
@@ -90,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-08-15-preview/examples/CosmosDBDatabaseAccountCreateMax.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-11-15-preview/examples/CosmosDBDatabaseAccountCreateMax.json
 if __name__ == "__main__":
     main()

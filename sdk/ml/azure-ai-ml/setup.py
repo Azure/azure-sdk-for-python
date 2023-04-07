@@ -49,13 +49,13 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(
         exclude=[
-            "samples",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
@@ -67,7 +67,7 @@ setup(
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
         "msrest>=0.6.18",
-        "azure-core<2.0.0,>=1.8.0, !=1.22.0",
+        "azure-core<2.0.0,>=1.23.0",
         "azure-mgmt-core<2.0.0,>=1.3.0",
         "marshmallow<4.0.0,>=3.5",
         "jsonschema<5.0.0,>=4.0.0",

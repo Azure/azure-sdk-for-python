@@ -24,7 +24,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
 import asyncio
 
 
@@ -35,6 +34,7 @@ async def sample_recognize_linked_entities_async() -> None:
         "all of the necessary information for research purposes."
     )
     # [START recognize_linked_entities_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -72,9 +72,9 @@ async def sample_recognize_linked_entities_async() -> None:
     # [END recognize_linked_entities_async]
 
     print("\nNow let's see all of the Wikipedia articles we've extracted from our research documents")
-    for entity, url in entity_to_url.items():
+    for entity_name, url in entity_to_url.items():
         print("Link to Wikipedia article for '{}': {}".format(
-                entity, url
+                entity_name, url
         ))
 
 

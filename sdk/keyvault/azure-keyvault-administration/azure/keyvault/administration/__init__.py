@@ -4,7 +4,7 @@
 # ------------------------------------
 from ._access_control_client import KeyVaultAccessControlClient
 from ._backup_client import KeyVaultBackupClient
-from ._enums import KeyVaultRoleScope, KeyVaultDataAction
+from ._enums import KeyVaultRoleScope, KeyVaultDataAction, KeyVaultSettingType
 from ._internal.client_base import ApiVersion
 from ._models import (
     KeyVaultBackupResult,
@@ -12,7 +12,9 @@ from ._models import (
     KeyVaultRoleAssignment,
     KeyVaultRoleAssignmentProperties,
     KeyVaultRoleDefinition,
+    KeyVaultSetting,
 )
+from ._settings_client import KeyVaultSettingsClient
 
 
 __all__ = [
@@ -26,6 +28,9 @@ __all__ = [
     "KeyVaultRoleAssignmentProperties",
     "KeyVaultRoleDefinition",
     "KeyVaultRoleScope",
+    "KeyVaultSetting",
+    "KeyVaultSettingsClient",
+    "KeyVaultSettingType",
 ]
 
 from ._version import VERSION

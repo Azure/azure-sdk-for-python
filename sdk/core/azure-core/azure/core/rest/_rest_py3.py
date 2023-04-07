@@ -29,10 +29,13 @@ from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    Iterable, Iterator,
+    Iterable,
+    Iterator,
     Optional,
     Union,
     MutableMapping,
+    Dict,
+    AsyncContextManager,
 )
 
 from ..utils._utils import case_insensitive_dict
@@ -51,6 +54,7 @@ from ._helpers import (
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ################################## CLASSES ######################################
+
 
 class HttpRequest(HttpRequestBackcompatMixin):
     """An HTTP request.
@@ -95,7 +99,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         headers: Optional[MutableMapping[str, str]] = None,
         json: Any = None,
         content: Optional[ContentType] = None,
-        data: Optional[dict] = None,
+        data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         **kwargs
     ):
@@ -105,7 +109,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if params:
             _format_parameters_helper(self, params)
         self._files = None
-        self._data = None  # type: Any
+        self._data: Any = None
 
         default_headers = self._set_body(
             content=content,
@@ -118,21 +122,18 @@ class HttpRequest(HttpRequestBackcompatMixin):
 
         if kwargs:
             raise TypeError(
-                "You have passed in kwargs '{}' that are not valid kwargs.".format(
-                    "', '".join(list(kwargs.keys()))
-                )
+                "You have passed in kwargs '{}' that are not valid kwargs.".format("', '".join(list(kwargs.keys())))
             )
 
     def _set_body(
         self,
         content: Optional[ContentType] = None,
-        data: Optional[dict] = None,
+        data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         json: Any = None,
     ) -> MutableMapping[str, str]:
-        """Sets the body of the request, and returns the default headers
-        """
-        default_headers = {}  # type: MutableMapping[str, str]
+        """Sets the body of the request, and returns the default headers"""
+        default_headers: MutableMapping[str, str] = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
             content = data
@@ -158,9 +159,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         return self._data or self._files
 
     def __repr__(self) -> str:
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None) -> "HttpRequest":
         try:
@@ -176,9 +175,9 @@ class HttpRequest(HttpRequestBackcompatMixin):
         except (ValueError, TypeError):
             return copy.copy(self)
 
+
 class _HttpResponseBase(abc.ABC):
-    """Base abstract base class for HttpResponses.
-    """
+    """Base abstract base class for HttpResponses."""
 
     @property
     @abc.abstractmethod
@@ -312,6 +311,7 @@ class _HttpResponseBase(abc.ABC):
         """
         ...
 
+
 class HttpResponse(_HttpResponseBase):
     """Abstract base class for HTTP responses.
 
@@ -367,14 +367,11 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<HttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
 
-class AsyncHttpResponse(_HttpResponseBase):
+
+class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):
     """Abstract base class for Async HTTP responses.
 
     Use this abstract base class to create your own transport responses.
@@ -422,8 +419,4 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     @abc.abstractmethod
     async def close(self) -> None:
-        ...
-
-    @abc.abstractmethod
-    async def __aexit__(self, *args) -> None:
         ...

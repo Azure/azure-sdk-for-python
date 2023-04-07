@@ -55,6 +55,7 @@ from ._models_py3 import ContainerAppProbeTcpSocket
 from ._models_py3 import ContainerAppSecret
 from ._models_py3 import ContainerResources
 from ._models_py3 import CookieExpiration
+from ._models_py3 import CorsPolicy
 from ._models_py3 import CustomDomain
 from ._models_py3 import CustomDomainConfiguration
 from ._models_py3 import CustomHostnameAnalysisResult
@@ -173,6 +174,7 @@ from ._container_apps_api_client_enums import DnsVerificationTestResult
 from ._container_apps_api_client_enums import EnvironmentProvisioningState
 from ._container_apps_api_client_enums import ExtendedLocationTypes
 from ._container_apps_api_client_enums import ForwardProxyConvention
+from ._container_apps_api_client_enums import IngressClientCertificateMode
 from ._container_apps_api_client_enums import IngressTransportMethod
 from ._container_apps_api_client_enums import LogLevel
 from ._container_apps_api_client_enums import ManagedEnvironmentOutBoundType
@@ -186,7 +188,7 @@ from ._container_apps_api_client_enums import StorageType
 from ._container_apps_api_client_enums import Type
 from ._container_apps_api_client_enums import UnauthenticatedClientActionV2
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -239,6 +241,7 @@ __all__ = [
     "ContainerAppSecret",
     "ContainerResources",
     "CookieExpiration",
+    "CorsPolicy",
     "CustomDomain",
     "CustomDomainConfiguration",
     "CustomHostnameAnalysisResult",
@@ -356,6 +359,7 @@ __all__ = [
     "EnvironmentProvisioningState",
     "ExtendedLocationTypes",
     "ForwardProxyConvention",
+    "IngressClientCertificateMode",
     "IngressTransportMethod",
     "LogLevel",
     "ManagedEnvironmentOutBoundType",

@@ -133,11 +133,11 @@ async def test_scope():
 
     challenge_with_resource = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": 'Bearer authorization="{}", resource={}'.format(endpoint, resource)},
+        headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
     )
 
     challenge_with_scope = Mock(
-        status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", scope={}'.format(endpoint, scope)}
+        status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", scope={scope}'}
     )
 
     await test_with_challenge(challenge_with_resource, scope)
@@ -187,7 +187,7 @@ async def test_tenant():
         assert credential.get_token.call_count == 1
 
     tenant = "tenant-id"
-    endpoint = "https://authority.net/{}".format(tenant)
+    endpoint = f"https://authority.net/{tenant}"
     resource = "https://vault.azure.net"
 
     challenge = Mock(
@@ -211,7 +211,7 @@ async def test_policy_updates_cache():
     first_token = "first-scope-token"
     second_scope = "https://vault.azure.net/second-scope"
     second_token = "second-scope-token"
-    challenge_fmt = 'Bearer authorization="https://login.authority.net/tenant", resource={}'
+    challenge_fmt = 'Bearer authorization="https://login.authority.net/tenant", resource='
 
     # mocking a tenant change:
     # 1. first request -> respond with challenge
@@ -223,17 +223,17 @@ async def test_policy_updates_cache():
     transport = async_validating_transport(
         requests=(
             Request(url),
-            Request(url, required_headers={"Authorization": "Bearer {}".format(first_token)}),
-            Request(url, required_headers={"Authorization": "Bearer {}".format(first_token)}),
-            Request(url, required_headers={"Authorization": "Bearer {}".format(first_token)}),
-            Request(url, required_headers={"Authorization": "Bearer {}".format(second_token)}),
-            Request(url, required_headers={"Authorization": "Bearer {}".format(second_token)}),
+            Request(url, required_headers={"Authorization": f"Bearer {first_token}"}),
+            Request(url, required_headers={"Authorization": f"Bearer {first_token}"}),
+            Request(url, required_headers={"Authorization": f"Bearer {first_token}"}),
+            Request(url, required_headers={"Authorization": f"Bearer {second_token}"}),
+            Request(url, required_headers={"Authorization": f"Bearer {second_token}"}),
         ),
         responses=(
-            mock_response(status_code=401, headers={"WWW-Authenticate": challenge_fmt.format(first_scope)}),
+            mock_response(status_code=401, headers={"WWW-Authenticate": challenge_fmt + first_scope}),
             mock_response(status_code=200),
             mock_response(status_code=200),
-            mock_response(status_code=401, headers={"WWW-Authenticate": challenge_fmt.format(second_scope)}),
+            mock_response(status_code=401, headers={"WWW-Authenticate": challenge_fmt + second_scope}),
             mock_response(status_code=200),
             mock_response(status_code=200),
         ),

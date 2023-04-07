@@ -4,9 +4,9 @@
 
 from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._schema import StringTransformedEnum, UnionField, PatchedSchemaMeta
-from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField, PrimitiveValueField
+from ..._schema import PatchedSchemaMeta, StringTransformedEnum, UnionField
+from ..._schema.component.input_output import InputPortSchema, ParameterSchema
+from ..._schema.core.fields import DumpableEnumField, PrimitiveValueField
 
 SUPPORTED_INTERNAL_PARAM_TYPES = [
     "integer",
@@ -17,7 +17,10 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
     "String",
     "float",
     "Float",
+    "double",
+    "Double",
 ]
+
 
 class InternalInputPortSchema(InputPortSchema):
     # skip client-side validate for type enum & support list

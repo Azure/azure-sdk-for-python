@@ -6,10 +6,8 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
-import six
 
 from . import _constants as constants
-from ._api_version import DEFAULT_VERSION
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
@@ -85,18 +83,14 @@ def get_next_template(list_func, *args, **kwargs):
     """
     start_index = kwargs.pop("start_index", 0)
     max_page_size = kwargs.pop("max_page_size", 100)
-    api_version = kwargs.pop("api_version", DEFAULT_VERSION)
     if args[0]:
         queries = urlparse.parse_qs(urlparse.urlparse(args[0]).query)
         start_index = int(queries[constants.LIST_OP_SKIP][0])
         max_page_size = int(queries[constants.LIST_OP_TOP][0])
-        api_version = queries[constants.API_VERSION_PARAM_NAME][0]
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
-            list_func(
-                skip=start_index, top=max_page_size, api_version=api_version, **kwargs
-            ),
+            list_func(skip=start_index, top=max_page_size, **kwargs),
         )
     return feed_element
 
@@ -123,9 +117,9 @@ def serialize_value_type(value):
         value, bool
     ):  # Attention: bool is subclass of int. So put bool ahead of int
         return "boolean", str(value).lower()
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         return "string", value
-    if isinstance(value, six.integer_types):
+    if isinstance(value, int):
         return "int" if value <= constants.INT32_MAX_VALUE else "long", str(value)
     if isinstance(value, datetime):
         return "dateTime", isodate.datetime_isoformat(value)

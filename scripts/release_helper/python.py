@@ -16,12 +16,10 @@ _PYTHON_ASSIGNEE = {'Wzb123456789'}
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
-_7_DAY_ATTENTION = '7days attention'
 _MultiAPI = 'MultiAPI'
-_ON_TIME = 'on time'
-_HOLD_ON = 'HoldOn'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime"]
 
 
 class IssueProcessPython(IssueProcess):
@@ -30,8 +28,6 @@ class IssueProcessPython(IssueProcess):
                  assignee_candidates: Set[str], language_owner: Set[str]):
         IssueProcess.__init__(self, issue_package, request_repo_dict, assignee_candidates, language_owner)
         self.output_folder = ''
-        self.is_multiapi = False
-        self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
         self.python_tag = ''
         self.rest_repo_hash = ''
@@ -49,49 +45,36 @@ class IssueProcessPython(IssueProcess):
                 return line.split(":", 1)[-1].strip()
         return ""
 
-    def init_readme_link(self) -> None:
-        issue_body_list = self.get_issue_body()
-
-        # Get the origin link and readme tag in issue body
-        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
-
-        # Get the specified tag and rest repo hash in issue body
-        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
-        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
-
-        # get readme_link
-        self.get_readme_link(origin_link)
-
     def multi_api_policy(self) -> None:
-        if self.is_multiapi:
-            if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
-                self.bot_advice.append(_MultiAPI)
-            if _MultiAPI not in self.issue_package.labels_name:
-                self.add_label(_MultiAPI)
-
-    def get_package_and_output(self) -> None:
-        self.init_readme_link()
-        readme_python_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
-        contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
-        pattern_package = re.compile(r'package-name: [\w+-.]+')
-        pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
-        self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
-        self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        self.is_multiapi = (_MultiAPI in self.issue_package.labels_name) or ('multi-api' in contents)
+        if (_MultiAPI in self.issue_package.labels_name) and (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name):
+            self.bot_advice.append(_MultiAPI)
 
     def get_edit_content(self) -> None:
-        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
-                            f'\nReadme Tag: {self.target_readme_tag}'
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\nReadme Tag: {self.target_readme_tag}'
+
+    @property
+    def is_multiapi(self):
+        return _MultiAPI in self.issue_package.labels_name
+
+    def get_content(self, file_name: str) -> str:
+        patterns = [r'/specification/([\w-]+/)+resource-manager', r'/specification/([\w-]+/)+resource-manager/.*']
+        for item in patterns:
+            try:
+                readme_path = re.compile(item).search(self.readme_link).group() + file_name
+                contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
+                return contents
+            except:
+                pass
+        raise Exception(f"can not get content with {self.readme_link}")
 
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        if 'package-' not in self.target_readme_tag:
-            return True
         if _CONFIGURED in self.issue_package.labels_name:
             return False
-        readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
-        contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
+        if 'package-' not in self.target_readme_tag:
+            return True
+        contents = self.get_content('/readme.md')
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tags = pattern_tag.findall(contents)
         whether_same_tag = self.target_readme_tag in package_tags[0]
@@ -99,7 +82,7 @@ class IssueProcessPython(IssueProcess):
         return whether_change_readme
 
     def auto_reply(self) -> None:
-        if self.issue_package.issue.comments == 0 or _CONFIGURED in self.issue_package.labels_name:
+        if (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name) or (_CONFIGURED in self.issue_package.labels_name):
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
                 try:
@@ -129,40 +112,22 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
-    def on_time_policy(self):
-        if _ON_TIME in self.issue_package.labels_name:
-            self.bot_advice.append('On time')
-
-    def hold_on_policy(self):
-        if _HOLD_ON in self.issue_package.labels_name:
-            self.bot_advice.append('Hold on')
-
-    def remind_policy(self):
-        if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
-            self.comment(
-                f'hi @{self.owner}, the issue is closed since there is no reply for a long time. '
-                'Please reopen it if necessary or create new one.')
-            self.issue_package.issue.edit(state='close')
-        elif self.delay_time >= 7 and _7_DAY_ATTENTION not in self.issue_package.labels_name and self.date_from_target < 7:
-            self.comment(
-                f'hi @{self.owner}, this release-request has been delayed more than 7 days,'
-                ' please deal with it ASAP. We will close the issue if there is still no response after 7 days!')
-            self.add_label(_7_DAY_ATTENTION)
+    def hint_policy(self):
+        for item in _HINTS:
+            if item in self.issue_package.labels_name:
+                self.bot_advice.append(item)
 
     def auto_bot_advice(self):
         super().auto_bot_advice()
         self.multi_api_policy()
         self.attention_policy()
-        self.on_time_policy()
-        self.hold_on_policy()
-        self.remind_policy()
-
+        self.hint_policy()
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
             return
         last_version, last_time = get_last_released_date(self.package_name)
-        if last_time and last_time > self.created_time:
+        if last_version and last_time > self.created_time:
             comment = f'Hi @{self.owner}, pypi link: https://pypi.org/project/{self.package_name}/{last_version}/'
             self.issue_package.issue.create_comment(body=comment)
             self.issue_package.issue.edit(state='closed')
@@ -171,8 +136,30 @@ class IssueProcessPython(IssueProcess):
             self.log(f"{self.issue_package.issue.number} has been closed!")
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT, last_version)
 
+    def auto_parse(self):
+        super().auto_parse()
+        issue_body_list = self.get_issue_body()
+        self.readme_link = issue_body_list[0].strip("\r\n ")
+        if not re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
+            return
+
+        # Get the specified tag and rest repo hash in issue body
+        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
+        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
+
+        try:
+            contents = self.get_content('/readme.python.md')
+        except Exception as e:
+            raise Exception(f"fail to read readme.python.md: {e}")
+        pattern_package = re.compile(r'package-name: [\w+-.]+')
+        pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
+        self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
+        self.output_folder = pattern_output.search(contents).group().split('/')[1]
+        if ('multi-api' in contents) and (_MultiAPI not in self.issue_package.labels_name):
+            self.add_label(_MultiAPI)
+
+
     def run(self) -> None:
-        self.get_package_and_output()
         super().run()
         self.auto_reply()
         self.auto_close()
@@ -196,6 +183,5 @@ class Python(Common):
         self.output()
 
 
-def python_process(issues: List[Any]):
-    instance = Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)
-    instance.run()
+def python_process(issues: List[Any]) -> Python:
+    return Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)

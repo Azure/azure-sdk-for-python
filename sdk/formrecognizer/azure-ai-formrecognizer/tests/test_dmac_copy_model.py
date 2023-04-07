@@ -9,7 +9,7 @@ import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelDetails, DocumentModelAdministrationClient, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -26,15 +26,17 @@ class TestCopyModel(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_copy_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id=None, target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_copy_model_empty_model_id(self,**kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id="", target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()

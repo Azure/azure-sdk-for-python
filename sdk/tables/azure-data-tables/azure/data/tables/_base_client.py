@@ -4,15 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from typing import Dict, Optional, Any, List, Mapping, Union, TYPE_CHECKING
+
 from uuid import uuid4
+from typing import Any, Dict, List, Optional, Mapping, Union
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
     from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
     HttpTransport,
@@ -25,7 +26,6 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     RequestIdPolicy,
@@ -35,7 +35,6 @@ from ._generated import AzureTable
 from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
-    STORAGE_OAUTH_SCOPE,
     DEFAULT_COSMOS_ENDPOINT_SUFFIX,
     DEFAULT_STORAGE_ENDPOINT_SUFFIX,
 )
@@ -46,7 +45,7 @@ from ._error import (
     _validate_tablename_error
 )
 from ._models import LocationMode
-from ._authentication import BearerTokenChallengePolicy, SharedKeyCredentialPolicy
+from ._authentication import _configure_credential
 from ._policies import (
     CosmosPatchTransformPolicy,
     StorageHeadersPolicy,
@@ -55,16 +54,12 @@ from ._policies import (
 )
 from ._sdk_moniker import SDK_MONIKER
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
 
 
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any], str) -> str
+def get_api_version(kwargs: Dict[str, Any], default: str) -> str:
     api_version = kwargs.pop("api_version", None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
@@ -79,11 +74,10 @@ def get_api_version(kwargs, default):
 class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        account_url,  # type: Any
-        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        account_url: str,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        **kwargs
+    ) -> None:
         try:
             if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
@@ -143,8 +137,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 LocationMode.PRIMARY: primary_hostname,
                 LocationMode.SECONDARY: secondary_hostname,
             }
-        self._credential_policy = None  # type: ignore
-        self._configure_credential(self.credential)  # type: ignore
+
         self._policies = self._configure_policies(hosts=self._hosts, **kwargs)  # type: ignore
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
@@ -208,22 +201,37 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._client._config.version  # pylint: disable=protected-access
 
 
-class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-version-keyword
+class TablesBaseClient(AccountHostsMixin):
+    """Base class for TableClient
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    :param str endpoint: A URL to an Azure Tables account.
+    :keyword credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+    :paramtype credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
+    :keyword api_version: Specifies the version of the operation to use for this request. Default value
+        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
+
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        credential = kwargs.pop('credential', None)
-        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
+        endpoint: str,
+        *,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
+        **kwargs
+    ) -> None:
+        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs) # type: ignore
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, self._client._config.version) # type: ignore # pylint: disable=protected-access
 
     def __enter__(self):
         self._client.__enter__()
@@ -233,12 +241,13 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
         self._client.__exit__(*args)
 
     def _configure_policies(self, **kwargs):
+        credential_policy = _configure_credential(self.credential)
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
             ProxyPolicy(**kwargs),
-            self._credential_policy,
+            credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(**kwargs),
@@ -249,23 +258,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
             HttpLoggingPolicy(**kwargs),
         ]
 
-    def _configure_credential(self, credential):
-        # type: (Any) -> None
-        if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenChallengePolicy(  # type: ignore
-                credential, STORAGE_OAUTH_SCOPE
-            )
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential  # type: ignore
-        elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
-        elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
-
-    def _batch_send(self, table_name, *reqs, **kwargs):
-        # type: (str, List[HttpRequest], Any) -> List[Mapping[str, Any]]
+    def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -318,8 +311,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
             raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """

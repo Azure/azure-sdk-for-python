@@ -1,5 +1,20 @@
 # Release History
 
+## 2.0.0b1 (2022-11-18)
+
+### Features Added
+
+  - Added operation NetworkFunctionsOperations.begin_execute_request
+  - Added operation VendorSkusOperations.list_credential
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+
+### Breaking Changes
+
+  - Model Device no longer has parameter azure_stack_edge
+  - Model DevicePropertiesFormat no longer has parameter azure_stack_edge
+
 ## 1.0.0 (2021-07-21)
 
 **Features**

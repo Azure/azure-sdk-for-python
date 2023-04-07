@@ -7,57 +7,56 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllocationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Allocation method.
-    """
+class AllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation method."""
 
     DYNAMIC = "Dynamic"
     STATIC = "Static"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class CreateDiffDisk(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets a value indicating diff disk.
-    """
+
+class CreateDiffDisk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets a value indicating diff disk."""
 
     FALSE = "false"
     TRUE = "true"
 
-class DynamicMemoryEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets a value indicating whether to enable dynamic memory or not.
-    """
+
+class DynamicMemoryEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets a value indicating whether to enable dynamic memory or not."""
 
     FALSE = "false"
     TRUE = "true"
 
-class InventoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The inventory type.
-    """
+
+class InventoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The inventory type."""
 
     CLOUD = "Cloud"
     VIRTUAL_NETWORK = "VirtualNetwork"
     VIRTUAL_MACHINE_TEMPLATE = "VirtualMachineTemplate"
     VIRTUAL_MACHINE = "VirtualMachine"
 
-class IsCustomizable(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets a value indicating whether the vm template is customizable or not.
-    """
+
+class IsCustomizable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets a value indicating whether the vm template is customizable or not."""
 
     FALSE = "false"
     TRUE = "true"
 
-class LimitCpuForMigration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class LimitCpuForMigration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets a value indicating whether to enable processor compatibility mode for live
     migration of VMs.
     """
@@ -65,9 +64,9 @@ class LimitCpuForMigration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FALSE = "false"
     TRUE = "true"
 
-class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the different types of VM guest operating systems.
-    """
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of VM guest operating systems."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"

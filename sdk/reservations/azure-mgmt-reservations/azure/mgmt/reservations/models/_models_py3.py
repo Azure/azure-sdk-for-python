@@ -13,18 +13,23 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AppliedReservationList(_serialization.Model):
-    """AppliedReservationList.
+    """Paginated list of applied reservations.
 
     :ivar value:
     :vartype value: list[str]
@@ -37,7 +42,7 @@ class AppliedReservationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List[str]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[List[str]] = None, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[str]
@@ -50,7 +55,7 @@ class AppliedReservationList(_serialization.Model):
 
 
 class AppliedReservations(_serialization.Model):
-    """AppliedReservations.
+    """The response for applied reservations api.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -60,7 +65,7 @@ class AppliedReservations(_serialization.Model):
     :vartype name: str
     :ivar type: Type of resource. "Microsoft.Capacity/AppliedReservations".
     :vartype type: str
-    :ivar reservation_order_ids:
+    :ivar reservation_order_ids: Paginated list of applied reservations.
     :vartype reservation_order_ids: ~azure.mgmt.reservations.models.AppliedReservationList
     """
 
@@ -77,9 +82,11 @@ class AppliedReservations(_serialization.Model):
         "reservation_order_ids": {"key": "properties.reservationOrderIds", "type": "AppliedReservationList"},
     }
 
-    def __init__(self, *, reservation_order_ids: Optional["_models.AppliedReservationList"] = None, **kwargs):
+    def __init__(
+        self, *, reservation_order_ids: Optional["_models.AppliedReservationList"] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword reservation_order_ids:
+        :keyword reservation_order_ids: Paginated list of applied reservations.
         :paramtype reservation_order_ids: ~azure.mgmt.reservations.models.AppliedReservationList
         """
         super().__init__(**kwargs)
@@ -89,10 +96,66 @@ class AppliedReservations(_serialization.Model):
         self.reservation_order_ids = reservation_order_ids
 
 
-class AvailableScopeProperties(_serialization.Model):
-    """AvailableScopeProperties.
+class AppliedScopeProperties(_serialization.Model):
+    """Properties specific to applied scope type. Not required if not applicable. Required and need to
+    provide tenantId and managementGroupId if AppliedScopeType is ManagementGroup.
 
-    :ivar properties:
+    :ivar tenant_id: Tenant ID where the savings plan should apply benefit.
+    :vartype tenant_id: str
+    :ivar management_group_id: Fully-qualified identifier of the management group where the benefit
+     must be applied.
+    :vartype management_group_id: str
+    :ivar subscription_id: Fully-qualified identifier of the subscription.
+    :vartype subscription_id: str
+    :ivar resource_group_id: Fully-qualified identifier of the resource group.
+    :vartype resource_group_id: str
+    :ivar display_name: Display name.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group_id": {"key": "resourceGroupId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        management_group_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tenant_id: Tenant ID where the savings plan should apply benefit.
+        :paramtype tenant_id: str
+        :keyword management_group_id: Fully-qualified identifier of the management group where the
+         benefit must be applied.
+        :paramtype management_group_id: str
+        :keyword subscription_id: Fully-qualified identifier of the subscription.
+        :paramtype subscription_id: str
+        :keyword resource_group_id: Fully-qualified identifier of the resource group.
+        :paramtype resource_group_id: str
+        :keyword display_name: Display name.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.tenant_id = tenant_id
+        self.management_group_id = management_group_id
+        self.subscription_id = subscription_id
+        self.resource_group_id = resource_group_id
+        self.display_name = display_name
+
+
+class AvailableScopeProperties(_serialization.Model):
+    """The response of available scope api containing scopes and their eligibilities.
+
+    :ivar properties: The scopes checked by the available scope api.
     :vartype properties: ~azure.mgmt.reservations.models.SubscriptionScopeProperties
     """
 
@@ -100,9 +163,9 @@ class AvailableScopeProperties(_serialization.Model):
         "properties": {"key": "properties", "type": "SubscriptionScopeProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.SubscriptionScopeProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.SubscriptionScopeProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword properties:
+        :keyword properties: The scopes checked by the available scope api.
         :paramtype properties: ~azure.mgmt.reservations.models.SubscriptionScopeProperties
         """
         super().__init__(**kwargs)
@@ -120,7 +183,9 @@ class AvailableScopeRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "AvailableScopeRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.AvailableScopeRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.AvailableScopeRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Available scope request properties.
         :paramtype properties: ~azure.mgmt.reservations.models.AvailableScopeRequestProperties
@@ -140,7 +205,7 @@ class AvailableScopeRequestProperties(_serialization.Model):
         "scopes": {"key": "scopes", "type": "[str]"},
     }
 
-    def __init__(self, *, scopes: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, scopes: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword scopes:
         :paramtype scopes: list[str]
@@ -152,11 +217,14 @@ class AvailableScopeRequestProperties(_serialization.Model):
 class BillingInformation(_serialization.Model):
     """billing information.
 
-    :ivar billing_currency_total_paid_amount:
+    :ivar billing_currency_total_paid_amount: Pricing information containing the amount and the
+     currency code.
     :vartype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
-    :ivar billing_currency_prorated_amount:
+    :ivar billing_currency_prorated_amount: Pricing information containing the amount and the
+     currency code.
     :vartype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
-    :ivar billing_currency_remaining_commitment_amount:
+    :ivar billing_currency_remaining_commitment_amount: Pricing information containing the amount
+     and the currency code.
     :vartype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
     """
 
@@ -175,14 +243,17 @@ class BillingInformation(_serialization.Model):
         billing_currency_total_paid_amount: Optional["_models.Price"] = None,
         billing_currency_prorated_amount: Optional["_models.Price"] = None,
         billing_currency_remaining_commitment_amount: Optional["_models.Price"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword billing_currency_total_paid_amount:
+        :keyword billing_currency_total_paid_amount: Pricing information containing the amount and the
+         currency code.
         :paramtype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
-        :keyword billing_currency_prorated_amount:
+        :keyword billing_currency_prorated_amount: Pricing information containing the amount and the
+         currency code.
         :paramtype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
-        :keyword billing_currency_remaining_commitment_amount:
+        :keyword billing_currency_remaining_commitment_amount: Pricing information containing the
+         amount and the currency code.
         :paramtype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
         """
         super().__init__(**kwargs)
@@ -224,8 +295,8 @@ class CalculateExchangeOperationResultResponse(_serialization.Model):
         status: Optional[Union[str, "_models.CalculateExchangeOperationResultStatus"]] = None,
         properties: Optional["_models.CalculateExchangeResponseProperties"] = None,
         error: Optional["_models.OperationResultError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: It should match what is used to GET the operation result.
         :paramtype id: str
@@ -260,7 +331,9 @@ class CalculateExchangeRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "CalculateExchangeRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CalculateExchangeRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.CalculateExchangeRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Calculate exchange request properties.
         :paramtype properties: ~azure.mgmt.reservations.models.CalculateExchangeRequestProperties
@@ -274,12 +347,17 @@ class CalculateExchangeRequestProperties(_serialization.Model):
 
     :ivar reservations_to_purchase: List of reservations that are being purchased in this exchange.
     :vartype reservations_to_purchase: list[~azure.mgmt.reservations.models.PurchaseRequest]
+    :ivar savings_plans_to_purchase: List of savings plans that are being purchased in this
+     exchange.
+    :vartype savings_plans_to_purchase:
+     list[~azure.mgmt.reservations.models.SavingsPlanPurchaseRequest]
     :ivar reservations_to_exchange: List of reservations that are being returned in this exchange.
     :vartype reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToReturn]
     """
 
     _attribute_map = {
         "reservations_to_purchase": {"key": "reservationsToPurchase", "type": "[PurchaseRequest]"},
+        "savings_plans_to_purchase": {"key": "savingsPlansToPurchase", "type": "[SavingsPlanPurchaseRequest]"},
         "reservations_to_exchange": {"key": "reservationsToExchange", "type": "[ReservationToReturn]"},
     }
 
@@ -287,19 +365,25 @@ class CalculateExchangeRequestProperties(_serialization.Model):
         self,
         *,
         reservations_to_purchase: Optional[List["_models.PurchaseRequest"]] = None,
+        savings_plans_to_purchase: Optional[List["_models.SavingsPlanPurchaseRequest"]] = None,
         reservations_to_exchange: Optional[List["_models.ReservationToReturn"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reservations_to_purchase: List of reservations that are being purchased in this
          exchange.
         :paramtype reservations_to_purchase: list[~azure.mgmt.reservations.models.PurchaseRequest]
+        :keyword savings_plans_to_purchase: List of savings plans that are being purchased in this
+         exchange.
+        :paramtype savings_plans_to_purchase:
+         list[~azure.mgmt.reservations.models.SavingsPlanPurchaseRequest]
         :keyword reservations_to_exchange: List of reservations that are being returned in this
          exchange.
         :paramtype reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToReturn]
         """
         super().__init__(**kwargs)
         self.reservations_to_purchase = reservations_to_purchase
+        self.savings_plans_to_purchase = savings_plans_to_purchase
         self.reservations_to_exchange = reservations_to_exchange
 
 
@@ -308,15 +392,18 @@ class CalculateExchangeResponseProperties(_serialization.Model):
 
     :ivar session_id: Exchange session identifier.
     :vartype session_id: str
-    :ivar net_payable:
+    :ivar net_payable: Pricing information containing the amount and the currency code.
     :vartype net_payable: ~azure.mgmt.reservations.models.Price
-    :ivar refunds_total:
+    :ivar refunds_total: Pricing information containing the amount and the currency code.
     :vartype refunds_total: ~azure.mgmt.reservations.models.Price
-    :ivar purchases_total:
+    :ivar purchases_total: Pricing information containing the amount and the currency code.
     :vartype purchases_total: ~azure.mgmt.reservations.models.Price
     :ivar reservations_to_purchase: Details of the reservations being purchased.
     :vartype reservations_to_purchase:
      list[~azure.mgmt.reservations.models.ReservationToPurchaseCalculateExchange]
+    :ivar savings_plans_to_purchase: Details of the savings plans being purchased.
+    :vartype savings_plans_to_purchase:
+     list[~azure.mgmt.reservations.models.SavingsPlanToPurchaseCalculateExchange]
     :ivar reservations_to_exchange: Details of the reservations being returned.
     :vartype reservations_to_exchange: list[~azure.mgmt.reservations.models.ReservationToExchange]
     :ivar policy_result: Exchange policy errors.
@@ -332,6 +419,10 @@ class CalculateExchangeResponseProperties(_serialization.Model):
             "key": "reservationsToPurchase",
             "type": "[ReservationToPurchaseCalculateExchange]",
         },
+        "savings_plans_to_purchase": {
+            "key": "savingsPlansToPurchase",
+            "type": "[SavingsPlanToPurchaseCalculateExchange]",
+        },
         "reservations_to_exchange": {"key": "reservationsToExchange", "type": "[ReservationToExchange]"},
         "policy_result": {"key": "policyResult", "type": "ExchangePolicyErrors"},
     }
@@ -344,22 +435,26 @@ class CalculateExchangeResponseProperties(_serialization.Model):
         refunds_total: Optional["_models.Price"] = None,
         purchases_total: Optional["_models.Price"] = None,
         reservations_to_purchase: Optional[List["_models.ReservationToPurchaseCalculateExchange"]] = None,
+        savings_plans_to_purchase: Optional[List["_models.SavingsPlanToPurchaseCalculateExchange"]] = None,
         reservations_to_exchange: Optional[List["_models.ReservationToExchange"]] = None,
         policy_result: Optional["_models.ExchangePolicyErrors"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword session_id: Exchange session identifier.
         :paramtype session_id: str
-        :keyword net_payable:
+        :keyword net_payable: Pricing information containing the amount and the currency code.
         :paramtype net_payable: ~azure.mgmt.reservations.models.Price
-        :keyword refunds_total:
+        :keyword refunds_total: Pricing information containing the amount and the currency code.
         :paramtype refunds_total: ~azure.mgmt.reservations.models.Price
-        :keyword purchases_total:
+        :keyword purchases_total: Pricing information containing the amount and the currency code.
         :paramtype purchases_total: ~azure.mgmt.reservations.models.Price
         :keyword reservations_to_purchase: Details of the reservations being purchased.
         :paramtype reservations_to_purchase:
          list[~azure.mgmt.reservations.models.ReservationToPurchaseCalculateExchange]
+        :keyword savings_plans_to_purchase: Details of the savings plans being purchased.
+        :paramtype savings_plans_to_purchase:
+         list[~azure.mgmt.reservations.models.SavingsPlanToPurchaseCalculateExchange]
         :keyword reservations_to_exchange: Details of the reservations being returned.
         :paramtype reservations_to_exchange:
          list[~azure.mgmt.reservations.models.ReservationToExchange]
@@ -372,14 +467,15 @@ class CalculateExchangeResponseProperties(_serialization.Model):
         self.refunds_total = refunds_total
         self.purchases_total = purchases_total
         self.reservations_to_purchase = reservations_to_purchase
+        self.savings_plans_to_purchase = savings_plans_to_purchase
         self.reservations_to_exchange = reservations_to_exchange
         self.policy_result = policy_result
 
 
 class CalculatePriceResponse(_serialization.Model):
-    """CalculatePriceResponse.
+    """The response of calculate price for reservation.
 
-    :ivar properties:
+    :ivar properties: Properties for calculate price response.
     :vartype properties: ~azure.mgmt.reservations.models.CalculatePriceResponseProperties
     """
 
@@ -387,9 +483,11 @@ class CalculatePriceResponse(_serialization.Model):
         "properties": {"key": "properties", "type": "CalculatePriceResponseProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CalculatePriceResponseProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.CalculatePriceResponseProperties"] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword properties:
+        :keyword properties: Properties for calculate price response.
         :paramtype properties: ~azure.mgmt.reservations.models.CalculatePriceResponseProperties
         """
         super().__init__(**kwargs)
@@ -397,7 +495,7 @@ class CalculatePriceResponse(_serialization.Model):
 
 
 class CalculatePriceResponseProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """CalculatePriceResponseProperties.
+    """Properties for calculate price response.
 
     :ivar billing_currency_total: Currency and amount that customer will be charged in customer's
      local currency. Tax is not included.
@@ -417,9 +515,9 @@ class CalculatePriceResponseProperties(_serialization.Model):  # pylint: disable
     :ivar reservation_order_id: GUID that represents reservation order that can be placed after
      calculating price.
     :vartype reservation_order_id: str
-    :ivar sku_title: Title of SKU that is being purchased.
+    :ivar sku_title: Title of sku that is being purchased.
     :vartype sku_title: str
-    :ivar sku_description: Description of SKU that is being purchased.
+    :ivar sku_description: Description of sku that is being purchased.
     :vartype sku_description: str
     :ivar pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
      calculating refund limit. Tax is not included.
@@ -463,8 +561,8 @@ class CalculatePriceResponseProperties(_serialization.Model):  # pylint: disable
         sku_description: Optional[str] = None,
         pricing_currency_total: Optional["_models.CalculatePriceResponsePropertiesPricingCurrencyTotal"] = None,
         payment_schedule: Optional[List["_models.PaymentDetail"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword billing_currency_total: Currency and amount that customer will be charged in
          customer's local currency. Tax is not included.
@@ -484,9 +582,9 @@ class CalculatePriceResponseProperties(_serialization.Model):  # pylint: disable
         :keyword reservation_order_id: GUID that represents reservation order that can be placed after
          calculating price.
         :paramtype reservation_order_id: str
-        :keyword sku_title: Title of SKU that is being purchased.
+        :keyword sku_title: Title of sku that is being purchased.
         :paramtype sku_title: str
-        :keyword sku_description: Description of SKU that is being purchased.
+        :keyword sku_description: Description of sku that is being purchased.
         :paramtype sku_description: str
         :keyword pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
          calculating refund limit. Tax is not included.
@@ -510,7 +608,8 @@ class CalculatePriceResponseProperties(_serialization.Model):  # pylint: disable
 
 
 class CalculatePriceResponsePropertiesBillingCurrencyTotal(_serialization.Model):
-    """Currency and amount that customer will be charged in customer's local currency. Tax is not included.
+    """Currency and amount that customer will be charged in customer's local currency. Tax is not
+    included.
 
     :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
      record.
@@ -524,7 +623,7 @@ class CalculatePriceResponsePropertiesBillingCurrencyTotal(_serialization.Model)
         "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
@@ -538,7 +637,8 @@ class CalculatePriceResponsePropertiesBillingCurrencyTotal(_serialization.Model)
 
 
 class CalculatePriceResponsePropertiesPricingCurrencyTotal(_serialization.Model):
-    """Amount that Microsoft uses for record. Used during refund for calculating refund limit. Tax is not included.
+    """Amount that Microsoft uses for record. Used during refund for calculating refund limit. Tax is
+    not included.
 
     :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
      record.
@@ -552,7 +652,7 @@ class CalculatePriceResponsePropertiesPricingCurrencyTotal(_serialization.Model)
         "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
@@ -566,11 +666,12 @@ class CalculatePriceResponsePropertiesPricingCurrencyTotal(_serialization.Model)
 
 
 class CalculateRefundRequest(_serialization.Model):
-    """CalculateRefundRequest.
+    """Request containing information needed for calculating refund.
 
     :ivar id: Fully qualified identifier of the reservation order being returned.
     :vartype id: str
-    :ivar properties:
+    :ivar properties: Properties needed for calculate refund including the scope and the
+     reservation to be returned.
     :vartype properties: ~azure.mgmt.reservations.models.CalculateRefundRequestProperties
     """
 
@@ -584,12 +685,13 @@ class CalculateRefundRequest(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         properties: Optional["_models.CalculateRefundRequestProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified identifier of the reservation order being returned.
         :paramtype id: str
-        :keyword properties:
+        :keyword properties: Properties needed for calculate refund including the scope and the
+         reservation to be returned.
         :paramtype properties: ~azure.mgmt.reservations.models.CalculateRefundRequestProperties
         """
         super().__init__(**kwargs)
@@ -598,7 +700,7 @@ class CalculateRefundRequest(_serialization.Model):
 
 
 class CalculateRefundRequestProperties(_serialization.Model):
-    """CalculateRefundRequestProperties.
+    """Properties needed for calculate refund including the scope and the reservation to be returned.
 
     :ivar scope: The scope of the refund, e.g. Reservation.
     :vartype scope: str
@@ -616,8 +718,8 @@ class CalculateRefundRequestProperties(_serialization.Model):
         *,
         scope: Optional[str] = None,
         reservation_to_return: Optional["_models.ReservationToReturn"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The scope of the refund, e.g. Reservation.
         :paramtype scope: str
@@ -630,11 +732,11 @@ class CalculateRefundRequestProperties(_serialization.Model):
 
 
 class CalculateRefundResponse(_serialization.Model):
-    """CalculateRefundResponse.
+    """The response of calculate refund containing refund information of reservation.
 
     :ivar id: Fully qualified identifier of the reservation being returned.
     :vartype id: str
-    :ivar properties:
+    :ivar properties: The refund properties of reservation.
     :vartype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
     """
 
@@ -648,12 +750,12 @@ class CalculateRefundResponse(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         properties: Optional["_models.RefundResponseProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified identifier of the reservation being returned.
         :paramtype id: str
-        :keyword properties:
+        :keyword properties: The refund properties of reservation.
         :paramtype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
         """
         super().__init__(**kwargs)
@@ -662,15 +764,15 @@ class CalculateRefundResponse(_serialization.Model):
 
 
 class Catalog(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Catalog.
+    """Product details of a type of resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar resource_type: The type of resource the SKU applies to.
+    :ivar resource_type: The type of resource the sku applies to.
     :vartype resource_type: str
-    :ivar name: The name of SKU.
+    :ivar name: The name of sku.
     :vartype name: str
-    :ivar billing_plans: The billing plan options available for this SKU.
+    :ivar billing_plans: The billing plan options available for this sku.
     :vartype billing_plans: dict[str, list[str or
      ~azure.mgmt.reservations.models.ReservationBillingPlan]]
     :ivar terms: Available reservation terms for this resource.
@@ -679,13 +781,13 @@ class Catalog(_serialization.Model):  # pylint: disable=too-many-instance-attrib
     :vartype locations: list[str]
     :ivar sku_properties:
     :vartype sku_properties: list[~azure.mgmt.reservations.models.SkuProperty]
-    :ivar msrp: Pricing information about the SKU.
+    :ivar msrp: Pricing information about the sku.
     :vartype msrp: ~azure.mgmt.reservations.models.CatalogMsrp
     :ivar restrictions:
     :vartype restrictions: list[~azure.mgmt.reservations.models.SkuRestriction]
-    :ivar tier: The tier of this SKU.
+    :ivar tier: The tier of this sku.
     :vartype tier: str
-    :ivar size: The size of this SKU.
+    :ivar size: The size of this sku.
     :vartype size: str
     :ivar capabilities:
     :vartype capabilities: list[~azure.mgmt.reservations.models.SkuCapability]
@@ -719,10 +821,13 @@ class Catalog(_serialization.Model):  # pylint: disable=too-many-instance-attrib
     }
 
     def __init__(
-        self, *, billing_plans: Optional[Dict[str, List[Union[str, "_models.ReservationBillingPlan"]]]] = None, **kwargs
-    ):
+        self,
+        *,
+        billing_plans: Optional[Dict[str, List[Union[str, "_models.ReservationBillingPlan"]]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword billing_plans: The billing plan options available for this SKU.
+        :keyword billing_plans: The billing plan options available for this sku.
         :paramtype billing_plans: dict[str, list[str or
          ~azure.mgmt.reservations.models.ReservationBillingPlan]]
         """
@@ -741,27 +846,81 @@ class Catalog(_serialization.Model):  # pylint: disable=too-many-instance-attrib
 
 
 class CatalogMsrp(_serialization.Model):
-    """Pricing information about the SKU.
+    """Pricing information about the sku.
 
     :ivar p1_y: Amount in pricing currency. Tax not included.
     :vartype p1_y: ~azure.mgmt.reservations.models.Price
+    :ivar p3_y: Amount in pricing currency. Tax not included.
+    :vartype p3_y: ~azure.mgmt.reservations.models.Price
+    :ivar p5_y: Amount in pricing currency. Tax not included.
+    :vartype p5_y: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
         "p1_y": {"key": "p1Y", "type": "Price"},
+        "p3_y": {"key": "p3Y", "type": "Price"},
+        "p5_y": {"key": "p5Y", "type": "Price"},
     }
 
-    def __init__(self, *, p1_y: Optional["_models.Price"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        p1_y: Optional["_models.Price"] = None,
+        p3_y: Optional["_models.Price"] = None,
+        p5_y: Optional["_models.Price"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword p1_y: Amount in pricing currency. Tax not included.
         :paramtype p1_y: ~azure.mgmt.reservations.models.Price
+        :keyword p3_y: Amount in pricing currency. Tax not included.
+        :paramtype p3_y: ~azure.mgmt.reservations.models.Price
+        :keyword p5_y: Amount in pricing currency. Tax not included.
+        :paramtype p5_y: ~azure.mgmt.reservations.models.Price
         """
         super().__init__(**kwargs)
         self.p1_y = p1_y
+        self.p3_y = p3_y
+        self.p5_y = p5_y
+
+
+class CatalogsResult(_serialization.Model):
+    """The list of catalogs and pagination information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of catalogs.
+    :vartype value: list[~azure.mgmt.reservations.models.Catalog]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    :ivar total_items: The total amount of catalog items.
+    :vartype total_items: int
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Catalog]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "total_items": {"key": "totalItems", "type": "int"},
+    }
+
+    def __init__(self, *, total_items: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword total_items: The total amount of catalog items.
+        :paramtype total_items: int
+        """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+        self.total_items = total_items
 
 
 class ChangeDirectoryRequest(_serialization.Model):
-    """ChangeDirectoryRequest.
+    """Request body for change directory of a reservation.
 
     :ivar destination_tenant_id: Tenant id GUID that reservation order is to be transferred to.
     :vartype destination_tenant_id: str
@@ -771,7 +930,7 @@ class ChangeDirectoryRequest(_serialization.Model):
         "destination_tenant_id": {"key": "destinationTenantId", "type": "str"},
     }
 
-    def __init__(self, *, destination_tenant_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, destination_tenant_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword destination_tenant_id: Tenant id GUID that reservation order is to be transferred to.
         :paramtype destination_tenant_id: str
@@ -799,8 +958,8 @@ class ChangeDirectoryResponse(_serialization.Model):
         *,
         reservation_order: Optional["_models.ChangeDirectoryResult"] = None,
         reservations: Optional[List["_models.ChangeDirectoryResult"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reservation_order: Change directory result for reservation order or reservation.
         :paramtype reservation_order: ~azure.mgmt.reservations.models.ChangeDirectoryResult
@@ -840,8 +999,8 @@ class ChangeDirectoryResult(_serialization.Model):
         name: Optional[str] = None,
         is_succeeded: Optional[bool] = None,
         error: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Identifier of the reservation order or reservation.
         :paramtype id: str
@@ -860,6 +1019,73 @@ class ChangeDirectoryResult(_serialization.Model):
         self.error = error
 
 
+class Price(_serialization.Model):
+    """Pricing information containing the amount and the currency code.
+
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount:
+    :vartype amount: float
+    """
+
+    _attribute_map = {
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
+    }
+
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs: Any) -> None:
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount:
+        :paramtype amount: float
+        """
+        super().__init__(**kwargs)
+        self.currency_code = currency_code
+        self.amount = amount
+
+
+class Commitment(Price):
+    """Commitment towards the benefit.
+
+    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
+     record.
+    :vartype currency_code: str
+    :ivar amount:
+    :vartype amount: float
+    :ivar grain: Commitment grain. "Hourly"
+    :vartype grain: str or ~azure.mgmt.reservations.models.CommitmentGrain
+    """
+
+    _attribute_map = {
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "amount": {"key": "amount", "type": "float"},
+        "grain": {"key": "grain", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        currency_code: Optional[str] = None,
+        amount: Optional[float] = None,
+        grain: Optional[Union[str, "_models.CommitmentGrain"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
+         purchase record.
+        :paramtype currency_code: str
+        :keyword amount:
+        :paramtype amount: float
+        :keyword grain: Commitment grain. "Hourly"
+        :paramtype grain: str or ~azure.mgmt.reservations.models.CommitmentGrain
+        """
+        super().__init__(currency_code=currency_code, amount=amount, **kwargs)
+        self.grain = grain
+
+
 class CreateGenericQuotaRequestParameters(_serialization.Model):
     """Quota change requests information.
 
@@ -871,7 +1097,7 @@ class CreateGenericQuotaRequestParameters(_serialization.Model):
         "value": {"key": "value", "type": "[CurrentQuotaLimitBase]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.CurrentQuotaLimitBase"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.CurrentQuotaLimitBase"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Quota change requests.
         :paramtype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
@@ -917,7 +1143,7 @@ class CurrentQuotaLimit(_serialization.Model):
         "properties": {"key": "quotaInformation.properties", "type": "QuotaProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Quota properties for the resource.
         :paramtype properties: ~azure.mgmt.reservations.models.QuotaProperties
@@ -959,7 +1185,7 @@ class CurrentQuotaLimitBase(_serialization.Model):
         "properties": {"key": "properties", "type": "QuotaProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Quota properties for the resource.
         :paramtype properties: ~azure.mgmt.reservations.models.QuotaProperties
@@ -972,9 +1198,9 @@ class CurrentQuotaLimitBase(_serialization.Model):
 
 
 class Error(_serialization.Model):
-    """Error.
+    """Error information.
 
-    :ivar error:
+    :ivar error: Extended error information including error code and error message.
     :vartype error: ~azure.mgmt.reservations.models.ExtendedErrorInfo
     """
 
@@ -982,9 +1208,9 @@ class Error(_serialization.Model):
         "error": {"key": "error", "type": "ExtendedErrorInfo"},
     }
 
-    def __init__(self, *, error: Optional["_models.ExtendedErrorInfo"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ExtendedErrorInfo"] = None, **kwargs: Any) -> None:
         """
-        :keyword error:
+        :keyword error: Extended error information including error code and error message.
         :paramtype error: ~azure.mgmt.reservations.models.ExtendedErrorInfo
         """
         super().__init__(**kwargs)
@@ -1016,7 +1242,7 @@ class ErrorDetails(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1025,7 +1251,8 @@ class ErrorDetails(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates that the service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar error: The details of the error.
     :vartype error: ~azure.mgmt.reservations.models.ErrorDetails
@@ -1035,7 +1262,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.reservations.models.ErrorDetails
@@ -1055,7 +1282,7 @@ class ExceptionResponse(_serialization.Model):
         "error": {"key": "error", "type": "ServiceError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ServiceError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ServiceError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The API error details.
         :paramtype error: ~azure.mgmt.reservations.models.ServiceError
@@ -1097,8 +1324,8 @@ class ExchangeOperationResultResponse(_serialization.Model):
         status: Optional[Union[str, "_models.ExchangeOperationResultStatus"]] = None,
         properties: Optional["_models.ExchangeResponseProperties"] = None,
         error: Optional["_models.OperationResultError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: It should match what is used to GET the operation result.
         :paramtype id: str
@@ -1135,7 +1362,7 @@ class ExchangePolicyError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -1158,7 +1385,7 @@ class ExchangePolicyErrors(_serialization.Model):
         "policy_errors": {"key": "policyErrors", "type": "[ExchangePolicyError]"},
     }
 
-    def __init__(self, *, policy_errors: Optional[List["_models.ExchangePolicyError"]] = None, **kwargs):
+    def __init__(self, *, policy_errors: Optional[List["_models.ExchangePolicyError"]] = None, **kwargs: Any) -> None:
         """
         :keyword policy_errors: Exchange Policy errors.
         :paramtype policy_errors: list[~azure.mgmt.reservations.models.ExchangePolicyError]
@@ -1178,7 +1405,7 @@ class ExchangeRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "ExchangeRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ExchangeRequestProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ExchangeRequestProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Exchange request properties.
         :paramtype properties: ~azure.mgmt.reservations.models.ExchangeRequestProperties
@@ -1198,7 +1425,7 @@ class ExchangeRequestProperties(_serialization.Model):
         "session_id": {"key": "sessionId", "type": "str"},
     }
 
-    def __init__(self, *, session_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, session_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword session_id: SessionId that was returned by CalculateExchange API.
         :paramtype session_id: str
@@ -1212,15 +1439,18 @@ class ExchangeResponseProperties(_serialization.Model):
 
     :ivar session_id: Exchange session identifier.
     :vartype session_id: str
-    :ivar net_payable:
+    :ivar net_payable: Pricing information containing the amount and the currency code.
     :vartype net_payable: ~azure.mgmt.reservations.models.Price
-    :ivar refunds_total:
+    :ivar refunds_total: Pricing information containing the amount and the currency code.
     :vartype refunds_total: ~azure.mgmt.reservations.models.Price
-    :ivar purchases_total:
+    :ivar purchases_total: Pricing information containing the amount and the currency code.
     :vartype purchases_total: ~azure.mgmt.reservations.models.Price
     :ivar reservations_to_purchase: Details of the reservations being purchased.
     :vartype reservations_to_purchase:
      list[~azure.mgmt.reservations.models.ReservationToPurchaseExchange]
+    :ivar savings_plans_to_purchase: Details of the savings plans being purchased.
+    :vartype savings_plans_to_purchase:
+     list[~azure.mgmt.reservations.models.SavingsPlanToPurchaseExchange]
     :ivar reservations_to_exchange: Details of the reservations being returned.
     :vartype reservations_to_exchange:
      list[~azure.mgmt.reservations.models.ReservationToReturnForExchange]
@@ -1234,6 +1464,7 @@ class ExchangeResponseProperties(_serialization.Model):
         "refunds_total": {"key": "refundsTotal", "type": "Price"},
         "purchases_total": {"key": "purchasesTotal", "type": "Price"},
         "reservations_to_purchase": {"key": "reservationsToPurchase", "type": "[ReservationToPurchaseExchange]"},
+        "savings_plans_to_purchase": {"key": "savingsPlansToPurchase", "type": "[SavingsPlanToPurchaseExchange]"},
         "reservations_to_exchange": {"key": "reservationsToExchange", "type": "[ReservationToReturnForExchange]"},
         "policy_result": {"key": "policyResult", "type": "ExchangePolicyErrors"},
     }
@@ -1246,22 +1477,26 @@ class ExchangeResponseProperties(_serialization.Model):
         refunds_total: Optional["_models.Price"] = None,
         purchases_total: Optional["_models.Price"] = None,
         reservations_to_purchase: Optional[List["_models.ReservationToPurchaseExchange"]] = None,
+        savings_plans_to_purchase: Optional[List["_models.SavingsPlanToPurchaseExchange"]] = None,
         reservations_to_exchange: Optional[List["_models.ReservationToReturnForExchange"]] = None,
         policy_result: Optional["_models.ExchangePolicyErrors"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword session_id: Exchange session identifier.
         :paramtype session_id: str
-        :keyword net_payable:
+        :keyword net_payable: Pricing information containing the amount and the currency code.
         :paramtype net_payable: ~azure.mgmt.reservations.models.Price
-        :keyword refunds_total:
+        :keyword refunds_total: Pricing information containing the amount and the currency code.
         :paramtype refunds_total: ~azure.mgmt.reservations.models.Price
-        :keyword purchases_total:
+        :keyword purchases_total: Pricing information containing the amount and the currency code.
         :paramtype purchases_total: ~azure.mgmt.reservations.models.Price
         :keyword reservations_to_purchase: Details of the reservations being purchased.
         :paramtype reservations_to_purchase:
          list[~azure.mgmt.reservations.models.ReservationToPurchaseExchange]
+        :keyword savings_plans_to_purchase: Details of the savings plans being purchased.
+        :paramtype savings_plans_to_purchase:
+         list[~azure.mgmt.reservations.models.SavingsPlanToPurchaseExchange]
         :keyword reservations_to_exchange: Details of the reservations being returned.
         :paramtype reservations_to_exchange:
          list[~azure.mgmt.reservations.models.ReservationToReturnForExchange]
@@ -1274,14 +1509,16 @@ class ExchangeResponseProperties(_serialization.Model):
         self.refunds_total = refunds_total
         self.purchases_total = purchases_total
         self.reservations_to_purchase = reservations_to_purchase
+        self.savings_plans_to_purchase = savings_plans_to_purchase
         self.reservations_to_exchange = reservations_to_exchange
         self.policy_result = policy_result
 
 
 class ExtendedErrorInfo(_serialization.Model):
-    """ExtendedErrorInfo.
+    """Extended error information including error code and error message.
 
-    :ivar code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+    :ivar code: Error code describing the reason that service is not able to process the incoming
+     request. Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
      "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
      "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
      "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
@@ -1312,10 +1549,15 @@ class ExtendedErrorInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[Union[str, "_models.ErrorResponseCode"]] = None, message: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        code: Optional[Union[str, "_models.ErrorResponseCode"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+        :keyword code: Error code describing the reason that service is not able to process the
+         incoming request. Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
          "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
          "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
          "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
@@ -1364,8 +1606,8 @@ class ExtendedStatusInfo(_serialization.Model):
         *,
         status_code: Optional[Union[str, "_models.ReservationStatusCode"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status_code: Known values are: "None", "Pending", "Processing", "Active",
          "PurchaseError", "PaymentInstrumentError", "Split", "Merged", "Expired", and "Succeeded".
@@ -1379,7 +1621,7 @@ class ExtendedStatusInfo(_serialization.Model):
 
 
 class MergeRequest(_serialization.Model):
-    """MergeRequest.
+    """The request for reservation merge.
 
     :ivar sources: Format of the resource id should be
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
@@ -1390,7 +1632,7 @@ class MergeRequest(_serialization.Model):
         "sources": {"key": "properties.sources", "type": "[str]"},
     }
 
-    def __init__(self, *, sources: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, sources: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword sources: Format of the resource id should be
          /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
@@ -1401,7 +1643,7 @@ class MergeRequest(_serialization.Model):
 
 
 class OperationDisplay(_serialization.Model):
-    """OperationDisplay.
+    """Information about an operation.
 
     :ivar provider:
     :vartype provider: str
@@ -1427,8 +1669,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider:
         :paramtype provider: str
@@ -1447,7 +1689,7 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationList(_serialization.Model):
-    """OperationList.
+    """Paginated list of operations.
 
     :ivar value:
     :vartype value: list[~azure.mgmt.reservations.models.OperationResponse]
@@ -1461,8 +1703,12 @@ class OperationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationResponse"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.OperationResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.reservations.models.OperationResponse]
@@ -1475,7 +1721,7 @@ class OperationList(_serialization.Model):
 
 
 class OperationResponse(_serialization.Model):
-    """OperationResponse.
+    """The response containing operation information.
 
     :ivar name: Name of the operation.
     :vartype name: str
@@ -1505,8 +1751,8 @@ class OperationResponse(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -1544,7 +1790,7 @@ class OperationResultError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Required if status == failed or status == cancelled. If status == failed,
          provide an invariant error code used for error troubleshooting, aggregation, and analysis.
@@ -1560,33 +1806,44 @@ class OperationResultError(_serialization.Model):
 
 
 class Patch(_serialization.Model):
-    """Patch.
+    """The request for reservation patch.
 
-    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single" and "Shared".
+    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single", "Shared", and
+     "ManagementGroup".
     :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
     :ivar applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-     specify if AppliedScopeType is Shared.
+     specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+     appliedScopeProperties instead for Single AppliedScopeType.
     :vartype applied_scopes: list[str]
+    :ivar applied_scope_properties: Properties specific to applied scope type. Not required if not
+     applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType is
+     ManagementGroup.
+    :vartype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
     :ivar instance_flexibility: Turning this on will apply the reservation discount to other VMs in
      the same VM size group. Only specify for VirtualMachines reserved resource type. Known values
      are: "On" and "Off".
     :vartype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
-    :ivar name: Name of the Reservation.
+    :ivar name: Display name of the reservation.
     :vartype name: str
     :ivar renew: Setting this to true will automatically purchase a new reservation on the
      expiration date time.
     :vartype renew: bool
     :ivar renew_properties:
     :vartype renew_properties: ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
+    :ivar review_date_time: This is the date-time when the Azure hybrid benefit needs to be
+     reviewed.
+    :vartype review_date_time: ~datetime.datetime
     """
 
     _attribute_map = {
         "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
         "applied_scopes": {"key": "properties.appliedScopes", "type": "[str]"},
+        "applied_scope_properties": {"key": "properties.appliedScopeProperties", "type": "AppliedScopeProperties"},
         "instance_flexibility": {"key": "properties.instanceFlexibility", "type": "str"},
         "name": {"key": "properties.name", "type": "str"},
         "renew": {"key": "properties.renew", "type": "bool"},
         "renew_properties": {"key": "properties.renewProperties", "type": "PatchPropertiesRenewProperties"},
+        "review_date_time": {"key": "properties.reviewDateTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1594,44 +1851,56 @@ class Patch(_serialization.Model):
         *,
         applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
         applied_scopes: Optional[List[str]] = None,
+        applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
         instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None,
         name: Optional[str] = None,
         renew: bool = False,
         renew_properties: Optional["_models.PatchPropertiesRenewProperties"] = None,
-        **kwargs
-    ):
+        review_date_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single" and
-         "Shared".
+        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single", "Shared",
+         and "ManagementGroup".
         :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
         :keyword applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-         specify if AppliedScopeType is Shared.
+         specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+         appliedScopeProperties instead for Single AppliedScopeType.
         :paramtype applied_scopes: list[str]
+        :keyword applied_scope_properties: Properties specific to applied scope type. Not required if
+         not applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType
+         is ManagementGroup.
+        :paramtype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
         :keyword instance_flexibility: Turning this on will apply the reservation discount to other VMs
          in the same VM size group. Only specify for VirtualMachines reserved resource type. Known
          values are: "On" and "Off".
         :paramtype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
-        :keyword name: Name of the Reservation.
+        :keyword name: Display name of the reservation.
         :paramtype name: str
         :keyword renew: Setting this to true will automatically purchase a new reservation on the
          expiration date time.
         :paramtype renew: bool
         :keyword renew_properties:
         :paramtype renew_properties: ~azure.mgmt.reservations.models.PatchPropertiesRenewProperties
+        :keyword review_date_time: This is the date-time when the Azure hybrid benefit needs to be
+         reviewed.
+        :paramtype review_date_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
+        self.applied_scope_properties = applied_scope_properties
         self.instance_flexibility = instance_flexibility
         self.name = name
         self.renew = renew
         self.renew_properties = renew_properties
+        self.review_date_time = review_date_time
 
 
 class PatchPropertiesRenewProperties(_serialization.Model):
     """PatchPropertiesRenewProperties.
 
-    :ivar purchase_properties:
+    :ivar purchase_properties: The request for reservation purchase.
     :vartype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
     """
 
@@ -1639,9 +1908,9 @@ class PatchPropertiesRenewProperties(_serialization.Model):
         "purchase_properties": {"key": "purchaseProperties", "type": "PurchaseRequest"},
     }
 
-    def __init__(self, *, purchase_properties: Optional["_models.PurchaseRequest"] = None, **kwargs):
+    def __init__(self, *, purchase_properties: Optional["_models.PurchaseRequest"] = None, **kwargs: Any) -> None:
         """
-        :keyword purchase_properties:
+        :keyword purchase_properties: The request for reservation purchase.
         :paramtype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
         """
         super().__init__(**kwargs)
@@ -1689,8 +1958,8 @@ class PaymentDetail(_serialization.Model):
         billing_account: Optional[str] = None,
         status: Optional[Union[str, "_models.PaymentStatus"]] = None,
         extended_status_info: Optional["_models.ExtendedStatusInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword due_date: Date when the payment needs to be done.
         :paramtype due_date: ~datetime.date
@@ -1719,40 +1988,91 @@ class PaymentDetail(_serialization.Model):
         self.extended_status_info = extended_status_info
 
 
-class Price(_serialization.Model):
-    """Price.
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
-    :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
-     record.
-    :vartype currency_code: str
-    :ivar amount:
-    :vartype amount: float
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.reservations.models.SystemData
     """
 
-    _attribute_map = {
-        "currency_code": {"key": "currencyCode", "type": "str"},
-        "amount": {"key": "amount", "type": "float"},
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
-    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
-        """
-        :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
-         purchase record.
-        :paramtype currency_code: str
-        :keyword amount:
-        :paramtype amount: float
-        """
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.currency_code = currency_code
-        self.amount = amount
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.reservations.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """PurchaseRequest.
+    """The request for reservation purchase.
 
-    :ivar sku:
+    :ivar sku: The name of sku.
     :vartype sku: ~azure.mgmt.reservations.models.SkuName
-    :ivar location: The Azure Region where the reserved resource lives.
+    :ivar location: The Azure region where the reserved resource lives.
     :vartype location: str
     :ivar reserved_resource_type: The type of the resource that is being reserved. Known values
      are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
@@ -1761,21 +2081,28 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
      "SapHana", "SqlAzureHybridBenefit", "AVS", "DataFactory", "NetAppStorage", "AzureFiles",
      "SqlEdge", and "VirtualMachineSoftware".
     :vartype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
-    :ivar billing_scope_id: Subscription that will be charged for purchasing Reservation.
+    :ivar billing_scope_id: Subscription that will be charged for purchasing reservation or savings
+     plan.
     :vartype billing_scope_id: str
-    :ivar term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+    :ivar term: Represent the term of reservation. Known values are: "P1Y", "P3Y", and "P5Y".
     :vartype term: str or ~azure.mgmt.reservations.models.ReservationTerm
     :ivar billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
     :vartype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
-    :ivar quantity: Quantity of the SKUs that are part of the Reservation.
+    :ivar quantity: Quantity of the skus that are part of the reservation.
     :vartype quantity: int
-    :ivar display_name: Friendly name of the Reservation.
+    :ivar display_name: Friendly name of the reservation.
     :vartype display_name: str
-    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single" and "Shared".
+    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single", "Shared", and
+     "ManagementGroup".
     :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
     :ivar applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-     specify if AppliedScopeType is Shared.
+     specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+     appliedScopeProperties instead for Single AppliedScopeType.
     :vartype applied_scopes: list[str]
+    :ivar applied_scope_properties: Properties specific to applied scope type. Not required if not
+     applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType is
+     ManagementGroup.
+    :vartype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
     :ivar renew: Setting this to true will automatically purchase a new reservation on the
      expiration date time.
     :vartype renew: bool
@@ -1783,6 +2110,9 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
      required if not applicable.
     :vartype reserved_resource_properties:
      ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
+    :ivar review_date_time: This is the date-time when the Azure hybrid benefit needs to be
+     reviewed.
+    :vartype review_date_time: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1796,11 +2126,13 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
         "display_name": {"key": "properties.displayName", "type": "str"},
         "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
         "applied_scopes": {"key": "properties.appliedScopes", "type": "[str]"},
+        "applied_scope_properties": {"key": "properties.appliedScopeProperties", "type": "AppliedScopeProperties"},
         "renew": {"key": "properties.renew", "type": "bool"},
         "reserved_resource_properties": {
             "key": "properties.reservedResourceProperties",
             "type": "PurchaseRequestPropertiesReservedResourceProperties",
         },
+        "review_date_time": {"key": "properties.reviewDateTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1816,14 +2148,16 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
         display_name: Optional[str] = None,
         applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
         applied_scopes: Optional[List[str]] = None,
+        applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
         renew: bool = False,
         reserved_resource_properties: Optional["_models.PurchaseRequestPropertiesReservedResourceProperties"] = None,
-        **kwargs
-    ):
+        review_date_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword sku:
+        :keyword sku: The name of sku.
         :paramtype sku: ~azure.mgmt.reservations.models.SkuName
-        :keyword location: The Azure Region where the reserved resource lives.
+        :keyword location: The Azure region where the reserved resource lives.
         :paramtype location: str
         :keyword reserved_resource_type: The type of the resource that is being reserved. Known values
          are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
@@ -1832,22 +2166,28 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
          "SapHana", "SqlAzureHybridBenefit", "AVS", "DataFactory", "NetAppStorage", "AzureFiles",
          "SqlEdge", and "VirtualMachineSoftware".
         :paramtype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
-        :keyword billing_scope_id: Subscription that will be charged for purchasing Reservation.
+        :keyword billing_scope_id: Subscription that will be charged for purchasing reservation or
+         savings plan.
         :paramtype billing_scope_id: str
-        :keyword term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+        :keyword term: Represent the term of reservation. Known values are: "P1Y", "P3Y", and "P5Y".
         :paramtype term: str or ~azure.mgmt.reservations.models.ReservationTerm
         :keyword billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
         :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
-        :keyword quantity: Quantity of the SKUs that are part of the Reservation.
+        :keyword quantity: Quantity of the skus that are part of the reservation.
         :paramtype quantity: int
-        :keyword display_name: Friendly name of the Reservation.
+        :keyword display_name: Friendly name of the reservation.
         :paramtype display_name: str
-        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single" and
-         "Shared".
+        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single", "Shared",
+         and "ManagementGroup".
         :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
         :keyword applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-         specify if AppliedScopeType is Shared.
+         specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+         appliedScopeProperties instead for Single AppliedScopeType.
         :paramtype applied_scopes: list[str]
+        :keyword applied_scope_properties: Properties specific to applied scope type. Not required if
+         not applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType
+         is ManagementGroup.
+        :paramtype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
         :keyword renew: Setting this to true will automatically purchase a new reservation on the
          expiration date time.
         :paramtype renew: bool
@@ -1855,6 +2195,9 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
          required if not applicable.
         :paramtype reserved_resource_properties:
          ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
+        :keyword review_date_time: This is the date-time when the Azure hybrid benefit needs to be
+         reviewed.
+        :paramtype review_date_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -1867,8 +2210,10 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
         self.display_name = display_name
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
+        self.applied_scope_properties = applied_scope_properties
         self.renew = renew
         self.reserved_resource_properties = reserved_resource_properties
+        self.review_date_time = review_date_time
 
 
 class PurchaseRequestPropertiesReservedResourceProperties(_serialization.Model):
@@ -1884,7 +2229,9 @@ class PurchaseRequestPropertiesReservedResourceProperties(_serialization.Model):
         "instance_flexibility": {"key": "instanceFlexibility", "type": "str"},
     }
 
-    def __init__(self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs):
+    def __init__(
+        self, *, instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword instance_flexibility: Turning this on will apply the reservation discount to other VMs
          in the same VM size group. Only specify for VirtualMachines reserved resource type. Known
@@ -1915,8 +2262,8 @@ class QuotaLimits(_serialization.Model):
         *,
         value: Optional[List["_models.CurrentQuotaLimitBase"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of quotas (service limits).
         :paramtype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
@@ -1945,8 +2292,12 @@ class QuotaLimitsResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CurrentQuotaLimit"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.CurrentQuotaLimit"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of quotas with the quota request status.
         :paramtype value: list[~azure.mgmt.reservations.models.CurrentQuotaLimit]
@@ -2008,8 +2359,8 @@ class QuotaProperties(_serialization.Model):
         name: Optional["_models.ResourceName"] = None,
         resource_type: Optional[Union[str, "_models.ResourceType"]] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword limit: Quota properties.
         :paramtype limit: int
@@ -2081,8 +2432,8 @@ class QuotaRequestDetails(_serialization.Model):
         *,
         provisioning_state: Optional[Union[str, "_models.QuotaRequestState"]] = None,
         value: Optional[List["_models.SubRequest"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
          "Succeeded", "Failed", and "InProgress".
@@ -2116,8 +2467,12 @@ class QuotaRequestDetailsList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.QuotaRequestDetails"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.QuotaRequestDetails"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The quota requests.
         :paramtype value: list[~azure.mgmt.reservations.models.QuotaRequestDetails]
@@ -2184,7 +2539,7 @@ class QuotaRequestOneResourceSubmitResponse(_serialization.Model):
         "properties": {"key": "properties.properties.properties", "type": "QuotaProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.QuotaProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Quota properties for the resource.
         :paramtype properties: ~azure.mgmt.reservations.models.QuotaProperties
@@ -2236,8 +2591,8 @@ class QuotaRequestProperties(_serialization.Model):
         *,
         provisioning_state: Optional[Union[str, "_models.QuotaRequestState"]] = None,
         value: Optional[List["_models.SubRequest"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
          "Succeeded", "Failed", and "InProgress".
@@ -2280,7 +2635,7 @@ class QuotaRequestSubmitResponse(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, properties: Optional["_models.QuotaRequestProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.QuotaRequestProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The quota request details.
         :paramtype properties: ~azure.mgmt.reservations.models.QuotaRequestProperties
@@ -2326,7 +2681,7 @@ class QuotaRequestSubmitResponse201(_serialization.Model):
         "message": {"key": "properties.message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2346,11 +2701,14 @@ class RefundBillingInformation(_serialization.Model):
     :vartype completed_transactions: int
     :ivar total_transactions: The number of total transactions in this reservation's payment.
     :vartype total_transactions: int
-    :ivar billing_currency_total_paid_amount:
+    :ivar billing_currency_total_paid_amount: Pricing information containing the amount and the
+     currency code.
     :vartype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
-    :ivar billing_currency_prorated_amount:
+    :ivar billing_currency_prorated_amount: Pricing information containing the amount and the
+     currency code.
     :vartype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
-    :ivar billing_currency_remaining_commitment_amount:
+    :ivar billing_currency_remaining_commitment_amount: Pricing information containing the amount
+     and the currency code.
     :vartype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
     """
 
@@ -2375,8 +2733,8 @@ class RefundBillingInformation(_serialization.Model):
         billing_currency_total_paid_amount: Optional["_models.Price"] = None,
         billing_currency_prorated_amount: Optional["_models.Price"] = None,
         billing_currency_remaining_commitment_amount: Optional["_models.Price"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword billing_plan: Represent the billing plans. Known values are: "Upfront" and "Monthly".
         :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
@@ -2385,11 +2743,14 @@ class RefundBillingInformation(_serialization.Model):
         :paramtype completed_transactions: int
         :keyword total_transactions: The number of total transactions in this reservation's payment.
         :paramtype total_transactions: int
-        :keyword billing_currency_total_paid_amount:
+        :keyword billing_currency_total_paid_amount: Pricing information containing the amount and the
+         currency code.
         :paramtype billing_currency_total_paid_amount: ~azure.mgmt.reservations.models.Price
-        :keyword billing_currency_prorated_amount:
+        :keyword billing_currency_prorated_amount: Pricing information containing the amount and the
+         currency code.
         :paramtype billing_currency_prorated_amount: ~azure.mgmt.reservations.models.Price
-        :keyword billing_currency_remaining_commitment_amount:
+        :keyword billing_currency_remaining_commitment_amount: Pricing information containing the
+         amount and the currency code.
         :paramtype billing_currency_remaining_commitment_amount: ~azure.mgmt.reservations.models.Price
         """
         super().__init__(**kwargs)
@@ -2404,7 +2765,8 @@ class RefundBillingInformation(_serialization.Model):
 class RefundPolicyError(_serialization.Model):
     """error details.
 
-    :ivar code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+    :ivar code: Error code describing the reason that service is not able to process the incoming
+     request. Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
      "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
      "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
      "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
@@ -2435,10 +2797,15 @@ class RefundPolicyError(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[Union[str, "_models.ErrorResponseCode"]] = None, message: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        code: Optional[Union[str, "_models.ErrorResponseCode"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword code: Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
+        :keyword code: Error code describing the reason that service is not able to process the
+         incoming request. Known values are: "NotSpecified", "InternalServerError", "ServerTimeout",
          "AuthorizationFailed", "BadRequest", "ClientCertificateThumbprintNotSet",
          "InvalidRequestContent", "OperationFailed", "HttpMethodNotSupported", "InvalidRequestUri",
          "MissingTenantId", "InvalidTenantId", "InvalidReservationOrderId", "InvalidReservationId",
@@ -2478,7 +2845,7 @@ class RefundPolicyResult(_serialization.Model):
         "properties": {"key": "properties", "type": "RefundPolicyResultProperty"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RefundPolicyResultProperty"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.RefundPolicyResultProperty"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Refund policy result property.
         :paramtype properties: ~azure.mgmt.reservations.models.RefundPolicyResultProperty
@@ -2490,9 +2857,9 @@ class RefundPolicyResult(_serialization.Model):
 class RefundPolicyResultProperty(_serialization.Model):
     """Refund policy result property.
 
-    :ivar consumed_refunds_total:
+    :ivar consumed_refunds_total: Pricing information containing the amount and the currency code.
     :vartype consumed_refunds_total: ~azure.mgmt.reservations.models.Price
-    :ivar max_refund_limit:
+    :ivar max_refund_limit: Pricing information containing the amount and the currency code.
     :vartype max_refund_limit: ~azure.mgmt.reservations.models.Price
     :ivar policy_errors: Refund Policy errors.
     :vartype policy_errors: list[~azure.mgmt.reservations.models.RefundPolicyError]
@@ -2510,12 +2877,13 @@ class RefundPolicyResultProperty(_serialization.Model):
         consumed_refunds_total: Optional["_models.Price"] = None,
         max_refund_limit: Optional["_models.Price"] = None,
         policy_errors: Optional[List["_models.RefundPolicyError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword consumed_refunds_total:
+        :keyword consumed_refunds_total: Pricing information containing the amount and the currency
+         code.
         :paramtype consumed_refunds_total: ~azure.mgmt.reservations.models.Price
-        :keyword max_refund_limit:
+        :keyword max_refund_limit: Pricing information containing the amount and the currency code.
         :paramtype max_refund_limit: ~azure.mgmt.reservations.models.Price
         :keyword policy_errors: Refund Policy errors.
         :paramtype policy_errors: list[~azure.mgmt.reservations.models.RefundPolicyError]
@@ -2527,9 +2895,10 @@ class RefundPolicyResultProperty(_serialization.Model):
 
 
 class RefundRequest(_serialization.Model):
-    """RefundRequest.
+    """Request containing information needed for returning reservation.
 
-    :ivar properties:
+    :ivar properties: Properties needed for refund request including the session id from calculate
+     refund, the scope, the reservation to be returned and the return reason.
     :vartype properties: ~azure.mgmt.reservations.models.RefundRequestProperties
     """
 
@@ -2537,9 +2906,10 @@ class RefundRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "RefundRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RefundRequestProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.RefundRequestProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword properties:
+        :keyword properties: Properties needed for refund request including the session id from
+         calculate refund, the scope, the reservation to be returned and the return reason.
         :paramtype properties: ~azure.mgmt.reservations.models.RefundRequestProperties
         """
         super().__init__(**kwargs)
@@ -2547,7 +2917,8 @@ class RefundRequest(_serialization.Model):
 
 
 class RefundRequestProperties(_serialization.Model):
-    """RefundRequestProperties.
+    """Properties needed for refund request including the session id from calculate refund, the scope,
+    the reservation to be returned and the return reason.
 
     :ivar session_id: SessionId that was returned by CalculateRefund API.
     :vartype session_id: str
@@ -2573,8 +2944,8 @@ class RefundRequestProperties(_serialization.Model):
         scope: Optional[str] = None,
         reservation_to_return: Optional["_models.ReservationToReturn"] = None,
         return_reason: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword session_id: SessionId that was returned by CalculateRefund API.
         :paramtype session_id: str
@@ -2593,11 +2964,11 @@ class RefundRequestProperties(_serialization.Model):
 
 
 class RefundResponse(_serialization.Model):
-    """RefundResponse.
+    """The response of refund request containing refund information of reservation.
 
     :ivar id: Fully qualified identifier of the reservation being returned.
     :vartype id: str
-    :ivar properties:
+    :ivar properties: The refund properties of reservation.
     :vartype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
     """
 
@@ -2611,12 +2982,12 @@ class RefundResponse(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         properties: Optional["_models.RefundResponseProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified identifier of the reservation being returned.
         :paramtype id: str
-        :keyword properties:
+        :keyword properties: The refund properties of reservation.
         :paramtype properties: ~azure.mgmt.reservations.models.RefundResponseProperties
         """
         super().__init__(**kwargs)
@@ -2625,15 +2996,15 @@ class RefundResponse(_serialization.Model):
 
 
 class RefundResponseProperties(_serialization.Model):
-    """RefundResponseProperties.
+    """The refund properties of reservation.
 
     :ivar session_id: Refund session identifier.
     :vartype session_id: str
     :ivar quantity: Quantity to be returned.
     :vartype quantity: int
-    :ivar billing_refund_amount:
+    :ivar billing_refund_amount: Pricing information containing the amount and the currency code.
     :vartype billing_refund_amount: ~azure.mgmt.reservations.models.Price
-    :ivar pricing_refund_amount:
+    :ivar pricing_refund_amount: Pricing information containing the amount and the currency code.
     :vartype pricing_refund_amount: ~azure.mgmt.reservations.models.Price
     :ivar policy_result: Refund policy result.
     :vartype policy_result: ~azure.mgmt.reservations.models.RefundPolicyResult
@@ -2659,16 +3030,18 @@ class RefundResponseProperties(_serialization.Model):
         pricing_refund_amount: Optional["_models.Price"] = None,
         policy_result: Optional["_models.RefundPolicyResult"] = None,
         billing_information: Optional["_models.RefundBillingInformation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword session_id: Refund session identifier.
         :paramtype session_id: str
         :keyword quantity: Quantity to be returned.
         :paramtype quantity: int
-        :keyword billing_refund_amount:
+        :keyword billing_refund_amount: Pricing information containing the amount and the currency
+         code.
         :paramtype billing_refund_amount: ~azure.mgmt.reservations.models.Price
-        :keyword pricing_refund_amount:
+        :keyword pricing_refund_amount: Pricing information containing the amount and the currency
+         code.
         :paramtype pricing_refund_amount: ~azure.mgmt.reservations.models.Price
         :keyword policy_result: Refund policy result.
         :paramtype policy_result: ~azure.mgmt.reservations.models.RefundPolicyResult
@@ -2685,9 +3058,9 @@ class RefundResponseProperties(_serialization.Model):
 
 
 class RenewPropertiesResponse(_serialization.Model):
-    """RenewPropertiesResponse.
+    """The renew properties for a reservation.
 
-    :ivar purchase_properties:
+    :ivar purchase_properties: The request for reservation purchase.
     :vartype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
     :ivar pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
      calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
@@ -2717,10 +3090,10 @@ class RenewPropertiesResponse(_serialization.Model):
         purchase_properties: Optional["_models.PurchaseRequest"] = None,
         pricing_currency_total: Optional["_models.RenewPropertiesResponsePricingCurrencyTotal"] = None,
         billing_currency_total: Optional["_models.RenewPropertiesResponseBillingCurrencyTotal"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword purchase_properties:
+        :keyword purchase_properties: The request for reservation purchase.
         :paramtype purchase_properties: ~azure.mgmt.reservations.models.PurchaseRequest
         :keyword pricing_currency_total: Amount that Microsoft uses for record. Used during refund for
          calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
@@ -2738,7 +3111,8 @@ class RenewPropertiesResponse(_serialization.Model):
 
 
 class RenewPropertiesResponseBillingCurrencyTotal(_serialization.Model):
-    """Currency and amount that customer will be charged in customer's local currency for renewal purchase. Tax is not included.
+    """Currency and amount that customer will be charged in customer's local currency for renewal
+    purchase. Tax is not included.
 
     :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
      record.
@@ -2752,7 +3126,7 @@ class RenewPropertiesResponseBillingCurrencyTotal(_serialization.Model):
         "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
@@ -2766,7 +3140,8 @@ class RenewPropertiesResponseBillingCurrencyTotal(_serialization.Model):
 
 
 class RenewPropertiesResponsePricingCurrencyTotal(_serialization.Model):
-    """Amount that Microsoft uses for record. Used during refund for calculating refund limit. Tax is not included. This is locked price 30 days before expiry.
+    """Amount that Microsoft uses for record. Used during refund for calculating refund limit. Tax is
+    not included. This is locked price 30 days before expiry.
 
     :ivar currency_code: The ISO 4217 3-letter currency code for the currency used by this purchase
      record.
@@ -2780,7 +3155,7 @@ class RenewPropertiesResponsePricingCurrencyTotal(_serialization.Model):
         "amount": {"key": "amount", "type": "float"},
     }
 
-    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs):
+    def __init__(self, *, currency_code: Optional[str] = None, amount: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword currency_code: The ISO 4217 3-letter currency code for the currency used by this
          purchase record.
@@ -2794,7 +3169,7 @@ class RenewPropertiesResponsePricingCurrencyTotal(_serialization.Model):
 
 
 class ReservationList(_serialization.Model):
-    """ReservationList.
+    """List of ``Reservation``\ s.
 
     :ivar value:
     :vartype value: list[~azure.mgmt.reservations.models.ReservationResponse]
@@ -2808,8 +3183,12 @@ class ReservationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ReservationResponse"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ReservationResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.reservations.models.ReservationResponse]
@@ -2822,14 +3201,14 @@ class ReservationList(_serialization.Model):
 
 
 class ReservationMergeProperties(_serialization.Model):
-    """ReservationMergeProperties.
+    """Properties of reservation merge.
 
-    :ivar merge_destination: Reservation Resource Id Created due to the merge. Format of the
-     resource Id is
+    :ivar merge_destination: Reservation resource id Created due to the merge. Format of the
+     resource id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
     :vartype merge_destination: str
-    :ivar merge_sources: Resource Ids of the Source Reservation's merged to form this Reservation.
-     Format of the resource Id is
+    :ivar merge_sources: Resource ids of the source reservation's merged to form this reservation.
+     Format of the resource id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
     :vartype merge_sources: list[str]
     """
@@ -2839,14 +3218,16 @@ class ReservationMergeProperties(_serialization.Model):
         "merge_sources": {"key": "mergeSources", "type": "[str]"},
     }
 
-    def __init__(self, *, merge_destination: Optional[str] = None, merge_sources: Optional[List[str]] = None, **kwargs):
+    def __init__(
+        self, *, merge_destination: Optional[str] = None, merge_sources: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword merge_destination: Reservation Resource Id Created due to the merge. Format of the
-         resource Id is
+        :keyword merge_destination: Reservation resource id Created due to the merge. Format of the
+         resource id is
          /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
         :paramtype merge_destination: str
-        :keyword merge_sources: Resource Ids of the Source Reservation's merged to form this
-         Reservation. Format of the resource Id is
+        :keyword merge_sources: Resource ids of the source reservation's merged to form this
+         reservation. Format of the resource id is
          /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
         :paramtype merge_sources: list[str]
         """
@@ -2883,8 +3264,8 @@ class ReservationOrderBillingPlanInformation(_serialization.Model):
         start_date: Optional[datetime.date] = None,
         next_payment_due_date: Optional[datetime.date] = None,
         transactions: Optional[List["_models.PaymentDetail"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pricing_currency_total: Amount of money to be paid for the Order. Tax is not included.
         :paramtype pricing_currency_total: ~azure.mgmt.reservations.models.Price
@@ -2904,7 +3285,7 @@ class ReservationOrderBillingPlanInformation(_serialization.Model):
 
 
 class ReservationOrderList(_serialization.Model):
-    """ReservationOrderList.
+    """List of ``ReservationOrder``\ s.
 
     :ivar value:
     :vartype value: list[~azure.mgmt.reservations.models.ReservationOrderResponse]
@@ -2922,8 +3303,8 @@ class ReservationOrderList(_serialization.Model):
         *,
         value: Optional[List["_models.ReservationOrderResponse"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.reservations.models.ReservationOrderResponse]
@@ -2936,7 +3317,7 @@ class ReservationOrderList(_serialization.Model):
 
 
 class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """ReservationOrderResponse.
+    """Details of a reservation order being returned.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2957,13 +3338,15 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
     :vartype request_date_time: ~datetime.datetime
     :ivar created_date_time: This is the DateTime when the reservation was created.
     :vartype created_date_time: ~datetime.datetime
-    :ivar expiry_date: This is the date when the Reservation will expire.
+    :ivar expiry_date: This is the date when the reservation will expire.
     :vartype expiry_date: ~datetime.date
+    :ivar expiry_date_time: This is the date-time when the reservation will expire.
+    :vartype expiry_date_time: ~datetime.datetime
     :ivar benefit_start_time: This is the DateTime when the reservation benefit started.
     :vartype benefit_start_time: ~datetime.datetime
-    :ivar original_quantity: Total Quantity of the SKUs purchased in the Reservation.
+    :ivar original_quantity: Total Quantity of the skus purchased in the reservation.
     :vartype original_quantity: int
-    :ivar term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+    :ivar term: Represent the term of reservation. Known values are: "P1Y", "P3Y", and "P5Y".
     :vartype term: str or ~azure.mgmt.reservations.models.ReservationTerm
     :ivar provisioning_state: Current state of the reservation. Known values are: "Creating",
      "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
@@ -2977,6 +3360,9 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
      ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
     :ivar reservations:
     :vartype reservations: list[~azure.mgmt.reservations.models.ReservationResponse]
+    :ivar review_date_time: This is the date-time when the Azure Hybrid Benefit needs to be
+     reviewed.
+    :vartype review_date_time: ~datetime.datetime
     """
 
     _validation = {
@@ -2996,6 +3382,7 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         "request_date_time": {"key": "properties.requestDateTime", "type": "iso-8601"},
         "created_date_time": {"key": "properties.createdDateTime", "type": "iso-8601"},
         "expiry_date": {"key": "properties.expiryDate", "type": "date"},
+        "expiry_date_time": {"key": "properties.expiryDateTime", "type": "iso-8601"},
         "benefit_start_time": {"key": "properties.benefitStartTime", "type": "iso-8601"},
         "original_quantity": {"key": "properties.originalQuantity", "type": "int"},
         "term": {"key": "properties.term", "type": "str"},
@@ -3003,6 +3390,7 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         "billing_plan": {"key": "properties.billingPlan", "type": "str"},
         "plan_information": {"key": "properties.planInformation", "type": "ReservationOrderBillingPlanInformation"},
         "reservations": {"key": "properties.reservations", "type": "[ReservationResponse]"},
+        "review_date_time": {"key": "properties.reviewDateTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3013,6 +3401,7 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         request_date_time: Optional[datetime.datetime] = None,
         created_date_time: Optional[datetime.datetime] = None,
         expiry_date: Optional[datetime.date] = None,
+        expiry_date_time: Optional[datetime.datetime] = None,
         benefit_start_time: Optional[datetime.datetime] = None,
         original_quantity: Optional[int] = None,
         term: Optional[Union[str, "_models.ReservationTerm"]] = None,
@@ -3020,8 +3409,9 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
         plan_information: Optional["_models.ReservationOrderBillingPlanInformation"] = None,
         reservations: Optional[List["_models.ReservationResponse"]] = None,
-        **kwargs
-    ):
+        review_date_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag:
         :paramtype etag: int
@@ -3032,13 +3422,15 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         :paramtype request_date_time: ~datetime.datetime
         :keyword created_date_time: This is the DateTime when the reservation was created.
         :paramtype created_date_time: ~datetime.datetime
-        :keyword expiry_date: This is the date when the Reservation will expire.
+        :keyword expiry_date: This is the date when the reservation will expire.
         :paramtype expiry_date: ~datetime.date
+        :keyword expiry_date_time: This is the date-time when the reservation will expire.
+        :paramtype expiry_date_time: ~datetime.datetime
         :keyword benefit_start_time: This is the DateTime when the reservation benefit started.
         :paramtype benefit_start_time: ~datetime.datetime
-        :keyword original_quantity: Total Quantity of the SKUs purchased in the Reservation.
+        :keyword original_quantity: Total Quantity of the skus purchased in the reservation.
         :paramtype original_quantity: int
-        :keyword term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+        :keyword term: Represent the term of reservation. Known values are: "P1Y", "P3Y", and "P5Y".
         :paramtype term: str or ~azure.mgmt.reservations.models.ReservationTerm
         :keyword provisioning_state: Current state of the reservation. Known values are: "Creating",
          "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
@@ -3053,6 +3445,9 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
          ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
         :keyword reservations:
         :paramtype reservations: list[~azure.mgmt.reservations.models.ReservationResponse]
+        :keyword review_date_time: This is the date-time when the Azure Hybrid Benefit needs to be
+         reviewed.
+        :paramtype review_date_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.etag = etag
@@ -3064,6 +3459,7 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         self.request_date_time = request_date_time
         self.created_date_time = created_date_time
         self.expiry_date = expiry_date
+        self.expiry_date_time = expiry_date_time
         self.benefit_start_time = benefit_start_time
         self.original_quantity = original_quantity
         self.term = term
@@ -3071,31 +3467,35 @@ class ReservationOrderResponse(_serialization.Model):  # pylint: disable=too-man
         self.billing_plan = billing_plan
         self.plan_information = plan_information
         self.reservations = reservations
+        self.review_date_time = review_date_time
 
 
-class ReservationResponse(_serialization.Model):
+class ReservationResponse(ProxyResource):
     """The definition of the reservation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar location: The Azure Region where the reserved resource lives.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.reservations.models.SystemData
+    :ivar location: The Azure region where the reserved resource lives.
     :vartype location: str
     :ivar etag:
     :vartype etag: int
-    :ivar id: Identifier of the reservation.
-    :vartype id: str
-    :ivar name: Name of the reservation.
-    :vartype name: str
     :ivar sku: The sku information associated to this reservation.
     :vartype sku: ~azure.mgmt.reservations.models.SkuName
     :ivar properties: The properties associated to this reservation.
     :vartype properties: ~azure.mgmt.reservations.models.ReservationsProperties
-    :ivar type: Type of resource. "Microsoft.Capacity/reservationOrders/reservations".
-    :vartype type: str
     :ivar kind: Resource Provider type to be reserved. Default value is "Microsoft.Compute".
     :vartype kind: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.reservations.models.SystemData
     """
 
     _validation = {
@@ -3106,15 +3506,15 @@ class ReservationResponse(_serialization.Model):
     }
 
     _attribute_map = {
-        "location": {"key": "location", "type": "str"},
-        "etag": {"key": "etag", "type": "int"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "int"},
         "sku": {"key": "sku", "type": "SkuName"},
         "properties": {"key": "properties", "type": "ReservationsProperties"},
-        "type": {"key": "type", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -3124,11 +3524,11 @@ class ReservationResponse(_serialization.Model):
         etag: Optional[int] = None,
         sku: Optional["_models.SkuName"] = None,
         properties: Optional["_models.ReservationsProperties"] = None,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+        kind: Optional[Literal["Microsoft.Compute"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: The Azure Region where the reserved resource lives.
+        :keyword location: The Azure region where the reserved resource lives.
         :paramtype location: str
         :keyword etag:
         :paramtype etag: int
@@ -3142,13 +3542,9 @@ class ReservationResponse(_serialization.Model):
         super().__init__(**kwargs)
         self.location = location
         self.etag = etag
-        self.id = None
-        self.name = None
         self.sku = sku
         self.properties = properties
-        self.type = None
         self.kind = kind
-        self.system_data = None
 
 
 class ReservationsListResult(_serialization.Model):
@@ -3175,7 +3571,7 @@ class ReservationsListResult(_serialization.Model):
         "summary": {"key": "summary", "type": "ReservationSummary"},
     }
 
-    def __init__(self, *, summary: Optional["_models.ReservationSummary"] = None, **kwargs):
+    def __init__(self, *, summary: Optional["_models.ReservationSummary"] = None, **kwargs: Any) -> None:
         """
         :keyword summary: The roll out count summary of the reservations.
         :paramtype summary: ~azure.mgmt.reservations.models.ReservationSummary
@@ -3187,14 +3583,14 @@ class ReservationsListResult(_serialization.Model):
 
 
 class ReservationSplitProperties(_serialization.Model):
-    """ReservationSplitProperties.
+    """Properties of reservation split.
 
-    :ivar split_destinations: List of destination Resource Id that are created due to split. Format
-     of the resource Id is
+    :ivar split_destinations: List of destination resource id that are created due to split. Format
+     of the resource id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
     :vartype split_destinations: list[str]
-    :ivar split_source: Resource Id of the Reservation from which this is split. Format of the
-     resource Id is
+    :ivar split_source: Resource id of the reservation from which this is split. Format of the
+     resource id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
     :vartype split_source: str
     """
@@ -3204,14 +3600,16 @@ class ReservationSplitProperties(_serialization.Model):
         "split_source": {"key": "splitSource", "type": "str"},
     }
 
-    def __init__(self, *, split_destinations: Optional[List[str]] = None, split_source: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, split_destinations: Optional[List[str]] = None, split_source: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword split_destinations: List of destination Resource Id that are created due to split.
-         Format of the resource Id is
+        :keyword split_destinations: List of destination resource id that are created due to split.
+         Format of the resource id is
          /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
         :paramtype split_destinations: list[str]
-        :keyword split_source: Resource Id of the Reservation from which this is split. Format of the
-         resource Id is
+        :keyword split_source: Resource id of the reservation from which this is split. Format of the
+         resource id is
          /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
         :paramtype split_source: str
         """
@@ -3233,54 +3631,69 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
      "SqlEdge", and "VirtualMachineSoftware".
     :vartype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
     :ivar instance_flexibility: Allows reservation discount to be applied across skus within the
-     same Autofit group. Not all skus support instance size flexibility. Known values are: "On" and
+     same auto fit group. Not all skus support instance size flexibility. Known values are: "On" and
      "Off".
     :vartype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
     :ivar display_name: Friendly name for user to easily identify the reservation.
     :vartype display_name: str
     :ivar applied_scopes: The list of applied scopes.
     :vartype applied_scopes: list[str]
-    :ivar applied_scope_type: The applied scope type. Known values are: "Single" and "Shared".
+    :ivar applied_scope_type: The applied scope type. Known values are: "Single", "Shared", and
+     "ManagementGroup".
     :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
     :ivar archived: Indicates if the reservation is archived.
     :vartype archived: bool
     :ivar capabilities: Capabilities of the reservation.
     :vartype capabilities: str
-    :ivar quantity: Quantity of the SKUs that are part of the Reservation.
+    :ivar quantity: Quantity of the skus that are part of the reservation.
     :vartype quantity: int
     :ivar provisioning_state: Current state of the reservation. Known values are: "Creating",
      "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
      "Created", "Succeeded", "Cancelled", "Expired", "BillingFailed", "Failed", "Split", and
      "Merged".
     :vartype provisioning_state: str or ~azure.mgmt.reservations.models.ProvisioningState
-    :ivar effective_date_time: DateTime of the Reservation starting when this version is effective
+    :ivar effective_date_time: DateTime of the reservation starting when this version is effective
      from.
     :vartype effective_date_time: ~datetime.datetime
     :ivar benefit_start_time: This is the DateTime when the reservation benefit started.
     :vartype benefit_start_time: ~datetime.datetime
-    :ivar last_updated_date_time: DateTime of the last time the Reservation was updated.
+    :ivar last_updated_date_time: DateTime of the last time the reservation was updated.
     :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiry_date: This is the date when the Reservation will expire.
+    :ivar expiry_date: This is the date when the reservation will expire.
     :vartype expiry_date: ~datetime.date
-    :ivar sku_description: Description of the SKU in english.
+    :ivar expiry_date_time: This is the date-time when the reservation will expire.
+    :vartype expiry_date_time: ~datetime.datetime
+    :ivar review_date_time: This is the date-time when the Azure Hybrid Benefit needs to be
+     reviewed.
+    :vartype review_date_time: ~datetime.datetime
+    :ivar sku_description: Description of the sku in english.
     :vartype sku_description: str
     :ivar extended_status_info: The message giving detailed information about the status code.
     :vartype extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
-    :ivar billing_plan: The billing plan options available for this SKU. Known values are:
+    :ivar billing_plan: The billing plan options available for this sku. Known values are:
      "Upfront" and "Monthly".
     :vartype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
     :ivar display_provisioning_state: The provisioning state of the reservation for display, e.g.
      Succeeded.
     :vartype display_provisioning_state: str
-    :ivar provisioning_sub_state: The provisioning state of the reservation, e.g. Succeeded.
+    :ivar provisioning_sub_state: The provisioning sub-state of the reservation, e.g. Succeeded.
     :vartype provisioning_sub_state: str
-    :ivar purchase_date: This is the date when the Reservation was purchased.
+    :ivar purchase_date: This is the date when the reservation was purchased.
     :vartype purchase_date: ~datetime.date
-    :ivar split_properties:
+    :ivar purchase_date_time: This is the date-time when the reservation was purchased.
+    :vartype purchase_date_time: ~datetime.datetime
+    :ivar split_properties: Properties of reservation split.
     :vartype split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
-    :ivar merge_properties:
+    :ivar merge_properties: Properties of reservation merge.
     :vartype merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
-    :ivar billing_scope_id: Subscription that will be charged for purchasing Reservation.
+    :ivar swap_properties: Properties of reservation swap.
+    :vartype swap_properties: ~azure.mgmt.reservations.models.ReservationSwapProperties
+    :ivar applied_scope_properties: Properties specific to applied scope type. Not required if not
+     applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType is
+     ManagementGroup.
+    :vartype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
+    :ivar billing_scope_id: Subscription that will be charged for purchasing reservation or savings
+     plan.
     :vartype billing_scope_id: str
     :ivar renew: Setting this to true will automatically purchase a new reservation on the
      expiration date time.
@@ -3293,9 +3706,9 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
      Format of the resource Id is
      /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
     :vartype renew_destination: str
-    :ivar renew_properties:
+    :ivar renew_properties: The renew properties for a reservation.
     :vartype renew_properties: ~azure.mgmt.reservations.models.RenewPropertiesResponse
-    :ivar term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+    :ivar term: Represent the term of reservation. Known values are: "P1Y", "P3Y", and "P5Y".
     :vartype term: str or ~azure.mgmt.reservations.models.ReservationTerm
     :ivar user_friendly_applied_scope_type: The applied scope type of the reservation for display,
      e.g. Shared.
@@ -3329,14 +3742,19 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         "benefit_start_time": {"key": "benefitStartTime", "type": "iso-8601"},
         "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
         "expiry_date": {"key": "expiryDate", "type": "date"},
+        "expiry_date_time": {"key": "expiryDateTime", "type": "iso-8601"},
+        "review_date_time": {"key": "reviewDateTime", "type": "iso-8601"},
         "sku_description": {"key": "skuDescription", "type": "str"},
         "extended_status_info": {"key": "extendedStatusInfo", "type": "ExtendedStatusInfo"},
         "billing_plan": {"key": "billingPlan", "type": "str"},
         "display_provisioning_state": {"key": "displayProvisioningState", "type": "str"},
         "provisioning_sub_state": {"key": "provisioningSubState", "type": "str"},
         "purchase_date": {"key": "purchaseDate", "type": "date"},
+        "purchase_date_time": {"key": "purchaseDateTime", "type": "iso-8601"},
         "split_properties": {"key": "splitProperties", "type": "ReservationSplitProperties"},
         "merge_properties": {"key": "mergeProperties", "type": "ReservationMergeProperties"},
+        "swap_properties": {"key": "swapProperties", "type": "ReservationSwapProperties"},
+        "applied_scope_properties": {"key": "appliedScopeProperties", "type": "AppliedScopeProperties"},
         "billing_scope_id": {"key": "billingScopeId", "type": "str"},
         "renew": {"key": "renew", "type": "bool"},
         "renew_source": {"key": "renewSource", "type": "str"},
@@ -3363,20 +3781,25 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         effective_date_time: Optional[datetime.datetime] = None,
         benefit_start_time: Optional[datetime.datetime] = None,
         expiry_date: Optional[datetime.date] = None,
+        expiry_date_time: Optional[datetime.datetime] = None,
+        review_date_time: Optional[datetime.datetime] = None,
         sku_description: Optional[str] = None,
         extended_status_info: Optional["_models.ExtendedStatusInfo"] = None,
         billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
         purchase_date: Optional[datetime.date] = None,
+        purchase_date_time: Optional[datetime.datetime] = None,
         split_properties: Optional["_models.ReservationSplitProperties"] = None,
         merge_properties: Optional["_models.ReservationMergeProperties"] = None,
+        swap_properties: Optional["_models.ReservationSwapProperties"] = None,
+        applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
         billing_scope_id: Optional[str] = None,
         renew: bool = False,
         renew_source: Optional[str] = None,
         renew_destination: Optional[str] = None,
         renew_properties: Optional["_models.RenewPropertiesResponse"] = None,
         term: Optional[Union[str, "_models.ReservationTerm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reserved_resource_type: The type of the resource that is being reserved. Known values
          are: "VirtualMachines", "SqlDatabases", "SuseLinux", "CosmosDb", "RedHat", "SqlDataWarehouse",
@@ -3386,47 +3809,62 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
          "SqlEdge", and "VirtualMachineSoftware".
         :paramtype reserved_resource_type: str or ~azure.mgmt.reservations.models.ReservedResourceType
         :keyword instance_flexibility: Allows reservation discount to be applied across skus within the
-         same Autofit group. Not all skus support instance size flexibility. Known values are: "On" and
+         same auto fit group. Not all skus support instance size flexibility. Known values are: "On" and
          "Off".
         :paramtype instance_flexibility: str or ~azure.mgmt.reservations.models.InstanceFlexibility
         :keyword display_name: Friendly name for user to easily identify the reservation.
         :paramtype display_name: str
         :keyword applied_scopes: The list of applied scopes.
         :paramtype applied_scopes: list[str]
-        :keyword applied_scope_type: The applied scope type. Known values are: "Single" and "Shared".
+        :keyword applied_scope_type: The applied scope type. Known values are: "Single", "Shared", and
+         "ManagementGroup".
         :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
         :keyword archived: Indicates if the reservation is archived.
         :paramtype archived: bool
         :keyword capabilities: Capabilities of the reservation.
         :paramtype capabilities: str
-        :keyword quantity: Quantity of the SKUs that are part of the Reservation.
+        :keyword quantity: Quantity of the skus that are part of the reservation.
         :paramtype quantity: int
         :keyword provisioning_state: Current state of the reservation. Known values are: "Creating",
          "PendingResourceHold", "ConfirmedResourceHold", "PendingBilling", "ConfirmedBilling",
          "Created", "Succeeded", "Cancelled", "Expired", "BillingFailed", "Failed", "Split", and
          "Merged".
         :paramtype provisioning_state: str or ~azure.mgmt.reservations.models.ProvisioningState
-        :keyword effective_date_time: DateTime of the Reservation starting when this version is
+        :keyword effective_date_time: DateTime of the reservation starting when this version is
          effective from.
         :paramtype effective_date_time: ~datetime.datetime
         :keyword benefit_start_time: This is the DateTime when the reservation benefit started.
         :paramtype benefit_start_time: ~datetime.datetime
-        :keyword expiry_date: This is the date when the Reservation will expire.
+        :keyword expiry_date: This is the date when the reservation will expire.
         :paramtype expiry_date: ~datetime.date
-        :keyword sku_description: Description of the SKU in english.
+        :keyword expiry_date_time: This is the date-time when the reservation will expire.
+        :paramtype expiry_date_time: ~datetime.datetime
+        :keyword review_date_time: This is the date-time when the Azure Hybrid Benefit needs to be
+         reviewed.
+        :paramtype review_date_time: ~datetime.datetime
+        :keyword sku_description: Description of the sku in english.
         :paramtype sku_description: str
         :keyword extended_status_info: The message giving detailed information about the status code.
         :paramtype extended_status_info: ~azure.mgmt.reservations.models.ExtendedStatusInfo
-        :keyword billing_plan: The billing plan options available for this SKU. Known values are:
+        :keyword billing_plan: The billing plan options available for this sku. Known values are:
          "Upfront" and "Monthly".
         :paramtype billing_plan: str or ~azure.mgmt.reservations.models.ReservationBillingPlan
-        :keyword purchase_date: This is the date when the Reservation was purchased.
+        :keyword purchase_date: This is the date when the reservation was purchased.
         :paramtype purchase_date: ~datetime.date
-        :keyword split_properties:
+        :keyword purchase_date_time: This is the date-time when the reservation was purchased.
+        :paramtype purchase_date_time: ~datetime.datetime
+        :keyword split_properties: Properties of reservation split.
         :paramtype split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
-        :keyword merge_properties:
+        :keyword merge_properties: Properties of reservation merge.
         :paramtype merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
-        :keyword billing_scope_id: Subscription that will be charged for purchasing Reservation.
+        :keyword swap_properties: Properties of reservation swap.
+        :paramtype swap_properties: ~azure.mgmt.reservations.models.ReservationSwapProperties
+        :keyword applied_scope_properties: Properties specific to applied scope type. Not required if
+         not applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType
+         is ManagementGroup.
+        :paramtype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
+        :keyword billing_scope_id: Subscription that will be charged for purchasing reservation or
+         savings plan.
         :paramtype billing_scope_id: str
         :keyword renew: Setting this to true will automatically purchase a new reservation on the
          expiration date time.
@@ -3439,9 +3877,9 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
          renew. Format of the resource Id is
          /providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
         :paramtype renew_destination: str
-        :keyword renew_properties:
+        :keyword renew_properties: The renew properties for a reservation.
         :paramtype renew_properties: ~azure.mgmt.reservations.models.RenewPropertiesResponse
-        :keyword term: Represent the term of Reservation. Known values are: "P1Y", "P3Y", and "P5Y".
+        :keyword term: Represent the term of reservation. Known values are: "P1Y", "P3Y", and "P5Y".
         :paramtype term: str or ~azure.mgmt.reservations.models.ReservationTerm
         """
         super().__init__(**kwargs)
@@ -3458,14 +3896,19 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         self.benefit_start_time = benefit_start_time
         self.last_updated_date_time = None
         self.expiry_date = expiry_date
+        self.expiry_date_time = expiry_date_time
+        self.review_date_time = review_date_time
         self.sku_description = sku_description
         self.extended_status_info = extended_status_info
         self.billing_plan = billing_plan
         self.display_provisioning_state = None
         self.provisioning_sub_state = None
         self.purchase_date = purchase_date
+        self.purchase_date_time = purchase_date_time
         self.split_properties = split_properties
         self.merge_properties = merge_properties
+        self.swap_properties = swap_properties
+        self.applied_scope_properties = applied_scope_properties
         self.billing_scope_id = billing_scope_id
         self.renew = renew
         self.renew_source = renew_source
@@ -3482,7 +3925,7 @@ class ReservationsPropertiesUtilization(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar trend: The number of days trend for a reservation.
+    :ivar trend: last 7 day utilization trend for a reservation.
     :vartype trend: str
     :ivar aggregates: The array of aggregates of a reservation's utilization.
     :vartype aggregates: list[~azure.mgmt.reservations.models.ReservationUtilizationAggregates]
@@ -3497,7 +3940,9 @@ class ReservationsPropertiesUtilization(_serialization.Model):
         "aggregates": {"key": "aggregates", "type": "[ReservationUtilizationAggregates]"},
     }
 
-    def __init__(self, *, aggregates: Optional[List["_models.ReservationUtilizationAggregates"]] = None, **kwargs):
+    def __init__(
+        self, *, aggregates: Optional[List["_models.ReservationUtilizationAggregates"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword aggregates: The array of aggregates of a reservation's utilization.
         :paramtype aggregates: list[~azure.mgmt.reservations.models.ReservationUtilizationAggregates]
@@ -3526,6 +3971,10 @@ class ReservationSummary(_serialization.Model):
     :vartype cancelled_count: float
     :ivar processing_count: The number of reservation in Processing state.
     :vartype processing_count: float
+    :ivar warning_count: The number of reservation in Warning state.
+    :vartype warning_count: float
+    :ivar no_benefit_count: The number of reservation in NoBenefit state.
+    :vartype no_benefit_count: float
     """
 
     _validation = {
@@ -3536,6 +3985,8 @@ class ReservationSummary(_serialization.Model):
         "pending_count": {"readonly": True},
         "cancelled_count": {"readonly": True},
         "processing_count": {"readonly": True},
+        "warning_count": {"readonly": True},
+        "no_benefit_count": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3546,9 +3997,11 @@ class ReservationSummary(_serialization.Model):
         "pending_count": {"key": "pendingCount", "type": "float"},
         "cancelled_count": {"key": "cancelledCount", "type": "float"},
         "processing_count": {"key": "processingCount", "type": "float"},
+        "warning_count": {"key": "warningCount", "type": "float"},
+        "no_benefit_count": {"key": "noBenefitCount", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.succeeded_count = None
@@ -3558,16 +4011,54 @@ class ReservationSummary(_serialization.Model):
         self.pending_count = None
         self.cancelled_count = None
         self.processing_count = None
+        self.warning_count = None
+        self.no_benefit_count = None
+
+
+class ReservationSwapProperties(_serialization.Model):
+    """Properties of reservation swap.
+
+    :ivar swap_source: Resource id of the source reservation that gets swapped. Format of the
+     resource id is
+     /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype swap_source: str
+    :ivar swap_destination: Reservation resource id that the original resource gets swapped to.
+     Format of the resource id is
+     /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype swap_destination: str
+    """
+
+    _attribute_map = {
+        "swap_source": {"key": "swapSource", "type": "str"},
+        "swap_destination": {"key": "swapDestination", "type": "str"},
+    }
+
+    def __init__(
+        self, *, swap_source: Optional[str] = None, swap_destination: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword swap_source: Resource id of the source reservation that gets swapped. Format of the
+         resource id is
+         /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype swap_source: str
+        :keyword swap_destination: Reservation resource id that the original resource gets swapped to.
+         Format of the resource id is
+         /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype swap_destination: str
+        """
+        super().__init__(**kwargs)
+        self.swap_source = swap_source
+        self.swap_destination = swap_destination
 
 
 class ReservationToExchange(_serialization.Model):
     """Reservation refund details.
 
-    :ivar reservation_id: Fully qualified id of the Reservation being returned.
+    :ivar reservation_id: Fully qualified id of the reservation being returned.
     :vartype reservation_id: str
     :ivar quantity: Quantity to be returned.
     :vartype quantity: int
-    :ivar billing_refund_amount:
+    :ivar billing_refund_amount: Pricing information containing the amount and the currency code.
     :vartype billing_refund_amount: ~azure.mgmt.reservations.models.Price
     :ivar billing_information: billing information.
     :vartype billing_information: ~azure.mgmt.reservations.models.BillingInformation
@@ -3587,14 +4078,15 @@ class ReservationToExchange(_serialization.Model):
         quantity: Optional[int] = None,
         billing_refund_amount: Optional["_models.Price"] = None,
         billing_information: Optional["_models.BillingInformation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword reservation_id: Fully qualified id of the Reservation being returned.
+        :keyword reservation_id: Fully qualified id of the reservation being returned.
         :paramtype reservation_id: str
         :keyword quantity: Quantity to be returned.
         :paramtype quantity: int
-        :keyword billing_refund_amount:
+        :keyword billing_refund_amount: Pricing information containing the amount and the currency
+         code.
         :paramtype billing_refund_amount: ~azure.mgmt.reservations.models.Price
         :keyword billing_information: billing information.
         :paramtype billing_information: ~azure.mgmt.reservations.models.BillingInformation
@@ -3609,9 +4101,9 @@ class ReservationToExchange(_serialization.Model):
 class ReservationToPurchaseCalculateExchange(_serialization.Model):
     """Reservation purchase details.
 
-    :ivar properties:
+    :ivar properties: The request for reservation purchase.
     :vartype properties: ~azure.mgmt.reservations.models.PurchaseRequest
-    :ivar billing_currency_total:
+    :ivar billing_currency_total: Pricing information containing the amount and the currency code.
     :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
     """
 
@@ -3625,12 +4117,13 @@ class ReservationToPurchaseCalculateExchange(_serialization.Model):
         *,
         properties: Optional["_models.PurchaseRequest"] = None,
         billing_currency_total: Optional["_models.Price"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword properties:
+        :keyword properties: The request for reservation purchase.
         :paramtype properties: ~azure.mgmt.reservations.models.PurchaseRequest
-        :keyword billing_currency_total:
+        :keyword billing_currency_total: Pricing information containing the amount and the currency
+         code.
         :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
         """
         super().__init__(**kwargs)
@@ -3641,14 +4134,14 @@ class ReservationToPurchaseCalculateExchange(_serialization.Model):
 class ReservationToPurchaseExchange(_serialization.Model):
     """Reservation purchase details.
 
-    :ivar reservation_order_id: Fully qualified id of the ReservationOrder being purchased.
+    :ivar reservation_order_id: Fully qualified id of the reservationOrder being purchased.
     :vartype reservation_order_id: str
-    :ivar reservation_id: Fully qualified id of the Reservation being purchased. This value is only
+    :ivar reservation_id: Fully qualified id of the reservation being purchased. This value is only
      guaranteed to be non-null if the purchase is successful.
     :vartype reservation_id: str
-    :ivar properties:
+    :ivar properties: The request for reservation purchase.
     :vartype properties: ~azure.mgmt.reservations.models.PurchaseRequest
-    :ivar billing_currency_total:
+    :ivar billing_currency_total: Pricing information containing the amount and the currency code.
     :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
     :ivar status: Status of the individual operation. Known values are: "Succeeded", "Failed",
      "Cancelled", and "Pending".
@@ -3671,17 +4164,18 @@ class ReservationToPurchaseExchange(_serialization.Model):
         properties: Optional["_models.PurchaseRequest"] = None,
         billing_currency_total: Optional["_models.Price"] = None,
         status: Optional[Union[str, "_models.OperationStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword reservation_order_id: Fully qualified id of the ReservationOrder being purchased.
+        :keyword reservation_order_id: Fully qualified id of the reservationOrder being purchased.
         :paramtype reservation_order_id: str
-        :keyword reservation_id: Fully qualified id of the Reservation being purchased. This value is
+        :keyword reservation_id: Fully qualified id of the reservation being purchased. This value is
          only guaranteed to be non-null if the purchase is successful.
         :paramtype reservation_id: str
-        :keyword properties:
+        :keyword properties: The request for reservation purchase.
         :paramtype properties: ~azure.mgmt.reservations.models.PurchaseRequest
-        :keyword billing_currency_total:
+        :keyword billing_currency_total: Pricing information containing the amount and the currency
+         code.
         :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
         :keyword status: Status of the individual operation. Known values are: "Succeeded", "Failed",
          "Cancelled", and "Pending".
@@ -3698,7 +4192,7 @@ class ReservationToPurchaseExchange(_serialization.Model):
 class ReservationToReturn(_serialization.Model):
     """Reservation to return.
 
-    :ivar reservation_id: Fully qualified identifier of the Reservation being returned.
+    :ivar reservation_id: Fully qualified identifier of the reservation being returned.
     :vartype reservation_id: str
     :ivar quantity: Quantity to be returned. Must be greater than zero.
     :vartype quantity: int
@@ -3709,9 +4203,9 @@ class ReservationToReturn(_serialization.Model):
         "quantity": {"key": "quantity", "type": "int"},
     }
 
-    def __init__(self, *, reservation_id: Optional[str] = None, quantity: Optional[int] = None, **kwargs):
+    def __init__(self, *, reservation_id: Optional[str] = None, quantity: Optional[int] = None, **kwargs: Any) -> None:
         """
-        :keyword reservation_id: Fully qualified identifier of the Reservation being returned.
+        :keyword reservation_id: Fully qualified identifier of the reservation being returned.
         :paramtype reservation_id: str
         :keyword quantity: Quantity to be returned. Must be greater than zero.
         :paramtype quantity: int
@@ -3724,11 +4218,11 @@ class ReservationToReturn(_serialization.Model):
 class ReservationToReturnForExchange(_serialization.Model):
     """Reservation refund details.
 
-    :ivar reservation_id: Fully qualified id of the Reservation being returned.
+    :ivar reservation_id: Fully qualified id of the reservation being returned.
     :vartype reservation_id: str
     :ivar quantity: Quantity to be returned.
     :vartype quantity: int
-    :ivar billing_refund_amount:
+    :ivar billing_refund_amount: Pricing information containing the amount and the currency code.
     :vartype billing_refund_amount: ~azure.mgmt.reservations.models.Price
     :ivar billing_information: billing information.
     :vartype billing_information: ~azure.mgmt.reservations.models.BillingInformation
@@ -3753,14 +4247,15 @@ class ReservationToReturnForExchange(_serialization.Model):
         billing_refund_amount: Optional["_models.Price"] = None,
         billing_information: Optional["_models.BillingInformation"] = None,
         status: Optional[Union[str, "_models.OperationStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword reservation_id: Fully qualified id of the Reservation being returned.
+        :keyword reservation_id: Fully qualified id of the reservation being returned.
         :paramtype reservation_id: str
         :keyword quantity: Quantity to be returned.
         :paramtype quantity: int
-        :keyword billing_refund_amount:
+        :keyword billing_refund_amount: Pricing information containing the amount and the currency
+         code.
         :paramtype billing_refund_amount: ~azure.mgmt.reservations.models.Price
         :keyword billing_information: billing information.
         :paramtype billing_information: ~azure.mgmt.reservations.models.BillingInformation
@@ -3805,7 +4300,7 @@ class ReservationUtilizationAggregates(_serialization.Model):
         "value_unit": {"key": "valueUnit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.grain = None
@@ -3834,7 +4329,7 @@ class ResourceName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Resource name.
         :paramtype value: str
@@ -3844,8 +4339,184 @@ class ResourceName(_serialization.Model):
         self.localized_value = None
 
 
+class SavingsPlanPurchaseRequest(_serialization.Model):
+    """Request body for savings plan purchase.
+
+    :ivar sku: The name of sku.
+    :vartype sku: ~azure.mgmt.reservations.models.SkuName
+    :ivar display_name: Friendly name of the savings plan.
+    :vartype display_name: str
+    :ivar billing_scope_id: Subscription that will be charged for purchasing reservation or savings
+     plan.
+    :vartype billing_scope_id: str
+    :ivar term: Represent savings plan term in ISO 8601 format. Known values are: "P1Y" and "P3Y".
+    :vartype term: str or ~azure.mgmt.reservations.models.SavingsPlanTerm
+    :ivar billing_plan: Represents the billing plan in ISO 8601 format. Required only for monthly
+     billing plans. "P1M"
+    :vartype billing_plan: str or ~azure.mgmt.reservations.models.BillingPlan
+    :ivar applied_scope_type: Type of the Applied Scope. Known values are: "Single", "Shared", and
+     "ManagementGroup".
+    :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+    :ivar applied_scope_properties: Properties specific to applied scope type. Not required if not
+     applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType is
+     ManagementGroup.
+    :vartype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
+    :ivar commitment: Commitment towards the benefit.
+    :vartype commitment: ~azure.mgmt.reservations.models.Commitment
+    """
+
+    _attribute_map = {
+        "sku": {"key": "sku", "type": "SkuName"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "billing_scope_id": {"key": "properties.billingScopeId", "type": "str"},
+        "term": {"key": "properties.term", "type": "str"},
+        "billing_plan": {"key": "properties.billingPlan", "type": "str"},
+        "applied_scope_type": {"key": "properties.appliedScopeType", "type": "str"},
+        "applied_scope_properties": {"key": "properties.appliedScopeProperties", "type": "AppliedScopeProperties"},
+        "commitment": {"key": "properties.commitment", "type": "Commitment"},
+    }
+
+    def __init__(
+        self,
+        *,
+        sku: Optional["_models.SkuName"] = None,
+        display_name: Optional[str] = None,
+        billing_scope_id: Optional[str] = None,
+        term: Optional[Union[str, "_models.SavingsPlanTerm"]] = None,
+        billing_plan: Optional[Union[str, "_models.BillingPlan"]] = None,
+        applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
+        applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
+        commitment: Optional["_models.Commitment"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword sku: The name of sku.
+        :paramtype sku: ~azure.mgmt.reservations.models.SkuName
+        :keyword display_name: Friendly name of the savings plan.
+        :paramtype display_name: str
+        :keyword billing_scope_id: Subscription that will be charged for purchasing reservation or
+         savings plan.
+        :paramtype billing_scope_id: str
+        :keyword term: Represent savings plan term in ISO 8601 format. Known values are: "P1Y" and
+         "P3Y".
+        :paramtype term: str or ~azure.mgmt.reservations.models.SavingsPlanTerm
+        :keyword billing_plan: Represents the billing plan in ISO 8601 format. Required only for
+         monthly billing plans. "P1M"
+        :paramtype billing_plan: str or ~azure.mgmt.reservations.models.BillingPlan
+        :keyword applied_scope_type: Type of the Applied Scope. Known values are: "Single", "Shared",
+         and "ManagementGroup".
+        :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
+        :keyword applied_scope_properties: Properties specific to applied scope type. Not required if
+         not applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType
+         is ManagementGroup.
+        :paramtype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
+        :keyword commitment: Commitment towards the benefit.
+        :paramtype commitment: ~azure.mgmt.reservations.models.Commitment
+        """
+        super().__init__(**kwargs)
+        self.sku = sku
+        self.display_name = display_name
+        self.billing_scope_id = billing_scope_id
+        self.term = term
+        self.billing_plan = billing_plan
+        self.applied_scope_type = applied_scope_type
+        self.applied_scope_properties = applied_scope_properties
+        self.commitment = commitment
+
+
+class SavingsPlanToPurchaseCalculateExchange(_serialization.Model):
+    """Savings plan purchase details.
+
+    :ivar properties: Request body for savings plan purchase.
+    :vartype properties: ~azure.mgmt.reservations.models.SavingsPlanPurchaseRequest
+    :ivar billing_currency_total: Pricing information containing the amount and the currency code.
+    :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "SavingsPlanPurchaseRequest"},
+        "billing_currency_total": {"key": "billingCurrencyTotal", "type": "Price"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SavingsPlanPurchaseRequest"] = None,
+        billing_currency_total: Optional["_models.Price"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Request body for savings plan purchase.
+        :paramtype properties: ~azure.mgmt.reservations.models.SavingsPlanPurchaseRequest
+        :keyword billing_currency_total: Pricing information containing the amount and the currency
+         code.
+        :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+        self.billing_currency_total = billing_currency_total
+
+
+class SavingsPlanToPurchaseExchange(_serialization.Model):
+    """Savings plan purchase details.
+
+    :ivar savings_plan_order_id: Fully qualified id of the savings plan order being purchased.
+    :vartype savings_plan_order_id: str
+    :ivar savings_plan_id: Fully qualified id of the savings plan being purchased. This value is
+     only guaranteed to be non-null if the purchase is successful.
+    :vartype savings_plan_id: str
+    :ivar properties: Request body for savings plan purchase.
+    :vartype properties: ~azure.mgmt.reservations.models.SavingsPlanPurchaseRequest
+    :ivar billing_currency_total: Pricing information containing the amount and the currency code.
+    :vartype billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :ivar status: Status of the individual operation. Known values are: "Succeeded", "Failed",
+     "Cancelled", and "Pending".
+    :vartype status: str or ~azure.mgmt.reservations.models.OperationStatus
+    """
+
+    _attribute_map = {
+        "savings_plan_order_id": {"key": "savingsPlanOrderId", "type": "str"},
+        "savings_plan_id": {"key": "savingsPlanId", "type": "str"},
+        "properties": {"key": "properties", "type": "SavingsPlanPurchaseRequest"},
+        "billing_currency_total": {"key": "billingCurrencyTotal", "type": "Price"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        savings_plan_order_id: Optional[str] = None,
+        savings_plan_id: Optional[str] = None,
+        properties: Optional["_models.SavingsPlanPurchaseRequest"] = None,
+        billing_currency_total: Optional["_models.Price"] = None,
+        status: Optional[Union[str, "_models.OperationStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword savings_plan_order_id: Fully qualified id of the savings plan order being purchased.
+        :paramtype savings_plan_order_id: str
+        :keyword savings_plan_id: Fully qualified id of the savings plan being purchased. This value is
+         only guaranteed to be non-null if the purchase is successful.
+        :paramtype savings_plan_id: str
+        :keyword properties: Request body for savings plan purchase.
+        :paramtype properties: ~azure.mgmt.reservations.models.SavingsPlanPurchaseRequest
+        :keyword billing_currency_total: Pricing information containing the amount and the currency
+         code.
+        :paramtype billing_currency_total: ~azure.mgmt.reservations.models.Price
+        :keyword status: Status of the individual operation. Known values are: "Succeeded", "Failed",
+         "Cancelled", and "Pending".
+        :paramtype status: str or ~azure.mgmt.reservations.models.OperationStatus
+        """
+        super().__init__(**kwargs)
+        self.savings_plan_order_id = savings_plan_order_id
+        self.savings_plan_id = savings_plan_id
+        self.properties = properties
+        self.billing_currency_total = billing_currency_total
+        self.status = status
+
+
 class ScopeProperties(_serialization.Model):
-    """ScopeProperties.
+    """The scope and whether it is valid.
 
     :ivar scope:
     :vartype scope: str
@@ -3858,7 +4529,7 @@ class ScopeProperties(_serialization.Model):
         "valid": {"key": "valid", "type": "bool"},
     }
 
-    def __init__(self, *, scope: Optional[str] = None, valid: Optional[bool] = None, **kwargs):
+    def __init__(self, *, scope: Optional[str] = None, valid: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword scope:
         :paramtype scope: str
@@ -3893,7 +4564,7 @@ class ServiceError(_serialization.Model):
         "details": {"key": "details", "type": "[ServiceErrorDetail]"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -3927,7 +4598,7 @@ class ServiceErrorDetail(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -3935,7 +4606,7 @@ class ServiceErrorDetail(_serialization.Model):
 
 
 class SkuCapability(_serialization.Model):
-    """SkuCapability.
+    """Capability of a sku.
 
     :ivar name: An invariant to describe the feature.
     :vartype name: str
@@ -3948,7 +4619,7 @@ class SkuCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: An invariant to describe the feature.
         :paramtype name: str
@@ -3961,7 +4632,7 @@ class SkuCapability(_serialization.Model):
 
 
 class SkuName(_serialization.Model):
-    """SkuName.
+    """The name of sku.
 
     :ivar name:
     :vartype name: str
@@ -3971,7 +4642,7 @@ class SkuName(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -3981,7 +4652,7 @@ class SkuName(_serialization.Model):
 
 
 class SkuProperty(_serialization.Model):
-    """SkuProperty.
+    """Property of a sku.
 
     :ivar name: An invariant to describe the feature.
     :vartype name: str
@@ -3994,7 +4665,7 @@ class SkuProperty(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: An invariant to describe the feature.
         :paramtype name: str
@@ -4007,12 +4678,12 @@ class SkuProperty(_serialization.Model):
 
 
 class SkuRestriction(_serialization.Model):
-    """SkuRestriction.
+    """Restriction of a sku.
 
     :ivar type: The type of restrictions.
     :vartype type: str
     :ivar values: The value of restrictions. If the restriction type is set to location. This would
-     be different locations where the SKU is restricted.
+     be different locations where the sku is restricted.
     :vartype values: list[str]
     :ivar reason_code: The reason for restriction.
     :vartype reason_code: str
@@ -4030,13 +4701,13 @@ class SkuRestriction(_serialization.Model):
         type: Optional[str] = None,
         values: Optional[List[str]] = None,
         reason_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of restrictions.
         :paramtype type: str
         :keyword values: The value of restrictions. If the restriction type is set to location. This
-         would be different locations where the SKU is restricted.
+         would be different locations where the sku is restricted.
         :paramtype values: list[str]
         :keyword reason_code: The reason for restriction.
         :paramtype reason_code: str
@@ -4048,7 +4719,7 @@ class SkuRestriction(_serialization.Model):
 
 
 class SplitRequest(_serialization.Model):
-    """SplitRequest.
+    """The request for reservation split.
 
     :ivar quantities: List of the quantities in the new reservations to create.
     :vartype quantities: list[int]
@@ -4063,7 +4734,9 @@ class SplitRequest(_serialization.Model):
         "reservation_id": {"key": "properties.reservationId", "type": "str"},
     }
 
-    def __init__(self, *, quantities: Optional[List[int]] = None, reservation_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, quantities: Optional[List[int]] = None, reservation_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword quantities: List of the quantities in the new reservations to create.
         :paramtype quantities: list[int]
@@ -4123,8 +4796,8 @@ class SubRequest(_serialization.Model):
         name: Optional["_models.ResourceName"] = None,
         unit: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.QuotaRequestState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The resource name.
         :paramtype name: ~azure.mgmt.reservations.models.ResourceName
@@ -4146,7 +4819,7 @@ class SubRequest(_serialization.Model):
 
 
 class SubscriptionScopeProperties(_serialization.Model):
-    """SubscriptionScopeProperties.
+    """The scopes checked by the available scope api.
 
     :ivar scopes:
     :vartype scopes: list[~azure.mgmt.reservations.models.ScopeProperties]
@@ -4156,7 +4829,7 @@ class SubscriptionScopeProperties(_serialization.Model):
         "scopes": {"key": "scopes", "type": "[ScopeProperties]"},
     }
 
-    def __init__(self, *, scopes: Optional[List["_models.ScopeProperties"]] = None, **kwargs):
+    def __init__(self, *, scopes: Optional[List["_models.ScopeProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword scopes:
         :paramtype scopes: list[~azure.mgmt.reservations.models.ScopeProperties]
@@ -4202,8 +4875,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str

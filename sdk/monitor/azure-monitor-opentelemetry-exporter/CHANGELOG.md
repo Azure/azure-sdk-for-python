@@ -1,17 +1,62 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
+## 1.0.0b13 (Unreleased)
 
 ### Features Added
 
-- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+- Enable AAD Credentials
+    ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b12 (2023-02-06)
+
+### Features Added
+
+- Add sdkVersion prefix during App Service attach
+    ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+- Correcting sdkVersion prefix
+    ([#29227](https://github.com/Azure/azure-sdk-for-python/pull/29227))
+
+### Bugs Fixed
+
+- Update success criteria for requests
+    ([#28486](https://github.com/Azure/azure-sdk-for-python/pull/28486))
+
+### Other Changes
+
+- Loosen instrumentation key validation strictness
+    ([#28316](https://github.com/Azure/azure-sdk-for-python/pull/28316))
+- Disable storage for statsbeat if storage is disabled for exporter
+    ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
+- Add UK to eu statsbeats
+    ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
+- Update to opentelemetry api/sdk v1.15
+    ([#28499](https://github.com/Azure/azure-sdk-for-python/pull/28499))
+- Update logging samples import paths to opentelemetry api/sdk v1.15
+    ([#28646](https://github.com/Azure/azure-sdk-for-python/pull/28646))
+
+## 1.0.0b11 (2022-12-15)
+
+### Features Added
+
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+- Add azure-sdk usage to instrumentations statsbeat
+    ([#27756](https://github.com/Azure/azure-sdk-for-python/pull/27756))
+
+### Bugs Fixed
+
+- Pinning OpenTelemetry SDK and API to between 1.12 and 1.14 to avoid bug from change in module path. Reverting [#27913]
+    ([#27958](https://github.com/Azure/azure-sdk-for-python/pull/27958))
+- Pass along sampleRate in SpanEvents from Span
+    ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
 
 ## 1.0.0b10 (2022-11-10)
 

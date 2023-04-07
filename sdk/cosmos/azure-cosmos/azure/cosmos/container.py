@@ -29,7 +29,8 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, validate_cache_staleness_value, _deserialize_throughput, _replace_throughput
+from ._base import build_options, validate_cache_staleness_value, _deserialize_throughput, _replace_throughput, \
+    GenerateGuidId
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import ThroughputProperties
@@ -185,9 +186,8 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int max_integrated_cache_staleness_in_ms:
-        The max cache staleness for the integrated cache in milliseconds.
-            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
@@ -241,9 +241,8 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int max_integrated_cache_staleness_in_ms:
-        The max cache staleness for the integrated cache in milliseconds.
-            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
@@ -289,7 +288,7 @@ class ContainerProxy(object):
             This is used to process the change feed in parallel across multiple consumers.
         :param partition_key: partition key at which ChangeFeed requests are targetted.
         :param is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default it's start from current (false).
+            beginning (true) or from current (false). By default, it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -300,7 +299,7 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
-        partition_key = kwargs.pop("partitionKey", None)
+        partition_key = kwargs.pop("partitionKey", kwargs.pop("partition_key", None))
         if partition_key is not None:
             feed_options["partitionKey"] = partition_key
         if is_start_from_beginning is not None:
@@ -355,9 +354,8 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int max_integrated_cache_staleness_in_ms:
-        The max cache staleness for the integrated cache in milliseconds.
-            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
@@ -396,7 +394,8 @@ class ContainerProxy(object):
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-
+        correlated_activity_id = GenerateGuidId()
+        feed_options["correlatedActivityId"] = correlated_activity_id
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 

@@ -19,7 +19,7 @@ METHOD_NAMES = [
 METHOD_MAP = dict(zip(METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"]))
 
 
-class TestIndexDocumentsBatch(object):
+class TestIndexDocumentsBatch:
     def test_init(self):
         batch = IndexDocumentsBatch()
         assert batch.actions == []

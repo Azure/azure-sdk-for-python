@@ -26,6 +26,5 @@ conf:
   spark.executor.cores: 2
   spark.executor.memory: "2g"
   spark.executor.instances: 4
-  spark.yarn.dist.jars: https://foobaradrama2.azurefd.net/latest/hadoop-azureml-fs.jar
 
-#environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+#environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

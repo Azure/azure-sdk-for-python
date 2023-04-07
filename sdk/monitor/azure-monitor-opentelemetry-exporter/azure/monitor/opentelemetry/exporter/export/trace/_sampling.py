@@ -36,7 +36,7 @@ class ApplicationInsightsSampler(Sampler):
         if not 0.0 <= sampling_ratio <= 1.0:
             raise ValueError("sampling_ratio must be in the range [0,1]")
         self._ratio = sampling_ratio
-        self._sample_rate = round(sampling_ratio * 100)
+        self._sample_rate = sampling_ratio * 100
 
     # pylint:disable=C0301
     # See https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md

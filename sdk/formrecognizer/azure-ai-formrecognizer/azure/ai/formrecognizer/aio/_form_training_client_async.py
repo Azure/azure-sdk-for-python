@@ -54,14 +54,14 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_ft_client_with_key_async]
             :end-before: [END create_ft_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormTrainingClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_ft_client_with_aad_async]
             :end-before: [END create_ft_client_with_aad_async]
             :language: python
@@ -150,7 +150,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     deserialization_callback=deserialization_callback,
                 )
 
-            response = await self._client.train_custom_model_async(
+            response = await self._client.train_custom_model_async(  # type: ignore
                 train_request=self._generated_models.TrainRequest(
                     source=training_files_url,
                     use_label_file=use_training_labels,
@@ -447,8 +447,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies,
-        )  # type: AsyncPipeline
+            policies=self._client._client._pipeline._impl_policies,  # type: ignore
+        )
         client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
@@ -457,7 +457,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
-        client._client._config = self._client._client._config
+        client._client._config = self._client._config
         return client
 
     async def __aenter__(self) -> "FormTrainingClient":

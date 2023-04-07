@@ -3,8 +3,12 @@
 # ---------------------------------------------------------
 from typing import Dict, Optional, Union
 
-from azure.ai.ml import Input, Output
-from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
+from ... import Input, Output
+from ..._utils.utils import get_all_enum_values_iter
+from ...constants import AssetTypes
+from ...constants._common import InputTypes
+from ...constants._component import ComponentParameterTypes, IOConstants
+from .._schema.input_output import SUPPORTED_INTERNAL_PARAM_TYPES
 
 _INPUT_TYPE_ENUM = "enum"
 _INPUT_TYPE_ENUM_CAP = "Enum"
@@ -13,9 +17,9 @@ _INPUT_TYPE_FLOAT_CAP = "Float"
 
 
 class InternalInput(Input):
-    """Internal input class for internal components only.
-    Comparing to the public Input class, this class has additional primitive
-    input types:
+    """Internal input class for internal components only. Comparing to the public Input class, this class has additional
+    primitive input types:
+
     - String
     - Integer
     - Float, float
@@ -92,7 +96,10 @@ class InternalInput(Input):
 
     @classmethod
     def _from_base(cls, _input: Union[Input, Dict]) -> Optional["InternalInput"]:
-        """Cast from Input or Dict to InternalInput. Do not guarantee to create a new object."""
+        """Cast from Input or Dict to InternalInput.
+
+        Do not guarantee to create a new object.
+        """
         if _input is None:
             return None
         if isinstance(_input, InternalInput):
@@ -105,9 +112,30 @@ class InternalInput(Input):
         return InternalInput(**_input)
 
 
+def _map_v1_io_type(output_type: str) -> str:
+    """Map v1 IO type to v2."""
+    # TODO: put it in a common place
+    def _map_primitive_type(_type):
+        """Convert double and float to number type."""
+        _type = _type.lower()
+        if _type in ["double", "float"]:
+            return InputTypes.NUMBER
+        return _type
+
+    if output_type in list(get_all_enum_values_iter(AssetTypes)):
+        return output_type
+    if output_type in SUPPORTED_INTERNAL_PARAM_TYPES:
+        return _map_primitive_type(output_type)
+    if output_type in ["AnyFile"]:
+        return AssetTypes.URI_FILE
+    # Handle AnyDirectory and the other types.
+    return AssetTypes.URI_FOLDER
+
+
 class InternalOutput(Output):
-    def __init__(self, *, datastore_mode=None, **kwargs):
+    def __init__(self, *, datastore_mode=None, is_link_mode=None, **kwargs):
         self.datastore_mode = datastore_mode
+        self.is_link_mode = is_link_mode
         super().__init__(**kwargs)
 
     @classmethod
@@ -122,3 +150,8 @@ class InternalOutput(Output):
             _output.__class__ = InternalOutput
             return _output
         return InternalOutput(**_output)
+
+    def map_pipeline_output_type(self):
+        """Map output type to pipeline output type."""
+        # TODO: call this for node output
+        return _map_v1_io_type(self.type)

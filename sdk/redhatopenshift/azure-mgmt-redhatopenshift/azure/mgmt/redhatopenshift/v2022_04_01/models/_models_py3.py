@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +8,19 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._azure_red_hat_open_shift_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class APIServerProfile(msrest.serialization.Model):
+class APIServerProfile(_serialization.Model):
     """APIServerProfile represents an API server profile.
 
-    :ivar visibility: API server visibility. Possible values include: "Private", "Public".
+    :ivar visibility: API server visibility. Known values are: "Private" and "Public".
     :vartype visibility: str or ~azure.mgmt.redhatopenshift.v2022_04_01.models.Visibility
     :ivar url: The URL to access the cluster API server.
     :vartype url: str
@@ -26,34 +29,34 @@ class APIServerProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'visibility': {'key': 'visibility', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'ip': {'key': 'ip', 'type': 'str'},
+        "visibility": {"key": "visibility", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "ip": {"key": "ip", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        visibility: Optional[Union[str, "Visibility"]] = None,
+        visibility: Optional[Union[str, "_models.Visibility"]] = None,
         url: Optional[str] = None,
         ip: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword visibility: API server visibility. Possible values include: "Private", "Public".
+        :keyword visibility: API server visibility. Known values are: "Private" and "Public".
         :paramtype visibility: str or ~azure.mgmt.redhatopenshift.v2022_04_01.models.Visibility
         :keyword url: The URL to access the cluster API server.
         :paramtype url: str
         :keyword ip: The IP of the cluster API server.
         :paramtype ip: str
         """
-        super(APIServerProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.visibility = visibility
         self.url = url
         self.ip = ip
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """CloudErrorBody represents the body of a cloud error.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -70,10 +73,10 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -82,9 +85,9 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.CloudErrorBody"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -98,14 +101,14 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.redhatopenshift.v2022_04_01.models.CloudErrorBody]
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class ClusterProfile(msrest.serialization.Model):
+class ClusterProfile(_serialization.Model):
     """ClusterProfile represents a cluster profile.
 
     :ivar pull_secret: The pull secret for the cluster.
@@ -116,18 +119,18 @@ class ClusterProfile(msrest.serialization.Model):
     :vartype version: str
     :ivar resource_group_id: The ID of the cluster resource group.
     :vartype resource_group_id: str
-    :ivar fips_validated_modules: If FIPS validated crypto modules are used. Possible values
-     include: "Disabled", "Enabled".
+    :ivar fips_validated_modules: If FIPS validated crypto modules are used. Known values are:
+     "Disabled" and "Enabled".
     :vartype fips_validated_modules: str or
      ~azure.mgmt.redhatopenshift.v2022_04_01.models.FipsValidatedModules
     """
 
     _attribute_map = {
-        'pull_secret': {'key': 'pullSecret', 'type': 'str'},
-        'domain': {'key': 'domain', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'resource_group_id': {'key': 'resourceGroupId', 'type': 'str'},
-        'fips_validated_modules': {'key': 'fipsValidatedModules', 'type': 'str'},
+        "pull_secret": {"key": "pullSecret", "type": "str"},
+        "domain": {"key": "domain", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "resource_group_id": {"key": "resourceGroupId", "type": "str"},
+        "fips_validated_modules": {"key": "fipsValidatedModules", "type": "str"},
     }
 
     def __init__(
@@ -137,9 +140,9 @@ class ClusterProfile(msrest.serialization.Model):
         domain: Optional[str] = None,
         version: Optional[str] = None,
         resource_group_id: Optional[str] = None,
-        fips_validated_modules: Optional[Union[str, "FipsValidatedModules"]] = None,
-        **kwargs
-    ):
+        fips_validated_modules: Optional[Union[str, "_models.FipsValidatedModules"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pull_secret: The pull secret for the cluster.
         :paramtype pull_secret: str
@@ -149,12 +152,12 @@ class ClusterProfile(msrest.serialization.Model):
         :paramtype version: str
         :keyword resource_group_id: The ID of the cluster resource group.
         :paramtype resource_group_id: str
-        :keyword fips_validated_modules: If FIPS validated crypto modules are used. Possible values
-         include: "Disabled", "Enabled".
+        :keyword fips_validated_modules: If FIPS validated crypto modules are used. Known values are:
+         "Disabled" and "Enabled".
         :paramtype fips_validated_modules: str or
          ~azure.mgmt.redhatopenshift.v2022_04_01.models.FipsValidatedModules
         """
-        super(ClusterProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pull_secret = pull_secret
         self.domain = domain
         self.version = version
@@ -162,7 +165,7 @@ class ClusterProfile(msrest.serialization.Model):
         self.fips_validated_modules = fips_validated_modules
 
 
-class ConsoleProfile(msrest.serialization.Model):
+class ConsoleProfile(_serialization.Model):
     """ConsoleProfile represents a console profile.
 
     :ivar url: The URL to access the cluster console.
@@ -170,24 +173,19 @@ class ConsoleProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword url: The URL to access the cluster console.
         :paramtype url: str
         """
-        super(ConsoleProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
 
 
-class Display(msrest.serialization.Model):
+class Display(_serialization.Model):
     """Display represents the display details of an operation.
 
     :ivar provider: Friendly name of the resource provider.
@@ -201,10 +199,10 @@ class Display(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -214,8 +212,8 @@ class Display(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -226,61 +224,61 @@ class Display(msrest.serialization.Model):
         :keyword description: Friendly name of the operation.
         :paramtype description: str
         """
-        super(Display, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class IngressProfile(msrest.serialization.Model):
+class IngressProfile(_serialization.Model):
     """IngressProfile represents an ingress profile.
 
     :ivar name: The ingress profile name.
     :vartype name: str
-    :ivar visibility: Ingress visibility. Possible values include: "Private", "Public".
+    :ivar visibility: Ingress visibility. Known values are: "Private" and "Public".
     :vartype visibility: str or ~azure.mgmt.redhatopenshift.v2022_04_01.models.Visibility
     :ivar ip: The IP of the ingress.
     :vartype ip: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'visibility': {'key': 'visibility', 'type': 'str'},
-        'ip': {'key': 'ip', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "visibility": {"key": "visibility", "type": "str"},
+        "ip": {"key": "ip", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        visibility: Optional[Union[str, "Visibility"]] = None,
+        visibility: Optional[Union[str, "_models.Visibility"]] = None,
         ip: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The ingress profile name.
         :paramtype name: str
-        :keyword visibility: Ingress visibility. Possible values include: "Private", "Public".
+        :keyword visibility: Ingress visibility. Known values are: "Private" and "Public".
         :paramtype visibility: str or ~azure.mgmt.redhatopenshift.v2022_04_01.models.Visibility
         :keyword ip: The IP of the ingress.
         :paramtype ip: str
         """
-        super(IngressProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.visibility = visibility
         self.ip = ip
 
 
-class MasterProfile(msrest.serialization.Model):
+class MasterProfile(_serialization.Model):
     """MasterProfile represents a master profile.
 
     :ivar vm_size: The size of the master VMs.
     :vartype vm_size: str
     :ivar subnet_id: The Azure resource ID of the master subnet.
     :vartype subnet_id: str
-    :ivar encryption_at_host: Whether master virtual machines are encrypted at host. Possible
-     values include: "Disabled", "Enabled".
+    :ivar encryption_at_host: Whether master virtual machines are encrypted at host. Known values
+     are: "Disabled" and "Enabled".
     :vartype encryption_at_host: str or
      ~azure.mgmt.redhatopenshift.v2022_04_01.models.EncryptionAtHost
     :ivar disk_encryption_set_id: The resource ID of an associated DiskEncryptionSet, if
@@ -289,10 +287,10 @@ class MasterProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'str'},
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "encryption_at_host": {"key": "encryptionAtHost", "type": "str"},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
     def __init__(
@@ -300,31 +298,31 @@ class MasterProfile(msrest.serialization.Model):
         *,
         vm_size: Optional[str] = None,
         subnet_id: Optional[str] = None,
-        encryption_at_host: Optional[Union[str, "EncryptionAtHost"]] = None,
+        encryption_at_host: Optional[Union[str, "_models.EncryptionAtHost"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_size: The size of the master VMs.
         :paramtype vm_size: str
         :keyword subnet_id: The Azure resource ID of the master subnet.
         :paramtype subnet_id: str
-        :keyword encryption_at_host: Whether master virtual machines are encrypted at host. Possible
-         values include: "Disabled", "Enabled".
+        :keyword encryption_at_host: Whether master virtual machines are encrypted at host. Known
+         values are: "Disabled" and "Enabled".
         :paramtype encryption_at_host: str or
          ~azure.mgmt.redhatopenshift.v2022_04_01.models.EncryptionAtHost
         :keyword disk_encryption_set_id: The resource ID of an associated DiskEncryptionSet, if
          applicable.
         :paramtype disk_encryption_set_id: str
         """
-        super(MasterProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_size = vm_size
         self.subnet_id = subnet_id
         self.encryption_at_host = encryption_at_host
         self.disk_encryption_set_id = disk_encryption_set_id
 
 
-class NetworkProfile(msrest.serialization.Model):
+class NetworkProfile(_serialization.Model):
     """NetworkProfile represents a network profile.
 
     :ivar pod_cidr: The CIDR used for OpenShift/Kubernetes Pods.
@@ -334,29 +332,23 @@ class NetworkProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pod_cidr': {'key': 'podCidr', 'type': 'str'},
-        'service_cidr': {'key': 'serviceCidr', 'type': 'str'},
+        "pod_cidr": {"key": "podCidr", "type": "str"},
+        "service_cidr": {"key": "serviceCidr", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        pod_cidr: Optional[str] = None,
-        service_cidr: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, pod_cidr: Optional[str] = None, service_cidr: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword pod_cidr: The CIDR used for OpenShift/Kubernetes Pods.
         :paramtype pod_cidr: str
         :keyword service_cidr: The CIDR used for OpenShift/Kubernetes Services.
         :paramtype service_cidr: str
         """
-        super(NetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pod_cidr = pod_cidr
         self.service_cidr = service_cidr
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -372,31 +364,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -410,46 +399,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class OpenShiftCluster(TrackedResource):
+class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """OpenShiftCluster represents an Azure Red Hat OpenShift cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -464,14 +447,14 @@ class OpenShiftCluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.redhatopenshift.v2022_04_01.models.SystemData
-    :ivar provisioning_state: The cluster provisioning state. Possible values include:
-     "AdminUpdating", "Creating", "Deleting", "Failed", "Succeeded", "Updating".
+    :ivar provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
+     "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.redhatopenshift.v2022_04_01.models.ProvisioningState
     :ivar cluster_profile: The cluster profile.
@@ -494,29 +477,29 @@ class OpenShiftCluster(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'cluster_profile': {'key': 'properties.clusterProfile', 'type': 'ClusterProfile'},
-        'console_profile': {'key': 'properties.consoleProfile', 'type': 'ConsoleProfile'},
-        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ServicePrincipalProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'master_profile': {'key': 'properties.masterProfile', 'type': 'MasterProfile'},
-        'worker_profiles': {'key': 'properties.workerProfiles', 'type': '[WorkerProfile]'},
-        'apiserver_profile': {'key': 'properties.apiserverProfile', 'type': 'APIServerProfile'},
-        'ingress_profiles': {'key': 'properties.ingressProfiles', 'type': '[IngressProfile]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "cluster_profile": {"key": "properties.clusterProfile", "type": "ClusterProfile"},
+        "console_profile": {"key": "properties.consoleProfile", "type": "ConsoleProfile"},
+        "service_principal_profile": {"key": "properties.servicePrincipalProfile", "type": "ServicePrincipalProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "master_profile": {"key": "properties.masterProfile", "type": "MasterProfile"},
+        "worker_profiles": {"key": "properties.workerProfiles", "type": "[WorkerProfile]"},
+        "apiserver_profile": {"key": "properties.apiserverProfile", "type": "APIServerProfile"},
+        "ingress_profiles": {"key": "properties.ingressProfiles", "type": "[IngressProfile]"},
     }
 
     def __init__(
@@ -524,24 +507,24 @@ class OpenShiftCluster(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        cluster_profile: Optional["ClusterProfile"] = None,
-        console_profile: Optional["ConsoleProfile"] = None,
-        service_principal_profile: Optional["ServicePrincipalProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        master_profile: Optional["MasterProfile"] = None,
-        worker_profiles: Optional[List["WorkerProfile"]] = None,
-        apiserver_profile: Optional["APIServerProfile"] = None,
-        ingress_profiles: Optional[List["IngressProfile"]] = None,
-        **kwargs
-    ):
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        cluster_profile: Optional["_models.ClusterProfile"] = None,
+        console_profile: Optional["_models.ConsoleProfile"] = None,
+        service_principal_profile: Optional["_models.ServicePrincipalProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        master_profile: Optional["_models.MasterProfile"] = None,
+        worker_profiles: Optional[List["_models.WorkerProfile"]] = None,
+        apiserver_profile: Optional["_models.APIServerProfile"] = None,
+        ingress_profiles: Optional[List["_models.IngressProfile"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword provisioning_state: The cluster provisioning state. Possible values include:
-         "AdminUpdating", "Creating", "Deleting", "Failed", "Succeeded", "Updating".
+        :keyword provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
+         "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
         :paramtype provisioning_state: str or
          ~azure.mgmt.redhatopenshift.v2022_04_01.models.ProvisioningState
         :keyword cluster_profile: The cluster profile.
@@ -563,7 +546,7 @@ class OpenShiftCluster(TrackedResource):
         :paramtype ingress_profiles:
          list[~azure.mgmt.redhatopenshift.v2022_04_01.models.IngressProfile]
         """
-        super(OpenShiftCluster, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.provisioning_state = provisioning_state
         self.cluster_profile = cluster_profile
@@ -576,7 +559,7 @@ class OpenShiftCluster(TrackedResource):
         self.ingress_profiles = ingress_profiles
 
 
-class OpenShiftClusterAdminKubeconfig(msrest.serialization.Model):
+class OpenShiftClusterAdminKubeconfig(_serialization.Model):
     """OpenShiftClusterAdminKubeconfig represents an OpenShift cluster's admin kubeconfig.
 
     :ivar kubeconfig: The base64-encoded kubeconfig file.
@@ -584,24 +567,19 @@ class OpenShiftClusterAdminKubeconfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'kubeconfig': {'key': 'kubeconfig', 'type': 'str'},
+        "kubeconfig": {"key": "kubeconfig", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kubeconfig: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kubeconfig: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kubeconfig: The base64-encoded kubeconfig file.
         :paramtype kubeconfig: str
         """
-        super(OpenShiftClusterAdminKubeconfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kubeconfig = kubeconfig
 
 
-class OpenShiftClusterCredentials(msrest.serialization.Model):
+class OpenShiftClusterCredentials(_serialization.Model):
     """OpenShiftClusterCredentials represents an OpenShift cluster's credentials.
 
     :ivar kubeadmin_username: The username for the kubeadmin user.
@@ -611,29 +589,25 @@ class OpenShiftClusterCredentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'kubeadmin_username': {'key': 'kubeadminUsername', 'type': 'str'},
-        'kubeadmin_password': {'key': 'kubeadminPassword', 'type': 'str'},
+        "kubeadmin_username": {"key": "kubeadminUsername", "type": "str"},
+        "kubeadmin_password": {"key": "kubeadminPassword", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        kubeadmin_username: Optional[str] = None,
-        kubeadmin_password: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, kubeadmin_username: Optional[str] = None, kubeadmin_password: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kubeadmin_username: The username for the kubeadmin user.
         :paramtype kubeadmin_username: str
         :keyword kubeadmin_password: The password for the kubeadmin user.
         :paramtype kubeadmin_password: str
         """
-        super(OpenShiftClusterCredentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kubeadmin_username = kubeadmin_username
         self.kubeadmin_password = kubeadmin_password
 
 
-class OpenShiftClusterList(msrest.serialization.Model):
+class OpenShiftClusterList(_serialization.Model):
     """OpenShiftClusterList represents a list of OpenShift clusters.
 
     :ivar value: The list of OpenShift clusters.
@@ -643,39 +617,39 @@ class OpenShiftClusterList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OpenShiftCluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OpenShiftCluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["OpenShiftCluster"]] = None,
+        value: Optional[List["_models.OpenShiftCluster"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of OpenShift clusters.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_04_01.models.OpenShiftCluster]
         :keyword next_link: The link used to get the next page of operations.
         :paramtype next_link: str
         """
-        super(OpenShiftClusterList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OpenShiftClusterUpdate(msrest.serialization.Model):
+class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """OpenShiftCluster represents an Azure Red Hat OpenShift cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.redhatopenshift.v2022_04_01.models.SystemData
-    :ivar provisioning_state: The cluster provisioning state. Possible values include:
-     "AdminUpdating", "Creating", "Deleting", "Failed", "Succeeded", "Updating".
+    :ivar provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
+     "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.redhatopenshift.v2022_04_01.models.ProvisioningState
     :ivar cluster_profile: The cluster profile.
@@ -698,43 +672,43 @@ class OpenShiftClusterUpdate(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_data': {'readonly': True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'cluster_profile': {'key': 'properties.clusterProfile', 'type': 'ClusterProfile'},
-        'console_profile': {'key': 'properties.consoleProfile', 'type': 'ConsoleProfile'},
-        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ServicePrincipalProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'master_profile': {'key': 'properties.masterProfile', 'type': 'MasterProfile'},
-        'worker_profiles': {'key': 'properties.workerProfiles', 'type': '[WorkerProfile]'},
-        'apiserver_profile': {'key': 'properties.apiserverProfile', 'type': 'APIServerProfile'},
-        'ingress_profiles': {'key': 'properties.ingressProfiles', 'type': '[IngressProfile]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "cluster_profile": {"key": "properties.clusterProfile", "type": "ClusterProfile"},
+        "console_profile": {"key": "properties.consoleProfile", "type": "ConsoleProfile"},
+        "service_principal_profile": {"key": "properties.servicePrincipalProfile", "type": "ServicePrincipalProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "master_profile": {"key": "properties.masterProfile", "type": "MasterProfile"},
+        "worker_profiles": {"key": "properties.workerProfiles", "type": "[WorkerProfile]"},
+        "apiserver_profile": {"key": "properties.apiserverProfile", "type": "APIServerProfile"},
+        "ingress_profiles": {"key": "properties.ingressProfiles", "type": "[IngressProfile]"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        cluster_profile: Optional["ClusterProfile"] = None,
-        console_profile: Optional["ConsoleProfile"] = None,
-        service_principal_profile: Optional["ServicePrincipalProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        master_profile: Optional["MasterProfile"] = None,
-        worker_profiles: Optional[List["WorkerProfile"]] = None,
-        apiserver_profile: Optional["APIServerProfile"] = None,
-        ingress_profiles: Optional[List["IngressProfile"]] = None,
-        **kwargs
-    ):
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        cluster_profile: Optional["_models.ClusterProfile"] = None,
+        console_profile: Optional["_models.ConsoleProfile"] = None,
+        service_principal_profile: Optional["_models.ServicePrincipalProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        master_profile: Optional["_models.MasterProfile"] = None,
+        worker_profiles: Optional[List["_models.WorkerProfile"]] = None,
+        apiserver_profile: Optional["_models.APIServerProfile"] = None,
+        ingress_profiles: Optional[List["_models.IngressProfile"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. The resource tags.
+        :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
-        :keyword provisioning_state: The cluster provisioning state. Possible values include:
-         "AdminUpdating", "Creating", "Deleting", "Failed", "Succeeded", "Updating".
+        :keyword provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
+         "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
         :paramtype provisioning_state: str or
          ~azure.mgmt.redhatopenshift.v2022_04_01.models.ProvisioningState
         :keyword cluster_profile: The cluster profile.
@@ -756,7 +730,7 @@ class OpenShiftClusterUpdate(msrest.serialization.Model):
         :paramtype ingress_profiles:
          list[~azure.mgmt.redhatopenshift.v2022_04_01.models.IngressProfile]
         """
-        super(OpenShiftClusterUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.system_data = None
         self.provisioning_state = provisioning_state
@@ -770,7 +744,7 @@ class OpenShiftClusterUpdate(msrest.serialization.Model):
         self.ingress_profiles = ingress_profiles
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Operation represents an RP operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -783,19 +757,19 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'Display'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "Display"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["Display"] = None,
+        display: Optional["_models.Display"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -805,13 +779,13 @@ class Operation(msrest.serialization.Model):
          user or system, e.g. "user,system".
         :paramtype origin: str
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """OperationList represents an RP operation list.
 
     :ivar value: List of operations supported by the resource provider.
@@ -821,29 +795,25 @@ class OperationList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.redhatopenshift.v2022_04_01.models.Operation]
         :keyword next_link: The link used to get the next page of operations.
         :paramtype next_link: str
         """
-        super(OperationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ServicePrincipalProfile(msrest.serialization.Model):
+class ServicePrincipalProfile(_serialization.Model):
     """ServicePrincipalProfile represents a service principal profile.
 
     :ivar client_id: The client ID used for the cluster.
@@ -853,42 +823,36 @@ class ServicePrincipalProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword client_id: The client ID used for the cluster.
         :paramtype client_id: str
         :keyword client_secret: The client secret used for the cluster.
         :paramtype client_secret: str
         """
-        super(ServicePrincipalProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.redhatopenshift.v2022_04_01.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.redhatopenshift.v2022_04_01.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -896,43 +860,43 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.redhatopenshift.v2022_04_01.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.redhatopenshift.v2022_04_01.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -941,7 +905,7 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class WorkerProfile(msrest.serialization.Model):
+class WorkerProfile(_serialization.Model):
     """WorkerProfile represents a worker profile.
 
     :ivar name: The worker profile name.
@@ -954,8 +918,8 @@ class WorkerProfile(msrest.serialization.Model):
     :vartype subnet_id: str
     :ivar count: The number of worker VMs.
     :vartype count: int
-    :ivar encryption_at_host: Whether master virtual machines are encrypted at host. Possible
-     values include: "Disabled", "Enabled".
+    :ivar encryption_at_host: Whether master virtual machines are encrypted at host. Known values
+     are: "Disabled" and "Enabled".
     :vartype encryption_at_host: str or
      ~azure.mgmt.redhatopenshift.v2022_04_01.models.EncryptionAtHost
     :ivar disk_encryption_set_id: The resource ID of an associated DiskEncryptionSet, if
@@ -964,13 +928,13 @@ class WorkerProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'str'},
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "encryption_at_host": {"key": "encryptionAtHost", "type": "str"},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
     def __init__(
@@ -981,10 +945,10 @@ class WorkerProfile(msrest.serialization.Model):
         disk_size_gb: Optional[int] = None,
         subnet_id: Optional[str] = None,
         count: Optional[int] = None,
-        encryption_at_host: Optional[Union[str, "EncryptionAtHost"]] = None,
+        encryption_at_host: Optional[Union[str, "_models.EncryptionAtHost"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The worker profile name.
         :paramtype name: str
@@ -996,15 +960,15 @@ class WorkerProfile(msrest.serialization.Model):
         :paramtype subnet_id: str
         :keyword count: The number of worker VMs.
         :paramtype count: int
-        :keyword encryption_at_host: Whether master virtual machines are encrypted at host. Possible
-         values include: "Disabled", "Enabled".
+        :keyword encryption_at_host: Whether master virtual machines are encrypted at host. Known
+         values are: "Disabled" and "Enabled".
         :paramtype encryption_at_host: str or
          ~azure.mgmt.redhatopenshift.v2022_04_01.models.EncryptionAtHost
         :keyword disk_encryption_set_id: The resource ID of an associated DiskEncryptionSet, if
          applicable.
         :paramtype disk_encryption_set_id: str
         """
-        super(WorkerProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.vm_size = vm_size
         self.disk_size_gb = disk_size_gb
