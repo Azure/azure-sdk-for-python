@@ -8,7 +8,6 @@
 
 import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
-from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error

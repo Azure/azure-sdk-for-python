@@ -6,7 +6,6 @@
 
 import functools
 import warnings
-from datetime import datetime
 from typing import (  # pylint: disable=unused-import
     Any, Dict, cast, List, Optional, Union,
     TYPE_CHECKING, Tuple)
