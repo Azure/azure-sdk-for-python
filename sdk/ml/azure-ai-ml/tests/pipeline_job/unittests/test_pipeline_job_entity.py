@@ -773,7 +773,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -799,7 +799,7 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -1340,7 +1340,7 @@ class TestPipelineJobEntity:
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -1366,7 +1366,7 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
             },
