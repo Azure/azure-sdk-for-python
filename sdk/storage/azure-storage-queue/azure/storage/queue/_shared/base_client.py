@@ -20,6 +20,7 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
+from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
@@ -37,7 +38,6 @@ from azure.core.pipeline.policies import (
 
 from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
-from .._models import StorageConfiguration
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
@@ -215,7 +215,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[StorageConfiguration, Pipeline]
+        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
@@ -406,8 +406,8 @@ def parse_connection_str(conn_str, credential, service):
 
 
 def create_configuration(**kwargs):
-    # type: (**Any) -> StorageConfiguration
-    config = StorageConfiguration(**kwargs)
+    # type: (**Any) -> Configuration
+    config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(
         sdk_moniker=f"storage-{kwargs.pop('storage_sdk')}/{VERSION}", **kwargs)
