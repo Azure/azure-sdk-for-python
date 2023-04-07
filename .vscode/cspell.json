@@ -91,6 +91,11 @@
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -392,7 +397,8 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls"
+    "whls",
+    "aiter"
   ],
   "overrides": [
     {
@@ -426,6 +432,12 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "doc/esrp_release.md",
+      "words": [
+        "ESRP"
       ]
     },
     {
@@ -474,6 +486,20 @@
       "words": [
         "essai",
         "myfoldername"
+      ]
+    },
+    {
+      "filename": "sdk/translation/azure-ai-translation-text/**",
+      "words": [
+        "akhtabar",
+        "deserializers",
+        "Esto",
+        "hudha",
+        "mosca",
+        "mros",
+        "NOACTION",
+        "prueba",
+        "wordomatic"
       ]
     },
     {

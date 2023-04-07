@@ -33,6 +33,24 @@ class TestQueryExceptions(AzureRecordedTestCase):
         assert response.partial_error.code == 'PartialError'
         assert response.partial_error.__class__ == LogsQueryError
 
+    def test_logs_resource_query_fatal_exception(self, recorded_test):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        with pytest.raises(HttpResponseError):
+            client.query_resource('/bad/resource/id', 'AzureActivity', timespan=None)
+
+    def test_logs_resource_query_partial_exception(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = """let Weight = 92233720368547758;
+        range x from 1 to 3 step 1
+        | summarize percentilesw(x, Weight * 100, 50)"""
+        response = client.query_resource(monitor_info['metrics_resource_id'], query, timespan=timedelta(days=1))
+        assert response.__class__ == LogsQueryPartialResult
+        assert response.partial_error is not None
+        assert response.partial_data is not None
+        assert response.partial_error.details is not None
+        assert response.partial_error.code == 'PartialError'
+        assert response.partial_error.__class__ == LogsQueryError
+
     def test_logs_batch_query_fatal_exception(self, recorded_test, monitor_info):
         credential  = ClientSecretCredential(
             client_id = monitor_info['client_id'],
