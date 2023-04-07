@@ -294,7 +294,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             SignedIdentifier access policies to associate with the queue.
             This may contain up to 5 elements. An empty dict
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
+        :type signed_identifiers: Dict[str, ~azure.storage.queue.AccessPolicy]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
@@ -323,9 +323,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers
         try:
-            await self._client.queue.set_access_policy(queue_acl=signed_identifiers or None, timeout=timeout, **kwargs)
+            await self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -388,7 +387,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            self._config.message_encode_policy.configure(
+            self.message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
                 resolver=self.key_resolver_function,
@@ -400,11 +399,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 Consider updating your encryption information/implementation. \
                 Retrying without encryption_version."
             )
-            self._config.message_encode_policy.configure(
+            self.message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
                 resolver=self.key_resolver_function)
-        encoded_content = self._config.message_encode_policy(content)
+        encoded_content = self.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
@@ -469,7 +468,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :caption: Receive one message from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        self._config.message_decode_policy.configure(
+        self.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function)
@@ -478,7 +477,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 number_of_messages=1,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                cls=self._config.message_decode_policy,
+                cls=self.message_decode_policy,
                 **kwargs
             )
             wrapped_message = QueueMessage._from_generated(  # pylint: disable=protected-access
@@ -544,7 +543,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :caption: Receive messages from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        self._config.message_decode_policy.configure(
+        self.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
@@ -554,7 +553,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 self._client.messages.dequeue,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                cls=self._config.message_decode_policy,
+                cls=self.message_decode_policy,
                 **kwargs
             )
             if max_messages is not None and messages_per_page is not None:
@@ -644,7 +643,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
             try:
-                self._config.message_encode_policy.configure(
+                self.message_encode_policy.configure(
                     self.require_encryption,
                     self.key_encryption_key,
                     self.key_resolver_function,
@@ -657,12 +656,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                     Consider updating your encryption information/implementation. \
                     Retrying without encryption_version."
                 )
-                self._config.message_encode_policy.configure(
+                self.message_encode_policy.configure(
                     self.require_encryption,
                     self.key_encryption_key,
                     self.key_resolver_function
                 )
-            encoded_message_text = self._config.message_encode_policy(message_text)
+            encoded_message_text = self.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:
             updated = None
@@ -734,14 +733,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         timeout = kwargs.pop('timeout', None)
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
-        self._config.message_decode_policy.configure(
+        self.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
         )
         try:
             messages = await self._client.messages.peek(
-                number_of_messages=max_messages, timeout=timeout, cls=self._config.message_decode_policy, **kwargs
+                number_of_messages=max_messages, timeout=timeout, cls=self.message_decode_policy, **kwargs
             )
             wrapped_messages = []
             for peeked in messages:

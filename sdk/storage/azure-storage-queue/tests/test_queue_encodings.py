@@ -70,8 +70,8 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
-        assert isinstance(queue._config.message_encode_policy, NoEncodePolicy)
-        assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
+        assert isinstance(queue.message_encode_policy, NoEncodePolicy)
+        assert isinstance(queue.message_decode_policy, NoDecodePolicy)
         self._validate_encoding(queue, message)
 
     @QueuePreparer()
@@ -225,8 +225,8 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             message_decode_policy=None)
 
         # Asserts
-        assert isinstance(queue._config.message_encode_policy, NoEncodePolicy)
-        assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
+        assert isinstance(queue.message_encode_policy, NoEncodePolicy)
+        assert isinstance(queue.message_decode_policy, NoDecodePolicy)
 
 
 # ------------------------------------------------------------------------------

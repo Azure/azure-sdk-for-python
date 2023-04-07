@@ -274,11 +274,11 @@ class QueueMessage(DictMixin):
         identifies the message in the queue. This value may be used together
         with the value of pop_receipt to delete a message from the queue after
         it has been retrieved with the receive messages operation."""
-    inserted_on: "datetime"
+    inserted_on: Optional["datetime"]
     """A UTC date value representing the time the messages was inserted."""
-    expires_on: "datetime"
+    expires_on: Optional["datetime"]
     """A UTC date value representing the time the message expires."""
-    dequeue_count: int
+    dequeue_count: Optional[int]
     """Begins with a value of 1 the first time the message is received. This
         value is incremented each time the message is subsequently received."""
     content: Any = None
