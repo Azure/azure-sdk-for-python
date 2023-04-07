@@ -2891,7 +2891,7 @@ class DocumentAnnotation:
     def _from_generated(cls, annotation):
         return cls(
             kind=annotation.kind,
-            polygon=get_polygon(annotation.polygon),
+            polygon=get_polygon(annotation),
             confidence=annotation.confidence
         )
 
@@ -2961,7 +2961,7 @@ class DocumentBarcode:
             span=DocumentSpan._from_generated(barcode.span)
             if barcode.span
             else None,
-            polygon=get_polygon(barcode.polygon) if barcode.polygon else [],
+            polygon=get_polygon(barcode) if barcode.polygon else [],
             confidence=barcode.confidence
         )
 
@@ -3034,7 +3034,7 @@ class DocumentFormula:
             span=DocumentSpan._from_generated(formula.span)
             if formula.span
             else None,
-            polygon=get_polygon(formula.polygon) if formula.polygon else [],
+            polygon=get_polygon(formula) if formula.polygon else [],
             confidence=formula.confidence
         )
 
@@ -3103,7 +3103,7 @@ class DocumentImage:
             span=DocumentSpan._from_generated(image.span)
             if image.span
             else None,
-            polygon=get_polygon(image.polygon) if image.polygon else [],
+            polygon=get_polygon(image) if image.polygon else [],
             confidence=image.confidence
         )
 
