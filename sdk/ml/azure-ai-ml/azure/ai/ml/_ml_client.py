@@ -10,7 +10,7 @@ import os
 from functools import singledispatch
 from itertools import product
 from pathlib import Path
-from typing import Any, Optional, Tuple, TypeVar, Union
+from typing import Any, Dict, Optional, Tuple, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -113,22 +113,22 @@ class MLClient:
     Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
     :param credential: Credential to use for authentication.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: azure.core.credentials.TokenCredential
     :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None.
-    :type subscription_id: typing.Optional[str]
+    :type subscription_id: Optional[str]
     :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None.
-    :type resource_group_name: typing.Optional[str]
+    :type resource_group_name: Optional[str]
     :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
             defaults to None.
-    :type workspace_name: typing.Optional[str]
+    :type workspace_name: Optional[str]
     :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
             defaults to None.
-    :type registry_name: typing.Optional[str]
+    :type registry_name: Optional[str]
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
-    :type show_progress: typing.Optional[bool]
+    :type show_progress: Optional[bool]
     :param enable_telemetry: Whether to enable telemetry. Will be overridden to False if not in a Jupyter Notebook.
-    :type enable_telemetry: typing.Optional[bool]
+    :type enable_telemetry: Optional[bool]
     :keyword cloud: The cloud name to use, defaults to AzureCloud.
     :paramtype cloud: str
 
@@ -152,26 +152,25 @@ class MLClient:
         registry_name: Optional[str] = None,
         **kwargs: Any,
     ):
-        """A client class to interact with Azure ML services.
+        """Return a client class to interact with Azure ML services.
 
         Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
         :param credential: Credential to use for authentication.
-        :type credential: ~azure.core.credentials.TokenCredential
+        :type credential: azure.core.credentials.TokenCredential
         :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None
-        :type subscription_id: typing.Optional[str]
+        :type subscription_id: Optional[str]
         :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None
-        :type resource_group_name: typing.Optional[str]
+        :type resource_group_name: Optional[str]
         :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
                 defaults to None
-        :type workspace_name: typing.Optional[str]
+        :type workspace_name: Optional[str]
         :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
                 defaults to None
-        :type registry_name: typing.Optional[str]
-        :raises ValueError: Will raise ValueError when both workspace_name and registry_name are used for ml_client
-        :raises ~azure.ai.ml.ValidationException: Raises client-side validation
+        :type registry_name: Optional[str]
+        :raises ValueError: Raises ValueError if credential argument is None
+        :raises azure.ai.ml.ValidationException: Raises ValidationException if both workspace_name and registry_name are used for MLClient
         """
-
         if credential is None:
             raise ValueError("credential can not be None")
 
@@ -523,7 +522,7 @@ class MLClient:
         credential: TokenCredential,
         *,
         path: Optional[Union[os.PathLike, str]] = None,
-        file_name=None,
+        file_name: Optional[str] = None,
         **kwargs,
     ) -> "MLClient":
         """Return a workspace object from an existing Azure Machine Learning Workspace.
@@ -537,21 +536,19 @@ class MLClient:
         retyping the workspace ARM properties.
 
         :param credential: The credential object for the workspace.
-        :type credential: ~azure.core.credentials.TokenCredential
+        :type credential: azure.core.credentials.TokenCredential
         :param path: The path to the config file or starting directory to search.
-            The parameter defaults to starting the search in the current directory.
-            Defaults to None
-        :type path: typing.Union[os.PathLike, str]
-        :param file_name: Allows overriding the config file name to search for when path is a directory path.
-            (Default value = None)
-        :type file_name: str
-        :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
+            The parameter defaults to starting the search in the current directory, defaults to None
+        :type path: Union[os.PathLike, str]
+        :param file_name: Allows overriding the config file name to search for when path is a directory path, defaults to None.
+        :type file_name: Optional[str]
+        :param cloud: The cloud name to use. Defaults to AzureCloud.
+        :type cloud: Optional[str]
+        :raises azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
             Details will be provided in the error message.
-        :returns: The workspace object for an existing Azure ML Workspace.
-        :rtype: ~azure.ai.ml.MLClient
+        :return: The workspace object for an existing Azure ML Workspace.
+        :rtype: azure.ai.ml.MLClient
         """
-
         path = Path(".") if path is None else Path(path)
 
         if path.is_file():
@@ -613,41 +610,50 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
-        """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
+    def _ml_client_cli(cls, credential: TokenCredential, subscription_id: Optional[str] = None, **kwargs) -> "MLClient":
+        """Return a client class to interact with Azure ML services via the CLI.
 
+        This method provides a way to create MLClient object for cli to leverage cli context for authentication.
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
         credentials are passed by cli get_mgmt_service_client when it created a object of this class.
-        """
 
-        ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
+        :param credential: The credential object for the workspace.
+        :type credential: azure.core.credentials.TokenCredential
+        :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None.
+        :type subscription_id: Optional[str]
+        :return: Client class to interact with Azure ML services via CLI
+        :rtype: MLClient
+        """
+        ml_client = cls(credential=credential, subscription_id=subscription_id, **kwargs)
         return ml_client
 
     @property
     def workspaces(self) -> WorkspaceOperations:
-        """A collection of workspace related operations.
+        """Return a collection of workspace related operations.
 
         :return: Workspace operations
-        :rtype: WorkspaceOperations
+        :rtype: azure.ai.ml.operations._workspace_operations.WorkspaceOperations
         """
         return self._workspaces
 
     @property
     @experimental
     def registries(self) -> RegistryOperations:
-        """A collection of registry-related operations.
+        """Return a collection of registry-related operations.
 
         :return: Registry operations
-        :rtype: RegistryOperations
+        :rtype: azure.ai.ml.operations._registry_operations.RegistryOperations
         """
         return self._registries
 
     @property
     @experimental
     def _feature_stores(self) -> _FeatureStoreOperations:
-        """A collection of feature-store related operations.
-        :return: Featurestore operations
-        :rtype: _FeatureStoreOperations
+        """Return a collection of feature-store related operations.
+
+        :raises Exception: Raises Exception if private preview not enabled since property is experimental
+        :return: Feature-store operations
+        :rtype: azure.ai.ml.operations._feature_store_operations._FeatureStoreOperations
         """
         if is_private_preview_enabled():
             return self._featurestores
@@ -656,9 +662,11 @@ class MLClient:
     @property
     @experimental
     def _feature_sets(self) -> _FeatureSetOperations:
-        """A collection of feature set related operations.
-        :return: FeatureSet operations
-        :rtype: _FeatureSetOperations
+        """Return a collection of feature set related operations.
+
+        :raises Exception: Raises Exception if private preview not enabled since property is experimental
+        :return: Feature set operations
+        :rtype: azure.ai.ml.operations._feature_set_operations._FeatureSetOperations
         """
         if is_private_preview_enabled():
             return self._featuresets
@@ -667,9 +675,11 @@ class MLClient:
     @property
     @experimental
     def _feature_store_entities(self) -> _FeatureStoreEntityOperations:
-        """A collection of feature store entity related operations.
-        :return: FeatureStoreEntity operations
-        :rtype: _FeatureStoreEntityOperations
+        """Return a collection of feature store entity related operations.
+
+        :raises Exception: Raises Exception if private preview not enabled since property is experimental
+        :return: Feature-store entity operations
+        :rtype: azure.ai.ml.operations._feature_store_entity_operations._FeatureStoreEntityOperations
         """
         if is_private_preview_enabled():
             return self._featurestoreentities
@@ -677,126 +687,126 @@ class MLClient:
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:
-        """A collection of workspace connection related operations.
+        """Return a collection of workspace connection related operations.
 
         :return: Workspace Connections operations
-        :rtype: WorkspaceConnectionsOperations
+        :rtype: azure.ai.ml.operations._workspace_connections_operations.WorkspaceConnectionsOperations
         """
         return self._workspace_connections
 
     @property
     def jobs(self) -> JobOperations:
-        """A collection of job related operations.
+        """Return a collection of job related operations.
 
         :return: Job operations
-        :rtype: JobOperations
+        :rtype: azure.ai.ml.operations._job_operationsJobOperations
         """
         return self._jobs
 
     @property
     def compute(self) -> ComputeOperations:
-        """A collection of compute related operations.
+        """Return a collection of compute related operations.
 
         :return: Compute operations
-        :rtype: ComputeOperations
+        :rtype: azure.ai.ml.operations._compute_operations.ComputeOperations
         """
         return self._compute
 
     @property
     def models(self) -> ModelOperations:
-        """A collection of model related operations.
+        """Return a collection of model related operations.
 
         :return: Model operations
-        :rtype: ModelOperations
+        :rtype: azure.ai.ml.operations._model_operations.ModelOperations
         """
         return self._models
 
     @property
     def online_endpoints(self) -> OnlineEndpointOperations:
-        """A collection of online endpoint related operations.
+        """Return a collection of online endpoint related operations.
 
         :return: Online Endpoint operations
-        :rtype: OnlineEndpointOperations
+        :rtype: azure.ai.ml.operations._online_endpoint_operations.OnlineEndpointOperations
         """
         return self._online_endpoints
 
     @property
     def batch_endpoints(self) -> BatchEndpointOperations:
-        """A collection of batch endpoint related operations.
+        """Return a collection of batch endpoint related operations.
 
         :return: Batch Endpoint operations
-        :rtype: BatchEndpointOperations
+        :rtype: azure.ai.ml.operations._batch_endpoint_operations.BatchEndpointOperations
         """
         return self._batch_endpoints
 
     @property
     def online_deployments(self) -> OnlineDeploymentOperations:
-        """A collection of online deployment related operations.
+        """Return a collection of online deployment related operations.
 
         :return: Online Deployment operations
-        :rtype: OnlineDeploymentOperations
+        :rtype: azure.ai.ml.operations._online_deployment_operations.OnlineDeploymentOperations
         """
         return self._online_deployments
 
     @property
     def batch_deployments(self) -> BatchDeploymentOperations:
-        """A collection of batch deployment related operations.
+        """Return a collection of batch deployment related operations.
 
-        :return: Batch Deployment operations.
-        :rtype: BatchDeploymentOperations
+        :return: Batch Deployment operations
+        :rtype: azure.ai.ml.operations._batch_deployment_operations.BatchDeploymentOperations
         """
         return self._batch_deployments
 
     @property
     def datastores(self) -> DatastoreOperations:
-        """A collection of datastore related operations.
+        """Return a collection of datastore related operations.
 
-        :return: Datastore operations.
-        :rtype: DatastoreOperations
+        :return: Datastore operations
+        :rtype: azure.ai.ml.operations._datastore_operations.DatastoreOperations
         """
         return self._datastores
 
     @property
     def environments(self) -> EnvironmentOperations:
-        """A collection of environment related operations.
+        """Return a collection of environment related operations.
 
-        :return: Environment operations.
-        :rtype: EnvironmentOperations
+        :return: Environment operations
+        :rtype: azure.ai.ml.operations._environment_operations.EnvironmentOperations
         """
         return self._environments
 
     @property
     def data(self) -> DataOperations:
-        """A collection of data related operations.
+        """Return a collection of data related operations.
 
-        :return: Data operations.
-        :rtype: DataOperations
+        :return: Data operations
+        :rtype: azure.ai.ml.operations._data_operations.DataOperations
         """
         return self._data
 
     @property
     def components(self) -> ComponentOperations:
-        """A collection of component related operations.
+        """Return a collection of component related operations.
 
-        :return: Component operations.
-        :rtype: ComponentOperations
+        :return: Component operations
+        :rtype: azure.ai.ml.operations._component_operations.ComponentOperations
         """
         return self._components
 
     @property
     def schedules(self) -> ScheduleOperations:
-        """A collection of schedule related operations.
+        """Return a collection of schedule related operations.
 
-        :return: Schedule operations.
-        :rtype: ScheduleOperations
+        :return: Schedule operations
+        :rtype: azure.ai.ml.operations._schedule_operations.ScheduleOperations
         """
         return self._schedules
 
     @property
     def subscription_id(self) -> str:
-        """Get the subscription Id of a MLClient object.
+        """Get the subscription ID of a MLClient object.
 
-        :return: An Azure subscription Id.
+        :return: An Azure subscription ID
         :rtype: str
         """
         return self._operation_scope.subscription_id
@@ -805,27 +815,28 @@ class MLClient:
     def resource_group_name(self) -> str:
         """Get the resource group name of a MLClient object.
 
-        :return: An Azure resource group name.
+        :return: An Azure resource group name
         :rtype: str
         """
         return self._operation_scope.resource_group_name
 
     @property
     def workspace_name(self) -> Optional[str]:
-        """The workspace where workspace dependent operations will be executed in.
+        """Get the workspace where workspace dependent operations will be executed in.
 
-        :return: Default workspace name.
+        :return: Default workspace name
         :rtype: str
         """
         return self._operation_scope.workspace_name
 
     def _get_new_client(self, workspace_name: str, **kwargs) -> "MLClient":
-        """Returns a new MLClient object with the specified arguments.
+        """Return a new MLClient object with the specified arguments.
 
         :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
+        :return: Client class to interact with Azure ML services
+        :rtype: MLClient
         """
-
         return MLClient(
             credential=self._credential,
             subscription_id=self._operation_scope.subscription_id,
@@ -835,7 +846,18 @@ class MLClient:
         )
 
     @classmethod
-    def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
+    def _get_workspace_info(cls, found_path: Optional[Union[os.PathLike, str]]) -> Tuple[str, str, str]:
+        """Return information about a workspace given the local path to its configuration file.
+
+        Information returned includes subscription ID, resource group name, and workspace name.
+
+        :param found_path: The local path to the workspace's configuration file
+        :type found_path: Optional[Union[os.PathLike, str]]
+        :raises ValidationException: Raises ValidationException if the configuration file does not include all
+        of subscription ID, resource group name, and workspace name.
+        :return: The workspace's subscription ID, resource group name, and workspace name
+        :rtype: Tuple[str, str, str]
+        """
         with open(found_path) as config_file:
             config = json.load(config_file)
 
@@ -888,17 +910,16 @@ class MLClient:
         entity: T,
         **kwargs,
     ) -> T:
-        """Creates or updates an Azure ML resource.
+        """Create or update an Azure ML resource.
 
         :param entity: The resource to create or update.
-        :type entity: typing.Union[~azure.ai.ml.entities.Job
-            , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
-            , ~azure.ai.ml.entities.Datastore]
+        :type entity: Union[azure.ai.ml.entities.Job
+            , azure.ai.ml.entities.Model, azure.ai.ml.entities.Environment, azure.ai.ml.entities.Component
+            , azure.ai.ml.entities.Datastore]
         :return: The created or updated resource.
-        :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
-            , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
+        :rtype: Union[azure.ai.ml.entities.Job, azure.ai.ml.entities.Model
+            , azure.ai.ml.entities.Environment, azure.ai.ml.entities.Component, azure.ai.ml.entities.Datastore]
         """
-
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
 
     # R = valid inputs/outputs for begin_create_or_update
@@ -920,23 +941,23 @@ class MLClient:
         entity: R,
         **kwargs,
     ) -> LROPoller[R]:
-        """Creates or updates an Azure ML resource asynchronously.
+        """Create or update an Azure ML resource asynchronously.
 
         :param entity: The resource to create or update.
-        :type entity: typing.Union[~azure.ai.ml.entities.Workspace
-            , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
-            , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
-            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
+        :type entity: Union[azure.ai.ml.entities.Workspace
+            , azure.ai.ml.entities.Registry, azure.ai.ml.entities.Compute, azure.ai.ml.entities.OnlineDeployment
+            , azure.ai.ml.entities.OnlineEndpoint, azure.ai.ml.entities.BatchDeployment
+            , azure.ai.ml.entities.BatchEndpoint, azure.ai.ml.entities.JobSchedule]
         :return: The resource after create/update operation.
-        :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace
-            , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
-            , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
-            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]]
+        :rtype: azure.core.polling.LROPoller[Union[azure.ai.ml.entities.Workspace
+            , azure.ai.ml.entities.Registry, azure.ai.ml.entities.Compute, azure.ai.ml.entities.OnlineDeployment
+            , azure.ai.ml.entities.OnlineEndpoint, azure.ai.ml.entities.BatchDeployment
+            , azure.ai.ml.entities.BatchEndpoint, azure.ai.ml.entities.JobSchedule]]
         """
-
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
 
     def __repr__(self) -> str:
+        """Return string representation of MLClient object."""
         return f"""MLClient(credential={self._credential},
          subscription_id={self._operation_scope.subscription_id},
          resource_group_name={self._operation_scope.resource_group_name},
@@ -944,106 +965,169 @@ class MLClient:
 
 
 def _add_user_agent(kwargs) -> None:
+    """Set the user's package version as user_agent. If None provided in kwargs, use default from azure.ai.ml._version."""
     user_agent = kwargs.pop("user_agent", None)
     user_agent = f"{user_agent} {USER_AGENT}" if user_agent else USER_AGENT
     kwargs.setdefault("user_agent", user_agent)
 
 
+T = TypeVar("T", Job, Model, Environment, Component, Datastore)
+V = TypeVar("V", JobOperations, ModelOperations, EnvironmentOperations, ComponentOperations, DatastoreOperations)
+
+
 @singledispatch
-def _create_or_update(entity, operations, **kwargs):
+def _create_or_update(entity: T, operations: V, **kwargs) -> None:
+    """Create or update an Azure ML resource.
+
+    :param entity: The resource to create or update.
+    :type entity: Union[azure.ai.ml.entities.Job
+        , azure.ai.ml.entities.Model, azure.ai.ml.entities.Environment, azure.ai.ml.entities.Component
+        , azure.ai.ml.entities.Datastore]
+    :param operations: The entity's related operations
+    :type operations: Union[azure.ai.ml.operations._job_operations.JobOperations,
+        , azure.ai.ml.operations._model_operations.ModelOperations, azure.ai.ml.operations._environment_operations.EnvironmentOperations,
+        azure.ai.ml.operations._component_operations.ComponentOperations
+        , azure.ai.ml.operations._datastore_operations.DatastoreOperations]
+    :raises TypeError: Raises TypeError if used directly, should be called via decorator with the entity-specific method defined below
+    """
     raise TypeError("Please refer to create_or_update docstring for valid input types.")
 
 
 @_create_or_update.register(Job)
-def _(entity: Job, operations, **kwargs):
+def _(entity: Job, operations: Dict[str, V], **kwargs):
+    """Create or update job."""
     module_logger.debug("Creating or updating job")
     return operations[AzureMLResourceType.JOB].create_or_update(entity, **kwargs)
 
 
 @_create_or_update.register(Model)
-def _(entity: Model, operations):
+def _(entity: Model, operations: Dict[str, V]):
+    """Create or update model."""
     module_logger.debug("Creating or updating model")
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
 
 @_create_or_update.register(WorkspaceAssetReference)
-def _(entity: WorkspaceAssetReference, operations):
+def _(entity: WorkspaceAssetReference, operations: Dict[str, V]):
+    """Promote model to registry."""
     module_logger.debug("Promoting model to registry")
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
 
 @_create_or_update.register(Environment)
-def _(entity: Environment, operations):
+def _(entity: Environment, operations: Dict[str, V]):
+    """Create or update environment."""
     module_logger.debug("Creating or updating environment")
     return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
 
 
 @_create_or_update.register(WorkspaceAssetReference)
-def _(entity: WorkspaceAssetReference, operations):
+def _(entity: WorkspaceAssetReference, operations: Dict[str, V]):
+    """Promote environment to registry."""
     module_logger.debug("Promoting environment to registry")
     return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
 
 
 @_create_or_update.register(Component)
-def _(entity: Component, operations, **kwargs):
+def _(entity: Component, operations: Dict[str, V], **kwargs):
+    """Create or update component."""
     module_logger.debug("Creating or updating components")
     return operations[AzureMLResourceType.COMPONENT].create_or_update(entity, **kwargs)
 
 
 @_create_or_update.register(Datastore)
-def _(entity: Datastore, operations):
+def _(entity: Datastore, operations: Dict[str, V]):
+    """Create or update datastore."""
     module_logger.debug("Creating or updating datastores")
     return operations[AzureMLResourceType.DATASTORE].create_or_update(entity)
 
 
+U = TypeVar(
+    "U", Workspace, Registry, Compute, OnlineEndpoint, OnlineDeployment, BatchEndpoint, BatchDeployment, JobSchedule
+)
+W = TypeVar(
+    "W",
+    WorkspaceOperations,
+    RegistryOperations,
+    ComputeOperations,
+    ComputeOperations,
+    OnlineEndpointOperations,
+    OnlineDeploymentOperations,
+    BatchDeploymentOperations,
+    BatchEndpointOperations,
+    ScheduleOperations,
+)
+
+
 @singledispatch
-def _begin_create_or_update(entity, operations, **kwargs):
+def _begin_create_or_update(entity: U, operations: W, **kwargs):
+    """Begin create or update an Azure ML resource.
+
+    :param entity: The resource to create or update.
+    :type entity: Union[azure.ai.ml.entities.Workspace
+        , azure.ai.ml.entities.Registry, azure.ai.ml.entities.Compute, azure.ai.ml.entities.OnlineEndpoint
+        , azure.ai.ml.entities.OnlineDeployment, azure.ai.ml.entities.BatchEndpoint, azure.ai.ml.entities.BatchDeployment, azure.ai.ml.entities.JobSchedule]
+    :param operations: The entity's related operations
+    :type operations: Union[azure.ai.ml.operations._workspace_operations.WorkspaceOperations,
+        , azure.ai.ml.operations._registry_operations.RegistryOperations, azure.ai.ml.operations._compute_operations.ComputeOperations,
+        azure.ai.ml.operations._online_endpoint_operations.OnlineEndpointOperations, azure.ai.ml.operations._online_deployment_operations.OnlineDeploymentOperations,
+        azure.ai.ml.operations._batch_deployment_operations.BatchDeploymentOperations, azure.ai.ml.operations._batch_endpoint_operations.BatchEndpointOperations, azure.ai.ml.operations._schedule_operations.ScheduleOperations]
+    :raises TypeError: Raises TypeError if used directly, should be called via decorator with the entity-specific method defined below
+    """
     raise TypeError("Please refer to begin_create_or_update docstring for valid input types.")
 
 
 @_begin_create_or_update.register(Workspace)
-def _(entity: Workspace, operations, *args, **kwargs):
+def _(entity: Workspace, operations: Dict[str, W], *args, **kwargs):
+    """Create or update workspace."""
     module_logger.debug("Creating or updating workspaces")
     return operations[AzureMLResourceType.WORKSPACE].begin_create(entity, **kwargs)
 
 
 @_begin_create_or_update.register(Registry)
-def _(entity: Registry, operations, *args, **kwargs):
+def _(entity: Registry, operations: Dict[str, W], *args, **kwargs):
+    """Create or update registry."""
     module_logger.debug("Creating or updating registries")
     return operations[AzureMLResourceType.REGISTRY].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(Compute)
-def _(entity: Compute, operations, *args, **kwargs):
+def _(entity: Compute, operations: Dict[str, W], *args, **kwargs):
+    """Create or update compute."""
     module_logger.debug("Creating or updating compute")
     return operations[AzureMLResourceType.COMPUTE].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(OnlineEndpoint)
-def _(entity: OnlineEndpoint, operations, *args, **kwargs):
+def _(entity: OnlineEndpoint, operations: Dict[str, W], *args, **kwargs):
+    """Create or update online endpoint."""
     module_logger.debug("Creating or updating online_endpoints")
     return operations[AzureMLResourceType.ONLINE_ENDPOINT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(BatchEndpoint)
-def _(entity: BatchEndpoint, operations, *args, **kwargs):
+def _(entity: BatchEndpoint, operations: Dict[str, W], *args, **kwargs):
+    """Create or update batch endpoint."""
     module_logger.debug("Creating or updating batch_endpoints")
     return operations[AzureMLResourceType.BATCH_ENDPOINT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(OnlineDeployment)
-def _(entity: OnlineDeployment, operations, *args, **kwargs):
+def _(entity: OnlineDeployment, operations: Dict[str, W], *args, **kwargs):
+    """Create or update online deployment."""
     module_logger.debug("Creating or updating online_deployments")
     return operations[AzureMLResourceType.ONLINE_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(BatchDeployment)
-def _(entity: BatchDeployment, operations, *args, **kwargs):
+def _(entity: BatchDeployment, operations: Dict[str, W], *args, **kwargs):
+    """Create or update batch deployment."""
     module_logger.debug("Creating or updating batch_deployments")
     return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(JobSchedule)
-def _(entity: JobSchedule, operations, *args, **kwargs):
+def _(entity: JobSchedule, operations: Dict[str, W], *args, **kwargs):
+    """Create or update schedule."""
     module_logger.debug("Creating or updating schedules")
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
