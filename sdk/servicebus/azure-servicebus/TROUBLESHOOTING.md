@@ -12,11 +12,9 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [SSL handshake failures](#ssl-handshake-failures)
   - [Socket exhaustion errors](#socket-exhaustion-errors)
   - [Adding components to the connection string does not work](#adding-components-to-the-connection-string-does-not-work)
-    - ["TransportType=AmqpWebSockets" Alternative](#transporttypeamqpwebsockets-alternative)
     - ["Authentication=Managed Identity" Alternative](#authenticationmanaged-identity-alternative)
 - [Logging and Diagnostics](#logging-and-diagnostics)
   - [Enable logging](#enable-logging)
-  - [Distributed tracing](#distributed-tracing)
 - [Troubleshoot sender issues](#troubleshoot-sender-issues)
   - [Cannot set multiple partition keys (or multiple sessions when partitions are enabled) for messages in ServiceBusMessageBatch](#cannot-send-batch-with-multiple-partition-keys)
   - [Batch fails to send](#batch-fails-to-send)
@@ -25,16 +23,7 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [Message or session lock is lost before lock expiration time](#message-or-session-lock-is-lost-before-lock-expiration-time)
   - [How to browse scheduled or deferred messages](#how-to-browse-scheduled-or-deferred-messages)
   - [How to browse session messages across all sessions](#how-to-browse-session-messages-across-all-sessions)
-  - [NotSupportedException thrown when accessing Body property](#notsupportedexception-thrown-when-accessing-message-body)
-- [Troubleshoot processor issues](#troubleshoot-processor-issues)
   - [Autolock renewal does not appear to be working](#autolock-renewal-is-not-working)
-  - [Processor appears to hang or have latency issues when using extremely high concurrency](#processor-appears-to-hang-or-have-latency-issues-when-using-high-concurrency)
-  - [Session processor takes too long to switch sessions](#session-processor-takes-too-long-to-switch-sessions)
-  - [Processor stops immediately](#processor-stops-immediately)
-- [Troubleshoot transaction issues](#troubleshoot-transactions)
-  - [Supported operations](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-transactions#operations-within-a-transaction-scope)
-  - [Operations in transactions are not retried](#operations-in-a-transaction-are-not-retried)
-  - [Transactions across entities are not working](#transactions-across-entities-are-not-working)
 - [Quotas](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quotas)
 
 ## Handle Service Bus Exceptions
@@ -54,7 +43,7 @@ By default the producer and consumer clients will retry for error conditions. We
      value is 3
 * **retry_backoff_factor**: A backoff factor to apply between attempts after the second try
 * **retry_backoff_max**: The maximum back off time. Default value is 120 seconds
-* **retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential', where default is 'exponential'
+* **retry_mode**: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential', where default is 'exponential'
 
 ### Other common exceptions
 
@@ -109,7 +98,7 @@ Please view the [exceptions reference docs][exception_reference] for detailed de
 
 ### Timeout when connecting to service
 
-Depending on the host environment and network, this may present to applications as either a `TimeoutException`, `OperationCanceledException`, or a `ServiceBusException` with `Reason` of `ServiceTimeout` and most often occurs when the client cannot find a network path to the service.
+Depending on the host environment and network, this may present to applications as either a `ServiceBusConnectionError`, `OperationTimeoutError`, or a `ServiceBusError` and most often occurs when the client cannot find a network path to the service.
 
 To troubleshoot:
 
@@ -117,11 +106,9 @@ To troubleshoot:
 
 - Check the firewall and port permissions in your hosting environment and that the AMQP ports 5671 and 5672 are open and that the endpoint is allowed through the firewall.
 
-- Try using the Web Socket transport option, which connects using port 443. For details, see: [configure the transport][TransportSample].
-
 - See if your network is blocking specific IP addresses. For details, see: [What IP addresses do I need to allow?][ServiceBusIPAddresses].
 
-- If applicable, verify the proxy configuration. For details, see: [Configuring the transport][TransportSample].
+- If applicable, verify the proxy configuration. For details, see: [Configuring the transport][ProxySample].
 
 - For more information about troubleshooting network connectivity, see: [Troubleshooting guide for Azure Service Bus][TroubleshootingGuide].
 
@@ -131,9 +118,7 @@ This error can occur when an intercepting proxy is used. To verify, it is recomm
 
 ### Socket exhaustion errors
 
-Applications should prefer treating the Service Bus types as singletons, creating and using a single instance through the lifetime of the application. Each new [ServiceBusClient][ServiceBusClient] created results in a new AMQP connection, which uses a socket. The [ServiceBusClient][ServiceBusClient] type manages the connection for all types created from that instance. Each [ServiceBusReceiver][ServiceBusReceiver], [ServiceBusSessionReceiver][ServiceBusSessionReceiver], [ServiceBusSender][ServiceBusSender], and [ServiceBusProcessor][ServiceBusProcessor] manages its own AMQP link for the associated Service Bus entity. When using a [ServiceBusSessionProcessor][ServiceBusSessionProcessor], multiple AMQP links may be established depending on the number of sessions that are being processed concurrently.
-
-The clients are safe to cache when idle; they will ensure efficient management of network, CPU, and memory use, minimizing their impact during periods of inactivity. It is also important that either `CloseAsync` or `DisposeAsync` be called when a client is no longer needed to ensure that network resources are properly cleaned up.
+Applications should prefer treating the Service Bus types as singletons, creating and using a single instance through the lifetime of the application. This is important as each client type manages its connection; creating a new Service Bus client results in a new AMQP connection, which uses a socket. Additionally, it is essential to be aware that your client is responsible for calling close() when it is finished using a client or to use the with statement for clients so that they are automatically closed after the flow execution leaves that block.
 
 ### Adding components to the connection string does not work
 
@@ -141,84 +126,49 @@ The current generation of the Service Bus client library supports connection str
 
 Previous generations of the Service Bus clients allowed for some behavior to be configured by adding key/value components to a connection string. These components are no longer recognized and have no effect on client behavior.
 
-#### "TransportType=AmqpWebSockets" Alternative
-
-To configure web socket use, see: [Configuring the transport][TransportSample].
-
 #### "Authentication=Managed Identity" Alternative
 
 To authenticate with Managed Identity, see: [Identity and Shared Access Credentials][IdentitySample].
 
-For more information about the `Azure.Identity` library, see: [Authentication and the Azure SDK][AuthenticationAndTheAzureSDK].
+For more information about the `azure.identity` library, see: [Authentication and the Azure SDK][AuthenticationAndTheAzureSDK].
 
 ## Logging and diagnostics
 
-The Service Bus client library is fully instrumented for logging information at various levels of detail using the .NET `EventSource` to emit information. Logging is performed for each operation and follows the pattern of marking the starting point of the operation, it's completion, and any exceptions encountered. Additional information that may offer insight is also logged in the context of the associated operation.
+The Azure SDK for Python offers a consistent logging story to help troubleshoot application errors and expedite their resolution.  The logs produced will capture the flow of an application before reaching the terminal state to help locate the root issue.
 
-### Enable logging
+This library uses the standard [Logging] library for logging
 
-The Service Bus client logs are available to any `EventListener` by opting into the sources starting with "Azure-Messaging-ServiceBus" or by opting into all sources that have the trait "AzureEventSource". To make capturing logs from the Azure client libraries easier, the `Azure.Core` library used by Service Bus offers an `AzureEventSourceListener`.
+- Enable `azure.servicebus` logger to collect traces from the library.
 
-For more information, see: [Logging with the Azure SDK for .NET][Logging].
+### Enable AMQP transport logging
 
-### Distributed tracing
+If enabling client logging is not enough to diagnose your issues. You can enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
-The Service Bus client library supports distributed tracing though integration with the Application Insights SDK. It also has **experimental** support for the the OpenTelemetry specification via the .NET [ActivitySource][ActivitySource] type introduced in .NET 5. In order to enable `ActivitySource` support for use with OpenTelemetry, see [ActivitySource support][ActivitySourceSupport].
-
-In order to use the GA DiagnosticActivity support, you can integrate with the Application Insights SDK. More details can be found in [ApplicationInsights with Azure Monitor][AppInsights].
-
-The library creates the following spans:
-
-`Message`  
-`ServiceBusSender.Send`  
-`ServiceBusSender.Schedule`  
-`ServiceBusSender.Cancel`  
-`ServiceBusReceiver.Receive`  
-`ServiceBusReceiver.ReceiveDeferred`  
-`ServiceBusReceiver.Peek`  
-`ServiceBusReceiver.Abandon`  
-`ServiceBusReceiver.Complete`  
-`ServiceBusReceiver.DeadLetter`  
-`ServiceBusReceiver.Defer`  
-`ServiceBusReceiver.RenewMessageLock`  
-`ServiceBusSessionReceiver.RenewSessionLock`  
-`ServiceBusSessionReceiver.GetSessionState`  
-`ServiceBusSessionReceiver.SetSessionState`  
-`ServiceBusProcessor.ProcessMessage`  
-`ServiceBusSessionProcessor.ProcessSessionMessage`  
-`ServiceBusRuleManager.CreateRule`  
-`ServiceBusRuleManager.DeleteRule`  
-`ServiceBusRuleManager.GetRules`  
-
-Most of the spans are self-explanatory and are started and stopped during the operation that bears its name. The span that ties the others together is `Message`. The way that the message is traced is via the the `Diagnostic-Id` that is set in the [ServiceBusMessage.ApplicationProperties][ApplicationProperties] property by the library during send and schedule operations. In Application Insights, `Message` spans will be displayed as linking out to the various other spans that were used to interact with the message, e.g. the `ServiceBusReceiver.Receive` span, the `ServiceBusSender.Send` span, and the `ServiceBusReceiver.Complete` span would all be linked from the `Message` span. Here is an example of what this looks like in Application Insights:
-
-![image](https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/assets/Tracing.png)
-
-In the above screenshot, we see the end-to-end transaction that can be viewed in Application Insights in the portal. In this scenario, the application is sending messages and using the [ServiceBusSessionProcessor][ServiceBusSessionProcessor] to process them. The `Message` activity is linked to `ServiceBusSender.Send`, `ServiceBusReceiver.Receive`, `ServiceBusSessionProcessor.ProcessSessionMessage`, and `ServiceBusReceiver.Complete`. 
+For more information, see: [Logging with the Azure SDK for Python][Logging].
 
 ## Troubleshoot sender issues
 
 ### Cannot send batch with multiple partition keys
 
-When sending to a partition-enabled entity, all messages included in a single send operation must have the same `PartitionKey`. If your entity is session-enabled, the same requirement holds true for the `SessionId` property. In order to send messages with different `PartitionKey` or `SessionId` values, group the messages in separate [ServiceBusMessageBatch][ServiceBusMessageBatch] instances or include them in separate calls to the [SendMessagesAsync][SendMessages] overload that takes a set of [ServiceBusMessage] instances.
+When sending to a partition-enabled entity, all messages included in a single send operation must have the same `partition_key`. If your entity is session-enabled, the same requirement holds true for the `session_id` property. In order to send messages with different `partition_key` or `session_id` values, group the messages in separate [ServiceBusMessageBatch][ServiceBusMessageBatch] instances or include them in separate calls to the [send_messages][SendMessages] overload that takes a set of [ServiceBusMessage] instances.
 
 ### Batch fails to send
 
-We define a message batch as either [ServiceBusMessageBatch][ServiceBusMessageBatch] containing 2 or more messages, or a call to [SendMessagesAsync][SendMessages] where 2 or more messages are passed in. The service does not allow a message batch to exceed 1MB. This is true whether or not the [Premium large message support][LargeMessageSupport] feature is enabled. If you intend to send a message greater than 1MB, it must be sent individually rather than grouped with other messages. Unfortunately, the [ServiceBusMessageBatch][ServiceBusMessageBatch] type does not currently support validating that a batch does not contain any messages greater than 1MB as the size is constrained by the service and may change. So if you intend to use the premium large message support feature, you will need to ensure you send messages over 1MB individually. See this [GitHub discussion][GitHubDiscussionOnBatching] for more info.
+We define a message batch as either [ServiceBusMessageBatch][ServiceBusMessageBatch] containing 2 or more messages, or a call to [send_messages][SendMessages] where 2 or more messages are passed in. The service does not allow a message batch to exceed 1MB. This is true whether or not the [Premium large message support][LargeMessageSupport] feature is enabled. If you intend to send a message greater than 1MB, it must be sent individually rather than grouped with other messages. Unfortunately, the [ServiceBusMessageBatch][ServiceBusMessageBatch] type does not currently support validating that a batch does not contain any messages greater than 1MB as the size is constrained by the service and may change. So if you intend to use the premium large message support feature, you will need to ensure you send messages over 1MB individually. See this [GitHub discussion][GitHubDiscussionOnBatching] for more info.
 
 ## Troubleshoot receiver issues
 
 ### Number of messages returned does not match number requested in batch receive
 
-When attempting to do a batch receive, i.e. passing a `maxMessages` value of 2 or greater to the [ReceiveMessagesAsync][ReceiveMessages] method, you are not guaranteed to receive the number of messages requested, even if the queue or subscription has that many messages available at that time, and even if the entire configured `maxWaitTime` has not yet elapsed. To maximize throughput and avoid lock expiration, once the first message comes over the wire, the receiver will wait an additional 20ms for any additional messages before dispatching the messages for processing.  The `maxWaitTime` controls how long the receiver will wait to receive the *first* message - subsequent messages will be waited for 20ms. Therefore, your application should not assume that all messages available will be received in one call.
+When attempting to do a batch receive, i.e. passing a `max_message_count` value of 2 or greater to the [receive_messages][ReceiveMessages] method, you are not guaranteed to receive the number of messages requested, even if the queue or subscription has that many messages available at that time, and even if the entire configured `max_wait_time` has not yet elapsed. To maximize throughput and avoid lock expiration, once the first message comes over the wire, the receiver will wait an additional 20ms for any additional messages before dispatching the messages for processing.  The `max_wait_time` controls how long the receiver will wait to receive the *first* message - subsequent messages will be waited for 20ms. Therefore, your application should not assume that all messages available will be received in one call.
 
 ### Message or session lock is lost before lock expiration time
 
-The Service Bus service leverages the AMQP protocol, which is stateful. Due to the nature of the protocol, if the link that connects the client and the service is detached after a message is received, but before the message is settled, the message is not able to be settled on reconnecting the link. Links can be detached due to a short-term transient network failure, a network outage, or due to the service enforced 10-minute idle timeout. The reconnection of the link happens automatically as a part of any operation that requires the link, i.e. settling or receiving messages. Because of this, you may encounter `ServiceBusException` with `Reason` of `MessageLockLost` or `SessionLockLost` even if the lock expiration time has not yet passed. 
+The Service Bus service leverages the AMQP protocol, which is stateful. Due to the nature of the protocol, if the link that connects the client and the service is detached after a message is received, but before the message is settled, the message is not able to be settled on reconnecting the link. Links can be detached due to a short-term transient network failure, a network outage, or due to the service enforced 10-minute idle timeout. The reconnection of the link happens automatically as a part of any operation that requires the link, i.e. settling or receiving messages. Because of this, you may encounter `ServiceBusError`  or `SessionLockLostError` even if the lock expiration time has not yet passed. 
 
 ### How to browse scheduled or deferred messages
 
-Scheduled and deferred messages are included when peeking messages. They can be identified by the [ServiceBusReceivedMessage.State][MessageState] property. Once you have the [SequenceNumber][SequenceNumber] of a deferred message, you can receive it with a lock via the [ReceiveDeferredMessagesAsync][ReceiveDeferredMessages] method.
+Scheduled and deferred messages are included when peeking messages. They can be identified by the [ServiceBusReceivedMessage.state] property. Once you have the [sequence_number][SequenceNumber] of a deferred message, you can receive it with a lock via the [receive_deferred_messages][ReceiveDeferredMessages] method.
 
 When working with topics, you cannot peek scheduled messages on the subscription, as the messages remain in the topic until the scheduled enqueue time. As a workaround, you can construct a [ServiceBusReceiver][ServiceBusReceiver] passing in the topic name in order to peek such messages. Note that no other operations with the receiver will work when using a topic name.
 
@@ -226,52 +176,11 @@ When working with topics, you cannot peek scheduled messages on the subscription
 
 You can use a regular [ServiceBusReceiver][ServiceBusReceiver] to peek across all sessions. To peek for a specific session you can use the [ServiceBusSessionReceiver][ServiceBusSessionReceiver], but you will need to obtain a session lock.
 
-### NotSupportedException thrown when accessing message body
-
-This issue occurs most often in interop scenarios when receiving a message sent from a different library that uses a different AMQP message body format. If you are interacting with these types of messages, see the [AMQP message body sample][MessageBody] to learn how to access the message body. 
-
-## Troubleshoot processor issues
+## Troubleshoot receiver issues
 
 ### Autolock renewal is not working
 
 Autolock renewal relies on the system time to determine when to renew a lock for a message or session. If your system time is not accurate, e.g. your clock is slow, then lock renewal may not happen before the lock is lost. Ensure that your system time is accurate if autolock renewal is not working.
-
-### Processor appears to hang or have latency issues when using high concurrency
-
-This is often caused by thread starvation, particularly when using the session processor and using a very high value for [MaxConcurrentSessions][MaxConcurrentSessions], relative to the number of cores on the machine. The first thing to check would be to make sure you are not doing sync-over-async in any of your event handlers. Sync-over-async is an easy way to cause deadlocks and thread starvation. Even if you are not doing sync over async, any pure sync code in your handlers could contribute to thread starvation. If you've determined that this is not the issue, e.g. because you have pure async code, you can try increasing your [TryTimeout][TryTimeout]. This will relieve pressure on the threadpool by reducing the number of context switches and timeouts that may occur when using the session processor in particular. The default value for [TryTimeout][TryTimeout] is 60 seconds, but it can be set all the way up to 1 hour.  We recommend testing with the `TryTimeout` set to 5 minutes as a starting point and iterate from there. If none of these suggestions work, you may simply need to scale out to multiple hosts, reducing the concurrency in your application, but running the application on multiple hosts to achieve the desired overall concurrency.
-
-Further reading:
-- [Debug ThreadPool Starvation][DebugThreadPoolStarvation]
-- [Diagnosing .NET Core ThreadPool Starvation with PerfView (Why my service is not saturating all cores or seems to stall)](https://docs.microsoft.com/archive/blogs/vancem/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall)
-- [Diagnosing ThreadPool Exhaustion Issues in .NET Core Apps][DiagnoseThreadPoolExhaustion] _(video)_
-
-### Session processor takes too long to switch sessions
-
-This can be configured using the [SessionIdleTimeout][SessionIdleTimeout], which tells the processor how long to wait to receive a message from a session, before giving up and moving to another one. This is useful if you have many sparsely populated sessions, where each session may only have a few messages. If you expect that each session will have many messages that trickle in, setting this too low can be counter productive, as it will result in unnecessary closing of the session.
-
-### Processor stops immediately
-
-This is often observed for demo or testing scenarios.  `StartProcessingAsync` returns immediately after the processor has started. Calling this method will not block and keep your application alive while the processor is running, so you'll need some other mechanism to do so.  For demos or testing, it may be sufficient to just add a `Console.ReadKey()` call after you start the processor. For production scenarios, you will likely want to use some sort of framework integration like [BackgroundService][BackgroundService] to provide convenient application lifecycle hooks that can be used for starting and disposing the processor.
-
-## Troubleshoot transactions
-
-For general information about transactions in Service Bus, see the [Overview of Service Bus transaction processing][Transactions].
-
-### Supported operations
-
-Not all operations are supported when using transactions. To see the list of supported transactions, see [Operations within a transaction scope][TransactionOperations].
-
-### Timeout
-
-A transaction times out after a [period of time][TransactionTimeout], so it is important that processing that occurs within a transaction scope adheres to this timeout.
-
-### Operations in a transaction are not retried
-
-This is by design. Consider the following scenario - you are attempting to complete a message within a transaction, but there is some transient error that occurs, e.g. `ServiceBusException` with a `Reason` of `ServiceCommunicationProblem`. Suppose the request does actually make it to the service. If the client were to retry, the service would see two complete requests. The first complete will not be finalized until the transaction is committed. The second complete is not able to even be evaluated before the first complete finishes. The transaction on the client is waiting for the complete to finish. This creates a deadlock where the service is waiting for the client to complete the transaction, but the client is waiting for the service to acknowledge the second complete operation. The transaction will eventually timeout after 2 minutes, but this is a bad user experience. For this reason, we do not retry operations within a transaction.
-
-### Transactions across entities are not working
-
-In order to perform transactions that involve multiple entities, you'll need to set the `ServiceBusClientOptions.EnableCrossEntityTransactions` property to `true`. For details, see the [Transactions across entities][CrossEntityTransactions] sample. 
 
 ## Quotas
 
@@ -281,47 +190,26 @@ Information about Service Bus quotas can be found [here][ServiceBusQuotas].
 [ClientDefinition]: https://learn.microsoft.com/en-us/python/api/azure-servicebus/azure.servicebus.servicebusclient?view=azure-python
 [exception_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#module-azure.servicebus.exceptions
 [ServiceBusQuotas]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quotas
-[UnauthorizedAccessException]: https://docs.microsoft.com/dotnet/api/system.unauthorizedaccessexception
-[RetryOptionsSample]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples/Sample13_AdvancedConfiguration.md#customizing-the-retry-options
-[TransportSample]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples/Sample13_AdvancedConfiguration.md#configuring-the-transport
-[ServiceBusMessagingExceptions]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-exceptions
+[ProxySample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/samples/sync_samples/proxy.py
 [AmqpSpec]: https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html
 [GetConnectionString]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal#get-the-connection-string
 [AuthorizeSAS]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-sas
 [RBAC]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-managed-service-identity
 [TroubleshootingGuide]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-troubleshooting-guide
 [ServiceBusIPAddresses]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-faq#what-ip-addresses-do-i-need-to-add-to-allowlist-
-[ServiceBusProcessor]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusprocessor?view=azure-dotnet
-[ServiceBusSessionProcessor]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussessionprocessor?view=azure-dotnet
-[MaxConcurrentSessions]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussessionprocessoroptions.maxconcurrentsessions?view=azure-dotnet
-[SessionIdleTimeout]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussessionprocessoroptions.sessionidletimeout?view=azure-dotnet
-[ServiceBusClient]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusclient?view=azure-dotnet
-[TryTimeout]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusretryoptions.trytimeout?view=azure-dotnet
-[ServiceBusReceiver]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceiver?view=azure-dotnet
-[ServiceBusSessionReceiver]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussessionreceiver?view=azure-dotnet
-[ServiceBusSender]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussender?view=azure-dotnet
-[ServiceBusMessageBatch]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusmessagebatch?view=azure-dotnet
-[ServiceBusMessage]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusmessage?view=azure-dotnet
-[SendMessages]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebussender.sendmessagesasync?view=azure-dotnet#azure-messaging-servicebus-servicebussender-sendmessagesasync(system-collections-generic-ienumerable((azure-messaging-servicebus-servicebusmessage))-system-threading-cancellationtoken)
-[ReceiveMessages]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceiver.receivemessagesasync?view=azure-dotnet#azure-messaging-servicebus-servicebusreceiver-receivemessagesasync(system-int32-system-nullable((system-timespan))-system-threading-cancellationtoken)
-[ReceiveDeferredMessages]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceiver.receivedeferredmessagesasync?view=azure-dotnet
-[MessageState]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceivedmessage.state?view=azure-dotnet#azure-messaging-servicebus-servicebusreceivedmessage-state
-[SequenceNumber]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusreceivedmessage.sequencenumber?view=azure-dotnet
-[Logging]: https://docs.microsoft.com/dotnet/azure/sdk/logging
-[ActivitySourceSupport]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/samples/Diagnostics.md#activitysource-support
-[ActivitySource]: https://docs.microsoft.com/dotnet/api/system.diagnostics.activitysource?view=dotnet
-[ApplicationProperties]: https://docs.microsoft.com/dotnet/api/azure.messaging.servicebus.servicebusmessage.applicationproperties?view=azure-dotnet
-[AppInsights]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/samples/Diagnostics.md#applicationinsights-with-azure-monitor
-[TransactionOperations]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-transactions#operations-within-a-transaction-scope
-[Transactions]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-transactions
+[ServiceBusReceiver]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusreceiver?view=azure-python
+[ServiceBusSender]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebussender?view=azure-python
+[ServiceBusMessageBatch]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusmessagebatch?view=azure-python
+[ServiceBusMessage]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusreceivedmessage?view=azure-python
+[SendMessages]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebussender?view=azure-python#azure-servicebus-servicebussender-send-messages
+[ReceiveMessages]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusreceiver?view=azure-python#azure-servicebus-servicebusreceiver-receive-messages
+[ReceiveDeferredMessages]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusreceiver?view=azure-python#azure-servicebus-servicebusreceiver-receive-deferred-messages
+[SequenceNumber]: https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus.servicebusreceivedmessage?view=azure-python#azure-servicebus-servicebusreceivedmessage-sequence-number
+[Logging]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [CrossEntityTransactions]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples/Sample06_Transactions.md#transactions-across-entities
 [LargeMessageSupport]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging#large-messages-support
 [GitHubDiscussionOnBatching]: https://github.com/Azure/azure-sdk-for-net/issues/25381#issuecomment-1227917960
 [BackgroundService]: https://docs.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice?view=dotnet
 [AuthenticationAndTheAzureSDK]: https://devblogs.microsoft.com/azure-sdk/authentication-and-the-azure-sdk
-[IdentitySample]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/servicebus/Azure.Messaging.ServiceBus#authenticating-with-azureidentity
-[DebugThreadPoolStarvation]: https://docs.microsoft.com/dotnet/core/diagnostics/debug-threadpool-starvation
-[DiagnoseThreadPoolExhaustion]: https://docs.microsoft.com/shows/on-net/diagnosing-thread-pool-exhaustion-issues-in-net-core-apps
-[TransactionTimeout]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-transactions#timeout
-[MessageBody]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples/Sample14_AMQPMessage.md#message-body
+[IdentitySample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/samples/sync_samples/client_identity_authentication.py
 [Throttling]: https://learn.microsoft.com/azure/service-bus-messaging/service-bus-throttling
