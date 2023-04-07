@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataflowType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataflowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataflowType."""
 
     JSON = "Json"
     YAML = "Yaml"
 
-class FieldType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class FieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FieldType."""
 
     STRING = "String"
     BOOLEAN = "Boolean"
@@ -30,9 +32,11 @@ class FieldType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LIST = "List"
     STREAM = "Stream"
 
-class HttpStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    CONTINUE_ENUM = "Continue"
+class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HttpStatusCode."""
+
+    CONTINUE = "Continue"
     SWITCHING_PROTOCOLS = "SwitchingProtocols"
     PROCESSING = "Processing"
     EARLY_HINTS = "EarlyHints"
@@ -93,14 +97,19 @@ class HttpStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LOOP_DETECTED = "LoopDetected"
     NOT_EXTENDED = "NotExtended"
     NETWORK_AUTHENTICATION_REQUIRED = "NetworkAuthenticationRequired"
+    CONTINUE_ENUM = "Continue"
 
-class HttpVersionPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class HttpVersionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HttpVersionPolicy."""
 
     REQUEST_VERSION_OR_LOWER = "RequestVersionOrLower"
     REQUEST_VERSION_OR_HIGHER = "RequestVersionOrHigher"
     REQUEST_VERSION_EXACT = "RequestVersionExact"
 
-class StoredProcedureParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StoredProcedureParameterType."""
 
     STRING = "String"
     INT = "Int"
@@ -109,7 +118,9 @@ class StoredProcedureParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, 
     BOOLEAN = "Boolean"
     DATE = "Date"
 
-class SType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SType."""
 
     EMAIL_ADDRESS = "EmailAddress"
     GEOGRAPHIC_COORDINATE = "GeographicCoordinate"

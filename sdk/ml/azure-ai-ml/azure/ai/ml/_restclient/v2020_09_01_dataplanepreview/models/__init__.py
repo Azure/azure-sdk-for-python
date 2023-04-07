@@ -6,133 +6,100 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AssetJobInput
-    from ._models_py3 import AssetJobOutput
-    from ._models_py3 import BatchJob
-    from ._models_py3 import BatchJobResource
-    from ._models_py3 import BatchJobResourceArmPaginatedResult
-    from ._models_py3 import BatchRetrySettings
-    from ._models_py3 import ComputeConfiguration
-    from ._models_py3 import CustomModelJobInput
-    from ._models_py3 import CustomModelJobOutput
-    from ._models_py3 import DataVersion
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import InferenceDataInputBase
-    from ._models_py3 import InferenceDataUrlInput
-    from ._models_py3 import InferenceDatasetIdInput
-    from ._models_py3 import InferenceDatasetInput
-    from ._models_py3 import JobEndpoint
-    from ._models_py3 import JobInput
-    from ._models_py3 import JobOutputArtifacts
-    from ._models_py3 import JobOutputV2
-    from ._models_py3 import LabelClass
-    from ._models_py3 import LiteralJobInput
-    from ._models_py3 import MLFlowModelJobInput
-    from ._models_py3 import MLFlowModelJobOutput
-    from ._models_py3 import MLTableJobInput
-    from ._models_py3 import MLTableJobOutput
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TritonModelJobInput
-    from ._models_py3 import TritonModelJobOutput
-    from ._models_py3 import UriFileJobInput
-    from ._models_py3 import UriFileJobOutput
-    from ._models_py3 import UriFolderJobInput
-    from ._models_py3 import UriFolderJobOutput
-except (SyntaxError, ImportError):
-    from ._models import AssetJobInput  # type: ignore
-    from ._models import AssetJobOutput  # type: ignore
-    from ._models import BatchJob  # type: ignore
-    from ._models import BatchJobResource  # type: ignore
-    from ._models import BatchJobResourceArmPaginatedResult  # type: ignore
-    from ._models import BatchRetrySettings  # type: ignore
-    from ._models import ComputeConfiguration  # type: ignore
-    from ._models import CustomModelJobInput  # type: ignore
-    from ._models import CustomModelJobOutput  # type: ignore
-    from ._models import DataVersion  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import InferenceDataInputBase  # type: ignore
-    from ._models import InferenceDataUrlInput  # type: ignore
-    from ._models import InferenceDatasetIdInput  # type: ignore
-    from ._models import InferenceDatasetInput  # type: ignore
-    from ._models import JobEndpoint  # type: ignore
-    from ._models import JobInput  # type: ignore
-    from ._models import JobOutputArtifacts  # type: ignore
-    from ._models import JobOutputV2  # type: ignore
-    from ._models import LabelClass  # type: ignore
-    from ._models import LiteralJobInput  # type: ignore
-    from ._models import MLFlowModelJobInput  # type: ignore
-    from ._models import MLFlowModelJobOutput  # type: ignore
-    from ._models import MLTableJobInput  # type: ignore
-    from ._models import MLTableJobOutput  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TritonModelJobInput  # type: ignore
-    from ._models import TritonModelJobOutput  # type: ignore
-    from ._models import UriFileJobInput  # type: ignore
-    from ._models import UriFileJobOutput  # type: ignore
-    from ._models import UriFolderJobInput  # type: ignore
-    from ._models import UriFolderJobOutput  # type: ignore
+from ._models_py3 import AssetJobInput
+from ._models_py3 import AssetJobOutput
+from ._models_py3 import BatchJob
+from ._models_py3 import BatchJobResource
+from ._models_py3 import BatchJobResourceArmPaginatedResult
+from ._models_py3 import BatchRetrySettings
+from ._models_py3 import ComputeConfiguration
+from ._models_py3 import CustomModelJobInput
+from ._models_py3 import CustomModelJobOutput
+from ._models_py3 import DataVersion
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import InferenceDataInputBase
+from ._models_py3 import InferenceDataUrlInput
+from ._models_py3 import InferenceDatasetIdInput
+from ._models_py3 import InferenceDatasetInput
+from ._models_py3 import JobEndpoint
+from ._models_py3 import JobInput
+from ._models_py3 import JobOutputArtifacts
+from ._models_py3 import JobOutputV2
+from ._models_py3 import LabelClass
+from ._models_py3 import LiteralJobInput
+from ._models_py3 import MLFlowModelJobInput
+from ._models_py3 import MLFlowModelJobOutput
+from ._models_py3 import MLTableJobInput
+from ._models_py3 import MLTableJobOutput
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TritonModelJobInput
+from ._models_py3 import TritonModelJobOutput
+from ._models_py3 import UriFileJobInput
+from ._models_py3 import UriFileJobOutput
+from ._models_py3 import UriFolderJobInput
+from ._models_py3 import UriFolderJobOutput
 
-from ._azure_machine_learning_workspaces_enums import (
-    BatchLoggingLevel,
-    CreatedByType,
-    DatasetType,
-    InferenceDataInputType,
-    InputDeliveryMode,
-    JobInputType,
-    JobOutputType,
-    JobProvisioningState,
-    JobStatus,
-    OutputDeliveryMode,
-)
+from ._azure_machine_learning_workspaces_enums import BatchLoggingLevel
+from ._azure_machine_learning_workspaces_enums import CreatedByType
+from ._azure_machine_learning_workspaces_enums import DatasetType
+from ._azure_machine_learning_workspaces_enums import InferenceDataInputType
+from ._azure_machine_learning_workspaces_enums import InputDeliveryMode
+from ._azure_machine_learning_workspaces_enums import JobInputType
+from ._azure_machine_learning_workspaces_enums import JobOutputType
+from ._azure_machine_learning_workspaces_enums import JobProvisioningState
+from ._azure_machine_learning_workspaces_enums import JobStatus
+from ._azure_machine_learning_workspaces_enums import OutputDeliveryMode
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AssetJobInput',
-    'AssetJobOutput',
-    'BatchJob',
-    'BatchJobResource',
-    'BatchJobResourceArmPaginatedResult',
-    'BatchRetrySettings',
-    'ComputeConfiguration',
-    'CustomModelJobInput',
-    'CustomModelJobOutput',
-    'DataVersion',
-    'ErrorDetail',
-    'ErrorResponse',
-    'InferenceDataInputBase',
-    'InferenceDataUrlInput',
-    'InferenceDatasetIdInput',
-    'InferenceDatasetInput',
-    'JobEndpoint',
-    'JobInput',
-    'JobOutputArtifacts',
-    'JobOutputV2',
-    'LabelClass',
-    'LiteralJobInput',
-    'MLFlowModelJobInput',
-    'MLFlowModelJobOutput',
-    'MLTableJobInput',
-    'MLTableJobOutput',
-    'Resource',
-    'SystemData',
-    'TritonModelJobInput',
-    'TritonModelJobOutput',
-    'UriFileJobInput',
-    'UriFileJobOutput',
-    'UriFolderJobInput',
-    'UriFolderJobOutput',
-    'BatchLoggingLevel',
-    'CreatedByType',
-    'DatasetType',
-    'InferenceDataInputType',
-    'InputDeliveryMode',
-    'JobInputType',
-    'JobOutputType',
-    'JobProvisioningState',
-    'JobStatus',
-    'OutputDeliveryMode',
+    "AssetJobInput",
+    "AssetJobOutput",
+    "BatchJob",
+    "BatchJobResource",
+    "BatchJobResourceArmPaginatedResult",
+    "BatchRetrySettings",
+    "ComputeConfiguration",
+    "CustomModelJobInput",
+    "CustomModelJobOutput",
+    "DataVersion",
+    "ErrorDetail",
+    "ErrorResponse",
+    "InferenceDataInputBase",
+    "InferenceDataUrlInput",
+    "InferenceDatasetIdInput",
+    "InferenceDatasetInput",
+    "JobEndpoint",
+    "JobInput",
+    "JobOutputArtifacts",
+    "JobOutputV2",
+    "LabelClass",
+    "LiteralJobInput",
+    "MLFlowModelJobInput",
+    "MLFlowModelJobOutput",
+    "MLTableJobInput",
+    "MLTableJobOutput",
+    "Resource",
+    "SystemData",
+    "TritonModelJobInput",
+    "TritonModelJobOutput",
+    "UriFileJobInput",
+    "UriFileJobOutput",
+    "UriFolderJobInput",
+    "UriFolderJobOutput",
+    "BatchLoggingLevel",
+    "CreatedByType",
+    "DatasetType",
+    "InferenceDataInputType",
+    "InputDeliveryMode",
+    "JobInputType",
+    "JobOutputType",
+    "JobProvisioningState",
+    "JobStatus",
+    "OutputDeliveryMode",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

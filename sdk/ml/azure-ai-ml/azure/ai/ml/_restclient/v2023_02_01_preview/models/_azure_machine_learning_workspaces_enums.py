@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
     not resizing. There are no changes to the number of compute nodes in the compute in progress. A
     compute enters this state when it is created and when no operations are being performed on the
@@ -22,7 +21,8 @@ class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STEADY = "Steady"
     RESIZING = "Resizing"
 
-class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ApplicationSharingPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for sharing applications on this compute instance among users of parent workspace. If
     Personal, only the creator can access applications on this compute instance. When Shared, any
     workspace user can access applications on this instance depending on his/her assigned role.
@@ -31,9 +31,9 @@ class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     PERSONAL = "Personal"
     SHARED = "Shared"
 
-class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of registry asset.
-    """
+
+class AssetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of registry asset."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -42,35 +42,36 @@ class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     UPDATING = "Updating"
     DELETING = "Deleting"
 
-class AutoRebuildSetting(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """AutoRebuild setting for the derived image
-    """
+
+class AutoRebuildSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutoRebuild setting for the derived image."""
 
     DISABLED = "Disabled"
     ON_BASE_IMAGE_UPDATE = "OnBaseImageUpdate"
 
-class Autosave(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Auto save settings.
-    """
+
+class Autosave(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Auto save settings."""
 
     NONE = "None"
     LOCAL = "Local"
     REMOTE = "Remote"
 
-class BaseEnvironmentSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Base environment type.
-    """
+
+class BaseEnvironmentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Base environment type."""
 
     ENVIRONMENT_ASSET = "EnvironmentAsset"
 
-class BatchDeploymentPropertyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The enumerated property types for batch deployments.
-    """
+
+class BatchDeploymentPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enumerated property types for batch deployments."""
 
     MODEL = "Model"
     PIPELINE_COMPONENT = "PipelineComponent"
 
-class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class BatchLoggingLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Log verbosity for batch inferencing.
     Increasing verbosity order for logging is : Warning, Info and Debug.
     The default value is Info.
@@ -80,179 +81,179 @@ class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     DEBUG = "Debug"
 
-class BatchOutputAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine how batch inferencing will handle output
-    """
+
+class BatchOutputAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine how batch inferencing will handle output."""
 
     SUMMARY_ONLY = "SummaryOnly"
     APPEND_ROW = "AppendRow"
 
-class BillingCurrency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Three lettered code specifying the currency of the VM price. Example: USD
-    """
+
+class BillingCurrency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Three lettered code specifying the currency of the VM price. Example: USD."""
 
     USD = "USD"
 
-class BlockedTransformers(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum for all classification models supported by AutoML.
-    """
 
-    #: Target encoding for text data.
+class BlockedTransformers(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for all classification models supported by AutoML."""
+
     TEXT_TARGET_ENCODER = "TextTargetEncoder"
-    #: Ohe hot encoding creates a binary feature transformation.
+    """Target encoding for text data."""
     ONE_HOT_ENCODER = "OneHotEncoder"
-    #: Target encoding for categorical data.
+    """Ohe hot encoding creates a binary feature transformation."""
     CAT_TARGET_ENCODER = "CatTargetEncoder"
-    #: Tf-Idf stands for, term-frequency times inverse document-frequency. This is a common term
-    #: weighting scheme for identifying information from documents.
+    """Target encoding for categorical data."""
     TF_IDF = "TfIdf"
-    #: Weight of Evidence encoding is a technique used to encode categorical variables. It uses the
-    #: natural log of the P(1)/P(0) to create weights.
+    """Tf-Idf stands for, term-frequency times inverse document-frequency. This is a common term
+    #: weighting scheme for identifying information from documents."""
     WO_E_TARGET_ENCODER = "WoETargetEncoder"
-    #: Label encoder converts labels/categorical variables in a numerical form.
+    """Weight of Evidence encoding is a technique used to encode categorical variables. It uses the
+    #: natural log of the P(1)/P(0) to create weights."""
     LABEL_ENCODER = "LabelEncoder"
-    #: Word embedding helps represents words or phrases as a vector, or a series of numbers.
+    """Label encoder converts labels/categorical variables in a numerical form."""
     WORD_EMBEDDING = "WordEmbedding"
-    #: Naive Bayes is a classified that is used for classification of discrete features that are
-    #: categorically distributed.
+    """Word embedding helps represents words or phrases as a vector, or a series of numbers."""
     NAIVE_BAYES = "NaiveBayes"
-    #: Count Vectorizer converts a collection of text documents to a matrix of token counts.
+    """Naive Bayes is a classified that is used for classification of discrete features that are
+    #: categorically distributed."""
     COUNT_VECTORIZER = "CountVectorizer"
-    #: Hashing One Hot Encoder can turn categorical variables into a limited number of new features.
-    #: This is often used for high-cardinality categorical features.
+    """Count Vectorizer converts a collection of text documents to a matrix of token counts."""
     HASH_ONE_HOT_ENCODER = "HashOneHotEncoder"
+    """Hashing One Hot Encoder can turn categorical variables into a limited number of new features.
+    #: This is often used for high-cardinality categorical features."""
 
-class Caching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Caching type of Data Disk.
-    """
+
+class Caching(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Caching type of Data Disk."""
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum for all classification models supported by AutoML.
-    """
 
-    #: Logistic regression is a fundamental classification technique.
+class ClassificationModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for all classification models supported by AutoML."""
+
+    LOGISTIC_REGRESSION = "LogisticRegression"
+    """Logistic regression is a fundamental classification technique.
     #: It belongs to the group of linear classifiers and is somewhat similar to polynomial and linear
     #: regression.
     #: Logistic regression is fast and relatively uncomplicated, and it's convenient for you to
     #: interpret the results.
     #: Although it's essentially a method for binary classification, it can also be applied to
-    #: multiclass problems.
-    LOGISTIC_REGRESSION = "LogisticRegression"
-    #: SGD: Stochastic gradient descent is an optimization algorithm often used in machine learning
+    #: multiclass problems."""
+    SGD = "SGD"
+    """SGD: Stochastic gradient descent is an optimization algorithm often used in machine learning
     #: applications
     #: to find the model parameters that correspond to the best fit between predicted and actual
-    #: outputs.
-    SGD = "SGD"
-    #: The multinomial Naive Bayes classifier is suitable for classification with discrete features
+    #: outputs."""
+    MULTINOMIAL_NAIVE_BAYES = "MultinomialNaiveBayes"
+    """The multinomial Naive Bayes classifier is suitable for classification with discrete features
     #: (e.g., word counts for text classification).
     #: The multinomial distribution normally requires integer feature counts. However, in practice,
-    #: fractional counts such as tf-idf may also work.
-    MULTINOMIAL_NAIVE_BAYES = "MultinomialNaiveBayes"
-    #: Naive Bayes classifier for multivariate Bernoulli models.
+    #: fractional counts such as tf-idf may also work."""
     BERNOULLI_NAIVE_BAYES = "BernoulliNaiveBayes"
-    #: A support vector machine (SVM) is a supervised machine learning model that uses classification
+    """Naive Bayes classifier for multivariate Bernoulli models."""
+    SVM = "SVM"
+    """A support vector machine (SVM) is a supervised machine learning model that uses classification
     #: algorithms for two-group classification problems.
     #: After giving an SVM model sets of labeled training data for each category, they're able to
-    #: categorize new text.
-    SVM = "SVM"
-    #: A support vector machine (SVM) is a supervised machine learning model that uses classification
+    #: categorize new text."""
+    LINEAR_SVM = "LinearSVM"
+    """A support vector machine (SVM) is a supervised machine learning model that uses classification
     #: algorithms for two-group classification problems.
     #: After giving an SVM model sets of labeled training data for each category, they're able to
     #: categorize new text.
     #: Linear SVM performs best when input data is linear, i.e., data can be easily classified by
-    #: drawing the straight line between classified values on a plotted graph.
-    LINEAR_SVM = "LinearSVM"
-    #: K-nearest neighbors (KNN) algorithm uses 'feature similarity' to predict the values of new
+    #: drawing the straight line between classified values on a plotted graph."""
+    KNN = "KNN"
+    """K-nearest neighbors (KNN) algorithm uses 'feature similarity' to predict the values of new
     #: datapoints
     #: which further means that the new data point will be assigned a value based on how closely it
-    #: matches the points in the training set.
-    KNN = "KNN"
-    #: Decision Trees are a non-parametric supervised learning method used for both classification and
+    #: matches the points in the training set."""
+    DECISION_TREE = "DecisionTree"
+    """Decision Trees are a non-parametric supervised learning method used for both classification and
     #: regression tasks.
     #: The goal is to create a model that predicts the value of a target variable by learning simple
-    #: decision rules inferred from the data features.
-    DECISION_TREE = "DecisionTree"
-    #: Random forest is a supervised learning algorithm.
+    #: decision rules inferred from the data features."""
+    RANDOM_FOREST = "RandomForest"
+    """Random forest is a supervised learning algorithm.
     #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
     #: â€œbaggingâ€ method.
     #: The general idea of the bagging method is that a combination of learning models increases the
-    #: overall result.
-    RANDOM_FOREST = "RandomForest"
-    #: Extreme Trees is an ensemble machine learning algorithm that combines the predictions from many
-    #: decision trees. It is related to the widely used random forest algorithm.
+    #: overall result."""
     EXTREME_RANDOM_TREES = "ExtremeRandomTrees"
-    #: LightGBM is a gradient boosting framework that uses tree based learning algorithms.
+    """Extreme Trees is an ensemble machine learning algorithm that combines the predictions from many
+    #: decision trees. It is related to the widely used random forest algorithm."""
     LIGHT_GBM = "LightGBM"
-    #: The technique of transiting week learners into a strong learner is called Boosting. The
-    #: gradient boosting algorithm process works on this theory of execution.
+    """LightGBM is a gradient boosting framework that uses tree based learning algorithms."""
     GRADIENT_BOOSTING = "GradientBoosting"
-    #: XGBoost: Extreme Gradient Boosting Algorithm. This algorithm is used for structured data where
-    #: target column values can be divided into distinct class values.
+    """The technique of transiting week learners into a strong learner is called Boosting. The
+    #: gradient boosting algorithm process works on this theory of execution."""
     XG_BOOST_CLASSIFIER = "XGBoostClassifier"
+    """XGBoost: Extreme Gradient Boosting Algorithm. This algorithm is used for structured data where
+    #: target column values can be divided into distinct class values."""
 
-class ClassificationMultilabelPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Primary metrics for classification multilabel tasks.
-    """
 
-    #: AUC is the Area under the curve.
-    #: This metric represents arithmetic mean of the score for each class,
-    #: weighted by the number of true instances in each class.
+class ClassificationMultilabelPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary metrics for classification multilabel tasks."""
+
     AUC_WEIGHTED = "AUCWeighted"
-    #: Accuracy is the ratio of predictions that exactly match the true class labels.
+    """AUC is the Area under the curve.
+    #: This metric represents arithmetic mean of the score for each class,
+    #: weighted by the number of true instances in each class."""
     ACCURACY = "Accuracy"
-    #: Normalized macro recall is recall macro-averaged and normalized, so that random
-    #: performance has a score of 0, and perfect performance has a score of 1.
+    """Accuracy is the ratio of predictions that exactly match the true class labels."""
     NORM_MACRO_RECALL = "NormMacroRecall"
-    #: The arithmetic mean of the average precision score for each class, weighted by
-    #: the number of true instances in each class.
+    """Normalized macro recall is recall macro-averaged and normalized, so that random
+    #: performance has a score of 0, and perfect performance has a score of 1."""
     AVERAGE_PRECISION_SCORE_WEIGHTED = "AveragePrecisionScoreWeighted"
-    #: The arithmetic mean of precision for each class, weighted by number of true instances in each
-    #: class.
+    """The arithmetic mean of the average precision score for each class, weighted by
+    #: the number of true instances in each class."""
     PRECISION_SCORE_WEIGHTED = "PrecisionScoreWeighted"
-    #: Intersection Over Union. Intersection of predictions divided by union of predictions.
+    """The arithmetic mean of precision for each class, weighted by number of true instances in each
+    #: class."""
     IOU = "IOU"
+    """Intersection Over Union. Intersection of predictions divided by union of predictions."""
 
-class ClassificationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Primary metrics for classification tasks.
-    """
 
-    #: AUC is the Area under the curve.
-    #: This metric represents arithmetic mean of the score for each class,
-    #: weighted by the number of true instances in each class.
+class ClassificationPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary metrics for classification tasks."""
+
     AUC_WEIGHTED = "AUCWeighted"
-    #: Accuracy is the ratio of predictions that exactly match the true class labels.
+    """AUC is the Area under the curve.
+    #: This metric represents arithmetic mean of the score for each class,
+    #: weighted by the number of true instances in each class."""
     ACCURACY = "Accuracy"
-    #: Normalized macro recall is recall macro-averaged and normalized, so that random
-    #: performance has a score of 0, and perfect performance has a score of 1.
+    """Accuracy is the ratio of predictions that exactly match the true class labels."""
     NORM_MACRO_RECALL = "NormMacroRecall"
-    #: The arithmetic mean of the average precision score for each class, weighted by
-    #: the number of true instances in each class.
+    """Normalized macro recall is recall macro-averaged and normalized, so that random
+    #: performance has a score of 0, and perfect performance has a score of 1."""
     AVERAGE_PRECISION_SCORE_WEIGHTED = "AveragePrecisionScoreWeighted"
-    #: The arithmetic mean of precision for each class, weighted by number of true instances in each
-    #: class.
+    """The arithmetic mean of the average precision score for each class, weighted by
+    #: the number of true instances in each class."""
     PRECISION_SCORE_WEIGHTED = "PrecisionScoreWeighted"
+    """The arithmetic mean of precision for each class, weighted by number of true instances in each
+    #: class."""
 
-class ClusterPurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Intended usage of the cluster
-    """
+
+class ClusterPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Intended usage of the cluster."""
 
     FAST_PROD = "FastProd"
     DENSE_PROD = "DenseProd"
     DEV_TEST = "DevTest"
 
-class ComputeInstanceAuthorizationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The Compute Instance Authorization type. Available values are personal (default).
-    """
+
+class ComputeInstanceAuthorizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Compute Instance Authorization type. Available values are personal (default)."""
 
     PERSONAL = "personal"
 
-class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Current state of an ComputeInstance.
-    """
+
+class ComputeInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of an ComputeInstance."""
 
     CREATING = "Creating"
     CREATE_FAILED = "CreateFailed"
@@ -270,16 +271,16 @@ class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "Unknown"
     UNUSABLE = "Unusable"
 
-class ComputePowerAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """[Required] The compute power action.
-    """
+
+class ComputePowerAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """[Required] The compute power action."""
 
     START = "Start"
     STOP = "Stop"
 
-class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of compute
-    """
+
+class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of compute."""
 
     AKS = "AKS"
     KUBERNETES = "Kubernetes"
@@ -292,9 +293,9 @@ class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATA_LAKE_ANALYTICS = "DataLakeAnalytics"
     SYNAPSE_SPARK = "SynapseSpark"
 
-class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Authentication type of the connection target
-    """
+
+class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type of the connection target."""
 
     PAT = "PAT"
     MANAGED_IDENTITY = "ManagedIdentity"
@@ -304,9 +305,9 @@ class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_PRINCIPAL = "ServicePrincipal"
     ACCESS_KEY = "AccessKey"
 
-class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Category of the connection
-    """
+
+class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of the connection."""
 
     PYTHON_FEED = "PythonFeed"
     CONTAINER_REGISTRY = "ContainerRegistry"
@@ -317,29 +318,29 @@ class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_SQL_DB = "AzureSqlDb"
     AZURE_SYNAPSE_ANALYTICS = "AzureSynapseAnalytics"
 
-class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of container to retrieve logs from.
-    """
 
-    #: The container used to download models and score script.
+class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of container to retrieve logs from."""
+
     STORAGE_INITIALIZER = "StorageInitializer"
-    #: The container used to serve user's request.
+    """The container used to download models and score script."""
     INFERENCE_SERVER = "InferenceServer"
-    #: The container used to collect payload and custom logging when mdc is enabled.
+    """The container used to serve user's request."""
     MODEL_DATA_COLLECTOR = "ModelDataCollector"
+    """The container used to collect payload and custom logging when mdc is enabled."""
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the datastore credentials type.
-    """
+
+class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the datastore credentials type."""
 
     ACCOUNT_KEY = "AccountKey"
     CERTIFICATE = "Certificate"
@@ -349,9 +350,9 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KERBEROS_KEYTAB = "KerberosKeytab"
     KERBEROS_PASSWORD = "KerberosPassword"
 
-class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the datastore contents type.
-    """
+
+class DatastoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the datastore contents type."""
 
     AZURE_BLOB = "AzureBlob"
     AZURE_DATA_LAKE_GEN1 = "AzureDataLakeGen1"
@@ -359,17 +360,17 @@ class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_FILE = "AzureFile"
     HDFS = "Hdfs"
 
-class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the type of data.
-    """
+
+class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the type of data."""
 
     URI_FILE = "uri_file"
     URI_FOLDER = "uri_folder"
     MLTABLE = "mltable"
 
-class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Possible values for DeploymentProvisioningState.
-    """
+
+class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible values for DeploymentProvisioningState."""
 
     CREATING = "Creating"
     DELETING = "Deleting"
@@ -379,29 +380,32 @@ class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class DiagnoseResultLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of workspace setup error
-    """
+
+class DiagnoseResultLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of workspace setup error."""
 
     WARNING = "Warning"
     ERROR = "Error"
     INFORMATION = "Information"
 
-class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the job distribution type.
-    """
+
+class DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the job distribution type."""
 
     PY_TORCH = "PyTorch"
     TENSOR_FLOW = "TensorFlow"
     MPI = "Mpi"
 
-class EarlyTerminationPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """EarlyTerminationPolicyType."""
 
     BANDIT = "Bandit"
     MEDIAN_STOPPING = "MedianStopping"
     TRUNCATION_SELECTION = "TruncationSelection"
 
-class EgressPublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class EgressPublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine whether PublicNetworkAccess is Enabled or Disabled for egress of a
     deployment.
     """
@@ -409,40 +413,40 @@ class EgressPublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str,
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EmailNotificationEnableType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the email notification type.
-    """
+
+class EmailNotificationEnableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the email notification type."""
 
     JOB_COMPLETED = "JobCompleted"
     JOB_FAILED = "JobFailed"
     JOB_CANCELLED = "JobCancelled"
 
-class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether or not the encryption is enabled for the workspace.
-    """
+
+class EncryptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether or not the encryption is enabled for the workspace."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine endpoint authentication mode.
-    """
+
+class EndpointAuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine endpoint authentication mode."""
 
     AML_TOKEN = "AMLToken"
     KEY = "Key"
     AAD_TOKEN = "AADToken"
 
-class EndpointComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine endpoint compute type.
-    """
+
+class EndpointComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine endpoint compute type."""
 
     MANAGED = "Managed"
     KUBERNETES = "Kubernetes"
     AZURE_ML_COMPUTE = "AzureMLCompute"
 
-class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of endpoint provisioning.
-    """
+
+class EndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of endpoint provisioning."""
 
     CREATING = "Creating"
     DELETING = "Deleting"
@@ -451,28 +455,30 @@ class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     UPDATING = "Updating"
     CANCELED = "Canceled"
 
-class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Environment type is either user created or curated by Azure ML service
-    """
+
+class EnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Environment type is either user created or curated by Azure ML service."""
 
     CURATED = "Curated"
     USER_CREATED = "UserCreated"
 
-class EnvironmentVariableType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Environment Variable. Possible values are: local - For local variable
-    """
+
+class EnvironmentVariableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Environment Variable. Possible values are: local - For local variable."""
 
     LOCAL = "local"
 
-class ExportFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The format of exported labels.
-    """
+
+class ExportFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of exported labels."""
 
     DATASET = "Dataset"
     COCO = "Coco"
     CSV = "CSV"
 
-class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class FeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FeatureDataType."""
 
     STRING = "String"
     INTEGER = "Integer"
@@ -483,185 +489,188 @@ class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATETIME = "Datetime"
     BOOLEAN = "Boolean"
 
-class FeatureLags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Flag for generating lags for the numeric features.
-    """
 
-    #: No feature lags generated.
+class FeatureLags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag for generating lags for the numeric features."""
+
     NONE = "None"
-    #: System auto-generates feature lags.
+    """No feature lags generated."""
     AUTO = "Auto"
+    """System auto-generates feature lags."""
 
-class FeaturestoreJobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class FeaturestoreJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FeaturestoreJobType."""
 
     RECURRENT_MATERIALIZATION = "RecurrentMaterialization"
     BACKFILL_MATERIALIZATION = "BackfillMaterialization"
 
-class FeaturizationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Featurization mode - determines data featurization mode.
-    """
 
-    #: Auto mode, system performs featurization without any custom featurization inputs.
+class FeaturizationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Featurization mode - determines data featurization mode."""
+
     AUTO = "Auto"
-    #: Custom featurization.
+    """Auto mode, system performs featurization without any custom featurization inputs."""
     CUSTOM = "Custom"
-    #: Featurization off. 'Forecasting' task cannot use this value.
+    """Custom featurization."""
     OFF = "Off"
+    """Featurization off. 'Forecasting' task cannot use this value."""
 
-class ForecastHorizonMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine forecast horizon selection mode.
-    """
 
-    #: Forecast horizon to be determined automatically.
+class ForecastHorizonMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine forecast horizon selection mode."""
+
     AUTO = "Auto"
-    #: Use the custom forecast horizon.
+    """Forecast horizon to be determined automatically."""
     CUSTOM = "Custom"
+    """Use the custom forecast horizon."""
 
-class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum for all forecasting models supported by AutoML.
-    """
 
-    #: Auto-Autoregressive Integrated Moving Average (ARIMA) model uses time-series data and
+class ForecastingModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for all forecasting models supported by AutoML."""
+
+    AUTO_ARIMA = "AutoArima"
+    """Auto-Autoregressive Integrated Moving Average (ARIMA) model uses time-series data and
     #: statistical analysis to interpret the data and make future predictions.
     #: This model aims to explain data by using time series data on its past values and uses linear
-    #: regression to make predictions.
-    AUTO_ARIMA = "AutoArima"
-    #: Prophet is a procedure for forecasting time series data based on an additive model where
+    #: regression to make predictions."""
+    PROPHET = "Prophet"
+    """Prophet is a procedure for forecasting time series data based on an additive model where
     #: non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
     #: It works best with time series that have strong seasonal effects and several seasons of
     #: historical data. Prophet is robust to missing data and shifts in the trend, and typically
-    #: handles outliers well.
-    PROPHET = "Prophet"
-    #: The Naive forecasting model makes predictions by carrying forward the latest target value for
-    #: each time-series in the training data.
+    #: handles outliers well."""
     NAIVE = "Naive"
-    #: The Seasonal Naive forecasting model makes predictions by carrying forward the latest season of
-    #: target values for each time-series in the training data.
+    """The Naive forecasting model makes predictions by carrying forward the latest target value for
+    #: each time-series in the training data."""
     SEASONAL_NAIVE = "SeasonalNaive"
-    #: The Average forecasting model makes predictions by carrying forward the average of the target
-    #: values for each time-series in the training data.
+    """The Seasonal Naive forecasting model makes predictions by carrying forward the latest season of
+    #: target values for each time-series in the training data."""
     AVERAGE = "Average"
-    #: The Seasonal Average forecasting model makes predictions by carrying forward the average value
-    #: of the latest season of data for each time-series in the training data.
+    """The Average forecasting model makes predictions by carrying forward the average of the target
+    #: values for each time-series in the training data."""
     SEASONAL_AVERAGE = "SeasonalAverage"
-    #: Exponential smoothing is a time series forecasting method for univariate data that can be
-    #: extended to support data with a systematic trend or seasonal component.
+    """The Seasonal Average forecasting model makes predictions by carrying forward the average value
+    #: of the latest season of data for each time-series in the training data."""
     EXPONENTIAL_SMOOTHING = "ExponentialSmoothing"
-    #: An Autoregressive Integrated Moving Average with Explanatory Variable (ARIMAX) model can be
+    """Exponential smoothing is a time series forecasting method for univariate data that can be
+    #: extended to support data with a systematic trend or seasonal component."""
+    ARIMAX = "Arimax"
+    """An Autoregressive Integrated Moving Average with Explanatory Variable (ARIMAX) model can be
     #: viewed as a multiple regression model with one or more autoregressive (AR) terms and/or one or
     #: more moving average (MA) terms.
     #: This method is suitable for forecasting when data is stationary/non stationary, and
-    #: multivariate with any type of data pattern, i.e., level/trend /seasonality/cyclicity.
-    ARIMAX = "Arimax"
-    #: TCNForecaster: Temporal Convolutional Networks Forecaster. //TODO: Ask forecasting team for
-    #: brief intro.
+    #: multivariate with any type of data pattern, i.e., level/trend /seasonality/cyclicity."""
     TCN_FORECASTER = "TCNForecaster"
-    #: Elastic net is a popular type of regularized linear regression that combines two popular
-    #: penalties, specifically the L1 and L2 penalty functions.
+    """TCNForecaster: Temporal Convolutional Networks Forecaster. //TODO: Ask forecasting team for
+    #: brief intro."""
     ELASTIC_NET = "ElasticNet"
-    #: The technique of transiting week learners into a strong learner is called Boosting. The
-    #: gradient boosting algorithm process works on this theory of execution.
+    """Elastic net is a popular type of regularized linear regression that combines two popular
+    #: penalties, specifically the L1 and L2 penalty functions."""
     GRADIENT_BOOSTING = "GradientBoosting"
-    #: Decision Trees are a non-parametric supervised learning method used for both classification and
+    """The technique of transiting week learners into a strong learner is called Boosting. The
+    #: gradient boosting algorithm process works on this theory of execution."""
+    DECISION_TREE = "DecisionTree"
+    """Decision Trees are a non-parametric supervised learning method used for both classification and
     #: regression tasks.
     #: The goal is to create a model that predicts the value of a target variable by learning simple
-    #: decision rules inferred from the data features.
-    DECISION_TREE = "DecisionTree"
-    #: K-nearest neighbors (KNN) algorithm uses 'feature similarity' to predict the values of new
+    #: decision rules inferred from the data features."""
+    KNN = "KNN"
+    """K-nearest neighbors (KNN) algorithm uses 'feature similarity' to predict the values of new
     #: datapoints
     #: which further means that the new data point will be assigned a value based on how closely it
-    #: matches the points in the training set.
-    KNN = "KNN"
-    #: Lasso model fit with Least Angle Regression a.k.a. Lars. It is a Linear Model trained with an
-    #: L1 prior as regularizer.
+    #: matches the points in the training set."""
     LASSO_LARS = "LassoLars"
-    #: SGD: Stochastic gradient descent is an optimization algorithm often used in machine learning
+    """Lasso model fit with Least Angle Regression a.k.a. Lars. It is a Linear Model trained with an
+    #: L1 prior as regularizer."""
+    SGD = "SGD"
+    """SGD: Stochastic gradient descent is an optimization algorithm often used in machine learning
     #: applications
     #: to find the model parameters that correspond to the best fit between predicted and actual
     #: outputs.
-    #: It's an inexact but powerful technique.
-    SGD = "SGD"
-    #: Random forest is a supervised learning algorithm.
+    #: It's an inexact but powerful technique."""
+    RANDOM_FOREST = "RandomForest"
+    """Random forest is a supervised learning algorithm.
     #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
     #: â€œbaggingâ€ method.
     #: The general idea of the bagging method is that a combination of learning models increases the
-    #: overall result.
-    RANDOM_FOREST = "RandomForest"
-    #: Extreme Trees is an ensemble machine learning algorithm that combines the predictions from many
-    #: decision trees. It is related to the widely used random forest algorithm.
+    #: overall result."""
     EXTREME_RANDOM_TREES = "ExtremeRandomTrees"
-    #: LightGBM is a gradient boosting framework that uses tree based learning algorithms.
+    """Extreme Trees is an ensemble machine learning algorithm that combines the predictions from many
+    #: decision trees. It is related to the widely used random forest algorithm."""
     LIGHT_GBM = "LightGBM"
-    #: XGBoostRegressor: Extreme Gradient Boosting Regressor is a supervised machine learning model
-    #: using ensemble of base learners.
+    """LightGBM is a gradient boosting framework that uses tree based learning algorithms."""
     XG_BOOST_REGRESSOR = "XGBoostRegressor"
+    """XGBoostRegressor: Extreme Gradient Boosting Regressor is a supervised machine learning model
+    #: using ensemble of base learners."""
 
-class ForecastingPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Primary metrics for Forecasting task.
-    """
 
-    #: The Spearman's rank coefficient of correlation is a non-parametric measure of rank correlation.
+class ForecastingPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary metrics for Forecasting task."""
+
     SPEARMAN_CORRELATION = "SpearmanCorrelation"
-    #: The Normalized Root Mean Squared Error (NRMSE) the RMSE facilitates the comparison between
-    #: models with different scales.
+    """The Spearman's rank coefficient of correlation is a non-parametric measure of rank correlation."""
     NORMALIZED_ROOT_MEAN_SQUARED_ERROR = "NormalizedRootMeanSquaredError"
-    #: The R2 score is one of the performance evaluation measures for forecasting-based machine
-    #: learning models.
+    """The Normalized Root Mean Squared Error (NRMSE) the RMSE facilitates the comparison between
+    #: models with different scales."""
     R2_SCORE = "R2Score"
-    #: The Normalized Mean Absolute Error (NMAE) is a validation metric to compare the Mean Absolute
-    #: Error (MAE) of (time) series with different scales.
+    """The R2 score is one of the performance evaluation measures for forecasting-based machine
+    #: learning models."""
     NORMALIZED_MEAN_ABSOLUTE_ERROR = "NormalizedMeanAbsoluteError"
+    """The Normalized Mean Absolute Error (NMAE) is a validation metric to compare the Mean Absolute
+    #: Error (MAE) of (time) series with different scales."""
 
-class Goal(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines supported metric goals for hyperparameter tuning
-    """
+
+class Goal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines supported metric goals for hyperparameter tuning."""
 
     MINIMIZE = "Minimize"
     MAXIMIZE = "Maximize"
 
-class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine identity framework.
-    """
+
+class IdentityConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine identity framework."""
 
     MANAGED = "Managed"
     AML_TOKEN = "AMLToken"
     USER_IDENTITY = "UserIdentity"
 
-class ImageAnnotationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Annotation type of image data.
-    """
+
+class ImageAnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Annotation type of image data."""
 
     CLASSIFICATION = "Classification"
     BOUNDING_BOX = "BoundingBox"
     INSTANCE_SEGMENTATION = "InstanceSegmentation"
 
-class ImageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the image. Possible values are: docker - For docker images. azureml - For AzureML
-    images
+    images.
     """
 
     DOCKER = "docker"
     AZUREML = "azureml"
 
-class IncrementalDataRefresh(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether IncrementalDataRefresh is enabled
-    """
+
+class IncrementalDataRefresh(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether IncrementalDataRefresh is enabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class InferencingServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Inferencing server type for various targets.
-    """
+
+class InferencingServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Inferencing server type for various targets."""
 
     AZURE_ML_ONLINE = "AzureMLOnline"
     AZURE_ML_BATCH = "AzureMLBatch"
     TRITON = "Triton"
     CUSTOM = "Custom"
 
-class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the input data delivery mode.
-    """
+
+class InputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
     READ_WRITE_MOUNT = "ReadWriteMount"
@@ -670,25 +679,25 @@ class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EVAL_MOUNT = "EvalMount"
     EVAL_DOWNLOAD = "EvalDownload"
 
-class InputPathType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Input path type for package inputs.
-    """
+
+class InputPathType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Input path type for package inputs."""
 
     URL = "Url"
     PATH_ID = "PathId"
     PATH_VERSION = "PathVersion"
 
-class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Primary metrics for InstanceSegmentation tasks.
-    """
 
-    #: Mean Average Precision (MAP) is the average of AP (Average Precision).
-    #: AP is calculated for each class and averaged to get the MAP.
+class InstanceSegmentationPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary metrics for InstanceSegmentation tasks."""
+
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
+    """Mean Average Precision (MAP) is the average of AP (Average Precision).
+    #: AP is calculated for each class and averaged to get the MAP."""
 
-class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the Job Input Type.
-    """
+
+class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the Job Input Type."""
 
     LITERAL = "literal"
     URI_FILE = "uri_file"
@@ -698,14 +707,16 @@ class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MLFLOW_MODEL = "mlflow_model"
     TRITON_MODEL = "triton_model"
 
-class JobLimitsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class JobLimitsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JobLimitsType."""
 
     COMMAND = "Command"
     SWEEP = "Sweep"
 
-class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the Job Output Type.
-    """
+
+class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the Job Output Type."""
 
     URI_FILE = "uri_file"
     URI_FOLDER = "uri_folder"
@@ -714,67 +725,67 @@ class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MLFLOW_MODEL = "mlflow_model"
     TRITON_MODEL = "triton_model"
 
-class JobProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the job provisioning state.
-    """
+
+class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the job provisioning state."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
     IN_PROGRESS = "InProgress"
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of a job.
-    """
 
-    #: Run hasn't started yet.
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a job."""
+
     NOT_STARTED = "NotStarted"
-    #: Run has started. The user has a run ID.
+    """Run hasn't started yet."""
     STARTING = "Starting"
-    #: (Not used currently) It will be used if ES is creating the compute target.
+    """Run has started. The user has a run ID."""
     PROVISIONING = "Provisioning"
-    #: The run environment is being prepared.
+    """(Not used currently) It will be used if ES is creating the compute target."""
     PREPARING = "Preparing"
-    #: The job is queued in the compute target. For example, in BatchAI the job is in queued state,
-    #: while waiting for all required nodes to be ready.
+    """The run environment is being prepared."""
     QUEUED = "Queued"
-    #: The job started to run in the compute target.
+    """The job is queued in the compute target. For example, in BatchAI the job is in queued state,
+    #: while waiting for all required nodes to be ready."""
     RUNNING = "Running"
-    #: Job is completed in the target. It is in output collection state now.
+    """The job started to run in the compute target."""
     FINALIZING = "Finalizing"
-    #: Cancellation has been requested for the job.
+    """Job is completed in the target. It is in output collection state now."""
     CANCEL_REQUESTED = "CancelRequested"
-    #: Job completed successfully. This reflects that both the job itself and output collection states
-    #: completed successfully.
+    """Cancellation has been requested for the job."""
     COMPLETED = "Completed"
-    #: Job failed.
+    """Job completed successfully. This reflects that both the job itself and output collection states
+    #: completed successfully"""
     FAILED = "Failed"
-    #: Following cancellation request, the job is now successfully canceled.
+    """Job failed."""
     CANCELED = "Canceled"
-    #: When heartbeat is enabled, if the run isn't updating any information to RunHistory then the run
+    """Following cancellation request, the job is now successfully canceled."""
+    NOT_RESPONDING = "NotResponding"
+    """When heartbeat is enabled, if the run isn't updating any information to RunHistory then the run
     #: goes to NotResponding state.
     #: NotResponding is the only state that is exempt from strict transition orders. A run can go from
-    #: NotResponding to any of the previous states.
-    NOT_RESPONDING = "NotResponding"
-    #: The job is paused by users. Some adjustment to labeling jobs can be made only in paused state.
+    #: NotResponding to any of the previous states."""
     PAUSED = "Paused"
-    #: Default job status if not mapped to all other statuses.
+    """The job is paused by users. Some adjustment to labeling jobs can be made only in paused state."""
     UNKNOWN = "Unknown"
-    #: The job is in a scheduled state. Job is not in any active state.
+    """Default job status if not mapped to all other statuses"""
     SCHEDULED = "Scheduled"
+    """The job is in a scheduled state. Job is not in any active state."""
 
-class JobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the job tier.
-    """
+
+class JobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the job tier."""
 
     SPOT = "Spot"
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the type of job.
-    """
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the type of job."""
 
     AUTO_ML = "AutoML"
     COMMAND = "Command"
@@ -783,53 +794,58 @@ class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PIPELINE = "Pipeline"
     SPARK = "Spark"
 
-class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyType."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class LearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Learning rate scheduler enum.
-    """
 
-    #: No learning rate scheduler selected.
+class LearningRateScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Learning rate scheduler enum."""
+
     NONE = "None"
-    #: Cosine Annealing With Warmup.
+    """No learning rate scheduler selected."""
     WARMUP_COSINE = "WarmupCosine"
-    #: Step learning rate scheduler.
+    """Cosine Annealing With Warmup."""
     STEP = "Step"
+    """Step learning rate scheduler."""
 
-class ListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ListViewType."""
 
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
-class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Load Balancer Type
-    """
+
+class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Load Balancer Type."""
 
     PUBLIC_IP = "PublicIp"
     INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
 
-class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum for setting log verbosity.
-    """
 
-    #: No logs emitted.
+class LogVerbosity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for setting log verbosity."""
+
     NOT_SET = "NotSet"
-    #: Debug and above log statements logged.
+    """No logs emitted."""
     DEBUG = "Debug"
-    #: Info and above log statements logged.
+    """Debug and above log statements logged."""
     INFO = "Info"
-    #: Warning and above log statements logged.
+    """Info and above log statements logged."""
     WARNING = "Warning"
-    #: Error and above log statements logged.
+    """Warning and above log statements logged."""
     ERROR = "Error"
-    #: Only critical statements logged.
+    """Error and above log statements logged."""
     CRITICAL = "Critical"
+    """Only critical statements logged."""
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
     """
@@ -839,64 +855,68 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
-class MaterializationStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class MaterializationStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MaterializationStoreType."""
 
     NONE = "None"
     ONLINE = "Online"
     OFFLINE = "Offline"
     ONLINE_AND_OFFLINE = "OnlineAndOffline"
 
-class MediaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Media type of data asset.
-    """
+
+class MediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Media type of data asset."""
 
     IMAGE = "Image"
     TEXT = "Text"
 
-class MLAssistConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class MLAssistConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MLAssistConfigurationType."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class MlflowAutologger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether mlflow autologger is enabled for notebooks.
-    """
+
+class MlflowAutologger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether mlflow autologger is enabled for notebooks."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class MLFlowAutologgerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the state of mlflow autologger.
-    """
+
+class MLFlowAutologgerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the state of mlflow autologger."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Image model size.
-    """
 
-    #: No value selected.
+class ModelSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Image model size."""
+
     NONE = "None"
-    #: Small size.
+    """No value selected."""
     SMALL = "Small"
-    #: Medium size.
+    """Small size."""
     MEDIUM = "Medium"
-    #: Large size.
+    """Medium size."""
     LARGE = "Large"
-    #: Extra large size.
+    """Large size."""
     EXTRA_LARGE = "ExtraLarge"
+    """Extra large size."""
 
-class MountAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Mount Action.
-    """
+
+class MountAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mount Action."""
 
     MOUNT = "Mount"
     UNMOUNT = "Unmount"
 
-class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Mount state.
-    """
+
+class MountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mount state."""
 
     MOUNT_REQUESTED = "MountRequested"
     MOUNTED = "Mounted"
@@ -905,50 +925,51 @@ class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNMOUNT_FAILED = "UnmountFailed"
     UNMOUNTED = "Unmounted"
 
-class MultiSelect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether multiSelect is enabled
-    """
+
+class MultiSelect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether multiSelect is enabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class NCrossValidationsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Determines how N-Cross validations value is determined.
-    """
 
-    #: Determine N-Cross validations value automatically. Supported only for 'Forecasting' AutoML
-    #: task.
+class NCrossValidationsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines how N-Cross validations value is determined."""
+
     AUTO = "Auto"
-    #: Use custom N-Cross validations value.
+    """Determine N-Cross validations value automatically. Supported only for 'Forecasting' AutoML
+    #: task."""
     CUSTOM = "Custom"
+    """Use custom N-Cross validations value."""
 
-class Network(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """network of this container.
-    """
+
+class Network(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """network of this container."""
 
     BRIDGE = "Bridge"
     HOST = "Host"
 
-class NlpLearningRateScheduler(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum of learning rate schedulers that aligns with those supported by HF
-    """
 
-    #: No learning rate schedule.
+class NlpLearningRateScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of learning rate schedulers that aligns with those supported by HF."""
+
     NONE = "None"
-    #: Linear warmup and decay.
+    """No learning rate schedule."""
     LINEAR = "Linear"
-    #: Linear warmup then cosine decay.
+    """Linear warmup and decay."""
     COSINE = "Cosine"
-    #: Linear warmup, cosine decay, then restart to initial LR.
+    """Linear warmup then cosine decay."""
     COSINE_WITH_RESTARTS = "CosineWithRestarts"
-    #: Increase linearly then polynomially decay.
+    """Linear warmup, cosine decay, then restart to initial LR."""
     POLYNOMIAL = "Polynomial"
-    #: Constant learning rate.
+    """Increase linearly then polynomially decay."""
     CONSTANT = "Constant"
-    #: Linear warmup followed by constant value.
+    """Constant learning rate."""
     CONSTANT_WITH_WARMUP = "ConstantWithWarmup"
+    """Linear warmup followed by constant value."""
 
-class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the compute node. Values are idle, running, preparing, unusable, leaving and
     preempted.
     """
@@ -960,31 +981,31 @@ class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LEAVING = "leaving"
     PREEMPTED = "preempted"
 
-class NodesValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The enumerated types for the nodes value
-    """
+
+class NodesValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enumerated types for the nodes value."""
 
     ALL = "All"
     CUSTOM = "Custom"
 
-class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Primary metrics for Image ObjectDetection task.
-    """
 
-    #: Mean Average Precision (MAP) is the average of AP (Average Precision).
-    #: AP is calculated for each class and averaged to get the MAP.
+class ObjectDetectionPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary metrics for Image ObjectDetection task."""
+
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
+    """Mean Average Precision (MAP) is the average of AP (Average Precision).
+    #: AP is calculated for each class and averaged to get the MAP."""
 
-class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of operating system.
-    """
+
+class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of operating system."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Name of the last operation.
-    """
+
+class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of the last operation."""
 
     CREATE = "Create"
     START = "Start"
@@ -993,9 +1014,9 @@ class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REIMAGE = "Reimage"
     DELETE = "Delete"
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Operation status.
-    """
+
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operation status."""
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
@@ -1006,71 +1027,73 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REIMAGE_FAILED = "ReimageFailed"
     DELETE_FAILED = "DeleteFailed"
 
-class OperationTrigger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Trigger of operation.
-    """
+
+class OperationTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Trigger of operation."""
 
     USER = "User"
     SCHEDULE = "Schedule"
     IDLE_SHUTDOWN = "IdleShutdown"
 
-class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OrderString."""
 
     CREATED_AT_DESC = "CreatedAtDesc"
     CREATED_AT_ASC = "CreatedAtAsc"
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
-class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Compute OS Type
-    """
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compute OS Type."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Output data delivery mode enums.
-    """
+
+class OutputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Output data delivery mode enums."""
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
     DIRECT = "Direct"
 
-class PackageBuildState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Package build state returned in package response.
-    """
+
+class PackageBuildState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Package build state returned in package response."""
 
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class PackageInputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Mounting type of the model or the inputs
-    """
+
+class PackageInputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mounting type of the model or the inputs."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
     DOWNLOAD = "Download"
 
-class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the inputs.
-    """
+
+class PackageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the inputs."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
@@ -1078,15 +1101,16 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
 
-class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Protocol over which communication will happen over this endpoint
-    """
+
+class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol over which communication will happen over this endpoint."""
 
     TCP = "tcp"
     UDP = "udp"
     HTTP = "http"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of workspace resource. The provisioningState is to indicate states
     for resource provisioning.
     """
@@ -1100,125 +1124,126 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CANCELED = "Canceled"
     SOFT_DELETED = "SoftDeleted"
 
-class ProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current deployment state of schedule.
-    """
+
+class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current deployment state of schedule."""
 
     COMPLETED = "Completed"
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether requests from Public Network are allowed.
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class PublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine whether PublicNetworkAccess is Enabled or Disabled.
-    """
+
+class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine whether PublicNetworkAccess is Enabled or Disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class QuotaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """An enum describing the unit of quota measurement.
-    """
+
+class QuotaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An enum describing the unit of quota measurement."""
 
     COUNT = "Count"
 
-class RandomSamplingAlgorithmRule(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The specific type of random algorithm
-    """
+
+class RandomSamplingAlgorithmRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The specific type of random algorithm."""
 
     RANDOM = "Random"
     SOBOL = "Sobol"
 
-class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to describe the frequency of a recurrence schedule
-    """
 
-    #: Minute frequency.
+class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to describe the frequency of a recurrence schedule."""
+
     MINUTE = "Minute"
-    #: Hour frequency.
+    """Minute frequency"""
     HOUR = "Hour"
-    #: Day frequency.
+    """Hour frequency"""
     DAY = "Day"
-    #: Week frequency.
+    """Day frequency"""
     WEEK = "Week"
-    #: Month frequency.
+    """Week frequency"""
     MONTH = "Month"
+    """Month frequency"""
 
-class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine which reference method to use for an asset.
-    """
+
+class ReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine which reference method to use for an asset."""
 
     ID = "Id"
     DATA_PATH = "DataPath"
     OUTPUT_PATH = "OutputPath"
 
-class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum for all Regression models supported by AutoML.
-    """
 
-    #: Elastic net is a popular type of regularized linear regression that combines two popular
-    #: penalties, specifically the L1 and L2 penalty functions.
+class RegressionModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for all Regression models supported by AutoML."""
+
     ELASTIC_NET = "ElasticNet"
-    #: The technique of transiting week learners into a strong learner is called Boosting. The
-    #: gradient boosting algorithm process works on this theory of execution.
+    """Elastic net is a popular type of regularized linear regression that combines two popular
+    #: penalties, specifically the L1 and L2 penalty functions."""
     GRADIENT_BOOSTING = "GradientBoosting"
-    #: Decision Trees are a non-parametric supervised learning method used for both classification and
+    """The technique of transiting week learners into a strong learner is called Boosting. The
+    #: gradient boosting algorithm process works on this theory of execution."""
+    DECISION_TREE = "DecisionTree"
+    """Decision Trees are a non-parametric supervised learning method used for both classification and
     #: regression tasks.
     #: The goal is to create a model that predicts the value of a target variable by learning simple
-    #: decision rules inferred from the data features.
-    DECISION_TREE = "DecisionTree"
-    #: K-nearest neighbors (KNN) algorithm uses 'feature similarity' to predict the values of new
+    #: decision rules inferred from the data features."""
+    KNN = "KNN"
+    """K-nearest neighbors (KNN) algorithm uses 'feature similarity' to predict the values of new
     #: datapoints
     #: which further means that the new data point will be assigned a value based on how closely it
-    #: matches the points in the training set.
-    KNN = "KNN"
-    #: Lasso model fit with Least Angle Regression a.k.a. Lars. It is a Linear Model trained with an
-    #: L1 prior as regularizer.
+    #: matches the points in the training set."""
     LASSO_LARS = "LassoLars"
-    #: SGD: Stochastic gradient descent is an optimization algorithm often used in machine learning
+    """Lasso model fit with Least Angle Regression a.k.a. Lars. It is a Linear Model trained with an
+    #: L1 prior as regularizer."""
+    SGD = "SGD"
+    """SGD: Stochastic gradient descent is an optimization algorithm often used in machine learning
     #: applications
     #: to find the model parameters that correspond to the best fit between predicted and actual
     #: outputs.
-    #: It's an inexact but powerful technique.
-    SGD = "SGD"
-    #: Random forest is a supervised learning algorithm.
+    #: It's an inexact but powerful technique."""
+    RANDOM_FOREST = "RandomForest"
+    """Random forest is a supervised learning algorithm.
     #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
     #: â€œbaggingâ€ method.
     #: The general idea of the bagging method is that a combination of learning models increases the
-    #: overall result.
-    RANDOM_FOREST = "RandomForest"
-    #: Extreme Trees is an ensemble machine learning algorithm that combines the predictions from many
-    #: decision trees. It is related to the widely used random forest algorithm.
+    #: overall result."""
     EXTREME_RANDOM_TREES = "ExtremeRandomTrees"
-    #: LightGBM is a gradient boosting framework that uses tree based learning algorithms.
+    """Extreme Trees is an ensemble machine learning algorithm that combines the predictions from many
+    #: decision trees. It is related to the widely used random forest algorithm."""
     LIGHT_GBM = "LightGBM"
-    #: XGBoostRegressor: Extreme Gradient Boosting Regressor is a supervised machine learning model
-    #: using ensemble of base learners.
+    """LightGBM is a gradient boosting framework that uses tree based learning algorithms."""
     XG_BOOST_REGRESSOR = "XGBoostRegressor"
+    """XGBoostRegressor: Extreme Gradient Boosting Regressor is a supervised machine learning model
+    #: using ensemble of base learners."""
 
-class RegressionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Primary metrics for Regression task.
-    """
 
-    #: The Spearman's rank coefficient of correlation is a nonparametric measure of rank correlation.
+class RegressionPrimaryMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary metrics for Regression task."""
+
     SPEARMAN_CORRELATION = "SpearmanCorrelation"
-    #: The Normalized Root Mean Squared Error (NRMSE) the RMSE facilitates the comparison between
-    #: models with different scales.
+    """The Spearman's rank coefficient of correlation is a nonparametric measure of rank correlation."""
     NORMALIZED_ROOT_MEAN_SQUARED_ERROR = "NormalizedRootMeanSquaredError"
-    #: The R2 score is one of the performance evaluation measures for forecasting-based machine
-    #: learning models.
+    """The Normalized Root Mean Squared Error (NRMSE) the RMSE facilitates the comparison between
+    #: models with different scales."""
     R2_SCORE = "R2Score"
-    #: The Normalized Mean Absolute Error (NMAE) is a validation metric to compare the Mean Absolute
-    #: Error (MAE) of (time) series with different scales.
+    """The R2 score is one of the performance evaluation measures for forecasting-based machine
+    #: learning models."""
     NORMALIZED_MEAN_ABSOLUTE_ERROR = "NormalizedMeanAbsoluteError"
+    """The Normalized Mean Absolute Error (NMAE) is a validation metric to compare the Mean Absolute
+    #: Error (MAE) of (time) series with different scales."""
 
-class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on all nodes of the cluster. Enabled - Indicates that the public ssh port is
     open on all nodes of the cluster. NotSpecified - Indicates that the public ssh port is closed
@@ -1231,37 +1256,47 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
 
-class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SamplingAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SamplingAlgorithmType."""
 
     GRID = "Grid"
     RANDOM = "Random"
     BAYESIAN = "Bayesian"
 
-class ScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ScaleType."""
 
     DEFAULT = "Default"
     TARGET_UTILIZATION = "TargetUtilization"
 
-class ScheduleActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScheduleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ScheduleActionType."""
 
     CREATE_JOB = "CreateJob"
     INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
 
-class ScheduleListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScheduleListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ScheduleListViewType."""
 
     ENABLED_ONLY = "EnabledOnly"
     DISABLED_ONLY = "DisabledOnly"
     ALL = "All"
 
-class ScheduleProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current deployment state of schedule.
-    """
+
+class ScheduleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current deployment state of schedule."""
 
     COMPLETED = "Completed"
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
-class ScheduleProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScheduleProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ScheduleProvisioningStatus."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -1270,25 +1305,25 @@ class ScheduleProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, En
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class ScheduleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Is the schedule enabled or disabled?
-    """
+
+class ScheduleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Is the schedule enabled or disabled?."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SeasonalityMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Forecasting seasonality mode.
-    """
 
-    #: Seasonality to be determined automatically.
+class SeasonalityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Forecasting seasonality mode."""
+
     AUTO = "Auto"
-    #: Use the custom seasonality value.
+    """Seasonality to be determined automatically."""
     CUSTOM = "Custom"
+    """Use the custom seasonality value."""
 
-class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the datastore secrets type.
-    """
+
+class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the datastore secrets type."""
 
     ACCOUNT_KEY = "AccountKey"
     CERTIFICATE = "Certificate"
@@ -1297,41 +1332,44 @@ class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KERBEROS_PASSWORD = "KerberosPassword"
     KERBEROS_KEYTAB = "KerberosKeytab"
 
-class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Do not use any identity for service data access.
+class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ServiceDataAccessAuthIdentity."""
+
     NONE = "None"
-    #: Use the system assigned managed identity of the Workspace to authenticate service data access.
+    """Do not use any identity for service data access."""
     WORKSPACE_SYSTEM_ASSIGNED_IDENTITY = "WorkspaceSystemAssignedIdentity"
-    #: Use the user assigned managed identity of the Workspace to authenticate service data access.
+    """Use the system assigned managed identity of the Workspace to authenticate service data access."""
     WORKSPACE_USER_ASSIGNED_IDENTITY = "WorkspaceUserAssignedIdentity"
+    """Use the user assigned managed identity of the Workspace to authenticate service data access."""
 
-class ShortSeriesHandlingConfiguration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The parameter defining how if AutoML should handle short time series.
-    """
 
-    #: Represents no/null value.
+class ShortSeriesHandlingConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The parameter defining how if AutoML should handle short time series."""
+
     NONE = "None"
-    #: Short series will be padded if there are no long series, otherwise short series will be
-    #: dropped.
+    """Represents no/null value."""
     AUTO = "Auto"
-    #: All the short series will be padded.
+    """Short series will be padded if there are no long series, otherwise short series will be
+    #: dropped."""
     PAD = "Pad"
-    #: All the short series will be dropped.
+    """All the short series will be padded."""
     DROP = "Drop"
+    """All the short series will be dropped."""
 
-class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Node scaling setting for the compute sku.
-    """
 
-    #: Automatically scales node count.
+class SkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Node scaling setting for the compute sku."""
+
     AUTOMATIC = "Automatic"
-    #: Node count scaled upon user request.
+    """Automatically scales node count."""
     MANUAL = "Manual"
-    #: Fixed set of nodes.
+    """Node count scaled upon user request."""
     NONE = "None"
+    """Fixed set of nodes."""
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """
@@ -1341,20 +1379,23 @@ class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Data source type.
-    """
+
+class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Data source type."""
 
     DATASET = "Dataset"
     DATASTORE = "Datastore"
     URI = "URI"
 
-class SparkJobEntryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SparkJobEntryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SparkJobEntryType."""
 
     SPARK_JOB_PYTHON_ENTRY = "SparkJobPythonEntry"
     SPARK_JOB_SCALA_ENTRY = "SparkJobScalaEntry"
 
-class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SshPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on this instance. Enabled - Indicates that the public ssh port is open and
     accessible according to the VNet/subnet policy if applicable.
@@ -1363,39 +1404,40 @@ class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SslConfigStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable or disable ssl for scoring
-    """
+
+class SslConfigStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enable or disable ssl for scoring."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
     AUTO = "Auto"
 
-class StackMetaLearnerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class StackMetaLearnerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The meta-learner is a model trained on the output of the individual heterogeneous models.
     Default meta-learners are LogisticRegression for classification tasks (or LogisticRegressionCV
     if cross-validation is enabled) and ElasticNet for regression/forecasting tasks (or
     ElasticNetCV if cross-validation is enabled).
     This parameter can be one of the following strings: LogisticRegression, LogisticRegressionCV,
-    LightGBMClassifier, ElasticNet, ElasticNetCV, LightGBMRegressor, or LinearRegression
+    LightGBMClassifier, ElasticNet, ElasticNetCV, LightGBMRegressor, or LinearRegression.
     """
 
     NONE = "None"
-    #: Default meta-learners are LogisticRegression for classification tasks.
     LOGISTIC_REGRESSION = "LogisticRegression"
-    #: Default meta-learners are LogisticRegression for classification task when CV is on.
+    """Default meta-learners are LogisticRegression for classification tasks."""
     LOGISTIC_REGRESSION_CV = "LogisticRegressionCV"
+    """Default meta-learners are LogisticRegression for classification task when CV is on."""
     LIGHT_GBM_CLASSIFIER = "LightGBMClassifier"
-    #: Default meta-learners are LogisticRegression for regression task.
     ELASTIC_NET = "ElasticNet"
-    #: Default meta-learners are LogisticRegression for regression task when CV is on.
+    """Default meta-learners are LogisticRegression for regression task."""
     ELASTIC_NET_CV = "ElasticNetCV"
+    """Default meta-learners are LogisticRegression for regression task when CV is on."""
     LIGHT_GBM_REGRESSOR = "LightGBMRegressor"
     LINEAR_REGRESSION = "LinearRegression"
 
-class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of update workspace quota.
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of update workspace quota."""
 
     UNDEFINED = "Undefined"
     SUCCESS = "Success"
@@ -1406,219 +1448,225 @@ class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OPERATION_NOT_SUPPORTED_FOR_SKU = "OperationNotSupportedForSku"
     OPERATION_NOT_ENABLED_FOR_REGION = "OperationNotEnabledForRegion"
 
-class StatusMessageLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class StatusMessageLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StatusMessageLevel."""
 
     ERROR = "Error"
     INFORMATION = "Information"
     WARNING = "Warning"
 
-class StochasticOptimizer(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Stochastic optimizer for image models.
-    """
 
-    #: No optimizer selected.
+class StochasticOptimizer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Stochastic optimizer for image models."""
+
     NONE = "None"
-    #: Stochastic Gradient Descent optimizer.
+    """No optimizer selected."""
     SGD = "Sgd"
-    #: Adam is algorithm the optimizes stochastic objective functions based on adaptive estimates of
-    #: moments.
+    """Stochastic Gradient Descent optimizer."""
     ADAM = "Adam"
-    #: AdamW is a variant of the optimizer Adam that has an improved implementation of weight decay.
+    """Adam is algorithm the optimizes stochastic objective functions based on adaptive estimates of
+    #: moments"""
     ADAMW = "Adamw"
+    """AdamW is a variant of the optimizer Adam that has an improved implementation of weight decay."""
 
-class StorageAccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """type of this storage account.
-    """
+
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """type of this storage account."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class TargetAggregationFunction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Target aggregate function.
-    """
 
-    #: Represent no value set.
+class TargetAggregationFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target aggregate function."""
+
     NONE = "None"
+    """Represent no value set."""
     SUM = "Sum"
     MAX = "Max"
     MIN = "Min"
     MEAN = "Mean"
 
-class TargetLagsMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Target lags selection modes.
-    """
 
-    #: Target lags to be determined automatically.
+class TargetLagsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target lags selection modes."""
+
     AUTO = "Auto"
-    #: Use the custom target lags.
+    """Target lags to be determined automatically."""
     CUSTOM = "Custom"
+    """Use the custom target lags."""
 
-class TargetRollingWindowSizeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Target rolling windows size mode.
-    """
 
-    #: Determine rolling windows size automatically.
+class TargetRollingWindowSizeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target rolling windows size mode."""
+
     AUTO = "Auto"
-    #: Use the specified rolling window size.
+    """Determine rolling windows size automatically."""
     CUSTOM = "Custom"
+    """Use the specified rolling window size."""
 
-class TaskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """AutoMLJob Task type.
-    """
 
-    #: Classification in machine learning and statistics is a supervised learning approach in which
-    #: the computer program learns from the data given to it and make new observations or
-    #: classifications.
+class TaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutoMLJob Task type."""
+
     CLASSIFICATION = "Classification"
-    #: Regression means to predict the value using the input data. Regression models are used to
-    #: predict a continuous value.
+    """Classification in machine learning and statistics is a supervised learning approach in which
+    #: the computer program learns from the data given to it and make new observations or
+    #: classifications."""
     REGRESSION = "Regression"
-    #: Forecasting is a special kind of regression task that deals with time-series data and creates
-    #: forecasting model
-    #: that can be used to predict the near future values based on the inputs.
+    """Regression means to predict the value using the input data. Regression models are used to
+    #: predict a continuous value."""
     FORECASTING = "Forecasting"
-    #: Image Classification. Multi-class image classification is used when an image is classified with
+    """Forecasting is a special kind of regression task that deals with time-series data and creates
+    #: forecasting model
+    #: that can be used to predict the near future values based on the inputs."""
+    IMAGE_CLASSIFICATION = "ImageClassification"
+    """Image Classification. Multi-class image classification is used when an image is classified with
     #: only a single label
     #: from a set of classes - e.g. each image is classified as either an image of a 'cat' or a 'dog'
-    #: or a 'duck'.
-    IMAGE_CLASSIFICATION = "ImageClassification"
-    #: Image Classification Multilabel. Multi-label image classification is used when an image could
-    #: have one or more labels
-    #: from a set of labels - e.g. an image could be labeled with both 'cat' and 'dog'.
+    #: or a 'duck'."""
     IMAGE_CLASSIFICATION_MULTILABEL = "ImageClassificationMultilabel"
-    #: Image Object Detection. Object detection is used to identify objects in an image and locate
-    #: each object with a
-    #: bounding box e.g. locate all dogs and cats in an image and draw a bounding box around each.
+    """Image Classification Multilabel. Multi-label image classification is used when an image could
+    #: have one or more labels
+    #: from a set of labels - e.g. an image could be labeled with both 'cat' and 'dog'."""
     IMAGE_OBJECT_DETECTION = "ImageObjectDetection"
-    #: Image Instance Segmentation. Instance segmentation is used to identify objects in an image at
-    #: the pixel level,
-    #: drawing a polygon around each object in the image.
+    """Image Object Detection. Object detection is used to identify objects in an image and locate
+    #: each object with a
+    #: bounding box e.g. locate all dogs and cats in an image and draw a bounding box around each."""
     IMAGE_INSTANCE_SEGMENTATION = "ImageInstanceSegmentation"
-    #: Text classification (also known as text tagging or text categorization) is the process of
-    #: sorting texts into categories.
-    #: Categories are mutually exclusive.
+    """Image Instance Segmentation. Instance segmentation is used to identify objects in an image at
+    #: the pixel level,
+    #: drawing a polygon around each object in the image."""
     TEXT_CLASSIFICATION = "TextClassification"
-    #: Multilabel classification task assigns each sample to a group (zero or more) of target labels.
+    """Text classification (also known as text tagging or text categorization) is the process of
+    #: sorting texts into categories.
+    #: Categories are mutually exclusive."""
     TEXT_CLASSIFICATION_MULTILABEL = "TextClassificationMultilabel"
-    #: Text Named Entity Recognition a.k.a. TextNER.
-    #: Named Entity Recognition (NER) is the ability to take free-form text and identify the
-    #: occurrences of entities such as people, locations, organizations, and more.
+    """Multilabel classification task assigns each sample to a group (zero or more) of target labels."""
     TEXT_NER = "TextNER"
+    """Text Named Entity Recognition a.k.a. TextNER.
+    #: Named Entity Recognition (NER) is the ability to take free-form text and identify the
+    #: occurrences of entities such as people, locations, organizations, and more."""
 
-class TextAnnotationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Annotation type of text data.
-    """
+
+class TextAnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Annotation type of text data."""
 
     CLASSIFICATION = "Classification"
     NAMED_ENTITY_RECOGNITION = "NamedEntityRecognition"
 
-class TrainingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Training mode dictates whether to use distributed training or not
-    """
 
-    #: Auto mode.
+class TrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Training mode dictates whether to use distributed training or not."""
+
     AUTO = "Auto"
-    #: Distributed training mode.
+    """Auto mode"""
     DISTRIBUTED = "Distributed"
-    #: Non distributed training mode.
+    """Distributed training mode"""
     NON_DISTRIBUTED = "NonDistributed"
+    """Non distributed training mode"""
 
-class TriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TriggerType."""
 
     RECURRENCE = "Recurrence"
     CRON = "Cron"
 
-class UnderlyingResourceAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class UnderlyingResourceAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """UnderlyingResourceAction."""
 
     DELETE = "Delete"
     DETACH = "Detach"
 
-class UnitOfMeasure(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of time measurement for the specified VM price. Example: OneHour
-    """
+
+class UnitOfMeasure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit of time measurement for the specified VM price. Example: OneHour."""
 
     ONE_HOUR = "OneHour"
 
-class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """An enum describing the unit of usage measurement.
-    """
+
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An enum describing the unit of usage measurement."""
 
     COUNT = "Count"
 
-class UseStl(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Configure STL Decomposition of the time-series target column.
-    """
 
-    #: No stl decomposition.
+class UseStl(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configure STL Decomposition of the time-series target column."""
+
     NONE = "None"
+    """No stl decomposition."""
     SEASON = "Season"
     SEASON_TREND = "SeasonTrend"
 
-class ValidationMetricType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric computation method to use for validation metrics in image tasks.
-    """
 
-    #: No metric.
+class ValidationMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric computation method to use for validation metrics in image tasks."""
+
     NONE = "None"
-    #: Coco metric.
+    """No metric."""
     COCO = "Coco"
-    #: Voc metric.
+    """Coco metric."""
     VOC = "Voc"
-    #: CocoVoc metric.
+    """Voc metric."""
     COCO_VOC = "CocoVoc"
+    """CocoVoc metric."""
 
-class ValueFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """format for the workspace connection value
-    """
+
+class ValueFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """format for the workspace connection value."""
 
     JSON = "JSON"
 
-class VMPriceOSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Operating system type used by the VM.
-    """
+
+class VMPriceOSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operating system type used by the VM."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class VmPriority(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Virtual Machine priority
-    """
+
+class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Virtual Machine priority."""
 
     DEDICATED = "Dedicated"
     LOW_PRIORITY = "LowPriority"
 
-class VMTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the VM.
-    """
+
+class VMTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the VM."""
 
     STANDARD = "Standard"
     LOW_PRIORITY = "LowPriority"
     SPOT = "Spot"
 
-class VolumeDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of Volume Definition. Possible Values: bind,volume,tmpfs,npipe
-    """
+
+class VolumeDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Volume Definition. Possible Values: bind,volume,tmpfs,npipe."""
 
     BIND = "bind"
     VOLUME = "volume"
     TMPFS = "tmpfs"
     NPIPE = "npipe"
 
-class WeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum of weekday
-    """
 
-    #: Monday weekday.
+class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of weekday."""
+
     MONDAY = "Monday"
-    #: Tuesday weekday.
+    """Monday weekday"""
     TUESDAY = "Tuesday"
-    #: Wednesday weekday.
+    """Tuesday weekday"""
     WEDNESDAY = "Wednesday"
-    #: Thursday weekday.
+    """Wednesday weekday"""
     THURSDAY = "Thursday"
-    #: Friday weekday.
+    """Thursday weekday"""
     FRIDAY = "Friday"
-    #: Saturday weekday.
+    """Friday weekday"""
     SATURDAY = "Saturday"
-    #: Sunday weekday.
+    """Saturday weekday"""
     SUNDAY = "Sunday"
+    """Sunday weekday"""

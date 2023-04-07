@@ -15,13 +15,19 @@ from ._run_artifacts_operations import RunArtifactsOperations
 from ._run_operations import RunOperations
 from ._spans_operations import SpansOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'DeleteOperations',
-    'EventsOperations',
-    'ExperimentsOperations',
-    'MetricOperations',
-    'RunsOperations',
-    'RunArtifactsOperations',
-    'RunOperations',
-    'SpansOperations',
+    "DeleteOperations",
+    "EventsOperations",
+    "ExperimentsOperations",
+    "MetricOperations",
+    "RunsOperations",
+    "RunArtifactsOperations",
+    "RunOperations",
+    "SpansOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

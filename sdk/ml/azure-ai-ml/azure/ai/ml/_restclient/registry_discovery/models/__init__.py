@@ -6,26 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import DebugInfoResponse
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import InnerErrorResponse
-    from ._models_py3 import RegistryDiscoveryDto
-    from ._models_py3 import RootError
-except (SyntaxError, ImportError):
-    from ._models import DebugInfoResponse  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import InnerErrorResponse  # type: ignore
-    from ._models import RegistryDiscoveryDto  # type: ignore
-    from ._models import RootError  # type: ignore
+from ._models_py3 import DebugInfoResponse
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorResponse
+from ._models_py3 import InnerErrorResponse
+from ._models_py3 import RegistryDiscoveryDto
+from ._models_py3 import RootError
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'DebugInfoResponse',
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'InnerErrorResponse',
-    'RegistryDiscoveryDto',
-    'RootError',
+    "DebugInfoResponse",
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "InnerErrorResponse",
+    "RegistryDiscoveryDto",
+    "RootError",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

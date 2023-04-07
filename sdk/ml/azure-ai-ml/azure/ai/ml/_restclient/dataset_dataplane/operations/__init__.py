@@ -15,13 +15,19 @@ from ._dataset_v2_operations import DatasetV2Operations
 from ._data_version_operations import DataVersionOperations
 from ._get_operation_status_operations import GetOperationStatusOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'DataCallOperations',
-    'DataContainerOperations',
-    'DeleteOperations',
-    'DatasetsV1Operations',
-    'DatasetControllerV2Operations',
-    'DatasetV2Operations',
-    'DataVersionOperations',
-    'GetOperationStatusOperations',
+    "DataCallOperations",
+    "DataContainerOperations",
+    "DeleteOperations",
+    "DatasetsV1Operations",
+    "DatasetControllerV2Operations",
+    "DatasetV2Operations",
+    "DataVersionOperations",
+    "GetOperationStatusOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -33,31 +33,37 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'BatchEndpointsOperations',
-    'BatchDeploymentsOperations',
-    'CodeContainersOperations',
-    'CodeVersionsOperations',
-    'ComponentContainersOperations',
-    'ComponentVersionsOperations',
-    'DataContainersOperations',
-    'DataVersionsOperations',
-    'DatastoresOperations',
-    'EnvironmentContainersOperations',
-    'EnvironmentVersionsOperations',
-    'JobsOperations',
-    'ModelContainersOperations',
-    'ModelVersionsOperations',
-    'OnlineEndpointsOperations',
-    'OnlineDeploymentsOperations',
-    'Operations',
-    'WorkspacesOperations',
-    'UsagesOperations',
-    'VirtualMachineSizesOperations',
-    'QuotasOperations',
-    'ComputeOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'WorkspaceConnectionsOperations',
-    'WorkspaceFeaturesOperations',
+    "BatchEndpointsOperations",
+    "BatchDeploymentsOperations",
+    "CodeContainersOperations",
+    "CodeVersionsOperations",
+    "ComponentContainersOperations",
+    "ComponentVersionsOperations",
+    "DataContainersOperations",
+    "DataVersionsOperations",
+    "DatastoresOperations",
+    "EnvironmentContainersOperations",
+    "EnvironmentVersionsOperations",
+    "JobsOperations",
+    "ModelContainersOperations",
+    "ModelVersionsOperations",
+    "OnlineEndpointsOperations",
+    "OnlineDeploymentsOperations",
+    "Operations",
+    "WorkspacesOperations",
+    "UsagesOperations",
+    "VirtualMachineSizesOperations",
+    "QuotasOperations",
+    "ComputeOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "WorkspaceConnectionsOperations",
+    "WorkspaceFeaturesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
