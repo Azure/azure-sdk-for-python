@@ -22,7 +22,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     parse_name_label,
     parse_prefixed_name_version,
 )
-from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
+from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset, get_storage_info_for_non_registry_asset
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
@@ -258,11 +258,20 @@ class OperationOrchestrator(object):
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
+            sas_info = get_storage_info_for_non_registry_asset(
+                service_client=self._code_assets._service_client,
+                workspace_name=self._operation_scope.workspace_name,
+                name=code_asset.name,
+                version=code_asset.version,
+                resource_group=self._operation_scope.resource_group_name,
+            )
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
+                sas_uri=sas_info["sas_uri"],
                 asset_operations=self._code_assets,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._operation_config.show_progress,
+                blob_uri=sas_info["blob_uri"],
             )
             uploaded_code_asset._id = get_arm_id_with_version(
                 self._operation_scope,

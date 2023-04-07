@@ -8,13 +8,22 @@ from typing import Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_path,
+    _get_snapshot_path_info,
+)
+from azure.ai.ml._utils._asset_utils import (
+    get_content_hash_version,
+    get_storage_info_for_non_registry_asset,
+    _get_existing_asset_name_and_version,
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -50,7 +59,7 @@ class CodeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane, ServiceClient042023Preview],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -82,6 +91,7 @@ class CodeOperations(_ScopeDependentOperations):
             name = code.name
             version = code.version
             sas_uri = None
+            blob_uri = None
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -92,12 +102,39 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
+            else:
+                _, _, asset_hash = _get_snapshot_path_info(code)
+                existing_assets = list(self._version_operation.list(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    name=name,
+                    hash=asset_hash,
+                    hash_version=str(get_content_hash_version()),
+                ))
+
+                if len(existing_assets) > 0:
+                    existing_asset = existing_assets[0]
+                    # TODO: remove once bug with name/version is fixed
+                    name, version = _get_existing_asset_name_and_version(existing_asset)
+                    return self.get(name=name, version=version)
+                else:
+                    sas_info = get_storage_info_for_non_registry_asset(
+                        service_client=self._service_client,
+                        workspace_name=self._workspace_name,
+                        name=name,
+                        version=version,
+                        resource_group=self._resource_group_name,
+                    )
+                    sas_uri = sas_info["sas_uri"]
+                    blob_uri = sas_info["blob_uri"]
+
             code, _ = _check_and_upload_path(
                 artifact=code,
                 asset_operations=self,
                 sas_uri=sas_uri,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._show_progress,
+                blob_uri=blob_uri,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,
