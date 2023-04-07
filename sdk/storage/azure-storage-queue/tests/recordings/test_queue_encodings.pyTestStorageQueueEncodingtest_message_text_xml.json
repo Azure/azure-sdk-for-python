@@ -8,15 +8,15 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 26 Oct 2022 23:31:16 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 07 Apr 2023 22:00:39 GMT",
         "x-ms-version": "2021-02-12"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 26 Oct 2022 23:31:15 GMT",
+        "Date": "Fri, 07 Apr 2023 22:00:38 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -34,8 +34,8 @@
         "Connection": "keep-alive",
         "Content-Length": "111",
         "Content-Type": "application/xml",
-        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 26 Oct 2022 23:31:16 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 07 Apr 2023 22:00:40 GMT",
         "x-ms-version": "2021-02-12"
       },
       "RequestBody": [
@@ -45,7 +45,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Wed, 26 Oct 2022 23:31:15 GMT",
+        "Date": "Fri, 07 Apr 2023 22:00:38 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -53,7 +53,7 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-02-12"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E56a10687-3cf2-4234-a8da-16757f842147\u003C/MessageId\u003E\u003CInsertionTime\u003EWed, 26 Oct 2022 23:31:16 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EWed, 02 Nov 2022 23:31:16 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAhrIaC5Pp2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EWed, 26 Oct 2022 23:31:16 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Ef37bc876-6500-4f1e-874e-6e14128de1f1\u003C/MessageId\u003E\u003CInsertionTime\u003EFri, 07 Apr 2023 22:00:38 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EFri, 14 Apr 2023 22:00:38 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAPOtiY5xp2QE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EFri, 07 Apr 2023 22:00:38 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
     },
     {
       "RequestUri": "https://storagename.queue.core.windows.net/mytestqueue9b732da4/messages",
@@ -62,8 +62,8 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 26 Oct 2022 23:31:17 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 07 Apr 2023 22:00:40 GMT",
         "x-ms-version": "2021-02-12"
       },
       "RequestBody": null,
@@ -71,7 +71,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/xml",
-        "Date": "Wed, 26 Oct 2022 23:31:15 GMT",
+        "Date": "Fri, 07 Apr 2023 22:00:38 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -80,7 +80,7 @@
         "Vary": "Origin",
         "x-ms-version": "2021-02-12"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E56a10687-3cf2-4234-a8da-16757f842147\u003C/MessageId\u003E\u003CInsertionTime\u003EWed, 26 Oct 2022 23:31:16 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EWed, 02 Nov 2022 23:31:16 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAVC4OHZPp2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EWed, 26 Oct 2022 23:31:46 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003E\u0026lt;message1\u0026gt;\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Ef37bc876-6500-4f1e-874e-6e14128de1f1\u003C/MessageId\u003E\u003CInsertionTime\u003EFri, 07 Apr 2023 22:00:38 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EFri, 14 Apr 2023 22:00:38 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAvZZSdZxp2QE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EFri, 07 Apr 2023 22:01:08 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003E\u0026lt;message1\u0026gt;\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
     }
   ],
   "Variables": {}
