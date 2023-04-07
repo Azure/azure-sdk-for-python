@@ -15,7 +15,7 @@ async def sample_abstractive_summarization_async() -> None:
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
-    from azure.core.experimental.transport import AsyncHttpTransport
+    from azure.core.experimental.transport import AsyncHttpXTransport
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -23,7 +23,7 @@ async def sample_abstractive_summarization_async() -> None:
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
-        transport=AsyncHttpTransport(),
+        transport=AsyncHttpXTransport(),
     )
 
     document = ["This is an example document."]
