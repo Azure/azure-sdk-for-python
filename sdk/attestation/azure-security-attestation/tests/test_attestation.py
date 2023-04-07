@@ -310,8 +310,8 @@ class TestAttestation(AzureRecordedTestCase):
         basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         admin_client.set_policy(AttestationType.TPM, basic_policy)
 
-        encoded_payload = base64url_decode(_attest_tpm_payload)
-        tpm_response = client.attest_tpm(encoded_payload)
+        payload = base64url_decode(_attest_tpm_payload)
+        tpm_response = client.attest_tpm(payload)
 
         decoded_response = json.loads(tpm_response.result)
         assert decoded_response["payload"] is not None
