@@ -71,7 +71,6 @@ from ._models_py3 import ContinuousModeBackupPolicy
 from ._models_py3 import ContinuousModeProperties
 from ._models_py3 import CorsPolicy
 from ._models_py3 import CosmosCassandraDataTransferDataSourceSink
-from ._models_py3 import CosmosMongoDataTransferDataSourceSink
 from ._models_py3 import CosmosSqlDataTransferDataSourceSink
 from ._models_py3 import CreateJobRequest
 from ._models_py3 import CreateUpdateOptions
@@ -334,6 +333,7 @@ from ._cosmos_db_management_client_enums import IndexingMode
 from ._cosmos_db_management_client_enums import KeyKind
 from ._cosmos_db_management_client_enums import ManagedCassandraProvisioningState
 from ._cosmos_db_management_client_enums import ManagedCassandraResourceIdentityType
+from ._cosmos_db_management_client_enums import MinimalTlsVersion
 from ._cosmos_db_management_client_enums import MongoRoleDefinitionType
 from ._cosmos_db_management_client_enums import NetworkAclBypass
 from ._cosmos_db_management_client_enums import NodeState
@@ -356,7 +356,7 @@ from ._cosmos_db_management_client_enums import TriggerOperation
 from ._cosmos_db_management_client_enums import TriggerType
 from ._cosmos_db_management_client_enums import UnitType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -425,7 +425,6 @@ __all__ = [
     "ContinuousModeProperties",
     "CorsPolicy",
     "CosmosCassandraDataTransferDataSourceSink",
-    "CosmosMongoDataTransferDataSourceSink",
     "CosmosSqlDataTransferDataSourceSink",
     "CreateJobRequest",
     "CreateUpdateOptions",
@@ -687,6 +686,7 @@ __all__ = [
     "KeyKind",
     "ManagedCassandraProvisioningState",
     "ManagedCassandraResourceIdentityType",
+    "MinimalTlsVersion",
     "MongoRoleDefinitionType",
     "NetworkAclBypass",
     "NodeState",

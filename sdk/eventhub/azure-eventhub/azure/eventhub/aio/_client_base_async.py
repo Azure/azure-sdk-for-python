@@ -216,7 +216,7 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         uamqp_transport = kwargs.get("uamqp_transport", False)
-        if uamqp_transport and not UamqpTransportAsync:
+        if uamqp_transport and UamqpTransportAsync is None:
             raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         if isinstance(credential, AzureSasCredential):
@@ -352,6 +352,9 @@ class ClientBaseAsync(ClientBase):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
                 # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
                 # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
                 # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
@@ -514,6 +517,9 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
                 last_exception = await self._handle_exception(exception)
                 await self._client._backoff_async(
                     retried_times=retried_times,

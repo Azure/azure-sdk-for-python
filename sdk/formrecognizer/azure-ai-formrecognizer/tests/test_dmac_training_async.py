@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer
@@ -91,6 +91,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         assert model.model_id
         assert model.description == "a v3 model"
         assert model.created_on
+        assert model.expires_on
         assert model.tags == {"testkey": "testvalue"}
         for name, doc_type in model.doc_types.items():
             assert name
@@ -114,6 +115,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         assert model.tags == {}
         assert model.description is None
         assert model.created_on
+        assert model.expires_on
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
@@ -135,6 +137,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         assert model.model_id
         assert model.description is None
         assert model.created_on
+        assert model.expires_on
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
@@ -268,3 +271,26 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             assert details["resource_location_url"]
             assert details["created_on"]
             assert details["last_updated_on"]
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
+    async def test_build_model_file_list_source(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
+        async with client:
+            poller = await client.begin_build_document_model(
+                build_mode="template",
+                blob_container_url=formrecognizer_selection_mark_storage_container_sas_url,
+                file_list="filelist.jsonl"
+            )
+            model = await poller.result()
+
+            assert model.model_id
+            assert model.description is None
+            assert model.created_on
+            for name, doc_type in model.doc_types.items():
+                assert name
+                for key, field in doc_type.field_schema.items():
+                    assert key
+                    assert field["type"]
+                    assert doc_type.field_confidence[key] is not None

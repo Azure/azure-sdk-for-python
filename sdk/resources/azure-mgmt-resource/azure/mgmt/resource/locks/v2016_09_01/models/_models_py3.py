@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -31,8 +31,12 @@ class ManagementLockListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ManagementLockObject"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ManagementLockObject"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of locks.
         :paramtype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject]
@@ -90,8 +94,8 @@ class ManagementLockObject(_serialization.Model):
         level: Union[str, "_models.LockLevel"],
         notes: Optional[str] = None,
         owners: Optional[List["_models.ManagementLockOwner"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword level: The level of the lock. Possible values are: NotSpecified, CanNotDelete,
          ReadOnly. CanNotDelete means authorized users are able to read and modify the resources, but
@@ -124,7 +128,7 @@ class ManagementLockOwner(_serialization.Model):
         "application_id": {"key": "applicationId", "type": "str"},
     }
 
-    def __init__(self, *, application_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, application_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword application_id: The application ID of the lock owner.
         :paramtype application_id: str
@@ -147,7 +151,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -182,8 +188,8 @@ class OperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.Authorization.
         :paramtype provider: str
@@ -199,7 +205,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Microsoft.Authorization operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Microsoft.Authorization operations. It contains a list of
+    operations and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Authorization operations.
     :vartype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.Operation]
@@ -212,7 +219,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Microsoft.Authorization operations.
         :paramtype value: list[~azure.mgmt.resource.locks.v2016_09_01.models.Operation]

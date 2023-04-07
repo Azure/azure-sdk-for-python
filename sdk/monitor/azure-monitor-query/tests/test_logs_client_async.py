@@ -47,15 +47,17 @@ class TestLogsClientAsync(AzureRecordedTestCase):
     async def test_logs_server_timeout(self, recorded_test, monitor_info):
         client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
-        async with client:
-            with pytest.raises(HttpResponseError) as e:
-                response = await client.query_workspace(
+
+        with pytest.raises(HttpResponseError) as e:
+            async with client:
+                await client.query_workspace(
                     monitor_info['workspace_id'],
-                    "range x from 1 to 10000000000 step 1 | count",
+                    "range x from 1 to 1000000000000000 step 1 | count",
                     timespan=None,
                     server_timeout=1,
                 )
-                assert e.message.contains('Gateway timeout')
+
+        assert 'Gateway timeout' in e.value.message
 
     @pytest.mark.asyncio
     async def test_logs_query_batch_raises_on_no_timespan(self, monitor_info):
@@ -226,3 +228,34 @@ class TestLogsClientAsync(AzureRecordedTestCase):
 
                 for row in table.rows:
                     assert row.__class__ == LogsTableRow
+
+    @pytest.mark.asyncio
+    async def test_logs_resource_query(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        async with client:
+            query = "requests | summarize count()"
+
+            response = await client.query_resource(monitor_info['metrics_resource_id'], query, timespan=None)
+
+            assert response is not None
+            assert response.tables is not None
+            assert len(response.tables[0].rows) == 1
+
+    @pytest.mark.asyncio
+    async def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        async with client:
+            query = "requests | summarize count()"
+
+            response = await client.query_resource(
+                monitor_info['metrics_resource_id'],
+                query,
+                timespan=None,
+                include_statistics=True,
+                include_visualization=True
+            )
+
+            assert response.visualization is not None
+            assert response.statistics is not None

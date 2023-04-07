@@ -113,7 +113,8 @@ class Model(Artifact):
     def _from_rest_object(cls, model_rest_object: ModelVersionData) -> "Model":
         rest_model_version: ModelVersionDetails = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
-        flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
+        if hasattr(rest_model_version, "flavors"):
+            flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -163,7 +164,6 @@ class Model(Artifact):
         return model_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path

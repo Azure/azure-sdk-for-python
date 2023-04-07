@@ -80,9 +80,9 @@ class AdvancedThreatProtectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-01-01"))  # type: Literal["2019-01-01"]
-        setting_name = kwargs.pop("setting_name", "current")  # type: Literal["current"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AdvancedThreatProtectionSetting]
+        api_version: Literal["2019-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-01-01"))
+        setting_name: Literal["current"] = kwargs.pop("setting_name", "current")
+        cls: ClsType[_models.AdvancedThreatProtectionSetting] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_id=resource_id,
@@ -93,10 +93,11 @@ class AdvancedThreatProtectionOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -112,7 +113,7 @@ class AdvancedThreatProtectionOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/advancedThreatProtectionSettings/{settingName}"}  # type: ignore
+    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/advancedThreatProtectionSettings/{settingName}"}
 
     @overload
     async def create(
@@ -181,7 +182,7 @@ class AdvancedThreatProtectionOperations:
         :param resource_id: The identifier of the resource. Required.
         :type resource_id: str
         :param advanced_threat_protection_setting: Advanced Threat Protection Settings. Is either a
-         model type or a IO type. Required.
+         AdvancedThreatProtectionSetting type or a IO type. Required.
         :type advanced_threat_protection_setting:
          ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting or IO
         :keyword setting_name: Advanced Threat Protection setting name. Default value is "current".
@@ -206,10 +207,10 @@ class AdvancedThreatProtectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-01-01"))  # type: Literal["2019-01-01"]
-        setting_name = kwargs.pop("setting_name", "current")  # type: Literal["current"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AdvancedThreatProtectionSetting]
+        api_version: Literal["2019-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-01-01"))
+        setting_name: Literal["current"] = kwargs.pop("setting_name", "current")
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AdvancedThreatProtectionSetting] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -231,10 +232,11 @@ class AdvancedThreatProtectionOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -250,4 +252,6 @@ class AdvancedThreatProtectionOperations:
 
         return deserialized
 
-    create.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/advancedThreatProtectionSettings/{settingName}"}  # type: ignore
+    create.metadata = {
+        "url": "/{resourceId}/providers/Microsoft.Security/advancedThreatProtectionSettings/{settingName}"
+    }

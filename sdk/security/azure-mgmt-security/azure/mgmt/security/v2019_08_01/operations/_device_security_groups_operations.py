@@ -45,7 +45,7 @@ def build_list_request(resource_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_request(resource_id: str, **kwargs: Any) -> HttpRequest:
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -69,7 +69,7 @@ def build_get_request(resource_id: str, device_security_group_name: str, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +81,7 @@ def build_get_request(resource_id: str, device_security_group_name: str, **kwarg
         "deviceSecurityGroupName": _SERIALIZER.url("device_security_group_name", device_security_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -96,8 +96,8 @@ def build_create_or_update_request(resource_id: str, device_security_group_name:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_create_or_update_request(resource_id: str, device_security_group_name:
         "deviceSecurityGroupName": _SERIALIZER.url("device_security_group_name", device_security_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -126,7 +126,7 @@ def build_delete_request(resource_id: str, device_security_group_name: str, **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -138,7 +138,7 @@ def build_delete_request(resource_id: str, device_security_group_name: str, **kw
         "deviceSecurityGroupName": _SERIALIZER.url("device_security_group_name", device_security_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -183,8 +183,8 @@ class DeviceSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeviceSecurityGroupList]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeviceSecurityGroupList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -205,7 +205,7 @@ class DeviceSecurityGroupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -221,7 +221,7 @@ class DeviceSecurityGroupsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -229,14 +229,15 @@ class DeviceSecurityGroupsOperations:
             deserialized = self._deserialize("DeviceSecurityGroupList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -248,7 +249,7 @@ class DeviceSecurityGroupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups"}  # type: ignore
+    list.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups"}
 
     @distributed_trace
     def get(self, resource_id: str, device_security_group_name: str, **kwargs: Any) -> _models.DeviceSecurityGroup:
@@ -275,8 +276,8 @@ class DeviceSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeviceSecurityGroup]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeviceSecurityGroup] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_id=resource_id,
@@ -287,10 +288,11 @@ class DeviceSecurityGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -306,7 +308,7 @@ class DeviceSecurityGroupsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}"}  # type: ignore
+    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}"}
 
     @overload
     def create_or_update(
@@ -382,8 +384,8 @@ class DeviceSecurityGroupsOperations:
         :param device_security_group_name: The name of the device security group. Note that the name of
          the device security group is case insensitive. Required.
         :type device_security_group_name: str
-        :param device_security_group: Security group object. Is either a model type or a IO type.
-         Required.
+        :param device_security_group: Security group object. Is either a DeviceSecurityGroup type or a
+         IO type. Required.
         :type device_security_group: ~azure.mgmt.security.v2019_08_01.models.DeviceSecurityGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -404,9 +406,9 @@ class DeviceSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeviceSecurityGroup]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeviceSecurityGroup] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -428,10 +430,11 @@ class DeviceSecurityGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -447,11 +450,13 @@ class DeviceSecurityGroupsOperations:
             deserialized = self._deserialize("DeviceSecurityGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}"
+    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -480,8 +485,8 @@ class DeviceSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_id=resource_id,
@@ -492,10 +497,11 @@ class DeviceSecurityGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -507,4 +513,6 @@ class DeviceSecurityGroupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}"
+    }

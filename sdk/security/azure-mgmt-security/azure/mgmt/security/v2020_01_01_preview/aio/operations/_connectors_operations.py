@@ -76,10 +76,10 @@ class ConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-01-01-preview")
-        )  # type: Literal["2020-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectorSettingList]
+        )
+        cls: ClsType[_models.ConnectorSettingList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -100,7 +100,7 @@ class ConnectorsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -116,7 +116,7 @@ class ConnectorsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -124,14 +124,15 @@ class ConnectorsOperations:
             deserialized = self._deserialize("ConnectorSettingList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -143,7 +144,7 @@ class ConnectorsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors"}
 
     @distributed_trace_async
     async def get(self, connector_name: str, **kwargs: Any) -> _models.ConnectorSetting:
@@ -167,10 +168,10 @@ class ConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-01-01-preview")
-        )  # type: Literal["2020-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectorSetting]
+        )
+        cls: ClsType[_models.ConnectorSetting] = kwargs.pop("cls", None)
 
         request = build_get_request(
             connector_name=connector_name,
@@ -181,10 +182,11 @@ class ConnectorsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -200,7 +202,7 @@ class ConnectorsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}
 
     @overload
     async def create_or_update(
@@ -259,8 +261,8 @@ class ConnectorsOperations:
 
         :param connector_name: Name of the cloud account connector. Required.
         :type connector_name: str
-        :param connector_setting: Settings for the cloud account connector. Is either a model type or a
-         IO type. Required.
+        :param connector_setting: Settings for the cloud account connector. Is either a
+         ConnectorSetting type or a IO type. Required.
         :type connector_setting: ~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -281,11 +283,11 @@ class ConnectorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-01-01-preview")
-        )  # type: Literal["2020-01-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectorSetting]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ConnectorSetting] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -307,10 +309,11 @@ class ConnectorsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -326,7 +329,9 @@ class ConnectorsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -352,10 +357,10 @@ class ConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-01-01-preview")
-        )  # type: Literal["2020-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             connector_name=connector_name,
@@ -366,10 +371,11 @@ class ConnectorsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -381,4 +387,4 @@ class ConnectorsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}  # type: ignore
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}"}

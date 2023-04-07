@@ -79,10 +79,10 @@ class AlertsSuppressionRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AlertsSuppressionRulesList]
+        )
+        cls: ClsType[_models.AlertsSuppressionRulesList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -104,7 +104,7 @@ class AlertsSuppressionRulesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -120,7 +120,7 @@ class AlertsSuppressionRulesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -128,14 +128,15 @@ class AlertsSuppressionRulesOperations:
             deserialized = self._deserialize("AlertsSuppressionRulesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -147,7 +148,7 @@ class AlertsSuppressionRulesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules"}
 
     @distributed_trace_async
     async def get(self, alerts_suppression_rule_name: str, **kwargs: Any) -> _models.AlertsSuppressionRule:
@@ -171,10 +172,10 @@ class AlertsSuppressionRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AlertsSuppressionRule]
+        )
+        cls: ClsType[_models.AlertsSuppressionRule] = kwargs.pop("cls", None)
 
         request = build_get_request(
             alerts_suppression_rule_name=alerts_suppression_rule_name,
@@ -185,10 +186,11 @@ class AlertsSuppressionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -204,7 +206,9 @@ class AlertsSuppressionRulesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"
+    }
 
     @overload
     async def update(
@@ -266,8 +270,8 @@ class AlertsSuppressionRulesOperations:
 
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
-        :param alerts_suppression_rule: Suppression rule object. Is either a model type or a IO type.
-         Required.
+        :param alerts_suppression_rule: Suppression rule object. Is either a AlertsSuppressionRule type
+         or a IO type. Required.
         :type alerts_suppression_rule:
          ~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -289,11 +293,11 @@ class AlertsSuppressionRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AlertsSuppressionRule]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AlertsSuppressionRule] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -315,10 +319,11 @@ class AlertsSuppressionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -334,7 +339,9 @@ class AlertsSuppressionRulesOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -360,10 +367,10 @@ class AlertsSuppressionRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             alerts_suppression_rule_name=alerts_suppression_rule_name,
@@ -374,10 +381,11 @@ class AlertsSuppressionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -389,4 +397,6 @@ class AlertsSuppressionRulesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}"
+    }

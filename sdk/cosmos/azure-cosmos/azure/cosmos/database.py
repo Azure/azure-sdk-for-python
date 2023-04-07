@@ -742,7 +742,7 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         warnings.warn(
-            "read_offer is a deprecated method name, use read_throughput instead",
+            "read_offer is a deprecated method name, use get_throughput instead",
             DeprecationWarning
         )
         return self.get_throughput(**kwargs)
@@ -783,11 +783,8 @@ class DatabaseProxy(object):
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the database, updated with new throughput.
         :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If no offer exists for the database or if the offer could not be updated.
-        :rtype: ~azure.cosmos.Offer
             If no throughput properties exists for the database or if the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """

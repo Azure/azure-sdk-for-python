@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.graph_resources.list_graphs(
+    response = client.sql_resources.list_sql_databases(
         resource_group_name="rgName",
         account_name="ddb1",
     )
@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-08-15-preview/examples/CosmosDBGraphResourceList.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-11-15-preview/examples/CosmosDBSqlDatabaseList.json
 if __name__ == "__main__":
     main()

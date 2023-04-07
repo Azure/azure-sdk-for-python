@@ -114,7 +114,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
         complete_annotation = anno
         if _is_dsl_type_cls(anno):
             complete_annotation = anno()
-        complete_annotation.name = name
+        complete_annotation._port_name = name
         if default is Input._EMPTY:
             return complete_annotation
         if isinstance(complete_annotation, Input):
@@ -128,7 +128,8 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
             complete_annotation._update_default(default)
         if isinstance(complete_annotation, Output) and default is not None:
             msg = (
-                f"Default value of Output {complete_annotation.name!r} cannot be set: " f"Output has no default value."
+                f"Default value of Output {complete_annotation._port_name!r} cannot be set:"
+                f"Output has no default value."
             )
             raise UserErrorException(msg)
         return complete_annotation

@@ -45,7 +45,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -64,7 +64,7 @@ def build_get_request(assessment_metadata_name: str, **kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_get_request(assessment_metadata_name: str, **kwargs: Any) -> HttpReque
         "assessmentMetadataName": _SERIALIZER.url("assessment_metadata_name", assessment_metadata_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -88,7 +88,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -116,7 +116,7 @@ def build_get_in_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_get_in_subscription_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -148,8 +148,8 @@ def build_create_in_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +164,7 @@ def build_create_in_subscription_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -183,7 +183,7 @@ def build_delete_in_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,7 +198,7 @@ def build_delete_in_subscription_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -242,8 +242,8 @@ class AssessmentsMetadataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentMetadataResponseList]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[_models.SecurityAssessmentMetadataResponseList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -263,7 +263,7 @@ class AssessmentsMetadataOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -279,7 +279,7 @@ class AssessmentsMetadataOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -287,14 +287,15 @@ class AssessmentsMetadataOperations:
             deserialized = self._deserialize("SecurityAssessmentMetadataResponseList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -306,7 +307,7 @@ class AssessmentsMetadataOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Security/assessmentMetadata"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Security/assessmentMetadata"}
 
     @distributed_trace
     def get(self, assessment_metadata_name: str, **kwargs: Any) -> _models.SecurityAssessmentMetadataResponse:
@@ -331,8 +332,8 @@ class AssessmentsMetadataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentMetadataResponse]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[_models.SecurityAssessmentMetadataResponse] = kwargs.pop("cls", None)
 
         request = build_get_request(
             assessment_metadata_name=assessment_metadata_name,
@@ -342,10 +343,11 @@ class AssessmentsMetadataOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -361,7 +363,7 @@ class AssessmentsMetadataOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"}  # type: ignore
+    get.metadata = {"url": "/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"}
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.SecurityAssessmentMetadataResponse"]:
@@ -377,8 +379,8 @@ class AssessmentsMetadataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentMetadataResponseList]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[_models.SecurityAssessmentMetadataResponseList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -399,7 +401,7 @@ class AssessmentsMetadataOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -415,7 +417,7 @@ class AssessmentsMetadataOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -423,14 +425,15 @@ class AssessmentsMetadataOperations:
             deserialized = self._deserialize("SecurityAssessmentMetadataResponseList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -442,7 +445,9 @@ class AssessmentsMetadataOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata"}  # type: ignore
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata"
+    }
 
     @distributed_trace
     def get_in_subscription(
@@ -469,8 +474,8 @@ class AssessmentsMetadataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentMetadataResponse]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[_models.SecurityAssessmentMetadataResponse] = kwargs.pop("cls", None)
 
         request = build_get_in_subscription_request(
             assessment_metadata_name=assessment_metadata_name,
@@ -481,10 +486,11 @@ class AssessmentsMetadataOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -500,7 +506,9 @@ class AssessmentsMetadataOperations:
 
         return deserialized
 
-    get_in_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"}  # type: ignore
+    get_in_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"
+    }
 
     @overload
     def create_in_subscription(
@@ -565,8 +573,8 @@ class AssessmentsMetadataOperations:
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
          Required.
         :type assessment_metadata_name: str
-        :param assessment_metadata: AssessmentMetadata object. Is either a model type or a IO type.
-         Required.
+        :param assessment_metadata: AssessmentMetadata object. Is either a
+         SecurityAssessmentMetadataResponse type or a IO type. Required.
         :type assessment_metadata:
          ~azure.mgmt.security.v2021_06_01.models.SecurityAssessmentMetadataResponse or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -588,9 +596,9 @@ class AssessmentsMetadataOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentMetadataResponse]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SecurityAssessmentMetadataResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -612,10 +620,11 @@ class AssessmentsMetadataOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -631,7 +640,9 @@ class AssessmentsMetadataOperations:
 
         return deserialized
 
-    create_in_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"}  # type: ignore
+    create_in_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"
+    }
 
     @distributed_trace
     def delete_in_subscription(  # pylint: disable=inconsistent-return-statements
@@ -659,8 +670,8 @@ class AssessmentsMetadataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_in_subscription_request(
             assessment_metadata_name=assessment_metadata_name,
@@ -671,10 +682,11 @@ class AssessmentsMetadataOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -686,4 +698,6 @@ class AssessmentsMetadataOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_in_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"}  # type: ignore
+    delete_in_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}"
+    }

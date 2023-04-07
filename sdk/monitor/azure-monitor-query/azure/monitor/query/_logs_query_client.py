@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Union, Sequence, Dict, List, cast, Tuple
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional
 from datetime import timedelta, datetime
 
 from azure.core.credentials import TokenCredential
@@ -44,7 +44,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
-    :paramtype endpoint: str
+    :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -67,8 +67,8 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        timespan: Optional[Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
         ],
         **kwargs: Any
         ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
@@ -83,18 +83,19 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-         a timedelta and a start datetime, or a start datetime/end datetime.
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
         :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-         or tuple[~datetime.datetime, ~datetime.datetime]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_visualization: In the query language, it is possible to specify different
          visualization options. By default, the API does not return information regarding the type of
-         visualization to show. If your client requires this information, specify the preference
+         visualization to show. If your client requires this information, specify the preference.
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-        :paramtype additional_workspaces: list[str]
+         These can be qualified workspace names, workspace IDs, or Azure resource IDs.
+        :paramtype additional_workspaces: Optional[list[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -149,7 +150,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-    ) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]:
+    ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
         """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
@@ -193,6 +194,90 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             partial_err=LogsQueryPartialResult,
             raise_with=LogsQueryError,
         )
+
+    @distributed_trace
+    def query_resource(
+        self,
+        resource_id: str,
+        query: str,
+        *,
+        timespan: Optional[Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
+        ],
+        **kwargs: Any
+        ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
+        """Execute a Kusto query on a resource.
+
+        Returns all the Azure Monitor logs matching the given Kusto query for an Azure resource.
+
+        :param resource_id: The identifier of the resource. The expected format is
+         '/subscriptions/<sid>/resourceGroups/<rg>/providers/<providerName>/<resourceType>/<resourceName>'.
+        :type resource_id: str
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
+        :type query: str
+        :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
+        :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
+         and the maximum timeout is 10 minutes.
+        :keyword bool include_statistics: To get information about query statistics.
+        :keyword bool include_visualization: In the query language, it is possible to specify different
+         visualization options. By default, the API does not return information regarding the type of
+         visualization to show. If your client requires this information, specify the preference.
+        :keyword additional_workspaces: A list of workspaces that are included in the query.
+         These can be qualified workspace names, workspace IDs, or Azure resource IDs.
+        :paramtype additional_workspaces: Optional[list[str]]
+        :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
+        :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_resource_logs_query.py
+            :start-after: [START resource_logs_query]
+            :end-before: [END resource_logs_query]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for a single query on a resource's logs.
+        """
+        timespan_iso = construct_iso8601(timespan)
+        include_statistics = kwargs.pop("include_statistics", False)
+        include_visualization = kwargs.pop("include_visualization", False)
+        server_timeout = kwargs.pop("server_timeout", None)
+        additional_workspaces = kwargs.pop("additional_workspaces", None)
+
+        prefer = process_prefer(
+            server_timeout, include_statistics, include_visualization
+        )
+
+        body = {
+            "query": query,
+            "timespan": timespan_iso,
+            "workspaces": additional_workspaces
+        }
+
+        try:
+            generated_response = (
+                self._query_op.resource_execute(  # pylint: disable=protected-access
+                    resource_id=resource_id, body=body, prefer=prefer, **kwargs
+                )
+            )
+        except HttpResponseError as err:
+            process_error(err, LogsQueryError)
+
+        response: Union[LogsQueryResult, LogsQueryPartialResult]
+        if not generated_response.get("error"):
+            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
+                generated_response
+            )
+        else:
+            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+                generated_response, LogsQueryError
+            )
+        return response
 
     def close(self) -> None:
         """Close the :class:`~azure.monitor.query.LogsQueryClient` session."""

@@ -15,6 +15,13 @@ class AppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SINGLE = "Single"
     SHARED = "Shared"
+    MANAGEMENT_GROUP = "ManagementGroup"
+
+
+class BillingPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the billing plan in ISO 8601 format. Required only for monthly billing plans."""
+
+    P1_M = "P1M"
 
 
 class CalculateExchangeOperationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -24,6 +31,12 @@ class CalculateExchangeOperationResultStatus(str, Enum, metaclass=CaseInsensitiv
     FAILED = "Failed"
     CANCELLED = "Cancelled"
     PENDING = "Pending"
+
+
+class CommitmentGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Commitment grain."""
+
+    HOURLY = "Hourly"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -36,7 +49,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DisplayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represent the current display state of the Reservation."""
+    """Represent the current display state of the reservation."""
 
     SUCCEEDED = "Succeeded"
     EXPIRING = "Expiring"
@@ -45,10 +58,12 @@ class DisplayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROCESSING = "Processing"
     CANCELLED = "Cancelled"
     FAILED = "Failed"
+    WARNING = "Warning"
+    NO_BENEFIT = "NoBenefit"
 
 
 class ErrorResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ErrorResponseCode."""
+    """Error code describing the reason that service is not able to process the incoming request."""
 
     NOT_SPECIFIED = "NotSpecified"
     INTERNAL_SERVER_ERROR = "InternalServerError"
@@ -229,7 +244,7 @@ class ReservationStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ReservationTerm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represent the term of Reservation."""
+    """Represent the term of reservation."""
 
     P1_Y = "P1Y"
     P3_Y = "P3Y"
@@ -275,6 +290,13 @@ class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOW_PRIORITY = "lowPriority"
     SHARED = "shared"
     SERVICE_SPECIFIC = "serviceSpecific"
+
+
+class SavingsPlanTerm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent savings plan term in ISO 8601 format."""
+
+    P1_Y = "P1Y"
+    P3_Y = "P3Y"
 
 
 class UserFriendlyAppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

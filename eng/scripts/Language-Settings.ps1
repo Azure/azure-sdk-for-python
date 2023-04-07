@@ -22,7 +22,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    pip install "./tools/azure-sdk-tools[build]" -q -I
+    python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -169,14 +169,14 @@ function ValidatePackage
 {
   Param(
     [Parameter(Mandatory=$true)]
-    [string]$packageName, 
+    [string]$packageName,
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$false)]
     [string]$PackageSourceOverride,
     [Parameter(Mandatory=$false)]
     [string]$DocValidationImageId
-  ) 
+  )
   $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
   if (!(Test-Path $installValidationFolder)) {
     New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
@@ -187,7 +187,7 @@ function ValidatePackage
   if (!$DocValidationImageId) {
     Write-Host "Validating using pip command directly on $packageName."
     FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
-  } 
+  }
   else {
     Write-Host "Validating using $DocValidationImageId on $packageName."
     DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
@@ -197,7 +197,7 @@ function ValidatePackage
 function DockerValidation{
   Param(
     [Parameter(Mandatory=$true)]
-    [string]$packageName, 
+    [string]$packageName,
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$false)]
@@ -206,11 +206,11 @@ function DockerValidation{
     [string]$DocValidationImageId,
     [Parameter(Mandatory=$false)]
     [string]$workingDirectory
-  ) 
+  )
   if ($PackageSourceOverride) {
     Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
     $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
-       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1
   }
   else {
     Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId"
@@ -218,15 +218,15 @@ function DockerValidation{
       -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1
   }
   # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
-  # If the docker failed because of docker itself instead of the application, 
-  # we should skip the validation and keep the packages. 
-  
-  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
+  # If the docker failed because of docker itself instead of the application,
+  # we should skip the validation and keep the packages.
+
+  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) {
     $commandLine | ForEach-Object { Write-Debug $_ }
     LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
     FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
   }
-  elseif ($LASTEXITCODE -ne 0) { 
+  elseif ($LASTEXITCODE -ne 0) {
     $commandLine | ForEach-Object { Write-Debug $_ }
     LogWarning "Package $packageName ref docs validation failed."
     return $false
@@ -238,22 +238,22 @@ function FallbackValidation
 {
   Param(
     [Parameter(Mandatory=$true)]
-    [string]$packageName, 
+    [string]$packageName,
     [Parameter(Mandatory=$true)]
     [string]$packageVersion,
     [Parameter(Mandatory=$true)]
     [string]$workingDirectory,
     [Parameter(Mandatory=$false)]
     [string]$PackageSourceOverride
-  ) 
+  )
   $installTargetFolder = Join-Path $workingDirectory $packageName
   New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
   $packageExpression = "$packageName$packageVersion"
   try {
     $pipInstallOutput = ""
     if ($PackageSourceOverride) {
-      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
-      $pipInstallOutput = pip `
+      Write-Host "python -m pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = python -m pip `
         install `
         $packageExpression `
         --no-cache-dir `
@@ -261,20 +261,20 @@ function FallbackValidation
         --extra-index-url=$PackageSourceOverride 2>&1
     }
     else {
-      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-      $pipInstallOutput = pip `
+      Write-Host "python -m pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = python -m pip `
         install `
         $packageExpression `
         --no-cache-dir `
         --target $installTargetFolder 2>&1
     }
     if ($LASTEXITCODE -ne 0) {
-      LogWarning "pip install failed for $packageExpression"
+      LogWarning "python -m pip install failed for $packageExpression"
       Write-Host $pipInstallOutput
       return $false
     }
   } catch {
-    LogWarning "pip install failed for $packageExpression with exception"
+    LogWarning "python -m pip install failed for $packageExpression with exception"
     LogWarning $_.Exception
     LogWarning $_.Exception.StackTrace
     return $false
@@ -334,13 +334,13 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
   $outputPackages = @()
   foreach ($package in $packageConfig.packages) {
     $packageName = $package.package_info.name
-    if (!$packageName) { 
+    if (!$packageName) {
       Write-Host "Keeping package with no name: $($package.package_info)"
       $outputPackages += $package
       continue
     }
 
-    if ($package.package_info.install_type -ne 'pypi') { 
+    if ($package.package_info.install_type -ne 'pypi') {
       Write-Host "Keeping package with install_type not 'pypi': $($package.package_info.name)"
       $outputPackages += $package
       continue
@@ -359,19 +359,19 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
       continue
     }
 
-    if ($matchingPublishedPackageArray.Count -gt 1) { 
+    if ($matchingPublishedPackageArray.Count -gt 1) {
       LogWarning "Found more than one matching published package in metadata for $packageName; only updating first entry"
     }
     $matchingPublishedPackage = $matchingPublishedPackageArray[0]
 
-    if ($Mode -eq 'preview' -and !$matchingPublishedPackage.VersionPreview.Trim()) { 
+    if ($Mode -eq 'preview' -and !$matchingPublishedPackage.VersionPreview.Trim()) {
       # If we are in preview mode and the package does not have a superseding
-      # preview version, remove the package from the list. 
+      # preview version, remove the package from the list.
       Write-Host "Remove superseded preview package: $packageName"
       continue
     }
 
-    if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) { 
+    if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) {
       LogWarning "Metadata is missing GA version for GA package $packageName. Keeping existing package."
       $outputPackages += $package
       continue
@@ -379,7 +379,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
 
     $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
     if ($Mode -eq 'preview') {
-      if (!$matchingPublishedPackage.VersionPreview.Trim()) { 
+      if (!$matchingPublishedPackage.VersionPreview.Trim()) {
         LogWarning "Metadata is missing preview version for preview package $packageName. Keeping existing package."
         $outputPackages += $package
         continue
@@ -402,7 +402,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
         -Name 'version' `
         -Value $packageVersion `
         -PassThru `
-        -Force 
+        -Force
       if ($PackageSourceOverride) {
         $package.package_info = Add-Member `
           -InputObject $package.package_info `
@@ -410,7 +410,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
           -Name 'extra_index_url' `
           -Value $PackageSourceOverride `
           -PassThru `
-          -Force 
+          -Force
       }
     }
 
@@ -420,15 +420,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
 
   $outputPackagesHash = @{}
   foreach ($package in $outputPackages) {
-    # In some cases there is no $package.package_info.name, only hash if the 
+    # In some cases there is no $package.package_info.name, only hash if the
     # name is set.
-    if ($package.package_info.name) { 
+    if ($package.package_info.name) {
       $outputPackagesHash[$package.package_info.name] = $true
     }
   }
 
-  $remainingPackages = @() 
-  if ($Mode -eq 'preview') { 
+  $remainingPackages = @()
+  if ($Mode -eq 'preview') {
     $remainingPackages = $DocsMetadata.Where({
       $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
     })
@@ -522,7 +522,7 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  python -m pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
   sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
@@ -536,7 +536,7 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
   catch
   {
-    if ($_.Exception.Response.StatusCode -ne 404) 
+    if ($_.Exception.Response.StatusCode -ne 404)
     {
       LogError "Failed to retrieve package versions for ${PackageName}. $($_.Exception.Message)"
     }
@@ -544,15 +544,15 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
 }
 
-function Get-python-DocsMsMetadataForPackage($PackageInfo) { 
+function Get-python-DocsMsMetadataForPackage($PackageInfo) {
   $readmeName = $PackageInfo.Name.ToLower()
   Write-Host "Docs.ms Readme name: $($readmeName)"
 
   # Readme names (which are used in the URL) should not include redundant terms
-  # when viewed in URL form. For example: 
+  # when viewed in URL form. For example:
   # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage-blobs-readme
   # Note how the end of the URL doesn't look like:
-  # ".../azure/azure-storage-blobs-readme" 
+  # ".../azure/azure-storage-blobs-readme"
 
   # This logic eliminates a preceeding "azure." in the readme filename.
   # "azure-storage-blobs" -> "storage-blobs"
@@ -573,7 +573,7 @@ function Import-Dev-Cert-python
   Write-Host "Python Trust Methodology"
 
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-  python -m pip install requests
+  python -m python -m pip install requests
   python $pathToScript
 }
 
@@ -588,4 +588,12 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
     ValidatePackage -packageName $package.Name -packageVersion $package.Version `
         -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
   }
+}
+
+function Get-python-EmitterName() {
+  return "@azure-tools/typespec-python"
+}
+
+function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
+  return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
 }

@@ -278,8 +278,9 @@ class Operations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -383,8 +384,9 @@ class SubscriptionsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -433,8 +435,9 @@ class SubscriptionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -516,8 +519,9 @@ class SubscriptionsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -582,8 +586,8 @@ class SubscriptionsOperations:
 
         :param subscription_id: The ID of the target subscription. Required.
         :type subscription_id: str
-        :param parameters: Parameters for checking zone peers. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for checking zone peers. Is either a CheckZonePeersRequest type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.subscriptions.v2019_06_01.models.CheckZonePeersRequest
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -630,8 +634,9 @@ class SubscriptionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -734,8 +739,9 @@ class TenantsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -808,7 +814,7 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type. Is either a model type or a IO type. Default value is None.
+         type. Is either a ResourceName type or a IO type. Default value is None.
         :type resource_name_definition:
          ~azure.mgmt.resource.subscriptions.v2019_06_01.models.ResourceName or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -857,8 +863,9 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

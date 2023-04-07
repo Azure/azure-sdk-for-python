@@ -1,0 +1,25 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:serverless
+inputs:
+  connection_target_azuresql: azureml:my_export_azuresqldb_connection
+  table_name: dbo.Persons
+  cosmos_folder:
+    type: uri_file
+    path: ../../data/testFile_ForSqlDB.parquet
+
+jobs:
+  blob_azuresql:
+    type: data_transfer
+    task: export_data
+    component: ../../components/data_transfer/export_blob_to_database.yaml
+    inputs:
+      source: ${{parent.inputs.cosmos_folder}}
+    sink:
+      type: database
+      table_name: ${{parent.inputs.table_name}}
+      connection: ${{parent.inputs.connection_target_azuresql}}
+      

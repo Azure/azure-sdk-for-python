@@ -22,5 +22,5 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class TemplateSpecExpandKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TemplateSpecExpandKind."""
 
-    #: Includes version information with the Template Spec.
     VERSIONS = "versions"
+    """Includes version information with the Template Spec."""

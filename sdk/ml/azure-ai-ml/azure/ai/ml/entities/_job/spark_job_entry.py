@@ -5,7 +5,8 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -31,6 +32,8 @@ class SparkJobEntry(RestTranslatableMixin):
     def _from_rest_object(cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
         if obj is None:
             return
+        if isinstance(obj, dict):
+            obj = RestSparkJobEntry.from_dict(obj)
         if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
             return SparkJobEntry(
                 entry=obj.__dict__.get("file", None),

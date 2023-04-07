@@ -1,5 +1,23 @@
 # Release History
 
+## 22.0.0 (2023-03-23)
+
+### Features Added
+
+  - Model ContainerServiceNetworkProfile has a new parameter network_dataplane
+  - Model ManagedCluster has a new parameter service_mesh_profile
+  - Model ManagedClusterIngressProfileWebAppRouting has a new parameter identity
+
+### Breaking Changes
+
+  - Model ContainerServiceNetworkProfile no longer has parameter ebpf_dataplane
+
+## 21.2.0 (2023-02-20)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter upgrade_settings
+
 ## 21.1.0 (2022-12-30)
 
 ### Features Added

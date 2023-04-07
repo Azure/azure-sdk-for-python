@@ -35,14 +35,14 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(LogsIngestionClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2021-11-01-preview"] = kwargs.pop("api_version", "2021-11-01-preview")
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", "2023-01-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -53,7 +53,7 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["user_impersonation"])
-        kwargs.setdefault("sdk_moniker", "logsingestionclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "monitor-ingestion/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

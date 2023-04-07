@@ -101,6 +101,7 @@ try:
     from ._models_py3 import ComputeInstanceVersion
     from ._models_py3 import ComputeResource
     from ._models_py3 import ComputeResourceSchema
+    from ._models_py3 import ComputeRuntimeDto
     from ._models_py3 import ComputeSchedules
     from ._models_py3 import ComputeSecrets
     from ._models_py3 import ComputeStartStopSchedule
@@ -179,12 +180,14 @@ try:
     from ._models_py3 import FQDNEndpointDetail
     from ._models_py3 import FQDNEndpoints
     from ._models_py3 import FQDNEndpointsProperties
+    from ._models_py3 import FeatureStoreSettings
     from ._models_py3 import FeaturizationSettings
     from ._models_py3 import FlavorData
     from ._models_py3 import ForecastHorizon
     from ._models_py3 import Forecasting
     from ._models_py3 import ForecastingSettings
     from ._models_py3 import ForecastingTrainingSettings
+    from ._models_py3 import FqdnOutboundRule
     from ._models_py3 import GridSamplingAlgorithm
     from ._models_py3 import HDInsight
     from ._models_py3 import HDInsightProperties
@@ -259,6 +262,9 @@ try:
     from ._models_py3 import MLTableJobOutput
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIdentityAuthTypeWorkspaceConnectionProperties
+    from ._models_py3 import ManagedNetworkProvisionOptions
+    from ._models_py3 import ManagedNetworkProvisionStatus
+    from ._models_py3 import ManagedNetworkSettings
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MedianStoppingPolicy
@@ -292,6 +298,9 @@ try:
     from ._models_py3 import OnlineEndpointTrackedResourceArmPaginatedResult
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import OnlineScaleSettings
+    from ._models_py3 import OutboundRule
+    from ._models_py3 import OutboundRuleBasicResource
+    from ._models_py3 import OutboundRuleListResult
     from ._models_py3 import OutputPathAssetReference
     from ._models_py3 import PATAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import PaginatedComputeResourcesList
@@ -309,6 +318,8 @@ try:
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointDestination
+    from ._models_py3 import PrivateEndpointOutboundRule
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
@@ -353,6 +364,8 @@ try:
     from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ServicePrincipalDatastoreCredentials
     from ._models_py3 import ServicePrincipalDatastoreSecrets
+    from ._models_py3 import ServiceTagDestination
+    from ._models_py3 import ServiceTagOutboundRule
     from ._models_py3 import SetupScripts
     from ._models_py3 import SharedPrivateLinkResource
     from ._models_py3 import Sku
@@ -532,6 +545,7 @@ except (SyntaxError, ImportError):
     from ._models import ComputeInstanceVersion  # type: ignore
     from ._models import ComputeResource  # type: ignore
     from ._models import ComputeResourceSchema  # type: ignore
+    from ._models import ComputeRuntimeDto  # type: ignore
     from ._models import ComputeSchedules  # type: ignore
     from ._models import ComputeSecrets  # type: ignore
     from ._models import ComputeStartStopSchedule  # type: ignore
@@ -610,12 +624,14 @@ except (SyntaxError, ImportError):
     from ._models import FQDNEndpointDetail  # type: ignore
     from ._models import FQDNEndpoints  # type: ignore
     from ._models import FQDNEndpointsProperties  # type: ignore
+    from ._models import FeatureStoreSettings  # type: ignore
     from ._models import FeaturizationSettings  # type: ignore
     from ._models import FlavorData  # type: ignore
     from ._models import ForecastHorizon  # type: ignore
     from ._models import Forecasting  # type: ignore
     from ._models import ForecastingSettings  # type: ignore
     from ._models import ForecastingTrainingSettings  # type: ignore
+    from ._models import FqdnOutboundRule  # type: ignore
     from ._models import GridSamplingAlgorithm  # type: ignore
     from ._models import HDInsight  # type: ignore
     from ._models import HDInsightProperties  # type: ignore
@@ -690,6 +706,9 @@ except (SyntaxError, ImportError):
     from ._models import MLTableJobOutput  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
     from ._models import ManagedIdentityAuthTypeWorkspaceConnectionProperties  # type: ignore
+    from ._models import ManagedNetworkProvisionOptions  # type: ignore
+    from ._models import ManagedNetworkProvisionStatus  # type: ignore
+    from ._models import ManagedNetworkSettings  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import MedianStoppingPolicy  # type: ignore
@@ -723,6 +742,9 @@ except (SyntaxError, ImportError):
     from ._models import OnlineEndpointTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
+    from ._models import OutboundRule  # type: ignore
+    from ._models import OutboundRuleBasicResource  # type: ignore
+    from ._models import OutboundRuleListResult  # type: ignore
     from ._models import OutputPathAssetReference  # type: ignore
     from ._models import PATAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import PaginatedComputeResourcesList  # type: ignore
@@ -740,6 +762,8 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointDestination  # type: ignore
+    from ._models import PrivateEndpointOutboundRule  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
@@ -784,6 +808,8 @@ except (SyntaxError, ImportError):
     from ._models import ServicePrincipalAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
     from ._models import ServicePrincipalDatastoreSecrets  # type: ignore
+    from ._models import ServiceTagDestination  # type: ignore
+    from ._models import ServiceTagOutboundRule  # type: ignore
     from ._models import SetupScripts  # type: ignore
     from ._models import SharedPrivateLinkResource  # type: ignore
     from ._models import Sku  # type: ignore
@@ -919,6 +945,7 @@ from ._azure_machine_learning_workspaces_enums import (
     IncrementalDataRefresh,
     InputDeliveryMode,
     InstanceSegmentationPrimaryMetrics,
+    IsolationMode,
     JobInputType,
     JobLimitsType,
     JobOutputType,
@@ -932,6 +959,7 @@ from ._azure_machine_learning_workspaces_enums import (
     LogVerbosity,
     MLAssistConfigurationType,
     MLFlowAutologgerState,
+    ManagedNetworkStatus,
     ManagedServiceIdentityType,
     MediaType,
     MlflowAutologger,
@@ -966,6 +994,9 @@ from ._azure_machine_learning_workspaces_enums import (
     RegressionModels,
     RegressionPrimaryMetrics,
     RemoteLoginPortPublicAccess,
+    RuleCategory,
+    RuleStatus,
+    RuleType,
     SamplingAlgorithmType,
     ScaleType,
     ScheduleActionType,
@@ -1103,6 +1134,7 @@ __all__ = [
     'ComputeInstanceVersion',
     'ComputeResource',
     'ComputeResourceSchema',
+    'ComputeRuntimeDto',
     'ComputeSchedules',
     'ComputeSecrets',
     'ComputeStartStopSchedule',
@@ -1181,12 +1213,14 @@ __all__ = [
     'FQDNEndpointDetail',
     'FQDNEndpoints',
     'FQDNEndpointsProperties',
+    'FeatureStoreSettings',
     'FeaturizationSettings',
     'FlavorData',
     'ForecastHorizon',
     'Forecasting',
     'ForecastingSettings',
     'ForecastingTrainingSettings',
+    'FqdnOutboundRule',
     'GridSamplingAlgorithm',
     'HDInsight',
     'HDInsightProperties',
@@ -1261,6 +1295,9 @@ __all__ = [
     'MLTableJobOutput',
     'ManagedIdentity',
     'ManagedIdentityAuthTypeWorkspaceConnectionProperties',
+    'ManagedNetworkProvisionOptions',
+    'ManagedNetworkProvisionStatus',
+    'ManagedNetworkSettings',
     'ManagedOnlineDeployment',
     'ManagedServiceIdentity',
     'MedianStoppingPolicy',
@@ -1294,6 +1331,9 @@ __all__ = [
     'OnlineEndpointTrackedResourceArmPaginatedResult',
     'OnlineRequestSettings',
     'OnlineScaleSettings',
+    'OutboundRule',
+    'OutboundRuleBasicResource',
+    'OutboundRuleListResult',
     'OutputPathAssetReference',
     'PATAuthTypeWorkspaceConnectionProperties',
     'PaginatedComputeResourcesList',
@@ -1311,6 +1351,8 @@ __all__ = [
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
+    'PrivateEndpointDestination',
+    'PrivateEndpointOutboundRule',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
@@ -1355,6 +1397,8 @@ __all__ = [
     'ServicePrincipalAuthTypeWorkspaceConnectionProperties',
     'ServicePrincipalDatastoreCredentials',
     'ServicePrincipalDatastoreSecrets',
+    'ServiceTagDestination',
+    'ServiceTagOutboundRule',
     'SetupScripts',
     'SharedPrivateLinkResource',
     'Sku',
@@ -1488,6 +1532,7 @@ __all__ = [
     'IncrementalDataRefresh',
     'InputDeliveryMode',
     'InstanceSegmentationPrimaryMetrics',
+    'IsolationMode',
     'JobInputType',
     'JobLimitsType',
     'JobOutputType',
@@ -1501,6 +1546,7 @@ __all__ = [
     'LogVerbosity',
     'MLAssistConfigurationType',
     'MLFlowAutologgerState',
+    'ManagedNetworkStatus',
     'ManagedServiceIdentityType',
     'MediaType',
     'MlflowAutologger',
@@ -1535,6 +1581,9 @@ __all__ = [
     'RegressionModels',
     'RegressionPrimaryMetrics',
     'RemoteLoginPortPublicAccess',
+    'RuleCategory',
+    'RuleStatus',
+    'RuleType',
     'SamplingAlgorithmType',
     'ScaleType',
     'ScheduleActionType',

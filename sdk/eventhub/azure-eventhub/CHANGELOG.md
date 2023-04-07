@@ -1,6 +1,6 @@
 # Release History
 
-## 5.11.1 (Unreleased)
+## 5.11.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.11.2 (2023-03-20)
+
+### Bugs Fixed
+
+- Fixed a bug that would prevent reconnect after a long idle period, network drop (issue #28996)
+
+## 5.11.1 (2023-01-25)
+
+### Bugs Fixed
+
+- Fixed a bug where, when `websocket-client` was not installed, the error was not caught/raised properly (issue #28453).
 
 ## 5.11.0 (2023-01-19)
 

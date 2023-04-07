@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
+from typing import Any, Optional, Mapping, Union
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -14,6 +14,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -35,9 +36,6 @@ from .._models import ConfigurationSetting
 from .._user_agent import USER_AGENT
 from ._sync_token_async import AsyncSyncTokenPolicy
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-
 
 class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
@@ -56,12 +54,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(
-        self,
-        base_url: str,
-        credential: Union[AppConfigConnectionStringCredential, "AsyncTokenCredential"],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -102,7 +95,7 @@ class AzureAppConfigurationClient:
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
+    def from_connection_string(cls, connection_string: str, **kwargs) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
         This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -122,17 +115,14 @@ class AzureAppConfigurationClient:
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),
+            credential=AppConfigConnectionStringCredential(connection_string), # type: ignore
             base_url=base_url,
             **kwargs
         )
 
     @distributed_trace
     def list_configuration_settings(
-        self,
-        key_filter: Optional[str] = None,
-        label_filter: Optional[str] = None,
-        **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -197,7 +187,7 @@ class AzureAppConfigurationClient:
         label: Optional[str] = None,
         etag: Optional[str] = "*",
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
-        **kwargs: Any
+        **kwargs
     ) -> Union[None, ConfigurationSetting]:
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -257,7 +247,7 @@ class AzureAppConfigurationClient:
     async def add_configuration_setting(
         self,
         configuration_setting: ConfigurationSetting,
-        **kwargs: Any
+        **kwargs
     ) -> ConfigurationSetting:
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
@@ -307,7 +297,7 @@ class AzureAppConfigurationClient:
         self,
         configuration_setting: ConfigurationSetting,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs: Any
+        **kwargs
     ) -> ConfigurationSetting:
 
         """Add or update a ConfigurationSetting.
@@ -378,7 +368,7 @@ class AzureAppConfigurationClient:
         self,
         key: str,
         label: Optional[str] = None,
-        **kwargs: Any
+        **kwargs
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
@@ -434,7 +424,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """
@@ -495,7 +485,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     async def set_read_only(
-        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs: Any
+        self, configuration_setting: ConfigurationSetting, read_only: bool = True, **kwargs
     ) -> ConfigurationSetting:
 
         """Set a configuration setting read only
@@ -564,14 +554,14 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
-    def update_sync_token(self, token: str) -> None:
+    async def update_sync_token(self, token: str) -> None:
 
         """Add a sync token to the internal list of tokens.
 
         :param str token: The sync token to be added to the internal list of tokens
         """
 
-        self._sync_token_policy.add_token(token)
+        await self._sync_token_policy.add_token(token)
 
     async def close(self) -> None:
 

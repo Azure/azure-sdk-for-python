@@ -15,6 +15,7 @@ from azure.communication.rooms._models import (
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
+from azure.communication.rooms._utils import verify_datetime_format
 from ._generated._client import AzureCommunicationRoomsService
 from ._generated.models import (
     CreateRoomRequest,
@@ -25,7 +26,7 @@ from ._generated.models import (
     RoomJoinPolicy
 )
 
-from ._shared.utils import parse_connection_str, verify_datetime_format
+from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 

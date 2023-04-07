@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -43,10 +44,12 @@ from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml.operations._workspace_operations import get_deployment_name, get_name_for_dependent_resource
+from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
+
+from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -120,15 +123,13 @@ def mock_workspace_scope() -> OperationScope:
 
 
 @pytest.fixture
-def mock_registry_scope() -> OperationScope:
-    yield OperationScope(
-        subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Registry_Name
-    )
+def mock_operation_config() -> OperationConfig:
+    yield OperationConfig(show_progress=True, enable_telemetry=True)
 
 
 @pytest.fixture
-def mock_operation_config() -> OperationConfig:
-    yield OperationConfig(True)
+def mock_operation_config_no_progress() -> OperationConfig:
+    yield OperationConfig(show_progress=False, enable_telemetry=True)
 
 
 @pytest.fixture
@@ -149,7 +150,7 @@ def mock_registry_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription,
         resource_group_name=Test_Resource_Group,
-        workspace_name=Test_Workspace_Name,
+        workspace_name=None,
         registry_name=Test_Registry_Name,
     )
 
@@ -216,6 +217,16 @@ def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
 
 
 @pytest.fixture
@@ -340,6 +351,18 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
 
 
 @pytest.fixture
+def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="UnsecureTest-testFeed",
+    )
+
+
+@pytest.fixture
 def only_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
@@ -368,6 +391,14 @@ def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCr
         credential=auth,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="sdk-test",
+    )
+
+
+@pytest.fixture
+def ipp_registry_client(auth: ClientSecretCredential) -> MLClient:
+    "return a machine learning client to use for IPP asset registration"
+    return MLClient(
+        credential=auth, logging_enable=getenv(E2E_TEST_LOGGING_ENABLED), registry_name="UnsecureTest-hello-world"
     )
 
 
@@ -639,7 +670,7 @@ def mock_workspace_arm_template_deployment_name(mocker: MockFixture, variable_re
         return variable_recorder.get_or_record("deployment_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_deployment_name",
+        "azure.ai.ml.operations._workspace_operations_base.get_deployment_name",
         side_effect=generate_mock_workspace_deployment_name,
     )
 
@@ -651,7 +682,7 @@ def mock_workspace_dependent_resource_name_generator(mocker: MockFixture, variab
         return variable_recorder.get_or_record(f"{resource_type}_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_name_for_dependent_resource",
+        "azure.ai.ml.operations._workspace_operations_base.get_name_for_dependent_resource",
         side_effect=generate_mock_workspace_dependent_resource_name,
     )
 
@@ -749,21 +780,33 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 @pytest.fixture()
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
+    from azure.ai.ml._internal._setup import _registered, enable_internal_components_in_pipeline
     from azure.ai.ml._schema.component import command_component as command_component_schema
+    from azure.ai.ml._schema.component import component as component_schema
     from azure.ai.ml._schema.component import input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml._schema.pipeline import pipeline_job as pipeline_job_schema
     from azure.ai.ml.entities._component import command_component as command_component_entity
     from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
+    from azure.ai.ml.entities._job.pipeline import pipeline_job as pipeline_job_entity
 
     def _reload_related_classes():
+        reload(component_schema)
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+        reload(pipeline_job_schema)
 
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+        pipeline_job_entity.PipelineJobSchema = pipeline_job_schema.PipelineJobSchema
+
+        # check internal flag after reload, force register if it is set as True
+        if _registered:
+            enable_internal_components_in_pipeline(force=True)
 
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
+
         _reload_related_classes()
         yield
     _reload_related_classes()
@@ -830,8 +873,10 @@ def pytest_configure(config):
         ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
+        ("data_import_test", "marks tests as data import tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
+        ("virtual_cluster_test", "marks tests as virtual cluster tests"),
     ]:
         config.addinivalue_line("markers", f"{marker}: {description}")
 
@@ -840,14 +885,44 @@ def pytest_configure(config):
 
 @pytest.fixture()
 def enable_private_preview_pipeline_node_types():
-    # Update the node types in pipeline jobs to include the private preview node types
-    from azure.ai.ml._schema.pipeline import pipeline_job
-
-    schema = pipeline_job.PipelineJobSchema
-    original_jobs = schema._declared_fields["jobs"]
-    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
-
-    try:
+    with reload_schema_for_nodes_in_pipeline_job():
         yield
-    finally:
-        schema._declared_fields["jobs"] = original_jobs
+
+
+@pytest.fixture()
+def disable_internal_components():
+    """Some global changes are made in enable_internal_components, so we need to explicitly disable it.
+    It's not recommended to use this fixture along with other related fixtures like enable_internal_components
+    and enable_private_preview_features, as the execution order of fixtures is not guaranteed.
+    """
+    from azure.ai.ml._internal._schema.component import NodeType
+    from azure.ai.ml._internal._setup import _set_registered
+    from azure.ai.ml.entities._component.component_factory import component_factory
+    from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+    for _type in NodeType.all_values():
+        pipeline_node_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
+        pipeline_node_factory._load_from_rest_object_funcs.pop(_type, None)  # pylint: disable=protected-access
+        component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
+        component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
+
+    _set_registered(False)
+
+    with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
+        yield
+
+
+@pytest.fixture()
+def federated_learning_components_folder() -> Path:
+    return Path("./tests/test_configs/components/fl_test_components")
+
+
+@pytest.fixture()
+def federated_learning_local_data_folder() -> Path:
+    return Path("./tests/test_configs/fl-e2e-test-data")
+
+
+@pytest.fixture()
+def mock_set_headers_with_user_aml_token(mocker: MockFixture):
+    if not is_live() or not is_live_and_not_recording():
+        mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")

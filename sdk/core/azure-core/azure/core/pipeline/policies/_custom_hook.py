@@ -35,14 +35,11 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(
-        self, **kwargs
-    ):  # pylint: disable=unused-argument,super-init-not-called
+    def __init__(self, **kwargs):  # pylint: disable=unused-argument,super-init-not-called
         self._request_callback = kwargs.get("raw_request_hook")
         self._response_callback = kwargs.get("raw_response_hook")
 
-    def on_request(self, request):  # pylint: disable=arguments-differ
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=arguments-differ
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
@@ -59,8 +56,9 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         if response_callback:
             request.context["raw_response_hook"] = response_callback
 
-    def on_response(self, request, response):  # pylint: disable=arguments-differ
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(
+        self, request: PipelineRequest, response: PipelineResponse
+    ) -> None:  # pylint: disable=arguments-differ
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
