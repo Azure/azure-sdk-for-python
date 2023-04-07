@@ -3,7 +3,7 @@
 ### 4.3.2 (Unreleased)
 
 #### Features Added
- - Added **preview** delete all items by partition key functionality.
+ - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186).
 
 #### Breaking Changes
 
