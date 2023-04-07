@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Un
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 
+from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
     ARTIFACT_ORIGIN,
@@ -966,3 +967,44 @@ class DirectoryUploadProgressBar(tqdm):
             self.completed = current
         if current:
             self.update(current - self.n)
+
+
+def get_storage_info_for_non_registry_asset(service_client, workspace_name, name, version, resource_group) -> Dict[str, str]:
+    """Get SAS uri and blob uri for non-registry asset.
+    :param service_client: Service client
+    :type service_client: AzureMachineLearningWorkspaces
+    :param name: Asset name
+    :type name: str
+    :param version: Asset version
+    :type version: str
+    :param resource_group: Resource group
+    :rtype: Dict[str, str]
+    """
+    request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")
+    response = service_client.code_versions.create_or_get_start_pending_upload(
+        resource_group_name=resource_group,
+        workspace_name=workspace_name,
+        name=name,
+        version=version,
+        body=request_body,
+    )
+
+    sas_info = {
+        "sas_uri": response.blob_reference_for_consumption.credential.sas_uri,
+        "blob_uri": response.blob_reference_for_consumption.blob_uri,
+    }
+
+    return sas_info
+
+
+def _get_existing_asset_name_and_version(existing_asset):
+    import re
+
+    regex = r"/codes/([^/]+)/versions/([^/]+)"
+
+    arm_id = existing_asset.id
+    match = re.search(regex, arm_id)
+    name = match.group(1)
+    version = match.group(2)
+
+    return name, version
