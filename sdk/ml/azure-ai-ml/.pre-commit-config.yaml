@@ -21,3 +21,4 @@ repos:
   hooks:
   - id: isort
     name: isort (python)
+    args: ['--settings-file', 'sdk/ml/azure-ai-ml/pyproject.toml']

@@ -9,3 +9,6 @@ fail-under = 95
 verbose = 2
 ignore-module = true
 exclude = ["setup.py", "tests", "azure/ai/ml/_restclient"]
+
+[tool.isort]
+profile = "black"
