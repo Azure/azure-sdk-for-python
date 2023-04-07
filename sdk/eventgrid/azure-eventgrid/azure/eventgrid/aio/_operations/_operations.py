@@ -41,14 +41,14 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClientMixinABC):
     @distributed_trace_async
     async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, event: _models._models.CloudEventEvent, **kwargs: Any
+        self, topic_name: str, body: _models._models.CloudEvent, **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event: Single Cloud Event being published. Required.
-        :type event: ~azuremessagingeventgrid.models.CloudEventEvent
+        :param body: Required.
+        :type body: ~azuremessagingeventgrid.models.CloudEvent
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -74,7 +74,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_azure_messaging_event_grid_publish_cloud_event_request(
             topic_name=topic_name,
@@ -105,14 +105,14 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
     @distributed_trace_async
     async def _publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, events: List[_models._models.CloudEventEvent], **kwargs: Any
+        self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
     ) -> None:
         """Publish Batch of Cloud Events to namespace topic.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param events: Array of Cloud Events being published. Required.
-        :type events: list[~azuremessagingeventgrid.models.CloudEventEvent]
+        :type events: list[~azuremessagingeventgrid.models.CloudEvent]
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str

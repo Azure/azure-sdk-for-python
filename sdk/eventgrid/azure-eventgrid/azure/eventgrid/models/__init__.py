@@ -11,7 +11,6 @@ from ._models import FailedLockToken
 from ._models import LockToken
 from ._models import LockTokenInput
 from ._models import LockTokensResponse
-from ._models import ReceiveDetails
 from ._models import ReceiveResponse
 from ._models import object
 from ._patch import __all__ as _patch_all
@@ -24,9 +23,9 @@ __all__ = [
     "LockToken",
     "LockTokenInput",
     "LockTokensResponse",
-    "ReceiveDetails",
     "ReceiveResponse",
     "object",
+    "ReceiveDetails",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

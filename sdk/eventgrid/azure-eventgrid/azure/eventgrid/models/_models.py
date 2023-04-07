@@ -49,7 +49,7 @@ class BrokerProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudEventEvent(_model_base.Model):
+class CloudEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
     CloudEvent 1.0 Schema.
 
@@ -182,12 +182,12 @@ class LockTokenInput(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar lock_tokens: LockToken. Required.
+    :ivar lock_tokens: LockTokens. Required.
     :vartype lock_tokens: list[str]
     """
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
-    """LockToken. Required."""
+    """LockTokens. Required."""
 
     @overload
     def __init__(
@@ -257,12 +257,12 @@ class ReceiveDetails(_model_base.Model):
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azuremessagingeventgrid.models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azuremessagingeventgrid.models.CloudEventEvent
+    :vartype event: ~azuremessagingeventgrid.models.CloudEvent
     """
 
     broker_properties: "_models.BrokerProperties" = rest_field(name="brokerProperties")
     """The Event Broker details. Required."""
-    event: "_models._models.CloudEventEvent" = rest_field()
+    event: "_models._models.CloudEvent" = rest_field()
     """Cloud Event details. Required."""
 
 
