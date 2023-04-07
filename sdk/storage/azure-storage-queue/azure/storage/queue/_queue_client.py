@@ -679,7 +679,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 if max_messages < messages_per_page:
                     raise ValueError("max_messages must be greater or equal to messages_per_page")
             return ItemPaged(command, results_per_page=messages_per_page,
-                            page_iterator_class=MessagesPaged, max_messages=max_messages)
+                             page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 
