@@ -16,3 +16,8 @@ repos:
   rev: v6.31.0
   hooks:
   - id: cspell
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v5.8.0
+  hooks:
+  - id: isort
+    name: isort (python)
