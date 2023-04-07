@@ -90,7 +90,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                     target=ErrorTarget.SPARK_JOB,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-        elif self.runtime_version is not None:
+        else:
             msg = "runtime version should be either float or str type"
             raise ValidationException(
                 message=msg,
