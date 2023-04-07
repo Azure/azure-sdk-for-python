@@ -5,10 +5,9 @@
 
 This includes enums and classes for exceptions.
 """
-from azure.core.exceptions import AzureError
 import logging
 from enum import Enum
-from typing import Iterable, Optional, Union
+from typing import Optional, Union
 
 from azure.core.exceptions import AzureError
 
@@ -16,9 +15,9 @@ module_logger = logging.getLogger(__name__)
 
 
 class ValidationErrorType(Enum):
-    """Error types to be specified when using ValidationException class.
-    This is a section with an typo
-    Types are then used in raise_error.py to format a detailed error message for users.
+    """Error types to be specified when using ValidationException class. Types are then used in raise_error.py to format
+    a detailed error message for users.
+
     When using ValidationException, specify the type that best describes the nature of the error being captured.
     If no type fits, add a new enum here and update raise_error.py to handle it.
 
@@ -45,16 +44,12 @@ class ValidationErrorType(Enum):
 
 
 class ErrorCategory:
-    """Error Category based on error source."""
-
     USER_ERROR = "UserError"
     SYSTEM_ERROR = "SystemError"
     UNKNOWN = "Unknown"
 
 
 class ErrorTarget:
-    """Error Targets corresponding to the entity where the error was triggered."""
-
     BATCH_ENDPOINT = "BatchEndpoint"
     BATCH_DEPLOYMENT = "BatchDeployment"
     LOCAL_ENDPOINT = "LocalEndpoint"
@@ -96,9 +91,19 @@ class ErrorTarget:
 
 
 class MlException(AzureError):
-    """The base class for all exceptions raised in AzureML SDK code base.
+    """The base class for all exceptions raised in AzureML SDK code base. If there is a need to define a custom
+    exception type, that custom exception type should extend from this class.
 
-    If there is a need to define a custom exception type, that custom exception type should extend from this class.
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data. This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    :param error: The original exception if any.
+    :type error: Exception
     """
 
     def __init__(
@@ -106,106 +111,78 @@ class MlException(AzureError):
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return the base class where all exceptions raised in the AzureML SDK codebase.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data. This will be pushed to telemetry logs.
-        :type no_personal_data_message: str
-        :param target: Name of the element that caused the exception to be thrown, defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        :param error: The original exception if any
-        :type error: Exception
-        """
         self._error_category = error_category
         self._target = target
         self._no_personal_data_message = no_personal_data_message
         super().__init__(message, *args, **kwargs)
 
     @property
-    def target(self) -> ErrorTarget:
+    def target(self):
         """Return the error target.
 
-        :return: Error target
-        :rtype: azure.ai.ml.exceptions.ErrorTarget
+        :return: The error target.
+        :rtype: ErrorTarget
         """
         return self._target
 
     @target.setter
-    def target(self, value: ErrorTarget) -> None:
-        """Set error target.
-
-        :param value: Error target
-        :type value: azure.ai.ml.exceptions.ErrorTarget
-        """
+    def target(self, value):
         self._target = value
 
     @property
-    def no_personal_data_message(self) -> str:
-        """Return the error message without personal data.
+    def no_personal_data_message(self):
+        """Return the error message with no personal data.
 
-        :return: Error message without personal data
+        :return: No personal data error message.
         :rtype: str
         """
         return self._no_personal_data_message
 
     @no_personal_data_message.setter
-    def no_personal_data_message(self, value: str) -> None:
-        """Set the error message without personal data.
-
-        :param value: Error message without personal data
-        :type value: str
-        """
+    def no_personal_data_message(self, value):
         self._no_personal_data_message = value
 
     @property
-    def error_category(self) -> ErrorCategory:
+    def error_category(self):
         """Return the error category.
 
-        :return: Error category
-        :rtype: azure.ai.ml.exceptions.ErrorCategory
+        :return: The error category.
+        :rtype: ErrorCategory
         """
         return self._error_category
 
     @error_category.setter
-    def error_category(self, value: ErrorCategory) -> None:
-        """Set the error category.
-
-        :param value: Error category
-        :type value: azure.ai.ml.exceptions.ErrorCategory
-        """
+    def error_category(self, value):
         self._error_category = value
 
 
 class DeploymentException(MlException):
-    """Class for all exceptions related to Deployments."""
+    """Class for all exceptions related to Deployments.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for Deployments.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(DeploymentException, self).__init__(
             message=message,
             target=target,
@@ -217,28 +194,28 @@ class DeploymentException(MlException):
 
 
 class ComponentException(MlException):
-    """Class for all exceptions related to Components."""
+    """Class for all exceptions related to Components.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for Components.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(ComponentException, self).__init__(
             message=message,
             target=target,
@@ -250,28 +227,28 @@ class ComponentException(MlException):
 
 
 class JobException(MlException):
-    """Class for all exceptions related to Jobs."""
+    """Class for all exceptions related to Jobs.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for Jobs.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(JobException, self).__init__(
             message=message,
             target=target,
@@ -283,28 +260,28 @@ class JobException(MlException):
 
 
 class ModelException(MlException):
-    """Class for all exceptions related to Models."""
+    """Class for all exceptions related to Models.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for Models.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(ModelException, self).__init__(
             message=message,
             target=target,
@@ -316,28 +293,28 @@ class ModelException(MlException):
 
 
 class AssetException(MlException):
-    """Class for all exceptions related to Assets."""
+    """Class for all exceptions related to Assets.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for Assets.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(AssetException, self).__init__(
             message=message,
             target=target,
@@ -349,28 +326,28 @@ class AssetException(MlException):
 
 
 class ScheduleException(MlException):
-    """Class for all exceptions related to Job Schedules."""
+    """Class for all exceptions related to Job Schedules.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for Schedules.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(ScheduleException, self).__init__(
             message=message,
             target=target,
@@ -382,30 +359,31 @@ class ScheduleException(MlException):
 
 
 class ValidationException(MlException):
-    """Class for all exceptions raised as part of client-side schema validation."""
-
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.USER_ERROR,
         **kwargs,
     ):
-        """Return exception class for schema validation.
+        """Class for all exceptions raised as part of client-side schema validation.
 
-        :param message: Message describing the error. This is the error message the user will see.
+        :param message: A message describing the error. This is the error message the user will see.
         :type message: str
-        :param no_personal_data_message: Error message without any personal data.
+        :param no_personal_data_message: The error message without any personal data.
+            This will be pushed to telemetry logs.
         :type no_personal_data_message: str
         :param error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
         :type error_type: ValidationErrorType
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
+        :param target: The name of the element that caused the exception to be thrown.
+        :type target: ErrorTarget
+        :param error_category: The error category, defaults to Unknown.
+        :type error_category: ErrorCategory
+        :param error: The original exception if any.
+        :type error: Exception
         """
         super(ValidationException, self).__init__(
             message=message,
@@ -424,47 +402,43 @@ class ValidationException(MlException):
             raise Exception(f"Error type {error_type} is not a member of the ValidationErrorType enum class.")
 
     @property
-    def error_type(self) -> ValidationErrorType:
+    def error_type(self):
         """Return the error type.
 
-        :return: The error type
-        :rtype: azure.ai.ml.exceptions.ValidationErrorType
+        :return: The error type.
+        :rtype: ValidationErrorType
         """
         return self._error_type
 
     @error_type.setter
-    def error_type(self, value: ValidationErrorType) -> None:
-        """Set error type.
-
-        :param value: Error type
-        :type value: azure.ai.ml.exceptions.ValidationErrorType
-        """
+    def error_type(self, value):
         self._error_type = value
 
 
 class AssetPathException(MlException):
-    """Class for the exception raised when an attempt is made to update the immutable path of an existing asset."""
+    """Class for the exception raised when an attempt is made to update the path of an existing asset. Asset paths are
+    immutable.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
         message: str,
         no_personal_data_message: str,
         *args,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
         **kwargs,
     ):
-        """Return exception class for updating an immutable existing asset path.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super(AssetPathException, self).__init__(
             message=message,
             target=target,
@@ -482,20 +456,9 @@ class EmptyDirectoryError(MlException):
         self,
         message: str,
         no_personal_data_message: str,
-        target: Optional[ErrorTarget] = ErrorTarget.UNKNOWN,
-        error_category: Optional[ErrorCategory] = ErrorCategory.UNKNOWN,
+        target: ErrorTarget = ErrorTarget.UNKNOWN,
+        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
     ):
-        """Return exception class for empty directory errors.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         self.message = message
         super(EmptyDirectoryError, self).__init__(
             message=self.message,
@@ -515,17 +478,6 @@ class UserErrorException(MlException):
         error_category=ErrorCategory.USER_ERROR,
         target: ErrorTarget = ErrorTarget.PIPELINE,
     ):
-        """Return exception class for user errors.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data.
-        :type no_personal_data_message: str
-        :param target: Name of the entity that caused the exception to be thrown., defaults to ErrorTarget.UNKNOWN
-        :type target: Optional[azure.ai.ml.exceptions.ErrorTarget]
-        :param error_category: Error category, defaults to ErrorCategory.UNKNOWN
-        :type error_category: Optional[azure.ai.ml.exceptions.ErrorCategory]
-        """
         super().__init__(
             message=message,
             target=target,
@@ -535,14 +487,9 @@ class UserErrorException(MlException):
 
 
 class CannotSetAttributeError(UserErrorException):
-    """Exception raised when a user tries setting attributes of inputs/outputs."""
+    """Exception raised when a user try setting attributes of inputs/outputs."""
 
-    def __init__(self, object_name: str):
-        """Return exception for user attribute setting error.
-
-        :param object_name: Name of object
-        :type object_name: str
-        """
+    def __init__(self, object_name):
         msg = "It is not allowed to set attribute of %r." % object_name
         super(CannotSetAttributeError, self).__init__(
             message=msg,
@@ -551,16 +498,9 @@ class CannotSetAttributeError(UserErrorException):
 
 
 class UnsupportedParameterKindError(UserErrorException):
-    """Exception raised when a user provides an unsupported parameter type."""
+    """Exception raised when a user try setting attributes of inputs/outputs."""
 
-    def __init__(self, func_name: str, parameter_kind: Optional[str] = None):
-        """Return exception for user parameter type error.
-
-        :param func_name: Function name
-        :type func_name: str
-        :param parameter_kind: Parameter type, defaults to None
-        :type parameter_kind: Optional[str]
-        """
+    def __init__(self, func_name, parameter_kind=None):
         parameter_kind = parameter_kind or "*args or **kwargs"
         msg = "%r: dsl pipeline does not accept %s as parameters." % (func_name, parameter_kind)
         super(UnsupportedParameterKindError, self).__init__(message=msg, no_personal_data_message=msg)
@@ -569,30 +509,14 @@ class UnsupportedParameterKindError(UserErrorException):
 class KeywordError(UserErrorException):
     """Super class of all type keyword error."""
 
-    def __init__(self, message: str, no_personal_data_message: Optional[str] = None):
-        """Return keyword error super class.
-
-        :param message: Message describing the error. This is the error message the user will see.
-        :type message: str
-        :param no_personal_data_message: Error message without any personal data, defaults to None
-        :type no_personal_data_message: Optional[str]
-        """
+    def __init__(self, message, no_personal_data_message=None):
         super().__init__(message=message, no_personal_data_message=no_personal_data_message)
 
 
 class UnexpectedKeywordError(KeywordError):
     """Exception raised when an unexpected keyword parameter is provided in dynamic functions."""
 
-    def __init__(self, func_name: str, keyword: str, keywords: Optional[Iterable[str]] = None):
-        """Return exception for unexpected keyword parameter in dynamic functions.
-
-        :param func_name: Function name
-        :type func_name: str
-        :param keyword: Keyword parameter
-        :type keyword: str
-        :param keywords: List of keywords, defaults to None
-        :type keywords: Optional[Iterable[str]]
-        """
+    def __init__(self, func_name, keyword, keywords=None):
         message = "%s() got an unexpected keyword argument %r" % (func_name, keyword)
         message += ", valid keywords: %s." % ", ".join("%r" % key for key in keywords) if keywords else "."
         super().__init__(message=message, no_personal_data_message=message)
