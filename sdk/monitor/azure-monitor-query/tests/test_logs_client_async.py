@@ -228,3 +228,34 @@ class TestLogsClientAsync(AzureRecordedTestCase):
 
                 for row in table.rows:
                     assert row.__class__ == LogsTableRow
+
+    @pytest.mark.asyncio
+    async def test_logs_resource_query(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        async with client:
+            query = "requests | summarize count()"
+
+            response = await client.query_resource(monitor_info['metrics_resource_id'], query, timespan=None)
+
+            assert response is not None
+            assert response.tables is not None
+            assert len(response.tables[0].rows) == 1
+
+    @pytest.mark.asyncio
+    async def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        async with client:
+            query = "requests | summarize count()"
+
+            response = await client.query_resource(
+                monitor_info['metrics_resource_id'],
+                query,
+                timespan=None,
+                include_statistics=True,
+                include_visualization=True
+            )
+
+            assert response.visualization is not None
+            assert response.statistics is not None
