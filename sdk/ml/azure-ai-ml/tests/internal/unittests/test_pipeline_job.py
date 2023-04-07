@@ -216,7 +216,7 @@ class TestPipelineJob:
         @pipeline
         def pipeline_func():
             node = component_func()
-            # node level should not have output type when type not configured
+            # node level should have correct output type when type not configured
             node.outputs.data_any_file.mode = "mount"
 
         pipeline_job = pipeline_func()
