@@ -20,6 +20,8 @@
 - Added property `code` to `CurrencyValue`.
 - Added properties `unit`, `city_district`, `state_district`, `suburb`, `house`, and `level` to `AddressValue`.
 - Added "boolean" `value_type` and `bool` `value` to `DocumentField`.
+- Added properties `annotations`, `images`, `formulas`, and `barcodes` to `DocumentPage`. 
+- Added models `DocumentAnnotation`, `DocumentImage`, `DocumentFormula`, and `DocumentBarcode`.
 
 ### Breaking Changes
 
