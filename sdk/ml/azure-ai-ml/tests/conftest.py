@@ -37,7 +37,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -521,6 +521,31 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
         mocker.patch(
             "azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
             return_value="00000000000000000000000000000000",
+        )
+
+
+@pytest.fixture
+def mock_anon_component_version(mocker: MockFixture):
+
+    fake_uuid = "000000000000000000000"
+
+    def generate_name_version(*args, **kwargs):
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        return ANONYMOUS_COMPONENT_NAME, real_uuid
+
+    def fake_name_version(*args, **kwargs):
+        return ANONYMOUS_COMPONENT_NAME, fake_uuid
+
+    if is_live():
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=generate_name_version,
+        )
+    else:
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=fake_name_version,
         )
 
 
