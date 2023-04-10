@@ -40,7 +40,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
 
 @experimental
-class DataQuality(MetricThreshold):
+class DataQualityMetricThreshold(MetricThreshold):
     def __init__(
         self,
         applicable_feature_type: str = None,
