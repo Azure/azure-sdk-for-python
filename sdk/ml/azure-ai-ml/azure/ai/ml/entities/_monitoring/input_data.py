@@ -4,6 +4,8 @@
 
 from azure.ai.ml._utils._experimental import experimental
 
+from azure.ai.ml.constants._monitoring import MonitorDatasetContext
+
 
 @experimental
 class MonitorInputData:
@@ -11,7 +13,7 @@ class MonitorInputData:
         self,
         *,
         input_dataset: str = None,
-        dataset_context: str = None,
+        dataset_context: MonitorDatasetContext = None,
         target_column_name: str = None,
         pre_processing_component: str = None,
     ):

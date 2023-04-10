@@ -1,7 +1,10 @@
-from typing import List, Union
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 
 from typing_extensions import Literal
 
+from azure.ai.ml.constants._monitoring import MonitorMetricName, MonitorFeatureType
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -17,9 +20,15 @@ class MetricThreshold:
 class DataDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
-        applicable_feature_type: str = None,
-        metric_name: str = None,
-        threshold: float = None
+        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
+        metric_name: Literal[
+            MonitorMetricName.JENSEN_SHANNON_DISTANCE,
+            MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
+            MonitorMetricName.POPULATION_STABILITY_INDEX,
+            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_TEST,
+            MonitorMetricName.CHI_SQUARED_TEST,
+        ] = None,
+        threshold: float = None,
     ):
         super().__init__(threshold=threshold)
         self.applicable_feature_type = applicable_feature_type
@@ -30,9 +39,15 @@ class DataDriftMetricThreshold(MetricThreshold):
 class PredictionDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
-        applicable_feature_type: str = None,
-        metric_name: str = None,
-        threshold: float = None
+        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
+        metric_name: Literal[
+            MonitorMetricName.JENSEN_SHANNON_DISTANCE,
+            MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
+            MonitorMetricName.POPULATION_STABILITY_INDEX,
+            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_TEST,
+            MonitorMetricName.CHI_SQUARED_TEST,
+        ] = None,
+        threshold: float = None,
     ):
         super().__init__(threshold=threshold)
         self.applicable_feature_type = applicable_feature_type
@@ -43,9 +58,13 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 class DataQualityMetricThreshold(MetricThreshold):
     def __init__(
         self,
-        applicable_feature_type: str = None,
-        metric_name: str = None,
-        threshold: float = None
+        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
+        metric_name: Literal[
+            MonitorMetricName.NULL_VALUE_RATE,
+            MonitorMetricName.DATA_TYPE_ERROR_RATE,
+            MonitorMetricName.OUT_OF_BOUND_RATE,
+        ] = None,
+        threshold: float = None,
     ):
         super().__init__(threshold=threshold)
         self.applicable_feature_type = applicable_feature_type
@@ -54,23 +73,27 @@ class DataQualityMetricThreshold(MetricThreshold):
 
 @experimental
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
-    def __init__(
-        self,
-        threshold: float = None
-    ):
+    def __init__(self, threshold: float = None):
         super().__init__(threshold=threshold)
-        self.applicable_feature_type = "all_feature_types"
-        self.metric_name = "normalized_discounted_cumulative_gain"
-
+        self.applicable_feature_type = MonitorFeatureType.ALL_FEATURE_TYPES
+        self.metric_name = MonitorMetricName.NORMALIZED_DISCOUNTED_CUMULATIVE_GAIN
 
 
 @experimental
 class ModelPerformanceMetricThreshold(MetricThreshold):
     def __init__(
         self,
-        metric_name: str = None,
-        threshold: float = None
+        metric_name: Literal[
+            MonitorMetricName.ACCURACY,
+            MonitorMetricName.PRECISION,
+            MonitorMetricName.RECALL,
+            MonitorMetricName.F1_SCORE,
+            MonitorMetricName.MAE,
+            MonitorMetricName.MSE,
+            MonitorMetricName.RMSE,
+        ] = None,
+        threshold: float = None,
     ):
         super().__init__(threshold=threshold)
-        self.applicable_feature_type = "not_applicable"
+        self.applicable_feature_type = MonitorFeatureType.NOT_APPLICABLE
         self.metric_name = metric_name

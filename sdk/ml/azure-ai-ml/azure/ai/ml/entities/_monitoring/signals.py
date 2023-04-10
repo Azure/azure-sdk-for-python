@@ -7,6 +7,7 @@ from typing import List, Union
 from typing_extensions import Literal
 
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
@@ -85,7 +86,7 @@ class DataSignal(MetricMonitoringSignal):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-        features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]] = None,
+        features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[MetricThreshold] = None,
     ):
         super().__init__(
@@ -103,8 +104,8 @@ class DataDriftSignal(DataSignal):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-        features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]] = None,
-        metric_thresholds: List[DataQualityMetricThreshold] = None,
+        features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
+        metric_thresholds: List[DataDriftMetricThreshold] = None,
     ):
         super().__init__(
             target_dataset=target_dataset,
@@ -112,7 +113,7 @@ class DataDriftSignal(DataSignal):
             metric_thresholds=metric_thresholds,
             features=features,
         )
-        self.type = "data_drift"
+        self.type = MonitorSignalType.DATA_DRIFT
 
 
 @experimental
@@ -127,7 +128,7 @@ class PredictionDriftSignal(MetricMonitoringSignal):
         super().__init__(
             target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds
         )
-        self.type = "prediction_drift"
+        self.type = MonitorSignalType.PREDICTION_DRIFT
 
 
 @experimental
@@ -137,7 +138,7 @@ class DataQualitySignal(DataSignal):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-        features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]] = None,
+        features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataQualityMetricThreshold] = None,
     ):
         super().__init__(
@@ -146,7 +147,7 @@ class DataQualitySignal(DataSignal):
             metric_thresholds=metric_thresholds,
             features=features,
         )
-        self.type = "data_quality"
+        self.type = MonitorSignalType.DATA_QUALITY
 
 
 @experimental
@@ -157,7 +158,7 @@ class ModelSignal(MetricMonitoringSignal):
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[MetricThreshold] = None,
-        model_type: str = None,
+        model_type: MonitorModelType = None,
     ):
         super().__init__(
             target_dataset=target_dataset,
@@ -175,7 +176,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[FeatureAttributionDriftMetricThreshold] = None,
-        model_type: str = None,
+        model_type: MonitorModelType = None,
     ):
         super().__init__(
             target_dataset=target_dataset,
@@ -183,7 +184,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
             metric_thresholds=metric_thresholds,
             model_type=model_type,
         )
-        self.type = "feature_attribution_drift"
+        self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
 
 @experimental
@@ -194,7 +195,7 @@ class ModelPerformanceSignal(ModelSignal):
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[ModelPerformanceMetricThreshold] = None,
-        model_type: str = None,
+        model_type: MonitorModelType = None,
         data_segment: DataSegment = None,
     ):
         super().__init__(
@@ -203,7 +204,7 @@ class ModelPerformanceSignal(ModelSignal):
             metric_thresholds=metric_thresholds,
             model_type=model_type,
         )
-        self.type = "model_drift"
+        self.type = MonitorSignalType.MODEL_PERFORMANCE
         self.data_segment = data_segment
 
 
@@ -220,5 +221,5 @@ class CustomMonitoringSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
         )
-        self.type = "custom_monitoring_signal"
+        self.type = MonitorSignalType.CUSTOM
         self.component_id = component_id
