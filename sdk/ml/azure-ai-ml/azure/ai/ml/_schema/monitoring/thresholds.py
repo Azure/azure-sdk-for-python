@@ -11,11 +11,11 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class MetricThreshold(metaclass=PatchedSchemaMeta):
+class MetricThresholdSchema(metaclass=PatchedSchemaMeta):
     threshold = fields.Number()
 
 
-class DataDriftMetricThreshold(MetricThreshold):
+class DataDriftMetricThresholdSchema(MetricThresholdSchema):
     applicable_feature_type = StringTransformedEnum(
         allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
     )
@@ -36,7 +36,7 @@ class DataDriftMetricThreshold(MetricThreshold):
         return DataDriftMetricThreshold(**data)
 
 
-class DataQualityMetricThreshold(MetricThreshold):
+class DataQualityMetricThresholdSchema(MetricThresholdSchema):
     applicable_feature_type = StringTransformedEnum(
         allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
     )
@@ -55,7 +55,7 @@ class DataQualityMetricThreshold(MetricThreshold):
         return DataQualityMetricThreshold(**data)
 
 
-class PredictionDriftMetricThreshold(MetricThreshold):
+class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
     applicable_feature_type = StringTransformedEnum(
         allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
     )
@@ -76,7 +76,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
         return PredictionDriftMetricThreshold(**data)
 
 
-class FeatureAttributionDriftMetricThreshold(MetricThreshold):
+class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.thresholds import FeatureAttributionDriftMetricThreshold
@@ -84,7 +84,7 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
         return FeatureAttributionDriftMetricThreshold(**data)
 
 
-class ModelPerformanceMetricThreshold(MetricThreshold):
+class ModelPerformanceMetricThresholdSchema(MetricThresholdSchema):
     metric_name = StringTransformedEnum(
         allowed_values=[
             MonitorMetricName.ACCURACY,
