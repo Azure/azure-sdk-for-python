@@ -41,8 +41,12 @@ if TYPE_CHECKING:
         AzureSasCredential,
         AzureNamedKeyCredential,
     )
-    from uamqp import SendClient as uamqp_SendClientSync
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    try:
+        # pylint:disable=unused-import
+        from uamqp import SendClient as uamqp_SendClientSync
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    except ImportError:
+        pass
 
     from ._transport._base import AmqpTransport
     from ._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth

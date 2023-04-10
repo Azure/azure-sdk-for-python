@@ -52,9 +52,13 @@ from .._common.utils import (
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
-    from uamqp.async_ops.client_async import ReceiveClientAsync as uamqp_ReceiveClientAsync
-    from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
-    from uamqp.message import Message as uamqp_Message
+    try:
+        # pylint:disable=unused-import
+        from uamqp.async_ops.client_async import ReceiveClientAsync as uamqp_ReceiveClientAsync
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
+        from uamqp.message import Message as uamqp_Message
+    except ImportError:
+        pass
     from ._transport._base_async import AmqpTransportAsync
     from .._pyamqp.message import Message as pyamqp_Message
     from .._pyamqp.aio import ReceiveClientAsync as pyamqp_ReceiveClientAsync
