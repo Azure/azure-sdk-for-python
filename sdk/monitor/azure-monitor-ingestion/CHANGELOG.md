@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+  - Fixed an issue where log entry sizes were miscalculated when chunking. ([#29584](https://github.com/Azure/azure-sdk-for-python/pull/29584))
 
 ### Other Changes
 

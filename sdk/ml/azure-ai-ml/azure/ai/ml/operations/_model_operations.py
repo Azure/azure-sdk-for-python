@@ -165,12 +165,13 @@ class ModelOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
-                if not sas_uri:
-                    module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
-                    return self.get(name=model.name, version=model.version)
 
             model, indicator_file = _check_and_upload_path(
-                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
+                artifact=model,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=self._show_progress,
             )
 
             model.path = resolve_short_datastore_url(model.path, self._operation_scope)
@@ -497,6 +498,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._model_versions_operation,
             self._resource_group_name,
             self._workspace_name,
+            self._registry_name,
         )
         return Model._from_rest_object(result)
 

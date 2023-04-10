@@ -36,14 +36,14 @@ class WebPubSubManagementClientConfiguration(Configuration):  # pylint: disable=
     :param subscription_id: Gets subscription Id which uniquely identify the Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-08-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-02-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(WebPubSubManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-08-01-preview")  # type: Literal["2022-08-01-preview"]
+        api_version: Literal["2023-02-01"] = kwargs.pop("api_version", "2023-02-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

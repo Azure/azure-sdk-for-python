@@ -60,6 +60,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
     label_table_fixed_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
     multipage_receipt_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
     invoice_no_sub_line_item = _get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
+    irs_classifier_document_url = _get_blob_url(testing_container_sas_url, "testingdata", "IRS-1040_2.pdf")
 
     # file stream samples
     receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -84,6 +85,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
     w2_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/tax/sample_w2.png"))
     html_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/simple_html.html"))
     spreadsheet = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx"))
+    irs_classifier_document = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/IRS-1040.pdf"))
 
     def get_oauth_endpoint(self):
         return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
@@ -122,6 +124,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert model.model_id == expected.model_id
         assert model.created_on == expected.created_date_time
         assert model.description == expected.description
+        assert model.expires_on == expected.expiration_date_time
 
         for name, field in model.doc_types.items():
             assert name in expected.doc_types
@@ -549,6 +552,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
             self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
             self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
+            assert key_value.common_name == expected.common_name
 
     def assertDocumentLanguagesTransformCorrect(self, transformed_languages, raw_languages, **kwargs):
         if transformed_languages == [] and not raw_languages:
@@ -565,6 +569,11 @@ class FormRecognizerTest(AzureRecordedTestCase):
         
         for style, expected in zip(transformed_styles, raw_styles):
             assert style.is_handwritten == expected.is_handwritten
+            assert style.similar_font_family == expected.similar_font_family
+            assert style.font_style == expected.font_style
+            assert style.font_weight == expected.font_weight
+            assert style.color == expected.color
+            assert style.background_color == expected.background_color
             assert style.confidence == expected.confidence
             
             for span, expected_span in zip(style.spans or [], expected.spans or []):
@@ -722,6 +731,8 @@ class FormRecognizerTest(AzureRecordedTestCase):
             assert document_field.value == expected.value_country_region
         if field_type == "signature":
             assert document_field.value == expected.value_signature
+        if field_type == "boolean":
+            assert document_field.value == expected.value_boolean
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertDocumentFieldValueTransformCorrect(document_field.value[i], expected.value_array[i])

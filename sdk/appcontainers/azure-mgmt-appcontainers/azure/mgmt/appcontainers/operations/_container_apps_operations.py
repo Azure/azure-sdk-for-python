@@ -766,8 +766,8 @@ class ContainerAppsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param container_app_envelope: Properties used to create a container app. Is either a model
-         type or a IO type. Required.
+        :param container_app_envelope: Properties used to create a container app. Is either a
+         ContainerApp type or a IO type. Required.
         :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1117,7 +1117,7 @@ class ContainerAppsOperations:
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
         :param container_app_envelope: Properties of a Container App that need to be updated. Is either
-         a model type or a IO type. Required.
+         a ContainerApp type or a IO type. Required.
         :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

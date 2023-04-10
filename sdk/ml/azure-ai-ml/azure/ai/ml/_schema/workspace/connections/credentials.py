@@ -101,7 +101,7 @@ class ServicePrincipalConfigurationSchema(metaclass=PatchedSchemaMeta):
         return ServicePrincipalConfiguration(**data)
 
 
-class AccessKeyCredentialsSchema(metaclass=PatchedSchemaMeta):
+class AccessKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.ACCESS_KEY,
         casing_transform=camel_to_snake,
