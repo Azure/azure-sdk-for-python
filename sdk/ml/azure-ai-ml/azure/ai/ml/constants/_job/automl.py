@@ -5,6 +5,8 @@ from enum import Enum
 
 # pylint: disable=unused-import
 from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TrainingMode
+from azure.ai.ml._utils._experimental import experimental
 
 
 class AutoMLConstants:
@@ -107,3 +109,8 @@ class NlpModels(Enum):
     XLM_ROBERTA_LARGE = "xlm-roberta-large"
     XLNET_BASE_CASED = "xlnet-base-cased"
     XLNET_LARGE_CASED = "xlnet-large-cased"
+
+
+TrainingMode.__doc__ = "Mode to enable/disable distributed training."
+TabularTrainingMode = experimental(TrainingMode)
+TabularTrainingMode.__name__ = "TabularTrainingMode"

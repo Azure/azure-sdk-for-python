@@ -102,9 +102,27 @@ def upsert_item(container, doc_id):
 
     print('Upserted Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
 
+def patch_item(container, doc_id):
+    print('\n1.7 Patching Item by Id\n')
+
+    operations = [
+        {"op": "add", "path": "/favorite_color", "value": "red"},
+        {"op": "remove", "path": "/ttl"},
+        {"op": "replace", "path": "/tax_amount", "value": 14},
+        {"op": "set", "path": "/items/0/discount", "value": 20.0512},
+        {"op": "incr", "path": "/total_due", "value": 5},
+        {"op": "move", "from": "/freight", "path": "/service_addition"}
+    ]
+
+    response = container.patch_item(item=doc_id, partition_key=doc_id, patch_operations=operations)
+    print('Patched Item\'s Id is {0}, new path favorite color={1}, removed path ttl={2}, replaced path tax_amount={3},'
+          ' set path for item at index 0 of discount={4}, increase in path total_due, new total_due={5}, move from path freight={6}'
+          ' to path service_addition={7}'.format(response["id"], response["favorite_color"], response.get("ttl"),
+                                                 response["tax_amount"], response["items"].get(0).get("discount"),
+                                                 response["total_due"], response.get("freight"), response["service_addition"]))
 
 def delete_item(container, doc_id):
-    print('\n1.7 Deleting Item by Id\n')
+    print('\n1.8 Deleting Item by Id\n')
 
     response = container.delete_item(item=doc_id, partition_key=doc_id)
 
@@ -175,6 +193,7 @@ def run_sample():
         query_items(container, 'SalesOrder1')
         replace_item(container, 'SalesOrder1')
         upsert_item(container, 'SalesOrder1')
+        patch_item(container, 'SalesOrder1')
         delete_item(container, 'SalesOrder1')
 
         # cleanup database after sample

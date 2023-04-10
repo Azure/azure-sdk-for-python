@@ -1347,10 +1347,12 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
-        self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
-                                           list,
-                                           client.list_databases())
+        try:
+            cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
+            raise Exception("Test did not fail as expected.")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
+
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
                                             CRUDTests.masterKey,
@@ -2558,6 +2560,66 @@ class CRUDTests(unittest.TestCase):
         # read permission with properties
         read_permission = created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
+
+    def test_patch_operations(self):
+        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_container", partition_key=PartitionKey(path="/pk"))
+
+        #Create item to patch
+        item = {
+            "id": "patch_item",
+            "pk": "patch_item_pk",
+            "prop": "prop1",
+            "address": {
+                "city": "Redmond"
+            },
+            "company": "Microsoft",
+            "number": 3}
+        created_container.create_item(item)
+        #Define and run patch operations
+        operations = [
+            {"op": "add", "path": "/color", "value": "yellow"},
+            {"op": "remove", "path": "/prop"},
+            {"op": "replace", "path": "/company", "value": "CosmosDB"},
+            {"op": "set", "path": "/address/new_city", "value": "Atlanta"},
+            {"op": "incr", "path": "/number", "value": 7},
+            {"op": "move", "from": "/color", "path": "/favorite_color"}
+        ]
+        patched_item = created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+        #Verify results from patch operations
+        self.assertTrue(patched_item.get("color") is None)
+        self.assertTrue(patched_item.get("prop") is None)
+        self.assertEqual(patched_item.get("company"), "CosmosDB")
+        self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
+        self.assertEqual(patched_item.get("number"), 10)
+        self.assertEqual(patched_item.get("favorite_color"), "yellow")
+
+        #Negative test - attempt to replace non-existent field
+        operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
+        try:
+            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+
+        #Negative test - attempt to remove non-existent field
+        operations = [{"op": "remove", "path": "/wrong_field"}]
+        try:
+            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+
+        #Negative test - attempt to increment non-number field
+        operations = [{"op": "incr", "path": "/company", "value": 3}]
+        try:
+            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+
+        #Negative test - attempt to move from non-existent field
+        operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
+        try:
+            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):
