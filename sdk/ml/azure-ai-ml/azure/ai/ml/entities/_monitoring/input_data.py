@@ -7,6 +7,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringInputDa
 from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext
+from azure.ai.ml.entities._inputs_outputs import Input
 
 
 @experimental
@@ -14,7 +15,7 @@ class MonitorInputData(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_dataset: str = None,
+        input_dataset: Input = None,
         dataset_context: MonitorDatasetContext = None,
         target_column_name: str = None,
         pre_processing_component: str = None,
