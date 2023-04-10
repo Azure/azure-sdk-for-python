@@ -6,6 +6,8 @@
 
 from marshmallow import fields, post_load
 
+from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName
+from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
@@ -14,8 +16,18 @@ class MetricThreshold(metaclass=PatchedSchemaMeta):
 
 
 class DataDriftMetricThreshold(MetricThreshold):
-    applicable_feature_type = fields.Str()
-    metric_name = fields.Str()
+    applicable_feature_type = StringTransformedEnum(
+        allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
+    )
+    metric_name = StringTransformedEnum(
+        allowed_values=[
+            MonitorMetricName.JENSEN_SHANNON_DISTANCE,
+            MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
+            MonitorMetricName.POPULATION_STABILITY_INDEX,
+            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_TEST,
+            MonitorMetricName.CHI_SQUARED_TEST,
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -25,8 +37,16 @@ class DataDriftMetricThreshold(MetricThreshold):
 
 
 class DataQualityMetricThreshold(MetricThreshold):
-    applicable_feature_type = fields.Str()
-    metric_name = fields.Str()
+    applicable_feature_type = StringTransformedEnum(
+        allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
+    )
+    metric_name = StringTransformedEnum(
+        allowed_values=[
+            MonitorMetricName.NULL_VALUE_RATE,
+            MonitorMetricName.DATA_TYPE_ERROR_RATE,
+            MonitorMetricName.OUT_OF_BOUND_RATE,
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -36,8 +56,18 @@ class DataQualityMetricThreshold(MetricThreshold):
 
 
 class PredictionDriftMetricThreshold(MetricThreshold):
-    applicable_feature_type = fields.Str()
-    metric_name = fields.Str()
+    applicable_feature_type = StringTransformedEnum(
+        allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
+    )
+    metric_name = StringTransformedEnum(
+        allowed_values=[
+            MonitorMetricName.JENSEN_SHANNON_DISTANCE,
+            MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
+            MonitorMetricName.POPULATION_STABILITY_INDEX,
+            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_TEST,
+            MonitorMetricName.CHI_SQUARED_TEST,
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -47,7 +77,6 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
 
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
-
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.thresholds import FeatureAttributionDriftMetricThreshold
@@ -56,7 +85,17 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
 
 class ModelPerformanceMetricThreshold(MetricThreshold):
-    metric_name = fields.Str()
+    metric_name = StringTransformedEnum(
+        allowed_values=[
+            MonitorMetricName.ACCURACY,
+            MonitorMetricName.PRECISION,
+            MonitorMetricName.RECALL,
+            MonitorMetricName.F1_SCORE,
+            MonitorMetricName.MAE,
+            MonitorMetricName.MSE,
+            MonitorMetricName.RMSE,
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
