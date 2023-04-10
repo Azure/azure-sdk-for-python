@@ -2574,6 +2574,49 @@ class CRUDTests(unittest.TestCase):
         read_permission = await created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
 
+    async def test_delete_all_items_by_partition_key(self):
+        # create database
+        created_db = self.databaseForTest
+
+        # create container
+        created_collection = await created_db.create_container(
+            id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/pk', kind='Hash')
+        )
+        # Create two partition keys
+        partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
+        partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
+
+        # add items for partition key 1
+        for i in range(1, 3):
+            await created_collection.upsert_item(
+                dict(id="item{}".format(i), pk=partition_key1)
+            )
+
+        # add items for partition key 2
+        pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
+
+        # delete all items for partition key 1
+        await created_collection.delete_all_items_by_partition_key(partition_key1)
+
+        # check that only items from partition key 1 have been deleted
+        items = [item async for item in created_collection.read_all_items()]
+
+        # items should only have 1 item, and it should equal pk2_item
+        self.assertDictEqual(pk2_item, items[0])
+
+        # attempting to delete a non-existent partition key or passing none should not delete
+        # anything and leave things unchanged
+        await created_collection.delete_all_items_by_partition_key(None)
+
+        # check that no changes were made by checking if the only item is still there
+        items = [item async for item in created_collection.read_all_items()]
+
+        # items should only have 1 item, and it should equal pk2_item
+        self.assertDictEqual(pk2_item, items[0])
+
+        await created_db.delete_container(created_collection)
+
     async def test_patch_operations(self):
         created_container = await self.databaseForTest.create_container_if_not_exists(id="patch_container", partition_key=PartitionKey(path="/pk"))
 
