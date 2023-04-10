@@ -40,7 +40,7 @@ class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
         return MonitorFeatureFilter(**data)
 
 class TargetDatasetSchema(metaclass=PatchedSchemaMeta):
-    dataset = fields.Str(NestedField(MonitorInputDataSchema))
+    dataset = NestedField(MonitorInputDataSchema)
     lookback_period = fields.Int()
 
     @post_load
