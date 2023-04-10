@@ -148,3 +148,20 @@ except exceptions.CosmosResourceExistsError:
 except exceptions.CosmosHttpResponseError as failure:
     print("Failed to create user. Status code:{}".format(failure.status_code))
 # [END create_user]
+
+# [START delete_all_items_by_partition_key]
+container_name = "products"
+container = database.get_container_client(container_name)
+for i in range(1, 10):
+    container.upsert_item(
+        dict(id="item{}".format(i), productName="Gadget", productModel="Model {}".format(i))
+    )
+items = container.read_all_items()
+for item in items:
+    print(json.dumps(item, indent=True))
+container.delete_all_items_by_partition_key("Gadget")
+print("All items in partition {} deleted.".format("Gadget"))
+items = container.read_all_items()
+for item in items:
+    print(json.dumps(item, indent=True))
+# [END delete_all_items_by_partition_key]
