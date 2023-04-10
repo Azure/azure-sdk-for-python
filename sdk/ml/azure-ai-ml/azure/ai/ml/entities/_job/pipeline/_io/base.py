@@ -337,6 +337,32 @@ class NodeInput(InputOutputBase):
             meta=self._meta,
         )
 
+    def _get_data_owner(self):
+        """Return the node if Input is from another node's output. Returns None if for literal value.
+        Note: This only works for @pipeline, not for YAML pipeline.
+
+        Note: Inner step will be returned as the owner when node's input is from sub pipeline's output.
+            @pipeline
+            def sub_pipeline():
+                inner_node = component_func()
+                return inner_node.outputs
+
+            @pipeline
+            def root_pipeline():
+                pipeline_node = sub_pipeline()
+                node = copy_files_component_func(input_dir=pipeline_node.outputs.output_dir)
+                owner = node.inputs.input_dir._get_data_owner()
+                assert owner == pipeline_node.nodes[0]
+        """
+        data = self._data
+        if isinstance(data, PipelineInput):
+            # for pipeline input, it's original value(can be literal value or another node's output)
+            # is stored in _original_data
+            data = data._original_data
+        if isinstance(data, NodeOutput):
+            return data._owner
+        return None
+
 
 class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     """Define one output of a Component."""

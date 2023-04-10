@@ -9,7 +9,7 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
 from azure.ai.ml.exceptions import UserErrorException
 
-from .._util import _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, expand_pipeline_nodes
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
@@ -18,6 +18,18 @@ common_omit_fields = [
     "jobs.*._source",
     "jobs.*.properties",
 ]
+
+
+def assert_node_owners_expected(pipeline_job, expected_owners: dict):
+    nodes = expand_pipeline_nodes(pipeline_job)
+
+    actual_owners = {}
+    for node in nodes:
+        owner = node.inputs.component_in_path._get_data_owner()
+        if owner:
+            owner = owner.name
+        actual_owners[node.name] = owner
+    assert actual_owners == expected_owners
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
@@ -196,4 +208,30 @@ class TestInputOutputBuilder:
         assert str(e.value) == (
             "Type <class 'azure.ai.ml.entities._job.pipeline._io.base.PipelineInput'> "
             "is not supported for operation bool()."
+        )
+
+    def test_input_get_data_owner(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @pipeline
+        def sub_pipeline(component_in_path: Input):
+            # node input from pipeline input
+            inner_node = component_func1(component_in_path=component_in_path)
+            return inner_node.outputs
+
+        @pipeline
+        def my_pipeline():
+            # node input literal value
+            node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
+            # node input from another node's output
+            node2 = sub_pipeline(component_in_path=node1.outputs.component_out_path)
+            # node input from another (pipeline) node's output
+            node3 = component_func1(component_in_path=node2.outputs.component_out_path)
+            return node3.outputs
+
+        my_pipeline = my_pipeline()
+
+        assert_node_owners_expected(
+            pipeline_job=my_pipeline, expected_owners={"node1": None, "inner_node": "node1", "node3": "node2"}
         )
