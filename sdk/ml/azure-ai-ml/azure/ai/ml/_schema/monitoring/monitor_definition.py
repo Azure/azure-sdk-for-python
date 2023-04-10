@@ -7,7 +7,6 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.monitoring.target import MonitoringTargetSchema
-from azure.ai.ml._schema.monitoring.input_data import MonitorInputDataSchema
 from azure.ai.ml._schema.monitoring.signals import (
     DataDriftSignalSchema,
     DataQualitySignalSchema,
