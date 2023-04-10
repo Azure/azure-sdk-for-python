@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 import six
 import msal
@@ -89,7 +89,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     @wrap_exceptions
     def _acquire_token_silently(
         self, *scopes: str, **kwargs: Any
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    ) -> Optional[AccessToken]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)
@@ -100,14 +100,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return (
-                        AccessToken(
-                            result["access_token"], now + int(result["expires_in"])
-                        ),
-                        None,
-                    )
+                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-        return None, None
+        return None
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

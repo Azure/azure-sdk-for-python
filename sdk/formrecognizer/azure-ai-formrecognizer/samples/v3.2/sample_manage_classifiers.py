@@ -73,7 +73,7 @@ def sample_manage_classifiers():
     my_classifier = document_model_admin_client.get_document_classifier(classifier_id=classifier_model.classifier_id)
     print("\nClassifier ID: {}".format(my_classifier.classifier_id))
     print("Description: {}".format(my_classifier.description))
-    print("Classifier created on: {}".format(my_classifier.created_date_time))
+    print("Classifier created on: {}".format(my_classifier.created_on))
     # [END get_document_classifier]
 
     # Finally, we will delete this classifier by ID
