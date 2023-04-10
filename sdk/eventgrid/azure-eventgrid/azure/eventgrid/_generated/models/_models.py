@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,138 +7,295 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import msrest.serialization
+import datetime
+import sys
+from typing import Any, Dict, Optional
+
+from .. import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class CloudEvent(msrest.serialization.Model):
+class CloudEvent(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
-    :param id: Required. An identifier for the event. The combination of id and source must be
-     unique for each distinct event.
-    :type id: str
-    :param source: Required. Identifies the context in which an event happened. The combination of
-     id and source must be unique for each distinct event.
-    :type source: str
-    :param data: Event data specific to the event type.
-    :type data: object
-    :param data_base64: Event data specific to the event type, encoded as a base64 string.
-    :type data_base64: bytearray
-    :param type: Required. Type of event related to the originating occurrence.
-    :type type: str
-    :param time: The time (in UTC) the event was generated, in RFC3339 format.
-    :type time: ~datetime.datetime
-    :param specversion: Required. The version of the CloudEvents specification which the event
-     uses.
-    :type specversion: str
-    :param dataschema: Identifies the schema that data adheres to.
-    :type dataschema: str
-    :param datacontenttype: Content type of data value.
-    :type datacontenttype: str
-    :param subject: This describes the subject of the event in the context of the event producer
+    :vartype additional_properties: dict[str, any]
+    :ivar id: An identifier for the event. The combination of id and source must be unique for each
+     distinct event. Required.
+    :vartype id: str
+    :ivar source: Identifies the context in which an event happened. The combination of id and
+     source must be unique for each distinct event. Required.
+    :vartype source: str
+    :ivar data: Event data specific to the event type.
+    :vartype data: JSON
+    :ivar data_base64: Event data specific to the event type, encoded as a base64 string.
+    :vartype data_base64: bytes
+    :ivar type: Type of event related to the originating occurrence. Required.
+    :vartype type: str
+    :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
+    :vartype time: ~datetime.datetime
+    :ivar specversion: The version of the CloudEvents specification which the event uses. Required.
+    :vartype specversion: str
+    :ivar dataschema: Identifies the schema that data adheres to.
+    :vartype dataschema: str
+    :ivar datacontenttype: Content type of data value.
+    :vartype datacontenttype: str
+    :ivar subject: This describes the subject of the event in the context of the event producer
      (identified by source).
-    :type subject: str
+    :vartype subject: str
     """
 
     _validation = {
-        'id': {'required': True},
-        'source': {'required': True},
-        'type': {'required': True},
-        'specversion': {'required': True},
+        "id": {"required": True},
+        "source": {"required": True},
+        "type": {"required": True},
+        "specversion": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'data_base64': {'key': 'data_base64', 'type': 'bytearray'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'specversion': {'key': 'specversion', 'type': 'str'},
-        'dataschema': {'key': 'dataschema', 'type': 'str'},
-        'datacontenttype': {'key': 'datacontenttype', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "id": {"key": "id", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "data": {"key": "data", "type": "object"},
+        "data_base64": {"key": "data_base64", "type": "bytearray"},
+        "type": {"key": "type", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "specversion": {"key": "specversion", "type": "str"},
+        "dataschema": {"key": "dataschema", "type": "str"},
+        "datacontenttype": {"key": "datacontenttype", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(CloudEvent, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.id = kwargs['id']
-        self.source = kwargs['source']
-        self.data = kwargs.get('data', None)
-        self.data_base64 = kwargs.get('data_base64', None)
-        self.type = kwargs['type']
-        self.time = kwargs.get('time', None)
-        self.specversion = kwargs['specversion']
-        self.dataschema = kwargs.get('dataschema', None)
-        self.datacontenttype = kwargs.get('datacontenttype', None)
-        self.subject = kwargs.get('subject', None)
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        type: str,
+        specversion: str,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        data: Optional[JSON] = None,
+        data_base64: Optional[bytes] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword id: An identifier for the event. The combination of id and source must be unique for
+         each distinct event. Required.
+        :paramtype id: str
+        :keyword source: Identifies the context in which an event happened. The combination of id and
+         source must be unique for each distinct event. Required.
+        :paramtype source: str
+        :keyword data: Event data specific to the event type.
+        :paramtype data: JSON
+        :keyword data_base64: Event data specific to the event type, encoded as a base64 string.
+        :paramtype data_base64: bytes
+        :keyword type: Type of event related to the originating occurrence. Required.
+        :paramtype type: str
+        :keyword time: The time (in UTC) the event was generated, in RFC3339 format.
+        :paramtype time: ~datetime.datetime
+        :keyword specversion: The version of the CloudEvents specification which the event uses.
+         Required.
+        :paramtype specversion: str
+        :keyword dataschema: Identifies the schema that data adheres to.
+        :paramtype dataschema: str
+        :keyword datacontenttype: Content type of data value.
+        :paramtype datacontenttype: str
+        :keyword subject: This describes the subject of the event in the context of the event producer
+         (identified by source).
+        :paramtype subject: str
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.id = id
+        self.source = source
+        self.data = data
+        self.data_base64 = data_base64
+        self.type = type
+        self.time = time
+        self.specversion = specversion
+        self.dataschema = dataschema
+        self.datacontenttype = datacontenttype
+        self.subject = subject
 
 
-class EventGridEvent(msrest.serialization.Model):
+class EventGridEvent(_serialization.Model):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. An unique identifier for the event.
-    :type id: str
-    :param topic: The resource path of the event source.
-    :type topic: str
-    :param subject: Required. A resource path relative to the topic path.
-    :type subject: str
-    :param data: Required. Event data specific to the event type.
-    :type data: object
-    :param event_type: Required. The type of the event that occurred.
-    :type event_type: str
-    :param event_time: Required. The time (in UTC) the event was generated.
-    :type event_time: ~datetime.datetime
+    :ivar id: An unique identifier for the event. Required.
+    :vartype id: str
+    :ivar topic: The resource path of the event source.
+    :vartype topic: str
+    :ivar subject: A resource path relative to the topic path. Required.
+    :vartype subject: str
+    :ivar data: Event data specific to the event type. Required.
+    :vartype data: JSON
+    :ivar event_type: The type of the event that occurred. Required.
+    :vartype event_type: str
+    :ivar event_time: The time (in UTC) the event was generated. Required.
+    :vartype event_time: ~datetime.datetime
     :ivar metadata_version: The schema version of the event metadata.
     :vartype metadata_version: str
-    :param data_version: Required. The schema version of the data object.
-    :type data_version: str
+    :ivar data_version: The schema version of the data object. Required.
+    :vartype data_version: str
     """
 
     _validation = {
-        'id': {'required': True},
-        'subject': {'required': True},
-        'data': {'required': True},
-        'event_type': {'required': True},
-        'event_time': {'required': True},
-        'metadata_version': {'readonly': True},
-        'data_version': {'required': True},
+        "id": {"required": True},
+        "subject": {"required": True},
+        "data": {"required": True},
+        "event_type": {"required": True},
+        "event_time": {"required": True},
+        "metadata_version": {"readonly": True},
+        "data_version": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'event_type': {'key': 'eventType', 'type': 'str'},
-        'event_time': {'key': 'eventTime', 'type': 'iso-8601'},
-        'metadata_version': {'key': 'metadataVersion', 'type': 'str'},
-        'data_version': {'key': 'dataVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "data": {"key": "data", "type": "object"},
+        "event_type": {"key": "eventType", "type": "str"},
+        "event_time": {"key": "eventTime", "type": "iso-8601"},
+        "metadata_version": {"key": "metadataVersion", "type": "str"},
+        "data_version": {"key": "dataVersion", "type": "str"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(EventGridEvent, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.topic = kwargs.get('topic', None)
-        self.subject = kwargs['subject']
-        self.data = kwargs['data']
-        self.event_type = kwargs['event_type']
-        self.event_time = kwargs['event_time']
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        subject: str,
+        data: JSON,
+        event_type: str,
+        event_time: datetime.datetime,
+        data_version: str,
+        topic: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: An unique identifier for the event. Required.
+        :paramtype id: str
+        :keyword topic: The resource path of the event source.
+        :paramtype topic: str
+        :keyword subject: A resource path relative to the topic path. Required.
+        :paramtype subject: str
+        :keyword data: Event data specific to the event type. Required.
+        :paramtype data: JSON
+        :keyword event_type: The type of the event that occurred. Required.
+        :paramtype event_type: str
+        :keyword event_time: The time (in UTC) the event was generated. Required.
+        :paramtype event_time: ~datetime.datetime
+        :keyword data_version: The schema version of the data object. Required.
+        :paramtype data_version: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.topic = topic
+        self.subject = subject
+        self.data = data
+        self.event_type = event_type
+        self.event_time = event_time
         self.metadata_version = None
-        self.data_version = kwargs['data_version']
+        self.data_version = data_version
+
+
+class SubscriptionDeletedEventData(_serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.EventGrid.SubscriptionDeletedEvent event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar event_subscription_id: The Azure resource ID of the deleted event subscription.
+    :vartype event_subscription_id: str
+    """
+
+    _validation = {
+        "event_subscription_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "event_subscription_id": {"key": "eventSubscriptionId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.event_subscription_id = None
+
+
+class SubscriptionValidationEventData(_serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a
+    Microsoft.EventGrid.SubscriptionValidationEvent event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar validation_code: The validation code sent by Azure Event Grid to validate an event
+     subscription. To complete the validation handshake, the subscriber must either respond with
+     this validation code as part of the validation response, or perform a GET request on the
+     validationUrl (available starting version 2018-05-01-preview).
+    :vartype validation_code: str
+    :ivar validation_url: The validation URL sent by Azure Event Grid (available starting version
+     2018-05-01-preview). To complete the validation handshake, the subscriber must either respond
+     with the validationCode as part of the validation response, or perform a GET request on the
+     validationUrl (available starting version 2018-05-01-preview).
+    :vartype validation_url: str
+    """
+
+    _validation = {
+        "validation_code": {"readonly": True},
+        "validation_url": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "validation_code": {"key": "validationCode", "type": "str"},
+        "validation_url": {"key": "validationUrl", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.validation_code = None
+        self.validation_url = None
+
+
+class SubscriptionValidationResponse(_serialization.Model):
+    """To complete an event subscription validation handshake, a subscriber can use either the
+    validationCode or the validationUrl received in a SubscriptionValidationEvent. When the
+    validationCode is used, the SubscriptionValidationResponse can be used to build the response.
+
+    :ivar validation_response: The validation response sent by the subscriber to Azure Event Grid
+     to complete the validation of an event subscription.
+    :vartype validation_response: str
+    """
+
+    _attribute_map = {
+        "validation_response": {"key": "validationResponse", "type": "str"},
+    }
+
+    def __init__(self, *, validation_response: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword validation_response: The validation response sent by the subscriber to Azure Event
+         Grid to complete the validation of an event subscription.
+        :paramtype validation_response: str
+        """
+        super().__init__(**kwargs)
+        self.validation_response = validation_response

@@ -1,13 +1,16 @@
 ## Release History
 
-### 4.3.2 (Unreleased)
+### 4.4.0b1 (Unreleased)
 
 #### Features Added
+- Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
 
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally.
+* Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally. See [PR 29136](https://github.com/Azure/azure-sdk-for-python/pull/29136).
+* Fixed bug with method `query_items()` of our async container class, where partition key and cross partition headers would both be set when using partition keys. See [PR 29366](https://github.com/Azure/azure-sdk-for-python/pull/29366/).
+* Fixed bug with client not properly surfacing errors for invalid credentials and identities with insufficient permissions. Users running into 'NoneType has no attribute ConsistencyPolicy' errors when initializing their clients will now see proper authentication exceptions. See [PR 29256](https://github.com/Azure/azure-sdk-for-python/pull/29256).
 
 #### Other Changes
 * Removed use of `six` package within the SDK.

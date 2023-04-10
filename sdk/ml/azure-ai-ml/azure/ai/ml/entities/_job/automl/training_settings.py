@@ -19,9 +19,12 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class TrainingSettings(RestTranslatableMixin):
@@ -39,6 +42,7 @@ class TrainingSettings(RestTranslatableMixin):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ):
         """TrainingSettings class for Azure Machine Learning.
 
@@ -51,6 +55,16 @@ class TrainingSettings(RestTranslatableMixin):
         :param ensemble_model_download_timeout: Timeout for downloading ensemble models
         :param allowed_training_algorithms: Models to train
         :param blocked_training_algorithms: Models that will not be considered for training
+        :param training_mode: [Experimental] The training mode to use.
+            The possible values are-
+
+            * distributed- enables distributed training for supported algorithms.
+
+            * non_distributed- disables distributed training.
+
+            * auto- Currently, it is same as non_distributed. In future, this might change.
+
+            Note: This parameter is in public preview and may change in future.
         """
         self.enable_onnx_compatible_models = enable_onnx_compatible_models
         self.enable_dnn_training = enable_dnn_training
@@ -61,6 +75,31 @@ class TrainingSettings(RestTranslatableMixin):
         self.ensemble_model_download_timeout = ensemble_model_download_timeout
         self.allowed_training_algorithms = allowed_training_algorithms
         self.blocked_training_algorithms = blocked_training_algorithms
+        self.training_mode = training_mode
+
+    @experimental
+    @property
+    def training_mode(self):
+        return self._training_mode
+
+    @training_mode.setter
+    def training_mode(self, value: Optional[Union[str, TabularTrainingMode]]):
+        if value is None or value is TabularTrainingMode:
+            self._training_mode = value
+        elif hasattr(TabularTrainingMode, camel_to_snake(value).upper()):
+            self._training_mode = TabularTrainingMode[camel_to_snake(value).upper()]
+        else:
+            supported_values = ", ".join([f'"{camel_to_snake(mode.value)}"' for mode in TabularTrainingMode])
+            msg = (
+                f"Unsupported training mode: {value}. Supported values are- {supported_values}. "
+                "Or you can use azure.ai.ml.constants.TabularTrainingMode enum."
+            )
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.AUTOML,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     @property
     def allowed_training_algorithms(self):
@@ -81,6 +120,7 @@ class TrainingSettings(RestTranslatableMixin):
             if self.stack_ensemble_settings
             else None,
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
+            training_mode=self.training_mode,
         )
 
     @classmethod
@@ -97,6 +137,7 @@ class TrainingSettings(RestTranslatableMixin):
                 if obj.stack_ensemble_settings
                 else None
             ),
+            training_mode=obj.training_mode,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -112,6 +153,7 @@ class TrainingSettings(RestTranslatableMixin):
             and self.stack_ensemble_settings == other.stack_ensemble_settings
             and self.allowed_training_algorithms == other.allowed_training_algorithms
             and self.blocked_training_algorithms == other.blocked_training_algorithms
+            and self.training_mode == other.training_mode
         )
 
     def __ne__(self, other: object) -> bool:
@@ -162,6 +204,7 @@ class ClassificationTrainingSettings(TrainingSettings):
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             allowed_training_algorithms=self.allowed_training_algorithms,
             blocked_training_algorithms=self.blocked_training_algorithms,
+            training_mode=self.training_mode,
         )
 
     @classmethod
@@ -176,6 +219,7 @@ class ClassificationTrainingSettings(TrainingSettings):
             stack_ensemble_settings=obj.stack_ensemble_settings,
             allowed_training_algorithms=obj.allowed_training_algorithms,
             blocked_training_algorithms=obj.blocked_training_algorithms,
+            training_mode=obj.training_mode,
         )
 
 
@@ -211,6 +255,7 @@ class ForecastingTrainingSettings(TrainingSettings):
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             allowed_training_algorithms=self.allowed_training_algorithms,
             blocked_training_algorithms=self.blocked_training_algorithms,
+            training_mode=self.training_mode,
         )
 
     @classmethod
@@ -225,6 +270,7 @@ class ForecastingTrainingSettings(TrainingSettings):
             stack_ensemble_settings=obj.stack_ensemble_settings,
             allowed_training_algorithms=obj.allowed_training_algorithms,
             blocked_training_algorithms=obj.blocked_training_algorithms,
+            training_mode=obj.training_mode,
         )
 
 
@@ -260,6 +306,7 @@ class RegressionTrainingSettings(TrainingSettings):
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             allowed_training_algorithms=self.allowed_training_algorithms,
             blocked_training_algorithms=self.blocked_training_algorithms,
+            training_mode=self.training_mode,
         )
 
     @classmethod
@@ -274,4 +321,5 @@ class RegressionTrainingSettings(TrainingSettings):
             stack_ensemble_settings=obj.stack_ensemble_settings,
             allowed_training_algorithms=obj.allowed_training_algorithms,
             blocked_training_algorithms=obj.blocked_training_algorithms,
+            training_mode=obj.training_mode,
         )

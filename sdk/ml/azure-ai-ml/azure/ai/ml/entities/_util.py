@@ -236,6 +236,18 @@ def _general_copy(src, dst, make_dirs=True):
         shutil.copy2(src, dst)
 
 
+def _dump_data_binding_expression_in_fields(obj):
+    for key, value in obj.__dict__.items():
+        # PipelineInput is subclass of NodeInput
+        from ._job.pipeline._io import NodeInput
+
+        if isinstance(value, NodeInput):
+            obj.__dict__[key] = str(value)
+        elif isinstance(value, RestTranslatableMixin):
+            _dump_data_binding_expression_in_fields(value)
+    return obj
+
+
 def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
@@ -263,6 +275,8 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
+        target_obj = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
+
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
 
         if isinstance(target_obj, _BaseIdentityConfiguration):

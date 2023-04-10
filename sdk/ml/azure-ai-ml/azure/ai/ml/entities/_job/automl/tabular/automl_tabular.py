@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LogVerbosity,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
@@ -245,6 +246,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         exit_score: Optional[float] = None,
         max_concurrent_trials: Optional[int] = None,
         max_cores_per_trial: Optional[int] = None,
+        max_nodes: Optional[int] = None,
         max_trials: Optional[int] = None,
         timeout_minutes: Optional[int] = None,
         trial_timeout_minutes: Optional[int] = None,
@@ -301,6 +303,14 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
             * Equal to 1, the default.
         :paramtype max_cores_per_trial: typing.Optional[int]
+        :keyword max_nodes: [Experimental] The maximum number of nodes to use for distributed training.
+
+            * For forecasting, each model is trained using max(2, int(max_nodes / max_concurrent_trials)) nodes.
+
+            * For classification/regression, each model is trained using max_nodes nodes.
+
+            Note- This parameter is in public preview and might change in future.
+        :paramtype max_nodes: typing.Optional[int]
         :keyword max_trials: The total number of different algorithm and parameter combinations to test during an
             automated ML experiment. If not specified, the default is 1000 iterations.
         :paramtype max_trials: typing.Optional[int]
@@ -324,6 +334,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self._limits.max_cores_per_trial = (
             max_cores_per_trial if max_cores_per_trial is not None else self._limits.max_cores_per_trial
         )
+        self._limits.max_nodes = max_nodes if max_nodes is not None else self._limits.max_nodes
         self._limits.max_trials = max_trials if max_trials is not None else self._limits.max_trials
         self._limits.timeout_minutes = timeout_minutes if timeout_minutes is not None else self._limits.timeout_minutes
         self._limits.trial_timeout_minutes = (
@@ -342,6 +353,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ) -> None:
         """The method to configure training related settings.
 
@@ -383,6 +395,17 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :paramtype allowed_training_algorithms: typing.Optional[List[str]]
         :keyword blocked_training_algorithms: A list of algorithms to ignore for an experiment, defaults to None
         :paramtype blocked_training_algorithms: typing.Optional[List[str]]
+        :keyword training_mode: [Experimental] The training mode to use.
+            The possible values are-
+
+            * distributed- enables distributed training for supported algorithms.
+
+            * non_distributed- disables distributed training.
+
+            * auto- Currently, it is same as non_distributed. In future, this might change.
+
+            Note: This parameter is in public preview and may change in future.
+        :paramtype training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
         """
         # get training object by calling training getter of respective tabular task
         self._training = self.training
@@ -417,6 +440,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
         self._training.allowed_training_algorithms = allowed_training_algorithms
         self._training.blocked_training_algorithms = blocked_training_algorithms
+        self._training.training_mode = training_mode if training_mode is not None else self._training.training_mode
 
     def set_featurization(
         self,

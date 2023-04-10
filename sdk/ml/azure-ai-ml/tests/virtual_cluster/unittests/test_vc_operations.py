@@ -13,7 +13,9 @@ def mock_credential() -> Mock:
 
 @pytest.fixture
 def mock_vc_operation(mock_workspace_scope: OperationScope, mock_credential) -> VirtualClusterOperations:
-    yield VirtualClusterOperations(operation_scope=mock_workspace_scope, credentials=mock_credential)
+    yield VirtualClusterOperations(
+        operation_scope=mock_workspace_scope, credentials=mock_credential, _service_client_kwargs=dict()
+    )
 
 
 @pytest.mark.unittest

@@ -39,7 +39,11 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
 
-from azure.core.polling.base_polling import LongRunningOperation, BadStatus, LocationPolling
+from azure.core.polling.base_polling import (
+    LongRunningOperation,
+    BadStatus,
+    LocationPolling,
+)
 from azure.mgmt.core.polling.arm_polling import (
     ARMPolling,
 )
@@ -151,7 +155,10 @@ def test_post(pipeline_client_builder, deserialization_cb):
 
     # Test 1, LRO options with Location final state
     poll = LROPoller(
-        client, initial_response, deserialization_cb, ARMPolling(0, lro_options={"final-state-via": "location"})
+        client,
+        initial_response,
+        deserialization_cb,
+        ARMPolling(0, lro_options={"final-state-via": "location"}),
     )
     result = poll.result()
     assert result["location_result"] == True
@@ -186,7 +193,10 @@ def test_post(pipeline_client_builder, deserialization_cb):
     client = pipeline_client_builder(send)
 
     poll = LROPoller(
-        client, initial_response, deserialization_cb, ARMPolling(0, lro_options={"final-state-via": "location"})
+        client,
+        initial_response,
+        deserialization_cb,
+        ARMPolling(0, lro_options={"final-state-via": "location"}),
     )
     result = poll.result()
     assert result is None
@@ -320,7 +330,10 @@ class TestArmPolling(object):
             LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0)).result()
 
         # Test with no polling necessary
-        response_body = {"properties": {"provisioningState": "Succeeded"}, "name": TEST_NAME}
+        response_body = {
+            "properties": {"provisioningState": "Succeeded"},
+            "name": TEST_NAME,
+        }
         response = TestArmPolling.mock_send("PUT", 201, {}, response_body)
 
         def no_update_allowed(url, headers=None):
@@ -369,7 +382,10 @@ class TestArmPolling(object):
 
         # Test polling from location header
         response = TestArmPolling.mock_send(
-            "PATCH", 202, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "PATCH",
+            202,
+            {"location": LOCATION_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         assert poll.result().name == TEST_NAME
@@ -380,7 +396,10 @@ class TestArmPolling(object):
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(
-            "PATCH", 202, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "PATCH",
+            202,
+            {"azure-asyncoperation": ASYNC_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         assert poll.result().name == TEST_NAME
@@ -388,7 +407,10 @@ class TestArmPolling(object):
 
         # Test polling from location header
         response = TestArmPolling.mock_send(
-            "PATCH", 200, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "PATCH",
+            200,
+            {"location": LOCATION_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         assert poll.result().name == TEST_NAME
@@ -399,7 +421,10 @@ class TestArmPolling(object):
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(
-            "PATCH", 200, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "PATCH",
+            200,
+            {"azure-asyncoperation": ASYNC_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         assert poll.result().name == TEST_NAME
@@ -430,7 +455,10 @@ class TestArmPolling(object):
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(
-            "POST", 201, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "POST",
+            201,
+            {"azure-asyncoperation": ASYNC_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_deserialization_no_body, ARMPolling(0))
         poll.wait()
@@ -441,7 +469,10 @@ class TestArmPolling(object):
 
         # Test polling from azure-asyncoperation header
         response = TestArmPolling.mock_send(
-            "POST", 202, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "POST",
+            202,
+            {"azure-asyncoperation": ASYNC_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_deserialization_no_body, ARMPolling(0))
         poll.wait()
@@ -452,7 +483,10 @@ class TestArmPolling(object):
 
         # Test polling from location header
         response = TestArmPolling.mock_send(
-            "POST", 202, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+            "POST",
+            202,
+            {"location": LOCATION_URL},
+            body={"properties": {"provisioningState": "Succeeded"}},
         )
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         assert poll.result().name == TEST_NAME
@@ -500,7 +534,10 @@ class TestArmPolling(object):
         POLLING_STATUS = 200
 
     def test_polling_with_path_format_arguments(self):
-        method = ARMPolling(timeout=0, path_format_arguments={"host": "host:3000", "accountName": "local"})
+        method = ARMPolling(
+            timeout=0,
+            path_format_arguments={"host": "host:3000", "accountName": "local"},
+        )
         client = PipelineClient(base_url="http://{accountName}{host}")
 
         method._operation = LocationPolling()
