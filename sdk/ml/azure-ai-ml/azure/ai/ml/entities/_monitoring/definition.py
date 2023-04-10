@@ -5,7 +5,6 @@
 from typing import Dict, Union
 
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.signals import (
     DataDriftSignal,
     DataQualitySignal,
