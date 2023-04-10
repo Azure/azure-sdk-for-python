@@ -1,0 +1,34 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeEndpoint.cognitive.microsofttranslator.com/transliterate?language=hi\u0026fromScript=Deva\u0026toScript=Latn\u0026api-version=3.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "226",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Region": "fakeregion",
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
+      },
+      "RequestBody": "[{\u0022text\u0022: \u0022\\u092f\\u0939\\u090f\\u0915\\u0915\\u0938\\u094c\\u091f\\u0940\\u0939\\u0948\\u092f\\u0939\\u090f\\u0915\\u0915\\u0938\\u094c\\u091f\\u0940\\u0939\\u0948\u0022}, {\u0022text\u0022: \u0022\\u092f\\u0939\\u090f\\u0915\\u0915\\u0938\\u094c\\u091f\\u0940\\u0939\\u0948\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "X-RequestId",
+          "X-Metered-Usage"
+        ],
+        "Content-Length": "96",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 03 Apr 2023 21:49:55 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Metered-Usage": "33",
+        "X-RequestId": "TLIT.MW1P.99BE.0403T2149.2FCA7AA"
+      },
+      "ResponseBody": "[{\u0022text\u0022:\u0022yhekakasautihekasautihai\u0022,\u0022script\u0022:\u0022Latn\u0022},{\u0022text\u0022:\u0022yhekakasoutihai\u0022,\u0022script\u0022:\u0022Latn\u0022}]"
+    }
+  ],
+  "Variables": {}
+}

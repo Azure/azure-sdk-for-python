@@ -1731,6 +1731,36 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
 
+    def PatchItem(self, document_link, operations, options=None, **kwargs):
+        """Patches a document and returns it.
+
+        :param str document_link: The link to the document.
+        :param list operations: The operations for the patch request.
+        :param dict options: The request options for the request.
+
+        :return:
+            The new Document.
+        :rtype:
+            dict
+
+        """
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        typ = "docs"
+
+        if options is None:
+            options = {}
+
+        initial_headers = self.default_headers
+        headers = base.GetHeaders(self, initial_headers, "patch", path, document_id, typ, options)
+        # Patch will use WriteEndpoint since it uses PUT operation
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Patch)
+        result, self.last_response_headers = self.__Patch(path, request_params, operations, headers, **kwargs)
+
+        # update session for request mutates data on server side
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        return result
+
     def DeleteItem(self, document_link, options=None, **kwargs):
         """Deletes a document.
 
@@ -1751,6 +1781,39 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
+
+    def DeleteAllItemsByPartitionKey(
+        self,
+        collection_link,
+        options=None,
+        **kwargs
+    ) -> None:
+        """Exposes an API to delete all items with a single partition key without the user having
+         to explicitly call delete on each record in the partition key.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            None
+        :rtype:
+            None
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link)
+        #Specified url to perform background operation to delete all items by partition key
+        path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "partitionkey", options)
+        request_params = _request_object.RequestObject("partitionkey", documents._OperationType.Delete)
+        result, self.last_response_headers = self.__Post(path=path, request_params=request_params,
+                                                         req_headers=headers, body=None, **kwargs)
+        return result
 
     def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
@@ -2306,6 +2369,32 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             pipeline_client=self.pipeline_client,
             request=request,
             request_data=body,
+            **kwargs
+        )
+
+    def __Patch(self, path, request_params, operations, req_headers, **kwargs):
+        """Azure Cosmos 'PATCH' http request.
+
+        :params str path:
+        :params ~azure.cosmos.RequestObject request_params:
+        :params list operations:
+        :params dict req_headers:
+
+        :return:
+            Tuple of (result, headers).
+        :rtype:
+            tuple of (dict, dict)
+
+        """
+        request = self.pipeline_client.patch(url=path, headers=req_headers)
+        return synchronized_request.SynchronizedRequest(
+            client=self,
+            request_params=request_params,
+            global_endpoint_manager=self._global_endpoint_manager,
+            connection_policy=self.connection_policy,
+            pipeline_client=self.pipeline_client,
+            request=request,
+            request_data=operations,
             **kwargs
         )
 

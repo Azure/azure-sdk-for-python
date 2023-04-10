@@ -63,7 +63,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
         rules_dict = {}
         for rule in rules:
-            rules_dict[rule.rule_name] = rule
+            rules_dict[rule.name] = rule
 
         assert "my-service" in rules_dict.keys()
         assert isinstance(rules_dict["my-service"], ServiceTagDestination)
@@ -75,7 +75,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert "my-storage" in rules_dict.keys()
         assert isinstance(rules_dict["my-storage"], PrivateEndpointDestination)
         assert rules_dict["my-storage"].category == OutboundRuleCategory.USER_DEFINED
-        assert "storageAccounts/mvnetstorage1" in rules_dict["my-storage"].service_resource_id
+        assert "storageAccounts/mvnetteststorage" in rules_dict["my-storage"].service_resource_id
         assert rules_dict["my-storage"].spark_enabled == False
         assert rules_dict["my-storage"].subresource_target == "blob"
 
@@ -115,13 +115,13 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-perule")
         assert isinstance(rule, PrivateEndpointDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert "storageAccounts/mvnetstorage2" in rule.service_resource_id
+        assert "storageAccounts/mvnetteststorage2" in rule.service_resource_id
         assert rule.subresource_target == "blob"
         assert rule.spark_enabled == True
 
         # assert update did not remove existing outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        rule_names = [rule.rule_name for rule in rules]
+        rule_names = [rule.name for rule in rules]
         assert "pytorch" in rule_names
         assert "my-service" in rule_names
         assert "my-storage" in rule_names
@@ -141,7 +141,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
 
         # assert remove worked removed the outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        rule_names = [rule.rule_name for rule in rules]
+        rule_names = [rule.name for rule in rules]
         assert "pytorch" not in rule_names
         assert "my-service" not in rule_names
         assert "my-storage" not in rule_names

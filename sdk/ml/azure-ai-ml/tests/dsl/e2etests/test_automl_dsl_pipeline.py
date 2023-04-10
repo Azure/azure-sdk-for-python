@@ -685,7 +685,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             image_instance_segmentation_train_data,
             image_instance_segmentation_valid_data,
         ):
-
             image_instance_segmentation_node = automl.image_instance_segmentation(
                 primary_metric="MeanAveragePrecision",
                 target_column_name="label",
