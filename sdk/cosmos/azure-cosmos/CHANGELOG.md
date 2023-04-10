@@ -1,9 +1,10 @@
 ## Release History
 
-### 4.3.2 (Unreleased)
+### 4.4.0b1 (Unreleased)
 
 #### Features Added
  - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186).
+ - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
 
 #### Breaking Changes
 

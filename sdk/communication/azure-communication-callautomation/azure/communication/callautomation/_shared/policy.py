@@ -8,6 +8,7 @@ import hashlib
 import urllib
 import base64
 import hmac
+from  urllib.parse import ParseResult, urlparse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
@@ -51,7 +52,11 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         verb = request.http_request.method.upper()
 
         # Get the path and query from url, which looks like https://host/path/query
-        query_url = str(request.http_request.url[len(self._host) + 8:])
+        parsedUrl:ParseResult = urlparse(request.http_request.url)
+        query_url = parsedUrl.path
+
+        if parsedUrl.query:
+            query_url += "?" + parsedUrl.query
 
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
