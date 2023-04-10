@@ -514,7 +514,7 @@ class RetryPolicy:
     def next_retry_delay(self, retry_attempt: int) -> Union[float, None]:
         if retry_attempt > self.retry_total:
             return None
-        if self.mode == "Fixed":
+        if self.mode == RetryMode.Fixed:
             return self.retry_backoff_factor
         return self.calculate_exponential_delay(retry_attempt)
 
