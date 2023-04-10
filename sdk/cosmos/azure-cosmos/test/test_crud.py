@@ -2594,6 +2594,16 @@ class CRUDTests(unittest.TestCase):
         # items should only have 1 item and it should equal pk2_item
         self.assertDictEqual(pk2_item, items[0])
 
+        # attempting to delete a non-existent partition key or passing none should not delete
+        # anything and leave things unchanged
+        created_collection.delete_all_items_by_partition_key(None)
+
+        # check that no changes were made by checking if the only item is still there
+        items = list(created_collection.read_all_items())
+
+        # items should only have 1 item and it should equal pk2_item
+        self.assertDictEqual(pk2_item, items[0])
+
         created_db.delete_container(created_collection)
 
     # Temporarily commenting analytical storage tests until emulator support comes.
