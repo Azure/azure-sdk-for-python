@@ -28,7 +28,6 @@ class MonitorDefinition(RestTranslatableMixin):
         *,
         compute: str = None,
         monitoring_target: MonitoringTarget = None,
-        data_ingestion: MonitorInputData = None,
         monitoring_signals: Dict[
             str,
             Union[
@@ -43,7 +42,6 @@ class MonitorDefinition(RestTranslatableMixin):
         alert_notification: AlertNotification = None,
     ):
         self.compute = compute
-        self.data_ingestion = data_ingestion
         self.monitoring_target = monitoring_target
         self.monitoring_signals = monitoring_signals
         self.alert_notification = alert_notification
