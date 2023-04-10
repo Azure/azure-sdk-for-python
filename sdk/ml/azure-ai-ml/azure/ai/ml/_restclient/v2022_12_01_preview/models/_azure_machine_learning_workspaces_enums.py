@@ -637,6 +637,8 @@ class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta,
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
 
 class IsolationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Isolation mode for the managed network of a machine learning workspace.
+    """
 
     DISABLED = "Disabled"
     ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
@@ -776,17 +778,12 @@ class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Only critical statements logged.
     CRITICAL = "Critical"
 
-class ManagedNetworkDtoIsolationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedNetworkStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status for the managed network of a machine learning workspace.
+    """
 
-    DISABLED = "Disabled"
-    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
-    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
-
-class ManagedNetworkSettingsIsolationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    DISABLED = "Disabled"
-    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
-    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
 
 class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
@@ -980,18 +977,6 @@ class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class OutboundRuleCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    REQUIRED = "Required"
-    RECOMMENDED = "Recommended"
-    USER_DEFINED = "UserDefined"
-
-class OutboundRuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    FQDN = "FQDN"
-    PRIVATE_ENDPOINT = "PrivateEndpoint"
-    SERVICE_TAG = "ServiceTag"
-
 class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Output data delivery mode enums.
     """
@@ -1173,12 +1158,23 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     NOT_SPECIFIED = "NotSpecified"
 
 class RuleCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Category of a managed network Outbound Rule of a machine learning workspace.
+    """
 
     REQUIRED = "Required"
     RECOMMENDED = "Recommended"
     USER_DEFINED = "UserDefined"
 
+class RuleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
 class RuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of a managed network Outbound Rule of a machine learning workspace.
+    """
 
     FQDN = "FQDN"
     PRIVATE_ENDPOINT = "PrivateEndpoint"

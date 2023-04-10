@@ -779,23 +779,33 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 @pytest.fixture()
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
+    from azure.ai.ml._internal._setup import _registered, enable_internal_components_in_pipeline
     from azure.ai.ml._schema.component import command_component as command_component_schema
     from azure.ai.ml._schema.component import component as component_schema
     from azure.ai.ml._schema.component import input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml._schema.pipeline import pipeline_job as pipeline_job_schema
     from azure.ai.ml.entities._component import command_component as command_component_entity
     from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
+    from azure.ai.ml.entities._job.pipeline import pipeline_job as pipeline_job_entity
 
     def _reload_related_classes():
         reload(component_schema)
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+        reload(pipeline_job_schema)
 
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+        pipeline_job_entity.PipelineJobSchema = pipeline_job_schema.PipelineJobSchema
+
+        # check internal flag after reload, force register if it is set as True
+        if _registered:
+            enable_internal_components_in_pipeline(force=True)
 
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
+
         _reload_related_classes()
         yield
     _reload_related_classes()

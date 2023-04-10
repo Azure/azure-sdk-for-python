@@ -510,6 +510,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._model_versions_operation,
             self._resource_group_name,
             self._workspace_name,
+            self._registry_name,
         )
         return Model._from_rest_object(result)
 
