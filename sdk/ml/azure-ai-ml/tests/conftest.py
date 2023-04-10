@@ -525,6 +525,24 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
 
 
 @pytest.fixture
+def storage_account_guid_sanitizer_443(test_proxy):
+    # masks blob storage account info in SAS uris
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net:443\\/([^/\\s"]{46,52})',
+        group_for_replace="1",
+    )
+@pytest.fixture
+def storage_account_guid_sanitizer(test_proxy):
+    # masks blob storage account info in SAS uris
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net\\/([^/\\s"]{47,54})',
+        group_for_replace="1",
+    )
+
+
+@pytest.fixture
 def mock_anon_component_version(mocker: MockFixture):
 
     fake_uuid = "000000000000000000000"
