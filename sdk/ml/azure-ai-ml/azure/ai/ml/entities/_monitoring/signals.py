@@ -7,6 +7,7 @@ from typing import List, Union
 from typing_extensions import Literal
 
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
     DataDriftMetricThreshold,
@@ -40,39 +41,15 @@ class MonitorFeatureFilter:
 
 
 @experimental
-class BaselineDataRange:
-    def __init__(
-        self,
-        *,
-        from_date: str = None,
-        to_date: str = None,
-    ):
-        self.from_date = from_date
-        self.to_date = to_date
-
-
-@experimental
 class TargetDataset:
     def __init__(
         self,
         *,
-        dataset_name: str = None,
-        lookback_period_name: int = None,
+        dataset: MonitorInputData = None,
+        lookback_period: int = None,
     ):
-        self.dataset_name = dataset_name
-        self.lookback_period_name = lookback_period_name
-
-
-@experimental
-class BaselineDataset:
-    def __init__(
-        self,
-        *,
-        dataset_name: str,
-        data_range: BaselineDataRange,
-    ):
-        self.dataset_name = dataset_name
-        self.data_range = data_range
+        self.dataset = dataset
+        self.lookback_period = lookback_period
 
 
 @experimental
@@ -81,7 +58,7 @@ class MonitoringSignal:
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
     ):
         self.type = None
         self.target_dataset = target_dataset
@@ -94,7 +71,7 @@ class MetricMonitoringSignal(MonitoringSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[MetricThreshold] = None,
     ):
         super().__init__(target_dataset=target_dataset, baseline_dataset=baseline_dataset)
@@ -107,7 +84,7 @@ class DataSignal(MetricMonitoringSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]] = None,
         metric_thresholds: List[MetricThreshold] = None,
     ):
@@ -125,7 +102,7 @@ class DataDriftSignal(DataSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]] = None,
         metric_thresholds: List[DataQualityMetricThreshold] = None,
     ):
@@ -144,7 +121,7 @@ class PredictionDriftSignal(MetricMonitoringSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[PredictionDriftMetricThreshold] = None,
     ):
         super().__init__(
@@ -159,7 +136,7 @@ class DataQualitySignal(DataSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]] = None,
         metric_thresholds: List[DataQualityMetricThreshold] = None,
     ):
@@ -178,7 +155,7 @@ class ModelSignal(MetricMonitoringSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[MetricThreshold] = None,
         model_type: str = None,
     ):
@@ -196,7 +173,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[FeatureAttributionDriftMetricThreshold] = None,
         model_type: str = None,
     ):
@@ -215,7 +192,7 @@ class ModelPerformanceSignal(ModelSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[ModelPerformanceMetricThreshold] = None,
         model_type: str = None,
         data_segment: DataSegment = None,
@@ -236,7 +213,7 @@ class CustomMonitoringSignal(MonitoringSignal):
         self,
         *,
         target_dataset: TargetDataset = None,
-        baseline_dataset: BaselineDataset = None,
+        baseline_dataset: MonitorInputData = None,
         component_id: str = None,
     ):
         super().__init__(

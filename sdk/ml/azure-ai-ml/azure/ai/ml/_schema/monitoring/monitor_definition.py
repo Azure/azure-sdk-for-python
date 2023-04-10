@@ -24,7 +24,6 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
     compute = ComputeField()
     monitoring_target = NestedField(MonitoringTargetSchema)
-    data_ingestion = NestedField(MonitorInputDataSchema)
     monitoring_signals = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
