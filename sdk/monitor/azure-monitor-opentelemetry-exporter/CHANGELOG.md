@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b13 (Unreleased)
+## 1.0.0b13 (2023-04-11)
 
 ### Features Added
 
@@ -8,12 +8,6 @@
     ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
 - Enable AAD Credentials
     ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b12 (2023-02-06)
 
