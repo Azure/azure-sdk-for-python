@@ -56,4 +56,4 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRAINING = "training"
     TEST = "test"
     VALIDATION = "validation"
-    GROUND_TRUTH_DATA = "ground_truth_data"
+    GROUND_TRUTH_DATA = "ground_truth"

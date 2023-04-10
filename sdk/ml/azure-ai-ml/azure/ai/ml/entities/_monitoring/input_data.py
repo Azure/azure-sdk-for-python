@@ -4,6 +4,7 @@
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringInputData as RestMonitoringInputData
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext
