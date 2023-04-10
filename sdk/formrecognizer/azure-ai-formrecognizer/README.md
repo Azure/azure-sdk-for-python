@@ -175,7 +175,7 @@ document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
 Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models]. 
-The `DocumentAnalysisClient` also provides operations for classifying documents through the through the `begin_classify_document` and `begin_classify_document_from_url` APIs. 
+The `DocumentAnalysisClient` also provides operations for classifying documents through the `begin_classify_document` and `begin_classify_document_from_url` APIs. 
 Custom classification models can classify each page in an input file to identify the document(s) within and can also identify multiple documents or multiple instances of a single document within an input file.
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
