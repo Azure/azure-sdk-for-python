@@ -24,5 +24,5 @@ class MonitorInputData(RestTranslatableMixin):
         self.target_column_name = target_column_name
         self.pre_processing_component = pre_processing_component
 
-    def _to_rest_object(self) -> MonitoringInputData:
+    def _to_rest_object(self) -> RestMonitoringInputData:
         return super()._to_rest_object()
