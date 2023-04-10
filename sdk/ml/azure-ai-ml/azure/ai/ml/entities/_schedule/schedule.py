@@ -107,6 +107,14 @@ class Schedule(ABC, YamlTranslatableMixin, SchemaValidatableMixin, RestTranslata
     def _get_validation_error_target(cls) -> ErrorTarget:
         return ErrorTarget.SCHEDULE
 
+    @classmethod
+    def _resolve_cls_and_type(cls, data, params_override):
+
+        if "create_job" in data:
+            return JobSchedule, None
+
+        return cls, None
+
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic."""
         if isinstance(self.create_job, PipelineJob):
