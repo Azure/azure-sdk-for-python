@@ -80,7 +80,7 @@ class TestSparkJobSchema:
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
         assert isinstance(spark_job.inputs["input1"], Input)

@@ -2320,7 +2320,7 @@ class TestDSLPipeline:
             "jobs": {
                 "add_greeting_column": {
                     "type": "spark",
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
                     "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
                     "py_files": ["utils.zip"],
                     "files": ["my_files.txt"],
@@ -2356,7 +2356,7 @@ class TestDSLPipeline:
                     "jars": ["scalaproj.jar"],
                     "name": "count_by_row",
                     "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
             },
