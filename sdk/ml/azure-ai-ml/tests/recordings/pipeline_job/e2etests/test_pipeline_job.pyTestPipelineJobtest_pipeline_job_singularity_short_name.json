@@ -14,17 +14,17 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "111927",
+        "Content-Length": "112972",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:12 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:11 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a371947d-8c5f-47fa-aee5-b64fe78124b3",
+        "x-ms-correlation-request-id": "79332d31-e098-47dd-90ae-1bc60f7460c4",
         "x-ms-ratelimit-remaining-tenant-reads": "11999",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055912Z:a371947d-8c5f-47fa-aee5-b64fe78124b3"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064312Z:79332d31-e098-47dd-90ae-1bc60f7460c4"
       },
       "ResponseBody": {
         "value": [
@@ -111,6 +111,9 @@
                 "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
               }
             ],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
             "subscriptionId": "bfd9f30e-252d-4fc8-823c-f27d994fc8b7",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "balapv-aml-sub",
@@ -733,6 +736,25 @@
             }
           },
           {
+            "id": "/subscriptions/34093ecf-e969-49a6-a6a9-44c45fcdb780",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "34093ecf-e969-49a6-a6a9-44c45fcdb780",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Local Search_100148",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/56dc39d5-3a13-4720-8b5c-93be49cec849",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -1042,17 +1064,12 @@
             }
           },
           {
-            "id": "/subscriptions/4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "id": "/subscriptions/932f56c7-38bf-4254-a4aa-50dbf02c55d9",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "NonProd",
-              "Env": "NonProd",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "subscriptionId": "932f56c7-38bf-4254-a4aa-50dbf02c55d9",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100043",
+            "displayName": "Cosmos_WDG_Universal Store_Data \u0026 Engineering Services_100066",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1061,12 +1078,17 @@
             }
           },
           {
-            "id": "/subscriptions/932f56c7-38bf-4254-a4aa-50dbf02c55d9",
+            "id": "/subscriptions/3198862a-f146-4627-b8ae-4aa60f4e9cb0",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
-            "subscriptionId": "932f56c7-38bf-4254-a4aa-50dbf02c55d9",
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_WDG_Universal Store_Data \u0026 Engineering Services_100066",
+            "displayName": "Cosmos_AIR_BingExp_Local Search_100010",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1090,20 +1112,6 @@
             "subscriptionId": "4d6c9028-0fec-4cf0-9832-5d59bb6dff70",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Cosmos_AIR_BingExp_Whole Page Relevance_100029",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/b15a46e3-13e9-4504-a348-f823e6e01503",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "subscriptionId": "b15a46e3-13e9-4504-a348-f823e6e01503",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_C\u0026E_DPG_Big Data_100031",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1150,6 +1158,25 @@
             }
           },
           {
+            "id": "/subscriptions/1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Bing App Linking and Task Completion_100298",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/2882c5d2-11c3-4525-ad3c-58b31fe160dd",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -1161,25 +1188,6 @@
             "subscriptionId": "2882c5d2-11c3-4525-ad3c-58b31fe160dd",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Cosmos_AIR_BingExp_India Search_100030",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/418971fc-8ad4-43e9-b3a2-0537cd906a56",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "418971fc-8ad4-43e9-b3a2-0537cd906a56",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100044",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1207,7 +1215,7 @@
             }
           },
           {
-            "id": "/subscriptions/3198862a-f146-4627-b8ae-4aa60f4e9cb0",
+            "id": "/subscriptions/5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
             "tags": {
@@ -1215,9 +1223,47 @@
               "Env": "Prod",
               "IsHostedOnBehalfOf": "False"
             },
-            "subscriptionId": "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
+            "subscriptionId": "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Local Search_100010",
+            "displayName": "Cosmos_AIR_BingEngineering_Whole-Page-Relevance_100495",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/44f06447-b1bf-4aad-9532-6bea66268f58",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "44f06447-b1bf-4aad-9532-6bea66268f58",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Whole Page Relevance_100417",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100043",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1237,6 +1283,62 @@
             "subscriptionId": "19269df8-6537-44af-b200-0c6f319a89fb",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Core ranking services",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/07c3f5a2-0880-4a37-b678-e29ade7b1036",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "07c3f5a2-0880-4a37-b678-e29ade7b1036",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Core Search Singularity",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/6fefb1eb-643f-46e0-ae97-34be003ca54e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "6fefb1eb-643f-46e0-ae97-34be003ca54e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_IPG_STCA_100051",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7078c008-8c1f-4361-8282-fcf408b650f4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "7078c008-8c1f-4361-8282-fcf408b650f4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "OneMapData",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1694,25 +1796,6 @@
             }
           },
           {
-            "id": "/subscriptions/34093ecf-e969-49a6-a6a9-44c45fcdb780",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "34093ecf-e969-49a6-a6a9-44c45fcdb780",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Local Search_100148",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
             "id": "/subscriptions/15f7d0cf-b3e7-42c6-9900-347686222f1d",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -1803,6 +1886,39 @@
             }
           },
           {
+            "id": "/subscriptions/b15a46e3-13e9-4504-a348-f823e6e01503",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b15a46e3-13e9-4504-a348-f823e6e01503",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_C\u0026E_DPG_Big Data_100031",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/121ed073-2274-4c26-8287-896e4afef998",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "121ed073-2274-4c26-8287-896e4afef998",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingAds_BI_100002",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/56dcf710-f955-442e-8ac2-3b90ab65dea1",
             "authorizationSource": "RoleBased",
             "managedByTenants": [
@@ -1840,7 +1956,7 @@
             }
           },
           {
-            "id": "/subscriptions/1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "id": "/subscriptions/418971fc-8ad4-43e9-b3a2-0537cd906a56",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
             "tags": {
@@ -1848,28 +1964,9 @@
               "Env": "Prod",
               "IsHostedOnBehalfOf": "False"
             },
-            "subscriptionId": "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "subscriptionId": "418971fc-8ad4-43e9-b3a2-0537cd906a56",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Bing App Linking and Task Completion_100298",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/121ed073-2274-4c26-8287-896e4afef998",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "121ed073-2274-4c26-8287-896e4afef998",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingAds_BI_100002",
+            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100044",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -1912,63 +2009,6 @@
             "subscriptionId": "913e1ed5-a98b-45e3-b97f-545299814c5c",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "AdQuality-Algo-PROD",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingEngineering_Whole-Page-Relevance_100495",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/44f06447-b1bf-4aad-9532-6bea66268f58",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "44f06447-b1bf-4aad-9532-6bea66268f58",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Whole Page Relevance_100417",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/449fb5c5-6abf-4e04-bcd8-c6c0d2962426",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "449fb5c5-6abf-4e04-bcd8-c6c0d2962426",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_UX_100053",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -2294,7 +2334,7 @@
             "managedByTenants": [],
             "subscriptionId": "1278a874-89fc-418c-b6b9-ac763b000415",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "(NBrady) Microsoft Azure Internal Consumption",
+            "displayName": "Microsoft Azure Internal Consumption (nbrady)",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -2536,24 +2576,6 @@
             "subscriptionId": "9b4236fe-df75-4289-bf00-40628ed41fd9",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Customer Confidence Proof of Concepts",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/10d0b7c6-9243-4713-91a9-2730375d3a1b",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [
-              {
-                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
-              }
-            ],
-            "subscriptionId": "10d0b7c6-9243-4713-91a9-2730375d3a1b",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "ASutton Subscription",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -3132,7 +3154,7 @@
             "subscriptionId": "a02ce7fd-1f09-4cd2-855d-49b67aef9c20",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Project Vienna - Runner Resource Creation - WestUS",
-            "state": "Enabled",
+            "state": "Disabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
               "quotaId": "Internal_2014-09-01",
@@ -3298,7 +3320,11 @@
           {
             "id": "/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4",
             "authorizationSource": "RoleBased",
-            "managedByTenants": [],
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
             "subscriptionId": "72c03bf3-4e69-41af-9532-dfcdc3eefef4",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "AML - Training R\u0026D",
@@ -4043,6 +4069,24 @@
             }
           },
           {
+            "id": "/subscriptions/4bf6b28a-452b-4af4-8080-8a196ee0ca4b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "4bf6b28a-452b-4af4-8080-8a196ee0ca4b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Inferencing R\u0026D Autotest Int",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/2fd34b77-86b4-48f8-98b1-5ff875a8455e",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -4201,7 +4245,7 @@
         ],
         "count": {
           "type": "Total",
-          "value": 245
+          "value": 247
         }
       }
     },
@@ -4212,7 +4256,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "10096",
+        "Content-Length": "10175",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
@@ -4257,6 +4301,7 @@
           "48bbc269-ce89-4f6f-9a12-c6f91fcb772d",
           "b43a6159-1bea-4fa2-9407-e875fdc0ff55",
           "0ba50112-002a-43dc-b863-fd5b345095ef",
+          "34093ecf-e969-49a6-a6a9-44c45fcdb780",
           "56dc39d5-3a13-4720-8b5c-93be49cec849",
           "dad45786-32e5-4ef3-b90e-8e0838fbadb6",
           "f30787b9-82a8-4e74-bb0f-f12d64ecc496",
@@ -4275,17 +4320,21 @@
           "3a4d3ed0-61ec-41ab-956b-91f3168c1e0f",
           "4e7b3094-d7f1-4973-8734-e82a24f1590e",
           "0d26e53d-f126-4051-83d6-75f1be8bedeb",
-          "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
           "932f56c7-38bf-4254-a4aa-50dbf02c55d9",
+          "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
           "4d6c9028-0fec-4cf0-9832-5d59bb6dff70",
-          "b15a46e3-13e9-4504-a348-f823e6e01503",
           "08cbec86-0544-47f0-a280-a6a76a165c0f",
           "3824ee45-4580-4ce0-919a-e9a2be3d3ff0",
+          "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
           "2882c5d2-11c3-4525-ad3c-58b31fe160dd",
-          "418971fc-8ad4-43e9-b3a2-0537cd906a56",
           "08f9b460-398d-47b5-9856-5e6c5f2fae50",
-          "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
+          "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
+          "44f06447-b1bf-4aad-9532-6bea66268f58",
+          "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
           "19269df8-6537-44af-b200-0c6f319a89fb",
+          "07c3f5a2-0880-4a37-b678-e29ade7b1036",
+          "6fefb1eb-643f-46e0-ae97-34be003ca54e",
+          "7078c008-8c1f-4361-8282-fcf408b650f4",
           "f9b96b36-1f5e-4021-8959-51527e26e6d3",
           "4115b323-4aac-47f4-bb13-22af265ed58b",
           "0cd6095b-b140-41ec-ad1d-32f2f7493386",
@@ -4314,21 +4363,18 @@
           "e30d7ec4-57a0-4fda-8320-f895a8995c75",
           "00000000-0000-0000-0000-000000000",
           "2d385bf4-0756-4a76-aa95-28bf9ed3b625",
-          "34093ecf-e969-49a6-a6a9-44c45fcdb780",
           "15f7d0cf-b3e7-42c6-9900-347686222f1d",
           "04150703-feca-4f63-a3a5-be940713f2ea",
           "d9c2ea9b-90b7-4f00-8b99-b0c820803123",
           "420fa1ca-075c-45e9-b5ff-4ff6a8feeac8",
           "0b62f195-6f9b-488f-970b-c920e0ef60e5",
+          "b15a46e3-13e9-4504-a348-f823e6e01503",
+          "121ed073-2274-4c26-8287-896e4afef998",
           "56dcf710-f955-442e-8ac2-3b90ab65dea1",
           "31b19382-57f7-43ee-a4e6-c562178f26ef",
-          "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
-          "121ed073-2274-4c26-8287-896e4afef998",
+          "418971fc-8ad4-43e9-b3a2-0537cd906a56",
           "1c5feffb-7ae5-4eca-b873-a60fa55f72d2",
           "913e1ed5-a98b-45e3-b97f-545299814c5c",
-          "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
-          "44f06447-b1bf-4aad-9532-6bea66268f58",
-          "449fb5c5-6abf-4e04-bcd8-c6c0d2962426",
           "02b62d86-c05b-4288-8a1a-3eeb755f88f1",
           "89cf644e-2dd7-4681-8972-a1eb092bbae0",
           "4d656246-b703-4454-873d-58670b9489ad",
@@ -4360,7 +4406,6 @@
           "eef8b6d5-94da-4b36-9327-a662f2674efb",
           "1163fbbe-27e7-4b0f-8466-195fe5417043",
           "9b4236fe-df75-4289-bf00-40628ed41fd9",
-          "10d0b7c6-9243-4713-91a9-2730375d3a1b",
           "e4e06275-58d1-4081-8f1b-be12462eb701",
           "d2c9544f-4329-4642-b73d-020e7fef844f",
           "68f3658f-0090-4277-a500-f02227aaee97",
@@ -4454,6 +4499,7 @@
           "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
           "f702b78b-b384-4ddd-9ce1-0d1a1be5b80c",
           "8b5789cd-8107-4765-ae2c-82a3a9289b3a",
+          "4bf6b28a-452b-4af4-8080-8a196ee0ca4b",
           "2fd34b77-86b4-48f8-98b1-5ff875a8455e",
           "4a13d854-77ae-4ad8-af70-54ca124d4c84",
           "3d6da6ed-6af5-4a74-87c6-da367514f8e0",
@@ -4464,7 +4510,7 @@
           "1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a",
           "1cba1da6-5a83-45e1-a88e-8b397eb84356"
         ],
-        "query": "resources\n    | where type == \u0027microsoft.machinelearningservices/virtualclusters\u0027\n    | order by tolower(name) asc \n    | project id, subscriptionId, resourceGroup, name, location, tags, type",
+        "query": "resources\n    | where type == \u0027microsoft.machinelearningservices/virtualclusters\u0027\n    | order by tolower(name) asc\n    | project id, subscriptionId, resourceGroup, name, location, tags, type",
         "options": {
           "resultFormat": "objectArray",
           "allowPartialScopes": false
@@ -4475,7 +4521,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:15 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:16 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
@@ -4483,17 +4529,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "17589004-3a8f-4237-b80f-33642ed4ef49",
+        "x-ms-correlation-request-id": "28340c00-73dc-442d-8b58-49f0ec2f2b3b",
         "x-ms-ratelimit-remaining-tenant-reads": "11998",
         "x-ms-ratelimit-remaining-tenant-resource-requests": "14",
-        "x-ms-resource-graph-request-duration": "0:00:00:00.5386064",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055915Z:17589004-3a8f-4237-b80f-33642ed4ef49",
+        "x-ms-resource-graph-request-duration": "0:00:00:00.8732211",
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064316Z:28340c00-73dc-442d-8b58-49f0ec2f2b3b",
         "x-ms-user-quota-remaining": "14",
         "x-ms-user-quota-resets-after": "00:00:05"
       },
       "ResponseBody": {
-        "totalRecords": 29,
-        "count": 29,
+        "totalRecords": 32,
+        "count": 32,
         "data": [
           {
             "id": "/subscriptions/814b8bcc-5e54-487e-a9fa-27b5740ac7b9/resourceGroups/prometheus/providers/Microsoft.MachineLearningServices/virtualclusters/ame-cs-chat-basic",
@@ -4550,8 +4596,8 @@
             "name": "ametestvc1",
             "location": "centraluseuap",
             "tags": {
-              "centraluseuap": "/subscriptions/d128f140-94e6-4175-87a7-954b9d27db16/resourceGroups/noorrg/providers/Microsoft.MachineLearningServices/workspaces/centeuapws",
-              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/ametestvc1"
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/ametestvc1",
+              "centraluseuap": "/subscriptions/d128f140-94e6-4175-87a7-954b9d27db16/resourceGroups/noorrg/providers/Microsoft.MachineLearningServices/workspaces/centeuapws"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
@@ -4646,8 +4692,8 @@
             "name": "cmarkley-testquota",
             "location": "eastus",
             "tags": {
-              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-testquota",
               "org": "Azure ML PM",
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-testquota",
               "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
@@ -4737,14 +4783,39 @@
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
           {
-            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortestdefaults",
+            "id": "/subscriptions/b6dc87f3-c479-49c8-8cb5-7896da3ff895/resourceGroups/RG-CS-NewsAndFeeds-Singularity/providers/Microsoft.MachineLearningServices/virtualclusters/Feeds",
+            "subscriptionId": "b6dc87f3-c479-49c8-8cb5-7896da3ff895",
+            "resourceGroup": "rg-cs-newsandfeeds-singularity",
+            "name": "Feeds",
+            "location": "eastus",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/feeds",
+              "eastus": "/subscriptions/b6dc87f3-c479-49c8-8cb5-7896da3ff895/resourceGroups/RG-CS-NewsAndFeeds-Singularity/providers/Microsoft.MachineLearningServices/workspaces/CS-NewsAndFeeds-Singularity"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortest462",
             "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
             "resourceGroup": "singularityrg",
-            "name": "noortestdefaults",
+            "name": "noortest462",
             "location": "centraluseuap",
             "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortest462",
               "org": "Azure ML PM",
-              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortestdefaults",
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortestempty",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "noortestempty",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortestempty",
+              "org": "Azure ML PM",
               "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
@@ -4834,6 +4905,18 @@
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
           {
+            "id": "/subscriptions/07c3f5a2-0880-4a37-b678-e29ade7b1036/resourceGroups/singularity/providers/Microsoft.MachineLearningServices/virtualclusters/webxtcoresearchpilot",
+            "subscriptionId": "07c3f5a2-0880-4a37-b678-e29ade7b1036",
+            "resourceGroup": "singularity",
+            "name": "webxtcoresearchpilot",
+            "location": "eastus",
+            "tags": {
+              "eastus": "/subscriptions/07c3f5a2-0880-4a37-b678-e29ade7b1036/resourceGroups/Singularity/providers/Microsoft.MachineLearningServices/workspaces/wxtcssing",
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/webxtcoresearchpilot"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
             "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/wzhang-rg/providers/Microsoft.MachineLearningServices/virtualclusters/wztest1",
             "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
             "resourceGroup": "wzhang-rg",
@@ -4864,17 +4947,17 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "111927",
+        "Content-Length": "112972",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:18 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:18 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "50c1ee1e-ed29-43bd-8d65-ecf8d6cfa94c",
+        "x-ms-correlation-request-id": "24756dfc-efb3-4ccb-92b4-c118f49423e9",
         "x-ms-ratelimit-remaining-tenant-reads": "11997",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055919Z:50c1ee1e-ed29-43bd-8d65-ecf8d6cfa94c"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064318Z:24756dfc-efb3-4ccb-92b4-c118f49423e9"
       },
       "ResponseBody": {
         "value": [
@@ -4961,6 +5044,9 @@
                 "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
               }
             ],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
             "subscriptionId": "bfd9f30e-252d-4fc8-823c-f27d994fc8b7",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "balapv-aml-sub",
@@ -5583,6 +5669,25 @@
             }
           },
           {
+            "id": "/subscriptions/34093ecf-e969-49a6-a6a9-44c45fcdb780",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "34093ecf-e969-49a6-a6a9-44c45fcdb780",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Local Search_100148",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/56dc39d5-3a13-4720-8b5c-93be49cec849",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -5892,17 +5997,12 @@
             }
           },
           {
-            "id": "/subscriptions/4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "id": "/subscriptions/932f56c7-38bf-4254-a4aa-50dbf02c55d9",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "NonProd",
-              "Env": "NonProd",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "subscriptionId": "932f56c7-38bf-4254-a4aa-50dbf02c55d9",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100043",
+            "displayName": "Cosmos_WDG_Universal Store_Data \u0026 Engineering Services_100066",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -5911,12 +6011,17 @@
             }
           },
           {
-            "id": "/subscriptions/932f56c7-38bf-4254-a4aa-50dbf02c55d9",
+            "id": "/subscriptions/3198862a-f146-4627-b8ae-4aa60f4e9cb0",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
-            "subscriptionId": "932f56c7-38bf-4254-a4aa-50dbf02c55d9",
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_WDG_Universal Store_Data \u0026 Engineering Services_100066",
+            "displayName": "Cosmos_AIR_BingExp_Local Search_100010",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -5940,20 +6045,6 @@
             "subscriptionId": "4d6c9028-0fec-4cf0-9832-5d59bb6dff70",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Cosmos_AIR_BingExp_Whole Page Relevance_100029",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/b15a46e3-13e9-4504-a348-f823e6e01503",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "subscriptionId": "b15a46e3-13e9-4504-a348-f823e6e01503",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_C\u0026E_DPG_Big Data_100031",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -6000,6 +6091,25 @@
             }
           },
           {
+            "id": "/subscriptions/1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Bing App Linking and Task Completion_100298",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/2882c5d2-11c3-4525-ad3c-58b31fe160dd",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -6011,25 +6121,6 @@
             "subscriptionId": "2882c5d2-11c3-4525-ad3c-58b31fe160dd",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Cosmos_AIR_BingExp_India Search_100030",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/418971fc-8ad4-43e9-b3a2-0537cd906a56",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "418971fc-8ad4-43e9-b3a2-0537cd906a56",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100044",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -6057,7 +6148,7 @@
             }
           },
           {
-            "id": "/subscriptions/3198862a-f146-4627-b8ae-4aa60f4e9cb0",
+            "id": "/subscriptions/5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
             "tags": {
@@ -6065,9 +6156,47 @@
               "Env": "Prod",
               "IsHostedOnBehalfOf": "False"
             },
-            "subscriptionId": "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
+            "subscriptionId": "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Local Search_100010",
+            "displayName": "Cosmos_AIR_BingEngineering_Whole-Page-Relevance_100495",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/44f06447-b1bf-4aad-9532-6bea66268f58",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "44f06447-b1bf-4aad-9532-6bea66268f58",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Whole Page Relevance_100417",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100043",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -6087,6 +6216,62 @@
             "subscriptionId": "19269df8-6537-44af-b200-0c6f319a89fb",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Core ranking services",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/07c3f5a2-0880-4a37-b678-e29ade7b1036",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "07c3f5a2-0880-4a37-b678-e29ade7b1036",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Core Search Singularity",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/6fefb1eb-643f-46e0-ae97-34be003ca54e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "6fefb1eb-643f-46e0-ae97-34be003ca54e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_IPG_STCA_100051",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7078c008-8c1f-4361-8282-fcf408b650f4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "7078c008-8c1f-4361-8282-fcf408b650f4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "OneMapData",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -6544,25 +6729,6 @@
             }
           },
           {
-            "id": "/subscriptions/34093ecf-e969-49a6-a6a9-44c45fcdb780",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "34093ecf-e969-49a6-a6a9-44c45fcdb780",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Local Search_100148",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
             "id": "/subscriptions/15f7d0cf-b3e7-42c6-9900-347686222f1d",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -6653,6 +6819,39 @@
             }
           },
           {
+            "id": "/subscriptions/b15a46e3-13e9-4504-a348-f823e6e01503",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b15a46e3-13e9-4504-a348-f823e6e01503",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_C\u0026E_DPG_Big Data_100031",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/121ed073-2274-4c26-8287-896e4afef998",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "121ed073-2274-4c26-8287-896e4afef998",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_AIR_BingAds_BI_100002",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/56dcf710-f955-442e-8ac2-3b90ab65dea1",
             "authorizationSource": "RoleBased",
             "managedByTenants": [
@@ -6690,7 +6889,7 @@
             }
           },
           {
-            "id": "/subscriptions/1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "id": "/subscriptions/418971fc-8ad4-43e9-b3a2-0537cd906a56",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
             "tags": {
@@ -6698,28 +6897,9 @@
               "Env": "Prod",
               "IsHostedOnBehalfOf": "False"
             },
-            "subscriptionId": "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
+            "subscriptionId": "418971fc-8ad4-43e9-b3a2-0537cd906a56",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Bing App Linking and Task Completion_100298",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/121ed073-2274-4c26-8287-896e4afef998",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "121ed073-2274-4c26-8287-896e4afef998",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingAds_BI_100002",
+            "displayName": "Cosmos_AIR_BingExp_Ranking and Intent_100044",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -6762,63 +6942,6 @@
             "subscriptionId": "913e1ed5-a98b-45e3-b97f-545299814c5c",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "AdQuality-Algo-PROD",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingEngineering_Whole-Page-Relevance_100495",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/44f06447-b1bf-4aad-9532-6bea66268f58",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "44f06447-b1bf-4aad-9532-6bea66268f58",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_Whole Page Relevance_100417",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/449fb5c5-6abf-4e04-bcd8-c6c0d2962426",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [],
-            "tags": {
-              "WebXT-Environment": "Prod",
-              "Env": "Prod",
-              "IsHostedOnBehalfOf": "False"
-            },
-            "subscriptionId": "449fb5c5-6abf-4e04-bcd8-c6c0d2962426",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "Cosmos_AIR_BingExp_UX_100053",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -7144,7 +7267,7 @@
             "managedByTenants": [],
             "subscriptionId": "1278a874-89fc-418c-b6b9-ac763b000415",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "(NBrady) Microsoft Azure Internal Consumption",
+            "displayName": "Microsoft Azure Internal Consumption (nbrady)",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -7386,24 +7509,6 @@
             "subscriptionId": "9b4236fe-df75-4289-bf00-40628ed41fd9",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Customer Confidence Proof of Concepts",
-            "state": "Enabled",
-            "subscriptionPolicies": {
-              "locationPlacementId": "Internal_2014-09-01",
-              "quotaId": "Internal_2014-09-01",
-              "spendingLimit": "Off"
-            }
-          },
-          {
-            "id": "/subscriptions/10d0b7c6-9243-4713-91a9-2730375d3a1b",
-            "authorizationSource": "RoleBased",
-            "managedByTenants": [
-              {
-                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
-              }
-            ],
-            "subscriptionId": "10d0b7c6-9243-4713-91a9-2730375d3a1b",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "displayName": "ASutton Subscription",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -7982,7 +8087,7 @@
             "subscriptionId": "a02ce7fd-1f09-4cd2-855d-49b67aef9c20",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "Project Vienna - Runner Resource Creation - WestUS",
-            "state": "Enabled",
+            "state": "Disabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
               "quotaId": "Internal_2014-09-01",
@@ -8148,7 +8253,11 @@
           {
             "id": "/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4",
             "authorizationSource": "RoleBased",
-            "managedByTenants": [],
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
             "subscriptionId": "72c03bf3-4e69-41af-9532-dfcdc3eefef4",
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "displayName": "AML - Training R\u0026D",
@@ -8893,6 +9002,24 @@
             }
           },
           {
+            "id": "/subscriptions/4bf6b28a-452b-4af4-8080-8a196ee0ca4b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "4bf6b28a-452b-4af4-8080-8a196ee0ca4b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Inferencing R\u0026D Autotest Int",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
             "id": "/subscriptions/2fd34b77-86b4-48f8-98b1-5ff875a8455e",
             "authorizationSource": "RoleBased",
             "managedByTenants": [],
@@ -9051,7 +9178,7 @@
         ],
         "count": {
           "type": "Total",
-          "value": 245
+          "value": 247
         }
       }
     },
@@ -9062,7 +9189,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "10096",
+        "Content-Length": "10175",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
@@ -9107,6 +9234,7 @@
           "48bbc269-ce89-4f6f-9a12-c6f91fcb772d",
           "b43a6159-1bea-4fa2-9407-e875fdc0ff55",
           "0ba50112-002a-43dc-b863-fd5b345095ef",
+          "34093ecf-e969-49a6-a6a9-44c45fcdb780",
           "56dc39d5-3a13-4720-8b5c-93be49cec849",
           "dad45786-32e5-4ef3-b90e-8e0838fbadb6",
           "f30787b9-82a8-4e74-bb0f-f12d64ecc496",
@@ -9125,17 +9253,21 @@
           "3a4d3ed0-61ec-41ab-956b-91f3168c1e0f",
           "4e7b3094-d7f1-4973-8734-e82a24f1590e",
           "0d26e53d-f126-4051-83d6-75f1be8bedeb",
-          "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
           "932f56c7-38bf-4254-a4aa-50dbf02c55d9",
+          "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
           "4d6c9028-0fec-4cf0-9832-5d59bb6dff70",
-          "b15a46e3-13e9-4504-a348-f823e6e01503",
           "08cbec86-0544-47f0-a280-a6a76a165c0f",
           "3824ee45-4580-4ce0-919a-e9a2be3d3ff0",
+          "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
           "2882c5d2-11c3-4525-ad3c-58b31fe160dd",
-          "418971fc-8ad4-43e9-b3a2-0537cd906a56",
           "08f9b460-398d-47b5-9856-5e6c5f2fae50",
-          "3198862a-f146-4627-b8ae-4aa60f4e9cb0",
+          "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
+          "44f06447-b1bf-4aad-9532-6bea66268f58",
+          "4062f5e8-5e2b-447f-a06f-62b65b731b0d",
           "19269df8-6537-44af-b200-0c6f319a89fb",
+          "07c3f5a2-0880-4a37-b678-e29ade7b1036",
+          "6fefb1eb-643f-46e0-ae97-34be003ca54e",
+          "7078c008-8c1f-4361-8282-fcf408b650f4",
           "f9b96b36-1f5e-4021-8959-51527e26e6d3",
           "4115b323-4aac-47f4-bb13-22af265ed58b",
           "0cd6095b-b140-41ec-ad1d-32f2f7493386",
@@ -9164,21 +9296,18 @@
           "e30d7ec4-57a0-4fda-8320-f895a8995c75",
           "00000000-0000-0000-0000-000000000",
           "2d385bf4-0756-4a76-aa95-28bf9ed3b625",
-          "34093ecf-e969-49a6-a6a9-44c45fcdb780",
           "15f7d0cf-b3e7-42c6-9900-347686222f1d",
           "04150703-feca-4f63-a3a5-be940713f2ea",
           "d9c2ea9b-90b7-4f00-8b99-b0c820803123",
           "420fa1ca-075c-45e9-b5ff-4ff6a8feeac8",
           "0b62f195-6f9b-488f-970b-c920e0ef60e5",
+          "b15a46e3-13e9-4504-a348-f823e6e01503",
+          "121ed073-2274-4c26-8287-896e4afef998",
           "56dcf710-f955-442e-8ac2-3b90ab65dea1",
           "31b19382-57f7-43ee-a4e6-c562178f26ef",
-          "1c787a74-97d7-4c03-8a19-2c66fc3237f9",
-          "121ed073-2274-4c26-8287-896e4afef998",
+          "418971fc-8ad4-43e9-b3a2-0537cd906a56",
           "1c5feffb-7ae5-4eca-b873-a60fa55f72d2",
           "913e1ed5-a98b-45e3-b97f-545299814c5c",
-          "5e1e626f-1b4c-4610-8156-6bbc9d8614f1",
-          "44f06447-b1bf-4aad-9532-6bea66268f58",
-          "449fb5c5-6abf-4e04-bcd8-c6c0d2962426",
           "02b62d86-c05b-4288-8a1a-3eeb755f88f1",
           "89cf644e-2dd7-4681-8972-a1eb092bbae0",
           "4d656246-b703-4454-873d-58670b9489ad",
@@ -9210,7 +9339,6 @@
           "eef8b6d5-94da-4b36-9327-a662f2674efb",
           "1163fbbe-27e7-4b0f-8466-195fe5417043",
           "9b4236fe-df75-4289-bf00-40628ed41fd9",
-          "10d0b7c6-9243-4713-91a9-2730375d3a1b",
           "e4e06275-58d1-4081-8f1b-be12462eb701",
           "d2c9544f-4329-4642-b73d-020e7fef844f",
           "68f3658f-0090-4277-a500-f02227aaee97",
@@ -9304,6 +9432,7 @@
           "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
           "f702b78b-b384-4ddd-9ce1-0d1a1be5b80c",
           "8b5789cd-8107-4765-ae2c-82a3a9289b3a",
+          "4bf6b28a-452b-4af4-8080-8a196ee0ca4b",
           "2fd34b77-86b4-48f8-98b1-5ff875a8455e",
           "4a13d854-77ae-4ad8-af70-54ca124d4c84",
           "3d6da6ed-6af5-4a74-87c6-da367514f8e0",
@@ -9314,7 +9443,7 @@
           "1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a",
           "1cba1da6-5a83-45e1-a88e-8b397eb84356"
         ],
-        "query": "resources\n    | where type == \u0027microsoft.machinelearningservices/virtualclusters\u0027\n    | order by tolower(name) asc \n    | project id, subscriptionId, resourceGroup, name, location, tags, type",
+        "query": "resources\n    | where type == \u0027microsoft.machinelearningservices/virtualclusters\u0027\n    | order by tolower(name) asc\n    | project id, subscriptionId, resourceGroup, name, location, tags, type",
         "options": {
           "resultFormat": "objectArray",
           "allowPartialScopes": false
@@ -9325,7 +9454,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:21 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:21 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
@@ -9333,17 +9462,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "0979202c-4f3e-4405-a10a-c906db9a3414",
+        "x-ms-correlation-request-id": "03add678-f4dc-4f09-898f-c6df4c73b2ef",
         "x-ms-ratelimit-remaining-tenant-reads": "11996",
         "x-ms-ratelimit-remaining-tenant-resource-requests": "14",
-        "x-ms-resource-graph-request-duration": "0:00:00:00.5817430",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055922Z:0979202c-4f3e-4405-a10a-c906db9a3414",
+        "x-ms-resource-graph-request-duration": "0:00:00:00.5759047",
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064321Z:03add678-f4dc-4f09-898f-c6df4c73b2ef",
         "x-ms-user-quota-remaining": "14",
-        "x-ms-user-quota-resets-after": "00:00:04"
+        "x-ms-user-quota-resets-after": "00:00:05"
       },
       "ResponseBody": {
-        "totalRecords": 29,
-        "count": 29,
+        "totalRecords": 32,
+        "count": 32,
         "data": [
           {
             "id": "/subscriptions/814b8bcc-5e54-487e-a9fa-27b5740ac7b9/resourceGroups/prometheus/providers/Microsoft.MachineLearningServices/virtualclusters/ame-cs-chat-basic",
@@ -9496,8 +9625,8 @@
             "name": "cmarkley-testquota",
             "location": "eastus",
             "tags": {
-              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-testquota",
               "org": "Azure ML PM",
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-testquota",
               "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
@@ -9569,8 +9698,8 @@
             "name": "demo0710",
             "location": "centraluseuap",
             "tags": {
-              "centraluseuap": "/subscriptions/d128f140-94e6-4175-87a7-954b9d27db16/resourceGroups/ragargeastus2euap/providers/Microsoft.MachineLearningServices/workspaces/testragargcentraluseuap",
-              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/demo0710"
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/demo0710",
+              "centraluseuap": "/subscriptions/d128f140-94e6-4175-87a7-954b9d27db16/resourceGroups/ragargeastus2euap/providers/Microsoft.MachineLearningServices/workspaces/testragargcentraluseuap"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
@@ -9587,15 +9716,40 @@
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
           {
-            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortestdefaults",
+            "id": "/subscriptions/b6dc87f3-c479-49c8-8cb5-7896da3ff895/resourceGroups/RG-CS-NewsAndFeeds-Singularity/providers/Microsoft.MachineLearningServices/virtualclusters/Feeds",
+            "subscriptionId": "b6dc87f3-c479-49c8-8cb5-7896da3ff895",
+            "resourceGroup": "rg-cs-newsandfeeds-singularity",
+            "name": "Feeds",
+            "location": "eastus",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/feeds",
+              "eastus": "/subscriptions/b6dc87f3-c479-49c8-8cb5-7896da3ff895/resourceGroups/RG-CS-NewsAndFeeds-Singularity/providers/Microsoft.MachineLearningServices/workspaces/CS-NewsAndFeeds-Singularity"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortest462",
             "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
             "resourceGroup": "singularityrg",
-            "name": "noortestdefaults",
+            "name": "noortest462",
             "location": "centraluseuap",
             "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortest462",
               "org": "Azure ML PM",
-              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws",
-              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortestdefaults"
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortestempty",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "noortestempty",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortestempty",
+              "org": "Azure ML PM",
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
@@ -9678,8 +9832,20 @@
             "name": "webxtcoresearch",
             "location": "westus2",
             "tags": {
-              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/webxtcoresearch",
-              "westus2": "/subscriptions/20d3c9e4-625d-45e1-ac8a-def90d3c4a88/resourceGroups/coresearchsingularitywus2/providers/Microsoft.MachineLearningServices/workspaces/wxtcssingwus2"
+              "westus2": "/subscriptions/20d3c9e4-625d-45e1-ac8a-def90d3c4a88/resourceGroups/coresearchsingularitywus2/providers/Microsoft.MachineLearningServices/workspaces/wxtcssingwus2",
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/webxtcoresearch"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/07c3f5a2-0880-4a37-b678-e29ade7b1036/resourceGroups/singularity/providers/Microsoft.MachineLearningServices/virtualclusters/webxtcoresearchpilot",
+            "subscriptionId": "07c3f5a2-0880-4a37-b678-e29ade7b1036",
+            "resourceGroup": "singularity",
+            "name": "webxtcoresearchpilot",
+            "location": "eastus",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/webxtcoresearchpilot",
+              "eastus": "/subscriptions/07c3f5a2-0880-4a37-b678-e29ade7b1036/resourceGroups/Singularity/providers/Microsoft.MachineLearningServices/workspaces/wxtcssing"
             },
             "type": "microsoft.machinelearningservices/virtualclusters"
           },
@@ -9723,20 +9889,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "960",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:26 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:25 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/2124c6bc1f06938850575032325f9ad3?api-version=2022-05-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-6ea12e02ee98faadfb018d48944d6386-a48db78e527a86de-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-edf1b1fa2c4912a4eab211e2e209a14d-1d7bd793e587ea57-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "8c9a0706-ba98-43ad-a112-f72f5a88bab4",
+        "x-ms-correlation-request-id": "00e674e5-8aa4-4887-a5fc-addbdcec151d",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055926Z:8c9a0706-ba98-43ad-a112-f72f5a88bab4",
-        "x-request-time": "1.593"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064325Z:00e674e5-8aa4-4887-a5fc-addbdcec151d",
+        "x-request-time": "0.386"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/2124c6bc1f06938850575032325f9ad3",
@@ -9799,20 +9965,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "1239",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:29 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:28 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/aa2baece-34d7-ed26-4d1b-91b728c44136?api-version=2022-10-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-965fa6488b5c9ec2fd4fb11dc529d2e9-ab286aaf5b9ff8cd-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-22f8ba4417c3b647a49844fd00ed7eff-55c6cb233112e8db-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4e82a24f-8512-474d-940c-3fa177694448",
+        "x-ms-correlation-request-id": "84674885-5b66-40f2-8ca2-8d46ab00a04a",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055930Z:4e82a24f-8512-474d-940c-3fa177694448",
-        "x-request-time": "1.066"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064328Z:84674885-5b66-40f2-8ca2-8d46ab00a04a",
+        "x-request-time": "0.323"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/d8178a7c-771a-493a-8a30-b2fd3d368543",
@@ -9888,22 +10054,22 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "3105",
+        "Content-Length": "3150",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:34 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:32 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-48140997178562036c193e629e676990-91931497b2db7fd0-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-3c2cb3f64d671cf22f38a9f6171d6bbe-15cdb96f7a9f8093-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "089d635d-38c6-48d5-a944-45ab9316333c",
+        "x-ms-correlation-request-id": "00d71710-c224-4c25-9fdf-972aac9c3714",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055935Z:089d635d-38c6-48d5-a944-45ab9316333c",
-        "x-request-time": "2.090"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064332Z:00d71710-c224-4c25-9fdf-972aac9c3714",
+        "x-request-time": "2.113"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -9914,6 +10080,7 @@
           "tags": {},
           "properties": {
             "azureml.DevPlatv2": "true",
+            "azureml.DatasetAccessMode": "Asset",
             "azureml.runsource": "azureml.PipelineRun",
             "runSource": "MFE",
             "runType": "HTTP",
@@ -9975,7 +10142,7 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-03-31T05:59:35.048516\u002B00:00",
+          "createdAt": "2023-04-11T06:43:32.0656264\u002B00:00",
           "createdBy": "Zhengfei Wang",
           "createdByType": "User"
         }
@@ -9997,7 +10164,7 @@
         "Cache-Control": "no-cache",
         "Content-Length": "4",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 05:59:38 GMT",
+        "Date": "Tue, 11 Apr 2023 06:43:36 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:812a357d-5aab-4c2c-8c11-86c9cc792edb:000000000000000000000?api-version=2023-02-01-preview",
         "Pragma": "no-cache",
@@ -10006,11 +10173,11 @@
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-async-operation-timeout": "PT1H",
-        "x-ms-correlation-request-id": "beb1d8a1-f4a3-4aa8-9198-4b5735abd777",
+        "x-ms-correlation-request-id": "94031fe7-380f-4811-a537-b7a81863421e",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T055939Z:beb1d8a1-f4a3-4aa8-9198-4b5735abd777",
-        "x-request-time": "0.896"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064336Z:94031fe7-380f-4811-a537-b7a81863421e",
+        "x-request-time": "1.240"
       },
       "ResponseBody": "null"
     },
@@ -10028,19 +10195,19 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 31 Mar 2023 06:00:10 GMT",
+        "Date": "Tue, 11 Apr 2023 06:44:06 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-b0429007db544fba05990f5ee2af5e81-c7287b44e3f3ed0d-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-88e6d115fdce1d5ed7a70a83e1d7f958-a9cae8449395e19a-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "ad87876e-e9fa-4eeb-bf14-db09ba0ea3b4",
+        "x-ms-correlation-request-id": "fcd873a7-59ad-4d80-8088-d43b31a42121",
         "x-ms-ratelimit-remaining-subscription-reads": "11998",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230331T060010Z:ad87876e-e9fa-4eeb-bf14-db09ba0ea3b4",
-        "x-request-time": "0.026"
+        "x-ms-routing-request-id": "JAPANEAST:20230411T064407Z:fcd873a7-59ad-4d80-8088-d43b31a42121",
+        "x-request-time": "0.032"
       },
       "ResponseBody": null
     }
