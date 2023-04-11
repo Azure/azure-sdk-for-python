@@ -36,20 +36,19 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
-    registry_name,  # type: str
+    workspace_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-    skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -57,8 +56,6 @@ def build_list_request(
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if skip is not None:
-        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -76,8 +73,8 @@ def build_list_request(
 def build_delete_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
-    registry_name,  # type: str
-    code_name,  # type: str
+    workspace_name,  # type: str
+    rule_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -85,12 +82,12 @@ def build_delete_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
-        "codeName": _SERIALIZER.url("code_name", code_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "ruleName": _SERIALIZER.url("rule_name", rule_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -115,8 +112,8 @@ def build_delete_request_initial(
 def build_get_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
-    registry_name,  # type: str
-    code_name,  # type: str
+    workspace_name,  # type: str
+    rule_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -124,12 +121,12 @@ def build_get_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
-        "codeName": _SERIALIZER.url("code_name", code_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "ruleName": _SERIALIZER.url("rule_name", rule_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -154,8 +151,8 @@ def build_get_request(
 def build_create_or_update_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
-    registry_name,  # type: str
-    code_name,  # type: str
+    workspace_name,  # type: str
+    rule_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -164,12 +161,12 @@ def build_create_or_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
-        "codeName": _SERIALIZER.url("code_name", code_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "ruleName": _SERIALIZER.url("rule_name", rule_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -193,8 +190,8 @@ def build_create_or_update_request_initial(
     )
 
 # fmt: on
-class RegistryCodeContainersOperations(object):
-    """RegistryCodeContainersOperations operations.
+class ManagedNetworkSettingsRuleOperations(object):
+    """ManagedNetworkSettingsRuleOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -219,31 +216,26 @@ class RegistryCodeContainersOperations(object):
     def list(
         self,
         resource_group_name,  # type: str
-        registry_name,  # type: str
-        skip=None,  # type: Optional[str]
+        workspace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.CodeContainerResourceArmPaginatedResult"]
-        """List containers.
-
-        List containers.
+        # type: (...) -> Iterable["_models.OutboundRuleListResult"]
+        """Lists the managed network outbound rules for a machine learning workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
-        :type registry_name: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CodeContainerResourceArmPaginatedResult or the
-         result of cls(response)
+        :return: An iterator like instance of either OutboundRuleListResult or the result of
+         cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.CodeContainerResourceArmPaginatedResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.OutboundRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainerResourceArmPaginatedResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutboundRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -254,9 +246,8 @@ class RegistryCodeContainersOperations(object):
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
-                    registry_name=registry_name,
+                    workspace_name=workspace_name,
                     api_version=api_version,
-                    skip=skip,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -267,9 +258,8 @@ class RegistryCodeContainersOperations(object):
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
-                    registry_name=registry_name,
+                    workspace_name=workspace_name,
                     api_version=api_version,
-                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -278,7 +268,7 @@ class RegistryCodeContainersOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CodeContainerResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize("OutboundRuleListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -305,13 +295,13 @@ class RegistryCodeContainersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name,  # type: str
-        registry_name,  # type: str
-        code_name,  # type: str
+        workspace_name,  # type: str
+        rule_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -327,8 +317,8 @@ class RegistryCodeContainersOperations(object):
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            code_name=code_name,
+            workspace_name=workspace_name,
+            rule_name=rule_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -348,36 +338,32 @@ class RegistryCodeContainersOperations(object):
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
             
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name,  # type: str
-        registry_name,  # type: str
-        code_name,  # type: str
+        workspace_name,  # type: str
+        rule_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete Code container.
-
-        Delete Code container.
+        """Deletes an outbound rule from the managed network of a machine learning workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
-        :type registry_name: str
-        :param code_name: Container name.
-        :type code_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param rule_name: Name of the workspace managed network outbound rule.
+        :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -401,8 +387,8 @@ class RegistryCodeContainersOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                code_name=code_name,
+                workspace_name=workspace_name,
+                rule_name=rule_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -426,33 +412,31 @@ class RegistryCodeContainersOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}"}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name,  # type: str
-        registry_name,  # type: str
-        code_name,  # type: str
+        workspace_name,  # type: str
+        rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CodeContainer"
-        """Get Code container.
-
-        Get Code container.
+        # type: (...) -> "_models.OutboundRuleBasicResource"
+        """Gets an outbound rule from the managed network of a machine learning workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
-        :type registry_name: str
-        :param code_name: Container name.
-        :type code_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param rule_name: Name of the workspace managed network outbound rule.
+        :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CodeContainer, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.CodeContainer
+        :return: OutboundRuleBasicResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.OutboundRuleBasicResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutboundRuleBasicResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -464,8 +448,8 @@ class RegistryCodeContainersOperations(object):
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            code_name=code_name,
+            workspace_name=workspace_name,
+            rule_name=rule_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -484,26 +468,26 @@ class RegistryCodeContainersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CodeContainer', pipeline_response)
+        deserialized = self._deserialize('OutboundRuleBasicResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}"}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
-        registry_name,  # type: str
-        code_name,  # type: str
-        body,  # type: "_models.CodeContainer"
+        workspace_name,  # type: str
+        rule_name,  # type: str
+        parameters,  # type: "_models.OutboundRuleBasicResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CodeContainer"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]
+        # type: (...) -> Optional["_models.OutboundRuleBasicResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OutboundRuleBasicResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -512,13 +496,13 @@ class RegistryCodeContainersOperations(object):
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'CodeContainer')
+        _json = self._serialize.body(parameters, 'OutboundRuleBasicResource')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            code_name=code_name,
+            workspace_name=workspace_name,
+            rule_name=rule_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -534,50 +518,48 @@ class RegistryCodeContainersOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('CodeContainer', pipeline_response)
+            deserialized = self._deserialize('OutboundRuleBasicResource', pipeline_response)
 
-        if response.status_code == 201:
-            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
             
-            deserialized = self._deserialize('CodeContainer', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}"}  # type: ignore
 
 
     @distributed_trace
     def begin_create_or_update(
         self,
         resource_group_name,  # type: str
-        registry_name,  # type: str
-        code_name,  # type: str
-        body,  # type: "_models.CodeContainer"
+        workspace_name,  # type: str
+        rule_name,  # type: str
+        parameters,  # type: "_models.OutboundRuleBasicResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.CodeContainer"]
-        """Create or update Code container.
-
-        Create or update Code container.
+        # type: (...) -> LROPoller["_models.OutboundRuleBasicResource"]
+        """Creates or updates an outbound rule in the managed network of a machine learning workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
-        :type registry_name: str
-        :param code_name: Container name.
-        :type code_name: str
-        :param body: Container entity to create or update.
-        :type body: ~azure.mgmt.machinelearningservices.models.CodeContainer
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param rule_name: Name of the workspace managed network outbound rule.
+        :type rule_name: str
+        :param parameters: Outbound Rule to be created or updated in the managed network of a machine
+         learning workspace.
+        :type parameters: ~azure.mgmt.machinelearningservices.models.OutboundRuleBasicResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -586,15 +568,16 @@ class RegistryCodeContainersOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either CodeContainer or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.CodeContainer]
+        :return: An instance of LROPoller that returns either OutboundRuleBasicResource or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.OutboundRuleBasicResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutboundRuleBasicResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -603,9 +586,9 @@ class RegistryCodeContainersOperations(object):
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                code_name=code_name,
-                body=body,
+                workspace_name=workspace_name,
+                rule_name=rule_name,
+                parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -615,13 +598,13 @@ class RegistryCodeContainersOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('CodeContainer', pipeline_response)
+            deserialized = self._deserialize('OutboundRuleBasicResource', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -633,4 +616,4 @@ class RegistryCodeContainersOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}"}  # type: ignore

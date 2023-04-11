@@ -42,10 +42,11 @@ def build_list_request(
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
+    list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -59,6 +60,8 @@ def build_list_request(
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if skip is not None:
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
+    if list_view_type is not None:
+        _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -77,7 +80,7 @@ def build_delete_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
-    code_name,  # type: str
+    name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -85,12 +88,12 @@ def build_delete_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
-        "codeName": _SERIALIZER.url("code_name", code_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "name": _SERIALIZER.url("name", name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -116,7 +119,7 @@ def build_get_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
-    code_name,  # type: str
+    name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -124,12 +127,12 @@ def build_get_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
-        "codeName": _SERIALIZER.url("code_name", code_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "name": _SERIALIZER.url("name", name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -155,7 +158,7 @@ def build_create_or_update_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
-    code_name,  # type: str
+    name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -164,12 +167,12 @@ def build_create_or_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
-        "codeName": _SERIALIZER.url("code_name", code_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "name": _SERIALIZER.url("name", name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -193,8 +196,8 @@ def build_create_or_update_request_initial(
     )
 
 # fmt: on
-class RegistryCodeContainersOperations(object):
-    """RegistryCodeContainersOperations operations.
+class RegistryDataContainersOperations(object):
+    """RegistryDataContainersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -221,12 +224,13 @@ class RegistryCodeContainersOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         skip=None,  # type: Optional[str]
+        list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.CodeContainerResourceArmPaginatedResult"]
-        """List containers.
+        # type: (...) -> Iterable["_models.DataContainerResourceArmPaginatedResult"]
+        """List Data containers.
 
-        List containers.
+        List Data containers.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -234,16 +238,18 @@ class RegistryCodeContainersOperations(object):
         :type registry_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param list_view_type: View type for including/excluding (for example) archived entities.
+        :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CodeContainerResourceArmPaginatedResult or the
+        :return: An iterator like instance of either DataContainerResourceArmPaginatedResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.CodeContainerResourceArmPaginatedResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.DataContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainerResourceArmPaginatedResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainerResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -257,6 +263,7 @@ class RegistryCodeContainersOperations(object):
                     registry_name=registry_name,
                     api_version=api_version,
                     skip=skip,
+                    list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -270,6 +277,7 @@ class RegistryCodeContainersOperations(object):
                     registry_name=registry_name,
                     api_version=api_version,
                     skip=skip,
+                    list_view_type=list_view_type,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -278,7 +286,7 @@ class RegistryCodeContainersOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CodeContainerResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize("DataContainerResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -305,13 +313,13 @@ class RegistryCodeContainersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        code_name,  # type: str
+        name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -328,7 +336,7 @@ class RegistryCodeContainersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            code_name=code_name,
+            name=name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -356,7 +364,7 @@ class RegistryCodeContainersOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}"}  # type: ignore
 
 
     @distributed_trace
@@ -364,20 +372,20 @@ class RegistryCodeContainersOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        code_name,  # type: str
+        name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Delete Code container.
+        """Delete container.
 
-        Delete Code container.
+        Delete container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param code_name: Container name.
-        :type code_name: str
+        :param name: Container name.
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -402,7 +410,7 @@ class RegistryCodeContainersOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                code_name=code_name,
+                name=name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -426,33 +434,33 @@ class RegistryCodeContainersOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}"}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        code_name,  # type: str
+        name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CodeContainer"
-        """Get Code container.
+        # type: (...) -> "_models.DataContainer"
+        """Get container.
 
-        Get Code container.
+        Get container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param code_name: Container name.
-        :type code_name: str
+        :param name: Container name.
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CodeContainer, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.CodeContainer
+        :return: DataContainer, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.DataContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -465,7 +473,7 @@ class RegistryCodeContainersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            code_name=code_name,
+            name=name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -484,26 +492,26 @@ class RegistryCodeContainersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CodeContainer', pipeline_response)
+        deserialized = self._deserialize('DataContainer', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}"}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        code_name,  # type: str
-        body,  # type: "_models.CodeContainer"
+        name,  # type: str
+        body,  # type: "_models.DataContainer"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CodeContainer"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]
+        # type: (...) -> "_models.DataContainer"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -512,13 +520,13 @@ class RegistryCodeContainersOperations(object):
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'CodeContainer')
+        _json = self._serialize.body(body, 'DataContainer')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            code_name=code_name,
+            name=name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -540,20 +548,20 @@ class RegistryCodeContainersOperations(object):
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('CodeContainer', pipeline_response)
+            deserialized = self._deserialize('DataContainer', pipeline_response)
 
         if response.status_code == 201:
             response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
             response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
             
-            deserialized = self._deserialize('CodeContainer', pipeline_response)
+            deserialized = self._deserialize('DataContainer', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}"}  # type: ignore
 
 
     @distributed_trace
@@ -561,23 +569,23 @@ class RegistryCodeContainersOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        code_name,  # type: str
-        body,  # type: "_models.CodeContainer"
+        name,  # type: str
+        body,  # type: "_models.DataContainer"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.CodeContainer"]
-        """Create or update Code container.
+        # type: (...) -> LROPoller["_models.DataContainer"]
+        """Create or update container.
 
-        Create or update Code container.
+        Create or update container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param code_name: Container name.
-        :type code_name: str
+        :param name: Container name.
+        :type name: str
         :param body: Container entity to create or update.
-        :type body: ~azure.mgmt.machinelearningservices.models.CodeContainer
+        :type body: ~azure.mgmt.machinelearningservices.models.DataContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -586,15 +594,15 @@ class RegistryCodeContainersOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either CodeContainer or the result of
+        :return: An instance of LROPoller that returns either DataContainer or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.CodeContainer]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.DataContainer]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainer"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -604,7 +612,7 @@ class RegistryCodeContainersOperations(object):
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                code_name=code_name,
+                name=name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -615,7 +623,7 @@ class RegistryCodeContainersOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('CodeContainer', pipeline_response)
+            deserialized = self._deserialize('DataContainer', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -633,4 +641,4 @@ class RegistryCodeContainersOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}"}  # type: ignore

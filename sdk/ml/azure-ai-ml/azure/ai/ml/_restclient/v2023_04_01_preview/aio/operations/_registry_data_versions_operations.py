@@ -21,12 +21,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._registry_model_versions_operations import build_create_or_get_start_pending_upload_request, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
+from ...operations._registry_data_versions_operations import build_create_or_get_start_pending_upload_request, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RegistryModelVersionsOperations:
-    """RegistryModelVersionsOperations async operations.
+class RegistryDataVersionsOperations:
+    """RegistryDataVersionsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -52,55 +52,48 @@ class RegistryModelVersionsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
-        skip: Optional[str] = None,
+        name: str,
         order_by: Optional[str] = None,
         top: Optional[int] = None,
-        version: Optional[str] = None,
-        description: Optional[str] = None,
+        skip: Optional[str] = None,
         tags: Optional[str] = None,
-        properties: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ModelVersionResourceArmPaginatedResult"]:
-        """List versions.
+    ) -> AsyncIterable["_models.DataVersionBaseResourceArmPaginatedResult"]:
+        """List data versions in the data container.
 
-        List versions.
+        List data versions in the data container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param model_name: Container name. This is case-sensitive.
-        :type model_name: str
+        :param name: Data container's name.
+        :type name: str
+        :param order_by: Please choose OrderBy value from ['createdtime', 'modifiedtime'].
+        :type order_by: str
+        :param top: Top count of results, top count cannot be greater than the page size.
+                                       If topCount > page size, results with be default page size count
+         will be returned.
+        :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
-        :param order_by: Ordering of list.
-        :type order_by: str
-        :param top: Maximum number of records to return.
-        :type top: int
-        :param version: Version identifier.
-        :type version: str
-        :param description: Model description.
-        :type description: str
         :param tags: Comma-separated list of tag names (and optionally values). Example:
          tag1,tag2=value2.
         :type tags: str
-        :param properties: Comma-separated list of property names (and optionally values). Example:
-         prop1,prop2=value2.
-        :type properties: str
-        :param list_view_type: View type for including/excluding (for example) archived entities.
+        :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
+         ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ModelVersionResourceArmPaginatedResult or the
+        :return: An iterator like instance of either DataVersionBaseResourceArmPaginatedResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.ModelVersionResourceArmPaginatedResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.DataVersionBaseResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersionResourceArmPaginatedResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionBaseResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,15 +105,12 @@ class RegistryModelVersionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    model_name=model_name,
+                    name=name,
                     api_version=api_version,
-                    skip=skip,
                     order_by=order_by,
                     top=top,
-                    version=version,
-                    description=description,
+                    skip=skip,
                     tags=tags,
-                    properties=properties,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -133,15 +123,12 @@ class RegistryModelVersionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    model_name=model_name,
+                    name=name,
                     api_version=api_version,
-                    skip=skip,
                     order_by=order_by,
                     top=top,
-                    version=version,
-                    description=description,
+                    skip=skip,
                     tags=tags,
-                    properties=properties,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )
@@ -151,7 +138,7 @@ class RegistryModelVersionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ModelVersionResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize("DataVersionBaseResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -178,13 +165,13 @@ class RegistryModelVersionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
+        name: str,
         version: str,
         **kwargs: Any
     ) -> None:
@@ -201,7 +188,7 @@ class RegistryModelVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            model_name=model_name,
+            name=name,
             version=version,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
@@ -230,7 +217,7 @@ class RegistryModelVersionsOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions/{version}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -238,7 +225,7 @@ class RegistryModelVersionsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
+        name: str,
         version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -250,8 +237,8 @@ class RegistryModelVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param model_name: Container name.
-        :type model_name: str
+        :param name: Container name.
+        :type name: str
         :param version: Version identifier.
         :type version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -278,7 +265,7 @@ class RegistryModelVersionsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                model_name=model_name,
+                name=name,
                 version=version,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
@@ -303,17 +290,17 @@ class RegistryModelVersionsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
+        name: str,
         version: str,
         **kwargs: Any
-    ) -> "_models.ModelVersion":
+    ) -> "_models.DataVersionBase":
         """Get version.
 
         Get version.
@@ -322,16 +309,16 @@ class RegistryModelVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param model_name: Container name. This is case-sensitive.
-        :type model_name: str
-        :param version: Version identifier. This is case-sensitive.
+        :param name: Container name.
+        :type name: str
+        :param version: Version identifier.
         :type version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ModelVersion, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
+        :return: DataVersionBase, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionBase
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionBase"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -344,7 +331,7 @@ class RegistryModelVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            model_name=model_name,
+            name=name,
             version=version,
             api_version=api_version,
             template_url=self.get.metadata['url'],
@@ -364,26 +351,26 @@ class RegistryModelVersionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ModelVersion', pipeline_response)
+        deserialized = self._deserialize('DataVersionBase', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions/{version}"}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
+        name: str,
         version: str,
-        body: "_models.ModelVersion",
+        body: "_models.DataVersionBase",
         **kwargs: Any
-    ) -> "_models.ModelVersion":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersion"]
+    ) -> "_models.DataVersionBase":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionBase"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -392,13 +379,13 @@ class RegistryModelVersionsOperations:
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'ModelVersion')
+        _json = self._serialize.body(body, 'DataVersionBase')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            model_name=model_name,
+            name=name,
             version=version,
             api_version=api_version,
             content_type=content_type,
@@ -421,20 +408,20 @@ class RegistryModelVersionsOperations:
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('ModelVersion', pipeline_response)
+            deserialized = self._deserialize('DataVersionBase', pipeline_response)
 
         if response.status_code == 201:
             response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
             response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
             
-            deserialized = self._deserialize('ModelVersion', pipeline_response)
+            deserialized = self._deserialize('DataVersionBase', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions/{version}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -442,11 +429,11 @@ class RegistryModelVersionsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
+        name: str,
         version: str,
-        body: "_models.ModelVersion",
+        body: "_models.DataVersionBase",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.ModelVersion"]:
+    ) -> AsyncLROPoller["_models.DataVersionBase"]:
         """Create or update version.
 
         Create or update version.
@@ -455,12 +442,12 @@ class RegistryModelVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param model_name: Container name.
-        :type model_name: str
+        :param name: Container name.
+        :type name: str
         :param version: Version identifier.
         :type version: str
         :param body: Version entity to create or update.
-        :type body: ~azure.mgmt.machinelearningservices.models.ModelVersion
+        :type body: ~azure.mgmt.machinelearningservices.models.DataVersionBase
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -469,16 +456,16 @@ class RegistryModelVersionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ModelVersion or the result of
+        :return: An instance of AsyncLROPoller that returns either DataVersionBase or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.ModelVersion]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.DataVersionBase]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersion"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionBase"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -488,7 +475,7 @@ class RegistryModelVersionsOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                model_name=model_name,
+                name=name,
                 version=version,
                 body=body,
                 api_version=api_version,
@@ -500,7 +487,7 @@ class RegistryModelVersionsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('ModelVersion', pipeline_response)
+            deserialized = self._deserialize('DataVersionBase', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -518,28 +505,28 @@ class RegistryModelVersionsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def create_or_get_start_pending_upload(
         self,
         resource_group_name: str,
         registry_name: str,
-        model_name: str,
+        name: str,
         version: str,
         body: "_models.PendingUploadRequestDto",
         **kwargs: Any
     ) -> "_models.PendingUploadResponseDto":
-        """Generate a storage location and credential for the client to upload a model asset to.
+        """Generate a storage location and credential for the client to upload a data asset to.
 
-        Generate a storage location and credential for the client to upload a model asset to.
+        Generate a storage location and credential for the client to upload a data asset to.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
-        :param model_name: Model name. This is case-sensitive.
-        :type model_name: str
+        :param name: Data asset name. This is case-sensitive.
+        :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param body: Pending upload request object.
@@ -564,7 +551,7 @@ class RegistryModelVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            model_name=model_name,
+            name=name,
             version=version,
             api_version=api_version,
             content_type=content_type,
@@ -593,5 +580,5 @@ class RegistryModelVersionsOperations:
 
         return deserialized
 
-    create_or_get_start_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}/startPendingUpload"}  # type: ignore
+    create_or_get_start_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/data/{name}/versions/{version}/startPendingUpload"}  # type: ignore
 
