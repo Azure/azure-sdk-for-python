@@ -10,6 +10,7 @@ from typing import ( # pylint: disable=unused-import
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -39,7 +40,7 @@ else:
     from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from .._models import ShareProperties, AccessPolicy
 
 
@@ -91,7 +92,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             self, account_url: str,
             share_name: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]] = None,  # pylint: disable=line-too-long
             *,
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
