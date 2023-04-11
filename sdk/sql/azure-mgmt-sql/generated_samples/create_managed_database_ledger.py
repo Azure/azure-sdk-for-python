@@ -14,7 +14,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python managed_database_update_min.py
+    python create_managed_database_ledger.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,15 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_databases.begin_update(
+    response = client.managed_databases.begin_create_or_update(
         resource_group_name="Default-SQL-SouthEastAsia",
         managed_instance_name="managedInstance",
-        database_name="testdb",
-        parameters={"tags": {"tagKey1": "TagValue1"}},
+        database_name="managedDatabase",
+        parameters={"location": "southeastasia", "properties": {"isLedgerOn": True}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedDatabaseUpdateMin.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/CreateManagedDatabaseLedger.json
 if __name__ == "__main__":
     main()
