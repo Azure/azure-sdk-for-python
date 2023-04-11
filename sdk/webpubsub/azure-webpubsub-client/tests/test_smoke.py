@@ -9,13 +9,7 @@ import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
-from azure.webpubsub.client.models import OnGroupDataMessageArgs, WebPubSubProtocolType
-
-TEST_RESULT = set()
-
-
-def on_group_message(msg: OnGroupDataMessageArgs):
-    TEST_RESULT.add(msg.data)
+from azure.webpubsub.client.models import OnGroupDataMessageArgs
 
 
 @pytest.mark.live_test_only
@@ -47,68 +41,6 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             client.join_group(group_name)
             client.send_to_group(group_name, "test_context_manager", "text")
             assert client._sequence_id.sequence_id > 0
-
-    # auto_connect will be triggered if connection is dropped by accident and we disable recovery
-    @WebpubsubClientPowerShellPreparer()
-    @recorded_by_proxy
-    def test_auto_connect(self, webpubsubclient_connection_string):
-        client = self.create_client(
-            connection_string=webpubsubclient_connection_string, protocol_type=WebPubSubProtocolType.JSON
-        )
-        name = "test_auto_connect"
-        with client:
-            time.sleep(0.001)  # wait for connection_id to be updated
-            conn_id0 = client._connection_id
-            group_name = "test"
-            client.on("group-message", on_group_message)
-            client.join_group(group_name)
-            client._ws.sock.close(1001)  # close the connection to trigger auto connect
-            client.send_to_group(group_name, name, "text")
-            conn_id1 = client._connection_id
-        assert name in TEST_RESULT
-        assert conn_id0 is not None
-        assert conn_id1 is not None
-        assert conn_id0 != conn_id1
-
-    # recovery will be triggered if connection is dropped by accident
-    @WebpubsubClientPowerShellPreparer()
-    @recorded_by_proxy
-    def test_recovery(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string, reconnect_retry_total=0)
-        name = "test_recovery"
-        with client:
-            time.sleep(0.001)  # wait for connection_id to be updated
-            conn_id0 = client._connection_id
-            group_name = "test"
-            client.on("group-message", on_group_message)
-            client.join_group(group_name)
-            client._ws.sock.close(1001)  # close connection to trigger recovery
-            client.send_to_group(group_name, name, "text")
-            conn_id1 = client._connection_id
-        assert name in TEST_RESULT
-        assert conn_id0 is not None
-        assert conn_id1 is not None
-        assert conn_id0 == conn_id1
-
-    # disable recovery and auto reconnect
-    @WebpubsubClientPowerShellPreparer()
-    @recorded_by_proxy
-    def test_disable_recovery_and_autoconnect(self, webpubsubclient_connection_string):
-        client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
-            reconnect_retry_total=0,
-            protocol_type=WebPubSubProtocolType.JSON,
-            message_retry_total=10,
-        )
-        name = "test_disable_recovery_and_autoconnect"
-        with client:
-            group_name = "test"
-            client.on("group-message", on_group_message)
-            client.join_group(group_name)
-            client._ws.sock.close(1001)  # close connection
-            with pytest.raises(Exception):
-                client.send_to_group(group_name, name, "text")
-        assert name not in TEST_RESULT
 
     # test on_stop
     @WebpubsubClientPowerShellPreparer()
@@ -149,3 +81,11 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with client:
             client._stop()
         assert not client._is_connected()
+
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_send_event(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=0)
+        with client:
+            # please register event handler in azure portal before run this test
+            client.send_event("event", "test_send_event", "text")

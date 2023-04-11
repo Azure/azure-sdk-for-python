@@ -371,20 +371,7 @@ class WebPubSubClientProtocol:
         return None
 
     @staticmethod
-    def write_message(
-        message: Union[
-            GroupDataMessage,
-            ServerDataMessage,
-            JoinGroupMessage,
-            LeaveGroupMessage,
-            ConnectedMessage,
-            DisconnectedMessage,
-            SendToGroupMessage,
-            SendEventMessage,
-            SequenceAckMessage,
-            AckMessage,
-        ]
-    ) -> str:
+    def write_message(message: WebPubSubMessage) -> str:
         if message.kind == UpstreamMessageType.JOIN_GROUP:
             data = JoinGroupData(group=message.group, ack_id=message.ack_id)
         elif message.kind == UpstreamMessageType.LEAVE_GROUP:

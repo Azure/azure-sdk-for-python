@@ -80,7 +80,7 @@ class WebPubSubClientCredential:
         return self._client_access_url_provider()
 
 
-_RETRY_TOTAL = 10
+_RETRY_TOTAL = 3
 _RETRY_BACKOFF_FACTOR = 0.8
 _RETRY_BACKOFF_MAX = 120.0
 _RECOVERY_TIMEOUT = 30.0
@@ -98,7 +98,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
     :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
-     reconnect. Default is 30.
+     reconnect. Default is 3.
     :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
      sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
@@ -106,7 +106,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
     :keyword RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
-    :keyword int message_retry_total: total number of retries to allow for sending message. Default is 30.
+    :keyword int message_retry_total: total number of retries to allow for sending message. Default is 3.
     :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
      sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
@@ -129,12 +129,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         *,
         message_retry_backoff_factor: float = _RETRY_BACKOFF_FACTOR,
         message_retry_backoff_max: float = _RETRY_BACKOFF_MAX,
-        message_retry_mode: RetryMode = RetryMode.Fixed,
+        message_retry_mode: RetryMode = RetryMode.Exponential,
         message_retry_total: int = _RETRY_TOTAL,
         protocol_type: WebPubSubProtocolType = WebPubSubProtocolType.JSON_RELIABLE,
         reconnect_retry_backoff_factor: float = _RETRY_BACKOFF_FACTOR,
         reconnect_retry_backoff_max: float = _RETRY_BACKOFF_MAX,
-        reconnect_retry_mode: RetryMode = RetryMode.Fixed,
+        reconnect_retry_mode: RetryMode = RetryMode.Exponential,
         reconnect_retry_total: int = _RETRY_TOTAL,
         auto_rejoin_groups: bool = True,
         logging_enable: bool = False,

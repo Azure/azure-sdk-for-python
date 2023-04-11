@@ -8,6 +8,7 @@ from typing import List
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.webpubsub.client import WebPubSubClient, WebPubSubClientCredential
+from azure.webpubsub.client.models import OnGroupDataMessageArgs
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
 
@@ -31,3 +32,9 @@ WebpubsubClientPowerShellPreparer = functools.partial(
     "webpubsubclient",
     webpubsubclient_connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
 )
+
+TEST_RESULT = set()
+
+
+def on_group_message(msg: OnGroupDataMessageArgs):
+    TEST_RESULT.add(msg.data)
