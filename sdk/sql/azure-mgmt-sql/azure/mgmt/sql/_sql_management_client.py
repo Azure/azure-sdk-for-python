@@ -566,11 +566,11 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar managed_database_restore_details: ManagedDatabaseRestoreDetailsOperations operations
     :vartype managed_database_restore_details:
      azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
-    :ivar managed_databases: ManagedDatabasesOperations operations
-    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar database_encryption_protectors: DatabaseEncryptionProtectorsOperations operations
     :vartype database_encryption_protectors:
      azure.mgmt.sql.operations.DatabaseEncryptionProtectorsOperations
+    :ivar managed_databases: ManagedDatabasesOperations operations
+    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar managed_instances: ManagedInstancesOperations operations
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar managed_ledger_digest_uploads: ManagedLedgerDigestUploadsOperations operations
@@ -994,10 +994,10 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_databases = ManagedDatabasesOperations(
+        self.database_encryption_protectors = DatabaseEncryptionProtectorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_encryption_protectors = DatabaseEncryptionProtectorsOperations(
+        self.managed_databases = ManagedDatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_instances = ManagedInstancesOperations(
