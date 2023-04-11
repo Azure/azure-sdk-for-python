@@ -3226,3 +3226,16 @@ class TestDSLPipeline:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_dsl_pipeline_telemetry_flag(self) -> None:
+        component_func = load_component("./tests/test_configs/components/helloworld_component.yml")
+
+        @dsl.pipeline
+        def pipeline_func():
+            component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
+
+        pipeline_job: PipelineJob = pipeline_func()
+        # log customized flag on root pipeline job, service helps save this value for telemetry.
+        pipeline_job.properties["azureml.telemetry.attribution"] = "customized value for telemetry"
+        rest_object = pipeline_job._to_rest_object()
+        assert rest_object.properties.properties == {"azureml.telemetry.attribution": "customized value for telemetry"}
