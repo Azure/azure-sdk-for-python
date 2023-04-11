@@ -35,6 +35,7 @@ TEST_PARAMS = {"a_param": "1", "another_param": "2"}
     "mock_code_hash",
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
+    "mock_anon_component_version"
 )
 @pytest.mark.training_experiences_test
 class TestCommandJob(AzureRecordedTestCase):
