@@ -31,7 +31,7 @@ class MonitorInputData(RestTranslatableMixin):
             data_context=snake_to_camel(self.dataset_context),
             asset=self.input_dataset._to_rest_object(),
             preprocessing_component_id=self.pre_processing_component,
-            target_column_name=self.target_column_name
+            target_column_name=self.target_column_name,
         )
 
     @classmethod
@@ -39,5 +39,5 @@ class MonitorInputData(RestTranslatableMixin):
         return cls(
             dataset_context=camel_to_snake(obj.data_context),
             target_column_name=obj.target_column_name,
-            pre_processing_component=obj.preprocessing_component_id
+            pre_processing_component=obj.preprocessing_component_id,
         )

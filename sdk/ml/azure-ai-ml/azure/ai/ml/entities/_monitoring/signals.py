@@ -17,8 +17,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     MonitoringDataSegment as RestMonitoringDataSegment,
     TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
     AllFeatures as RestAllFeatures,
-    FeatureSubset as RestFeatureSubset
-
+    FeatureSubset as RestFeatureSubset,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType

@@ -60,6 +60,8 @@ class MonitorDefinition(RestTranslatableMixin):
         return cls(
             compute=obj.compute_id,
             monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target),
-            monitoring_signals={signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()},
+            monitoring_signals={
+                signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
+            },
             alert_notification=AlertNotification._from_rest_object(obj.notification_setting),
         )
