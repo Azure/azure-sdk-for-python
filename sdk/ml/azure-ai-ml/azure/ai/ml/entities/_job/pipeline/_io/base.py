@@ -337,7 +337,7 @@ class NodeInput(InputOutputBase):
             meta=self._meta,
         )
 
-    def _get_data_owner(self):
+    def _get_data_owner(self) -> Optional["BaseNode"]:
         """Return the node if Input is from another node's output. Returns None if for literal value.
         Note: This only works for @pipeline, not for YAML pipeline.
 
@@ -354,14 +354,25 @@ class NodeInput(InputOutputBase):
                 owner = node.inputs.input_dir._get_data_owner()
                 assert owner == pipeline_node.nodes[0]
         """
-        data = self._data
-        if isinstance(data, PipelineInput):
-            # for pipeline input, it's original value(can be literal value or another node's output)
-            # is stored in _original_data
-            data = data._original_data
-        if isinstance(data, NodeOutput):
-            return data._owner
-        return None
+        from azure.ai.ml.entities import Pipeline
+        from azure.ai.ml.entities._builders import BaseNode
+
+        def _resolve_data_owner(data) -> Optional["BaseNode"]:
+            if isinstance(data, BaseNode) and not isinstance(data, Pipeline):
+                return data
+            while isinstance(data, PipelineInput):
+                # for pipeline input, it's original value(can be literal value or another node's output)
+                # is stored in _original_data
+                return _resolve_data_owner(data._original_data)
+            if isinstance(data, NodeOutput):
+                if isinstance(data._owner, Pipeline):
+                    # for input from subgraph's output, trace back to inner node
+                    return _resolve_data_owner(data._node_output)
+                # for input from another node's output, return the node
+                return _resolve_data_owner(data._owner)
+            return None
+
+        return _resolve_data_owner(self._data)
 
 
 class NodeOutput(InputOutputBase, PipelineExpressionMixin):
@@ -374,6 +385,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         *,
         data: Optional[Union[Output, str]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
+        node_output: Optional["NodeOutput"] = None,
         **kwargs,
     ):
         """Initialize an Output of a component.
@@ -391,6 +403,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :type mode: str
         :param owner: The owner component of the output, used to calculate binding.
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
+        :param node_output: The node output bound to pipeline output, only available for pipeline.
+        :type node_output: azure.ai.ml.entities.NodeOutput
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
@@ -413,6 +427,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         self._assert_name_and_version()
 
         self._is_control = meta.is_control if meta is not None else None
+        # store original node output to be able to trace back to inner node from a pipeline output builder.
+        self._node_output = node_output
 
     @property
     def is_control(self) -> str:
@@ -562,6 +578,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             data=copy.copy(self._data),
             owner=self._owner,
             meta=self._meta,
+            node_output=self._node_output,
         )
 
 

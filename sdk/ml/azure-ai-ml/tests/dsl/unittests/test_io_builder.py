@@ -261,25 +261,104 @@ class TestInputOutputBuilder:
             input_name="component_in_path",
         )
 
-        # case3: node input from subgraph's output
+        # case2.3: node input from pipeline input, which is from subgraph's output
+        @pipeline
+        def sub_pipeline1(component_in_path: Input):
+            node1 = component_func1(component_in_number=2, component_in_path=component_in_path)
+            return node1.outputs
+
+        @pipeline
+        def sub_pipeline2(component_in_path: Input):
+            node2 = component_func1(component_in_number=2, component_in_path=component_in_path)
+            assert node2.inputs.component_in_path._get_data_owner().name == "node1"
+
+        @pipeline
+        def parent_pipeline():
+            src = component_func1(component_in_number=1, component_in_path=Input(path="test_path"))
+            sub1 = sub_pipeline1(component_in_path=src)
+            sub_pipeline2(component_in_path=sub1.outputs.component_out_path)
+
+        assert_node_owners_expected(
+            pipeline_job=parent_pipeline(),
+            expected_owners={"src": None, "node1": "src", "node2": "node1"},
+            input_name="component_in_path",
+        )
+
+        # case3.1: node input from subgraph's output, which is from a normal node
         @pipeline
         def sub_pipeline(component_in_path: Input):
-            node2 = component_func1(component_in_number=2, component_in_path=component_in_path)
-            return node2.outputs
+            sub_node = component_func1(component_in_number=2, component_in_path=component_in_path)
+            return sub_node.outputs
 
         @pipeline
         def parent_pipeline():
             node1 = sub_pipeline(component_in_path=Input(path="test_path"))
             node3 = component_func1(component_in_number=3, component_in_path=node1.outputs.component_out_path)
-            # TODO: check do we need node1 or node2 here
-            assert node3.inputs.component_in_path._get_data_owner().name == "node1"
+            assert node3.inputs.component_in_path._get_data_owner().name == "sub_node"
             return node3
 
         assert_node_owners_expected(
             pipeline_job=parent_pipeline(),
-            expected_owners={"node2": None, "node3": "node1"},
+            expected_owners={"sub_node": None, "node3": "sub_node"},
             input_name="component_in_path",
         )
+
+        # case3.2: node input from subgraph's output, which is from another subgraph
+        @pipeline
+        def sub_pipeline_1(component_in_path: Input):
+            sub_node_1 = component_func1(component_in_number=2, component_in_path=component_in_path)
+            return sub_node_1.outputs
+
+        @pipeline
+        def sub_pipeline_2(component_in_path: Input):
+            sub_node_2 = sub_pipeline_1(component_in_path=component_in_path)
+            return sub_node_2.outputs
+
+        @pipeline
+        def parent_pipeline():
+            node1 = sub_pipeline_2(component_in_path=Input(path="test_path"))
+            node3 = component_func1(component_in_number=3, component_in_path=node1.outputs.component_out_path)
+            assert node3.inputs.component_in_path._get_data_owner().name == "sub_node_1"
+            return node3
+
+        assert_node_owners_expected(
+            pipeline_job=parent_pipeline(),
+            expected_owners={"sub_node_1": None, "node3": "sub_node_1"},
+            input_name="component_in_path",
+        )
+
+    def test_input_get_data_owner_multiple_subgraph(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @pipeline
+        def sub_pipeline(component_in_path: Input):
+            inner_node = component_func1(component_in_number=2, component_in_path=component_in_path)
+            return inner_node.outputs
+
+        @pipeline
+        def parent_pipeline():
+            node1 = component_func1(component_in_number=1, component_in_path=Input(path="test_path1"))
+            node1.name = "node1"
+            sub1 = sub_pipeline(component_in_path=node1.outputs.component_out_path)
+            after1 = component_func1(component_in_path=sub1.outputs.component_out_path)
+            source_of_branch_1 = after1.inputs.component_in_path._get_data_owner()
+            assert source_of_branch_1.name == "inner_node"
+
+            node2 = component_func1(component_in_number=3, component_in_path=Input(path="test_path2"))
+            node2.name = "node2"
+            sub2 = sub_pipeline(component_in_path=node2.outputs.component_out_path)
+            after2 = component_func1(component_in_path=sub2.outputs.component_out_path)
+            source_of_branch_2 = after2.inputs.component_in_path._get_data_owner()
+            assert source_of_branch_2.name == "inner_node"
+
+            # subgraph called twice, source for each branch should not be the same
+            assert source_of_branch_1._instance_id != source_of_branch_2._instance_id
+            # one is from node1, the other is from node2
+            assert source_of_branch_1.inputs.component_in_path._get_data_owner().name == "node1"
+            assert source_of_branch_2.inputs.component_in_path._get_data_owner().name == "node2"
+
+        parent_pipeline()
 
     def test_input_get_data_owner_multiple_level_pipeline(self):
         component_yaml = components_dir / "helloworld_component.yml"
@@ -289,8 +368,7 @@ class TestInputOutputBuilder:
         @pipeline
         def pipeline_level1(component_in_path: Input):
             node1 = component_func1(component_in_path=component_in_path)
-            # TODO: confirm if we need None or src here
-            assert node1.inputs.component_in_path._get_data_owner() == None
+            assert node1.inputs.component_in_path._get_data_owner().name == "src"
             return node1.outputs
 
         @pipeline
@@ -307,7 +385,7 @@ class TestInputOutputBuilder:
 
         assert_node_owners_expected(
             pipeline_job=pipeline_level3(),
-            expected_owners={"src": None, "node1": None},
+            expected_owners={"src": None, "node1": "src"},
             input_name="component_in_path",
         )
 
@@ -328,13 +406,12 @@ class TestInputOutputBuilder:
             node3 = pipeline_level2()
             node3.name = "node3"
             dst = component_func1(component_in_path=node3.outputs.component_out_path)
-            # TODO: confirm if we need node1 or node3 here
-            assert dst.inputs.component_in_path._get_data_owner().name == "node3"
+            assert dst.inputs.component_in_path._get_data_owner().name == "node1"
             return dst.outputs
 
         assert_node_owners_expected(
             pipeline_job=pipeline_level3(),
-            expected_owners={"node1": None, "dst": "node3"},
+            expected_owners={"node1": None, "dst": "node1"},
             input_name="component_in_path",
         )
 
@@ -367,14 +444,13 @@ class TestInputOutputBuilder:
             node3 = component_func1(component_in_path=node2.outputs.component_out_path)
             node3.name = "node3"
             # node input from another (pipeline) node's output
-            # TODO: check do we need node2 or inner_node here
-            assert node3.inputs.component_in_path._get_data_owner().name == "node2"
+            assert node3.inputs.component_in_path._get_data_owner().name == "inner_node"
             return node3.outputs
 
         my_pipeline = my_pipeline()
 
         assert_node_owners_expected(
             pipeline_job=my_pipeline,
-            expected_owners={"node1": None, "inner_node": "node1", "node3": "node2"},
+            expected_owners={"node1": None, "inner_node": "node1", "node3": "inner_node"},
             input_name="component_in_path",
         )
