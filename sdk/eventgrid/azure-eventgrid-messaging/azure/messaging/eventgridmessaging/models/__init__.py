@@ -11,6 +11,7 @@ from ._models import FailedLockToken
 from ._models import LockToken
 from ._models import LockTokenInput
 from ._models import LockTokensResponse
+from ._models import ReceiveDetails
 from ._models import ReceiveResponse
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -22,6 +23,7 @@ __all__ = [
     "LockToken",
     "LockTokenInput",
     "LockTokensResponse",
+    "ReceiveDetails",
     "ReceiveResponse",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

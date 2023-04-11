@@ -14,7 +14,7 @@ client = AzureMessagingEventGridClient(endpoint=ENDPOINT, credential=credential)
 # PUBLISH
 
 try:
-    publish = client.publish_cloud_event(topic_name=topic, event=CloudEventEvent(id="1", source="test", type="test", data="test", specversion="1.0"))
+    publish = client.publish_cloud_event(topic_name=topic, event=CloudEvent(id="1", source="test", type="test", data="test", specversion="1.0"))
     print("PUBLISH")
     print(publish)
 except Exception as e:
@@ -23,7 +23,7 @@ except Exception as e:
 
 # PUBLISH BATCH
 try:
-    publish_batch = client.publish_batch_of_cloud_events(topic_name=topic, events=[CloudEventEvent(id="1", source="test", type="test", data="test", specversion="1.0")])
+    publish_batch = client.publish_batch_of_cloud_events(topic_name=topic, events=[CloudEvent(id="1", source="test", type="test", data="test", specversion="1.0")])
     print("PUBLISH BATCH")
     print(publish_batch)
 except Exception as e:
