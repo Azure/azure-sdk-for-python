@@ -14,7 +14,7 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
     def __init__(self, method_name, *args, **kwargs):
         self.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING', 'Endpoint=sb://REDACTED.servicebus.windows.net/;SharedAccessKeyName=REDACTED;SharedAccessKey=REDACTED')
-        self.dispatcher_endpoint = 'https://REDACTED.azurewebsites.net'
+        self.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT', 'https://REDACTED.azurewebsites.net')
         self.dispatcher_callback = self.dispatcher_endpoint + '/api/servicebuscallback/events'
         self.processor_store: Dict[str, Any] = {}
         self.incoming_call_context_store: Dict[str, Any] = {}
