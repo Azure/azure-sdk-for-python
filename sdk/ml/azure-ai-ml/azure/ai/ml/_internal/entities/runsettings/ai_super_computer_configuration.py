@@ -7,13 +7,25 @@ from typing import Dict, List, Optional
 from ....entities._job.job_resource_configuration import BaseProperty
 
 
-class AISuperComputerStorageReferenceConfiguration(BaseProperty):
+class PascalCaseProperty(BaseProperty):
+    
+    _KEY_MAPPING = {}
+
+    def items(self):
+        result  = []
+        for key, value in super().items():
+            if key.lower() in self._KEY_MAPPING:
+                key = self._KEY_MAPPING[key.lower()]
+            result.append((key, value))
+        return result
+
+
+class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):
 
     _KEY_MAPPING = {
         "container_name": "ContainerName",
         "relative_path": "RelativePath",
     }
-    _NEED_KEY_MAPPING = True
 
     def __init__(
         self,
@@ -32,7 +44,7 @@ class AISuperComputerStorageReferenceConfiguration(BaseProperty):
         self.relative_path = relative_path
 
 
-class AISuperComputerScalePolicy(BaseProperty):
+class AISuperComputerScalePolicy(PascalCaseProperty):
 
     _KEY_MAPPING = {
         "auto_scale_instance_type_count_set": "AutoScaleInstanceTypeCountSet",
@@ -40,7 +52,6 @@ class AISuperComputerScalePolicy(BaseProperty):
         "max_instance_type_count": "MaxInstanceTypeCount",
         "min_instance_type_count": "MinInstanceTypeCount",
     }
-    _NEED_KEY_MAPPING = True
 
     def __init__(
         self,
@@ -73,7 +84,7 @@ class AISuperComputerScalePolicy(BaseProperty):
         self.min_instance_type_count = min_instance_type_count
 
 
-class AISuperComputerConfiguration(BaseProperty):  # pylint: disable=too-many-instance-attributes
+class AISuperComputerConfiguration(PascalCaseProperty):  # pylint: disable=too-many-instance-attributes
     """A class to manage AI Super Computer Configuration."""
 
     _KEY_MAPPING = {
@@ -95,7 +106,6 @@ class AISuperComputerConfiguration(BaseProperty):  # pylint: disable=too-many-in
         "suspend_on_idle_time_hours": "SuspendOnIdleTimeHours",
         "user_alias": "UserAlias",
     }
-    _NEED_KEY_MAPPING = True
 
     def __init__(
         self,

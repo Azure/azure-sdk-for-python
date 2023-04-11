@@ -50,18 +50,11 @@ class BaseProperty(dict):
 
     @classmethod
     def _to_dict(cls, obj: Any) -> Any:
-        # pylint: disable=protected-access
         if isinstance(obj, dict):
-            # if obj has attribute _NEED_KEY_MAPPING, it should be an internal AISuperComputerConfiguration object,
-            # whose key name need to be mapped to Pascal case during to dict operation.
-            # Ref: sdk\ml\azure-ai-ml\azure\ai\ml\_internal\entities\runsettings\ai_super_computer_configuration.py
-            need_key_mapping = hasattr(obj, "_NEED_KEY_MAPPING")
             result = {}
             for key, value in obj.items():
                 if value is None:
                     continue
-                if need_key_mapping and key.lower() in obj._KEY_MAPPING:
-                    key = obj._KEY_MAPPING[key.lower()]
                 if isinstance(value, dict):
                     result[key] = cls._to_dict(value)
                 else:
