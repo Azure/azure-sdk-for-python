@@ -3,8 +3,6 @@ import asyncio
 from azure.messaging.eventgridmessaging.aio import EventGridMessagingClient
 from azure.messaging.eventgridmessaging import EventGridSharedAccessKeyCredential
 from azure.messaging.eventgridmessaging.models import *
-from azure.core.messaging import CloudEvent
-
 
 
 # Create a client
