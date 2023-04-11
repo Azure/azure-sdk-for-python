@@ -5,6 +5,17 @@
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._monitoring import MonitorMetricName, MonitorFeatureType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    NumericalDataDriftMetricThreshold,
+    CategoricalDataDriftMetricThreshold,
+    NumericalDataQualityMetricThreshold,
+    CategoricalDataQualityMetricThreshold,
+    NumericalPredictionDriftMetricThreshold,
+    CategoricalPredictionDriftMetricThreshold,
+    FeatureAttributionMetricThreshold,
+    ClassificationModelPerformanceMetric,
+    RegressionModelPerformanceMetric,
+)
 from azure.ai.ml._utils._experimental import experimental
 
 
