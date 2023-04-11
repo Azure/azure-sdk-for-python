@@ -162,7 +162,8 @@ class JobSchedule(Schedule):
             description=description,
             tags=tags,
             properties=properties,
-            **kwargs)
+            **kwargs,
+        )
         self.create_job = create_job
 
     @classmethod
