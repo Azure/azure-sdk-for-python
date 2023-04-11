@@ -30,6 +30,7 @@ from ._helpers import (
     _is_tag,
     _parse_next_link,
     _validate_digest,
+    _serialize_manifest,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
     OCI_IMAGE_MANIFEST,
@@ -886,7 +887,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             if isinstance(manifest, dict):
-                data = BytesIO(json.dumps(manifest).encode())
+                data = _serialize_manifest(manifest)
             else:
                 data = manifest
             tag_or_digest = tag

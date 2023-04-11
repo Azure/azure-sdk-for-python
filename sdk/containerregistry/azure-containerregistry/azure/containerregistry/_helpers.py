@@ -8,7 +8,8 @@ import hashlib
 import re
 import time
 import json
-from typing import List, Dict, IO, Optional
+from io import BytesIO
+from typing import Any, List, Dict, IO, Optional
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
@@ -125,6 +126,10 @@ def _parse_exp_time(raw_token):
         return web_token.get("exp", time.time())
 
     return time.time()
+
+def _serialize_manifest(manifest: Dict[str, Any]) -> IO:
+    data = json.dumps(manifest).encode('utf-8')
+    return BytesIO(data)
 
 def _compute_digest(data: IO[bytes]) -> str:
     data.seek(0)

@@ -10,6 +10,9 @@ from ._container_registry_client import ContainerRegistryClient
 from ._generated.models import (
     ArtifactManifestOrder,
     ArtifactTagOrder,
+    OciImageManifest,
+    OciDescriptor,
+    OciAnnotations,
 )
 from ._models import (
     ArtifactArchitecture,
@@ -35,4 +38,7 @@ __all__ = [
     "ArtifactTagProperties",
     "DownloadManifestResult",
     "DownloadBlobStream",
+    "OciImageManifest",
+    "OciDescriptor",
+    "OciAnnotations",
 ]

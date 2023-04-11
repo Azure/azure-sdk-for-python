@@ -25,13 +25,18 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from ._async_download_stream import AsyncDownloadBlobStream
-from .._container_registry_client import _return_response_headers, _return_response_and_headers, _return_response_and_deserialized
+from .._container_registry_client import (
+    _return_response_headers,
+    _return_response_and_headers,
+    _return_response_and_deserialized,
+)
 from .._generated.models import AcrErrors
 from .._helpers import (
     _compute_digest,
     _is_tag,
     _parse_next_link,
     _validate_digest,
+    _serialize_manifest,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
     OCI_IMAGE_MANIFEST,
@@ -864,7 +869,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_attributes.tag, # type: ignore
             repository=repository
         )
-    
+
     @distributed_trace_async
     async def upload_manifest(
         self,
@@ -892,7 +897,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             if isinstance(manifest, dict):
-                data = BytesIO(json.dumps(manifest).encode())
+                data = _serialize_manifest(manifest)
             else:
                 data = manifest
             tag_or_digest = tag
@@ -1015,7 +1020,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
+    async def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
         """Download the manifest for an artifact.
 
         :param str repository: Name of the repository.
@@ -1037,7 +1042,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
         )
         media_type = response.http_response.headers['Content-Type']
-        manifest_stream = BytesIO(b"".join(manifest_iterator))
+        manifest_bytes = b""
+        async for chunk in manifest_iterator:
+           manifest_bytes += chunk
+        manifest_stream = BytesIO(manifest_bytes)
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
         else:
