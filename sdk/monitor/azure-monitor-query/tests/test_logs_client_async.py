@@ -261,6 +261,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
             assert response.visualization is not None
             assert response.statistics is not None
 
+    @pytest.mark.asyncio
     async def test_client_different_endpoint(self):
         credential = self.get_credential(LogsQueryClient, is_async=True)
         endpoint = "https://api.loganalytics.azure.cn/v1"
