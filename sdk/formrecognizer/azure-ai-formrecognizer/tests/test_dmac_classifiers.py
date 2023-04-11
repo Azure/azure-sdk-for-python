@@ -64,8 +64,8 @@ class TestClassifier(FormRecognizerTest):
         result = poller.result()
         assert result.api_version
         assert result.classifier_id
-        assert result.created_date_time
-        assert result.expiration_date_time
+        assert result.created_on
+        assert result.expires_on
         assert result.description == "IRS document classifier"
         for doc_type, source in result.doc_types.items():
             assert doc_type
@@ -120,8 +120,8 @@ class TestClassifier(FormRecognizerTest):
 
         assert result.classifier_id
         assert result.api_version
-        assert result.created_date_time
-        assert result.expiration_date_time
+        assert result.created_on
+        assert result.expires_on
         assert result.description is None
         for doc_type, source in result.doc_types.items():
             assert doc_type
@@ -191,8 +191,8 @@ class TestClassifier(FormRecognizerTest):
         assert result.classifier_id == classifier.classifier_id
         assert result.description == classifier.description
         assert result.api_version == classifier.api_version
-        assert result.created_date_time == classifier.created_date_time
-        assert result.expiration_date_time == classifier.expiration_date_time
+        assert result.created_on == classifier.created_on
+        assert result.expires_on == classifier.expires_on
         for doc_type, source in result.doc_types.items():
             assert doc_type in classifier.doc_types
             assert source.azure_blob_source.container_url == classifier.doc_types[doc_type].azure_blob_source.container_url
@@ -202,8 +202,8 @@ class TestClassifier(FormRecognizerTest):
         for classifier in classifiers_list:
             assert classifier.classifier_id
             assert classifier.api_version
-            assert classifier.created_date_time
-            assert classifier.expiration_date_time
+            assert classifier.created_on
+            assert classifier.expires_on
             assert classifier.doc_types
 
         client.delete_document_classifier(classifier.classifier_id)

@@ -138,7 +138,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         workspace_name = self._check_workspace_name(workspace_name)
-        return self._provision_network_operation.begin_post(
+        return self._provision_network_operation.begin_provision_managed_network(
             self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=include_spark)
         )
 

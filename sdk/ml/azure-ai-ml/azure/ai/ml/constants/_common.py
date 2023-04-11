@@ -844,6 +844,13 @@ class Boolean:
     """False boolean type."""
 
 
+class InferenceServerType:
+    AZUREML_ONLINE = "azureml_online"
+    AZUREML_BATCH = "azureml_batch"
+    TRITON = "triton"
+    CUSTOM = "custom"
+
+
 class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "all"
     NONE = "none"
