@@ -48,6 +48,7 @@ class ModelBatchDeployment(BatchDeployment):
         tags: Optional[Dict[str, Any]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
         model_deployment_settings: Optional[ModelDeploymentSettings] = None,
+        compute: Optional[str] = None,
         mini_batch_size: Optional[int],
         instance_count: Optional[int] = None,
         max_concurrency_per_instance: Optional[int] = None,
@@ -67,6 +68,7 @@ class ModelBatchDeployment(BatchDeployment):
             code_configuration=code_configuration,
             description=description,
             tags=tags,
+            compute=compute,
             **kwargs
         )
         self.model_deployment_settings = ModelDeploymentSettings(
@@ -108,6 +110,7 @@ class ModelBatchDeployment(BatchDeployment):
             mini_batch_size=deployment_settings.mini_batch_size,
             max_concurrency_per_instance=deployment_settings.max_concurrency_per_instance,
             environment_variables=deployment_settings.environment_variables,
+            compute=self.compute
         )
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 

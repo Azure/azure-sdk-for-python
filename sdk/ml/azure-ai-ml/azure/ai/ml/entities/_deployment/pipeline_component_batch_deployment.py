@@ -5,11 +5,12 @@
 from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import PipelineComponentBatchDeploymentSchema
 from azure.ai.ml.entities import BatchDeployment, PipelineComponent
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration, IdAssetReference, BatchDeploymentProperties, BatchDeployment as RestBatchDeployment
+
 
 class PipelineComponentBatchDeployment(BatchDeployment):
     """Job Definition entity.
@@ -62,3 +63,12 @@ class PipelineComponentBatchDeployment(BatchDeployment):
                 location=location,
                 properties=BatchDeploymentProperties(deployment_configuration=batch_pipeline_config)
             )
+    @classmethod
+    def _from_rest_object(cls, deployment: RestBatchDeployment):
+        return PipelineComponentBatchDeployment(
+            name = deployment.name,
+            component= deployment.properties.deployment_configuration.component_id.asset_id,
+            settings= deployment.properties.deployment_configuration.settings
+        )
+    def _to_dict(self) -> Dict:
+        return PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member

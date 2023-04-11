@@ -11,6 +11,7 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema import(
     UnionField,
     ArmVersionedStr,
+    ArmStr,
     RegistryStr,
 )
 from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
@@ -61,7 +62,7 @@ class BatchDeploymentSchema(DeploymentSchema):
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False)
 
-    job_definition = NestedField(JobDefinitionSchema)
+    job_definition = ArmStr(azureml_type=AzureMLResourceType.JOB),
     component = UnionField(
         [
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
@@ -74,9 +75,6 @@ class BatchDeploymentSchema(DeploymentSchema):
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import BatchDeployment, ModelBatchDeployment, PipelineComponentBatchDeployment
-        import debugpy
-        debugpy.connect(('localhost', 5678))
-        debugpy.breakpoint()
         try:
             if data["type"]:
                 if data["type"] == BatchDeploymentType.COMPONENT:
@@ -84,6 +82,7 @@ class BatchDeploymentSchema(DeploymentSchema):
                 elif data["type"] == BatchDeploymentType.MODEL:
                     return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
         except Exception as ex:
-            raise ex
-        # except:
-        #     return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+            if type(ex) is KeyError:
+                return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+            else:
+                raise ex

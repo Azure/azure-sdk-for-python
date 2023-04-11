@@ -266,29 +266,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             properties=deployment.properties.properties,
         )
 
-        # Job definition is in private preview. If private preview environment is
-        # not enable we need to remove job definition from properties.
-        if is_private_preview_enabled():
-            snake_dict = {}
-            for k in deployment.properties:
-                if k.startswith("ComponentDeployment"):
-                    k_snake = cls._flat_key_pascal_to_snake(k)
-                    snake_dict[k_snake] = deployment.properties[k]
-            if len(snake_dict) > 0:
-                for k in snake_dict:
-                    deployment.properties[k] = snake_dict[k]
-            unflat_data = unflatten(deployment.properties, ".")
-            if unflat_data.get("component_deployment", None):
-                deployment.job_definition = unflat_data.get("component_deployment")
 
-        del_key = []
-        for k in deployment.properties:
-            if k.startswith("ComponentDeployment") or k.startswith("component_deployment"):
-                del_key.append(k)
-        if len(del_key) > 0:
-            for k in del_key:
-                del deployment.properties[k]
-        return deployment
 
     @classmethod
     def _load(
