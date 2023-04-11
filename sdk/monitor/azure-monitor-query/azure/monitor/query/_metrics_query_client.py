@@ -14,7 +14,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._serialization import Serializer
 from ._generated.metrics._client import MonitorMetricsClient
 from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
-from ._helpers import get_metrics_authentication_policy, construct_iso8601
+from ._helpers import get_authentication_policy, construct_iso8601
 
 
 class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -49,7 +49,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         self._client = MonitorMetricsClient(
             credential=credential,
             endpoint=self._endpoint,
-            authentication_policy=auth_policy or get_metrics_authentication_policy(credential, audience),
+            authentication_policy=auth_policy or get_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics

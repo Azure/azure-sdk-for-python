@@ -14,34 +14,13 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._generated._serialization import Serializer, Deserializer
 
 
-def get_authentication_policy(
-    credential: TokenCredential,
-    audience: str
-) -> BearerTokenCredentialPolicy:
+def get_authentication_policy(credential: TokenCredential, audience: str) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
-    scope = audience.rstrip('/') + "/.default"
+    scope = audience.rstrip("/") + "/.default"
     if hasattr(credential, "get_token"):
-        return BearerTokenCredentialPolicy(
-            credential, scope
-        )
-
-    raise TypeError("Unsupported credential")
-
-
-def get_metrics_authentication_policy(
-    credential: TokenCredential,
-    audience: str
-) -> BearerTokenCredentialPolicy:
-    """Returns the correct authentication policy"""
-    if credential is None:
-        raise ValueError("Parameter 'credential' must not be None.")
-    scope = audience.rstrip('/') + "/.default"
-    if hasattr(credential, "get_token"):
-        return BearerTokenCredentialPolicy(
-            credential, scope
-        )
+        return BearerTokenCredentialPolicy(credential, scope)
 
     raise TypeError("Unsupported credential")
 
