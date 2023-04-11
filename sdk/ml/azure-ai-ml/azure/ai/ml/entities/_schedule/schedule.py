@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import typing
+from abc import ABC
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
@@ -30,7 +31,100 @@ from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
-class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Resource, TelemetryMixin):
+class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Resource, TelemetryMixin, ABC):
+    """JobSchedule object.
+
+    :param name: Name of the schedule.
+    :type name: str
+    :param trigger: Trigger of the schedule.
+    :type trigger: Union[CronTrigger, RecurrenceTrigger]
+    :param display_name: Display name of the schedule.
+    :type display_name: str
+    :param description: Description of the schedule, defaults to None
+    :type description: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param properties: The job property dictionary.
+    :type properties: dict[str, str]
+    """
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        trigger: Union[CronTrigger, RecurrenceTrigger],
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        **kwargs,
+    ):
+        is_enabled = kwargs.pop("is_enabled", None)
+        provisioning_state = kwargs.pop("provisioning_state", None)
+        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        self.trigger = trigger
+        self.display_name = display_name
+        self._is_enabled = is_enabled
+        self._provisioning_state = provisioning_state
+
+    @property
+    def is_enabled(self):
+        """
+        Return the schedule is enabled or not.
+
+        :return: Enabled status.
+        :rtype: bool
+        """
+        return self._is_enabled
+
+    @property
+    def provisioning_state(self):
+        """
+        Return the schedule's provisioning state. Possible values include:
+        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+
+        :return: Provisioning state.
+        :rtype: str
+        """
+        return self._provisioning_state
+
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+        """Dump the schedule content into a file in yaml format.
+
+        :param dest: The destination to receive this schedule's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[str, PathLike, IO[AnyStr]]
+        """
+        path = kwargs.pop("path", None)
+        yaml_serialized = self._to_dict()
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+
+    @classmethod
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.SCHEDULE
+
+    @classmethod
+    def _resolve_cls_and_type(cls, data, params_override):
+
+        if "create_job" in data:
+            return JobSchedule, None
+
+        return cls, None
+
+    def _to_dict(self) -> Dict:
+        """Convert the resource to a dictionary."""
+        return self._dump_for_validation()
+
+    def _get_telemetry_values(self, *args, **kwargs):
+        """Return the telemetry values of schedule."""
+        return {"trigger_type": type(self.trigger).__name__}
+
+
+class JobSchedule(Schedule):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -61,35 +155,15 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-        is_enabled = kwargs.pop("is_enabled", None)
-        provisioning_state = kwargs.pop("provisioning_state", None)
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
-        self.trigger = trigger
-        self.display_name = display_name
+        super().__init__(
+            name=name,
+            trigger=trigger,
+            display_name=display_name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs)
         self.create_job = create_job
-        self._is_enabled = is_enabled
-        self._provisioning_state = provisioning_state
-
-    @property
-    def is_enabled(self):
-        """
-        Return the schedule is enabled or not.
-
-        :return: Enabled status.
-        :rtype: bool
-        """
-        return self._is_enabled
-
-    @property
-    def provisioning_state(self):
-        """
-        Return the schedule's provisioning state. Possible values include:
-        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-
-        :return: Provisioning state.
-        :rtype: str
-        """
-        return self._provisioning_state
 
     @classmethod
     def _load(
@@ -171,28 +245,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         schedule.create_job = create_job
         return schedule
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the schedule content into a file in yaml format.
-
-        :param dest: The destination to receive this schedule's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
-        :type dest: Union[str, PathLike, IO[AnyStr]]
-        """
-        path = kwargs.pop("path", None)
-        yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
-
     @classmethod
     def _create_schema_for_validation(cls, context):
         return ScheduleSchema(context=context)
-
-    @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.SCHEDULE
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic."""
@@ -290,16 +345,8 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             )
         )
 
-    def _to_dict(self) -> Dict:
-        """Convert the resource to a dictionary."""
-        return self._dump_for_validation()
-
     def __str__(self):
         try:
             return self._to_yaml()
         except BaseException:  # pylint: disable=broad-except
             return super(JobSchedule, self).__str__()
-
-    def _get_telemetry_values(self, *args, **kwargs):
-        """Return the telemetry values of schedule."""
-        return {"trigger_type": type(self.trigger).__name__}
