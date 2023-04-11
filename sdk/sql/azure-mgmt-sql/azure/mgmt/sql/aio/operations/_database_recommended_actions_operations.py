@@ -109,8 +109,9 @@ class DatabaseRecommendedActionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -189,8 +190,9 @@ class DatabaseRecommendedActionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -308,8 +310,8 @@ class DatabaseRecommendedActionsOperations:
         :type advisor_name: str
         :param recommended_action_name: The name of Database Recommended Action. Required.
         :type recommended_action_name: str
-        :param parameters: The requested recommended action resource state. Is either a model type or a
-         IO type. Required.
+        :param parameters: The requested recommended action resource state. Is either a
+         RecommendedAction type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.RecommendedAction or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -362,8 +364,9 @@ class DatabaseRecommendedActionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

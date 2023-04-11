@@ -9,11 +9,17 @@ securely store and control access to tokens, passwords, certificates, API keys,
 and other secrets
 - Vault administration ([azure-keyvault-administration](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration)) - role-based access control (RBAC), and vault-level backup and restore options
 
-[Source code][library_src] | [Package (PyPI)][pypi_package_certificates] | [API reference documentation][reference_docs] | [Product documentation][azure_keyvault] | [Samples][certificates_samples]
+[Source code][library_src]
+| [Package (PyPI)][pypi_package_certificates]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-keyvault/)
+| [API reference documentation][reference_docs]
+| [Product documentation][azure_keyvault]
+| [Samples][certificates_samples]
 
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
+_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 ## Getting started
 ### Install the package
@@ -27,7 +33,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.6 or later
+* Python 3.7 or later
 * An existing [Azure Key Vault][azure_keyvault]. If you need to create one, you can do so using the Azure CLI by following the steps in [this document][azure_keyvault_cli].
 
 ### Authenticate the client
@@ -36,16 +42,17 @@ In order to interact with the Azure Key Vault service, you will need an instance
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
 #### Create a client
-After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a certificate client (replacing the value of `vault_url` with your vault's URL):
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a certificate client (replacing the value of `VAULT_URL` with your vault's URL):
+
+<!-- SNIPPET:hello_world.create_a_certificate_client -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient
-
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 ```
+
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.certificates.aio`'s `CertificateClient` instead.
 
@@ -189,7 +196,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 
@@ -278,7 +285,7 @@ level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient
 import sys

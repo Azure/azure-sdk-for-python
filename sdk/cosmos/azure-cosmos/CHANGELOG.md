@@ -1,14 +1,29 @@
 ## Release History
 
-### 4.3.1b2 (Unreleased)
+### 4.4.0b1 (2023-04-11)
+
 #### Features Added
- - Added `correlated_activity_id` for query operations
- - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations
-#### Breaking Changes
+ - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186).
+ - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
+
+
+#### Bugs Fixed
+* Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally. See [PR 29136](https://github.com/Azure/azure-sdk-for-python/pull/29136).
+* Fixed bug with method `query_items()` of our async container class, where partition key and cross partition headers would both be set when using partition keys. See [PR 29366](https://github.com/Azure/azure-sdk-for-python/pull/29366/).
+* Fixed bug with client not properly surfacing errors for invalid credentials and identities with insufficient permissions. Users running into 'NoneType has no attribute ConsistencyPolicy' errors when initializing their clients will now see proper authentication exceptions. See [PR 29256](https://github.com/Azure/azure-sdk-for-python/pull/29256).
+
+#### Other Changes
+* Removed use of `six` package within the SDK.
+
+### 4.3.1 (2023-02-23)
+
+#### Features Added
+ - Added `correlated_activity_id` for query operations.
+ - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations.
+ - GA release of CosmosHttpLoggingPolicy and autoscale feature.
 
 #### Bugs Fixed
 - Bug fix to address queries with VALUE MAX (or any other aggregate) that run into an issue if the query is executed on a container with at least one "empty" partition.
-#### Other Changes
 
 ### 4.3.1b1 (2022-09-19)
 

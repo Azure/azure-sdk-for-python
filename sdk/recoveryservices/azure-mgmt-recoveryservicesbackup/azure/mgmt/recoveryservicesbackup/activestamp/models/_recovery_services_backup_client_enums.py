@@ -694,6 +694,14 @@ class SupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_SUPPORTED = "NotSupported"
 
 
+class TargetDiskNetworkAccessOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network access settings to be used for restored disks."""
+
+    SAME_AS_ON_SOURCE_DISKS = "SameAsOnSourceDisks"
+    ENABLE_PRIVATE_ACCESS_FOR_ALL_DISKS = "EnablePrivateAccessForAllDisks"
+    ENABLE_PUBLIC_ACCESS_FOR_ALL_DISKS = "EnablePublicAccessForAllDisks"
+
+
 class TieringMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tiering Mode to control automatic tiering of recovery points. Supported values are:
 

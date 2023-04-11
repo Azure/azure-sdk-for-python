@@ -36,7 +36,7 @@ initialize_logger_info(module_logger, terminator="")
 
 
 def get_duration(start_time: float) -> None:
-    """Calculates the duration of the Long running operation took to finish
+    """Calculates the duration of the Long running operation took to finish.
 
     :param start_time: Start time
     :type start_time: float
@@ -100,7 +100,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
 
 
 def validate_response(response: HttpResponse) -> None:
-    """Validates the response of POST requests, throws on error
+    """Validates the response of POST requests, throws on error.
 
     :param HttpResponse response: the response of a POST requests
     :raises Exception: Raised when response is not json serializable
@@ -128,8 +128,7 @@ def validate_response(response: HttpResponse) -> None:
 
 
 def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
-    """Upload code, dependency, model dependencies. For BatchDeployment only
-    register compute.
+    """Upload code, dependency, model dependencies. For BatchDeployment only register compute.
 
     :param Deployment deployment: Endpoint deployment object.
     :param OperationOrchestrator orchestrators: Operation Orchestrator.

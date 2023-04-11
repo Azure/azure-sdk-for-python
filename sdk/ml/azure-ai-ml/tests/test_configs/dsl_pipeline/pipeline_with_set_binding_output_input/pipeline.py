@@ -131,7 +131,7 @@ def pipeline_with_setting_binding_node_and_pipeline_level() -> PipelineJob:
 
 
 def pipeline_with_command_builder_setting_binding_node_and_pipeline_level() -> PipelineJob:
-    environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+    environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     inputs = {
         "training_data": Input(type="uri_folder"),
@@ -189,7 +189,6 @@ def nested_dsl_pipeline_with_setting_binding_node_and_pipeline_level() -> Pipeli
         training_learning_rate: float,
         learning_rate_schedule: str,
     ) -> Output(mode=InputOutputModes.RW_MOUNT):
-
         train_job = train_func(
             training_data=training_input,
             max_epochs=training_max_epocs,

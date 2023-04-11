@@ -148,7 +148,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert isinstance(environment_list, ItemPaged)
 
     def test_environment_get(self, client: MLClient) -> None:
-        environment_name = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu"
+        environment_name = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu"
         environment_version = "1"
         environment_id = _get_environment_arm_id(
             client=client, environment_name=environment_name, environment_version=environment_version
@@ -203,7 +203,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert name in get_environment_list()
 
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
-
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
 

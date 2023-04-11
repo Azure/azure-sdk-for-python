@@ -44,7 +44,7 @@ def analyze_read():
     )
 
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -54,13 +54,22 @@ def analyze_read():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-read", document=f
+            "prebuilt-read", document=f, features=[AnalysisFeature.OCR_FONT]
         )
     result = poller.result()
 
     print("----Languages detected in the document----")
     for language in result.languages:
         print("Language code: '{}' with confidence {}".format(language.locale, language.confidence))
+
+    print("----Styles detected in the document----")
+    for style in result.styles:
+        if style.is_handwritten:
+            print("Found the following handwritten content: ")
+            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+        if style.font_style:
+            print(f"The document contains '{style.font_style}' font style, applied to the following text: ")
+            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
     for page in result.pages:
         print("----Analyzing document from page #{}----".format(page.page_number))
@@ -112,19 +121,19 @@ if __name__ == "__main__":
     try:
         analyze_read()
     except HttpResponseError as error:
+        print("For more information about troubleshooting errors, see the following guide: "
+              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
-            if error.error.code == "InvalidRequest":
-                print(f"Received an invalid request error: {error.error}")
-                sys.exit(1)
             if error.error.code == "InvalidImage":
                 print(f"Received an invalid image error: {error.error}")
-                sys.exit(1)
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
         # If the inner error is None and then it is possible to check the message to get more information:
-        filter_msg = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
-        if any(example_error.casefold() in error.message.casefold() for example_error in filter_msg):
-            print(f"Uh-oh! Something unexpected happened: {error}")
-            sys.exit(1)
-        # Print the full error content:
-        print(f"Full HttpResponseError: {error}")
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

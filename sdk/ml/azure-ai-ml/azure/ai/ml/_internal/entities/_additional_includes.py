@@ -6,15 +6,17 @@ import os
 import shutil
 import tempfile
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Union
 
 import yaml
 
-from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
-from azure.ai.ml.entities._util import _general_copy
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
-
+from ..._utils._asset_utils import IgnoreFile, traverse_directory
+from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
+from ...entities._util import _general_copy
+from ...entities._validation import MutableValidationResult, _ValidationResultBuilder
 from ._artifact_cache import ArtifactCache
 from .code import InternalComponentIgnoreFile
 
@@ -270,6 +272,50 @@ class _AdditionalIncludes:
             self._load_artifact_additional_includes()
         return self.__artifact_validate_result
 
+    @classmethod
+    def merge_local_path_to_additional_includes(cls, local_path, config_info, conflict_files):
+        file_name = Path(local_path).name
+        conflicts = conflict_files.get(file_name, set())
+        conflicts.add(config_info)
+        conflict_files[file_name] = conflicts
+
+    @classmethod
+    def _get_artifacts_by_config(cls, artifact_config):
+        artifact_cache = ArtifactCache()
+        if any(item not in artifact_config for item in ["feed", "name", "version"]):
+            raise RuntimeError("Feed, name and version are required for artifacts config.")
+        return artifact_cache.get(
+            organization=artifact_config.get("organization", None),
+            project=artifact_config.get("project", None),
+            feed=artifact_config["feed"],
+            name=artifact_config["name"],
+            version=artifact_config["version"],
+            scope=artifact_config.get("scope", "organization"),
+            resolve=True,
+        )
+
+    def _resolve_additional_include_config(self, additional_include_config):
+        result = []
+        if isinstance(additional_include_config, dict) and additional_include_config.get("type") == ARTIFACT_KEY:
+            try:
+                # Get the artifacts package from devops to the local
+                artifact_path = self._get_artifacts_by_config(additional_include_config)
+                for item in os.listdir(artifact_path):
+                    config_info = (
+                        f"{additional_include_config['name']}:{additional_include_config['version']} in "
+                        f"{additional_include_config['feed']}"
+                    )
+                    result.append((os.path.join(artifact_path, item), config_info))
+            except Exception as e:  # pylint: disable=broad-except
+                self._artifact_validate_result.append_error(message=e.args[0])
+        elif isinstance(additional_include_config, str):
+            result.append((additional_include_config, additional_include_config))
+        else:
+            self._artifact_validate_result.append_error(
+                message=f"Unexpected format in additional_includes, {additional_include_config}"
+            )
+        return result
+
     def _load_artifact_additional_includes(self):
         """
         Load the additional includes by yaml format.
@@ -291,57 +337,37 @@ class _AdditionalIncludes:
         :return additional_includes: Path list of additional_includes
         :rtype additional_includes: List[str]
         """
-        additional_includes, conflict_files = [], {}
         self.__artifact_validate_result = _ValidationResultBuilder.success()
-
-        def merge_local_path_to_additional_includes(local_path, config_info):
-            additional_includes.append(local_path)
-            file_name = Path(local_path).name
-            conflicts = conflict_files.get(file_name, set())
-            conflicts.add(config_info)
-            conflict_files[file_name] = conflicts
-
-        def get_artifacts_by_config(artifact_config):
-            artifact_cache = ArtifactCache()
-            if any(item not in artifact_config for item in ["feed", "name", "version"]):
-                raise RuntimeError("Feed, name and version are required for artifacts config.")
-            artifact_path = artifact_cache.get(
-                organization=artifact_config.get("organization", None),
-                project=artifact_config.get("project", None),
-                feed=artifact_config["feed"],
-                name=artifact_config["name"],
-                version=artifact_config["version"],
-                scope=artifact_config.get("scope", "organization"),
-                resolve=True,
-            )
-            return artifact_path
 
         # Load the artifacts config from additional_includes
         with open(self._additional_includes_file_path) as f:
             additional_includes_configs = yaml.safe_load(f)
             additional_includes_configs = additional_includes_configs.get(ADDITIONAL_INCLUDES_KEY, [])
 
-        for additional_include in additional_includes_configs:
-            if isinstance(additional_include, dict) and additional_include.get("type") == ARTIFACT_KEY:
-                try:
-                    # Get the artifacts package from devops to the local
-                    artifact_path = get_artifacts_by_config(additional_include)
-                    for item in os.listdir(artifact_path):
-                        config_info = (
-                            f"{additional_include['name']}:{additional_include['version']} in "
-                            f"{additional_include['feed']}"
+        additional_includes, conflict_files = [], {}
+        # Unlike component registration, artifact downloading is a pure download progress; so we can use
+        # more threads to speed up the downloading process.
+        # We use 5 threads per CPU core plus 5 extra threads, and the max number of threads is 64.
+        num_threads = min(64, (int(cpu_count()) * 5) + 5)
+        if (
+            len(additional_includes_configs) > 1
+            and is_concurrent_component_registration_enabled()
+            and is_private_preview_enabled()
+        ):
+            with ThreadPoolExecutor(max_workers=num_threads) as executor:
+                for result in executor.map(self._resolve_additional_include_config, additional_includes_configs):
+                    for local_path, config_info in result:
+                        additional_includes.append(local_path)
+                        self.merge_local_path_to_additional_includes(
+                            local_path=local_path, config_info=config_info, conflict_files=conflict_files
                         )
-                        merge_local_path_to_additional_includes(
-                            local_path=os.path.join(artifact_path, item), config_info=config_info
-                        )
-                except Exception as e:  # pylint: disable=broad-except
-                    self._artifact_validate_result.append_error(message=e.args[0])
-            elif isinstance(additional_include, str):
-                merge_local_path_to_additional_includes(local_path=additional_include, config_info=additional_include)
-            else:
-                self._artifact_validate_result.append_error(
-                    message=f"Unexpected format in additional_includes, {additional_include}"
-                )
+        else:
+            for result in map(self._resolve_additional_include_config, additional_includes_configs):
+                for local_path, config_info in result:
+                    additional_includes.append(local_path)
+                    self.merge_local_path_to_additional_includes(
+                        local_path=local_path, config_info=config_info, conflict_files=conflict_files
+                    )
 
         # Check the file conflict in local path and artifact package.
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}

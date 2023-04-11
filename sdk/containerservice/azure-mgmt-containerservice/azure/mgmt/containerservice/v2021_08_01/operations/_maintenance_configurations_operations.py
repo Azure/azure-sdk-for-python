@@ -294,8 +294,9 @@ class MaintenanceConfigurationsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -357,8 +358,9 @@ class MaintenanceConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -461,8 +463,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_name: str
         :param config_name: The name of the maintenance configuration. Required.
         :type config_name: str
-        :param parameters: The maintenance configuration to create or update. Is either a model type or
-         a IO type. Required.
+        :param parameters: The maintenance configuration to create or update. Is either a
+         MaintenanceConfiguration type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2021_08_01.models.MaintenanceConfiguration or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -512,8 +514,9 @@ class MaintenanceConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -579,8 +582,9 @@ class MaintenanceConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

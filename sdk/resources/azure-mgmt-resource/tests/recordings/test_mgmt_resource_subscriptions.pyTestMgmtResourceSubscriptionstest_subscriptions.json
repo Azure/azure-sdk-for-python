@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:01:13 GMT",
+        "Date": "Mon, 27 Mar 2023 09:13:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - NCUS ProdSlices",
+        "x-ms-httpver": "1.1",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +102,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +112,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:01:13 GMT",
+        "Date": "Mon, 27 Mar 2023 09:13:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - NCUS ProdSlices",
+        "x-ms-httpver": "1.1",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,12 +174,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "a255bb92-7e3b-44ab-a840-3f7e93a201e5",
+        "client-request-id": "86e43abb-9d2e-4f3f-b533-fa2d3e4877d3",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -190,10 +192,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "a255bb92-7e3b-44ab-a840-3f7e93a201e5",
+        "client-request-id": "86e43abb-9d2e-4f3f-b533-fa2d3e4877d3",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:01:13 GMT",
+        "Date": "Mon, 27 Mar 2023 09:13:11 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +203,8 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14649.17 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - SCUS ProdSlices",
+        "x-ms-httpver": "1.1",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -219,7 +222,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/22.1.0b1 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/23.0.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -228,15 +231,15 @@
         "Content-Encoding": "gzip",
         "Content-Length": "869",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:01:13 GMT",
+        "Date": "Mon, 27 Mar 2023 09:13:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b5ce2422-5181-4e5f-9b12-6e51c589e055",
+        "x-ms-correlation-request-id": "c758bd22-5021-45bf-b640-d8acb690102a",
         "x-ms-ratelimit-remaining-tenant-reads": "11999",
-        "x-ms-routing-request-id": "NORTHCENTRALUS:20230216T050114Z:b5ce2422-5181-4e5f-9b12-6e51c589e055"
+        "x-ms-routing-request-id": "CENTRALUS:20230327T091312Z:c758bd22-5021-45bf-b640-d8acb690102a"
       },
       "ResponseBody": {
         "value": [
@@ -282,24 +285,24 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/22.1.0b1 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/23.0.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "32134",
+        "Content-Length": "31078",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:01:14 GMT",
+        "Date": "Mon, 27 Mar 2023 09:13:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "be7517de-05e4-40c2-86f4-cab4aab63e72",
+        "x-ms-correlation-request-id": "8fdf0ff7-18f2-4676-8709-4ecb80a47f3d",
         "x-ms-ratelimit-remaining-subscription-reads": "11988",
-        "x-ms-routing-request-id": "NORTHCENTRALUS:20230216T050114Z:be7517de-05e4-40c2-86f4-cab4aab63e72"
+        "x-ms-routing-request-id": "CENTRALUS:20230327T091313Z:8fdf0ff7-18f2-4676-8709-4ecb80a47f3d"
       },
       "ResponseBody": {
         "value": [
@@ -565,8 +568,8 @@
               "regionType": "Physical",
               "regionCategory": "Recommended",
               "geographyGroup": "Africa",
-              "longitude": "28.21837",
-              "latitude": "-25.73134",
+              "longitude": "28.218370",
+              "latitude": "-25.731340",
               "physicalLocation": "Johannesburg",
               "pairedRegion": [
                 {
@@ -649,7 +652,7 @@
               "regionType": "Physical",
               "regionCategory": "Recommended",
               "geographyGroup": "Asia Pacific",
-              "longitude": "126.978",
+              "longitude": "126.9780",
               "latitude": "37.5665",
               "physicalLocation": "Seoul",
               "pairedRegion": [
@@ -691,7 +694,7 @@
               "regionType": "Physical",
               "regionCategory": "Recommended",
               "geographyGroup": "Europe",
-              "longitude": "2.373",
+              "longitude": "2.3730",
               "latitude": "46.3772",
               "physicalLocation": "Paris",
               "pairedRegion": [
@@ -808,27 +811,6 @@
             }
           },
           {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap",
-            "name": "centraluseuap",
-            "type": "Region",
-            "displayName": "Central US EUAP",
-            "regionalDisplayName": "(US) Central US EUAP",
-            "metadata": {
-              "regionType": "Physical",
-              "regionCategory": "Recommended",
-              "geographyGroup": "US",
-              "longitude": "-93.6208",
-              "latitude": "41.5908",
-              "physicalLocation": "",
-              "pairedRegion": [
-                {
-                  "name": "eastus2euap",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap"
-                }
-              ]
-            }
-          },
-          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap",
             "name": "eastus2euap",
             "type": "Region",
@@ -840,7 +822,6 @@
               "geographyGroup": "US",
               "longitude": "-78.3889",
               "latitude": "36.6681",
-              "physicalLocation": "",
               "pairedRegion": [
                 {
                   "name": "centraluseuap",
@@ -1194,31 +1175,6 @@
             }
           },
           {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilus",
-            "name": "brazilus",
-            "type": "Region",
-            "displayName": "Brazil US",
-            "regionalDisplayName": "(South America) Brazil US",
-            "metadata": {
-              "regionType": "Physical",
-              "regionCategory": "Other",
-              "geographyGroup": "South America",
-              "longitude": "0",
-              "latitude": "0",
-              "physicalLocation": "",
-              "pairedRegion": [
-                {
-                  "name": "Brazil Southeast",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/Brazil Southeast"
-                },
-                {
-                  "name": "brazilus",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilus"
-                }
-              ]
-            }
-          },
-          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastusstg",
             "name": "eastusstg",
             "type": "Region",
@@ -1303,22 +1259,21 @@
             }
           },
           {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/devfabric",
-            "name": "devfabric",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap",
+            "name": "centraluseuap",
             "type": "Region",
-            "displayName": "devfabric",
-            "regionalDisplayName": "(US) devfabric",
+            "displayName": "Central US EUAP",
+            "regionalDisplayName": "(US) Central US EUAP",
             "metadata": {
               "regionType": "Physical",
               "regionCategory": "Other",
               "geographyGroup": "US",
-              "longitude": "0",
-              "latitude": "0",
-              "physicalLocation": "DevFabric",
+              "longitude": "-93.6208",
+              "latitude": "41.5908",
               "pairedRegion": [
                 {
-                  "name": "devfabric",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/devfabric"
+                  "name": "eastus2euap",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap"
                 }
               ]
             }
@@ -1334,7 +1289,7 @@
               "regionCategory": "Other",
               "geographyGroup": "US",
               "longitude": "-110.234",
-              "latitude": "40.89",
+              "latitude": "40.890",
               "physicalLocation": "Wyoming",
               "pairedRegion": [
                 {
@@ -1711,7 +1666,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/22.1.0b1 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/23.0.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1720,15 +1675,15 @@
         "Content-Encoding": "gzip",
         "Content-Length": "417",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:01:14 GMT",
+        "Date": "Mon, 27 Mar 2023 09:13:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "87804de8-3fc0-4768-a16b-ff2cb3d0e439",
+        "x-ms-correlation-request-id": "1488eaf5-b7ef-45b2-9837-d18619b53eb1",
         "x-ms-ratelimit-remaining-subscription-reads": "11987",
-        "x-ms-routing-request-id": "NORTHCENTRALUS:20230216T050114Z:87804de8-3fc0-4768-a16b-ff2cb3d0e439"
+        "x-ms-routing-request-id": "CENTRALUS:20230327T091313Z:1488eaf5-b7ef-45b2-9837-d18619b53eb1"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000",

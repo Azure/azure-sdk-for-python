@@ -965,6 +965,11 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype is_infra_encryption_enabled: bool
     :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
     :vartype federated_client_id: str
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+    :ivar encryption_protector: The azure key vault URI of the database if it's configured with per
+     Database Customer Managed Keys.
+    :vartype encryption_protector: str
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
@@ -992,6 +997,33 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
      For more details about “x-ms-authorization-auxiliary” header see
      https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant.
     :vartype source_resource_id: str
+    :ivar manual_cutover: Whether or not customer controlled manual cutover needs to be done during
+     Update Database operation to Hyperscale tier.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier.
+
+     When manualCutover is specified, the scaling operation will wait for user input to trigger
+     cutover to Hyperscale database.
+
+     To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+     Waiting state.
+    :vartype manual_cutover: bool
+    :ivar perform_cutover: To trigger customer controlled manual cutover during the wait state
+     while Scaling operation is in progress.
+
+     This property parameter is only applicable for scaling operations that are initiated along
+     with 'manualCutover' parameter.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+     When performCutover is specified, the scaling operation will trigger cutover and perform
+     role-change to Hyperscale database.
+    :vartype perform_cutover: bool
+    :ivar availability_zone: Specifies the availability zone the database is pinned to. Known
+     values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _validation = {
@@ -1068,8 +1100,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
         "is_infra_encryption_enabled": {"key": "properties.isInfraEncryptionEnabled", "type": "bool"},
         "federated_client_id": {"key": "properties.federatedClientId", "type": "str"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
+        "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
         "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
+        "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
+        "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1103,8 +1140,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
         federated_client_id: Optional[str] = None,
+        keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
+        encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
         source_resource_id: Optional[str] = None,
+        manual_cutover: Optional[bool] = None,
+        perform_cutover: Optional[bool] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1233,6 +1275,11 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype is_ledger_on: bool
         :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
         :paramtype federated_client_id: str
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+        :keyword encryption_protector: The azure key vault URI of the database if it's configured with
+         per Database Customer Managed Keys.
+        :paramtype encryption_protector: str
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
@@ -1260,6 +1307,33 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
          For more details about “x-ms-authorization-auxiliary” header see
          https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant.
         :paramtype source_resource_id: str
+        :keyword manual_cutover: Whether or not customer controlled manual cutover needs to be done
+         during Update Database operation to Hyperscale tier.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier.
+
+         When manualCutover is specified, the scaling operation will wait for user input to trigger
+         cutover to Hyperscale database.
+
+         To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+         Waiting state.
+        :paramtype manual_cutover: bool
+        :keyword perform_cutover: To trigger customer controlled manual cutover during the wait state
+         while Scaling operation is in progress.
+
+         This property parameter is only applicable for scaling operations that are initiated along
+         with 'manualCutover' parameter.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+         When performCutover is specified, the scaling operation will trigger cutover and perform
+         role-change to Hyperscale database.
+        :paramtype perform_cutover: bool
+        :keyword availability_zone: Specifies the availability zone the database is pinned to. Known
+         values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -1304,8 +1378,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
         self.federated_client_id = federated_client_id
+        self.keys = keys
+        self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
         self.source_resource_id = source_resource_id
+        self.manual_cutover = manual_cutover
+        self.perform_cutover = perform_cutover
+        self.availability_zone = availability_zone
 
 
 class DatabaseAdvancedThreatProtection(ProxyResource):
@@ -2002,6 +2081,44 @@ class DatabaseIdentity(_serialization.Model):
         self.type = type
         self.tenant_id = None
         self.user_assigned_identities = user_assigned_identities
+
+
+class DatabaseKey(_serialization.Model):
+    """Database level key used for encryption at rest.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The database key type. Only supported value is 'AzureKeyVault'. "AzureKeyVault"
+    :vartype type: str or ~azure.mgmt.sql.models.DatabaseKeyType
+    :ivar thumbprint: Thumbprint of the database key.
+    :vartype thumbprint: str
+    :ivar creation_date: The database key creation date.
+    :vartype creation_date: ~datetime.datetime
+    :ivar subregion: Subregion of the server key.
+    :vartype subregion: str
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "thumbprint": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "subregion": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "creation_date": {"key": "creationDate", "type": "iso-8601"},
+        "subregion": {"key": "subregion", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.thumbprint = None
+        self.creation_date = None
+        self.subregion = None
 
 
 class DatabaseListResult(_serialization.Model):
@@ -2825,9 +2942,38 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype is_infra_encryption_enabled: bool
     :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
     :vartype federated_client_id: str
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+    :ivar encryption_protector: The azure key vault URI of the database if it's configured with per
+     Database Customer Managed Keys.
+    :vartype encryption_protector: str
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar manual_cutover: Whether or not customer controlled manual cutover needs to be done during
+     Update Database operation to Hyperscale tier.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier.
+
+     When manualCutover is specified, the scaling operation will wait for user input to trigger
+     cutover to Hyperscale database.
+
+     To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+     Waiting state.
+    :vartype manual_cutover: bool
+    :ivar perform_cutover: To trigger customer controlled manual cutover during the wait state
+     while Scaling operation is in progress.
+
+     This property parameter is only applicable for scaling operations that are initiated along
+     with 'manualCutover' parameter.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+     When performCutover is specified, the scaling operation will trigger cutover and perform
+     role-change to Hyperscale database.
+    :vartype perform_cutover: bool
     """
 
     _validation = {
@@ -2892,7 +3038,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
         "is_infra_encryption_enabled": {"key": "properties.isInfraEncryptionEnabled", "type": "bool"},
         "federated_client_id": {"key": "properties.federatedClientId", "type": "str"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
+        "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
+        "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2925,7 +3075,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
         federated_client_id: Optional[str] = None,
+        keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
+        encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        manual_cutover: Optional[bool] = None,
+        perform_cutover: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3037,9 +3191,38 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype is_ledger_on: bool
         :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
         :paramtype federated_client_id: str
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+        :keyword encryption_protector: The azure key vault URI of the database if it's configured with
+         per Database Customer Managed Keys.
+        :paramtype encryption_protector: str
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword manual_cutover: Whether or not customer controlled manual cutover needs to be done
+         during Update Database operation to Hyperscale tier.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier.
+
+         When manualCutover is specified, the scaling operation will wait for user input to trigger
+         cutover to Hyperscale database.
+
+         To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+         Waiting state.
+        :paramtype manual_cutover: bool
+        :keyword perform_cutover: To trigger customer controlled manual cutover during the wait state
+         while Scaling operation is in progress.
+
+         This property parameter is only applicable for scaling operations that are initiated along
+         with 'manualCutover' parameter.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+         When performCutover is specified, the scaling operation will trigger cutover and perform
+         role-change to Hyperscale database.
+        :paramtype perform_cutover: bool
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -3083,7 +3266,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
         self.federated_client_id = federated_client_id
+        self.keys = keys
+        self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
+        self.manual_cutover = manual_cutover
+        self.perform_cutover = perform_cutover
 
 
 class DatabaseUsage(ProxyResource):
@@ -4017,6 +4204,8 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype creation_date: ~datetime.datetime
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
     :vartype max_size_bytes: int
+    :ivar min_capacity: Minimal capacity that serverless pool will not shrink below, if not paused.
+    :vartype min_capacity: float
     :ivar per_database_settings: The per database settings for the elastic pool.
     :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
     :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4029,8 +4218,15 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
      This configuration defines the period when the maintenance updates will will occur.
     :vartype maintenance_configuration_id: str
     :ivar high_availability_replica_count: The number of secondary replicas associated with the
-     elastic pool that are used to provide high availability.
+     elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+     pools.
     :vartype high_availability_replica_count: int
+    :ivar preferred_enclave_type: Type of enclave requested on the elastic pool. Known values are:
+     "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
+     to. Known values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _validation = {
@@ -4054,11 +4250,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "state": {"key": "properties.state", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
         "max_size_bytes": {"key": "properties.maxSizeBytes", "type": "int"},
+        "min_capacity": {"key": "properties.minCapacity", "type": "float"},
         "per_database_settings": {"key": "properties.perDatabaseSettings", "type": "ElasticPoolPerDatabaseSettings"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "high_availability_replica_count": {"key": "properties.highAvailabilityReplicaCount", "type": "int"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(
@@ -4068,11 +4267,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         max_size_bytes: Optional[int] = None,
+        min_capacity: Optional[float] = None,
         per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
         high_availability_replica_count: Optional[int] = None,
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4093,6 +4295,9 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype sku: ~azure.mgmt.sql.models.Sku
         :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
         :paramtype max_size_bytes: int
+        :keyword min_capacity: Minimal capacity that serverless pool will not shrink below, if not
+         paused.
+        :paramtype min_capacity: float
         :keyword per_database_settings: The per database settings for the elastic pool.
         :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
         :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4105,8 +4310,15 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
          pool. This configuration defines the period when the maintenance updates will will occur.
         :paramtype maintenance_configuration_id: str
         :keyword high_availability_replica_count: The number of secondary replicas associated with the
-         elastic pool that are used to provide high availability.
+         elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+         pools.
         :paramtype high_availability_replica_count: int
+        :keyword preferred_enclave_type: Type of enclave requested on the elastic pool. Known values
+         are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword availability_zone: Specifies the availability zone the pool's primary replica is
+         pinned to. Known values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -4114,11 +4326,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         self.state = None
         self.creation_date = None
         self.max_size_bytes = max_size_bytes
+        self.min_capacity = min_capacity
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
         self.high_availability_replica_count = high_availability_replica_count
+        self.preferred_enclave_type = preferred_enclave_type
+        self.availability_zone = availability_zone
 
 
 class ElasticPoolActivity(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -4842,7 +5057,7 @@ class ElasticPoolPerformanceLevelCapability(_serialization.Model):  # pylint: di
         self.reason = reason
 
 
-class ElasticPoolUpdate(_serialization.Model):
+class ElasticPoolUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An elastic pool update.
 
     :ivar sku: An ARM Resource SKU.
@@ -4851,6 +5066,8 @@ class ElasticPoolUpdate(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
     :vartype max_size_bytes: int
+    :ivar min_capacity: Minimal capacity that serverless pool will not shrink below, if not paused.
+    :vartype min_capacity: float
     :ivar per_database_settings: The per database settings for the elastic pool.
     :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
     :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4866,17 +5083,26 @@ class ElasticPoolUpdate(_serialization.Model):
      elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
      pools.
     :vartype high_availability_replica_count: int
+    :ivar preferred_enclave_type: Type of enclave requested on the elastic pool. Known values are:
+     "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
+     to. Known values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _attribute_map = {
         "sku": {"key": "sku", "type": "Sku"},
         "tags": {"key": "tags", "type": "{str}"},
         "max_size_bytes": {"key": "properties.maxSizeBytes", "type": "int"},
+        "min_capacity": {"key": "properties.minCapacity", "type": "float"},
         "per_database_settings": {"key": "properties.perDatabaseSettings", "type": "ElasticPoolPerDatabaseSettings"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "high_availability_replica_count": {"key": "properties.highAvailabilityReplicaCount", "type": "int"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(
@@ -4885,11 +5111,14 @@ class ElasticPoolUpdate(_serialization.Model):
         sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         max_size_bytes: Optional[int] = None,
+        min_capacity: Optional[float] = None,
         per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
         high_availability_replica_count: Optional[int] = None,
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4899,6 +5128,9 @@ class ElasticPoolUpdate(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
         :paramtype max_size_bytes: int
+        :keyword min_capacity: Minimal capacity that serverless pool will not shrink below, if not
+         paused.
+        :paramtype min_capacity: float
         :keyword per_database_settings: The per database settings for the elastic pool.
         :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
         :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4914,16 +5146,25 @@ class ElasticPoolUpdate(_serialization.Model):
          elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
          pools.
         :paramtype high_availability_replica_count: int
+        :keyword preferred_enclave_type: Type of enclave requested on the elastic pool. Known values
+         are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword availability_zone: Specifies the availability zone the pool's primary replica is
+         pinned to. Known values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(**kwargs)
         self.sku = sku
         self.tags = tags
         self.max_size_bytes = max_size_bytes
+        self.min_capacity = min_capacity
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
         self.high_availability_replica_count = high_availability_replica_count
+        self.preferred_enclave_type = preferred_enclave_type
+        self.availability_zone = availability_zone
 
 
 class EncryptionProtector(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -5101,6 +5342,59 @@ class EndpointCertificateListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class EndpointDependency(_serialization.Model):
+    """A domain name that the managed instance service needs to communicate with, along with
+    additional details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar domain_name: The domain name of the dependency.
+    :vartype domain_name: str
+    :ivar endpoint_details: The IP Addresses and Ports used when connecting to DomainName.
+    :vartype endpoint_details: list[~azure.mgmt.sql.models.EndpointDetail]
+    """
+
+    _validation = {
+        "domain_name": {"readonly": True},
+        "endpoint_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "domain_name": {"key": "domainName", "type": "str"},
+        "endpoint_details": {"key": "endpointDetails", "type": "[EndpointDetail]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.domain_name = None
+        self.endpoint_details = None
+
+
+class EndpointDetail(_serialization.Model):
+    """A domain name that the managed instance service needs to communicate with, along with
+    additional details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar port: The port an endpoint is connected to.
+    :vartype port: int
+    """
+
+    _validation = {
+        "port": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "port": {"key": "port", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.port = None
 
 
 class ExportDatabaseDefinition(_serialization.Model):
@@ -9239,6 +9533,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -9289,6 +9587,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -9312,6 +9611,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9377,6 +9677,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
@@ -9400,6 +9704,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
@@ -10150,6 +10455,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -10192,6 +10501,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(
@@ -10214,6 +10524,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10277,6 +10588,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -10301,6 +10616,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -10322,8 +10638,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype tags: dict[str, str]
     :ivar identity: The Azure Active Directory identity of the managed instance.
     :vartype identity: ~azure.mgmt.sql.models.ResourceIdentity
-    :ivar sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
-     BC_Gen5.
+    :ivar sku: Managed instance SKU. Allowed values for sku.name: GP_Gen5, GP_G8IM, GP_G8IH,
+     BC_Gen5, BC_G8IM, BC_G8IH.
     :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar provisioning_state: Known values are: "Creating", "Deleting", "Updating", "Unknown",
      "Succeeded", "Failed", "Accepted", "Created", "Deleted", "Unrecognized", "Running", "Canceled",
@@ -10356,8 +10672,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
     :ivar v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
     :vartype v_cores: int
-    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-     Increments of 32 GB allowed only.
+    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+     Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+     number of vCores.
     :vartype storage_size_in_gb: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
@@ -10414,7 +10731,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype primary_user_assigned_identity_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory administrator of the server.
+    :ivar administrators: The Azure Active Directory administrator of the instance. This can only
+     be used at instance create time. If used for instance update, it will be ignored or it will
+     result in an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
     :ivar service_principal: The managed instance's service principal.
     :vartype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -10514,8 +10833,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype tags: dict[str, str]
         :keyword identity: The Azure Active Directory identity of the managed instance.
         :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
-        :keyword sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
-         BC_Gen5.
+        :keyword sku: Managed instance SKU. Allowed values for sku.name: GP_Gen5, GP_G8IM, GP_G8IH,
+         BC_Gen5, BC_G8IM, BC_G8IH.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
         :keyword managed_instance_create_mode: Specifies the mode of database creation.
 
@@ -10539,8 +10858,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
         :keyword v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
         :paramtype v_cores: int
-        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-         Increments of 32 GB allowed only.
+        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+         Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+         number of vCores.
         :paramtype storage_size_in_gb: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
@@ -10587,7 +10907,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype primary_user_assigned_identity_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory administrator of the server.
+        :keyword administrators: The Azure Active Directory administrator of the instance. This can
+         only be used at instance create time. If used for instance update, it will be ignored or it
+         will result in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
         :keyword service_principal: The managed instance's service principal.
         :paramtype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -12339,8 +12661,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :vartype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
     :ivar v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
     :vartype v_cores: int
-    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-     Increments of 32 GB allowed only.
+    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+     Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+     number of vCores.
     :vartype storage_size_in_gb: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
@@ -12397,7 +12720,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :vartype primary_user_assigned_identity_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory administrator of the server.
+    :ivar administrators: The Azure Active Directory administrator of the instance. This can only
+     be used at instance create time. If used for instance update, it will be ignored or it will
+     result in an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
     :ivar service_principal: The managed instance's service principal.
     :vartype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -12510,8 +12835,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :paramtype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
         :keyword v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
         :paramtype v_cores: int
-        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-         Increments of 32 GB allowed only.
+        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+         Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+         number of vCores.
         :paramtype storage_size_in_gb: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
@@ -12558,7 +12884,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :paramtype primary_user_assigned_identity_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory administrator of the server.
+        :keyword administrators: The Azure Active Directory administrator of the instance. This can
+         only be used at instance create time. If used for instance update, it will be ignored or it
+         will result in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
         :keyword service_principal: The managed instance's service principal.
         :paramtype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -12820,6 +13148,79 @@ class ManagedInstanceVulnerabilityAssessmentListResult(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ManagedInstanceVulnerabilityAssessment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ManagedLedgerDigestUploads(ProxyResource):
+    """Azure SQL Database ledger digest upload settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar digest_storage_endpoint: The digest storage endpoint, which must be either an Azure blob
+     storage endpoint or an URI for Azure Confidential Ledger.
+    :vartype digest_storage_endpoint: str
+    :ivar state: Specifies the state of ledger digest upload. Known values are: "Enabled" and
+     "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.ManagedLedgerDigestUploadsState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "digest_storage_endpoint": {"key": "properties.digestStorageEndpoint", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+    }
+
+    def __init__(self, *, digest_storage_endpoint: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword digest_storage_endpoint: The digest storage endpoint, which must be either an Azure
+         blob storage endpoint or an URI for Azure Confidential Ledger.
+        :paramtype digest_storage_endpoint: str
+        """
+        super().__init__(**kwargs)
+        self.digest_storage_endpoint = digest_storage_endpoint
+        self.state = None
+
+
+class ManagedLedgerDigestUploadsListResult(_serialization.Model):
+    """A list of ledger digest upload settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ManagedLedgerDigestUploads]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedLedgerDigestUploads]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
@@ -13727,6 +14128,65 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
+class OutboundEnvironmentEndpoint(_serialization.Model):
+    """An endpoint that the managed instance service requires outbound network access to.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar category: The type of service accessed by the managed instance service, e.g., Azure
+     Storage, Azure Active Directory, etc.
+    :vartype category: str
+    :ivar endpoints: The endpoints that the managed instance service communicates with in order to
+     function correctly.
+    :vartype endpoints: list[~azure.mgmt.sql.models.EndpointDependency]
+    """
+
+    _validation = {
+        "category": {"readonly": True},
+        "endpoints": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "category": {"key": "category", "type": "str"},
+        "endpoints": {"key": "endpoints", "type": "[EndpointDependency]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.category = None
+        self.endpoints = None
+
+
+class OutboundEnvironmentEndpointCollection(_serialization.Model):
+    """A collection of endpoints that the managed instance service requires outbound network access
+    to.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.OutboundEnvironmentEndpoint]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[OutboundEnvironmentEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class OutboundFirewallRule(ProxyResource):
     """An Azure SQL DB Server Outbound Firewall Rule.
 
@@ -13985,6 +14445,8 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
@@ -13995,11 +14457,13 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
     """
 
     _validation = {
+        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
         "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionStateProperty",
@@ -14024,6 +14488,7 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
@@ -14985,7 +15450,7 @@ class RecommendedSensitivityLabelUpdateList(_serialization.Model):
 
 
 class RecoverableDatabase(ProxyResource):
-    """A recoverable database.
+    """A recoverable database resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -15001,9 +15466,10 @@ class RecoverableDatabase(ProxyResource):
     :vartype service_level_objective: str
     :ivar elastic_pool_name: The elastic pool name of the database.
     :vartype elastic_pool_name: str
-    :ivar last_available_backup_date: The last available backup date of the database (ISO8601
-     format).
+    :ivar last_available_backup_date: The last available backup date.
     :vartype last_available_backup_date: ~datetime.datetime
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
     """
 
     _validation = {
@@ -15024,41 +15490,48 @@ class RecoverableDatabase(ProxyResource):
         "service_level_objective": {"key": "properties.serviceLevelObjective", "type": "str"},
         "elastic_pool_name": {"key": "properties.elasticPoolName", "type": "str"},
         "last_available_backup_date": {"key": "properties.lastAvailableBackupDate", "type": "iso-8601"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, keys: Optional[Dict[str, "_models.DatabaseKey"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+        """
         super().__init__(**kwargs)
         self.edition = None
         self.service_level_objective = None
         self.elastic_pool_name = None
         self.last_available_backup_date = None
+        self.keys = keys
 
 
 class RecoverableDatabaseListResult(_serialization.Model):
-    """The response to a list recoverable databases request.
+    """A list of recoverable databases.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of recoverable databases. Required.
+    :ivar value: Array of results.
     :vartype value: list[~azure.mgmt.sql.models.RecoverableDatabase]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        "value": {"required": True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[RecoverableDatabase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RecoverableDatabase"], **kwargs: Any) -> None:
-        """
-        :keyword value: A list of recoverable databases. Required.
-        :paramtype value: list[~azure.mgmt.sql.models.RecoverableDatabase]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.value = value
+        self.value = None
+        self.next_link = None
 
 
 class RecoverableManagedDatabase(ProxyResource):
@@ -15122,6 +15595,66 @@ class RecoverableManagedDatabaseListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class RefreshExternalGovernanceStatusOperationResult(ProxyResource):
+    """An RefreshExternalGovernanceStatus operation result resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar request_id: Request Id.
+    :vartype request_id: str
+    :ivar request_type: Request type.
+    :vartype request_type: str
+    :ivar queued_time: Queued time.
+    :vartype queued_time: str
+    :ivar server_name: Server name.
+    :vartype server_name: str
+    :ivar status: Operation status.
+    :vartype status: str
+    :ivar error_message: Error message.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "request_id": {"readonly": True},
+        "request_type": {"readonly": True},
+        "queued_time": {"readonly": True},
+        "server_name": {"readonly": True},
+        "status": {"readonly": True},
+        "error_message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "request_id": {"key": "properties.requestId", "type": "str"},
+        "request_type": {"key": "properties.requestType", "type": "str"},
+        "queued_time": {"key": "properties.queuedTime", "type": "str"},
+        "server_name": {"key": "properties.serverName", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "error_message": {"key": "properties.errorMessage", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.request_id = None
+        self.request_type = None
+        self.queued_time = None
+        self.server_name = None
+        self.status = None
+        self.error_message = None
 
 
 class Remediation(_serialization.Model):
@@ -15386,6 +15919,8 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
     :ivar backup_storage_redundancy: The storage account type used to store backups for this
      database. Known values are: "Geo", "Local", "Zone", and "GeoZone".
     :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
     """
 
     _validation = {
@@ -15413,6 +15948,7 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         "deletion_date": {"key": "properties.deletionDate", "type": "iso-8601"},
         "earliest_restore_date": {"key": "properties.earliestRestoreDate", "type": "iso-8601"},
         "backup_storage_redundancy": {"key": "properties.backupStorageRedundancy", "type": "str"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
     }
 
     def __init__(
@@ -15421,6 +15957,7 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         sku: Optional["_models.Sku"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15430,6 +15967,8 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -15441,6 +15980,7 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         self.deletion_date = None
         self.earliest_restore_date = None
         self.backup_storage_redundancy = None
+        self.keys = keys
 
 
 class RestorableDroppedDatabaseListResult(_serialization.Model):
@@ -15645,6 +16185,65 @@ class RestorePointListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ScheduleItem(_serialization.Model):
+    """Schedule info describing when the server should be started or stopped.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_day: Start day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+     "Wednesday", "Thursday", "Friday", and "Saturday".
+    :vartype start_day: str or ~azure.mgmt.sql.models.DayOfWeek
+    :ivar start_time: Start time. Required.
+    :vartype start_time: str
+    :ivar stop_day: Stop day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+     "Wednesday", "Thursday", "Friday", and "Saturday".
+    :vartype stop_day: str or ~azure.mgmt.sql.models.DayOfWeek
+    :ivar stop_time: Stop time. Required.
+    :vartype stop_time: str
+    """
+
+    _validation = {
+        "start_day": {"required": True},
+        "start_time": {"required": True},
+        "stop_day": {"required": True},
+        "stop_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_day": {"key": "startDay", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "stop_day": {"key": "stopDay", "type": "str"},
+        "stop_time": {"key": "stopTime", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_day: Union[str, "_models.DayOfWeek"],
+        start_time: str,
+        stop_day: Union[str, "_models.DayOfWeek"],
+        stop_time: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_day: Start day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+         "Wednesday", "Thursday", "Friday", and "Saturday".
+        :paramtype start_day: str or ~azure.mgmt.sql.models.DayOfWeek
+        :keyword start_time: Start time. Required.
+        :paramtype start_time: str
+        :keyword stop_day: Stop day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+         "Wednesday", "Thursday", "Friday", and "Saturday".
+        :paramtype stop_day: str or ~azure.mgmt.sql.models.DayOfWeek
+        :keyword stop_time: Stop time. Required.
+        :paramtype stop_time: str
+        """
+        super().__init__(**kwargs)
+        self.start_day = start_day
+        self.start_time = start_time
+        self.stop_day = stop_day
+        self.stop_time = stop_time
 
 
 class SecurityEvent(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -16092,12 +16691,12 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :vartype minimal_tls_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-     "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
+     Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
      allows connection from workspace. Known values are: "Connected" and "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
@@ -16108,13 +16707,18 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype federated_client_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory identity of the server.
+    :ivar administrators: The Azure Active Directory administrator of the server. This can only be
+     used at server create time. If used for server update, it will be ignored or it will result in
+     an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
      are: "Enabled" and "Disabled".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+    :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
+     and "Disabled".
+    :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
     """
 
     _validation = {
@@ -16127,6 +16731,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "fully_qualified_domain_name": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
         "workspace_feature": {"readonly": True},
+        "external_governance_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -16154,6 +16759,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "key_id": {"key": "properties.keyId", "type": "str"},
         "administrators": {"key": "properties.administrators", "type": "ServerExternalAdministrator"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
+        "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
     }
 
     def __init__(
@@ -16166,7 +16772,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         administrator_login_password: Optional[str] = None,
         version: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
+        public_network_access: Optional[Union[str, "_models.ServerPublicNetworkAccessFlag"]] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         federated_client_id: Optional[str] = None,
         key_id: Optional[str] = None,
@@ -16189,12 +16795,12 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype administrator_login_password: str
         :keyword version: The version of the server.
         :paramtype version: str
-        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
         :paramtype minimal_tls_version: str
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
-         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled' or
+         'SecuredByPerimeter'. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
         :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
          used by default.
         :paramtype primary_user_assigned_identity_id: str
@@ -16202,7 +16808,9 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype federated_client_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory identity of the server.
+        :keyword administrators: The Azure Active Directory administrator of the server. This can only
+         be used at server create time. If used for server update, it will be ignored or it will result
+         in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
         :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
          for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
@@ -16227,6 +16835,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.key_id = key_id
         self.administrators = administrators
         self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.external_governance_status = None
 
 
 class ServerAdvancedThreatProtection(ProxyResource):
@@ -16893,6 +17502,77 @@ class ServerCommunicationLinkListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
+
+
+class ServerConfigurationOption(ProxyResource):
+    """A server configuration option.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar server_configuration_option_value: Value of the server configuration option.
+    :vartype server_configuration_option_value: int
+    :ivar provisioning_state: Provisioning state of server configuration option. Known values are:
+     "Created", "InProgress", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "server_configuration_option_value": {"key": "properties.serverConfigurationOptionValue", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, server_configuration_option_value: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword server_configuration_option_value: Value of the server configuration option.
+        :paramtype server_configuration_option_value: int
+        """
+        super().__init__(**kwargs)
+        self.server_configuration_option_value = server_configuration_option_value
+        self.provisioning_state = None
+
+
+class ServerConfigurationOptionListResult(_serialization.Model):
+    """A list of server configuration options.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ServerConfigurationOption]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServerConfigurationOption]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class ServerConnectionPolicy(ProxyResource):
@@ -17901,12 +18581,12 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :vartype minimal_tls_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-     "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
+     Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
      allows connection from workspace. Known values are: "Connected" and "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
@@ -17917,13 +18597,18 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
     :vartype federated_client_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory identity of the server.
+    :ivar administrators: The Azure Active Directory administrator of the server. This can only be
+     used at server create time. If used for server update, it will be ignored or it will result in
+     an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
      are: "Enabled" and "Disabled".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+    :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
+     and "Disabled".
+    :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
     """
 
     _validation = {
@@ -17931,6 +18616,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         "fully_qualified_domain_name": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
         "workspace_feature": {"readonly": True},
+        "external_governance_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -17953,6 +18639,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         "key_id": {"key": "properties.keyId", "type": "str"},
         "administrators": {"key": "properties.administrators", "type": "ServerExternalAdministrator"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
+        "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
     }
 
     def __init__(
@@ -17964,7 +18651,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         administrator_login_password: Optional[str] = None,
         version: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
+        public_network_access: Optional[Union[str, "_models.ServerPublicNetworkAccessFlag"]] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         federated_client_id: Optional[str] = None,
         key_id: Optional[str] = None,
@@ -17985,12 +18672,12 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         :paramtype administrator_login_password: str
         :keyword version: The version of the server.
         :paramtype version: str
-        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
         :paramtype minimal_tls_version: str
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
-         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled' or
+         'SecuredByPerimeter'. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
         :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
          used by default.
         :paramtype primary_user_assigned_identity_id: str
@@ -17998,7 +18685,9 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         :paramtype federated_client_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory identity of the server.
+        :keyword administrators: The Azure Active Directory administrator of the server. This can only
+         be used at server create time. If used for server update, it will be ignored or it will result
+         in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
         :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
          for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
@@ -18023,6 +18712,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         self.key_id = key_id
         self.administrators = administrators
         self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.external_governance_status = None
 
 
 class ServerUsage(_serialization.Model):
@@ -18971,6 +19661,106 @@ class SqlVulnerabilityAssessmentScanResults(ProxyResource):  # pylint: disable=t
         self.remediation = None
         self.baseline_adjusted_result = None
         self.rule_metadata = None
+
+
+class StartStopManagedInstanceSchedule(ProxyResource):
+    """Managed instance's Start/Stop schedule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: System data of the scheduled resource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
+    :ivar description: The description of the schedule.
+    :vartype description: str
+    :ivar time_zone_id: The time zone of the schedule.
+    :vartype time_zone_id: str
+    :ivar schedule_list: Schedule list.
+    :vartype schedule_list: list[~azure.mgmt.sql.models.ScheduleItem]
+    :ivar next_run_action: Next action to be executed (Start or Stop).
+    :vartype next_run_action: str
+    :ivar next_execution_time: Timestamp when the next action will be executed in the corresponding
+     schedule time zone.
+    :vartype next_execution_time: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "next_run_action": {"readonly": True},
+        "next_execution_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "time_zone_id": {"key": "properties.timeZoneId", "type": "str"},
+        "schedule_list": {"key": "properties.scheduleList", "type": "[ScheduleItem]"},
+        "next_run_action": {"key": "properties.nextRunAction", "type": "str"},
+        "next_execution_time": {"key": "properties.nextExecutionTime", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: str = "",
+        time_zone_id: str = "UTC",
+        schedule_list: Optional[List["_models.ScheduleItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The description of the schedule.
+        :paramtype description: str
+        :keyword time_zone_id: The time zone of the schedule.
+        :paramtype time_zone_id: str
+        :keyword schedule_list: Schedule list.
+        :paramtype schedule_list: list[~azure.mgmt.sql.models.ScheduleItem]
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.time_zone_id = time_zone_id
+        self.schedule_list = schedule_list
+        self.next_run_action = None
+        self.next_execution_time = None
+
+
+class StartStopManagedInstanceScheduleListResult(_serialization.Model):
+    """Managed instance's Start/Stop schedule list result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.StartStopManagedInstanceSchedule]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[StartStopManagedInstanceSchedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class StorageCapability(_serialization.Model):

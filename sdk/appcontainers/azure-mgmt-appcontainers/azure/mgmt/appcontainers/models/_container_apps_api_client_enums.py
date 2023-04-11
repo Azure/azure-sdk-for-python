@@ -242,10 +242,10 @@ class Scheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of the Sku."""
 
-    #: Consumption SKU of Managed Environment.
     CONSUMPTION = "Consumption"
-    #: Premium SKU of Managed Environment.
+    """Consumption SKU of Managed Environment."""
     PREMIUM = "Premium"
+    """Premium SKU of Managed Environment."""
 
 
 class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

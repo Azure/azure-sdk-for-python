@@ -8,22 +8,33 @@ Documentation of the motivations and goals of the test proxy can be found [here]
 GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
 
 ## Table of contents
-- [General troubleshooting tip](#general-troubleshooting-tip)
-- [Test collection failure](#test-collection-failure)
-- [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
-- [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
-- [Recordings not being produced](#recordings-not-being-produced)
-- [KeyError during container startup](#keyerror-during-container-startup)
-- [ConnectionError during test startup](#connectionerror-during-test-startup)
-- [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
-- [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
-- [Fixture not found error](#fixture-not-found-error)
+- [Guide for test proxy troubleshooting](#guide-for-test-proxy-troubleshooting)
+    - [Table of contents](#table-of-contents)
+    - [Debugging tip](#debugging-tip)
+    - [Test collection failure](#test-collection-failure)
+    - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
+    - [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
+    - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+    - [Recordings not being produced](#recordings-not-being-produced)
+    - [ConnectionError during tests](#connectionerror-during-tests)
+    - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
+    - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
+    - [Fixture not found error](#fixture-not-found-error)
 
-## General troubleshooting tip
+## Debugging tip
 
-For any issue that may come up, it's generally a good idea to first try deleting any existing proxy container (which
-will be called `ambitious_azsdk_test_proxy`) and creating a new one by running tests. This will fetch the latest tag of
-the test proxy Docker container, meaning the latest version of the proxy tool will be used.
+To see more detailed output from tests, you can run `pytest` commands with the flags `-s` and `--log-cli-level=DEBUG`.
+The former will output print statements and more logging, and the latter will expose `DEBUG`-level logs that are hidden
+by default. For example:
+```cmd
+pytest .\tests\test_client.py -s --log-cli-level=DEBUG
+```
+
+Additionally, the `-k` flag can be used to collect and run tests that have a specific name. For example, providing
+`-k "test_delete or test_upload"` to the `pytest` command will only collect and execute tests that have method names
+containing the strings `test_delete` or `test_upload`.
+
+For more information about `pytest` invocations, refer to [Usage and Invocations][pytest_commands].
 
 ## Test collection failure
 
@@ -38,6 +49,23 @@ resource preparers, such as
 [ResourceGroupPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py).
 Resource preparers need a management client to function, so test classes that use them will need to inherit from
 [AzureMgmtRecordedTestCase][mgmt_recorded_test_case] instead of AzureRecordedTestCase.
+
+## Test failure during `record/start` or `playback/start` requests
+
+If your library uses out-of-repo recordings and tests fail during startup, logs might indicate that POST requests to
+`record/start` or `playback/start` endpoints are returning 500 responses. In a stack trace, these errors might be raised
+[here][record_request_failure] or [here][playback_request_failure], respectively.
+
+This suggests that the test proxy failed to fetch recordings from the assets repository. This likely comes from a
+corrupted `git` configuration in `azure-sdk-for-python/.assets`. To resolve this:
+
+1. Upgrade your local version of `git` to at least 2.30.0
+2. Remove the `.assets` directory completely. To do this easily, `cd` into the root of `azure-sdk-for-python` with PowerShell >= 7.0.0 and run
+```powershell
+Remove-Item -Recurse -Force .\.assets\
+```
+
+After running tests again, a new `.assets` directory will be created and tests should run normally.
 
 ## Playback failures from body matching errors
 
@@ -54,22 +82,14 @@ matching enabled by default.
 
 ## Recordings not being produced
 
-First, make sure that the environment variable `AZURE_SKIP_LIVE_RECORDING` isn't set to "true". If it's not and live
-tests still aren't producing recordings, try deleting the `ambitious_azsdk_test_proxy` Docker container and re-running
-tests. The recording storage location is determined when the test proxy Docker container is created. If there are
-multiple local copies of the `azure-sdk-for-python` repo on your machine, the container could be storing recordings in
-the wrong repo.
+Ensure the environment variable `AZURE_SKIP_LIVE_RECORDING` **isn't** set to "true", and that `AZURE_TEST_RUN_LIVE`
+**is** set to "true".
 
-## KeyError during container startup
+## ConnectionError during tests
 
-Try updating your machine's version of Docker. Older versions of Docker may not return a status to indicate whether or
-not the proxy container is running, which the [proxy_startup.py][proxy_startup] script needs to determine.
-
-## ConnectionError during test startup
-
-For example, you may see a `requests.exceptions.ConnectionError` when trying to contact URL `/Info/Available`. This
-means that the test proxy tool wasn't started up properly, so requests to the tool are failing. Make sure Docker is
-installed and is up to date, and ensure that Linux containers are being used.
+For example, you may see a `requests.exceptions.ConnectionError` when trying to make service or sanitizer setup
+requests. This means that the test proxy tool never started correctly; ensure the `test_proxy` fixture is being invoked
+during test startup so that the tool is available during tests.
 
 ## Different error than expected when using proxy
 
@@ -107,6 +127,7 @@ Tests that aren't recorded should omit the `recorded_by_proxy` decorator. Howeve
 parameters that are provided by a preparer like the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader],
 you may see a new test setup error after migrating to the test proxy. For example, imagine a test is decorated with a
 preparer that provides a Key Vault URL as a `azure_keyvault_url` parameter:
+
 ```python
 class TestExample(AzureRecordedTestCase):
 
@@ -115,6 +136,7 @@ class TestExample(AzureRecordedTestCase):
 ```
 
 The above would work in the old test setup, but with the test proxy, running the test will yield
+
 ```text
 _______ ERROR at setup of TestExample.test_example _______
 ...
@@ -134,11 +156,14 @@ expected in either case.
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/initial-investigation.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L108
 [proxy_pipelines]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#enable-the-test-proxy-in-pipelines
 [proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
+[pytest_commands]: https://docs.pytest.org/latest/usage.html
+[record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L97
 [wrong_exception]: https://github.com/Azure/azure-sdk-tools/issues/2907

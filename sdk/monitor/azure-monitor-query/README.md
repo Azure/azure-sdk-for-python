@@ -9,6 +9,7 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 
 - [Source code][source]
 - [Package (PyPI)][package]
+- [Package (Conda)](https://anaconda.org/microsoft/azure-monitor-query/)
 - [API reference documentation][python-query-ref-docs]
 - [Service documentation][azure_monitor_overview]
 - [Samples][samples]
@@ -62,6 +63,17 @@ async_logs_client = LogsQueryClient(credential)
 async_metrics_client = MetricsQueryClient(credential)
 ```
 
+#### Configure clients for non-public Azure clouds
+
+By default, `LogsQueryClient` and `MetricsQueryClient` are configured to connect to the public Azure cloud. These can be configured to connect to non-public Azure clouds by passing in the correct `endpoint` argument: For example:
+
+```python
+logs_client = LogsQueryClient(credential, endpoint="https://api.loganalytics.azure.cn/v1")
+metrics_client = MetricsQueryClient(credential, endpoint="https://management.chinacloudapi.cn")
+```
+
+**Note**: Currently, `MetricsQueryClient` uses the Azure Resource Manager (ARM) endpoint for querying metrics, so you will need the corresponding management endpoint for your cloud when using this client. This is subject to change in the future.
+
 ### Execute the query
 
 For examples of Logs and Metrics queries, see the [Examples](#examples) section.
@@ -91,6 +103,7 @@ Each set of metric values is a time series with the following characteristics:
   - [Specify timespan](#specify-timespan)
   - [Handle logs query response](#handle-logs-query-response)
 - [Batch logs query](#batch-logs-query)
+- [Resource logs query](#resource-logs-query)
 - [Advanced logs query scenarios](#advanced-logs-query-scenarios)
   - [Set logs query timeout](#set-logs-query-timeout)
   - [Query multiple workspaces](#query-multiple-workspaces)
@@ -102,7 +115,7 @@ Each set of metric values is a time series with the following characteristics:
 
 ### Logs query
 
-This example shows getting a logs query. To handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use pandas.
+This example shows how to query a Log Analytics workspace. To handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use pandas.
 
 #### Specify timespan
 
@@ -147,7 +160,7 @@ try:
         print(df)
 except HttpResponseError as err:
     print("something fatal happened")
-    print (err)
+    print(err)
 ```
 
 #### Handle logs query response
@@ -162,7 +175,7 @@ LogsQueryResult
     |---name
     |---rows
     |---columns
-    |---column_types
+    |---columns_types
 
 LogsQueryPartialResult
 |---statistics
@@ -176,7 +189,7 @@ LogsQueryPartialResult
     |---name
     |---rows
     |---columns
-    |---column_types
+    |---columns_types
 ```
 
 The `LogsQueryResult` directly iterates over the table as a convenience. For example, to handle a logs query response with tables and display it using pandas:
@@ -218,18 +231,18 @@ requests = [
     LogsBatchQuery(
         query="AzureActivity | summarize count()",
         timespan=timedelta(hours=1),
-        workspace_id= os.environ['LOG_WORKSPACE_ID']
+        workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
         query= """bad query""",
         timespan=timedelta(days=1),
-        workspace_id= os.environ['LOG_WORKSPACE_ID']
+        workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
     LogsBatchQuery(
         query= """let Weight = 92233720368547758;
         range x from 1 to 3 step 1
         | summarize percentilesw(x, Weight * 100, 50)""",
-        workspace_id= os.environ['LOG_WORKSPACE_ID'],
+        workspace_id=os.environ['LOG_WORKSPACE_ID'],
         timespan=(datetime(2021, 6, 2, tzinfo=timezone.utc), datetime(2021, 6, 5, tzinfo=timezone.utc)), # (start, end)
         include_statistics=True
     ),
@@ -252,6 +265,39 @@ for res in results:
         df = pd.DataFrame(table.rows, columns=table.columns)
         print(df)
 
+```
+
+### Resource logs query
+
+The following example demonstrates how to query logs directly from an Azure resource without the use of a Log Analytics workspace. Here, the `query_resource` method is used instead of `query_workspace`, and instead of a workspace ID, an Azure resource identifier is passed in (e.g. `/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}`).
+
+```python
+import os
+import pandas as pd
+from datetime import timedelta
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+
+credential  = DefaultAzureCredential()
+client = LogsQueryClient(credential)
+
+query = """AzureActivity | take 5"""
+
+try:
+    response = client.query_resource(os.environ['LOGS_RESOURCE_ID'], query, timespan=timedelta(days=1))
+    if response.status == LogsQueryStatus.PARTIAL:
+        error = response.partial_error
+        data = response.partial_data
+        print(error)
+    elif response.status == LogsQueryStatus.SUCCESS:
+        data = response.tables
+    for table in data:
+        df = pd.DataFrame(data=table.rows, columns=table.columns)
+        print(df)
+except HttpResponseError as err:
+    print("something fatal happened")
+    print(err)
 ```
 
 ### Advanced logs query scenarios

@@ -46,7 +46,7 @@ jobs:
       environment:
         name: "prs-env"
         version: 1
-        image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+        image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
         conda_file: ../environment/environment_parallel.yml
       program_arguments: >-
         --job_output_path ${{outputs.job_output_path}}

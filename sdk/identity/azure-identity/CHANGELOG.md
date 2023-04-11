@@ -1,16 +1,27 @@
 # Release History
 
-## 1.13.0b3 (Unreleased)
+## 1.13.0b5 (Unreleased)
 
 ### Features Added
-
-- Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.13.0b4 (2023-04-11)
+
+### Features Added
+
+- Credentials that are implemented via launching a subprocess to acquire tokens now have configurable timeouts using the `process_timeout` keyword argument. This addresses scenarios where these proceses can take longer than the current default timeout values. The affected credentials are `AzureCliCredential`, `AzureDeveloperCliCredential`, and `AzurePowerShellCredential`. (Note: For `DefaultAzureCredential`, the `developer_credential_timeout` keyword argument allows users to propagate this option to `AzureCliCredential`, `AzureDeveloperCliCredential`, and `AzurePowerShellCredential` in the authentication chain.) ([#28290](https://github.com/Azure/azure-sdk-for-python/pull/28290))
+
+## 1.13.0b3 (2023-03-07)
+
+### Features Added
+
+- Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
+- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Azure Active Directory that your application can handle CAE claims challenges.
 
 ## 1.13.0b2 (2023-02-07)
 

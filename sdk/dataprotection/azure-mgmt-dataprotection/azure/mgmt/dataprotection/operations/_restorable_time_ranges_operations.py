@@ -45,9 +45,7 @@ def build_find_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -58,7 +56,9 @@ def build_find_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "backupInstanceName": _SERIALIZER.url("backup_instance_name", backup_instance_name, "str"),
     }
@@ -82,7 +82,7 @@ class RestorableTimeRangesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dataprotection.DataProtectionClient`'s
+        :class:`~azure.mgmt.dataprotection.DataProtectionMgmtClient`'s
         :attr:`restorable_time_ranges` attribute.
     """
 
@@ -108,7 +108,7 @@ class RestorableTimeRangesOperations:
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -139,7 +139,7 @@ class RestorableTimeRangesOperations:
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -168,14 +168,15 @@ class RestorableTimeRangesOperations:
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is either a model type or a IO type. Required.
+        :param parameters: Request body for operation. Is either a
+         AzureBackupFindRestorableTimeRangesRequest type or a IO type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -197,7 +198,7 @@ class RestorableTimeRangesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))

@@ -131,8 +131,9 @@ class DistributedAvailabilityGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -199,8 +200,9 @@ class DistributedAvailabilityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -269,8 +271,9 @@ class DistributedAvailabilityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -391,8 +394,8 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group info. Is either a model type or a IO
-         type. Required.
+        :param parameters: The distributed availability group info. Is either a
+         DistributedAvailabilityGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -497,8 +500,9 @@ class DistributedAvailabilityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -638,8 +642,9 @@ class DistributedAvailabilityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -757,8 +762,8 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group info. Is either a model type or a IO
-         type. Required.
+        :param parameters: The distributed availability group info. Is either a
+         DistributedAvailabilityGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
