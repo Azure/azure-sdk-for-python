@@ -99,8 +99,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             return
 
         if otel_kind == OpenTelemetrySpanKind.CLIENT:
-            # Since core instruments HTTP calls, we need to suppress any automatic HTTP instrumentation provided by
-            # other libraries to prevent duplicate spans.
+            # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
+            # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
+            # instrumentation libraries are being used.
             self._context_tokens.append(context.attach(context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True)))
 
         current_tracer = self.get_current_tracer()
