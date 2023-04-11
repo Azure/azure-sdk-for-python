@@ -1,6 +1,6 @@
 # EventGrid Client Examples:
 
-```
+```python
     import os
     import asyncio
     from azure.core.credentials import AzureKeyCredential
@@ -16,7 +16,7 @@
 
 
 # Async Create Client
-```
+```python
     from azure.messaging.eventgridmessaging.aio import EventGridMessagingClient
 
     # Create a client
@@ -24,7 +24,7 @@
 ```
 
 # Sync Create Client
-```
+```python
     from azure.messaging.eventgridmessaging import EventGridMessagingClient
 
     # Create a client
@@ -34,7 +34,7 @@
 # Publish Samples
 
 ### Async
-```
+```python
     async def main():
 
         # Publish a CloudEvent
@@ -56,7 +56,7 @@
 ```
 
 ### Sync
-```
+```python
     # Publish a CloudEvent
     try:
         cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
@@ -77,7 +77,7 @@
 # Receive Samples
 
 ### Async
-```
+```python
     async def main():
 
         # Receive CloudEvents
@@ -91,7 +91,7 @@
 ```
 
 ### Sync
-```
+```python
     # Receive CloudEvents
     try:
         receive_response = client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
@@ -103,7 +103,7 @@
 # Release Samples
 
 ### Async
-```
+```python
     async def main():
 
         # Release a LockToken
@@ -118,7 +118,7 @@
 ```
 
 ### Sync
-```
+```python
     # Release a LockToken
     try: 
         tokens = [LockToken({'lockToken': 'token'})]
@@ -133,7 +133,7 @@
 
 ### Async
 
-```
+```python
     async def main():
 
         # Acknowledge a batch of CloudEvents
@@ -148,7 +148,7 @@
 ```
 
 ### Sync
-```
+```python
     # Acknowledge a batch of CloudEvents
     try: 
         lock_tokens = LockTokenInput(lock_tokens=["token"])
