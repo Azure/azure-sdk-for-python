@@ -100,8 +100,6 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
-        if hasattr(credential, 'get_token') and not token_intent:
-            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
@@ -113,6 +111,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             directory_path=directory_path,
             snapshot=snapshot,
             credential=credential,
+            token_intent=token_intent,
             **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)

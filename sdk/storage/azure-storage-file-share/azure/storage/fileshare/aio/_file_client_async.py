@@ -157,8 +157,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
-        if hasattr(credential, 'get_token') and not token_intent:
-            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
@@ -166,7 +164,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareFileClient, self).__init__(
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
-            credential=credential, **kwargs
+            credential=credential, token_intent=token_intent, **kwargs
         )
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)

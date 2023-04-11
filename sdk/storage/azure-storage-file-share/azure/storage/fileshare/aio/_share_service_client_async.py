@@ -101,8 +101,6 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
-        if hasattr(credential, 'get_token') and not token_intent:
-            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
@@ -111,6 +109,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         super(ShareServiceClient, self).__init__(
             account_url,
             credential=credential,
+            token_intent=token_intent,
             **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
