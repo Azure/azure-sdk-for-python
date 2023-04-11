@@ -61,7 +61,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     """
 
     def __init__(self, span: Optional[Span] = None, name: str = "span", **kwargs: Any) -> None:
-        self._name = name
         self._context_tokens = []
         self._current_ctxt_manager: Optional[ContextManager[Span]] = None
 
