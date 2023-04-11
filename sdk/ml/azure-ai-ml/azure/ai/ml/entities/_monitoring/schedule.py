@@ -49,7 +49,7 @@ class MonitorSchedule(Schedule):
         module_logger.warning("create_job is not a valid property of MonitorSchedule")
 
     @create_job.setter
-    def create_job(self, value): # pylint: disable=unused-argument
+    def create_job(self, value):  # pylint: disable=unused-argument
         module_logger.warning("create_job is not a valid property of MonitorSchedule")
 
     @classmethod
