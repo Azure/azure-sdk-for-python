@@ -8,11 +8,11 @@ from ....entities._job.job_resource_configuration import BaseProperty
 
 
 class PascalCaseProperty(BaseProperty):
-    
+
     _KEY_MAPPING = {}
 
     def items(self):
-        result  = []
+        result = []
         for key, value in super().items():
             if key.lower() in self._KEY_MAPPING:
                 key = self._KEY_MAPPING[key.lower()]
