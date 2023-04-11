@@ -815,7 +815,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
