@@ -15,7 +15,6 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
@@ -40,6 +39,7 @@ else:
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import DirectoryProperties, Handle, NTFSAttributes
 
 
@@ -95,13 +95,13 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             share_name: str,
             directory_path: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             *,
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
-        if isinstance(credential, AsyncTokenCredential) and token_intent is None:
-            raise ValueError("'token_intent' keyword must not be None if 'credential' is an AsyncTokenCredential.")
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
