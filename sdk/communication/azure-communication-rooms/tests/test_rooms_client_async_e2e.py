@@ -13,7 +13,6 @@ from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     ParticipantRole,
-    InvitedRoomParticipant,
     RoomParticipant
 )
 from testcase_async import RoomsAsyncTestCase
@@ -39,15 +38,15 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
         self.id4 = self.identity_client.create_user().properties["id"]
 
         self.users = {
-            "john" : InvitedRoomParticipant(
+            "john" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=ParticipantRole.PRESENTER
             ),
-            "fred" : InvitedRoomParticipant(
+            "fred" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id2),
                 role=ParticipantRole.CONSUMER
             ),
-            "chris" : InvitedRoomParticipant(
+            "chris" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.ATTENDEE
             )
@@ -153,7 +152,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
     async def test_create_room_incorrectMri_async(self):
         # room attributes
         participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
                 role=ParticipantRole.ATTENDEE
             ),
@@ -375,14 +374,14 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
     @RoomsAsyncTestCase.await_prepared_test
     async def test_upsert_participant_with_null_roles_async(self):
         create_participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=None
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id2)
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.PRESENTER
             )
@@ -414,18 +413,18 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
 
             # Check participants were upserted properly
             upsert_participants = [
-                InvitedRoomParticipant(
+                RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier(self.id1),
                     role=None
                 ),
-                InvitedRoomParticipant(
+                RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier(self.id2),
                     role=ParticipantRole.CONSUMER
                 ),
-                InvitedRoomParticipant(
+                RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier(self.id3)
                 ),
-                InvitedRoomParticipant(
+                RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier(self.id4)
                 )]
 
@@ -440,7 +439,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
                 ),
                 RoomParticipant(
                     raw_id=self.id3,
-                    role=ParticipantRole.PRESENTER
+                    role=ParticipantRole.ATTENDEE
                 ),
                 RoomParticipant(
                     raw_id=self.id4,
@@ -493,7 +492,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             create_response = await self.rooms_client.create_room()
 
             participants = [
-                InvitedRoomParticipant(
+                RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier("wrong_mri"),
                     role=ParticipantRole.ATTENDEE),
                 self.users["john"]
@@ -513,7 +512,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             create_response = await self.rooms_client.create_room()
 
             participants = [
-                InvitedRoomParticipant(
+                RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier("chris"),
                     role='kafka'),
                 self.users["john"]

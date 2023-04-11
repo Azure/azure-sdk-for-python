@@ -33,7 +33,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
-    InvitedRoomParticipant,
+    RoomParticipant,
     ParticipantRole
 )
 
@@ -48,10 +48,10 @@ class RoomsSample(object):
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_string)
         self.rooms = []
-        self.participant_1 = InvitedRoomParticipant(
+        self.participant_1 = RoomParticipant(
             communication_identifier=self.identity_client.create_user(),
             role=ParticipantRole.PRESENTER)
-        self.participant_2 = InvitedRoomParticipant(
+        self.participant_2 = RoomParticipant(
             communication_identifier=self.identity_client.create_user(),
             role=ParticipantRole.CONSUMER)
 

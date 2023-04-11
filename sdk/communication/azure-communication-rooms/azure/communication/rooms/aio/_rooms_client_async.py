@@ -4,22 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 import uuid
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.communication.rooms._models import (
     RoomParticipant,
-    InvitedRoomParticipant,
     UpsertParticipantsResult,
     RemoveParticipantsResult)
 from azure.communication.rooms._shared.models import CommunicationIdentifier
-from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
 from .._generated.aio._client import AzureCommunicationRoomsService
-from .._shared.utils import parse_connection_str
+from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._generated.models import (
@@ -37,7 +36,7 @@ class RoomsClient(object):
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param ~azure.core.credentials.AzureKeyCredential credential:
+    param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The access key we use to authenticate against the service.
     :keyword api_version: Azure Communication Rooms API version.
         Default value is "2023-03-31-preview".
@@ -45,8 +44,9 @@ class RoomsClient(object):
     :paramtype api_version: str
     """
     def __init__(
-            self, endpoint: str,
-            credential: AzureKeyCredential,
+            self,
+            endpoint: str,
+            credential: Union[AsyncTokenCredential, AzureKeyCredential],
             **kwargs
     ) -> None:
         try:
@@ -59,14 +59,12 @@ class RoomsClient(object):
             raise ValueError(
                 "invalid credential from connection string.")
 
-        # TokenCredential not supported at the moment
-        if hasattr(credential, "get_token"):
-            raise TypeError("Unsupported credential: {}. Use an AzureKeyCredential to use HMACCredentialsPolicy"
-                    " for authentication".format(type(credential)))
+        if endpoint.endswith("/"):
+            endpoint = endpoint[:-1]
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
+        self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
         self._rooms_service_client = AzureCommunicationRoomsService(
             self._endpoint,
             api_version=self._api_version,
@@ -104,7 +102,7 @@ class RoomsClient(object):
         *,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
-        participants:Optional[List[InvitedRoomParticipant]] = None,
+        participants:Optional[List[RoomParticipant]] = None,
         **kwargs
     ) -> CommunicationRoom:
         """Create a new room.
@@ -114,7 +112,7 @@ class RoomsClient(object):
         :param valid_until: The timestamp from when the room can no longer be joined. Optional.
         :type valid_until: ~datetime.datetime
         :param participants: Collection of identities invited to the room. Optional.
-        :type participants: List[~azure.communication.rooms.InvitedRoomParticipant]
+        :type participants: List[~azure.communication.rooms.RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -222,7 +220,7 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        participants: List[InvitedRoomParticipant],
+        participants: List[RoomParticipant],
         **kwargs
     ) -> UpsertParticipantsResult:
         """Update participants to a room. It looks for the room participants based on their
@@ -231,7 +229,7 @@ class RoomsClient(object):
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities to be updated
-        :type participants: List[~azure.communication.rooms.InvitedRoomParticipant]
+        :type participants: List[~azure.communication.rooms.RoomParticipant]
         :return: Upsert participants result
         :rtype: ~azure.communication.rooms.UpsertParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -288,7 +286,7 @@ class RoomsClient(object):
 
     @staticmethod
     def _convert_room_participants_to_dictionary_for_upsert(
-        room_participants : List[InvitedRoomParticipant]
+        room_participants : List[RoomParticipant]
     ):
         upsert_dictionary = dict()
         for participant in room_participants or []:

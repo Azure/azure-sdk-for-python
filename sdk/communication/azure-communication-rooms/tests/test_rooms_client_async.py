@@ -11,7 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     ParticipantRole,
-    InvitedRoomParticipant,
+    RoomParticipant,
     UpsertParticipantsResult,
     RemoveParticipantsResult
 )
@@ -25,7 +25,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
     valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
     valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
     raw_id = "8:acs:abcd"
-    room_participant = InvitedRoomParticipant(
+    room_participant = RoomParticipant(
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
         ),
@@ -170,7 +170,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
     async def test_upsert_participants(self):
         raised = False
-        updated_participant = InvitedRoomParticipant(
+        updated_participant = RoomParticipant(
             communication_identifier=CommunicationUserIdentifier(
                 id=self.raw_id
             ),

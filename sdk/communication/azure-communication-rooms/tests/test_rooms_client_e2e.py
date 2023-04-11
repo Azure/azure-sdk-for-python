@@ -10,10 +10,9 @@ from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms import (
-    RoomsClient,
-    InvitedRoomParticipant,
     ParticipantRole,
-    RoomParticipant
+    RoomParticipant,
+    RoomsClient
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from _shared.utils import get_http_logging_policy
@@ -38,15 +37,15 @@ class RoomsClientTest(RoomsTestCase):
         self.id4 = self.identity_client.create_user().properties["id"]
 
         self.users = {
-            "john" : InvitedRoomParticipant(
+            "john" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=ParticipantRole.PRESENTER
             ),
-            "fred" : InvitedRoomParticipant(
+            "fred" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id2),
                 role=ParticipantRole.CONSUMER
             ),
-            "chris" : InvitedRoomParticipant(
+            "chris" : RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.ATTENDEE
             )
@@ -137,7 +136,7 @@ class RoomsClientTest(RoomsTestCase):
     def test_create_room_incorrectMri(self):
         # room attributes
         participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
                 role='Attendee'),
             self.users["john"]
@@ -337,14 +336,14 @@ class RoomsClientTest(RoomsTestCase):
 
     def test_upsert_participants_with_null_role(self):
         create_participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=None
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id2)
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.PRESENTER
             )
@@ -375,18 +374,18 @@ class RoomsClientTest(RoomsTestCase):
 
         # Check participants were upserted properly
         upsert_participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=None
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id2),
                 role=ParticipantRole.CONSUMER
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3)
             ),
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id4)
         )]
 
@@ -401,7 +400,7 @@ class RoomsClientTest(RoomsTestCase):
             ),
             RoomParticipant(
                 raw_id=self.id3,
-                role=ParticipantRole.PRESENTER
+                role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
                 raw_id=self.id4,
@@ -453,7 +452,7 @@ class RoomsClientTest(RoomsTestCase):
         create_response = self.rooms_client.create_room()
 
         participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
                 role=ParticipantRole.ATTENDEE),
             self.users["john"]
@@ -471,7 +470,7 @@ class RoomsClientTest(RoomsTestCase):
         create_response = self.rooms_client.create_room()
 
         participants = [
-            InvitedRoomParticipant(
+            RoomParticipant(
                 communication_identifier=self.users["john"].communication_identifier,
                 role='Kafka'),
         ]

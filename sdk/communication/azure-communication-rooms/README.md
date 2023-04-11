@@ -42,7 +42,7 @@ client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
 
 - `valid_from`: A datetime object from which room will start existing
 - `valid_until`: A datetime object after which room meeting would end
-- `participants`: A list of `InvitedRoomParticipant` containing MRI's of invitees to the room as well as optional `ParticipantRole`. If `ParticipantRole` is not specified, then it will be `Attendee` by default.
+- `participants`: A list of `RoomParticipant`s containing MRI's of invitees to the room as well as optional `ParticipantRole`. If `ParticipantRole` is not specified, then it will be `Attendee` by default.
 All the above attributes are optional. The service provides default values of valid_until and
 valid_from if they are missing. The default for`valid_from` is current date time and the default for `valid_until` is `valid_from + 180 days`.
 
@@ -54,7 +54,7 @@ from azure.core.exceptions import HttpResponseError
 from datetime import datetime, timedelta
 from azure.communication.rooms import (
     RoomsClient,
-    InvitedRoomParticipant,
+    RoomParticipant,
     ParticipantRole
 )
 from azure.communication.identity import CommunicationUserIdentifier
@@ -63,9 +63,9 @@ client = RoomsClient.from_connection_string(conn_str='<connection_str>')
 valid_from = datetime.now()
 valid_until = valid_from + relativedelta(months=+1)
 participants = []
-participants.append(InvitedRoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
-participants.append(InvitedRoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.CONSUMER))
-participants.append(InvitedRoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.PRESENTER))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.CONSUMER))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.PRESENTER))
 
 try:
     create_room_response = client.create_room(
@@ -128,9 +128,9 @@ In order to insert new participants or update existing participants, call the `u
 
 ```python
 participants = []
-participants.append(InvitedRoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
-participants.append(InvitedRoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.ATTENDEE))
-participants.append(InvitedRoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.CONSUMER))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.ATTENDEE))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.CONSUMER))
 try:
     response = client.upsert_participants(
         room_id="id of the room to be updated",

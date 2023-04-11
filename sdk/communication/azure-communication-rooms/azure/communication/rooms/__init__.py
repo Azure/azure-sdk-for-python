@@ -11,7 +11,6 @@ from ._generated.models import (
 )
 from ._models import (
     RoomParticipant,
-    InvitedRoomParticipant,
     UpsertParticipantsResult,
     RemoveParticipantsResult
 )
@@ -23,7 +22,6 @@ __all__ = [
     'ParticipantRole',
     'RoomsClient',
     'RoomParticipant',
-    "InvitedRoomParticipant",
     "UpsertParticipantsResult",
     "RemoveParticipantsResult"
 ]
