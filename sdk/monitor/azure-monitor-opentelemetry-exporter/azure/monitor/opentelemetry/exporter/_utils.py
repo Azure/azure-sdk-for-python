@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 import locale
-from os import environ, getenv
+from os import environ
+from os.path import isdir
 import platform
 import threading
 import time
@@ -25,16 +26,16 @@ opentelemetry_version = pkg_resources.get_distribution(
 
 def _get_sdk_version_prefix():
     is_on_app_service = "WEBSITE_SITE_NAME" in environ
-    is_attach_enabled = getenv("ApplicationInsightsAgent_EXTENSION_VERSION") == "~3"
+    is_attach_enabled = isdir("/agents/python/")
     sdk_version_prefix = ''
     if is_on_app_service and is_attach_enabled:
-        os = ''
+        os = 'u'
         system = platform.system()
         if system == "Linux":
             os = 'l'
         elif system == "Windows":
             os = 'w'
-        sdk_version_prefix = "a{}d_".format(os)
+        sdk_version_prefix = "a{}_".format(os)
     return sdk_version_prefix
 
 

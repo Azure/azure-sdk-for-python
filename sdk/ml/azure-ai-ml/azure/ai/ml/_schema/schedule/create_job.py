@@ -102,7 +102,6 @@ class BaseCreateJobSchema(BaseJobSchema):
         # Get the raw dict data before load
         raw_data = self.context.get(_SCHEDULED_JOB_UPDATES_KEY, {})  # pylint: disable=no-member
         if isinstance(job, Job):
-
             if job._source_path is None:
                 raise ValidationError("Could not load job for schedule without '_source_path' set.")
             # Load local job again with updated values

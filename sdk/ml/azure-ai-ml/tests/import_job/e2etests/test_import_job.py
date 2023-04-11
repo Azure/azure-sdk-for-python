@@ -84,7 +84,6 @@ class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.skip("Skip for not ready.")
     @pytest.mark.e2etest
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
-
         pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
@@ -119,7 +118,6 @@ class TestImportJob(AzureRecordedTestCase):
 
     @classmethod
     def validate_test_import_pipepine_submit_cancel(cls, pipeline: PipelineJob, client: MLClient, is_dsl: bool) -> None:
-
         import_pipeline: PipelineJob = assert_job_cancel(job=pipeline, client=client)
 
         import_step = "import_job" if is_dsl else "import_step"
