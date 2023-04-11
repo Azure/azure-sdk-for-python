@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b10 (2023-04-20)
+## 4.0.0b10 (2023-04-14)
 
 ### Features Added
 
