@@ -4,9 +4,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # pylint: disable=too-many-lines
+import functools
 import hashlib
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
+
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -21,6 +23,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors, OCIManifest, ManifestWrapper
+from ._download_stream import DownloadBlobStream
 from ._helpers import (
     _compute_digest,
     _is_tag,
@@ -36,12 +39,14 @@ from ._models import (
     RepositoryProperties,
     ArtifactTagProperties,
     ArtifactManifestProperties,
-    DownloadBlobResult,
     DownloadManifestResult,
 )
 
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
     return pipeline_response, deserialized
+
+def _return_response_and_headers(pipeline_response, _, response_headers):
+    return pipeline_response, response_headers
 
 def _return_response_headers(_, __, response_headers):
     return response_headers
@@ -955,7 +960,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             When digest is provided, will use this digest to compare with the one calculated by the response payload.
             When tag is provided, will use the digest in response headers to compare.
         :returns: DownloadManifestResult
-        :rtype: ~azure.containerregistry.models.DownloadManifestResult
+        :rtype: ~azure.containerregistry.DownloadManifestResult
         :raises ValueError: If the requested digest does not match the digest of the received manifest.
         """
         response, manifest_wrapper = cast(
@@ -980,21 +985,40 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:
-        """Download a blob that is part of an artifact.
+    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobStream:
+        """Download a blob that is part of an artifact to a stream.
 
-        :param str repository: Name of the repository
+        :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
-        :returns: DownloadBlobResult
-        :rtype: ~azure.containerregistry.DownloadBlobResult
+        :returns: DownloadBlobStream
+        :rtype: ~azure.containerregistry.DownloadBlobStream
+        :raises ValueError: If the requested digest does not match the digest of the received blob.
         """
-        deserialized = self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
-
-        blob_content = b''
-        for chunk in deserialized: # type: ignore
-            if chunk:
-                blob_content += chunk
-        return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
+        end_range = DEFAULT_CHUNK_SIZE - 1
+        first_chunk, headers = cast(
+            Tuple[PipelineResponse, Dict[str, str]],
+            self._client.container_registry_blob.get_chunk(
+                repository,
+                digest,
+                range_header=f"bytes=0-{end_range}",
+                cls=_return_response_and_headers,
+                **kwargs
+            )
+        )
+        return DownloadBlobStream(
+            response=first_chunk,
+            digest=digest,
+            get_next=functools.partial(
+                self._client.container_registry_blob.get_chunk,
+                name=repository,
+                digest=digest,
+                cls=_return_response_and_headers,
+                **kwargs
+            ),
+            blob_size=int(headers["Content-Range"].split("/")[1]),
+            downloaded=int(headers["Content-Length"]),
+            chunk_size=DEFAULT_CHUNK_SIZE
+        )
 
     @distributed_trace
     def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> None:

@@ -2416,7 +2416,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
     def test_registered_pipeline_with_group(self, client: MLClient):
-
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
         hello_world_component_func = load_component(hello_world_component_yaml)
         from azure.ai.ml.dsl._group_decorator import group
@@ -3067,3 +3066,71 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
 
         assert_job_cancel(pipeline_job, client)
+
+    def test_pipeline_variable_name_uppercase(self, client: MLClient):
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(
+            source=component_yaml,
+        )
+
+        @dsl.pipeline(name="pipeline_with_uppercase_node_names")
+        def pipeline_with_user_defined_nodes_1():
+            for i in range(2):
+                node1 = component_func(component_in_path=job_input)
+                # change node name to lower when setting it to avoid upper case in nxt_input's binding
+                node1.name = f"Dummy_{i}"
+                nxt_input = Input(
+                    path=node1.outputs.component_out_path,
+                    mode=InputOutputModes.DIRECT,
+                )
+                node2 = component_func(component_in_path=nxt_input)
+                node2.name = f"Another_{i}"
+
+        pipeline_job = pipeline_with_user_defined_nodes_1()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline_job, client)
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert actual_job["jobs"] == {
+            "another_0": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "mode": "Direct",
+                        "value": "${{parent.jobs.dummy_0.outputs.component_out_path}}",
+                    }
+                },
+                "name": "another_0",
+                "type": "command",
+            },
+            "another_1": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "mode": "Direct",
+                        "value": "${{parent.jobs.dummy_1.outputs.component_out_path}}",
+                    }
+                },
+                "name": "another_1",
+                "type": "command",
+            },
+            "dummy_0": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "uri_file",
+                        "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    }
+                },
+                "name": "dummy_0",
+                "type": "command",
+            },
+            "dummy_1": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "uri_file",
+                        "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    }
+                },
+                "name": "dummy_1",
+                "type": "command",
+            },
+        }
