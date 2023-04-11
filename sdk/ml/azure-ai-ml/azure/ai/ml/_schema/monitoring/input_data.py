@@ -6,7 +6,6 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._monitoring import MonitorDatasetContext
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum

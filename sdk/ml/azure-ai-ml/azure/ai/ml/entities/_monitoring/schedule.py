@@ -48,6 +48,11 @@ class MonitorSchedule(Schedule):
     def create_job(self):
         module_logger.warning("create_job is not a valid property of MonitorSchedule")
 
+    @create_job.setter
+    def create_job(self, value):
+        module_logger.warning("create_job is not a valid property of MonitorSchedule")
+        pass
+
     @classmethod
     def _load(
         cls,

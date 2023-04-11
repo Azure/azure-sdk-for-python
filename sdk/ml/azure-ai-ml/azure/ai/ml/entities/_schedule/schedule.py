@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
+from abc import abstractmethod
 import typing
 from os import PathLike
 from pathlib import Path
@@ -79,6 +80,16 @@ class Schedule(Resource):
             return MonitorSchedule, None
         return JobSchedule, None
 
+    @property
+    @abstractmethod
+    def create_job(self):
+        pass
+
+    @create_job.setter
+    @abstractmethod
+    def create_job(self, value):
+        pass
+
 
 class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
@@ -154,11 +165,11 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         return self._create_job
 
     @create_job.setter
-    def create_job(self, create_job: Union[Job, str]):
+    def create_job(self, value: Union[Job, str]):
         """
         Sets the schedule's action to a job definition or an existing job name.
         """
-        self._create_job = create_job
+        self._create_job = value
 
     @classmethod
     def _load(
