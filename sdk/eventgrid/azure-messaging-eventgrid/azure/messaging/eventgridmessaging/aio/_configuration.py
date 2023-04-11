@@ -42,7 +42,7 @@ class EventGridMessagingClientConfiguration(Configuration):  # pylint: disable=t
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         super(EventGridMessagingClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-06-01-preview")
+        api_version: str = kwargs.pop("api_version", "2022-05-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
