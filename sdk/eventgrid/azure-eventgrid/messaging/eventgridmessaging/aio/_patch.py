@@ -8,12 +8,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
-from ..models._patch import ReceiveResponse
+from ..models import ReceiveResponse
 from .._patch import _cloud_event_to_generated
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._client import AzureMessagingEventGridClient as ServiceClientGenerated
+from ._client import EventGridMessagingClient as ServiceClientGenerated
 
 class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
     def __init__(
@@ -27,7 +27,7 @@ class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
     def on_request(self, request):
         request.http_request.headers["Authorization"] = "SharedAccessKey " + self._credential.key
 
-class AzureMessagingEventGridClient(ServiceClientGenerated):
+class EventGridMessagingClient(ServiceClientGenerated):
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs):
         if isinstance(credential, AzureKeyCredential):
@@ -93,4 +93,4 @@ def patch_sdk():
     """
 
 
-__all__: List[str] = ["AzureMessagingEventGridClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["EventGridMessagingClient"]  # Add all objects you want publicly available to users at this package level
