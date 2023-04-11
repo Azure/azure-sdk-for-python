@@ -51,10 +51,14 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-    from uamqp import (
-        Message,
-        BatchMessage
-    )
+    try:
+        # pylint:disable=unused-import
+        from uamqp import (
+            Message,
+            BatchMessage
+        )
+    except ImportError:
+        pass
     from .._pyamqp.performatives import TransferFrame
     from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (

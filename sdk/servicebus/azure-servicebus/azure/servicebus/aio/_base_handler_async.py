@@ -28,7 +28,11 @@ from ..exceptions import (
 )
 
 if TYPE_CHECKING:
-    from uamqp.async_ops.client_async import AMQPClientAsync as uamqp_AMQPClientAsync
+    try:
+        # pylint:disable=unused-import
+        from uamqp.async_ops.client_async import AMQPClientAsync as uamqp_AMQPClientAsync
+    except ImportError:
+        pass
     from .._pyamqp.aio._client_async import AMQPClientAsync as pyamqp_AMQPClientAsync
     from .._pyamqp.message import Message as pyamqp_Message
     from azure.core.credentials_async import AsyncTokenCredential
