@@ -7,18 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
+from . import models as _models
 from ._configuration import CommunicationIdentityClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import CommunicationIdentityOperations
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
 
 
 class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -40,10 +37,11 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = CommunicationIdentityClientConfiguration(endpoint=endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.communication_identity = CommunicationIdentityOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -75,15 +73,12 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> CommunicationIdentityClient
+    def __enter__(self) -> "CommunicationIdentityClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

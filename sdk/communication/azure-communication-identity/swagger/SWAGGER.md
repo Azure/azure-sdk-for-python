@@ -27,6 +27,10 @@ clear-output-folder: true
 v3: true
 python: true
 title: Communication Identity Client
+no-async: false
+add-credential: false
+disable-async-iterators: true
+models-mode: msrest
 ```
 
 ### Rename CommunicationIdentityTokenScope to CommunicationTokenScope

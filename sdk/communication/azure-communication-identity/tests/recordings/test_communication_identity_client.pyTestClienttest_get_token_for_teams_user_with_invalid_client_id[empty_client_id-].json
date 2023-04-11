@@ -10,7 +10,7 @@
         "Connection": "keep-alive",
         "Content-Length": "53",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-identity/1.3.2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -32,7 +32,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "106ms"
+        "X-Processing-Time": "105ms"
       },
       "ResponseBody": {
         "error": {
