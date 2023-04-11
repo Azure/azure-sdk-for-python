@@ -26,7 +26,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import EventGridMessagingClientClientMixinABC, _format_url_section
+from .._vendor import EventGridMessagingClientMixinABC, _format_url_section
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_event_grid_messaging_client_publish_cloud_event_request(  # pylint: disable=name-too-long
+def build_event_grid_messaging_publish_cloud_event_request(  # pylint: disable=name-too-long
     topic_name: str, *, content: _models._models.CloudEvent, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -60,7 +60,7 @@ def build_event_grid_messaging_client_publish_cloud_event_request(  # pylint: di
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_messaging_client_publish_batch_of_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_messaging_publish_batch_of_cloud_events_request(  # pylint: disable=name-too-long
     topic_name: str, *, content: List[_models._models.CloudEvent], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -85,7 +85,7 @@ def build_event_grid_messaging_client_publish_batch_of_cloud_events_request(  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_messaging_client_receive_batch_of_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_messaging_receive_batch_of_cloud_events_request(  # pylint: disable=name-too-long
     topic_name: str,
     event_subscription_name: str,
     *,
@@ -121,7 +121,7 @@ def build_event_grid_messaging_client_receive_batch_of_cloud_events_request(  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_event_grid_messaging_client_acknowledge_batch_of_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_messaging_acknowledge_batch_of_cloud_events_request(  # pylint: disable=name-too-long
     topic_name: str, event_subscription_name: str, *, content: _models.LockTokenInput, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -150,7 +150,7 @@ def build_event_grid_messaging_client_acknowledge_batch_of_cloud_events_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_messaging_client_release_batch_of_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_messaging_release_batch_of_cloud_events_request(  # pylint: disable=name-too-long
     topic_name: str, event_subscription_name: str, *, content: List[_models.LockToken], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -179,7 +179,7 @@ def build_event_grid_messaging_client_release_batch_of_cloud_events_request(  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClientMixinABC):
+class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
     @distributed_trace
     def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
         self, topic_name: str, body: _models._models.CloudEvent, **kwargs: Any
@@ -189,7 +189,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param body: Required.
-        :type body: ~azure.messaging.eventgridmessagingclient.models.CloudEvent
+        :type body: ~azure.messaging.eventgridmessaging.models.CloudEvent
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -217,7 +217,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
 
         _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_messaging_client_publish_cloud_event_request(
+        request = build_event_grid_messaging_publish_cloud_event_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -253,7 +253,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param events: Array of Cloud Events being published. Required.
-        :type events: list[~azure.messaging.eventgridmessagingclient.models.CloudEvent]
+        :type events: list[~azure.messaging.eventgridmessaging.models.CloudEvent]
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -281,7 +281,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
 
         _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_messaging_client_publish_batch_of_cloud_events_request(
+        request = build_event_grid_messaging_publish_batch_of_cloud_events_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -332,7 +332,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ReceiveResponse. The ReceiveResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgridmessagingclient.models.ReceiveResponse
+        :rtype: ~azure.messaging.eventgridmessaging.models.ReceiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -348,7 +348,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
 
         cls: ClsType[_models.ReceiveResponse] = kwargs.pop("cls", None)
 
-        request = build_event_grid_messaging_client_receive_batch_of_cloud_events_request(
+        request = build_event_grid_messaging_receive_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             max_events=max_events,
@@ -395,13 +395,13 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type lock_tokens: ~azure.messaging.eventgridmessagingclient.models.LockTokenInput
+        :type lock_tokens: ~azure.messaging.eventgridmessaging.models.LockTokenInput
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: LockTokensResponse. The LockTokensResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgridmessagingclient.models.LockTokensResponse
+        :rtype: ~azure.messaging.eventgridmessaging.models.LockTokensResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -420,7 +420,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
 
         _content = json.dumps(lock_tokens, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_messaging_client_acknowledge_batch_of_cloud_events_request(
+        request = build_event_grid_messaging_acknowledge_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,
@@ -467,13 +467,13 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
         :type event_subscription_name: str
         :param tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type tokens: list[~azure.messaging.eventgridmessagingclient.models.LockToken]
+        :type tokens: list[~azure.messaging.eventgridmessaging.models.LockToken]
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: LockTokensResponse. The LockTokensResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgridmessagingclient.models.LockTokensResponse
+        :rtype: ~azure.messaging.eventgridmessaging.models.LockTokensResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -492,7 +492,7 @@ class EventGridMessagingClientClientOperationsMixin(EventGridMessagingClientClie
 
         _content = json.dumps(tokens, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_messaging_client_release_batch_of_cloud_events_request(
+        request = build_event_grid_messaging_release_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,

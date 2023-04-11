@@ -24,7 +24,7 @@ class BrokerProperties(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lock_token: The token used to lock the event. Required.
-    :vartype lock_token: ~azure.messaging.eventgridmessagingclient.models.LockToken
+    :vartype lock_token: ~azure.messaging.eventgridmessaging.models.LockToken
     """
 
     lock_token: "_models.LockToken" = rest_field(name="lockToken")
@@ -111,7 +111,7 @@ class FailedLockToken(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lock_token: LockToken value. Required.
-    :vartype lock_token: ~azure.messaging.eventgridmessagingclient.models.LockToken
+    :vartype lock_token: ~azure.messaging.eventgridmessaging.models.LockToken
     :ivar error_code: Error code. Required.
     :vartype error_code: int
     :ivar error_description: Description of the error. Required.
@@ -215,8 +215,7 @@ class LockTokensResponse(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Required.
-    :vartype failed_lock_tokens:
-     list[~azure.messaging.eventgridmessagingclient.models.FailedLockToken]
+    :vartype failed_lock_tokens: list[~azure.messaging.eventgridmessaging.models.FailedLockToken]
     :ivar succeeded_lock_tokens: Array of LockToken values for succeeded cloud events. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
@@ -252,9 +251,9 @@ class ReceiveDetails(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar broker_properties: The Event Broker details. Required.
-    :vartype broker_properties: ~azure.messaging.eventgridmessagingclient.models.BrokerProperties
+    :vartype broker_properties: ~azure.messaging.eventgridmessaging.models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.messaging.eventgridmessagingclient.models.CloudEvent
+    :vartype event: ~azure.messaging.eventgridmessaging.models.CloudEvent
     """
 
     broker_properties: "_models.BrokerProperties" = rest_field(name="brokerProperties")
@@ -288,7 +287,7 @@ class ReceiveResponse(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Array of receive responses, one per cloud event. Required.
-    :vartype value: list[~azure.messaging.eventgridmessagingclient.models.ReceiveDetails]
+    :vartype value: list[~azure.messaging.eventgridmessaging.models.ReceiveDetails]
     """
 
     value: List["_models.ReceiveDetails"] = rest_field()

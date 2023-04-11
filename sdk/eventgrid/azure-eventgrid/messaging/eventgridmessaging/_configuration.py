@@ -12,15 +12,15 @@ from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
-from .._version import VERSION
+from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 
-class EventGridMessagingClientClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for EventGridMessagingClientClient.
+class EventGridMessagingClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for EventGridMessagingClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -31,18 +31,16 @@ class EventGridMessagingClientClientConfiguration(Configuration):  # pylint: dis
     :param credential: Credential needed for the client to connect to Azure. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+     ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-06-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-    ) -> None:
-        super(EventGridMessagingClientClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-06-01-preview")
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        super(EventGridMessagingClientConfiguration, self).__init__(**kwargs)
+        api_version: str = kwargs.pop("api_version", "2022-05-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -53,14 +51,14 @@ class EventGridMessagingClientClientConfiguration(Configuration):  # pylint: dis
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://eventgrid.azure.net/.default"])
-        kwargs.setdefault("sdk_moniker", "eventgridmessagingclientclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "eventgridmessagingclient/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _infer_policy(self, **kwargs):
         if isinstance(self.credential, AzureKeyCredential):
             return policies.AzureKeyCredentialPolicy(self.credential, "SharedAccessKey", **kwargs)
         if hasattr(self.credential, "get_token"):
-            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            return policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
@@ -69,9 +67,9 @@ class EventGridMessagingClientClientConfiguration(Configuration):  # pylint: dis
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = self._infer_policy(**kwargs)

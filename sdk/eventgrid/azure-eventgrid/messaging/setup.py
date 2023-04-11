@@ -9,12 +9,12 @@
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "eventgridmessagingclientclient"
+PACKAGE_NAME = "eventgridmessagingclient"
 version = "1.0.0b1"
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="EventGridMessagingClientClient",
+    description="EventGridMessagingClient",
     author_email="",
     url="",
     keywords="azure, azure sdk",

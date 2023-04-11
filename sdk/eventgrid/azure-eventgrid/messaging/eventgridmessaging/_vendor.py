@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import List, TYPE_CHECKING, cast
 
-from ._configuration import EventGridMessagingClientClientConfiguration
+from ._configuration import EventGridMessagingClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,10 +29,10 @@ def _format_url_section(template, **kwargs):
             template = "/".join(components)
 
 
-class EventGridMessagingClientClientMixinABC(ABC):
+class EventGridMessagingClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"
-    _config: EventGridMessagingClientClientConfiguration
+    _config: EventGridMessagingClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
