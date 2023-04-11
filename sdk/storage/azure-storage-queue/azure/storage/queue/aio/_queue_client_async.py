@@ -101,7 +101,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         self._configure_encryption(kwargs)
 
     @distributed_trace_async
-    async def create_queue(
+    async def create_queue(  # type: ignore
         self, *,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -145,7 +145,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_queue(self, **kwargs: Any) -> None:
+    async def delete_queue(self, **kwargs: Any) -> None:  # type: ignore
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -180,7 +180,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
+    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":  # type: ignore
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -210,7 +210,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         return response
 
     @distributed_trace_async
-    async def set_queue_metadata(
+    async def set_queue_metadata(  # type: ignore
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
@@ -249,7 +249,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
+    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:  # type: ignore
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -272,7 +272,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_queue_access_policy(
+    async def set_queue_access_policy(  # type: ignore
         self, signed_identifiers: Dict[str, AccessPolicy],
         **kwargs: Any
     ) -> None:
@@ -329,7 +329,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def send_message(
+    async def send_message(  # type: ignore
         self, content: Any,
         *,
         visibility_timeout: Optional[int] = None,
@@ -425,7 +425,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def receive_message(
+    async def receive_message(  # type: ignore
         self, *,
         visibility_timeout: Optional[int] = None,
         **kwargs: Any
@@ -487,7 +487,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(
+    def receive_messages(  # type: ignore
         self, *,
         messages_per_page: Optional[int] = None,
         visibility_timeout: Optional[int] = None,
@@ -565,7 +565,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def update_message(
+    async def update_message(  # type: ignore
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
         content: Optional[Any] = None,
@@ -624,14 +624,16 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :caption: Update a message.
         """
         timeout = kwargs.pop('timeout', None)
-        try:
+
+        receipt: Optional[str]
+        if isinstance(message, QueueMessage):
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
             inserted_on = message.inserted_on
             expires_on = message.expires_on
             dequeue_count = message.dequeue_count
-        except AttributeError:
+        else:
             message_id = message
             message_text = content
             receipt = pop_receipt
@@ -687,7 +689,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def peek_messages(
+    async def peek_messages(  # type: ignore
         self, max_messages: Optional[int] = None,
         **kwargs: Any
     ) -> List[QueueMessage]:
@@ -750,7 +752,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(self, **kwargs: Any) -> None:
+    async def clear_messages(self, **kwargs: Any) -> None:  # type: ignore
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -776,7 +778,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_message(
+    async def delete_message(  # type: ignore
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
         **kwargs: Any
@@ -816,10 +818,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :caption: Delete a message.
         """
         timeout = kwargs.pop('timeout', None)
-        try:
+
+        receipt: Optional[str]
+        if isinstance(message, QueueMessage):
             message_id = message.id
             receipt = pop_receipt or message.pop_receipt
-        except AttributeError:
+        else:
             message_id = message
             receipt = pop_receipt
 
