@@ -402,6 +402,7 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
     def _basic_component_func(self):
         return load_component("./tests/test_configs/dsl_pipeline/do_while/basic_component/component.yml")
 
+    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_do_while_pipeline(self, client: MLClient):
         @pipeline
         def do_while_body_pipeline_component(
