@@ -9,8 +9,8 @@ from typing import Callable, Dict, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -52,7 +52,7 @@ class WorkspaceOperationsBase:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -292,7 +292,7 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            if workspace.storage_accounts is not  None:            
+            if workspace.storage_accounts is not  None:
                 for storageaccount in workspace.storage_accounts:
                     delete_resource_by_arm_id(
                         self._credentials,
@@ -315,7 +315,7 @@ class WorkspaceOperationsBase:
                         self._subscription_id,
                         containerregistry,
                         ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
-                    )     
+                    )
 
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,

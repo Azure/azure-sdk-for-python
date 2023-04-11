@@ -345,7 +345,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
-            self._service_client_02_2023_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -542,7 +542,7 @@ class MLClient:
 
         self._hubs = HubOperations(
              self._operation_scope,
-            self._service_client_02_2023_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -718,7 +718,7 @@ class MLClient:
         if is_private_preview_enabled():
             return self._featuresets
         raise Exception("feature set operations not supported")
-        
+
     @property
     @experimental
     def hubs(self) -> HubOperations:

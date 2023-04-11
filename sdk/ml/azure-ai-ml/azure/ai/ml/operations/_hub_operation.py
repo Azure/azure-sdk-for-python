@@ -133,6 +133,7 @@ class HubOperations(WorkspaceOperationsBase):
     def begin_update(
         self,
         workspace_hub: WorkspaceHub,
+        *,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[WorkspaceHub]:

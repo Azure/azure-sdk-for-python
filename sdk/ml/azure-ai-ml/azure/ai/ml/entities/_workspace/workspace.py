@@ -139,15 +139,17 @@ class Workspace(Resource):
         self.existing_workspaces = existing_workspaces
         self.hub_resource_id = hub_resource_id
 
-        if(workspace_hub):
-            if(workspace_hub._kind.lower() != HUB_KIND):
+        if workspace_hub:
+            if workspace_hub._kind.lower() != HUB_KIND:
                 raise ValidationError("workspace_hub should be a workspaceHub")
-            if all(x is None for x in [storage_account, location, container_registry, key_vault, public_network_access, managed_network, storage_accounts, key_vaults, container_registries, existing_workspaces]):
+            if all(x is None for x in [storage_account, location, container_registry, key_vault,\
+                                        public_network_access, managed_network, storage_accounts, \
+                                            key_vaults, container_registries, existing_workspaces]):
                 self._kind = LEAN_KIND
                 self.hub_resource_id = workspace_hub.id
                 self.location = workspace_hub.location
             else:
-                raise ValidationError("To use workspaceHub to create workspace, you can only specify application insight, encryption and identity.")
+                raise ValidationError("To use workspaceHub, only specify application insight, encryption and identity.")
 
     @property
     def discovery_url(self) -> str:

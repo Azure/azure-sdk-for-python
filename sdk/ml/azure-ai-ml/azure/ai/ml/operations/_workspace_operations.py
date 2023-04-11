@@ -5,10 +5,9 @@
 # pylint: disable=protected-access
 
 from typing import Dict, Iterable, Optional
-from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -23,7 +22,6 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
 )
-
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -44,7 +42,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,

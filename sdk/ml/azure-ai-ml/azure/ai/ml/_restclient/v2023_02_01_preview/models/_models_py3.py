@@ -27195,8 +27195,6 @@ class Workspace(Resource):
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the workspace.
     :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
-    :ivar kind:
-    :vartype kind: str
     :ivar workspace_id: The immutable id associated with this workspace.
     :vartype workspace_id: str
     :ivar description: The description of this workspace.
@@ -27275,18 +27273,6 @@ class Workspace(Resource):
     :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
      the workspace.
     :vartype system_datastores_auth_mode: str
-    :ivar storage_accounts: : A list of storage accounts used by Hub.
-    :vartype storage_accounts: list[str]
-    :ivar key_vaults: A list of key vaults used by Hub.
-    :vartype key_vaults: list[str]
-    :ivar container_registries: A list of container registries used by Hub.
-    :vartype container_registries: list[str]
-    :ivar existing_workspaces: A list of existing workspaces used by Hub to perform convert.
-    :vartype existing_workspaces: list[str]
-    :ivar hub_resource_id: Resource Id of Hub used for lean workspace.
-    :vartype hub_resource_id: str
-    :ivar associated_workspaces: A list of lean workspaces associated with Hub.
-    :vartype associated_workspaces: list[str]
     """
 
     _validation = {
@@ -27305,7 +27291,6 @@ class Workspace(Resource):
         'ml_flow_tracking_uri': {'readonly': True},
         'soft_deleted_at': {'readonly': True},
         'scheduled_purge_date': {'readonly': True},
-        'associated_workspaces': {'readonly': True},
     }
 
     _attribute_map = {
@@ -27317,7 +27302,6 @@ class Workspace(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -27346,12 +27330,6 @@ class Workspace(Resource):
         'soft_deleted_at': {'key': 'properties.softDeletedAt', 'type': 'str'},
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[str]'},
-        'key_vaults': {'key': 'properties.keyVaults', 'type': '[str]'},
-        'container_registries': {'key': 'properties.containerRegistries', 'type': '[str]'},
-        'existing_workspaces': {'key': 'properties.existingWorkspaces', 'type': '[str]'},
-        'hub_resource_id': {'key': 'properties.hubResourceId', 'type': 'str'},
-        'associated_workspaces': {'key': 'properties.associatedWorkspaces', 'type': '[str]'},
     }
 
     def __init__(
@@ -27361,7 +27339,6 @@ class Workspace(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
-        kind: Optional[str] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
         key_vault: Optional[str] = None,
@@ -27379,11 +27356,6 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         v1_legacy_mode: Optional[bool] = False,
         system_datastores_auth_mode: Optional[str] = None,
-        storage_accounts: Optional[List[str]] = None,
-        key_vaults: Optional[List[str]] = None,
-        container_registries: Optional[List[str]] = None,
-        existing_workspaces: Optional[List[str]] = None,
-        hub_resource_id: Optional[str] = None,
         **kwargs
     ):
         """
@@ -27395,8 +27367,6 @@ class Workspace(Resource):
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the workspace.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
-        :keyword kind:
-        :paramtype kind: str
         :keyword description: The description of this workspace.
         :paramtype description: str
         :keyword friendly_name: The friendly name for this workspace. This name in mutable.
@@ -27445,23 +27415,12 @@ class Workspace(Resource):
         :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
          the workspace.
         :paramtype system_datastores_auth_mode: str
-        :keyword storage_accounts: : A list of storage accounts used by Hub.
-        :paramtype storage_accounts: list[str]
-        :keyword key_vaults: A list of key vaults used by Hub.
-        :paramtype key_vaults: list[str]
-        :keyword container_registries: A list of container registries used by Hub.
-        :paramtype container_registries: list[str]
-        :keyword existing_workspaces: A list of existing workspaces used by Hub to perform convert.
-        :paramtype existing_workspaces: list[str]
-        :keyword hub_resource_id: Resource Id of Hub used for lean workspace.
-        :paramtype hub_resource_id: str
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = identity
         self.location = location
         self.tags = tags
         self.sku = sku
-        self.kind = kind
         self.workspace_id = None
         self.description = description
         self.friendly_name = friendly_name
@@ -27490,12 +27449,6 @@ class Workspace(Resource):
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
         self.system_datastores_auth_mode = system_datastores_auth_mode
-        self.storage_accounts = storage_accounts
-        self.key_vaults = key_vaults
-        self.container_registries = container_registries
-        self.existing_workspaces = existing_workspaces
-        self.hub_resource_id = hub_resource_id
-        self.associated_workspaces = None
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):

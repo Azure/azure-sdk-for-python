@@ -8,7 +8,6 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional, Union
-from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
 
@@ -17,7 +16,6 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from ._constants import HUB_KIND
@@ -150,4 +148,4 @@ class WorkspaceHub(Workspace):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceHub(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return HubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
