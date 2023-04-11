@@ -84,7 +84,6 @@ class DataOperations(_ScopeDependentOperations):
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
@@ -549,7 +548,6 @@ class DataOperations(_ScopeDependentOperations):
     def _prepare_to_copy(
         self, data: Data, name: Optional[str] = None, version: Optional[str] = None
     ) -> WorkspaceAssetReference:
-
         """Returns WorkspaceAssetReference to copy a registered data to registry given the asset id.
 
         :param data: Registered data

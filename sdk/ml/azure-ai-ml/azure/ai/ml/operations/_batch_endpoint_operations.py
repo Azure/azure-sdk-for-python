@@ -84,7 +84,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
