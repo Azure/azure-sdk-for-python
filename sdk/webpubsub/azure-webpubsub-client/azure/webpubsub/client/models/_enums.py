@@ -31,7 +31,7 @@ class WebPubSubDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTOBUF = "protobuf"
 
 
-class CallBackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CallbackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTED = "connected"
     DISCONNECTED = "disconnected"
     STOPPED = "stopped"

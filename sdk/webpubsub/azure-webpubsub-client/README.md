@@ -136,13 +136,8 @@ By default, the operation such as `client.join_group()`, `client.leave_group()`,
 ```python
 try:
   client.join_group(group_name)
-except Exception as e:
-  ack_id = None
-  if isinstance(e, SendMessageError):
-    ack_id = e.ack_id
-  
-  client.join_group(group_name, ack_id=ack_id);
-}
+except SendMessageError as e:
+  client.join_group(group_name, ack_id=e.ack_id)
 ```
 
 ---

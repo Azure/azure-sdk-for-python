@@ -13,7 +13,7 @@ from ._models import (
     SendMessageError,
 )
 
-from ._enums import WebPubSubDataType, WebPubSubProtocolType, CallBackType
+from ._enums import WebPubSubDataType, WebPubSubProtocolType, CallbackType
 
 __all__ = [
     "WebPubSubDataType",
@@ -24,6 +24,6 @@ __all__ = [
     "OnRejoinGroupFailedArgs",
     "WebPubSubProtocolType",
     "OnRejoinGroupFailedArgs",
-    "CallBackType",
+    "CallbackType",
     "SendMessageError",
 ]

@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+import time
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT, on_group_message
 from azure.webpubsub.client.models import WebPubSubProtocolType
@@ -29,4 +30,6 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
             client._ws.sock.close(1001)  # close connection
             with pytest.raises(Exception):
                 client.send_to_group(group_name, name, "text")
+            time.sleep(1)  # wait for on_group_message to be called
+
         assert name not in TEST_RESULT

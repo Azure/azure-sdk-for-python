@@ -27,6 +27,8 @@ class TestWebpubsubClientRecovery(WebpubsubClientTest):
             client._ws.sock.close(1001)  # close connection to trigger recovery
             client.send_to_group(group_name, name, "text")
             conn_id1 = client._connection_id
+            time.sleep(1)  # wait for on_group_message to be called
+
         assert name in TEST_RESULT
         assert conn_id0 is not None
         assert conn_id1 is not None

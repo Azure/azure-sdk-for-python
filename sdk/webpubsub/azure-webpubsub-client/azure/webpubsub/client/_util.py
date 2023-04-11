@@ -4,13 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 from typing import Optional
-import time
 from azure.core.pipeline.policies import UserAgentPolicy
 from ._version import VERSION
-
-
-def delay(delay_seconds: float):
-    time.sleep(delay_seconds)
 
 
 def format_user_agent(user_agent: Optional[str] = None):

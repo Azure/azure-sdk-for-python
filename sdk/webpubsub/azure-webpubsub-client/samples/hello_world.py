@@ -47,7 +47,7 @@ def main():
         client.on("group-message", on_group_message)
         group_name = "test"
         client.join_group(group_name)
-        client.send_to_group(group_name, "hello text", "text", no_echo=False, fire_and_forget=False)
+        client.send_to_group(group_name, "hello text", "text", no_echo=False, ack=False)
         client.send_to_group(group_name, {"hello": "json"}, "json")
         client.send_to_group(group_name, "hello json", "json")
         content = memoryview("hello binary".encode())
