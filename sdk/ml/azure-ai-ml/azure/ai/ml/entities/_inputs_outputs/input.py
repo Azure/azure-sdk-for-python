@@ -33,10 +33,16 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
     :type type: str
     :param path: The path to which the input is pointing.
-        Could be pointing to local data, cloud data, a registered name, etc.
+        Could be pointing to local data, cloud data, a registered name, etc. You can specify a path as below:
+        A path on your local computer       './home/username/data/my_data',
+        A path on a public http(s) server   'https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv',
+        A path on Azure Storage             'abfss://<file_system>@<account_name>.dfs.core.windows.net/<path>',
+        A path on a Datastore               'azureml://datastores/<data_store_name>/paths/<path>',
+        A path to a Data Asset              'azureml:<registered_name>: <version_number>', 'azureml:<registered_name>@latest'
     :type path: str
     :param mode: The mode of the data input. Possible values are:
                         'ro_mount': Read-only mount the data,
+                        'rw_mount': Read-write mount the data,
                         'download': Download the data to the compute target,
                         'direct': Pass in the URI as a string
     :type mode: str
