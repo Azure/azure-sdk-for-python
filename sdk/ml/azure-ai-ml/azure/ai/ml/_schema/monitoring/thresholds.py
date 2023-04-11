@@ -24,8 +24,8 @@ class DataDriftMetricThresholdSchema(MetricThresholdSchema):
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
             MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
             MonitorMetricName.POPULATION_STABILITY_INDEX,
-            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_TEST,
-            MonitorMetricName.CHI_SQUARED_TEST,
+            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST,
+            MonitorMetricName.PEARSONS_CHI_SQUARED_TEST,
         ]
     )
 
@@ -64,8 +64,8 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
             MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
             MonitorMetricName.POPULATION_STABILITY_INDEX,
-            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_TEST,
-            MonitorMetricName.CHI_SQUARED_TEST,
+            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST,
+            MonitorMetricName.PEARSONS_CHI_SQUARED_TEST,
         ]
     )
 
