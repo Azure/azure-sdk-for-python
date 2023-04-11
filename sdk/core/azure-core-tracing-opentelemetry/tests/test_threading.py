@@ -29,7 +29,6 @@ def test_get_span_from_thread(tracer):
 
 
 def test_nest_span_with_thread_pool_executor(tracer, exporter):
-
     def nest_spans():
         with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
             with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
