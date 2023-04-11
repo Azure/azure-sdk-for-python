@@ -13,20 +13,20 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 
 class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
     def __init__(self, method_name, *args, **kwargs):
-        self.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING', 'Endpoint=sb://REDACTED.servicebus.windows.net/;SharedAccessKeyName=REDACTED;SharedAccessKey=REDACTEDu8EtZn87JJY=')
-        self.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT', 'https://incomingcalldispatcher.azurewebsites.net')
+        self.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING', 'Endpoint=sb://REDACTED.servicebus.windows.net/;SharedAccessKeyName=REDACTED;SharedAccessKey=REDACTED')
+        self.dispatcher_endpoint = 'https://REDACTED.azurewebsites.net'
         self.dispatcher_callback = self.dispatcher_endpoint + '/api/servicebuscallback/events'
         self.processor_store: Dict[str, Any] = {}
         self.incoming_call_context_store: Dict[str, Any] = {}
         self.event_store: Dict[str, Dict[str, Any]] = {}
         super(CallAutomationAutomatedLiveTestBase, self).__init__(method_name, *args, **kwargs)
     
-    def _format_string(self, s):
+    def _format_string(self, s) -> str:
         s1 = f"{s[:12]}-{s[12:16]}-{s[16:20]}-{s[20:24]}-{s[24:36]}"
         s2 = f"{s[36:44]}-{s[44:48]}-{s[48:52]}-{s[52:56]}-{s[56:]}"
         return f"{s1}_{s2}"
     
-    def _parse_ids_from_identifier(self, identifier: str):
+    def _parse_ids_from_identifier(self, identifier: str) -> str:
         if identifier is None:
             raise ValueError("Identifier cannot be None")
         return self._format_string(''.join(filter(str.isalnum, identifier)))
@@ -60,7 +60,18 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
 
             self.event_store[call_connection_id][type(event)] = event
     
-    def service_bus_with_new_call(self, caller, receiver):
+    def service_bus_with_new_call(self, caller, receiver) -> str:
+        """Create new ServiceBus client.
+        Creates a new queue in the ServiceBus and a client in order to interact with it.
+
+        :param caller: User initiating the call.
+        :type caller: CommunicationUserIdentifier
+        :param receiver: User receiving the call.
+        :type receiver: CommunicationUserIdentifier
+
+        :return: a unique_id that can be used to identify the ServiceBus queue.
+        :rtype: str
+        """
         unique_id = self._parse_ids_from_identifier(caller.raw_id) + self._parse_ids_from_identifier(receiver.raw_id)
         dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
         response = requests.post(dispatcher_url)
@@ -73,7 +84,18 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         self.processor_store[unique_id] = service_bus_client
         return unique_id
     
-    def wait_for_messages(self, unique_id, time_out):
+    def wait_for_messages(self, unique_id, time_out) -> None:
+        """Create new ServiceBus client.
+        Checks the Service Bus queue specified by the unique_id for messages and stores them in the event_store.
+
+        :param unique_id: Identifier used to keep track of ServiceBus message queue.
+        :type unique_id: str
+        :param time_out: How long to wait for a response.
+        :type time_out: timedelta
+
+        :return: None
+        :rtype: None
+        """
         service_bus_receiver = self.processor_store[unique_id].get_queue_receiver(queue_name=unique_id)
         time_out_time = datetime.now() + time_out
         while datetime.now() < time_out_time:
@@ -85,6 +107,17 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
                 time.sleep(1)
 
     def check_for_event(self, event_type: Type, call_connection_id: str) -> Optional[Any]:
+        """Check for events.
+        Checks the event_store for any events that have been recieved from the Service Bus queue with the specified event_type and call_connection_id.
+
+        :param event_type: Type of event to check for in the event store.
+        :type event_type: Type
+        :param call_connection_id: The call_connection_id for which to find events for.
+        :type call_connection_id: str
+
+        :return: None if no events are found. The event object if an event is found.
+        :rtype: Optional[Any]
+        """
         if call_connection_id in self.event_store:
             return self.event_store[call_connection_id].get(event_type)
         return None

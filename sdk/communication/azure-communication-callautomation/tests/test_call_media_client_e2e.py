@@ -48,7 +48,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             print('Caller connection ID: ' + caller_connection_id)
 
             # wait for incomingCallContext
-            self.wait_for_messages(unique_id, timedelta(seconds=3))
+            self.wait_for_messages(unique_id, timedelta(seconds=30))
             incoming_call_context = self.incoming_call_context_store[unique_id]
             if incoming_call_context is None:
                 raise ValueError("Incoming call context is None")
@@ -69,7 +69,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             if caller_connected_event is None:
                 raise ValueError("Caller CallConnected event is None")
             if caller_participant_updated_event is None:
-                raise ValuError("Caller ParticipantsUpdated event is None")
+                raise ValueError("Caller ParticipantsUpdated event is None")
             
 
             # check events to receiver side
@@ -79,7 +79,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             if receiver_connected_event is None:
                 raise ValueError("Receiver CallConnected event is None")
             if receiver_participant_updated_event is None:
-                raise ValuError("Receiver ParticipantsUpdated event is None")
+                raise ValueError("Receiver ParticipantsUpdated event is None")
 
             # play media to all participants
             call_media_client = create_call_result.call_connection.get_call_media()
