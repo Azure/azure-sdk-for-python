@@ -31,7 +31,7 @@ from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
-class Schedule(ABC, YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Resource, TelemetryMixin):
+class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Resource, TelemetryMixin, ABC):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -114,12 +114,6 @@ class Schedule(ABC, YamlTranslatableMixin, SchemaValidatableMixin, RestTranslata
             return JobSchedule, None
 
         return cls, None
-
-    def _customized_validate(self) -> MutableValidationResult:
-        """Validate the resource with customized logic."""
-        if isinstance(self.create_job, PipelineJob):
-            return self.create_job._validate()
-        return self._create_empty_validation_result()
 
     def _to_dict(self) -> Dict:
         """Convert the resource to a dictionary."""
@@ -254,6 +248,12 @@ class JobSchedule(Schedule):
     @classmethod
     def _create_schema_for_validation(cls, context):
         return ScheduleSchema(context=context)
+
+    def _customized_validate(self) -> MutableValidationResult:
+        """Validate the resource with customized logic."""
+        if isinstance(self.create_job, PipelineJob):
+            return self.create_job._validate()
+        return self._create_empty_validation_result()
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
