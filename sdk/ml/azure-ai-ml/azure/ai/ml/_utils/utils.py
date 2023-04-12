@@ -544,6 +544,25 @@ def from_iso_duration_format_ms(duration: Optional[str]) -> int:
     return from_iso_duration_format(duration) * 1000 if duration else None
 
 
+def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
+    return isodate.duration_isoformat(timedelta(days=time_in_days)) if time_in_days else None
+
+
+@singledispatch
+def from_iso_duration_format_days(duration: Optional[Any] = None) -> int: # pylint: disable=unused-argument
+    return None
+
+
+@from_iso_duration_format_days.register(str)
+def _(duration: str) -> int:
+    return int(isodate.parse_duration(duration).days)
+
+
+@from_iso_duration_format_days.register(timedelta)
+def _(duration: timedelta) -> int:
+    return int(duration.days)
+
+
 def _get_mfe_base_url_from_discovery_service(
     workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
 ) -> str:
