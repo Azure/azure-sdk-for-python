@@ -401,30 +401,30 @@ class TestPipelineJob:
         properties_rest_dict = node._to_rest_object()["resources"]["properties"]
         assert properties_rest_dict == {
             JobComputePropertyFields.AISUPERCOMPUTER: {
-                "instance_type": "STANDARD_D2_V2",
-                "image_version": "1.0",
-                "locations": ["eastus2euap"],
-                "ai_super_computer_storage_data": {
+                "InstanceType": "STANDARD_D2_V2",
+                "ImageVersion": "1.0",
+                "Locations": ["eastus2euap"],
+                "AISuperComputerStorageData": {
                     "data": {
-                        "container_name": "container_name",
-                        "relative_path": "relative_path",
+                        "ContainerName": "container_name",
+                        "RelativePath": "relative_path",
                     }
                 },
-                "interactive": True,
-                "scale_policy": {
-                    "auto_scale_instance_type_count_set": [1, 2, 3],
-                    "auto_scale_interval_in_sec": 60,
-                    "max_instance_type_count": 3,
-                    "min_instance_type_count": 1,
+                "Interactive": True,
+                "ScalePolicy": {
+                    "AutoScaleInstanceTypeCountSet": [1, 2, 3],
+                    "AutoScaleIntervalInSec": 60,
+                    "MaxInstanceTypeCount": 3,
+                    "MinInstanceTypeCount": 1,
                 },
-                "virtual_cluster_arm_id": "virtual_cluster_arm_id",
-                "tensorboard_log_directory": "tensorboard_log_directory",
-                "ssh_public_key": "ssh_public_key",
-                "enable_azml_int": True,
-                "priority": "Medium",
-                "sla_tier": "Standard",
-                "suspend_on_idle_time_hours": 1,
-                "user_alias": "user_alias",
+                "VirtualClusterArmId": "virtual_cluster_arm_id",
+                "TensorboardLogDirectory": "tensorboard_log_directory",
+                "SSHPublicKey": "ssh_public_key",
+                "EnableAzmlInt": True,
+                "Priority": "Medium",
+                "SLATier": "Standard",
+                "SuspendOnIdleTimeHours": 1,
+                "UserAlias": "user_alias",
             }
         }
 
