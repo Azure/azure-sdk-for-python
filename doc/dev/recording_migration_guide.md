@@ -58,7 +58,7 @@ Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercont
 ### Migration script prerequisites
 
 - The targeted library is already migrated to use the test proxy.
-- Git version > 2.25.0 is to on the machine and in the path. Git is used by the script and test proxy.
+- Git version > 2.30.0 is to on the machine and in the path. Git is used by the script and test proxy.
 - [PowerShell Core][powershell] >= 7.0 is installed.
 - [Docker][docker] or [Podman][podman] is installed.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.

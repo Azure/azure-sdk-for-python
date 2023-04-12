@@ -85,6 +85,7 @@ class HttpHeaders(object):
     Prefer = "Prefer"
     Location = "Location"
     Referer = "referer"
+    Pragma = "Pragma"
 
     # Query
     Query = "x-ms-documentdb-query"
@@ -92,6 +93,8 @@ class HttpHeaders(object):
     IsQueryPlanRequest = "x-ms-cosmos-is-query-plan-request"
     SupportedQueryFeatures = "x-ms-cosmos-supported-query-features"
     QueryVersion = "x-ms-cosmos-query-version"
+    QueryMetrics = "x-ms-documentdb-query-metrics"
+    QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -117,8 +120,11 @@ class HttpHeaders(object):
     EmitVerboseTracesInQuery = "x-ms-documentdb-query-emit-traces"
     SubStatus = "x-ms-substatus"
     AlternateContentPath = "x-ms-alt-content-path"
+    ContentPath = "x-ms-content-path"
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
+    ResourceQuota = "x-ms-resource-quota"
+    ResourceUsage = "x-ms-resource-usage"
 
     # Quota Info
     MaxEntityCount = "x-ms-root-entity-max-count"
@@ -178,6 +184,7 @@ class HttpHeaders(object):
     PartitionKey = "x-ms-documentdb-partitionkey"
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
+    PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
 
     # Upsert header
     IsUpsert = "x-ms-documentdb-is-upsert"
@@ -430,6 +437,7 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
+    PartitionKey = "partitionkey"
 
     @staticmethod
     def IsCollectionChild(resourceType):
@@ -441,4 +449,5 @@ class ResourceType(object):
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
             ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
         )

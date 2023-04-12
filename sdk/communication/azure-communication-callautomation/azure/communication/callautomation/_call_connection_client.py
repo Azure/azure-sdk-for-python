@@ -80,6 +80,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :return: CallConnectionProperties
         :type: CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.get_call(call_connection_id=self.call_connection_id, **kwargs))
@@ -105,6 +106,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type repeatability_first_sent: str
         :return: None
         :type: None
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
@@ -129,6 +131,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :param participant_raw_id: Raw id of the participant to retrieve. Required.
         :type participant_raw_id: str
         :return: CallParticipant
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         return CallParticipant._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.get_participant(self.call_connection_id, participantMri, **kwargs))
@@ -143,6 +146,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :param participant_raw_id: Raw id of the participant to retrieve. Required.
         :type participant_raw_id: str
         :return: GetParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         return GetParticipantsResponse._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.get_participants(self.call_connection_id, **kwargs))
@@ -168,6 +172,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
          Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
         :type repeatability_first_sent: str
         :return: TransferCallResponse
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         user_custom_context = CustomContext(
             voip_headers=target.voipHeaders, sip_headers=target.sipHeaders)
@@ -210,6 +215,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
          Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
         :type repeatability_first_sent: str
         :return: AddParticipantResponse
+        :raises ~azure.core.exceptions.HttpResponseError
         """
         user_custom_context = CustomContext(
             voip_headers=participant.voipHeaders, sip_headers=participant.sipHeaders)
@@ -254,6 +260,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
          Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
         :type repeatability_first_sent: str
         :return: AddParticipantResponse
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         remove_participant_request = RemoveParticipantRequest(participant_to_remove=serialize_identifier(participant),

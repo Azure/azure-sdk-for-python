@@ -264,7 +264,11 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     not existing_offline_store_connection.properties
                     or existing_offline_store_connection.properties.target != offline_store.target
                 ):
-                    raise ValidationError("Cannot update the offline store target")
+                    module_logger.info(
+                        "Warning: You have changed the offline store connection, "
+                        "any data that was materialized "
+                        "earlier will not be available. You have to run backfill again."
+                    )
             else:
                 if not materialization_identity:
                     raise ValidationError("Materialization identity is required to setup offline store connection")
@@ -284,7 +288,11 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     not existing_online_store_connection.properties
                     or existing_online_store_connection.properties.target != online_store.target
                 ):
-                    raise ValidationError("Cannot update the online store target")
+                    module_logger.info(
+                        "Warning: You have changed the online store connection, "
+                        "any data that was materialized earlier "
+                        "will not be available. You have to run backfill again."
+                    )
             else:
                 if not materialization_identity:
                     raise ValidationError("Materialization identity is required to setup online store connection")
@@ -333,7 +341,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             )
             feature_store_settings.online_store_connection_name = online_store_connection_name
 
-        identity = kwargs.get("identity", feature_store.identity)
+        identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:
             identity = IdentityConfiguration(
                 type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED),

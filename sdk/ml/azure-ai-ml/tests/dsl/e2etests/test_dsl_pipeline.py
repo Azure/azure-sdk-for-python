@@ -6,10 +6,6 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -24,17 +20,25 @@ from azure.ai.ml import (
     dsl,
     load_component,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_singularity_id_for_resource
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_COMPONENT_NAME,
+    AssetTypes,
+    InputOutputModes,
+    SINGULARITY_ID_FORMAT,
+)
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
+from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
+from devtools_testutils import AzureRecordedTestCase, is_live
+from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -2417,7 +2421,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
     def test_registered_pipeline_with_group(self, client: MLClient):
-
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
         hello_world_component_func = load_component(hello_world_component_yaml)
         from azure.ai.ml.dsl._group_decorator import group
@@ -2571,9 +2574,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert "Studio" in default_services
         assert "Tracking" in default_services
         assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
-        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Studio"]["type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
-        assert default_services["Tracking"]["job_service_type"] == "Tracking"
+        assert default_services["Tracking"]["type"] == "Tracking"
 
     def test_group_outputs_description_overwrite(self, client):
         # test group outputs description overwrite
@@ -2656,6 +2659,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2964,7 +2968,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         subgraph_id = pipeline_job.jobs["subgraph"].component
         subgraph_id = subgraph_id.split(":")
         subgraph = client.components.get(name=subgraph_id[0], version=subgraph_id[1])
-        check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
+        # TODO: enable this check in playback mode after pipeline_component.jobs is opened in all subscriptions
+        if is_live():
+            check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
 
     @pytest.mark.disable_mock_code_hash
     # without this mark, the code would be passed with different id even when we upload the same component,
@@ -3027,3 +3033,231 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client)
         assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
         assert pipeline_job.jobs["node_1"].limits.timeout == 1
+
+    def test_pipeline_component_primitive_type_consumption(self, client: MLClient):
+        baisc_component_func = load_component(
+            "./tests/test_configs/dsl_pipeline/primitive_type_components/basic_component.yml"
+        )
+        boolean_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/boolean.yml")
+        integer_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/integer.yml")
+        number_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/number.yml")
+        string_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/string.yml")
+
+        @dsl.pipeline
+        def pipeline_component_func(bool_param: bool, int_param: int, float_param: float, str_param: str):
+            baisc_component_func(
+                bool_param=bool_param,
+                int_param=int_param,
+                float_param=float_param,
+                str_param=str_param,
+            )
+
+        @dsl.pipeline
+        def pipeline_func():
+            # components return primitive type outputs
+            bool_node = boolean_func()
+            int_node = integer_func()
+            float_node = number_func()
+            str_node = string_func()
+            # pipeline component consume above primitive type outputs
+            pipeline_node = pipeline_component_func(  # noqa: F841
+                bool_param=bool_node.outputs.output,
+                int_param=int_node.outputs.output,
+                float_param=float_node.outputs.output,
+                str_param=str_node.outputs.output,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
+
+    def test_pipeline_variable_name_uppercase(self, client: MLClient):
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(
+            source=component_yaml,
+        )
+
+        @dsl.pipeline(name="pipeline_with_uppercase_node_names")
+        def pipeline_with_user_defined_nodes_1():
+            for i in range(2):
+                node1 = component_func(component_in_path=job_input)
+                # change node name to lower when setting it to avoid upper case in nxt_input's binding
+                node1.name = f"Dummy_{i}"
+                nxt_input = Input(
+                    path=node1.outputs.component_out_path,
+                    mode=InputOutputModes.DIRECT,
+                )
+                node2 = component_func(component_in_path=nxt_input)
+                node2.name = f"Another_{i}"
+
+        pipeline_job = pipeline_with_user_defined_nodes_1()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline_job, client)
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert actual_job["jobs"] == {
+            "another_0": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "mode": "Direct",
+                        "value": "${{parent.jobs.dummy_0.outputs.component_out_path}}",
+                    }
+                },
+                "name": "another_0",
+                "type": "command",
+            },
+            "another_1": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "mode": "Direct",
+                        "value": "${{parent.jobs.dummy_1.outputs.component_out_path}}",
+                    }
+                },
+                "name": "another_1",
+                "type": "command",
+            },
+            "dummy_0": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "uri_file",
+                        "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    }
+                },
+                "name": "dummy_0",
+                "type": "command",
+            },
+            "dummy_1": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "uri_file",
+                        "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    }
+                },
+                "name": "dummy_1",
+                "type": "command",
+            },
+        }
+
+    def test_pipeline_singularity_strong_type_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        instance_type = "Singularity.ND40rs_v2"
+
+        @dsl.pipeline
+        def pipeline_func():
+            # basic job_tier + Low priority
+            basic_low_node = component_func()
+            basic_low_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
+            # standard job_tier + Medium priority
+            standard_medium_node = component_func()
+            standard_medium_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
+            # premium job_tier + High priority
+            premium_high_node = component_func()
+            premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+            # properties
+            node_with_properties = component_func()
+            properties = {"Singularity": {"imageVersion": "", "interactive": False}}
+            node_with_properties.resources = JobResourceConfiguration(
+                instance_count=2, instance_type=instance_type, properties=properties
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+        # this pipeline job is expected to fail as Singularity is mocked, focus on REST object assertion
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        # basic job_tier + Low priority
+        basic_low_node_dict = rest_obj.properties.jobs["basic_low_node"]
+        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
+        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # standard job_tier + Medium priority
+        standard_medium_node_dict = rest_obj.properties.jobs["standard_medium_node"]
+        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
+        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # premium job_tier + High priority
+        premium_high_node_dict = rest_obj.properties.jobs["premium_high_node"]
+        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
+        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # properties
+        node_with_properties_dict = rest_obj.properties.jobs["node_with_properties"]
+        assert node_with_properties_dict["resources"] == {
+            "instance_count": 2,
+            "instance_type": instance_type,
+            # the mapping Singularity => AISuperComputer is expected
+            "properties": {"AISuperComputer": {"imageVersion": "", "interactive": False}},
+        }
+
+    def test_pipeline_singularity_property_bag_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # property bag is supported, with lower priority than strong type
+        vc_config = {
+            "instance_type": "Singularity.ND40rs_v2",
+            "instance_count": 2,
+            "properties": {
+                "AISuperComputer": {
+                    "interactive": False,
+                    "imageVersion": "pytorch",
+                    "slaTier": "Premium",
+                    "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                }
+            },
+        }
+
+        @dsl.pipeline
+        def pipeline_func():
+            node = component_func()
+            node.resources = vc_config
+            node.compute = mock_singularity_arm_id
+
+        pipeline_job = pipeline_func()
+        # as Singularity is mocked and expected to fail validation, skip it for submission;
+        # then manually cancel it as other tests.
+        created_pipeline_job = client.create_or_update(pipeline_job, skip_validation=True)
+        client.jobs.begin_cancel(created_pipeline_job.name).result()
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["computeId"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["node"]["resources"] == vc_config
+
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_singularity_live(self, client: MLClient, singularity_vc):
+        # full name and short name are syntax sugar, SDK will resolve it to Singularity ARM id before request,
+        # this needs client to get & search available VCs - that's why we place this test in end-to-end test -
+        # and compute values in returned REST object should all be ARM id.
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # generate Singularity ARM id, full name and short name from VC
+        arm_id = SINGULARITY_ID_FORMAT.format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        @dsl.pipeline
+        def pipeline_func():
+            node_with_id = component_func()
+            node_with_id.compute = arm_id
+            node_with_full_name = component_func()
+            node_with_full_name.compute = full_name
+            node_with_short_name = component_func()
+            node_with_short_name.compute = short_name
+
+        pipeline_job = pipeline_func()
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        for node_name in ["node_with_id", "node_with_full_name", "node_with_short_name"]:
+            node_compute = rest_obj.properties.jobs[node_name]["computeId"]
+            assert is_singularity_id_for_resource(node_compute)
+            assert node_compute.endswith(singularity_vc.name)

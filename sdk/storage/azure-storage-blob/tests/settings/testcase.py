@@ -36,6 +36,8 @@ os.environ['VERSIONED_STORAGE_ACCOUNT_NAME'] = os.environ.get('VERSIONED_STORAGE
 os.environ['VERSIONED_STORAGE_ACCOUNT_KEY'] = os.environ.get('VERSIONED_STORAGE_ACCOUNT_KEY', None) or VERSIONED_STORAGE_ACCOUNT_KEY
 os.environ['PREMIUM_STORAGE_ACCOUNT_NAME'] = os.environ.get('PREMIUM_STORAGE_ACCOUNT_NAME', None) or PREMIUM_STORAGE_ACCOUNT_NAME
 os.environ['PREMIUM_STORAGE_ACCOUNT_KEY'] = os.environ.get('PREMIUM_STORAGE_ACCOUNT_KEY', None) or PREMIUM_STORAGE_ACCOUNT_KEY
+os.environ['SOFT_DELETE_STORAGE_ACCOUNT_NAME'] = os.environ.get('SOFT_DELETE_STORAGE_ACCOUNT_NAME', None) or SOFT_DELETE_STORAGE_ACCOUNT_NAME
+os.environ['SOFT_DELETE_STORAGE_ACCOUNT_KEY'] = os.environ.get('SOFT_DELETE_STORAGE_ACCOUNT_KEY', None) or SOFT_DELETE_STORAGE_ACCOUNT_KEY
 os.environ['STORAGE_RESOURCE_GROUP_NAME'] = os.environ.get('STORAGE_RESOURCE_GROUP_NAME', None) or STORAGE_RESOURCE_GROUP_NAME
 
 
@@ -60,8 +62,9 @@ BlobPreparer = functools.partial(
     versioned_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     premium_storage_account_name='pyacrstoragestorname',
     premium_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
-    storage_resource_group_name="rgname",
-
+    soft_delete_storage_account_name="storagesoftdelname",
+    soft_delete_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    storage_resource_group_name="rgname"
 )
 
 
