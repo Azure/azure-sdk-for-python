@@ -95,10 +95,12 @@ class MonitoringSignal(RestTranslatableMixin):
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: Union[MetricThreshold, List[MetricThreshold]] = None,
+        alert_enabled: bool = True,
     ):
         self.target_dataset = target_dataset
         self.baseline_dataset = baseline_dataset
         self.metric_thresholds = metric_thresholds
+        self.alert_enabled = alert_enabled
 
 
 @experimental
@@ -110,11 +112,13 @@ class DataSignal(MonitoringSignal):
         baseline_dataset: MonitorInputData = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[MetricThreshold] = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
+            alert_enabled=alert_enabled
         )
         self.features = features
 
@@ -128,12 +132,14 @@ class DataDriftSignal(DataSignal):
         baseline_dataset: MonitorInputData = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataDriftMetricThreshold] = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
             features=features,
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.DATA_DRIFT
 
@@ -167,9 +173,10 @@ class PredictionDriftSignal(MonitoringSignal):
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[PredictionDriftMetricThreshold] = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
-            target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds
+            target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds, alert_enabled=alert_enabled,
         )
         self.model_type = model_type
         self.type = MonitorSignalType.PREDICTION_DRIFT
@@ -203,12 +210,14 @@ class DataQualitySignal(DataSignal):
         baseline_dataset: MonitorInputData = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataQualityMetricThreshold] = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
             features=features,
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.DATA_QUALITY
 
@@ -242,11 +251,13 @@ class ModelSignal(MonitoringSignal):
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[MetricThreshold] = None,
         model_type: MonitorModelType = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
+            alert_enabled=alert_enabled
         )
         self.model_type = model_type
 
@@ -260,12 +271,14 @@ class FeatureAttributionDriftSignal(ModelSignal):
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: FeatureAttributionDriftMetricThreshold = None,
         model_type: MonitorModelType = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
             model_type=model_type,
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
@@ -297,12 +310,14 @@ class ModelPerformanceSignal(ModelSignal):
         metric_thresholds: ModelPerformanceMetricThreshold = None,
         model_type: MonitorModelType = None,
         data_segment: DataSegment = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
             model_type=model_type,
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.MODEL_PERFORMANCE
         self.data_segment = data_segment
@@ -335,11 +350,13 @@ class CustomMonitoringSignal(MonitoringSignal):
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[CustomMonitoringMetricThreshold] = None,
         component_id: str = None,
+        alert_enabled: bool = True,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
+            alert_enabled=alert_enabled
         )
         self.type = MonitorSignalType.CUSTOM
         self.component_id = component_id

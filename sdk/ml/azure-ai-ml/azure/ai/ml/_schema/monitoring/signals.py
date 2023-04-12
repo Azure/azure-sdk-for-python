@@ -56,6 +56,7 @@ class TargetDatasetSchema(metaclass=PatchedSchemaMeta):
 class MonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     target_dataset = NestedField(TargetDatasetSchema)
     baseline_dataset = NestedField(MonitorInputDataSchema)
+    alert_notification = fields.Bool()
 
 
 class DataSignalSchema(MonitoringSignalSchema):
