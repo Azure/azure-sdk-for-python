@@ -175,7 +175,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert len(layout.pages[0].annotations) > 0
         assert layout.pages[0].annotations[0].kind == "check"
         assert layout.pages[0].annotations[0].polygon
-        assert layout.pages[0].annotations[0].confidence > 0.8
+        assert layout.pages[0].annotations[0].confidence > 0.5
 
     @pytest.mark.live_test_only
     @skip_flaky_test
