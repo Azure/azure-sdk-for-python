@@ -725,7 +725,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 }
             },
