@@ -68,8 +68,6 @@ from ._key_vault_management_client_enums import AccessPolicyUpdateKind
 from ._key_vault_management_client_enums import ActionsRequired
 from ._key_vault_management_client_enums import CertificatePermissions
 from ._key_vault_management_client_enums import CreateMode
-from ._key_vault_management_client_enums import Enum12
-from ._key_vault_management_client_enums import Enum13
 from ._key_vault_management_client_enums import IdentityType
 from ._key_vault_management_client_enums import KeyPermissions
 from ._key_vault_management_client_enums import ManagedHsmSkuFamily
@@ -152,8 +150,6 @@ __all__ = [
     "ActionsRequired",
     "CertificatePermissions",
     "CreateMode",
-    "Enum12",
-    "Enum13",
     "IdentityType",
     "KeyPermissions",
     "ManagedHsmSkuFamily",
