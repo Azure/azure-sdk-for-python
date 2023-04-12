@@ -97,3 +97,14 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
         super().__init__(threshold=threshold)
         self.applicable_feature_type = MonitorFeatureType.NOT_APPLICABLE
         self.metric_name = metric_name
+
+
+@experimental
+class CustomMonitoringMetricThreshold(MetricThreshold):
+    def __init__(
+        self,
+        metric_name: str,
+        threshold: float = None,
+    ):
+        super().__init__(threshold=threshold)
+        self.metric_name = metric_name

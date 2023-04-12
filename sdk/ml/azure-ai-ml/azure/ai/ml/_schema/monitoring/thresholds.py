@@ -102,3 +102,13 @@ class ModelPerformanceMetricThresholdSchema(MetricThresholdSchema):
         from azure.ai.ml.entities._monitoring.thresholds import ModelPerformanceMetricThreshold
 
         return ModelPerformanceMetricThreshold(**data)
+
+
+class CustomMonitoringMetricThreshold(MetricThresholdSchema):
+    metric_name = fields.Str()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import CustomMonitoringMetricThreshold
+
+        return CustomMonitoringMetricThreshold(**data)
