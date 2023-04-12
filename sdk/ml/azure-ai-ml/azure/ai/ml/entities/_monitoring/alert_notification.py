@@ -10,8 +10,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     NotificationSetting,
     MonitoringAlertNotificationSettingsBase,
     AzMonMonitoringAlertNotificationSettings,
-    EmailMonitoringAlertNotificationSettings
+    EmailMonitoringAlertNotificationSettings,
 )
+
 
 @experimental
 class AlertNotification(RestTranslatableMixin):
@@ -24,7 +25,9 @@ class AlertNotification(RestTranslatableMixin):
         self.azure_monitoring_signals = azure_monitor_signals
         self.emails = emails
 
-    def _to_rest_object(self) -> Union[EmailMonitoringAlertNotificationSettings, AzMonMonitoringAlertNotificationSettings]:
+    def _to_rest_object(
+        self,
+    ) -> Union[EmailMonitoringAlertNotificationSettings, AzMonMonitoringAlertNotificationSettings]:
         if self.emails:
             return EmailMonitoringAlertNotificationSettings(
                 email_notification_setting=NotificationSetting(emails=self.emails)
@@ -35,9 +38,5 @@ class AlertNotification(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: MonitoringAlertNotificationSettingsBase) -> "AlertNotification":
         if isinstance(obj, EmailMonitoringAlertNotificationSettings):
-            return cls(
-                emails=obj.email_notification_setting.emails
-            )
-        return cls(
-            azure_monitoring_signals={}
-        )
+            return cls(emails=obj.email_notification_setting.emails)
+        return cls(azure_monitoring_signals={})

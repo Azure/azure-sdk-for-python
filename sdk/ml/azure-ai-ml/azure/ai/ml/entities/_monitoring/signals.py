@@ -19,6 +19,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
     AllFeatures as RestAllFeatures,
     FeatureSubset as RestFeatureSubset,
+    MonitoringNotificationMode,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
@@ -118,7 +119,7 @@ class DataSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled
+            alert_enabled=alert_enabled,
         )
         self.features = features
 
@@ -150,6 +151,7 @@ class DataDriftSignal(DataSignal):
             baseline_data=self.baseline_dataset._to_rest_object(),
             features=rest_features,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
     @classmethod
@@ -161,6 +163,9 @@ class DataDriftSignal(DataSignal):
             metric_thresholds=[
                 DataDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
             ],
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
         )
 
 
@@ -176,7 +181,10 @@ class PredictionDriftSignal(MonitoringSignal):
         alert_enabled: bool = True,
     ):
         super().__init__(
-            target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds, alert_enabled=alert_enabled,
+            target_dataset=target_dataset,
+            baseline_dataset=baseline_dataset,
+            metric_thresholds=metric_thresholds,
+            alert_enabled=alert_enabled,
         )
         self.model_type = model_type
         self.type = MonitorSignalType.PREDICTION_DRIFT
@@ -187,6 +195,7 @@ class PredictionDriftSignal(MonitoringSignal):
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
     @classmethod
@@ -198,6 +207,9 @@ class PredictionDriftSignal(MonitoringSignal):
             metric_thresholds=[
                 PredictionDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
             ],
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
         )
 
 
@@ -228,6 +240,7 @@ class DataQualitySignal(DataSignal):
             baseline_data=self.baseline_dataset._to_rest_object(),
             features=rest_features,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
     @classmethod
@@ -239,6 +252,9 @@ class DataQualitySignal(DataSignal):
             metric_thresholds=[
                 DataDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
             ],
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
         )
 
 
@@ -257,7 +273,7 @@ class ModelSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled
+            alert_enabled=alert_enabled,
         )
         self.model_type = model_type
 
@@ -288,6 +304,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(),
             model_type=self.model_type,
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
     @classmethod
@@ -297,6 +314,9 @@ class FeatureAttributionDriftSignal(ModelSignal):
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             metric_thresholds=FeatureAttributionDriftSignal._from_rest_object(obj.metric_threshold),
             model_type=obj.model_type.lower(),
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
         )
 
 
@@ -328,6 +348,7 @@ class ModelPerformanceSignal(ModelSignal):
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(model_type=self.model_type),
             data_segment=self.data_segment._to_rest_object(),
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
     @classmethod
@@ -338,6 +359,9 @@ class ModelPerformanceSignal(ModelSignal):
             metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
             model_type=obj.metric_threshold.model_type.lower(),
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
         )
 
 
@@ -356,7 +380,7 @@ class CustomMonitoringSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.CUSTOM
         self.component_id = component_id
@@ -369,11 +393,17 @@ class CustomMonitoringSignal(MonitoringSignal):
                 "target_dataset": self.target_dataset.dataset._to_rest_object(),
                 "baseline_dataset": self.baseline_dataset._to_rest_object(),
             },
+            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
     @classmethod
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
-        return cls(component_id=obj.component_id)
+        return cls(
+            component_id=obj.component_id,
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
+        )
 
 
 def _from_rest_features(
