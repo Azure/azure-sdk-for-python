@@ -24,6 +24,7 @@ from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
@@ -114,9 +115,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
-
         self.deployment_type = kwargs.pop("type", "Model")
         self.job_definition = kwargs.pop("job_definition", None)
+        self._provisioning_state = kwargs.pop("provisioning_state", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -159,6 +160,15 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
     @property
     def instance_count(self) -> int:
         return self.resources.instance_count if self.resources else None
+
+    @property
+    def provisioning_state(self) -> Optional[str]:
+        """Batch deployment provisioning state, readonly.
+
+        :return: Batch deployment provisioning state.
+        :rtype: Optional[str]
+        """
+        return self._provisioning_state
 
     @instance_count.setter
     def instance_count(self, value: int) -> None:
@@ -264,6 +274,8 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
             properties=deployment.properties.properties,
+            creation_context=SystemData._from_rest_object(deployment.system_data),
+            provisioning_state=deployment.properties.provisioning_state,
         )
 
 

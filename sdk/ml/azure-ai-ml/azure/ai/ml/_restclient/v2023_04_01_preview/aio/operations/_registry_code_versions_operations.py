@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._registry_code_versions_operations import build_create_or_get_pending_upload_request, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
+from ...operations._registry_code_versions_operations import build_create_or_get_start_pending_upload_request, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -64,7 +64,7 @@ class RegistryCodeVersionsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -221,7 +221,7 @@ class RegistryCodeVersionsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -293,7 +293,7 @@ class RegistryCodeVersionsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -426,7 +426,7 @@ class RegistryCodeVersionsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -479,7 +479,7 @@ class RegistryCodeVersionsOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -494,7 +494,7 @@ class RegistryCodeVersionsOperations:
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
-    async def create_or_get_pending_upload(
+    async def create_or_get_start_pending_upload(
         self,
         resource_group_name: str,
         registry_name: str,
@@ -509,7 +509,7 @@ class RegistryCodeVersionsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Pending upload name. This is case-sensitive.
         :type code_name: str
@@ -533,7 +533,7 @@ class RegistryCodeVersionsOperations:
 
         _json = self._serialize.body(body, 'PendingUploadRequestDto')
 
-        request = build_create_or_get_pending_upload_request(
+        request = build_create_or_get_start_pending_upload_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
@@ -542,7 +542,7 @@ class RegistryCodeVersionsOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_get_pending_upload.metadata['url'],
+            template_url=self.create_or_get_start_pending_upload.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -566,5 +566,5 @@ class RegistryCodeVersionsOperations:
 
         return deserialized
 
-    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/pendingUpload/{version}"}  # type: ignore
+    create_or_get_start_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}/startPendingUpload"}  # type: ignore
 

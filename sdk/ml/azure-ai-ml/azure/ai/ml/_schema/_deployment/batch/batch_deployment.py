@@ -17,6 +17,7 @@ from azure.ai.ml._schema import(
 from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
@@ -71,6 +72,8 @@ class BatchDeploymentSchema(DeploymentSchema):
         ]
     )
     settings = fields.Dict()
+    creation_context = NestedField(CreationContextSchema, dump_only=True)
+    provisioning_state = fields.Str(dump_only=True)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

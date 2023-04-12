@@ -24,7 +24,7 @@ class MockCredential(GetTokenMixin):
         self.acquire_token_silently = mock.Mock(return_value=cached_token)
 
     async def _acquire_token_silently(self, *scopes, **kwargs):
-        return self.acquire_token_silently(*scopes, **kwargs), None
+        return self.acquire_token_silently(*scopes, **kwargs)
 
     async def _request_token(self, *scopes, **kwargs):
         return self.request_token(*scopes, **kwargs)

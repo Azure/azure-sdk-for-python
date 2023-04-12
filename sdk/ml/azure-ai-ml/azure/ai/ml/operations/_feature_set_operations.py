@@ -63,7 +63,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-
         super(_FeatureSetOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
