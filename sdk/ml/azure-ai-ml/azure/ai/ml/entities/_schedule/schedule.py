@@ -90,6 +90,27 @@ class Schedule(Resource):
     def create_job(self, value):
         pass
 
+    @property
+    def is_enabled(self):
+        """
+        Return the schedule is enabled or not.
+
+        :return: Enabled status.
+        :rtype: bool
+        """
+        return self._is_enabled
+
+    @property
+    def provisioning_state(self):
+        """
+        Return the schedule's provisioning state. Possible values include:
+        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+
+        :return: Provisioning state.
+        :rtype: str
+        """
+        return self._provisioning_state
+
 
 class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
@@ -132,27 +153,6 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             create_job=create_job,
             **kwargs,
         )
-
-    @property
-    def is_enabled(self):
-        """
-        Return the schedule is enabled or not.
-
-        :return: Enabled status.
-        :rtype: bool
-        """
-        return self._is_enabled
-
-    @property
-    def provisioning_state(self):
-        """
-        Return the schedule's provisioning state. Possible values include:
-        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-
-        :return: Provisioning state.
-        :rtype: str
-        """
-        return self._provisioning_state
 
     @property
     def create_job(self):
