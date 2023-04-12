@@ -19,14 +19,12 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
-from ._graph_resources_operations import GraphResourcesOperations
 from ._sql_resources_operations import SqlResourcesOperations
 from ._mongo_db_resources_operations import MongoDBResourcesOperations
 from ._table_resources_operations import TableResourcesOperations
 from ._cassandra_resources_operations import CassandraResourcesOperations
 from ._gremlin_resources_operations import GremlinResourcesOperations
 from ._locations_operations import LocationsOperations
-from ._data_transfer_jobs_operations import DataTransferJobsOperations
 from ._cassandra_clusters_operations import CassandraClustersOperations
 from ._cassandra_data_centers_operations import CassandraDataCentersOperations
 from ._notebook_workspaces_operations import NotebookWorkspacesOperations
@@ -64,14 +62,12 @@ __all__ = [
     "CollectionPartitionOperations",
     "PartitionKeyRangeIdOperations",
     "PartitionKeyRangeIdRegionOperations",
-    "GraphResourcesOperations",
     "SqlResourcesOperations",
     "MongoDBResourcesOperations",
     "TableResourcesOperations",
     "CassandraResourcesOperations",
     "GremlinResourcesOperations",
     "LocationsOperations",
-    "DataTransferJobsOperations",
     "CassandraClustersOperations",
     "CassandraDataCentersOperations",
     "NotebookWorkspacesOperations",

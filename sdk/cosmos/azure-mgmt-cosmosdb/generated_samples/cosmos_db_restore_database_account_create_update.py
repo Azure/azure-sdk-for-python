@@ -37,7 +37,7 @@ def main():
             "location": "westus",
             "properties": {
                 "apiProperties": {"serverVersion": "3.2"},
-                "backupPolicy": {"continuousModeProperties": {"tier": "Continuous30Days"}, "type": "Continuous"},
+                "backupPolicy": {"type": "Continuous"},
                 "consistencyPolicy": {
                     "defaultConsistencyLevel": "BoundedStaleness",
                     "maxIntervalInSeconds": 10,
@@ -47,7 +47,6 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "enableAnalyticalStorage": True,
                 "enableFreeTier": False,
-                "enableMaterializedViews": False,
                 "keyVaultKeyUri": "https://myKeyVault.vault.azure.net",
                 "locations": [{"failoverPriority": 0, "isZoneRedundant": False, "locationName": "southcentralus"}],
                 "minimalTlsVersion": "Tls",
@@ -59,7 +58,6 @@ def main():
                     "restoreMode": "PointInTime",
                     "restoreSource": "/subscriptions/subid/providers/Microsoft.DocumentDB/locations/westus/restorableDatabaseAccounts/1a97b4bb-f6a0-430e-ade1-638d781830cc",
                     "restoreTimestampInUtc": "2021-03-11T22:05:09Z",
-                    "sourceBackupLocation": "westus",
                 },
             },
             "tags": {},
@@ -68,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-11-15-preview/examples/CosmosDBRestoreDatabaseAccountCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-03-15/examples/CosmosDBRestoreDatabaseAccountCreateUpdate.json
 if __name__ == "__main__":
     main()
