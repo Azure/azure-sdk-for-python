@@ -147,6 +147,47 @@ async def delete_item(container, doc_id):
     print('Deleted item\'s Id is {0}'.format(doc_id))
 
 
+async def delete_all_items_by_partition_key(db, partitionkey):
+    print('\n1.8 Deleting all Items by Partition Key\n')
+
+    # A container with a partition key that is different from id is needed
+    container = await db.create_container_if_not_exists(id="Partition Key Delete Container",
+                                                  partition_key=PartitionKey(path='/company'))
+    sales_order_company_A1 = get_sales_order("SalesOrderCompanyA1")
+    sales_order_company_A1["company"] = partitionkey
+    await container.upsert_item(sales_order_company_A1)
+
+    print("\nUpserted Item is {} with Partition Key: {}".format(sales_order_company_A1["id"], partitionkey))
+
+    sales_order_company_A2 = get_sales_order("SalesOrderCompanyA2")
+    sales_order_company_A2["company"] = partitionkey
+    await container.upsert_item(sales_order_company_A2)
+
+    print("\nUpserted Item is {} with Partition Key: {}".format(sales_order_company_A2["id"], partitionkey))
+
+    sales_order_company_B1 = get_sales_order("SalesOrderCompanyB1")
+    sales_order_company_B1["company"] = "companyB"
+    await container.upsert_item(sales_order_company_B1)
+
+    print("\nUpserted Item is {} with Partition Key: {}".format(sales_order_company_B1["id"], "companyB"))
+
+    item_list = [item async for item in container.read_all_items()]
+
+    print('Found {0} items'.format(item_list.__len__()))
+
+    for doc in item_list:
+        print('Item Id: {0}; Partition Key: {1}'.format(doc.get('id'), doc.get("company")))
+
+    print("\nDelete all items for Partition Key: {}\n".format(partitionkey))
+
+    await container.delete_all_items_by_partition_key(partitionkey)
+    item_list = [item async for item in container.read_all_items()]
+
+    print('Found {0} items'.format(item_list.__len__()))
+
+    for doc in item_list:
+        print('Item Id: {0}; Partition Key: {1}'.format(doc.get('id'), doc.get("company")))
+
 def get_sales_order(item_id):
     order1 = {'id' : item_id,
             'account_number' : 'Account1',
@@ -215,6 +256,7 @@ async def run_sample():
             await upsert_item(container, 'SalesOrder1')
             await patch_item(container, 'SalesOrder1')
             await delete_item(container, 'SalesOrder1')
+            await delete_all_items_by_partition_key(db, "CompanyA")
 
             # cleanup database after sample
             try:

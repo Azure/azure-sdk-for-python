@@ -247,7 +247,6 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 def loaded_text_classification_job(
     mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
 ) -> AutoMLJob:
-
     return _load_automl_job_from_path(
         mock_machinelearning_client,
         run_type,

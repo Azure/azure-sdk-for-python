@@ -1782,6 +1782,39 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
+    def DeleteAllItemsByPartitionKey(
+        self,
+        collection_link,
+        options=None,
+        **kwargs
+    ) -> None:
+        """Exposes an API to delete all items with a single partition key without the user having
+         to explicitly call delete on each record in the partition key.
+
+        :param str collection_link:
+            The link to the document collection.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            None
+        :rtype:
+            None
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link)
+        #Specified url to perform background operation to delete all items by partition key
+        path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "partitionkey", options)
+        request_params = _request_object.RequestObject("partitionkey", documents._OperationType.Delete)
+        result, self.last_response_headers = self.__Post(path=path, request_params=request_params,
+                                                         req_headers=headers, body=None, **kwargs)
+        return result
+
     def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
 
