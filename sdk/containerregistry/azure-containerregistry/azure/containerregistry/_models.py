@@ -305,11 +305,11 @@ class ArtifactTagProperties(object):
 
 
 class GetManifestResult(object):
-    """The result from downloading a manifest from the registry.
+    """The get manifest result.
 
-    :ivar manifest_stream: The manifest stream that was downloaded.
-    :vartype manifest_stream: IO
-    :ivar str media_type: The downloaded manifest media type.
+    :ivar manifest: The manifest JSON.
+    :vartype manifest_stream: JSON
+    :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 

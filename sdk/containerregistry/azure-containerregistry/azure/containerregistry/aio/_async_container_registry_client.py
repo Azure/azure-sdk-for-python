@@ -29,6 +29,7 @@ from .._container_registry_client import (
     _return_response_headers,
     _return_response_and_headers,
     _return_response_and_deserialized,
+    JSON,
 )
 from .._generated.models import AcrErrors
 from .._helpers import (
@@ -37,6 +38,7 @@ from .._helpers import (
     _parse_next_link,
     _validate_digest,
     _serialize_manifest,
+    _deserialize_manifest,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
     OCI_IMAGE_MANIFEST,
@@ -874,7 +876,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def set_manifest(
         self,
         repository: str,
-        manifest: Union[Dict[str, Any], IO[bytes]],
+        manifest: Union[JSON, IO[bytes]],
         *,
         tag: Optional[str] = None,
         media_type: str = OCI_IMAGE_MANIFEST,
@@ -897,7 +899,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             if isinstance(manifest, dict):
-                data = _serialize_manifest(manifest)
+                data = BytesIO(_serialize_manifest(manifest))
             else:
                 data = manifest
             tag_or_digest = tag
@@ -946,16 +948,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         media_type = response.http_response.headers['Content-Type']
         manifest_bytes = b""
         async for chunk in manifest_iterator:
-           manifest_bytes += chunk
-        manifest_stream = BytesIO(manifest_bytes)
+            manifest_bytes += chunk
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
         else:
             digest = response.http_response.headers['Docker-Content-Digest']
-        if not _validate_digest(manifest_stream, digest):
+        if not _validate_digest(manifest_bytes, digest):
             raise ValueError("The requested digest does not match the digest of the received manifest.")
 
-        return GetManifestResult(digest=digest, manifest_stream=manifest_stream, media_type=media_type)
+        return GetManifestResult(digest=digest, manifest=_deserialize_manifest(manifest_bytes), media_type=media_type)
 
     @distributed_trace_async
     async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:

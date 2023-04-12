@@ -8,10 +8,10 @@ import hashlib
 import re
 import time
 import json
-from io import BytesIO
-from typing import Any, List, Dict, IO, Optional
+from typing import List, Dict, IO, Optional, Union
 from urllib.parse import urlparse
 
+from azure.containerregistry._container_registry_client import JSON
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
 
@@ -127,16 +127,21 @@ def _parse_exp_time(raw_token):
 
     return time.time()
 
-def _serialize_manifest(manifest: Dict[str, Any]) -> IO:
-    data = json.dumps(manifest).encode('utf-8')
-    return BytesIO(data)
+def _serialize_manifest(manifest: JSON) -> bytes:
+    return json.dumps(manifest).encode('utf-8')
 
-def _compute_digest(data: IO[bytes]) -> str:
-    data.seek(0)
-    value = data.read()
-    data.seek(0)
+def _deserialize_manifest(manifest: bytes) -> JSON:
+    return json.loads(manifest.decode('utf-8'))
+
+def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
+    if isinstance(data, bytes):
+        value = data
+    else:
+        data.seek(0)
+        value = data.read()
+        data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
-def _validate_digest(data: IO[bytes], digest: str) -> bool:
+def _validate_digest(data: Union[IO[bytes], bytes], digest: str) -> bool:
     data_digest = _compute_digest(data)
     return data_digest == digest
