@@ -208,7 +208,6 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
         threshold: float = None,
     ):
         super().__init__(threshold=threshold)
-        self.applicable_feature_type = MonitorFeatureType.NOT_APPLICABLE
         self.metric_name = metric_name
 
     def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:

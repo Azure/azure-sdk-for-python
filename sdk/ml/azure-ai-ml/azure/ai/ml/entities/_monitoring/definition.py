@@ -50,18 +50,16 @@ class MonitorDefinition(RestTranslatableMixin):
             compute_id=self.compute,
             monitoring_target=self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id,
             signals={signal_name: signal._to_rest_object() for signal_name, signal in self.monitoring_signals.items()},
-            notification_setting=self.alert_notification._to_rest_object(),
+            alert_notification_setting=self.alert_notification._to_rest_object(),
         )
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitorDefinition) -> "MonitorDefinition":
-
-        # where does data_ingestion go??
         return cls(
             compute=obj.compute_id,
             monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target),
             monitoring_signals={
                 signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
             },
-            alert_notification=AlertNotification._from_rest_object(obj.notification_setting),
+            alert_notification=AlertNotification._from_rest_object(obj.alert_notification_setting),
         )

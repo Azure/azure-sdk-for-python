@@ -8,10 +8,14 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 
@@ -19,7 +23,7 @@ module_logger = logging.getLogger(__name__)
 
 
 @experimental
-class MonitorSchedule(Schedule):
+class MonitorSchedule(Schedule, RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -69,4 +73,17 @@ class MonitorSchedule(Schedule):
         return cls(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             **load_from_dict(MonitorScheduleSchema, data, context, **kwargs),
+        )
+
+    def _to_rest_object(self) -> RestSchedule:
+        rest_schedule_properties = ScheduleProperties(
+            description=self.description,
+            properties=self.properties,
+            tags=self.tags,
+            action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object()),
+            display_name=self.display_name,
+            is_enabled=self._is_enabled
+        )
+        rest_schedule = RestSchedule(
+
         )

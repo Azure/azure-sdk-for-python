@@ -305,13 +305,19 @@ class ModelPerformanceSignal(ModelSignal):
         return RestModelPerformanceSignal(
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
-            metric_threshold=self.metric_thresholds._to_rest_object(),
-            model_type=self.model_type,
+            metric_threshold=self.metric_thresholds._to_rest_object(model_type=self.model_type),
+            data_segment=self.data_segment._to_rest_object()
         )
 
     @classmethod
     def _from_rest_object(cls, obj: RestModelPerformanceSignal) -> "ModelPerformanceSignal":
-        return RestModelPerformanceSignal
+        return cls(
+            target_dataset=TargetDataset(dataset=MonitorInputData._from_rest_object(obj.target_data)),
+            baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
+            metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
+            model_type=obj.metric_threshold.model_type.lower(),
+            data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
+        )
 
 
 @experimental
