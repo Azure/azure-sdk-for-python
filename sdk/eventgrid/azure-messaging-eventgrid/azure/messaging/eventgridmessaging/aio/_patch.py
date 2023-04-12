@@ -9,23 +9,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
 from ..models import ReceiveResponse
-from .._patch import _cloud_event_to_generated
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from .._patch import _cloud_event_to_generated, EventGridSharedAccessKeyPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._client import EventGridMessagingClient as ServiceClientGenerated
-
-class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
-    def __init__(
-        self,
-        credential: "AzureKeyCredential",
-        **kwargs # pylint: disable=unused-argument
-    ) -> None:
-        super(EventGridSharedAccessKeyPolicy, self).__init__()
-        self._credential = credential
-
-    def on_request(self, request):
-        request.http_request.headers["Authorization"] = "SharedAccessKey " + self._credential.key
 
 class EventGridMessagingClient(ServiceClientGenerated):
 
