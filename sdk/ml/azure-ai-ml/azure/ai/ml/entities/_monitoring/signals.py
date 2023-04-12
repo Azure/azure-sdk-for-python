@@ -15,6 +15,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelPerformanceSignalBase as RestModelPerformanceSignal,
     CustomMonitoringSignal as RestCustomMonitoringSignal,
     MonitoringDataSegment as RestMonitoringDataSegment,
+    MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
     TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
     AllFeatures as RestAllFeatures,
     FeatureSubset as RestFeatureSubset,
@@ -153,10 +154,22 @@ class DataDriftSignal(DataSignal):
             features = RestFeatureSubset(features=self.features)
         elif isinstance(self.features, MonitorFeatureFilter):
             features = self.features._to_rest_object()
-        elif isinstance(self.features, str) and self.features == "all_features":
+        elif isinstance(self.features, str) and self.features == ALL_FEATURES:
             features = RestAllFeatures()
         return RestMonitoringDataDriftSignal(
+            target_data=self.target_dataset.dataset._to_rest_object(),
+            baseline_data=self.baseline_dataset._to_rest_object(),
             features=features,
+            metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds]
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataDriftSignal":
+        return cls(
+            target_dataset=TargetDataset(MonitorInputData._from_rest_object(obj.target_data)),
+            baseline_dataset = MonitorInputData._from_rest_object(obj.baseline_data),
+            features=_from_rest_features(obj.features),
+            metric_thresholds = [DataDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds]
         )
 
 
@@ -165,6 +178,7 @@ class PredictionDriftSignal(MetricMonitoringSignal):
     def __init__(
         self,
         *,
+        model_type: MonitorModelType = None,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[PredictionDriftMetricThreshold] = None,
@@ -172,14 +186,25 @@ class PredictionDriftSignal(MetricMonitoringSignal):
         super().__init__(
             target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds
         )
+        self.model_type = model_type
         self.type = MonitorSignalType.PREDICTION_DRIFT
 
     def _to_rest_object(self) -> RestPredictionDriftMonitoringSignal:
-        return RestPredictionDriftMonitoringSignal()
+        return RestPredictionDriftMonitoringSignal(
+            model_type=self.model_type,
+            target_data=self.target_dataset.dataset._to_rest_object(),
+            baseline_data=self.baseline_dataset._to_rest_object(),
+            metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestPredictionDriftMonitoringSignal) -> "PredictionDriftSignal":
-        return cls()
+        return cls(
+            model_type=obj.model_type.lower(),
+            target_data=TargetDataset(dataset=MonitorInputData._from_rest_object(obj.target_data)),
+            baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
+            metric_thresholds=[PredictionDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds]
+        )
 
 
 @experimental
@@ -201,19 +226,28 @@ class DataQualitySignal(DataSignal):
         self.type = MonitorSignalType.DATA_QUALITY
 
     def _to_rest_object(self) -> RestMonitoringDataQualitySignal:
+        features = None
         if isinstance(self.features, list):
             features = RestFeatureSubset(features=self.features)
         elif isinstance(self.features, MonitorFeatureFilter):
             features = self.features._to_rest_object()
-        elif isinstance(self.features, str) and self.features == "all_features":
+        elif isinstance(self.features, str) and self.features == ALL_FEATURES:
             features = RestAllFeatures()
         return RestMonitoringDataQualitySignal(
+            target_data=self.target_dataset.dataset._to_rest_object(),
+            baseline_data=self.baseline_dataset._to_rest_object(),
             features=features,
+            metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds]
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataQualitySignal":
-        return cls()
+    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataDriftSignal":
+        return cls(
+            target_dataset=TargetDataset(MonitorInputData._from_rest_object(obj.target_data)),
+            baseline_dataset = MonitorInputData._from_rest_object(obj.baseline_data),
+            features=_from_rest_features(obj.features),
+            metric_thresholds = [DataDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds]
+        )
 
 
 @experimental
@@ -305,8 +339,19 @@ class CustomMonitoringSignal(MonitoringSignal):
         self.component_id = component_id
 
     def _to_rest_object(self) -> RestCustomMonitoringSignal:
-        return RestCustomMonitoringSignal(component_id=self.component_id)
+        return RestCustomMonitoringSignal(
+            component_id=self.component_id
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
         return cls(component_id=obj.component_id)
+
+
+def _from_rest_features(obj: RestMonitoringFeatureFilterBase) -> Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]:
+    if isinstance(obj, RestTopNFeaturesByAttribution):
+        return MonitorFeatureFilter(top_n_feature_importance=obj.top)
+    elif isinstance(obj, RestFeatureSubset):
+        return obj.features
+    elif isinstance(obj, RestAllFeatures):
+        return ALL_FEATURES
