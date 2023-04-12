@@ -64,7 +64,7 @@ class CloudEventEvent(_model_base.Model):
     :ivar data: Event data specific to the event type.
     :vartype data: any
     :ivar data_base64: Event data specific to the event type, encoded as a base64 string.
-    :vartype data_base64: any
+    :vartype data_base64: bytes
     :ivar type: Type of event related to the originating occurrence. Required.
     :vartype type: str
     :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
@@ -88,7 +88,7 @@ class CloudEventEvent(_model_base.Model):
      unique for each distinct event. Required."""
     data: Optional[Any] = rest_field()
     """Event data specific to the event type."""
-    data_base64: Optional[Any] = rest_field()
+    data_base64: Optional[bytes] = rest_field()
     """Event data specific to the event type, encoded as a base64 string."""
     type: str = rest_field()
     """Type of event related to the originating occurrence. Required."""
