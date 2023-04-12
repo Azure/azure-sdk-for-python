@@ -44,8 +44,8 @@ class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: di
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
          https://api.cognitive.microsofttranslator.com). Required.
     :type endpoint: str
-    :keyword api_version: Default value is "3.0". Note that overriding this default value may
-     result in unsupported behavior.
+    :keyword api_version: Mandatory API version parameter. Default value is "3.0". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

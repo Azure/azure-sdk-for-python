@@ -3,14 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import ( Union, Optional )
+from typing import Union, Optional
 from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.policies import ( SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
-from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
+from azure.core.pipeline.policies import SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
 DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -20,9 +21,10 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 class TranslatorCredential:
-    """ Credential for Translator Service. It is using combination of Resource key and region.
-    """
+    """Credential for Translator Service. It is using combination of Resource key and region."""
+
     def __init__(self, key: str, region: str) -> None:
         self.key = key
         self.region = region
@@ -40,17 +42,20 @@ class TranslatorCredential:
             raise TypeError("The key used for updating must be a string.")
         self.key = key
 
+
 class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
-    """ Translator Authentication Policy. Adds both authentication headers that are required.
+    """Translator Authentication Policy. Adds both authentication headers that are required.
     Ocp-Apim-Subscription-Region header contains region of the Translator resource.
     Ocp-Apim-Subscription-Key header contains API key of the Translator resource.
     """
+
     def __init__(self, credential: TranslatorCredential):
         self.credential = credential
 
     def on_request(self, request: PipelineRequest) -> None:
         request.http_request.headers["Ocp-Apim-Subscription-Key"] = self.credential.key
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.credential.region
+
 
 def get_translation_endpoint(endpoint, api_version):
     if not endpoint:
@@ -64,6 +69,7 @@ def get_translation_endpoint(endpoint, api_version):
 
     return translator_endpoint
 
+
 def set_authentication_policy(credential, kwargs):
     if isinstance(credential, TranslatorCredential):
         if not kwargs.get("authentication_policy"):
@@ -71,10 +77,14 @@ def set_authentication_policy(credential, kwargs):
     elif isinstance(credential, AzureKeyCredential):
         if not kwargs.get("authentication_policy"):
             kwargs["authentication_policy"] = AzureKeyCredentialPolicy(
-                name="Ocp-Apim-Subscription-Key", credential=credential)
+                name="Ocp-Apim-Subscription-Key", credential=credential
+            )
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs)
+            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
+                credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
+            )
+
 
 class TextTranslationClient(ServiceClientGenerated):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
@@ -117,22 +127,21 @@ class TextTranslationClient(ServiceClientGenerated):
      result in unsupported behavior.
     :paramtype api_version: str
     """
+
     def __init__(
-            self,
-            credential: Union[AzureKeyCredential , TokenCredential , TranslatorCredential],
-            *,
-            endpoint: Optional[str] = None,
-            api_version = "3.0",
-            **kwargs):
+        self,
+        credential: Union[AzureKeyCredential, TokenCredential, TranslatorCredential],
+        *,
+        endpoint: Optional[str] = None,
+        api_version="3.0",
+        **kwargs
+    ):
 
         set_authentication_policy(credential, kwargs)
 
         translation_endpoint = get_translation_endpoint(endpoint, api_version)
 
-        super().__init__(
-            endpoint=translation_endpoint,
-            api_version=api_version,
-            **kwargs
-        )
+        super().__init__(endpoint=translation_endpoint, api_version=api_version, **kwargs)
+
 
 __all__ = ["TextTranslationClient", "TranslatorCredential"]

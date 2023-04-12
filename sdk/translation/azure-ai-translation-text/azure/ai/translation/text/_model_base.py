@@ -425,7 +425,9 @@ class Model(_MyMutableMapping):
             if non_attr_kwargs:
                 # actual type errors only throw the first wrong keyword arg they see, so following that.
                 raise TypeError(f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'")
-            dict_to_pass.update({self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items()})
+            dict_to_pass.update(
+                {self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items() if v is not None}
+            )
         super().__init__(dict_to_pass)
 
     def copy(self) -> "Model":

@@ -1,0 +1,15 @@
+{
+  "commit": "4637adf8aac277915fad37135dc4d11d34e166b9",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/translation/Azure.AI.TextTranslation",
+  "@azure-tools/typespec-python": {
+    "version": "0.8.2",
+    "resolved": "https://registry.npmjs.org/@azure-tools/typespec-python/-/typespec-python-0.8.2.tgz",
+    "dependencies": {
+      "@autorest/python": {
+        "version": "6.4.9",
+        "resolved": "https://registry.npmjs.org/@autorest/python/-/python-6.4.9.tgz"
+      }
+    }
+  }
+}

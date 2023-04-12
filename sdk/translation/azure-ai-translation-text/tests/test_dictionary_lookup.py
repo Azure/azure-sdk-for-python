@@ -8,8 +8,8 @@ from azure.ai.translation.text.models import InputTextItem
 from preparer import TextTranslationPreparer
 from testcase import TextTranslationTest
 
-class TestDictionaryLookup(TextTranslationTest):
 
+class TestDictionaryLookup(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_single_input_element(self, **kwargs):
@@ -23,7 +23,8 @@ class TestDictionaryLookup(TextTranslationTest):
         input_text_elements = [InputTextItem(text="fly")]
 
         response = client.lookup_dictionary_entries(
-            content=input_text_elements, from_parameter=source_language, to=target_language)
+            content=input_text_elements, from_parameter=source_language, to=target_language
+        )
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].display_source == "fly"
@@ -38,11 +39,11 @@ class TestDictionaryLookup(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [InputTextItem(
-            text="fly"), InputTextItem(text="fox")]
+        input_text_elements = [InputTextItem(text="fly"), InputTextItem(text="fox")]
 
         response = client.lookup_dictionary_entries(
-            content=input_text_elements, from_parameter=source_language, to=target_language)
+            content=input_text_elements, from_parameter=source_language, to=target_language
+        )
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"

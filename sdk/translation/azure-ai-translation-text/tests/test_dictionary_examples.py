@@ -10,7 +10,6 @@ from testcase import TextTranslationTest
 
 
 class TestDictionaryExamples(TextTranslationTest):
-
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_single_input_element(self, **kwargs):
@@ -21,13 +20,11 @@ class TestDictionaryExamples(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [DictionaryExampleTextItem(
-            text="fly", translation="volar")]
+        input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
         response = client.lookup_dictionary_examples(
-            content=input_text_elements,
-            from_parameter=source_language,
-            to=target_language)
+            content=input_text_elements, from_parameter=source_language, to=target_language
+        )
         assert response is not None
         assert response[0].normalized_source == "fly"
         assert response[0].normalized_target == "volar"
@@ -42,14 +39,14 @@ class TestDictionaryExamples(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [DictionaryExampleTextItem(
-            text="fly", translation="volar"),
-            DictionaryExampleTextItem(text="beef", translation="came")]
+        input_text_elements = [
+            DictionaryExampleTextItem(text="fly", translation="volar"),
+            DictionaryExampleTextItem(text="beef", translation="came"),
+        ]
 
         response = client.lookup_dictionary_examples(
-            content=input_text_elements,
-            from_parameter=source_language,
-            to=target_language)
+            content=input_text_elements, from_parameter=source_language, to=target_language
+        )
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"

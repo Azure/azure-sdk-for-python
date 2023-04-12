@@ -6,19 +6,15 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import ( Union, Optional )
-from azure.core.pipeline.policies import ( AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
+from typing import Union, Optional
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._patch import (
-    DEFAULT_TOKEN_SCOPE,
-    get_translation_endpoint,
-    TranslatorAuthenticationPolicy,
-    TranslatorCredential
-)
+from .._patch import DEFAULT_TOKEN_SCOPE, get_translation_endpoint, TranslatorAuthenticationPolicy, TranslatorCredential
 
 from ._client import TextTranslationClient as ServiceClientGenerated
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -28,6 +24,7 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 def set_authentication_policy(credential, kwargs):
     if isinstance(credential, TranslatorCredential):
         if not kwargs.get("authentication_policy"):
@@ -35,10 +32,14 @@ def set_authentication_policy(credential, kwargs):
     elif isinstance(credential, AzureKeyCredential):
         if not kwargs.get("authentication_policy"):
             kwargs["authentication_policy"] = AzureKeyCredentialPolicy(
-                name="Ocp-Apim-Subscription-Key", credential=credential)
+                name="Ocp-Apim-Subscription-Key", credential=credential
+            )
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs)
+            kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
+                credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs
+            )
+
 
 class TextTranslationClient(ServiceClientGenerated):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
@@ -81,23 +82,21 @@ class TextTranslationClient(ServiceClientGenerated):
      result in unsupported behavior.
     :paramtype api_version: str
     """
+
     def __init__(
-            self,
-            credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential],
-            *,
-            endpoint: Optional[str] = None,
-            api_version = "3.0",
-            **kwargs):
+        self,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential, TranslatorCredential],
+        *,
+        endpoint: Optional[str] = None,
+        api_version="3.0",
+        **kwargs
+    ):
 
         set_authentication_policy(credential, kwargs)
 
         translation_endpoint = get_translation_endpoint(endpoint, api_version)
 
-        super().__init__(
-            endpoint=translation_endpoint,
-            api_version=api_version,
-            **kwargs
-        )
+        super().__init__(endpoint=translation_endpoint, api_version=api_version, **kwargs)
 
 
 __all__ = ["TextTranslationClient"]

@@ -1,0 +1,4 @@
+cleanup: false
+commit: 4637adf8aac277915fad37135dc4d11d34e166b9
+directory: specification/translation/Azure.AI.TextTranslation
+repo: Azure/azure-rest-api-specs
