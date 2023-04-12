@@ -307,13 +307,12 @@ class ArtifactTagProperties(object):
 class GetManifestResult(object):
     """The get manifest result.
 
-    :ivar manifest: The manifest JSON.
-    :vartype manifest_stream: JSON
+    :ivar dict manifest: The manifest JSON.
     :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 
     def __init__(self, **kwargs):
-        self.manifest_stream = kwargs.get("manifest_stream")
+        self.manifest = kwargs.get("manifest")
         self.media_type = kwargs.get("media_type")
         self.digest = kwargs.get("digest")

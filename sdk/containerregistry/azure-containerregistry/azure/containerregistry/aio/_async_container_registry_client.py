@@ -6,9 +6,8 @@
 # pylint: disable=too-many-lines
 import functools
 import hashlib
-import json
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, AsyncIterator
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, AsyncIterator, MutableMapping
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -29,7 +28,6 @@ from .._container_registry_client import (
     _return_response_headers,
     _return_response_and_headers,
     _return_response_and_deserialized,
-    JSON,
 )
 from .._generated.models import AcrErrors
 from .._helpers import (
@@ -46,6 +44,8 @@ from .._helpers import (
     DEFAULT_CHUNK_SIZE,
 )
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties, GetManifestResult
+
+JSON = MutableMapping[str, Any]
 
 
 class _UnclosableBytesIO(BytesIO):
@@ -899,9 +899,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             if isinstance(manifest, dict):
-                data = BytesIO(_serialize_manifest(manifest))
+                data = _UnclosableBytesIO(_serialize_manifest(manifest))
             else:
-                data = manifest
+                data = _UnclosableBytesIO(manifest.read())
             tag_or_digest = tag
             if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
@@ -937,7 +937,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         response, manifest_iterator = cast(
             Tuple[PipelineResponse, AsyncIterator[bytes]],
-            self._client.container_registry.get_manifest(
+            await self._client.container_registry.get_manifest(
                 name=repository,
                 reference=tag_or_digest,
                 accept=SUPPORTED_MANIFEST_MEDIA_TYPES,

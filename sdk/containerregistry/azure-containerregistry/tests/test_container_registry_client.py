@@ -7,7 +7,6 @@ import os
 import pytest
 import six
 import hashlib
-import json
 from datetime import datetime
 from io import BytesIO
 from azure.containerregistry import (
@@ -17,9 +16,8 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     ArtifactTagOrder,
     ContainerRegistryClient,
-    OciImageManifest,
 )
-from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
+from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE, _deserialize_manifest
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -454,70 +452,41 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_oci_manifest(self, containerregistry_endpoint):
+    def test_set_oci_manifest_json(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        manifest = self.get_oci_manifest()
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_oci_manifest_prerequisites(repo, client)
 
-            # Act
-            with pytest.raises(HttpResponseError):
-                client.set_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
-            digest = client.set_manifest(repo, manifest)
+            with open(path, "rb") as manifest_stream:
+                manifest_json = _deserialize_manifest(manifest_stream.read())
+                with pytest.raises(HttpResponseError):
+                    client.set_manifest(repo, manifest_json, media_type=DOCKER_MANIFEST)
+                digest = client.set_manifest(repo, manifest_json)
 
-            # Assert
             response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
             assert response.media_type == OCI_IMAGE_MANIFEST
-            received_manifest = OciImageManifest.deserialize(json.load(response.manifest_stream))
-            self.assert_manifest(received_manifest, OciImageManifest.deserialize(manifest))
 
             client.delete_manifest(repo, digest)
             client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_oci_manifest_stream(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        manifest_stream = self.get_oci_manifest_stream()
-        with self.create_registry_client(containerregistry_endpoint) as client:
-            self.upload_oci_manifest_prerequisites(repo, client)
-
-            # Act
-            with pytest.raises(HttpResponseError):
-                client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
-            digest = client.set_manifest(repo, manifest_stream)
-
-            # Assert
-            response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
-            assert response.media_type == OCI_IMAGE_MANIFEST
-            received_manifest = OciImageManifest.deserialize(json.load(response.manifest_stream))
-            self.assert_manifest(received_manifest, OciImageManifest.deserialize(json.load(manifest_stream)))
-
-            client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
-
-    @acr_preparer()
-    @recorded_by_proxy
-    def test_set_and_get_oci_manifest_with_tag(self, containerregistry_endpoint):
+    def test_set_oci_manifest_json_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
-        manifest = self.get_oci_manifest()
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_oci_manifest_prerequisites(repo, client)
             
-            # Act
-            with pytest.raises(HttpResponseError):
-                client.set_manifest(repo, manifest, tag=tag, media_type=DOCKER_MANIFEST)
-            digest = client.set_manifest(repo, manifest, tag=tag)
+            with open(path, "rb") as manifest_stream:
+                manifest_json = _deserialize_manifest(manifest_stream.read())
+                with pytest.raises(HttpResponseError):
+                    client.set_manifest(repo, manifest_json, tag=tag, media_type=DOCKER_MANIFEST)
+                digest = client.set_manifest(repo, manifest_json, tag=tag)
             
-            # Assert
-            response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
+            response = client.get_manifest(repo, tag)
             assert response.media_type == OCI_IMAGE_MANIFEST
-            received_manifest = OciImageManifest.deserialize(json.load(response.manifest_stream))
-            self.assert_manifest(received_manifest, OciImageManifest.deserialize(manifest))
 
             tags = client.get_manifest_properties(repo, digest).tags
             assert len(tags) == 1
@@ -528,24 +497,41 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+    def test_set_oci_manifest_stream(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            self.upload_oci_manifest_prerequisites(repo, client)
+
+            with open(path, "rb") as manifest_stream:
+                with pytest.raises(HttpResponseError):
+                    client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
+                manifest_stream.seek(0)
+                digest = client.set_manifest(repo, manifest_stream)
+
+            response = client.get_manifest(repo, digest)
+            assert response.media_type == OCI_IMAGE_MANIFEST
+
+            client.delete_manifest(repo, digest)
+            client.delete_repository(repo)
+
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_set_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
-        manifest_stream = self.get_oci_manifest_stream()
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_oci_manifest_prerequisites(repo, client)
             
-            # Act
-            with pytest.raises(HttpResponseError):
-                client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
-            digest = client.set_manifest(repo, manifest_stream, tag=tag)
+            with open(path, "rb") as manifest_stream:
+                with pytest.raises(HttpResponseError):
+                    client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
+                manifest_stream.seek(0)
+                digest = client.set_manifest(repo, manifest_stream, tag=tag)
             
-            # Assert
-            response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
+            response = client.get_manifest(repo, tag)
             assert response.media_type == OCI_IMAGE_MANIFEST
-            received_manifest = OciImageManifest.deserialize(json.load(response.manifest_stream))
-            self.assert_manifest(received_manifest, OciImageManifest.deserialize(json.load(manifest_stream)))
             
             tags = client.get_manifest_properties(repo, digest).tags
             assert len(tags) == 1
@@ -556,20 +542,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_docker_manifest_stream(self, containerregistry_endpoint):
+    def test_set_docker_manifest_stream(self, containerregistry_endpoint):
         repo = "library/hello-world"
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
 
-            with open(path, "rb") as docker_manifest_stream:
+            with open(path, "rb") as manifest_stream:
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
-                    client.set_manifest(repo, docker_manifest_stream)
-                digest = client.set_manifest(repo, docker_manifest_stream, media_type=DOCKER_MANIFEST)
+                    client.set_manifest(repo, manifest_stream)
+                manifest_stream.seek(0)
+                digest = client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
 
             response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest)
@@ -577,21 +563,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_docker_manifest_stream_with_tag(self, containerregistry_endpoint):
+    def test_set_docker_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = "library/hello-world"
         tag = "v1"
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
 
-            with open(path, "rb") as docker_manifest_stream:
+            with open(path, "rb") as manifest_stream:
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
-                    client.set_manifest(repo, docker_manifest_stream, tag=tag)
-                digest = client.set_manifest(repo, docker_manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
+                    client.set_manifest(repo, manifest_stream, tag=tag)
+                digest = client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
             
-            response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
+            response = client.get_manifest(repo, tag)
             assert response.media_type == DOCKER_MANIFEST
 
             tags = client.get_manifest_properties(repo, digest).tags
@@ -603,22 +588,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_docker_manifest_json(self, containerregistry_endpoint):
+    def test_set_docker_manifest_json(self, containerregistry_endpoint):
         repo = "library/hello-world"
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
 
-            with open(path, "rb") as docker_manifest_stream:
-                docker_manifest_json = json.loads(docker_manifest_stream.read().decode())
-                
+            with open(path, "rb") as manifest_stream:
+                manifest_json = _deserialize_manifest(manifest_stream.read())
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
-                    client.set_manifest(repo, docker_manifest_json)
-                digest = client.set_manifest(repo, docker_manifest_json, media_type=DOCKER_MANIFEST)
+                    client.set_manifest(repo, manifest_json)
+                digest = client.set_manifest(repo, manifest_json, media_type=DOCKER_MANIFEST)
             
             response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest)
@@ -626,22 +609,21 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     
     @acr_preparer()
     @recorded_by_proxy
-    def test_set_and_get_docker_manifest_json_with_tag(self, containerregistry_endpoint):
+    def test_set_docker_manifest_json_with_tag(self, containerregistry_endpoint):
         repo = "library/hello-world"
         tag = "v1"
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
 
-            with open(path, "rb") as docker_manifest_stream:
-                docker_manifest_json = json.loads(docker_manifest_stream.read().decode())
+            with open(path, "rb") as manifest_stream:
+                manifest_json = _deserialize_manifest(manifest_stream.read())
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
-                    client.set_manifest(repo, docker_manifest_json, tag=tag)
-                digest = client.set_manifest(repo, docker_manifest_json, tag=tag, media_type=DOCKER_MANIFEST)
+                    client.set_manifest(repo, manifest_json, tag=tag)
+                digest = client.set_manifest(repo, manifest_json, tag=tag, media_type=DOCKER_MANIFEST)
             
-            response = client.get_manifest(repo, digest)
-            assert response.manifest_stream.tell() == 0
+            response = client.get_manifest(repo, tag)
             assert response.media_type == DOCKER_MANIFEST
 
             tags = client.get_manifest_properties(repo, digest).tags

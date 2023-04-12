@@ -69,48 +69,11 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         assert properties.can_write == value
         assert properties.can_list == value
 
-    def assert_manifest(self, manifest, expected):
-        assert manifest is not None
-        assert manifest.schema_version == expected.schema_version
-        assert manifest.config is not None
-        assert_manifest_config_or_layer_properties(manifest.config, expected.config)
-        assert manifest.layers is not None
-        assert len(manifest.layers) == len(expected.layers)
-        count = 0
-        for layer in manifest.layers:
-            assert_manifest_config_or_layer_properties(layer, expected.layers[count])
-            count += 1
-
     def create_fully_qualified_reference(self, registry, repository, digest):
         return f"{registry}/{repository}{':' if _is_tag(digest) else '@'}{digest.split(':')[-1]}"
 
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
-    
-    def get_oci_manifest(self):
-        oci_manifest = {
-            "schemaVersion": 2,
-            "config": {
-                "mediaType": "application/vnd.acme.rocket.config",
-                "digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
-                "sizeInBytes": 171,
-            },
-            "layers": [
-                {
-                    "mediaType": "application/vnd.oci.image.layer.v1.tar",
-                    "digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
-                    "sizeInBytes": 28,
-                    "annotations": {
-                        "org.opencontainers.image.ref.name": "artifact.txt",
-                    },
-                },
-            ],
-        }
-        return oci_manifest
-    
-    def get_oci_manifest_stream(self):
-        oci_manifest = self.get_oci_manifest()
-        return BytesIO(json.dumps(oci_manifest).encode())
     
     def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
@@ -219,8 +182,3 @@ def load_registry():
             import_image(authority_anon, repo, tag, is_anonymous=True)
         except Exception as e:
             print(e)
-
-def assert_manifest_config_or_layer_properties(value, expected):
-    assert value.media_type == expected.media_type
-    assert value.digest == expected.digest
-    assert value.size_in_bytes == expected.size_in_bytes

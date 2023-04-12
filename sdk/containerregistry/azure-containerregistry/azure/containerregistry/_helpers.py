@@ -8,12 +8,12 @@ import hashlib
 import re
 import time
 import json
-from typing import List, Dict, IO, Optional, Union
+from typing import Any, List, Dict, MutableMapping, IO, Optional, Union
 from urllib.parse import urlparse
-
-from azure.containerregistry._container_registry_client import JSON
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
+
+JSON = MutableMapping[str, Any]
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -142,6 +142,6 @@ def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
         data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
-def _validate_digest(data: Union[IO[bytes], bytes], digest: str) -> bool:
-    data_digest = _compute_digest(data)
-    return data_digest == digest
+def _validate_digest(data: Union[IO[bytes], bytes], expected_digest: str) -> bool:
+    digest = _compute_digest(data)
+    return digest == expected_digest
