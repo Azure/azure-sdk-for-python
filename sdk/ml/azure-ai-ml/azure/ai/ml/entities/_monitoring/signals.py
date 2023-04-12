@@ -138,17 +138,11 @@ class DataDriftSignal(DataSignal):
         self.type = MonitorSignalType.DATA_DRIFT
 
     def _to_rest_object(self) -> RestMonitoringDataDriftSignal:
-        features = None
-        if isinstance(self.features, list):
-            features = RestFeatureSubset(features=self.features)
-        elif isinstance(self.features, MonitorFeatureFilter):
-            features = self.features._to_rest_object()
-        elif isinstance(self.features, str) and self.features == ALL_FEATURES:
-            features = RestAllFeatures()
+        rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataDriftSignal(
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
-            features=features,
+            features=rest_features,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds]
         )
 
@@ -215,17 +209,11 @@ class DataQualitySignal(DataSignal):
         self.type = MonitorSignalType.DATA_QUALITY
 
     def _to_rest_object(self) -> RestMonitoringDataQualitySignal:
-        features = None
-        if isinstance(self.features, list):
-            features = RestFeatureSubset(features=self.features)
-        elif isinstance(self.features, MonitorFeatureFilter):
-            features = self.features._to_rest_object()
-        elif isinstance(self.features, str) and self.features == ALL_FEATURES:
-            features = RestAllFeatures()
+        rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataQualitySignal(
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
-            features=features,
+            features=rest_features,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds]
         )
 
@@ -351,3 +339,14 @@ def _from_rest_features(obj: RestMonitoringFeatureFilterBase) -> Union[List[str]
         return obj.features
     elif isinstance(obj, RestAllFeatures):
         return ALL_FEATURES
+
+
+def _to_rest_features(features:  Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]) -> RestMonitoringFeatureFilterBase:
+    rest_features = None
+    if isinstance(features, list):
+        rest_features = RestFeatureSubset(features=features)
+    elif isinstance(features, MonitorFeatureFilter):
+        rest_features = features._to_rest_object()
+    elif isinstance(features, str) and features == ALL_FEATURES:
+        rest_features = RestAllFeatures()
+    return rest_features
