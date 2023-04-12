@@ -197,7 +197,7 @@ def analyze_invoice():
             if unit_price:
                 print(
                     "......Unit Price: {}{} has confidence: {}".format(
-                        unit_price.value, unit_price.value.code, unit_price.confidence
+                        unit_price.value, unit_price.value.code if unit_price.value.code else "", unit_price.confidence
                     )
                 )
             product_code = item.value.get("ProductCode")
