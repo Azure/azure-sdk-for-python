@@ -61,7 +61,7 @@ class MonitoringSignal:
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-        metric_thresholds: List[MetricThreshold] = None,
+        metric_thresholds: Union[MetricThreshold, List[MetricThreshold]] = None,
     ):
         self.target_dataset = target_dataset
         self.baseline_dataset = baseline_dataset
@@ -164,7 +164,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-        metric_thresholds: List[FeatureAttributionDriftMetricThreshold] = None,
+        metric_thresholds: FeatureAttributionDriftMetricThreshold = None,
         model_type: MonitorModelType = None,
     ):
         super().__init__(
