@@ -207,5 +207,8 @@ class ManagedNetwork:
             else {}
         )
         return ManagedNetwork(
-            isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules, network_id=obj.network_id, status=obj.status
+            isolation_mode=obj.isolation_mode,
+            outbound_rules=from_rest_outbound_rules,
+            network_id=obj.network_id,
+            status=obj.status,
         )
