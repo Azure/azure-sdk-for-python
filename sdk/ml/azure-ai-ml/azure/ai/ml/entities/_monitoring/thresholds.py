@@ -22,6 +22,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelPerformanceMetricThresholdBase,
     ClassificationModelPerformanceMetricThreshold,
     RegressionModelPerformanceMetricThreshold,
+    CustomMetricThreshold,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml._utils._experimental import experimental
@@ -229,3 +230,27 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
     @classmethod
     def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
         return cls(metric=camel_to_snake(obj.metric), threshold=obj.threshold.value)
+
+
+@experimental
+class CustomMonitoringMetricThreshold(MetricThreshold):
+    def __init__(
+        self,
+        metric_name: str,
+        threshold: float = None,
+    ):
+        super().__init__(threshold=threshold)
+        self.metric_name = metric_name
+
+    def _to_rest_object(self) -> CustomMetricThreshold:
+        return CustomMetricThreshold(
+            metric=self.metric_name,
+            threshold=MonitoringThreshold(value=self.threshold),
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: MonitoringThreshold) -> "CustomMonitoringMetricThreshold":
+        return cls(
+            metric_name=obj.metric,
+            threshold=obj.threshold.value
+        )

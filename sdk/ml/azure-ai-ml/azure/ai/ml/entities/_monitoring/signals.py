@@ -30,6 +30,7 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     PredictionDriftMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     ModelPerformanceMetricThreshold,
+    CustomMonitoringMetricThreshold,
 )
 
 
@@ -93,19 +94,6 @@ class MonitoringSignal(RestTranslatableMixin):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-    ):
-        self.type = None
-        self.target_dataset = target_dataset
-        self.baseline_dataset = baseline_dataset
-
-
-@experimental
-class MetricMonitoringSignal(MonitoringSignal):
-    def __init__(
-        self,
-        *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[MetricThreshold] = None,
     ):
         super().__init__(target_dataset=target_dataset, baseline_dataset=baseline_dataset)
@@ -113,7 +101,7 @@ class MetricMonitoringSignal(MonitoringSignal):
 
 
 @experimental
-class DataSignal(MetricMonitoringSignal):
+class DataSignal(MonitoringSignal):
     def __init__(
         self,
         *,
@@ -174,7 +162,7 @@ class DataDriftSignal(DataSignal):
 
 
 @experimental
-class PredictionDriftSignal(MetricMonitoringSignal):
+class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
@@ -251,7 +239,7 @@ class DataQualitySignal(DataSignal):
 
 
 @experimental
-class ModelSignal(MetricMonitoringSignal):
+class ModelSignal(MonitoringSignal):
     def __init__(
         self,
         *,
@@ -329,18 +317,25 @@ class CustomMonitoringSignal(MonitoringSignal):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
+        metric_thresholds: List[CustomMonitoringMetricThreshold] = None,
         component_id: str = None,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
+            metric_thresholds=metric_thresholds,
         )
         self.type = MonitorSignalType.CUSTOM
         self.component_id = component_id
 
     def _to_rest_object(self) -> RestCustomMonitoringSignal:
         return RestCustomMonitoringSignal(
-            component_id=self.component_id
+            component_id=self.component_id,
+            metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
+            input_assets= {
+                "target_dataset": self.target_dataset.dataset._to_rest_object(),
+                "baseline_dataset": self.baseline_dataset._to_rest_object(),
+            }
         )
 
     @classmethod

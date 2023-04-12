@@ -17,6 +17,7 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     PredictionDriftMetricThresholdSchema,
     FeatureAttributionDriftMetricThresholdSchema,
     ModelPerformanceMetricThresholdSchema,
+    CustomMonitoringMetricThreshold,
 )
 
 
@@ -135,6 +136,7 @@ class ModelPerformanceSignalSchema(ModelSignalSchema):
 class CustomMonitoringSignalSchema(ModelSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.CUSTOM, required=True)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
+    metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThreshold))
 
     @post_load
     def make(self, data, **kwargs):
