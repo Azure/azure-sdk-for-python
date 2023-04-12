@@ -110,7 +110,7 @@ class ModelSignalSchema(MonitoringSignalSchema):
 
 class FeatureAttributionDriftSignalSchema(ModelSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT, required=True)
-    metric_thresholds = fields.List(NestedField(FeatureAttributionDriftMetricThresholdSchema))
+    metric_thresholds = NestedField(FeatureAttributionDriftMetricThresholdSchema)
 
     @post_load
     def make(self, data, **kwargs):
@@ -123,7 +123,7 @@ class FeatureAttributionDriftSignalSchema(ModelSignalSchema):
 class ModelPerformanceSignalSchema(ModelSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.MODEL_PERFORMANCE, required=True)
     data_segment = NestedField(DataSegmentSchema)
-    metric_thresholds = fields.List(NestedField(ModelPerformanceMetricThresholdSchema))
+    metric_thresholds = NestedField(ModelPerformanceMetricThresholdSchema)
 
     @post_load
     def make(self, data, **kwargs):
