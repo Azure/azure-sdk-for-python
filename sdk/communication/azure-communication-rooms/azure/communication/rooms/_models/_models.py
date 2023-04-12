@@ -18,17 +18,14 @@ class RoomParticipant():
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar communication_identifier: Identifies a participant in Azure Communication services. A
-    participant is, for example, an Azure communication user. This model must be interpreted as a
-    union: Apart from rawId, at most one further property may be set.
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
     :vartype role: Union[str, ParticipantRole]
     """
-    def __init__(self, *, raw_id: str = None, communication_identifier: CommunicationIdentifier = None, role: Union[str, ParticipantRole] = ParticipantRole.ATTENDEE, **kwargs: Any) -> None:
+    def __init__(self, *, communication_identifier: CommunicationIdentifier, role: Union[str, ParticipantRole] = ParticipantRole.ATTENDEE, **kwargs: Any) -> None:
         """
-        :keyword raw_id: Raw ID representation of the communication identifier. Please refer to the
+        :keyword communication_identifier: Raw ID representation of the communication identifier. Please refer to the
          following document for additional information on Raw ID. :code:`<br>`
          https://learn.microsoft.com/azure/communication-services/concepts/identifiers?pivots=programming-language-rest#raw-id-representation.
         :paramtype raw_id: str
@@ -37,9 +34,8 @@ class RoomParticipant():
         :paramtype role: str or ~azure.communication.rooms.models.ParticipantRole
         """
         super().__init__(**kwargs)
-        self.raw_id = raw_id
+        self.communication_identifier = communication_identifier
         self.role = role
-        self.communication_identifier = communication_identifier or identifier_from_raw_id(self.raw_id)
 
 
     def __eq__(self, other):
@@ -50,7 +46,7 @@ class RoomParticipant():
     @classmethod
     def _from_generated(cls, room_participant):
         return cls(
-            raw_id=room_participant.raw_id,
+            communication_identifier=identifier_from_raw_id(room_participant.raw_id),
             role=room_participant.role
         )
 

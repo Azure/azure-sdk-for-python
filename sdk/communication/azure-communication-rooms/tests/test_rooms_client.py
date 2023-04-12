@@ -229,6 +229,6 @@ class TestRoomsClient(unittest.TestCase):
                 items.append(participant)
         assert len(items) > 0
         self.assertEqual(self.room_participant.communication_identifier, items[0].communication_identifier)
-        self.assertEqual(self.room_participant.communication_identifier.raw_id, items[0].raw_id)
+        self.assertEqual(self.room_participant.communication_identifier.raw_id, items[0].communication_identifier.raw_id)
         self.assertEqual(self.room_participant.role, items[0].role)
         self.assertFalse(raised, 'Expected is no exception raised')

@@ -311,15 +311,15 @@ class RoomsClientTest(RoomsTestCase):
 
         expected_participants = [
             RoomParticipant(
-                raw_id=self.id1,
+                communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                raw_id=self.id2,
+                communication_identifier=CommunicationUserIdentifier(self.id2),
                 role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                raw_id=self.id3,
+                communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.ATTENDEE
             )
         ]
@@ -350,15 +350,15 @@ class RoomsClientTest(RoomsTestCase):
         ]
         expected_participants = [
             RoomParticipant(
-                raw_id=self.id1,
+                communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                raw_id=self.id2,
+                communication_identifier=CommunicationUserIdentifier(self.id2),
                 role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                raw_id=self.id3,
+                communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.PRESENTER
             )
         ]
@@ -391,19 +391,19 @@ class RoomsClientTest(RoomsTestCase):
 
         expected_participants = [
             RoomParticipant(
-                raw_id=self.id1,
+                communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                raw_id=self.id2,
+                communication_identifier=CommunicationUserIdentifier(self.id2),
                 role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                raw_id=self.id3,
+                communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                raw_id=self.id4,
+                communication_identifier=CommunicationUserIdentifier(self.id4),
                 role=ParticipantRole.ATTENDEE
             )
         ]
@@ -433,7 +433,7 @@ class RoomsClientTest(RoomsTestCase):
 
         expected_participants = [
             RoomParticipant(
-                raw_id=self.id3,
+                communication_identifier=CommunicationUserIdentifier(self.id3),
                 role=ParticipantRole.ATTENDEE
             )
         ]
