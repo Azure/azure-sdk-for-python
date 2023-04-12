@@ -113,15 +113,13 @@ def regenerate_restclient(api_tag, verbose):
     commands = [
         "autorest",
         "--python",
-        "--track2",
-        "--version=3.6.2",
-        "--use=@autorest/python@5.12.6",
+        "--version=3.9.2",
+        "--use=@autorest/python@6.4.3",
+        "--use=@autorest\modelerfour@4.24.3",
+        "--version-tolerant=False",
         f"--python-sdks-folder={restclient_path.absolute()}",
-        "--package-version=0.1.0",
         tag_arg,
         str(readme_path.absolute()),
-        "--modelerfour.lenient-model-deduplication",
-        '--title="Azure Machine Learning Workspaces"',
     ]
     print_blue(f"- Running autorest command: {' '.join(commands)}")
     run_command(
@@ -132,6 +130,7 @@ def regenerate_restclient(api_tag, verbose):
 
 
 if __name__ == "__main__":
+
     parser = ArgumentParser()
 
     parser.add_argument(
