@@ -399,7 +399,7 @@ def traverse_directory(
     dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
     blob_paths = []
 
-    for (dir_part, name) in zip(dir_parts, file_paths):
+    for dir_part, name in zip(dir_parts, file_paths):
         if file_paths_including_links.get(
             name
         ):  # for symlinks, use symlink name and structure in directory to create remote upload path
@@ -682,7 +682,7 @@ def _get_next_version_from_container(
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
-    registry_name: str,
+    registry_name: str = None,
     **kwargs,
 ) -> str:
     try:

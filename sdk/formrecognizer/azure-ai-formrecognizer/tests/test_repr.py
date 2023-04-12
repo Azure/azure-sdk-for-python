@@ -157,8 +157,15 @@ def address_value():
         postal_code="98052",
         country_region="USA",
         street_address="123 Contoso Ave",
+        unit="unit",
+        city_district="city_district",
+        state_district="state_district",
+        suburb="suburb",
+        house="house",
+        level="level"
     )
-    model_repr = "AddressValue(house_number={}, po_box={}, road={}, city={}, state={}, postal_code={}, country_region={}, street_address={})".format(
+    model_repr = "AddressValue(house_number={}, po_box={}, road={}, city={}, state={}, postal_code={}, country_region={}, street_address={}, " \
+                 "unit={}, city_district={}, state_district={}, suburb={}, house={}, level={})".format(
         "123",
         "4567",
         "Contoso Ave",
@@ -167,6 +174,12 @@ def address_value():
         "98052",
         "USA",
         "123 Contoso Ave",
+        "unit",
+        "city_district",
+        "state_district",
+        "suburb",
+        "house",
+        "level"
     )
     assert repr(model) == model_repr
     return model, model_repr
@@ -221,8 +234,8 @@ def document_key_value_element(bounding_region, document_span):
 
 @pytest.fixture
 def document_key_value_pair(document_key_value_element):
-    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98)
-    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={})".format(document_key_value_element[1], document_key_value_element[1], 0.98)
+    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98, common_name="Charges")
+    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={}, common_name={})".format(document_key_value_element[1], document_key_value_element[1], 0.98, "Charges")
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -285,7 +298,77 @@ def document_selection_mark(bounding_box, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_page(document_span, document_word, document_selection_mark, document_line):
+def document_annotation(bounding_box, document_span):
+    model = _models.DocumentAnnotation(
+                    kind="check",
+                    polygon=bounding_box[0],
+                    confidence=0.8
+                )
+    model_repr = "DocumentAnnotation(kind={}, polygon={}, confidence={})".format(
+            "check",
+            bounding_box[1],
+            0.8,
+        )
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def document_barcode(bounding_box, document_span):
+    model = _models.DocumentBarcode(
+                    kind="QRCode",
+                    value="15",
+                    polygon=bounding_box[0],
+                    span=document_span[0],
+                    confidence=0.8
+                )
+    model_repr = "DocumentBarcode(kind={}, polygon={}, confidence={}, value={}, span={})".format(
+            "QRCode",
+            bounding_box[1],
+            0.8,
+            "15",
+            document_span[1],
+        )
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def document_formula(bounding_box, document_span):
+    model = _models.DocumentFormula(
+                    kind="inline",
+                    value="2+2=4",
+                    polygon=bounding_box[0],
+                    span=document_span[0],
+                    confidence=0.8
+                )
+    model_repr = "DocumentFormula(kind={}, polygon={}, confidence={}, value={}, span={})".format(
+            "inline",
+            bounding_box[1],
+            0.8,
+            "2+2=4",
+            document_span[1],
+        )
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def document_image(bounding_box, document_span):
+    model = _models.DocumentImage(
+                    page_number=1,
+                    polygon=bounding_box[0],
+                    span=document_span[0],
+                    confidence=0.8
+                )
+    model_repr = "DocumentImage(page_number={}, polygon={}, confidence={}, span={})".format(
+            1,
+            bounding_box[1],
+            0.8,
+            document_span[1],
+        )
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def document_page(document_span, document_word, document_selection_mark, document_line, document_annotation, document_formula, document_image, document_barcode):
     model = _models.DocumentPage(
         page_number=1,
         angle=120.0,
@@ -296,8 +379,14 @@ def document_page(document_span, document_word, document_selection_mark, documen
         words=[document_word[0]],
         selection_marks=[document_selection_mark[0]],
         lines=[document_line[0]],
+        kind="document",
+        annotations=[document_annotation[0]],
+        formulas=[document_formula[0]],
+        images=[document_image[0]],
+        barcodes=[document_barcode[0]],
     )
-    model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}])".format(
+    model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}], " \
+                 "kind={}, annotations=[{}], barcodes=[{}], formulas=[{}], images=[{}])".format(
                 1,
                 120.0,
                 8.0,
@@ -307,6 +396,11 @@ def document_page(document_span, document_word, document_selection_mark, documen
                 document_word[1],
                 document_selection_mark[1],
                 document_span[1],
+                "document",
+                document_annotation[1],
+                document_barcode[1],
+                document_formula[1],
+                document_image[1],
             )
     assert repr(model) == model_repr
     return model, model_repr
@@ -390,16 +484,18 @@ def document_model(doc_type_info):
             tags={"awesome": "tag"},
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             doc_types={"prebuilt-invoice": doc_type_info[0]}
     )
-    model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+    model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}}, expires_on={})".format(
                 "prebuilt-invoice",
                 "my description",
                 datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
                 "2022-08-31",
                 {"awesome": "tag"},
-                doc_type_info[1]
+                doc_type_info[1],
+                datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             )
     assert repr(model) == model_repr
     return model, model_repr
@@ -573,6 +669,7 @@ class TestRepr():
         model = _models.DocumentModelDetails(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
@@ -580,13 +677,14 @@ class TestRepr():
                 "prebuilt-invoice": doc_type_info[0],
             }
         )
-        model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+        model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}}, expires_on={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             "2022-08-31",
             {"test": "value"},
-            doc_type_info[1]
+            doc_type_info[1],
+            datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
         )
         assert repr(model) == model_repr
 
@@ -594,16 +692,18 @@ class TestRepr():
         model = _models.DocumentModelSummary(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
         )
-        model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
+        model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={}, expires_on={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             "2022-08-31",
             {"test": "value"},
+            datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
         )
         assert repr(model) == model_repr
 
@@ -611,10 +711,16 @@ class TestRepr():
         model = _models.ResourceDetails(
             custom_document_models=_models.CustomDocumentModelsDetails(
                 limit=5000, count=10
+            ),
+            custom_neural_document_model_builds=_models.QuotaDetails(
+                used=0,
+                quota=20,
+                quota_resets_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)
             )
         )
-        model_repr = "ResourceDetails(custom_document_models={})".format(
-            "CustomDocumentModelsDetails(count=10, limit=5000)"
+        model_repr = "ResourceDetails(custom_document_models={}, custom_neural_document_model_builds={})".format(
+            "CustomDocumentModelsDetails(count=10, limit=5000)",
+            "QuotaDetails(used=0, quota=20, quota_resets_on=2024-09-16 10:10:59.342380)"
         )
         assert repr(model) == model_repr
 
@@ -622,10 +728,12 @@ class TestRepr():
         model = _models.CurrencyValue(
             amount=10.5,
             symbol="$",
+            code="USD"
         )
-        model_repr = "CurrencyValue(amount={}, symbol={})".format(
+        model_repr = "CurrencyValue(amount={}, symbol={}, code={})".format(
             10.5,
             "$",
+            "USD"
         )
         assert repr(model) == model_repr
 
@@ -633,6 +741,7 @@ class TestRepr():
         model = _models.CurrencyValue(
             amount=10.5,
             symbol="$",
+            code="USD"
         )
         assert str(model) == "$10.5"
 

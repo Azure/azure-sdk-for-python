@@ -234,7 +234,6 @@ def verify_entity_load_and_dump(
     # TODO once dump functionality audit is complete, this testing should be
     # made more robust, like comparing it to the inputted yaml or something.
     if test_dump_file_path is not None:
-
         # test file pointer-based dump
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmpfilename = f"{tmpdirname}/{test_dump_file_path}"

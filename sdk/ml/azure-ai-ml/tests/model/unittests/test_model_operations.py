@@ -118,7 +118,6 @@ version: 3"""
         mock_workspace_scope: OperationScope,
         tmp_path: Path,
     ) -> None:
-
         model_name = f"model_random_string"
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"

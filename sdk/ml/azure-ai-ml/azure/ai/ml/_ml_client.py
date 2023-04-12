@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes,too-many-lines
+# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes,too-many-lines,using-constant-test
 
 import json
 import logging
@@ -48,6 +48,10 @@ from azure.ai.ml._restclient.v2022_12_01_preview import (
 from azure.ai.ml._restclient.v2023_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022023Preview,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
+
 from azure.ai.ml._restclient.v2023_04_01 import (
     AzureMachineLearningWorkspaces as ServiceClient042023,
 )
@@ -318,6 +322,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023_preview = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._service_client_12_2022_preview = ServiceClient122022Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -384,8 +395,14 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview
+            if registry_name
+            else self._service_client_02_2023_preview
+            if is_private_preview_enabled
+            else self._service_client_05_2022,
             self._datastores,
+            self._operation_container,
+            requests_pipeline=self._requests_pipeline,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
@@ -499,6 +516,7 @@ class MLClient:
                 _service_client_kwargs=kwargs,
                 **ops_kwargs,
             )
+            self._operation_container.add(AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters)
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 

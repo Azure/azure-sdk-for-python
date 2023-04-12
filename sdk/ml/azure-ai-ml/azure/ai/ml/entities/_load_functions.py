@@ -34,6 +34,7 @@ from azure.ai.ml.entities._schedule.schedule import JobSchedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -754,3 +755,13 @@ def _load_feature_store_entity(
     :rtype: _FeatureStoreEntity
     """
     return load_common(_FeatureStoreEntity, source, relative_origin, **kwargs)
+
+
+def load_model_package(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs,
+) -> ModelPackage:
+    """Construct a model package object from yaml file."""
+    return load_common(ModelPackage, source, relative_origin, **kwargs)
