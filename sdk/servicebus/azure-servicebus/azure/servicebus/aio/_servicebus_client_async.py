@@ -13,7 +13,7 @@ from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 try:
     from ._transport._uamqp_transport_async import UamqpTransportAsync
 except ImportError:
-    pass
+    UamqpTransportAsync = None  # type: ignore
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
