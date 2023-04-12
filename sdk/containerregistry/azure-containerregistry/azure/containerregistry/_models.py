@@ -304,7 +304,7 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class DownloadManifestResult(object):
+class GetManifestResult(object):
     """The result from downloading a manifest from the registry.
 
     :ivar manifest_stream: The manifest stream that was downloaded.

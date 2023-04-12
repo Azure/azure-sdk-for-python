@@ -43,7 +43,7 @@ from .._helpers import (
     SUPPORTED_MANIFEST_MEDIA_TYPES,
     DEFAULT_CHUNK_SIZE,
 )
-from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties, DownloadManifestResult
+from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties, GetManifestResult
 
 
 class _UnclosableBytesIO(BytesIO):
@@ -871,7 +871,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def upload_manifest(
+    async def set_manifest(
         self,
         repository: str,
         manifest: Union[Dict[str, Any], IO[bytes]],
@@ -880,20 +880,20 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         media_type: str = OCI_IMAGE_MANIFEST,
         **kwargs
     ) -> str:
-        """Upload a manifest for an artifact.
+        """Set a manifest for an artifact.
 
         :param str repository: Name of the repository
-        :param manifest: The manifest to upload. It can be a JSON formatted dict or seekable stream.
+        :param manifest: The manifest to set. It can be a JSON formatted dict or seekable stream.
         :type manifest: dict or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
         :keyword media_type: The media type of the manifest. If not specified, this value will be set to
             a default value of "application/vnd.oci.image.manifest.v1+json".
         :paramtype media_type: str
-        :returns: The digest of the uploaded manifest, calculated by the registry.
+        :returns: The digest of the set manifest, calculated by the registry.
         :rtype: str
         :raises ValueError: If the parameter repository or manifest is None,
-            or the digest in the response does not match the digest of the uploaded manifest.
+            or the digest in the response does not match the digest of the set manifest.
         """
         try:
             if isinstance(manifest, dict):
@@ -914,12 +914,48 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
             digest = response_headers['Docker-Content-Digest']
             if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
+                raise ValueError("The digest in the response does not match the digest of the set manifest.")
         except Exception as e:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.") from e
             raise
         return digest
+
+    @distributed_trace_async
+    async def get_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> GetManifestResult:
+        """Get the manifest for an artifact.
+
+        :param str repository: Name of the repository.
+        :param str tag_or_digest: The tag or digest of the manifest to get.
+            When digest is provided, will use this digest to compare with the one calculated by the response payload.
+            When tag is provided, will use the digest in response headers to compare.
+        :returns: GetManifestResult
+        :rtype: ~azure.containerregistry.GetManifestResult
+        :raises ValueError: If the requested digest does not match the digest of the received manifest.
+        """
+        response, manifest_iterator = cast(
+            Tuple[PipelineResponse, AsyncIterator[bytes]],
+            self._client.container_registry.get_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
+                cls=_return_response_and_deserialized,
+                **kwargs
+            )
+        )
+        media_type = response.http_response.headers['Content-Type']
+        manifest_bytes = b""
+        async for chunk in manifest_iterator:
+           manifest_bytes += chunk
+        manifest_stream = BytesIO(manifest_bytes)
+        if tag_or_digest.startswith("sha256:"):
+            digest = tag_or_digest
+        else:
+            digest = response.http_response.headers['Docker-Content-Digest']
+        if not _validate_digest(manifest_stream, digest):
+            raise ValueError("The requested digest does not match the digest of the received manifest.")
+
+        return GetManifestResult(digest=digest, manifest_stream=manifest_stream, media_type=media_type)
 
     @distributed_trace_async
     async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
@@ -959,9 +995,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
-        blob_size = 0
         buffer = data.read(DEFAULT_CHUNK_SIZE)
-
+        blob_size = len(buffer)
         while len(buffer) > 0:
             try:
                 buffer_stream = _UnclosableBytesIO(buffer)
@@ -974,10 +1009,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         **kwargs
                     )
                 )
-                blob_size += len(buffer)
-                hasher.update(buffer)
                 location = response_headers['Location']
+                hasher.update(buffer)
                 buffer = data.read(DEFAULT_CHUNK_SIZE)
+                blob_size += len(buffer)
             finally:
                 buffer_stream.manual_close()
 
@@ -1018,42 +1053,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             downloaded=int(headers["Content-Length"]),
             chunk_size=DEFAULT_CHUNK_SIZE
         )
-
-    @distributed_trace_async
-    async def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
-        """Download the manifest for an artifact.
-
-        :param str repository: Name of the repository.
-        :param str tag_or_digest: The tag or digest of the manifest to download.
-            When digest is provided, will use this digest to compare with the one calculated by the response payload.
-            When tag is provided, will use the digest in response headers to compare.
-        :returns: DownloadManifestResult
-        :rtype: ~azure.containerregistry.models.DownloadManifestResult
-        :raises ValueError: If the requested digest does not match the digest of the received manifest.
-        """
-        response, manifest_iterator = cast(
-            Tuple[PipelineResponse, AsyncIterator[bytes]],
-            self._client.container_registry.get_manifest(
-                name=repository,
-                reference=tag_or_digest,
-                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
-                cls=_return_response_and_deserialized,
-                **kwargs
-            )
-        )
-        media_type = response.http_response.headers['Content-Type']
-        manifest_bytes = b""
-        async for chunk in manifest_iterator:
-           manifest_bytes += chunk
-        manifest_stream = BytesIO(manifest_bytes)
-        if tag_or_digest.startswith("sha256:"):
-            digest = tag_or_digest
-        else:
-            digest = response.http_response.headers['Docker-Content-Digest']
-        if not _validate_digest(manifest_stream, digest):
-            raise ValueError("The requested digest does not match the digest of the received manifest.")
-
-        return DownloadManifestResult(digest=digest, manifest_stream=manifest_stream, media_type=media_type)
 
     @distributed_trace_async
     async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> None:

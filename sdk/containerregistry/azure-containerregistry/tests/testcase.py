@@ -112,10 +112,19 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         oci_manifest = self.get_oci_manifest()
         return BytesIO(json.dumps(oci_manifest).encode())
     
-    def upload_manifest_prerequisites(self, repo, client):
+    def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"
         base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        # upload config
+        client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
+        # upload layers
+        client.upload_blob(repo, open(os.path.join(base_path, layer), "rb"))
+    
+    def upload_docker_manifest_prerequisites(self, repo, client):
+        layer = "2db29710123e3e53a794f2694094b9b4338aa9ee5c40b930cb8063a1be392c54"
+        config = "config.json"
+        base_path = os.path.join(self.get_test_directory(), "data", "docker_artifact")
         # upload config
         client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
         # upload layers
