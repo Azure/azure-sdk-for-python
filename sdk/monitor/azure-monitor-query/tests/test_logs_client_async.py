@@ -10,15 +10,14 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow
 from azure.monitor.query.aio import LogsQueryClient
+from devtools_testutils import AzureRecordedTestCase
 
-from base_testcase import AzureMonitorQueryLogsTestCase
 
-
-class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
+class TestLogsClientAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_auth(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests |
@@ -33,7 +32,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_auth_no_timespan(self, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests |
@@ -46,7 +45,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_server_timeout(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
 
         with pytest.raises(HttpResponseError) as e:
@@ -71,7 +70,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_query_batch_default(self, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             requests = [
@@ -106,7 +105,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_single_query_additional_workspaces_async(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = (
@@ -129,7 +128,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_query_batch_additional_workspaces(self, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = (
@@ -164,7 +163,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_single_query_with_visualization(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests | take 10"""
@@ -177,7 +176,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_single_query_with_visualization_and_stats(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """AppRequests | take 10"""
@@ -190,7 +189,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_query_result_iterate_over_tables(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "AppRequests | take 10; AppRequests | take 5"
@@ -213,7 +212,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_query_result_row_type(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "AppRequests | take 5"
@@ -232,7 +231,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "requests | summarize count()"
@@ -245,7 +244,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
-        client = self.get_client(
+        client = self.create_client_from_credential(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = "requests | summarize count()"
@@ -260,12 +259,3 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
             assert response.visualization is not None
             assert response.statistics is not None
-
-    @pytest.mark.asyncio
-    async def test_client_different_endpoint(self):
-        credential = self.get_credential(LogsQueryClient, is_async=True)
-        endpoint = "https://api.loganalytics.azure.cn/v1"
-        client = LogsQueryClient(credential, endpoint=endpoint)
-
-        assert client._endpoint == endpoint
-        assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes

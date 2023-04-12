@@ -18,9 +18,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
-    is_singularity_full_name_for_resource,
     is_singularity_id_for_resource,
-    is_singularity_short_name_for_resource,
     parse_name_label,
     parse_prefixed_name_version,
 )
@@ -40,9 +38,6 @@ from azure.ai.ml.constants._common import (
     MLFLOW_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
     REGISTRY_VERSION_PATTERN,
-    SINGULARITY_FULL_NAME_REGEX_FORMAT,
-    SINGULARITY_ID_FORMAT,
-    SINGULARITY_SHORT_NAME_REGEX_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
     AzureMLResourceType,
@@ -100,10 +95,6 @@ class OperationOrchestrator(object):
     def _component(self):
         return self._operation_container.all_operations[AzureMLResourceType.COMPONENT]
 
-    @property
-    def _virtual_cluster(self):
-        return self._operation_container.all_operations[AzureMLResourceType.VIRTUALCLUSTER]
-
     def get_asset_arm_id(
         self,
         asset: Optional[Union[str, Asset]],
@@ -129,7 +120,6 @@ class OperationOrchestrator(object):
         :return: The ARM Id or entity object
         :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
         """
-        # pylint: disable=too-many-return-statements, too-many-branches
         if (
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
@@ -137,10 +127,6 @@ class OperationOrchestrator(object):
             or is_singularity_id_for_resource(asset)
         ):
             return asset
-        if is_singularity_full_name_for_resource(asset):
-            return self._get_singularity_arm_id_from_full_name(asset)
-        if is_singularity_short_name_for_resource(asset):
-            return self._get_singularity_arm_id_from_short_name(asset)
         if isinstance(asset, str):
             if azureml_type in AzureMLResourceType.NAMED_TYPES:
                 return NAMED_RESOURCE_ID_FORMAT.format(
@@ -366,34 +352,6 @@ class OperationOrchestrator(object):
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress
             ).id
         return component.id
-
-    def _get_singularity_arm_id_from_full_name(self, singularity: str) -> str:
-        match = re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, singularity)
-        subscription_id = match.group("subscription_id")
-        resource_group_name = match.group("resource_group_name")
-        vc_name = match.group("name")
-        arm_id = SINGULARITY_ID_FORMAT.format(subscription_id, resource_group_name, vc_name)
-        vc = self._virtual_cluster.get(arm_id)
-        return vc["id"]
-
-    def _get_singularity_arm_id_from_short_name(self, singularity: str) -> str:
-        match = re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, singularity)
-        vc_name = match.group("name")
-        # below list operation can be time-consuming, may need an optimization on this
-        match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]
-        num_match_vc = len(match_vcs)
-        if num_match_vc != 1:
-            if num_match_vc == 0:
-                msg = "The virtual cluster {} could not be found."
-            else:
-                msg = "More than one match virtual clusters {} found."
-            raise ValidationException(
-                message=msg.format(vc_name),
-                no_personal_data_message=msg.format(""),
-                target=ErrorTarget.COMPUTE,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        return match_vcs[0]["id"]
 
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
         """Given an AzureML id of the form name@label, resolves the label to the actual ID.

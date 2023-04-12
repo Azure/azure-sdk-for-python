@@ -97,11 +97,8 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         for service_type in SERVICES:
             # Act
             # token credential is available for FileService
-            try:
-                service_type(self.account_url(storage_account_name, "file"), credential=self.token_credential,
-                             share_name='foo', directory_path='bar', file_path='baz')
-            except ValueError:
-                pass
+            service_type(self.account_url(storage_account_name, "file"), credential=self.token_credential,
+                         share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
     async def test_create_service_china(self, **kwargs):

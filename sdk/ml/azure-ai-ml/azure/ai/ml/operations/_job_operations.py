@@ -110,12 +110,9 @@ from ._operation_orchestrator import (
     OperationOrchestrator,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
-    is_singularity_full_name_for_resource,
     is_singularity_id_for_resource,
-    is_singularity_short_name_for_resource,
 )
 from ._run_operations import RunOperations
-from ._virtual_cluster_operations import VirtualClusterOperations
 
 try:
     pass
@@ -177,12 +174,6 @@ class JobOperations(_ScopeDependentOperations):
     def _compute_operations(self) -> ComputeOperations:
         return self._all_operations.get_operation(
             AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)
-        )
-
-    @property
-    def _virtual_cluster_operations(self) -> VirtualClusterOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
         )
 
     @property
@@ -361,21 +352,15 @@ class JobOperations(_ScopeDependentOperations):
         return results
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
-        # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
         if str(compute) == ComputeType.ADF:
             return compute
 
         if compute is not None:
-            # Singularity
-            if isinstance(compute, str) and is_singularity_id_for_resource(compute):
-                return self._virtual_cluster_operations.get(compute)["id"]
-            if isinstance(compute, str) and is_singularity_full_name_for_resource(compute):
-                return self._orchestrators._get_singularity_arm_id_from_full_name(compute)
-            if isinstance(compute, str) and is_singularity_short_name_for_resource(compute):
-                return self._orchestrators._get_singularity_arm_id_from_short_name(compute)
-            # other compute
+            if is_singularity_id_for_resource(compute):
+                # Singularity compute, skip try to get operation
+                return compute
             if is_ARM_id_for_resource(compute, resource_type=AzureMLResourceType.COMPUTE):
                 # compute is not a sub-workspace resource
                 compute_name = compute.split("/")[-1]

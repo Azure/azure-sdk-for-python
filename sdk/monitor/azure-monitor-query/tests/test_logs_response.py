@@ -6,11 +6,10 @@
 from datetime import datetime, timezone
 
 from azure.monitor.query import LogsQueryClient
+from devtools_testutils import AzureRecordedTestCase
 
-from base_testcase import AzureMonitorQueryLogsTestCase
 
-
-class TestLogsResponse(AzureMonitorQueryLogsTestCase):
+class TestLogsResponse(AzureRecordedTestCase):
 
     def test_query_response_data(self, recorded_test, monitor_info):
         # Sample log entry that is populated in table before test.
@@ -20,7 +19,7 @@ class TestLogsResponse(AzureMonitorQueryLogsTestCase):
         #    "AdditionalContext": '{"testContextKey": 1, "CounterName": "AppMetric1"}}'
         # }
 
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = (
             f"{monitor_info['table_name']} | project TimeGenerated, Type, ExtendedColumn, AdditionalContext"
             f"| order by TimeGenerated desc | take 5")
@@ -40,7 +39,7 @@ class TestLogsResponse(AzureMonitorQueryLogsTestCase):
         assert "testContextKey" in result.tables[0].rows[0][3]
 
     def test_query_response_types(self, recorded_test, monitor_info):
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """print "hello", true, make_datetime("2000-01-02 03:04:05Z"), toint(100), long(101), 102.1
             | project
                 stringcolumn=print_0,

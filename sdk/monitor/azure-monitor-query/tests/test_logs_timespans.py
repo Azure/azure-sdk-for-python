@@ -11,14 +11,13 @@ import pytest
 
 from azure.monitor.query import LogsQueryClient
 from azure.monitor.query._helpers import construct_iso8601
+from devtools_testutils import AzureRecordedTestCase
 
-from base_testcase import AzureMonitorQueryLogsTestCase
 
-
-class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
+class TestLogsTimespans(AzureRecordedTestCase):
 
     def test_query_no_duration(self, recorded_test, monitor_info):
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppRequests |
         where TimeGenerated > ago(12h) |
         summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
@@ -30,7 +29,7 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
         client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
 
     def test_query_start_and_end_time(self, recorded_test, monitor_info):
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = "AppRequests | take 5"
 
         end_time = datetime(2022, 11, 8)
@@ -43,7 +42,7 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
         client.query_workspace(monitor_info['workspace_id'], query, timespan=(start_time, end_time), raw_request_hook=callback)
 
     def test_query_duration_and_start_time(self, recorded_test, monitor_info):
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = "AppRequests | take 5"
 
         end_time = datetime(2022, 11, 8)
@@ -57,7 +56,7 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
         client.query_workspace(monitor_info['workspace_id'], query, timespan=(start_time,duration), raw_request_hook=callback)
 
     def test_query_duration_only(self, recorded_test, monitor_info):
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = "AppRequests | take 5"
 
         duration = timedelta(days=3)

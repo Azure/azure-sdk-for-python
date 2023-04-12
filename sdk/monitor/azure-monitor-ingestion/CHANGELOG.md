@@ -1,19 +1,15 @@
 # Release History
 
-## 1.0.2 (Unreleased)
+## 1.0.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+  - Fixed an issue where log entry sizes were miscalculated when chunking. ([#29584](https://github.com/Azure/azure-sdk-for-python/pull/29584))
 
 ### Other Changes
-
-## 1.0.1 (2023-04-11)
-
-### Bugs Fixed
-  - Fixed an issue where log entry sizes were miscalculated when chunking. ([#29584](https://github.com/Azure/azure-sdk-for-python/pull/29584))
 
 ## 1.0.0 (2023-02-16)
 

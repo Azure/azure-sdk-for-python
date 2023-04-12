@@ -38,6 +38,7 @@ from azure.ai.ml.entities import (
     JobResourceConfiguration,
     PipelineJob,
     QueueSettings,
+    SparkJobEntry,
     SparkResourceConfiguration,
 )
 from azure.ai.ml.entities._builders import Command, DataTransferCopy, Spark
@@ -3225,55 +3226,3 @@ class TestDSLPipeline:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
-
-    def test_pipeline_singularity_strong_type(self, mock_singularity_arm_id: str):
-        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
-        component_func = load_component(component_yaml)
-
-        instance_type = "Singularity.ND40rs_v2"
-
-        @dsl.pipeline
-        def pipeline_func():
-            # basic job_tier + Low priority
-            basic_low_node = component_func()
-            basic_low_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
-            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
-            # standard job_tier + Medium priority
-            standard_medium_node = component_func()
-            standard_medium_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
-            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
-            # premium job_tier + High priority
-            premium_high_node = component_func()
-            premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
-            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
-            # properties
-            node_with_properties = component_func()
-            properties = {"Singularity": {"imageVersion": "", "interactive": False}}
-            node_with_properties.resources = JobResourceConfiguration(
-                instance_count=2, instance_type=instance_type, properties=properties
-            )
-
-        pipeline_job = pipeline_func()
-        pipeline_job.settings.default_compute = mock_singularity_arm_id
-
-        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        # basic job_tier + Low priority
-        basic_low_node_dict = pipeline_job_dict["properties"]["jobs"]["basic_low_node"]
-        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
-        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
-        # standard job_tier + Medium priority
-        standard_medium_node_dict = pipeline_job_dict["properties"]["jobs"]["standard_medium_node"]
-        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
-        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
-        # premium job_tier + High priority
-        premium_high_node_dict = pipeline_job_dict["properties"]["jobs"]["premium_high_node"]
-        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
-        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
-        # properties
-        node_with_properties_dict = pipeline_job_dict["properties"]["jobs"]["node_with_properties"]
-        assert node_with_properties_dict["resources"] == {
-            "instance_count": 2,
-            "instance_type": instance_type,
-            # the mapping Singularity => AISuperComputer is expected
-            "properties": {"AISuperComputer": {"imageVersion": "", "interactive": False}},
-        }

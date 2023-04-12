@@ -36,16 +36,8 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
 SINGULARITY_ID_FORMAT = (
-    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
-)
-SINGULARITY_ID_REGEX_FORMAT = (
     "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
-SINGULARITY_FULL_NAME_REGEX_FORMAT = (
-    "^(azureml:)?//subscriptions/(?P<subscription_id>[^/]+)/resourceGroups/(?P<resource_group_name>[^/]+)/"
-    "virtualclusters/(?P<name>[^/]+)"
-)
-SINGULARITY_SHORT_NAME_REGEX_FORMAT = "^(azureml:)?//virtualclusters/(?P<name>[^/]+)"
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"

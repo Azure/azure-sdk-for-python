@@ -63,17 +63,6 @@ async_logs_client = LogsQueryClient(credential)
 async_metrics_client = MetricsQueryClient(credential)
 ```
 
-#### Configure clients for non-public Azure clouds
-
-By default, `LogsQueryClient` and `MetricsQueryClient` are configured to connect to the public Azure cloud. These can be configured to connect to non-public Azure clouds by passing in the correct `endpoint` argument: For example:
-
-```python
-logs_client = LogsQueryClient(credential, endpoint="https://api.loganalytics.azure.cn/v1")
-metrics_client = MetricsQueryClient(credential, endpoint="https://management.chinacloudapi.cn")
-```
-
-**Note**: Currently, `MetricsQueryClient` uses the Azure Resource Manager (ARM) endpoint for querying metrics, so you will need the corresponding management endpoint for your cloud when using this client. This is subject to change in the future.
-
 ### Execute the query
 
 For examples of Logs and Metrics queries, see the [Examples](#examples) section.

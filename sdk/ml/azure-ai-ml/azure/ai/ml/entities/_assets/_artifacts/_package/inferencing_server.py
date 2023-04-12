@@ -14,8 +14,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 )
 from azure.ai.ml._utils._experimental import experimental
 
-from ...._deployment.code_configuration import CodeConfiguration
-
 
 @experimental
 class AzureMLOnlineInferencingServer:
@@ -27,7 +25,7 @@ class AzureMLOnlineInferencingServer:
     :type code_configuration: str
     """
 
-    def __init__(self, type: str = None, code_configuration: CodeConfiguration = None):
+    def __init__(self, type: str = None, code_configuration: str = None):
         self.type = type
         self.code_configuration = code_configuration
 
@@ -46,10 +44,10 @@ class AzureMLBatchInferencingServer:
     :param type: The type of the inferencing server.
     :type type: str
     :param code_configuration: The code configuration of the inferencing server.
-    :type code_configuration: azure.ai.ml.entities.CodeConfiguration
+    :type code_configuration: str
     """
 
-    def __init__(self, type: str = None, code_configuration: CodeConfiguration = None):
+    def __init__(self, type: str = None, code_configuration: str = None):
         self.type = type
         self.code_configuration = code_configuration
 
@@ -68,10 +66,10 @@ class TritonInferencingServer:
     :param type: The type of the inferencing server.
     :type type: str
     :param inference_configuration: The inference configuration of the inferencing server.
-    :type inference_configuration: azure.ai.ml.entities.CodeConfiguration
+    :type inference_configuration: str
     """
 
-    def __init__(self, type: str = None, inference_configuration: CodeConfiguration = None):
+    def __init__(self, type: str = None, inference_configuration: str = None):
         self.type = type
         self.inference_configuration = inference_configuration
 

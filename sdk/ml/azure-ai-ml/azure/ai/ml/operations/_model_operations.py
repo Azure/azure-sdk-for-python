@@ -542,7 +542,6 @@ class ModelOperations(_ScopeDependentOperations):
             self._service_client = client_
             self._model_versions_operation = model_versions_operation_
 
-    @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
     def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
         if not kwargs.get("skip_to_rest", False):
