@@ -220,8 +220,8 @@ class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: decision rules inferred from the data features.
     DECISION_TREE = "DecisionTree"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
-    #: â€œbaggingâ€ method.
+    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the bagging
+    #: method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -512,6 +512,15 @@ class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     UPDATING = "Updating"
     CANCELED = "Canceled"
 
+class EndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Connection status of the service consumer with the service provider
+    """
+
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
 class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Environment type is either user created or curated by Azure ML service
     """
@@ -648,8 +657,8 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: It's an inexact but powerful technique.
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
-    #: â€œbaggingâ€ method.
+    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the bagging
+    #: method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -751,6 +760,14 @@ class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta,
     #: Mean Average Precision (MAP) is the average of AP (Average Precision).
     #: AP is calculated for each class and averaged to get the MAP.
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
+
+class IsolationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Isolation mode for the managed network of a machine learning workspace.
+    """
+
+    DISABLED = "Disabled"
+    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
+    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
 
 class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the Job Input Type.
@@ -909,6 +926,13 @@ class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Only critical statements logged.
     CRITICAL = "Critical"
 
+class ManagedNetworkStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status for the managed network of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
 class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -967,6 +991,13 @@ class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Extra large size.
     EXTRA_LARGE = "ExtraLarge"
 
+class MonitoringAlertNotificationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Settings for Azure Monitor based alerting.
+    AZURE_MONITOR = "AzureMonitor"
+    #: Settings for AML email notifications.
+    EMAIL = "Email"
+
 class MonitoringFeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Used for features of numerical data type.
@@ -987,7 +1018,7 @@ class MonitoringInputDataContext(with_metaclass(CaseInsensitiveEnumMeta, str, En
 
     #: A dataset containing the feature input to the model.
     MODEL_INPUTS = "ModelInputs"
-    #: A dataset containing the infered results of the model.
+    #: A dataset containing the inferred results of the model.
     MODEL_OUTPUTS = "ModelOutputs"
     #: A dataset containing the data used for training the model.
     TRAINING = "Training"
@@ -1027,7 +1058,7 @@ class MonitoringSignalType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FEATURE_ATTRIBUTION_DRIFT = "FeatureAttributionDrift"
     #: Tracks a custom signal provided by users.
     CUSTOM = "Custom"
-    #: Tracks model perforance based on ground truth data.
+    #: Tracks model performance based on ground truth data.
     MODEL_PERFORMANCE = "ModelPerformance"
 
 class MountAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -1153,7 +1184,7 @@ class OneLakeArtifactType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine OneLake artifact type.
     """
 
-    LAKEHOUSE = "Lakehouse"
+    LAKE_HOUSE = "LakeHouse"
 
 class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operating system.
@@ -1399,8 +1430,8 @@ class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: It's an inexact but powerful technique.
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
-    #: â€œbaggingâ€ method.
+    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the bagging
+    #: method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -1449,6 +1480,29 @@ class RollingRateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DAY = "Day"
     HOUR = "Hour"
     MINUTE = "Minute"
+
+class RuleCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Category of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    REQUIRED = "Required"
+    RECOMMENDED = "Recommended"
+    USER_DEFINED = "UserDefined"
+
+class RuleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
+class RuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    FQDN = "FQDN"
+    PRIVATE_ENDPOINT = "PrivateEndpoint"
+    SERVICE_TAG = "ServiceTag"
 
 class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
