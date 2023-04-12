@@ -19,6 +19,8 @@ from ._shared.models import (
     identifier_from_raw_id,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
+    MicrosoftBotProperties,
+    MicrosoftBotIdentifier,
     PhoneNumberIdentifier,
     PhoneNumberProperties,
     UnknownIdentifier
@@ -39,6 +41,8 @@ __all__ = [
     'identifier_from_raw_id',
     'MicrosoftTeamsUserIdentifier',
     'MicrosoftTeamsUserProperties',
+    'MicrosoftBotIdentifier',
+    'MicrosoftBotProperties',
     'PhoneNumberIdentifier',
     'PhoneNumberProperties',
     'UnknownIdentifier'
