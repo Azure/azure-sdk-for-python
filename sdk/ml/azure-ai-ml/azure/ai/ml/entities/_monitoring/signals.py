@@ -288,7 +288,7 @@ class ModelPerformanceSignal(ModelSignal):
         *,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
-        metric_thresholds: List[ModelPerformanceMetricThreshold] = None,
+        metric_thresholds: ModelPerformanceMetricThreshold = None,
         model_type: MonitorModelType = None,
         data_segment: DataSegment = None,
     ):
