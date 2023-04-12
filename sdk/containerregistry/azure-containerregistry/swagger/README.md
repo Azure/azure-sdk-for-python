@@ -119,22 +119,6 @@ directive:
     $["x-ms-client-name"] = "nextLink"
 ```
 
-### Updates to OciManifest
-``` yaml
-directive:
-  from: swagger-document
-  where: $.definitions.OCIManifest
-  transform: >
-    $["x-ms-client-name"] = "OciImageManifest";
-    $["required"] = ["schemaVersion"];
-    delete $["x-accessibility"];
-    delete $["allOf"];
-    $.properties["schemaVersion"] = {
-          "type": "integer",
-          "description": "Schema version"
-        };
-```
-
 ### Take stream as manifest body
 ``` yaml
 directive:
@@ -145,27 +129,6 @@ directive:
         "type": "string",
         "format": "binary"
       }
-```
-
-### Updates to Descriptor
-``` yaml
-directive:
-  from: swagger-document
-  where: $.definitions.Descriptor
-  transform: >
-    $["x-ms-client-name"] = "OciDescriptor";
-    $.properties.size["x-ms-client-name"] = "sizeInBytes";
-    delete $["x-accessibility"]
-```
-
-### Updates to Annotations
-``` yaml
-directive:
-  from: swagger-document
-  where: $.definitions.Annotations
-  transform: >
-    $["x-ms-client-name"] = "OciAnnotations";
-    delete $["x-accessibility"]
 ```
 
 ### Replace ManifestWrapper with stream response to calculate SHA256
