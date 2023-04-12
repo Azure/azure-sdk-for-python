@@ -8,6 +8,7 @@
 
 from ._client import EventGridMessagingClient
 from ._version import VERSION
+from ._event_mappings import SystemEventNames
 
 __version__ = VERSION
 
@@ -20,6 +21,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "EventGridMessagingClient",
+    "SystemEventNames",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 
