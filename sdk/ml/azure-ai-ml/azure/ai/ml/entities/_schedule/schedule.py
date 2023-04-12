@@ -209,7 +209,21 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         return ["create_job"]
 
     @classmethod
+    def _resolve_cls_and_type(cls, data, params_override):
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
+
+        if "import_data" in data:
+            return ImportDataSchedule, None
+
+        return cls, None
+
+    @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "JobSchedule":
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
+
+        if obj.properties.action.action_type == "ImportData":
+            return ImportDataSchedule._from_rest_object(obj)
+
         properties = obj.properties
         action: JobScheduleAction = properties.action
         if action.job_definition is None:

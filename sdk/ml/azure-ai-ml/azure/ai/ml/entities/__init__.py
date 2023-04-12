@@ -156,13 +156,9 @@ from ._feature_store.feature_store import _FeatureStore
 from ._feature_store.materialization_store import _MaterializationStore
 from ._notification.notification import _Notification
 
-# TODO: enable in PuP
-# from ._job.import_job import ImportJob
-# from ._component.import_component import ImportComponent
+from ._data_import.schedule import ImportDataSchedule
 
 __all__ = [
-    # "ImportJob",
-    # "ImportComponent",
     "Resource",
     "Job",
     "CommandJob",
@@ -268,6 +264,7 @@ __all__ = [
     "RecurrenceTrigger",
     "RecurrencePattern",
     "JobSchedule",
+    "ImportDataSchedule",
     "ComputePowerAction",
     "ComputeSchedules",
     "ComputeStartStopSchedule",
