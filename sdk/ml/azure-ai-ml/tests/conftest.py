@@ -7,6 +7,7 @@ import re
 import shutil
 import time
 import uuid
+from collections import namedtuple
 from datetime import datetime
 from functools import partial
 from importlib import reload
@@ -22,7 +23,6 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
-    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -37,7 +37,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, SINGULARITY_ID_FORMAT
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -925,3 +925,32 @@ def federated_learning_local_data_folder() -> Path:
 def mock_set_headers_with_user_aml_token(mocker: MockFixture):
     if not is_live() or not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")
+
+
+@pytest.fixture
+def mock_singularity_arm_id(environment_variables, e2e_ws_scope: OperationScope) -> str:
+    # Singularity ARM id contains information like subscription id and resource group,
+    # we prefer not exposing these to public, so make this a fixture.
+
+    # During local development, set ML_SINGULARITY_ARM_ID in environment variables to configure Singularity.
+    singularity_compute_id_in_environ = environment_variables.get("ML_SINGULARITY_ARM_ID")
+    if singularity_compute_id_in_environ is not None:
+        return singularity_compute_id_in_environ
+    # If not set, concatenate fake Singularity ARM id from subscription id and resource group name;
+    # note that this does not affect job submission, but the created pipeline job shall not complete.
+    return SINGULARITY_ID_FORMAT.format(
+        e2e_ws_scope.subscription_id, e2e_ws_scope.resource_group_name, "SingularityTestVC"
+    )
+
+
+SingularityVirtualCluster = namedtuple("SingularityVirtualCluster", ["subscription_id", "resource_group_name", "name"])
+
+
+@pytest.fixture
+def singularity_vc(client: MLClient) -> SingularityVirtualCluster:
+    """Returns a valid Singularity VC, NOT use this fixture for recording for potential information leak."""
+    # according to virtual cluster end-to-end test, client here should have available Singularity computes.
+    for vc in client._virtual_clusters.list():
+        return SingularityVirtualCluster(
+            subscription_id=vc["subscriptionId"], resource_group_name=vc["resourceGroup"], name=vc["name"]
+        )
