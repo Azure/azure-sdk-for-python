@@ -2092,3 +2092,11 @@ class TestPipelineJobEntity:
         # similar to sweep job, automl job job_tier value is also lowercase.
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
+
+    def test_get_predecessors_for_pipeline_job(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+        # get_predecessors is not supported for YAML job
+        assert pipeline.jobs["hello_world_component_1"].get_predecessors() == []
+        assert pipeline.jobs["hello_world_component_2"].get_predecessors() == []
+        assert pipeline.jobs["merge_component_outputs"].get_predecessors() == []
