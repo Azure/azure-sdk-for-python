@@ -8,45 +8,37 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AlignPolicy(_model_base.Model):
-    """An optional field, indicating the manner to align multiple variables.
+    """Manner of aligning multiple variables.
 
-    :ivar align_mode: An optional field, indicating how to align different variables to the same
-     time-range. Either Inner or Outer. Known values are: "Inner" and "Outer".
-    :vartype align_mode: str or ~anomalydetector.models.AlignMode
-    :ivar fill_n_a_method: An optional field, indicating how missing values will be filled. One of
-     Previous, Subsequent, Linear, Zero, Fixed. Known values are: "Previous", "Subsequent",
-     "Linear", "Zero", and "Fixed".
-    :vartype fill_n_a_method: str or ~anomalydetector.models.FillNAMethod
-    :ivar padding_value: An optional field. Required when fillNAMethod is Fixed.
+    :ivar align_mode: Field that indicates how to align different variables to the same
+     time range. Known values are: "Inner" and "Outer".
+    :vartype align_mode: str or ~azure.ai.anomalydetector.models.AlignMode
+    :ivar fill_n_a_method: Field that indicates how missing values will be filled. Known values
+     are: "Previous", "Subsequent", "Linear", "Zero", and "Fixed".
+    :vartype fill_n_a_method: str or ~azure.ai.anomalydetector.models.FillNAMethod
+    :ivar padding_value: Field that's required when fillNAMethod is Fixed.
     :vartype padding_value: float
     """
 
     align_mode: Optional[Union[str, "_models.AlignMode"]] = rest_field(name="alignMode")
-    """An optional field, indicating how to align different variables to the same
-time-range. Either Inner or Outer. Known values are: \"Inner\" and \"Outer\"."""
+    """Field that indicates how to align different variables to the same
+     time range. Known values are: \"Inner\" and \"Outer\"."""
     fill_n_a_method: Optional[Union[str, "_models.FillNAMethod"]] = rest_field(name="fillNAMethod")
-    """An optional field, indicating how missing values will be filled. One of
-Previous, Subsequent, Linear, Zero, Fixed. Known values are: \"Previous\", \"Subsequent\", \"Linear\", \"Zero\", and \"Fixed\"."""
+    """Field that indicates how missing values will be filled. Known values are: \"Previous\",
+     \"Subsequent\", \"Linear\", \"Zero\", and \"Fixed\"."""
     padding_value: Optional[float] = rest_field(name="paddingValue")
-    """An optional field. Required when fillNAMethod is Fixed. """
+    """Field that's required when fillNAMethod is Fixed."""
 
     @overload
     def __init__(
@@ -64,9 +56,8 @@ Previous, Subsequent, Linear, Zero, Fixed. Known values are: \"Previous\", \"Sub
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -83,20 +74,20 @@ class AnomalyDetectionModel(_model_base.Model):
     :vartype created_time: ~datetime.datetime
     :ivar last_updated_time: Date and time (UTC) when the model was last updated. Required.
     :vartype last_updated_time: ~datetime.datetime
-    :ivar model_info: Training result of a model including its status, errors and diagnostics
+    :ivar model_info: Training result of a model, including its status, errors, and diagnostics
      information.
-    :vartype model_info: ~anomalydetector.models.ModelInfo
+    :vartype model_info: ~azure.ai.anomalydetector.models.ModelInfo
     """
 
     model_id: str = rest_field(name="modelId", readonly=True)
-    """Model identifier. Required. """
+    """Model identifier. Required."""
     created_time: datetime.datetime = rest_field(name="createdTime")
-    """Date and time (UTC) when the model was created. Required. """
+    """Date and time (UTC) when the model was created. Required."""
     last_updated_time: datetime.datetime = rest_field(name="lastUpdatedTime")
-    """Date and time (UTC) when the model was last updated. Required. """
+    """Date and time (UTC) when the model was last updated. Required."""
     model_info: Optional["_models.ModelInfo"] = rest_field(name="modelInfo")
-    """Training result of a model including its status, errors and diagnostics
-information. """
+    """Training result of a model, including its status, errors, and diagnostics
+     information."""
 
     @overload
     def __init__(
@@ -114,40 +105,39 @@ information. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class AnomalyDetectorError(_model_base.Model):
-    """Error information returned by the API.
+    """Error information that the API returned.
 
-    :ivar x_ms_error_code: Error code.
-    :vartype x_ms_error_code: str
-    :ivar code: The error code. Known values are: "InvalidCustomInterval", "BadArgument",
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: Error code. Required. Known values are: "InvalidCustomInterval", "BadArgument",
      "InvalidGranularity", "InvalidPeriod", "InvalidModelArgument", "InvalidSeries",
      "InvalidJsonFormat", "RequiredGranularity", "RequiredSeries", "InvalidImputeMode", and
      "InvalidImputeFixedValue".
-    :vartype code: str or ~anomalydetector.models.AnomalyDetectorErrorCodes
-    :ivar message: A message explaining the error reported by the service.
+    :vartype code: str or ~azure.ai.anomalydetector.models.AnomalyDetectorErrorCodes
+    :ivar message: Message that explains the error that the service reported. Required.
     :vartype message: str
     """
 
-    x_ms_error_code: Optional[str] = rest_field(name="x-ms-error-code")
-    """Error code. """
-    code: Optional[Union[str, "_models.AnomalyDetectorErrorCodes"]] = rest_field()
-    """The error code. Known values are: \"InvalidCustomInterval\", \"BadArgument\", \"InvalidGranularity\", \"InvalidPeriod\", \"InvalidModelArgument\", \"InvalidSeries\", \"InvalidJsonFormat\", \"RequiredGranularity\", \"RequiredSeries\", \"InvalidImputeMode\", and \"InvalidImputeFixedValue\"."""
-    message: Optional[str] = rest_field()
-    """A message explaining the error reported by the service. """
+    code: Union[str, "_models.AnomalyDetectorErrorCodes"] = rest_field()
+    """Error code. Required. Known values are: \"InvalidCustomInterval\", \"BadArgument\",
+     \"InvalidGranularity\", \"InvalidPeriod\", \"InvalidModelArgument\", \"InvalidSeries\",
+     \"InvalidJsonFormat\", \"RequiredGranularity\", \"RequiredSeries\", \"InvalidImputeMode\", and
+     \"InvalidImputeFixedValue\"."""
+    message: str = rest_field()
+    """Message that explains the error that the service reported. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        x_ms_error_code: Optional[str] = None,
-        code: Optional[Union[str, "_models.AnomalyDetectorErrorCodes"]] = None,
-        message: Optional[str] = None,
+        code: Union[str, "_models.AnomalyDetectorErrorCodes"],
+        message: str,
     ):
         ...
 
@@ -157,32 +147,31 @@ class AnomalyDetectorError(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class AnomalyInterpretation(_model_base.Model):
-    """Interpretation of the anomalous timestamp.
+    """Interpretation of the anomalous time stamp.
 
     :ivar variable: Variable.
     :vartype variable: str
-    :ivar contribution_score: This score shows the percentage contributing to the anomalous
-     timestamp. A
+    :ivar contribution_score: This score shows the percentage that contributes to the anomalous
+     time stamp. It's a
      number between 0 and 1.
     :vartype contribution_score: float
     :ivar correlation_changes: Correlation changes among the anomalous variables.
-    :vartype correlation_changes: ~anomalydetector.models.CorrelationChanges
+    :vartype correlation_changes: ~azure.ai.anomalydetector.models.CorrelationChanges
     """
 
     variable: Optional[str] = rest_field()
-    """Variable. """
+    """Variable."""
     contribution_score: Optional[float] = rest_field(name="contributionScore")
-    """This score shows the percentage contributing to the anomalous timestamp. A
-number between 0 and 1. """
+    """This score shows the percentage that contributes to the anomalous time stamp. It's a
+     number between 0 and 1."""
     correlation_changes: Optional["_models.CorrelationChanges"] = rest_field(name="correlationChanges")
-    """Correlation changes among the anomalous variables. """
+    """Correlation changes among the anomalous variables."""
 
     @overload
     def __init__(
@@ -200,9 +189,8 @@ number between 0 and 1. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -211,20 +199,20 @@ class AnomalyState(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar timestamp: The timestamp for this anomaly. Required.
+    :ivar timestamp: Time stamp for this anomaly. Required.
     :vartype timestamp: ~datetime.datetime
-    :ivar value: The detailed value of this anomalous timestamp.
-    :vartype value: ~anomalydetector.models.AnomalyValue
-    :ivar errors: Error message for the current timestamp.
-    :vartype errors: list[~anomalydetector.models.ErrorResponse]
+    :ivar value: Detailed value of this anomalous time stamp.
+    :vartype value: ~azure.ai.anomalydetector.models.AnomalyValue
+    :ivar errors: Error message for the current time stamp.
+    :vartype errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
     """
 
     timestamp: datetime.datetime = rest_field()
-    """The timestamp for this anomaly. Required. """
+    """Time stamp for this anomaly. Required."""
     value: Optional["_models.AnomalyValue"] = rest_field()
-    """The detailed value of this anomalous timestamp. """
+    """Detailed value of this anomalous time stamp."""
     errors: Optional[List["_models.ErrorResponse"]] = rest_field()
-    """Error message for the current timestamp. """
+    """Error message for the current time stamp."""
 
     @overload
     def __init__(
@@ -242,39 +230,37 @@ class AnomalyState(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class AnomalyValue(_model_base.Model):
-    """Detailed information of the anomalous timestamp.
+    """Detailed information of the anomalous time stamp.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar is_anomaly: True if an anomaly is detected at the current timestamp. Required.
+    :ivar is_anomaly: True if an anomaly is detected at the current time stamp. Required.
     :vartype is_anomaly: bool
     :ivar severity: Indicates the significance of the anomaly. The higher the severity, the more
      significant the anomaly is. Required.
     :vartype severity: float
-    :ivar score: Raw anomaly score of severity, will help indicate the degree of abnormality as
-     well. Required.
+    :ivar score: Raw anomaly score of severity, to help indicate the degree of abnormality.
+     Required.
     :vartype score: float
-    :ivar interpretation: Interpretation of this anomalous timestamp.
-    :vartype interpretation: list[~anomalydetector.models.AnomalyInterpretation]
+    :ivar interpretation: Interpretation of this anomalous time stamp.
+    :vartype interpretation: list[~azure.ai.anomalydetector.models.AnomalyInterpretation]
     """
 
     is_anomaly: bool = rest_field(name="isAnomaly")
-    """True if an anomaly is detected at the current timestamp. Required. """
+    """True if an anomaly is detected at the current time stamp. Required."""
     severity: float = rest_field()
     """Indicates the significance of the anomaly. The higher the severity, the more
-significant the anomaly is. Required. """
+     significant the anomaly is. Required."""
     score: float = rest_field()
-    """Raw anomaly score of severity, will help indicate the degree of abnormality as
-well. Required. """
+    """Raw anomaly score of severity, to help indicate the degree of abnormality. Required."""
     interpretation: Optional[List["_models.AnomalyInterpretation"]] = rest_field()
-    """Interpretation of this anomalous timestamp. """
+    """Interpretation of this anomalous time stamp."""
 
     @overload
     def __init__(
@@ -293,22 +279,20 @@ well. Required. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class CorrelationChanges(_model_base.Model):
     """Correlation changes among the anomalous variables.
 
-    :ivar changed_variables: The correlated variables that have correlation changes under an
-     anomaly.
+    :ivar changed_variables: Correlated variables that have correlation changes under an anomaly.
     :vartype changed_variables: list[str]
     """
 
     changed_variables: Optional[List[str]] = rest_field(name="changedVariables")
-    """The correlated variables that have correlation changes under an anomaly. """
+    """Correlated variables that have correlation changes under an anomaly."""
 
     @overload
     def __init__(
@@ -324,25 +308,24 @@ class CorrelationChanges(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class DiagnosticsInfo(_model_base.Model):
-    """Diagnostics information to help inspect the states of model or variable.
+    """Diagnostics information to help inspect the states of a model or variable.
 
     :ivar model_state: Model status.
-    :vartype model_state: ~anomalydetector.models.ModelState
-    :ivar variable_states: Variable Status.
-    :vartype variable_states: list[~anomalydetector.models.VariableState]
+    :vartype model_state: ~azure.ai.anomalydetector.models.ModelState
+    :ivar variable_states: Variable status.
+    :vartype variable_states: list[~azure.ai.anomalydetector.models.VariableState]
     """
 
     model_state: Optional["_models.ModelState"] = rest_field(name="modelState")
-    """Model status. """
+    """Model status."""
     variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
-    """Variable Status. """
+    """Variable status."""
 
     @overload
     def __init__(
@@ -359,27 +342,26 @@ class DiagnosticsInfo(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class ErrorResponse(_model_base.Model):
-    """ErrorResponse contains code and message that shows the error information.
+    """Error information that the API returned.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: The error code. Required.
+    :ivar code: Error code. Required.
     :vartype code: str
-    :ivar message: The message explaining the error reported by the service. Required.
+    :ivar message: Message that explains the error that the service reported. Required.
     :vartype message: str
     """
 
     code: str = rest_field()
-    """The error code. Required. """
+    """Error code. Required."""
     message: str = rest_field()
-    """The message explaining the error reported by the service. Required. """
+    """Message that explains the error that the service reported. Required."""
 
     @overload
     def __init__(
@@ -396,79 +378,76 @@ class ErrorResponse(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class ModelInfo(_model_base.Model):
-    """Training result of a model including its status, errors and diagnostics
+    """Training result of a model, including its status, errors, and diagnostics
     information.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
-     either pointed to an Azure blob storage folder, or pointed to a CSV file in
-     Azure blob storage based on you data schema selection. Required.
+    :ivar data_source: Source link to the input data to indicate an accessible Azure Storage URI.
+     It either points to an Azure Blob Storage folder or points to a CSV file in
+     Azure Blob Storage, based on your data schema selection. Required.
     :vartype data_source: str
-    :ivar data_schema: Data schema of input data source: OneTable or MultiTable. The default
-     DataSchema is OneTable. Known values are: "OneTable" and "MultiTable".
-    :vartype data_schema: str or ~anomalydetector.models.DataSchema
-    :ivar start_time: A required field, indicating the start time of training data, which should be
-     date-time of ISO 8601 format. Required.
+    :ivar data_schema: Data schema of the input data source. The default
+     is OneTable. Known values are: "OneTable" and "MultiTable".
+    :vartype data_schema: str or ~azure.ai.anomalydetector.models.DataSchema
+    :ivar start_time: Start date/time of training data, which should be
+     in ISO 8601 format. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: A required field, indicating the end time of training data, which should be
-     date-time of ISO 8601 format. Required.
+    :ivar end_time: End date/time of training data, which should be
+     in ISO 8601 format. Required.
     :vartype end_time: ~datetime.datetime
-    :ivar display_name: An optional field. The display name of the model whose maximum length is 24
+    :ivar display_name: Display name of the model. Maximum length is 24
      characters.
     :vartype display_name: str
-    :ivar sliding_window: An optional field, indicating how many previous timestamps will be used
-     to
-     detect whether the timestamp is anomaly or not.
+    :ivar sliding_window: Number of previous time stamps that will be used to
+     detect whether the time stamp is an anomaly or not.
     :vartype sliding_window: int
-    :ivar align_policy: An optional field, indicating the manner to align multiple variables.
-    :vartype align_policy: ~anomalydetector.models.AlignPolicy
-    :ivar status: Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are:
-     "CREATED", "RUNNING", "READY", and "FAILED".
-    :vartype status: str or ~anomalydetector.models.ModelStatus
-    :ivar errors: Error messages when failed to create a model.
-    :vartype errors: list[~anomalydetector.models.ErrorResponse]
-    :ivar diagnostics_info: Diagnostics information to help inspect the states of model or
+    :ivar align_policy: Manner of aligning multiple variables.
+    :vartype align_policy: ~azure.ai.anomalydetector.models.AlignPolicy
+    :ivar status: Model status. Known values are: "CREATED", "RUNNING", "READY", and "FAILED".
+    :vartype status: str or ~azure.ai.anomalydetector.models.ModelStatus
+    :ivar errors: Error messages after failure to create a model.
+    :vartype errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
+    :ivar diagnostics_info: Diagnostics information to help inspect the states of a model or
      variable.
-    :vartype diagnostics_info: ~anomalydetector.models.DiagnosticsInfo
+    :vartype diagnostics_info: ~azure.ai.anomalydetector.models.DiagnosticsInfo
     """
 
     data_source: str = rest_field(name="dataSource")
-    """Source link to the input data to indicate an accessible Azure storage Uri,
-either pointed to an Azure blob storage folder, or pointed to a CSV file in
-Azure blob storage based on you data schema selection. Required. """
+    """Source link to the input data to indicate an accessible Azure Storage URI.
+     It either points to an Azure Blob Storage folder or points to a CSV file in
+     Azure Blob Storage, based on your data schema selection. Required."""
     data_schema: Optional[Union[str, "_models.DataSchema"]] = rest_field(name="dataSchema")
-    """Data schema of input data source: OneTable or MultiTable. The default
-DataSchema is OneTable. Known values are: \"OneTable\" and \"MultiTable\"."""
+    """Data schema of the input data source. The default
+     is OneTable. Known values are: \"OneTable\" and \"MultiTable\"."""
     start_time: datetime.datetime = rest_field(name="startTime")
-    """A required field, indicating the start time of training data, which should be
-date-time of ISO 8601 format. Required. """
+    """Start date/time of training data, which should be
+     in ISO 8601 format. Required."""
     end_time: datetime.datetime = rest_field(name="endTime")
-    """A required field, indicating the end time of training data, which should be
-date-time of ISO 8601 format. Required. """
+    """End date/time of training data, which should be
+     in ISO 8601 format. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """An optional field. The display name of the model whose maximum length is 24
-characters. """
+    """Display name of the model. Maximum length is 24
+     characters."""
     sliding_window: Optional[int] = rest_field(name="slidingWindow")
-    """An optional field, indicating how many previous timestamps will be used to
-detect whether the timestamp is anomaly or not. """
+    """Number of previous time stamps that will be used to
+     detect whether the time stamp is an anomaly or not."""
     align_policy: Optional["_models.AlignPolicy"] = rest_field(name="alignPolicy")
-    """An optional field, indicating the manner to align multiple variables. """
-    status: Optional[Union[str, "_models.ModelStatus"]] = rest_field()
-    """Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
+    """Manner of aligning multiple variables."""
+    status: Optional[Union[str, "_models.ModelStatus"]] = rest_field(readonly=True)
+    """Model status. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
     errors: Optional[List["_models.ErrorResponse"]] = rest_field(readonly=True)
-    """Error messages when failed to create a model. """
-    diagnostics_info: Optional["_models.DiagnosticsInfo"] = rest_field(name="diagnosticsInfo")
-    """Diagnostics information to help inspect the states of model or variable. """
+    """Error messages after failure to create a model."""
+    diagnostics_info: Optional["_models.DiagnosticsInfo"] = rest_field(name="diagnosticsInfo", readonly=True)
+    """Diagnostics information to help inspect the states of a model or variable."""
 
     @overload
     def __init__(
@@ -481,8 +460,6 @@ detect whether the timestamp is anomaly or not. """
         display_name: Optional[str] = None,
         sliding_window: Optional[int] = None,
         align_policy: Optional["_models.AlignPolicy"] = None,
-        status: Optional[Union[str, "_models.ModelStatus"]] = None,
-        diagnostics_info: Optional["_models.DiagnosticsInfo"] = None,
     ):
         ...
 
@@ -492,9 +469,8 @@ detect whether the timestamp is anomaly or not. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -504,33 +480,51 @@ class ModelList(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar models: List of models. Required.
-    :vartype models: list[~anomalydetector.models.AnomalyDetectionModel]
+    :vartype models: list[~azure.ai.anomalydetector.models.AnomalyDetectionModel]
     :ivar current_count: Number of trained multivariate models. Required.
     :vartype current_count: int
     :ivar max_count: Maximum number of models that can be trained for this Anomaly Detector
      resource. Required.
     :vartype max_count: int
-    :ivar next_link: The link to fetch more models.
+    :ivar next_link: Link to fetch more models.
     :vartype next_link: str
     """
 
     models: List["_models.AnomalyDetectionModel"] = rest_field()
-    """List of models. Required. """
+    """List of models. Required."""
     current_count: int = rest_field(name="currentCount")
-    """Number of trained multivariate models. Required. """
+    """Number of trained multivariate models. Required."""
     max_count: int = rest_field(name="maxCount")
-    """Maximum number of models that can be trained for this Anomaly Detector resource. Required. """
+    """Maximum number of models that can be trained for this Anomaly Detector resource. Required."""
     next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to fetch more models. """
+    """Link to fetch more models."""
 
-    def __init__(self, *args, **kwargs):
+    @overload
+    def __init__(
+        self,
+        *,
+        models: List["_models.AnomalyDetectionModel"],
+        current_count: int,
+        max_count: int,
+        next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class ModelState(_model_base.Model):
     """Model status.
 
-    :ivar epoch_ids: This indicates the number of passes of the entire training dataset the
+    :ivar epoch_ids: Number of passes of the entire training dataset that the
      algorithm has completed.
     :vartype epoch_ids: list[int]
     :ivar train_losses: List of metrics used to assess how the model fits the training data for
@@ -546,16 +540,16 @@ class ModelState(_model_base.Model):
     """
 
     epoch_ids: Optional[List[int]] = rest_field(name="epochIds")
-    """This indicates the number of passes of the entire training dataset the
-algorithm has completed. """
+    """Number of passes of the entire training dataset that the
+     algorithm has completed."""
     train_losses: Optional[List[float]] = rest_field(name="trainLosses")
     """List of metrics used to assess how the model fits the training data for each
-epoch. """
+     epoch."""
     validation_losses: Optional[List[float]] = rest_field(name="validationLosses")
     """List of metrics used to assess how the model fits the validation set for each
-epoch. """
+     epoch."""
     latencies_in_seconds: Optional[List[float]] = rest_field(name="latenciesInSeconds")
-    """Latency for each epoch. """
+    """Latency for each epoch."""
 
     @overload
     def __init__(
@@ -574,52 +568,49 @@ epoch. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class MultivariateBatchDetectionOptions(_model_base.Model):
-    """Detection request for batch inference. This is an asynchronous inference which
+    """Detection request for batch inference. This is an asynchronous inference that
     will need another API to get detection results.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
-     either pointed to an Azure blob storage folder, or pointed to a CSV file in
-     Azure blob storage based on you data schema selection. The data schema should
-     be exactly the same with those used in the training phase. Required.
+    :ivar data_source: Source link to the input data to indicate an accessible Azure Storage URI.
+     It either points to an Azure Blob Storage folder or points to a CSV file in
+     Azure Blob Storage, based on your data schema selection. The data schema should
+     be exactly the same as those used in the training phase. Required.
     :vartype data_source: str
-    :ivar top_contributor_count: An optional field, which is used to specify the number of top
-     contributed
-     variables for one anomalous timestamp in the response. The default number is
+    :ivar top_contributor_count: Number of top contributed
+     variables for one anomalous time stamp in the response. The default is
      10. Required.
     :vartype top_contributor_count: int
-    :ivar start_time: A required field, indicating the start time of data for detection, which
-     should
-     be date-time of ISO 8601 format. Required.
+    :ivar start_time: Start date/time of data for detection, which should
+     be in ISO 8601 format. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: A required field, indicating the end time of data for detection, which should
-     be date-time of ISO 8601 format. Required.
+    :ivar end_time: End date/time of data for detection, which should
+     be in ISO 8601 format. Required.
     :vartype end_time: ~datetime.datetime
     """
 
     data_source: str = rest_field(name="dataSource")
-    """Source link to the input data to indicate an accessible Azure storage Uri,
-either pointed to an Azure blob storage folder, or pointed to a CSV file in
-Azure blob storage based on you data schema selection. The data schema should
-be exactly the same with those used in the training phase. Required. """
+    """Source link to the input data to indicate an accessible Azure Storage URI.
+     It either points to an Azure Blob Storage folder or points to a CSV file in
+     Azure Blob Storage, based on your data schema selection. The data schema should
+     be exactly the same as those used in the training phase. Required."""
     top_contributor_count: int = rest_field(name="topContributorCount")
-    """An optional field, which is used to specify the number of top contributed
-variables for one anomalous timestamp in the response. The default number is
-10. Required. """
+    """Number of top contributed
+     variables for one anomalous time stamp in the response. The default is
+     10. Required."""
     start_time: datetime.datetime = rest_field(name="startTime")
-    """A required field, indicating the start time of data for detection, which should
-be date-time of ISO 8601 format. Required. """
+    """Start date/time of data for detection, which should
+     be in ISO 8601 format. Required."""
     end_time: datetime.datetime = rest_field(name="endTime")
-    """A required field, indicating the end time of data for detection, which should
-be date-time of ISO 8601 format. Required. """
+    """End date/time of data for detection, which should
+     be in ISO 8601 format. Required."""
 
     @overload
     def __init__(
@@ -638,9 +629,8 @@ be date-time of ISO 8601 format. Required. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -649,28 +639,28 @@ class MultivariateBatchDetectionResultSummary(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Status of detection results. One of CREATED, RUNNING, READY, and FAILED.
-     Required. Known values are: "CREATED", "RUNNING", "READY", and "FAILED".
-    :vartype status: str or ~anomalydetector.models.MultivariateBatchDetectionStatus
-    :ivar errors: Error message when detection is failed.
-    :vartype errors: list[~anomalydetector.models.ErrorResponse]
-    :ivar variable_states: Variable Status.
-    :vartype variable_states: list[~anomalydetector.models.VariableState]
-    :ivar setup_info: Detection request for batch inference. This is an asynchronous inference
-     which
+    :ivar status: Status of detection results. Required. Known values are: "CREATED", "RUNNING",
+     "READY", and "FAILED".
+    :vartype status: str or ~azure.ai.anomalydetector.models.MultivariateBatchDetectionStatus
+    :ivar errors: Error message when detection fails.
+    :vartype errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
+    :ivar variable_states: Variable status.
+    :vartype variable_states: list[~azure.ai.anomalydetector.models.VariableState]
+    :ivar setup_info: Detection request for batch inference. This is an asynchronous inference that
      will need another API to get detection results. Required.
-    :vartype setup_info: ~anomalydetector.models.MultivariateBatchDetectionOptions
+    :vartype setup_info: ~azure.ai.anomalydetector.models.MultivariateBatchDetectionOptions
     """
 
     status: Union[str, "_models.MultivariateBatchDetectionStatus"] = rest_field()
-    """Status of detection results. One of CREATED, RUNNING, READY, and FAILED. Required. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
+    """Status of detection results. Required. Known values are: \"CREATED\", \"RUNNING\", \"READY\",
+     and \"FAILED\"."""
     errors: Optional[List["_models.ErrorResponse"]] = rest_field()
-    """Error message when detection is failed. """
+    """Error message when detection fails."""
     variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
-    """Variable Status. """
+    """Variable status."""
     setup_info: "_models.MultivariateBatchDetectionOptions" = rest_field(name="setupInfo")
-    """Detection request for batch inference. This is an asynchronous inference which
-will need another API to get detection results. Required. """
+    """Detection request for batch inference. This is an asynchronous inference that
+     will need another API to get detection results. Required."""
 
     @overload
     def __init__(
@@ -689,34 +679,33 @@ will need another API to get detection results. Required. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class MultivariateDetectionResult(_model_base.Model):
-    """Detection results for the given resultId.
+    """Detection results for the resultId value.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar result_id: Result identifier, which is used to fetch the results of an inference call.
+    :ivar result_id: Result identifier that's used to fetch the results of an inference call.
      Required.
     :vartype result_id: str
     :ivar summary: Multivariate anomaly detection status. Required.
-    :vartype summary: ~anomalydetector.models.MultivariateBatchDetectionResultSummary
-    :ivar results: Detection result for each timestamp. Required.
-    :vartype results: list[~anomalydetector.models.AnomalyState]
+    :vartype summary: ~azure.ai.anomalydetector.models.MultivariateBatchDetectionResultSummary
+    :ivar results: Detection result for each time stamp. Required.
+    :vartype results: list[~azure.ai.anomalydetector.models.AnomalyState]
     """
 
     result_id: str = rest_field(name="resultId", readonly=True)
-    """Result identifier, which is used to fetch the results of an inference call. Required. """
+    """Result identifier that's used to fetch the results of an inference call. Required."""
     summary: "_models.MultivariateBatchDetectionResultSummary" = rest_field()
-    """Multivariate anomaly detection status. Required. """
+    """Multivariate anomaly detection status. Required."""
     results: List["_models.AnomalyState"] = rest_field()
-    """Detection result for each timestamp. Required. """
+    """Detection result for each time stamp. Required."""
 
     @overload
     def __init__(
@@ -733,41 +722,39 @@ class MultivariateDetectionResult(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class MultivariateLastDetectionOptions(_model_base.Model):
-    """Request of last detection.
+    """Request of the last detection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar variables: This contains the inference data, including the name, timestamps(ISO 8601) and
+    :ivar variables: Contains the inference data, including the name, time stamps (ISO 8601), and
      values of variables. Required.
-    :vartype variables: list[~anomalydetector.models.VariableValues]
-    :ivar top_contributor_count: An optional field, which is used to specify the number of top
-     contributed
-     variables for one anomalous timestamp in the response. The default number is
-     10. Required.
+    :vartype variables: list[~azure.ai.anomalydetector.models.VariableValues]
+    :ivar top_contributor_count: Number of top contributed
+     variables for one anomalous time stamp in the response. The default is
+     10.
     :vartype top_contributor_count: int
     """
 
     variables: List["_models.VariableValues"] = rest_field()
-    """This contains the inference data, including the name, timestamps(ISO 8601) and
-values of variables. Required. """
-    top_contributor_count: int = rest_field(name="topContributorCount")
-    """An optional field, which is used to specify the number of top contributed
-variables for one anomalous timestamp in the response. The default number is
-10. Required. """
+    """Contains the inference data, including the name, time stamps (ISO 8601), and
+     values of variables. Required."""
+    top_contributor_count: int = rest_field(name="topContributorCount", default=10)
+    """Number of top contributed
+     variables for one anomalous time stamp in the response. The default is
+     10."""
 
     @overload
     def __init__(
         self,
         *,
         variables: List["_models.VariableValues"],
-        top_contributor_count: int,
+        top_contributor_count: int = 10,
     ):
         ...
 
@@ -777,25 +764,24 @@ variables for one anomalous timestamp in the response. The default number is
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class MultivariateLastDetectionResult(_model_base.Model):
-    """Results of last detection.
+    """Results of the last detection.
 
-    :ivar variable_states: Variable Status.
-    :vartype variable_states: list[~anomalydetector.models.VariableState]
+    :ivar variable_states: Variable status.
+    :vartype variable_states: list[~azure.ai.anomalydetector.models.VariableState]
     :ivar results: Anomaly status and information.
-    :vartype results: list[~anomalydetector.models.AnomalyState]
+    :vartype results: list[~azure.ai.anomalydetector.models.AnomalyState]
     """
 
     variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
-    """Variable Status. """
+    """Variable status."""
     results: Optional[List["_models.AnomalyState"]] = rest_field()
-    """Anomaly status and information. """
+    """Anomaly status and information."""
 
     @overload
     def __init__(
@@ -812,69 +798,26 @@ class MultivariateLastDetectionResult(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class ResponseError(_model_base.Model):
-    """Error response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar x_ms_error_code: Error code.
-    :vartype x_ms_error_code: str
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar message: The message explaining the error reported by the service. Required.
-    :vartype message: str
-    """
-
-    x_ms_error_code: Optional[str] = rest_field(name="x-ms-error-code")
-    """Error code. """
-    code: str = rest_field()
-    """The error code. Required. """
-    message: str = rest_field()
-    """The message explaining the error reported by the service. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        x_ms_error_code: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class TimeSeriesPoint(_model_base.Model):
-    """The definition of input timeseries points.
+    """Definition of input time series points.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar timestamp: Optional argument, timestamp of a data point (ISO8601 format).
+    :ivar timestamp: Argument that indicates the time stamp of a data point (ISO8601 format).
     :vartype timestamp: ~datetime.datetime
-    :ivar value: The measurement of that point, should be float. Required.
+    :ivar value: Measurement of that point. Required.
     :vartype value: float
     """
 
     timestamp: Optional[datetime.datetime] = rest_field()
-    """Optional argument, timestamp of a data point (ISO8601 format). """
+    """Argument that indicates the time stamp of a data point (ISO8601 format)."""
     value: float = rest_field()
-    """The measurement of that point, should be float. Required. """
+    """Measurement of that point. Required."""
 
     @overload
     def __init__(
@@ -891,63 +834,64 @@ class TimeSeriesPoint(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class UnivariateChangePointDetectionOptions(_model_base.Model):
-    """The request of change point detection.
+    """Request of change point detection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar series: Time series data points. Points should be sorted by timestamp in ascending
+    :ivar series: Time series data points. Points should be sorted by time stamp in ascending
      order to match the change point detection result. Required.
-    :vartype series: list[~anomalydetector.models.TimeSeriesPoint]
-    :ivar granularity: Can only be one of yearly, monthly, weekly, daily, hourly, minutely or
-     secondly. Granularity is used for verify whether input series is valid. Required. Known values
-     are: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly", "microsecond",
-     and "none".
-    :vartype granularity: str or ~anomalydetector.models.TimeGranularity
-    :ivar custom_interval: Custom Interval is used to set non-standard time interval, for example,
-     if the
-     series is 5 minutes, request can be set as {"granularity":"minutely",
+    :vartype series: list[~azure.ai.anomalydetector.models.TimeSeriesPoint]
+    :ivar granularity: Granularity is used to verify whether the input series is valid. Required.
+     Known values are: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly",
+     "microsecond", and "none".
+    :vartype granularity: str or ~azure.ai.anomalydetector.models.TimeGranularity
+    :ivar custom_interval: A custom interval is used to set a nonstandard time interval. For
+     example, if the
+     series is 5 minutes, the request can be set as {"granularity":"minutely",
      "customInterval":5}.
     :vartype custom_interval: int
-    :ivar period: Optional argument, periodic value of a time series. If the value is null or
-     does not present, the API will determine the period automatically.
+    :ivar period: Argument that indicates the periodic value of a time series. If the value is null
+     or
+     not present, the API will determine the period automatically.
     :vartype period: int
-    :ivar stable_trend_window: Optional argument, advanced model parameter, a default
-     stableTrendWindow will
+    :ivar stable_trend_window: Argument that indicates an advanced model parameter. A default
+     stableTrendWindow value will
      be used in detection.
     :vartype stable_trend_window: int
-    :ivar threshold: Optional argument, advanced model parameter, between 0.0-1.0, the lower the
-     value is, the larger the trend error will be which means less change point will
+    :ivar threshold: Argument that indicates an advanced model parameter between 0.0 and 1.0. The
+     lower the
+     value is, the larger the trend error is, which means less change point will
      be accepted.
     :vartype threshold: float
     """
 
     series: List["_models.TimeSeriesPoint"] = rest_field()
-    """Time series data points. Points should be sorted by timestamp in ascending
-order to match the change point detection result. Required. """
+    """Time series data points. Points should be sorted by time stamp in ascending
+     order to match the change point detection result. Required."""
     granularity: Union[str, "_models.TimeGranularity"] = rest_field()
-    """Can only be one of yearly, monthly, weekly, daily, hourly, minutely or
-secondly. Granularity is used for verify whether input series is valid. Required. Known values are: \"yearly\", \"monthly\", \"weekly\", \"daily\", \"hourly\", \"minutely\", \"secondly\", \"microsecond\", and \"none\"."""
+    """Granularity is used to verify whether the input series is valid. Required. Known values are:
+     \"yearly\", \"monthly\", \"weekly\", \"daily\", \"hourly\", \"minutely\", \"secondly\",
+     \"microsecond\", and \"none\"."""
     custom_interval: Optional[int] = rest_field(name="customInterval")
-    """Custom Interval is used to set non-standard time interval, for example, if the
-series is 5 minutes, request can be set as {\"granularity\":\"minutely\",
-\"customInterval\":5}. """
+    """A custom interval is used to set a nonstandard time interval. For example, if the
+     series is 5 minutes, the request can be set as {\"granularity\":\"minutely\",
+     \"customInterval\":5}."""
     period: Optional[int] = rest_field()
-    """Optional argument, periodic value of a time series. If the value is null or
-does not present, the API will determine the period automatically. """
+    """Argument that indicates the periodic value of a time series. If the value is null or
+     not present, the API will determine the period automatically."""
     stable_trend_window: Optional[int] = rest_field(name="stableTrendWindow")
-    """Optional argument, advanced model parameter, a default stableTrendWindow will
-be used in detection. """
+    """Argument that indicates an advanced model parameter. A default stableTrendWindow value will
+     be used in detection."""
     threshold: Optional[float] = rest_field()
-    """Optional argument, advanced model parameter, between 0.0-1.0, the lower the
-value is, the larger the trend error will be which means less change point will
-be accepted. """
+    """Argument that indicates an advanced model parameter between 0.0 and 1.0. The lower the
+     value is, the larger the trend error is, which means less change point will
+     be accepted."""
 
     @overload
     def __init__(
@@ -968,38 +912,36 @@ be accepted. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class UnivariateChangePointDetectionResult(_model_base.Model):
-    """The response of change point detection.
+    """Response of change point detection.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar period: Frequency extracted from the series, zero means no recurrent pattern has been
+    :ivar period: Frequency extracted from the series. Zero means no recurrent pattern has been
      found.
     :vartype period: int
-    :ivar is_change_point: isChangePoint contains change point properties for each input point.
-     True means
-     an anomaly either negative or positive has been detected. The index of the
+    :ivar is_change_point: Change point properties for each input point. True means
+     an anomaly (either negative or positive) has been detected. The index of the
      array is consistent with the input series.
     :vartype is_change_point: list[bool]
-    :ivar confidence_scores: the change point confidence of each point.
+    :ivar confidence_scores: Change point confidence of each point.
     :vartype confidence_scores: list[float]
     """
 
     period: Optional[int] = rest_field(readonly=True)
-    """Frequency extracted from the series, zero means no recurrent pattern has been
-found. """
+    """Frequency extracted from the series. Zero means no recurrent pattern has been
+     found."""
     is_change_point: Optional[List[bool]] = rest_field(name="isChangePoint")
-    """isChangePoint contains change point properties for each input point. True means
-an anomaly either negative or positive has been detected. The index of the
-array is consistent with the input series. """
+    """Change point properties for each input point. True means
+     an anomaly (either negative or positive) has been detected. The index of the
+     array is consistent with the input series."""
     confidence_scores: Optional[List[float]] = rest_field(name="confidenceScores")
-    """the change point confidence of each point. """
+    """Change point confidence of each point."""
 
     @overload
     def __init__(
@@ -1016,84 +958,84 @@ array is consistent with the input series. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class UnivariateDetectionOptions(_model_base.Model):
-    """The request of entire or last anomaly detection.
+    """Request of the entire or last anomaly detection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar series: Time series data points. Points should be sorted by timestamp in ascending
+    :ivar series: Time series data points. Points should be sorted by time stamp in ascending
      order to match the anomaly detection result. If the data is not sorted
-     correctly or there is duplicated timestamp, the API will not work. In such
-     case, an error message will be returned. Required.
-    :vartype series: list[~anomalydetector.models.TimeSeriesPoint]
-    :ivar granularity: Optional argument, can be one of yearly, monthly, weekly, daily, hourly,
-     minutely, secondly, microsecond or none. If granularity is not present, it will
-     be none by default. If granularity is none, the timestamp property in time
+     correctly or there's a duplicated time stamp, the API won't work. In such
+     a case, an error message is returned. Required.
+    :vartype series: list[~azure.ai.anomalydetector.models.TimeSeriesPoint]
+    :ivar granularity: Argument that indicates time granularity. If granularity is not present, the
+     value
+     is none by default. If granularity is none, the time stamp property in the time
      series point can be absent. Known values are: "yearly", "monthly", "weekly", "daily",
      "hourly", "minutely", "secondly", "microsecond", and "none".
-    :vartype granularity: str or ~anomalydetector.models.TimeGranularity
-    :ivar custom_interval: Custom Interval is used to set non-standard time interval, for example,
-     if the
-     series is 5 minutes, request can be set as {"granularity":"minutely",
+    :vartype granularity: str or ~azure.ai.anomalydetector.models.TimeGranularity
+    :ivar custom_interval: A custom interval is used to set a nonstandard time interval. For
+     example, if the
+     series is 5 minutes, the request can be set as {"granularity":"minutely",
      "customInterval":5}.
     :vartype custom_interval: int
-    :ivar period: Optional argument, periodic value of a time series. If the value is null or
-     does not present, the API will determine the period automatically.
+    :ivar period: Argument that indicates the periodic value of a time series. If the value is null
+     or
+     is not present, the API determines the period automatically.
     :vartype period: int
-    :ivar max_anomaly_ratio: Optional argument, advanced model parameter, max anomaly ratio in a
-     time series.
+    :ivar max_anomaly_ratio: Argument that indicates an advanced model parameter. It's the maximum
+     anomaly ratio in a time series.
     :vartype max_anomaly_ratio: float
-    :ivar sensitivity: Optional argument, advanced model parameter, between 0-99, the lower the
-     value
-     is, the larger the margin value will be which means less anomalies will be
+    :ivar sensitivity: Argument that indicates an advanced model parameter between 0 and 99. The
+     lower the value
+     is, the larger the margin value is, which means fewer anomalies will be
      accepted.
     :vartype sensitivity: int
-    :ivar impute_mode: Used to specify how to deal with missing values in the input series, it's
-     used
+    :ivar impute_mode: Specifies how to deal with missing values in the input series. It's used
      when granularity is not "none". Known values are: "auto", "previous", "linear", "fixed",
      "zero", and "notFill".
-    :vartype impute_mode: str or ~anomalydetector.models.ImputeMode
-    :ivar impute_fixed_value: Used to specify the value to fill, it's used when granularity is not
-     "none"
+    :vartype impute_mode: str or ~azure.ai.anomalydetector.models.ImputeMode
+    :ivar impute_fixed_value: Specifies the value to fill. It's used when granularity is not "none"
      and imputeMode is "fixed".
     :vartype impute_fixed_value: float
     """
 
     series: List["_models.TimeSeriesPoint"] = rest_field()
-    """Time series data points. Points should be sorted by timestamp in ascending
-order to match the anomaly detection result. If the data is not sorted
-correctly or there is duplicated timestamp, the API will not work. In such
-case, an error message will be returned. Required. """
+    """Time series data points. Points should be sorted by time stamp in ascending
+     order to match the anomaly detection result. If the data is not sorted
+     correctly or there's a duplicated time stamp, the API won't work. In such
+     a case, an error message is returned. Required."""
     granularity: Optional[Union[str, "_models.TimeGranularity"]] = rest_field()
-    """Optional argument, can be one of yearly, monthly, weekly, daily, hourly,
-minutely, secondly, microsecond or none. If granularity is not present, it will
-be none by default. If granularity is none, the timestamp property in time
-series point can be absent. Known values are: \"yearly\", \"monthly\", \"weekly\", \"daily\", \"hourly\", \"minutely\", \"secondly\", \"microsecond\", and \"none\"."""
+    """Argument that indicates time granularity. If granularity is not present, the value
+     is none by default. If granularity is none, the time stamp property in the time
+     series point can be absent. Known values are: \"yearly\", \"monthly\", \"weekly\", \"daily\",
+     \"hourly\", \"minutely\", \"secondly\", \"microsecond\", and \"none\"."""
     custom_interval: Optional[int] = rest_field(name="customInterval")
-    """Custom Interval is used to set non-standard time interval, for example, if the
-series is 5 minutes, request can be set as {\"granularity\":\"minutely\",
-\"customInterval\":5}. """
+    """A custom interval is used to set a nonstandard time interval. For example, if the
+     series is 5 minutes, the request can be set as {\"granularity\":\"minutely\",
+     \"customInterval\":5}."""
     period: Optional[int] = rest_field()
-    """Optional argument, periodic value of a time series. If the value is null or
-does not present, the API will determine the period automatically. """
+    """Argument that indicates the periodic value of a time series. If the value is null or
+     is not present, the API determines the period automatically."""
     max_anomaly_ratio: Optional[float] = rest_field(name="maxAnomalyRatio")
-    """Optional argument, advanced model parameter, max anomaly ratio in a time series. """
+    """Argument that indicates an advanced model parameter. It's the maximum anomaly ratio in a time
+     series."""
     sensitivity: Optional[int] = rest_field()
-    """Optional argument, advanced model parameter, between 0-99, the lower the value
-is, the larger the margin value will be which means less anomalies will be
-accepted. """
+    """Argument that indicates an advanced model parameter between 0 and 99. The lower the value
+     is, the larger the margin value is, which means fewer anomalies will be
+     accepted."""
     impute_mode: Optional[Union[str, "_models.ImputeMode"]] = rest_field(name="imputeMode")
-    """Used to specify how to deal with missing values in the input series, it's used
-when granularity is not \"none\". Known values are: \"auto\", \"previous\", \"linear\", \"fixed\", \"zero\", and \"notFill\"."""
+    """Specifies how to deal with missing values in the input series. It's used
+     when granularity is not \"none\". Known values are: \"auto\", \"previous\", \"linear\",
+     \"fixed\", \"zero\", and \"notFill\"."""
     impute_fixed_value: Optional[float] = rest_field(name="imputeFixedValue")
-    """Used to specify the value to fill, it's used when granularity is not \"none\"
-and imputeMode is \"fixed\". """
+    """Specifies the value to fill. It's used when granularity is not \"none\"
+     and imputeMode is \"fixed\"."""
 
     @overload
     def __init__(
@@ -1116,96 +1058,90 @@ and imputeMode is \"fixed\". """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class UnivariateEntireDetectionResult(_model_base.Model):
-    """The response of entire anomaly detection.
+    """Response of the entire anomaly detection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar period: Frequency extracted from the series, zero means no recurrent pattern has been
+    :ivar period: Frequency extracted from the series. Zero means no recurrent pattern has been
      found. Required.
     :vartype period: int
-    :ivar expected_values: ExpectedValues contain expected value for each input point. The index of
-     the
+    :ivar expected_values: Expected value for each input point. The index of the
      array is consistent with the input series. Required.
     :vartype expected_values: list[float]
-    :ivar upper_margins: UpperMargins contain upper margin of each input point. UpperMargin is used
-     to
-     calculate upperBoundary, which equals to expectedValue + (100 -
-     marginScale)*upperMargin. Anomalies in response can be filtered by
-     upperBoundary and lowerBoundary. By adjusting marginScale value, less
-     significant anomalies can be filtered in client side. The index of the array is
+    :ivar upper_margins: Upper margin of each input point. UpperMargin is used to
+     calculate upperBoundary, which is equal to expectedValue + (100 -
+     marginScale)*upperMargin. Anomalies in the response can be filtered by
+     upperBoundary and lowerBoundary. Adjusting the marginScale value can help filter less
+     significant anomalies on the client side. The index of the array is
      consistent with the input series. Required.
     :vartype upper_margins: list[float]
-    :ivar lower_margins: LowerMargins contain lower margin of each input point. LowerMargin is used
-     to
-     calculate lowerBoundary, which equals to expectedValue - (100 -
+    :ivar lower_margins: Lower margin of each input point. LowerMargin is used to
+     calculate lowerBoundary, which is equal to expectedValue - (100 -
      marginScale)*lowerMargin. Points between the boundary can be marked as normal
-     ones in client side. The index of the array is consistent with the input
+     ones on the client side. The index of the array is consistent with the input
      series. Required.
     :vartype lower_margins: list[float]
-    :ivar is_anomaly: IsAnomaly contains anomaly properties for each input point. True means an
-     anomaly either negative or positive has been detected. The index of the array
+    :ivar is_anomaly: Anomaly properties for each input point. True means an
+     anomaly (either negative or positive) has been detected. The index of the array
      is consistent with the input series. Required.
     :vartype is_anomaly: list[bool]
-    :ivar is_negative_anomaly: IsNegativeAnomaly contains anomaly status in negative direction for
-     each input
+    :ivar is_negative_anomaly: Anomaly status in a negative direction for each input
      point. True means a negative anomaly has been detected. A negative anomaly
      means the point is detected as an anomaly and its real value is smaller than
      the expected one. The index of the array is consistent with the input series. Required.
     :vartype is_negative_anomaly: list[bool]
-    :ivar is_positive_anomaly: IsPositiveAnomaly contain anomaly status in positive direction for
-     each input
+    :ivar is_positive_anomaly: Anomaly status in a positive direction for each input
      point. True means a positive anomaly has been detected. A positive anomaly
      means the point is detected as an anomaly and its real value is larger than the
      expected one. The index of the array is consistent with the input series. Required.
     :vartype is_positive_anomaly: list[bool]
-    :ivar severity: The severity score for each input point. The larger the value is, the more
-     sever the anomaly is. For normal points, the "severity" is always 0.
+    :ivar severity: Severity score for each input point. The larger the value is, the more
+     severe the anomaly is. For normal points, the severity is always 0.
     :vartype severity: list[float]
     """
 
     period: int = rest_field()
-    """Frequency extracted from the series, zero means no recurrent pattern has been
-found. Required. """
+    """Frequency extracted from the series. Zero means no recurrent pattern has been
+     found. Required."""
     expected_values: List[float] = rest_field(name="expectedValues")
-    """ExpectedValues contain expected value for each input point. The index of the
-array is consistent with the input series. Required. """
+    """Expected value for each input point. The index of the
+     array is consistent with the input series. Required."""
     upper_margins: List[float] = rest_field(name="upperMargins")
-    """UpperMargins contain upper margin of each input point. UpperMargin is used to
-calculate upperBoundary, which equals to expectedValue + (100 -
-marginScale)*upperMargin. Anomalies in response can be filtered by
-upperBoundary and lowerBoundary. By adjusting marginScale value, less
-significant anomalies can be filtered in client side. The index of the array is
-consistent with the input series. Required. """
+    """Upper margin of each input point. UpperMargin is used to
+     calculate upperBoundary, which is equal to expectedValue + (100 -
+     marginScale)*upperMargin. Anomalies in the response can be filtered by
+     upperBoundary and lowerBoundary. Adjusting the marginScale value can help filter less
+     significant anomalies on the client side. The index of the array is
+     consistent with the input series. Required."""
     lower_margins: List[float] = rest_field(name="lowerMargins")
-    """LowerMargins contain lower margin of each input point. LowerMargin is used to
-calculate lowerBoundary, which equals to expectedValue - (100 -
-marginScale)*lowerMargin. Points between the boundary can be marked as normal
-ones in client side. The index of the array is consistent with the input
-series. Required. """
+    """Lower margin of each input point. LowerMargin is used to
+     calculate lowerBoundary, which is equal to expectedValue - (100 -
+     marginScale)*lowerMargin. Points between the boundary can be marked as normal
+     ones on the client side. The index of the array is consistent with the input
+     series. Required."""
     is_anomaly: List[bool] = rest_field(name="isAnomaly")
-    """IsAnomaly contains anomaly properties for each input point. True means an
-anomaly either negative or positive has been detected. The index of the array
-is consistent with the input series. Required. """
+    """Anomaly properties for each input point. True means an
+     anomaly (either negative or positive) has been detected. The index of the array
+     is consistent with the input series. Required."""
     is_negative_anomaly: List[bool] = rest_field(name="isNegativeAnomaly")
-    """IsNegativeAnomaly contains anomaly status in negative direction for each input
-point. True means a negative anomaly has been detected. A negative anomaly
-means the point is detected as an anomaly and its real value is smaller than
-the expected one. The index of the array is consistent with the input series. Required. """
+    """Anomaly status in a negative direction for each input
+     point. True means a negative anomaly has been detected. A negative anomaly
+     means the point is detected as an anomaly and its real value is smaller than
+     the expected one. The index of the array is consistent with the input series. Required."""
     is_positive_anomaly: List[bool] = rest_field(name="isPositiveAnomaly")
-    """IsPositiveAnomaly contain anomaly status in positive direction for each input
-point. True means a positive anomaly has been detected. A positive anomaly
-means the point is detected as an anomaly and its real value is larger than the
-expected one. The index of the array is consistent with the input series. Required. """
+    """Anomaly status in a positive direction for each input
+     point. True means a positive anomaly has been detected. A positive anomaly
+     means the point is detected as an anomaly and its real value is larger than the
+     expected one. The index of the array is consistent with the input series. Required."""
     severity: Optional[List[float]] = rest_field()
-    """The severity score for each input point. The larger the value is, the more
-sever the anomaly is. For normal points, the \"severity\" is always 0. """
+    """Severity score for each input point. The larger the value is, the more
+     severe the anomaly is. For normal points, the severity is always 0."""
 
     @overload
     def __init__(
@@ -1228,18 +1164,17 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class UnivariateLastDetectionResult(_model_base.Model):
-    """The response of last anomaly detection.
+    """Response of the last anomaly detection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar period: Frequency extracted from the series, zero means no recurrent pattern has been
+    :ivar period: Frequency extracted from the series. Zero means no recurrent pattern has been
      found. Required.
     :vartype period: int
     :ivar suggested_window: Suggested input series points needed for detecting the latest point.
@@ -1248,58 +1183,59 @@ class UnivariateLastDetectionResult(_model_base.Model):
     :ivar expected_value: Expected value of the latest point. Required.
     :vartype expected_value: float
     :ivar upper_margin: Upper margin of the latest point. UpperMargin is used to calculate
-     upperBoundary, which equals to expectedValue + (100 - marginScale)*upperMargin.
+     upperBoundary, which is equal to expectedValue + (100 - marginScale)*upperMargin.
      If the value of latest point is between upperBoundary and lowerBoundary, it
-     should be treated as normal value. By adjusting marginScale value, anomaly
-     status of latest point can be changed. Required.
+     should be treated as a normal value. Adjusting the marginScale value enables the anomaly
+     status of the latest point to be changed. Required.
     :vartype upper_margin: float
     :ivar lower_margin: Lower margin of the latest point. LowerMargin is used to calculate
-     lowerBoundary, which equals to expectedValue - (100 - marginScale)*lowerMargin. Required.
+     lowerBoundary, which is equal to expectedValue - (100 - marginScale)*lowerMargin. Required.
     :vartype lower_margin: float
-    :ivar is_anomaly: Anomaly status of the latest point, true means the latest point is an anomaly
-     either in negative direction or positive direction. Required.
+    :ivar is_anomaly: Anomaly status of the latest point. True means the latest point is an
+     anomaly,
+     either in the negative direction or in the positive direction. Required.
     :vartype is_anomaly: bool
-    :ivar is_negative_anomaly: Anomaly status in negative direction of the latest point. True means
-     the latest
+    :ivar is_negative_anomaly: Anomaly status of the latest point in a negative direction. True
+     means the latest
      point is an anomaly and its real value is smaller than the expected one. Required.
     :vartype is_negative_anomaly: bool
-    :ivar is_positive_anomaly: Anomaly status in positive direction of the latest point. True means
-     the latest
+    :ivar is_positive_anomaly: Anomaly status of the latest point in a positive direction. True
+     means the latest
      point is an anomaly and its real value is larger than the expected one. Required.
     :vartype is_positive_anomaly: bool
-    :ivar severity: The severity score for the last input point. The larger the value is, the more
-     sever the anomaly is. For normal points, the "severity" is always 0.
+    :ivar severity: Severity score for the last input point. The larger the value is, the more
+     severe the anomaly is. For normal points, the severity is always 0.
     :vartype severity: float
     """
 
     period: int = rest_field()
-    """Frequency extracted from the series, zero means no recurrent pattern has been
-found. Required. """
+    """Frequency extracted from the series. Zero means no recurrent pattern has been
+     found. Required."""
     suggested_window: int = rest_field(name="suggestedWindow")
-    """Suggested input series points needed for detecting the latest point. Required. """
+    """Suggested input series points needed for detecting the latest point. Required."""
     expected_value: float = rest_field(name="expectedValue")
-    """Expected value of the latest point. Required. """
+    """Expected value of the latest point. Required."""
     upper_margin: float = rest_field(name="upperMargin")
     """Upper margin of the latest point. UpperMargin is used to calculate
-upperBoundary, which equals to expectedValue + (100 - marginScale)*upperMargin.
-If the value of latest point is between upperBoundary and lowerBoundary, it
-should be treated as normal value. By adjusting marginScale value, anomaly
-status of latest point can be changed. Required. """
+     upperBoundary, which is equal to expectedValue + (100 - marginScale)*upperMargin.
+     If the value of latest point is between upperBoundary and lowerBoundary, it
+     should be treated as a normal value. Adjusting the marginScale value enables the anomaly
+     status of the latest point to be changed. Required."""
     lower_margin: float = rest_field(name="lowerMargin")
     """Lower margin of the latest point. LowerMargin is used to calculate
-lowerBoundary, which equals to expectedValue - (100 - marginScale)*lowerMargin. Required. """
+     lowerBoundary, which is equal to expectedValue - (100 - marginScale)*lowerMargin. Required."""
     is_anomaly: bool = rest_field(name="isAnomaly")
-    """Anomaly status of the latest point, true means the latest point is an anomaly
-either in negative direction or positive direction. Required. """
+    """Anomaly status of the latest point. True means the latest point is an anomaly,
+     either in the negative direction or in the positive direction. Required."""
     is_negative_anomaly: bool = rest_field(name="isNegativeAnomaly")
-    """Anomaly status in negative direction of the latest point. True means the latest
-point is an anomaly and its real value is smaller than the expected one. Required. """
+    """Anomaly status of the latest point in a negative direction. True means the latest
+     point is an anomaly and its real value is smaller than the expected one. Required."""
     is_positive_anomaly: bool = rest_field(name="isPositiveAnomaly")
-    """Anomaly status in positive direction of the latest point. True means the latest
-point is an anomaly and its real value is larger than the expected one. Required. """
+    """Anomaly status of the latest point in a positive direction. True means the latest
+     point is an anomaly and its real value is larger than the expected one. Required."""
     severity: Optional[float] = rest_field()
-    """The severity score for the last input point. The larger the value is, the more
-sever the anomaly is. For normal points, the \"severity\" is always 0. """
+    """Severity score for the last input point. The larger the value is, the more
+     severe the anomaly is. For normal points, the severity is always 0."""
 
     @overload
     def __init__(
@@ -1323,37 +1259,36 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class VariableState(_model_base.Model):
-    """Variable Status.
+    """Variable status.
 
     :ivar variable: Variable name in variable states.
     :vartype variable: str
     :ivar filled_n_a_ratio: Proportion of missing values that need to be filled by fillNAMethod.
     :vartype filled_n_a_ratio: float
-    :ivar effective_count: Number of effective data points before applying fillNAMethod.
+    :ivar effective_count: Number of effective data points before fillNAMethod is applied.
     :vartype effective_count: int
-    :ivar first_timestamp: First valid timestamp with value of input data.
+    :ivar first_timestamp: First valid time stamp with a value of input data.
     :vartype first_timestamp: ~datetime.datetime
-    :ivar last_timestamp: Last valid timestamp with value of input data.
+    :ivar last_timestamp: Last valid time stamp with a value of input data.
     :vartype last_timestamp: ~datetime.datetime
     """
 
     variable: Optional[str] = rest_field()
-    """Variable name in variable states. """
+    """Variable name in variable states."""
     filled_n_a_ratio: Optional[float] = rest_field(name="filledNARatio")
-    """Proportion of missing values that need to be filled by fillNAMethod. """
+    """Proportion of missing values that need to be filled by fillNAMethod."""
     effective_count: Optional[int] = rest_field(name="effectiveCount")
-    """Number of effective data points before applying fillNAMethod. """
+    """Number of effective data points before fillNAMethod is applied."""
     first_timestamp: Optional[datetime.datetime] = rest_field(name="firstTimestamp")
-    """First valid timestamp with value of input data. """
+    """First valid time stamp with a value of input data."""
     last_timestamp: Optional[datetime.datetime] = rest_field(name="lastTimestamp")
-    """Last valid timestamp with value of input data. """
+    """Last valid time stamp with a value of input data."""
 
     @overload
     def __init__(
@@ -1373,9 +1308,8 @@ class VariableState(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1384,20 +1318,20 @@ class VariableValues(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar variable: Variable name of last detection request. Required.
+    :ivar variable: Variable name of the last detection request. Required.
     :vartype variable: str
-    :ivar timestamps: Timestamps of last detection request. Required.
+    :ivar timestamps: Time stamps of the last detection request. Required.
     :vartype timestamps: list[str]
     :ivar values: Values of variables. Required.
     :vartype values: list[float]
     """
 
     variable: str = rest_field()
-    """Variable name of last detection request. Required. """
+    """Variable name of the last detection request. Required."""
     timestamps: List[str] = rest_field()
-    """Timestamps of last detection request. Required. """
+    """Time stamps of the last detection request. Required."""
     values: List[float] = rest_field()
-    """Values of variables. Required. """
+    """Values of variables. Required."""
 
     @overload
     def __init__(
@@ -1415,7 +1349,6 @@ class VariableValues(_model_base.Model):
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
         """
-        ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)

@@ -114,7 +114,10 @@ class MultivariateSample:
             r = self.ad_client.get_multivariate_batch_detection_result(result_id)
             print("Get detection result...(it may take a few seconds)")
 
-            while r.summary.status != MultivariateBatchDetectionStatus.READY and r.summary.status != MultivariateBatchDetectionStatus.FAILED:
+            while (
+                r.summary.status != MultivariateBatchDetectionStatus.READY
+                and r.summary.status != MultivariateBatchDetectionStatus.FAILED
+            ):
                 r = self.ad_client.get_multivariate_batch_detection_result(result_id)
                 print("Detection is {}".format(r.summary.status))
                 time.sleep(15)
