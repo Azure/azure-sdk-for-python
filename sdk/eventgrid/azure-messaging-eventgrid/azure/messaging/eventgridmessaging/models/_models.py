@@ -49,7 +49,7 @@ class BrokerProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudEvent(_model_base.Model):
+class CloudEventEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
     CloudEvent 1.0 Schema.
 
@@ -253,12 +253,12 @@ class ReceiveDetails(_model_base.Model):
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.messaging.eventgridmessaging.models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.messaging.eventgridmessaging.models.CloudEvent
+    :vartype event: ~azure.messaging.eventgridmessaging.models.CloudEventEvent
     """
 
     broker_properties: "_models.BrokerProperties" = rest_field(name="brokerProperties")
     """The Event Broker details. Required."""
-    event: "_models._models.CloudEvent" = rest_field()
+    event: "_models._models.CloudEventEvent" = rest_field()
     """Cloud Event details. Required."""
 
 

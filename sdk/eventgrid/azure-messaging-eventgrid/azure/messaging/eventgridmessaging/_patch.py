@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import base64
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
-from .models._models import CloudEvent as InternalCloudEvent
+from .models._models import CloudEventEvent as InternalCloudEvent
 from .models import ReceiveResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureKeyCredential

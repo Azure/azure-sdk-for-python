@@ -36,7 +36,7 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_event_grid_messaging_publish_cloud_event_request(  # pylint: disable=name-too-long
-    topic_name: str, *, content: _models._models.CloudEvent, **kwargs: Any
+    topic_name: str, *, content: _models._models.CloudEventEvent, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -61,7 +61,7 @@ def build_event_grid_messaging_publish_cloud_event_request(  # pylint: disable=n
 
 
 def build_event_grid_messaging_publish_batch_of_cloud_events_request(  # pylint: disable=name-too-long
-    topic_name: str, *, content: List[_models._models.CloudEvent], **kwargs: Any
+    topic_name: str, *, content: List[_models._models.CloudEventEvent], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -182,14 +182,14 @@ def build_event_grid_messaging_release_batch_of_cloud_events_request(  # pylint:
 class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
     @distributed_trace
     def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, body: _models._models.CloudEvent, **kwargs: Any
+        self, topic_name: str, event: _models._models.CloudEventEvent, **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param body: Required.
-        :type body: ~azure.messaging.eventgridmessaging.models.CloudEvent
+        :param event: Single Cloud Event being published. Required.
+        :type event: ~azure.messaging.eventgridmessaging.models.CloudEventEvent
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -215,7 +215,7 @@ class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_event_grid_messaging_publish_cloud_event_request(
             topic_name=topic_name,
@@ -246,14 +246,14 @@ class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
 
     @distributed_trace
     def _publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
+        self, topic_name: str, events: List[_models._models.CloudEventEvent], **kwargs: Any
     ) -> None:
         """Publish Batch of Cloud Events to namespace topic.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param events: Array of Cloud Events being published. Required.
-        :type events: list[~azure.messaging.eventgridmessaging.models.CloudEvent]
+        :type events: list[~azure.messaging.eventgridmessaging.models.CloudEventEvent]
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -322,7 +322,7 @@ class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event subscription name. Required.
+        :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :keyword max_events: Max Events count to be received. Default value is None.
         :paramtype max_events: int
@@ -391,7 +391,7 @@ class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event subscription name. Required.
+        :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
@@ -463,7 +463,7 @@ class EventGridMessagingClientOperationsMixin(EventGridMessagingClientMixinABC):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event subscription name. Required.
+        :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
         :param tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
