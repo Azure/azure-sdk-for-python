@@ -96,7 +96,8 @@ class MonitoringSignal(RestTranslatableMixin):
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[MetricThreshold] = None,
     ):
-        super().__init__(target_dataset=target_dataset, baseline_dataset=baseline_dataset)
+        self.target_dataset = target_dataset
+        self.baseline_dataset = baseline_dataset
         self.metric_thresholds = metric_thresholds
 
 
