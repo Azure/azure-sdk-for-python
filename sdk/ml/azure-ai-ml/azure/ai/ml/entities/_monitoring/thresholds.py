@@ -249,7 +249,4 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
 
     @classmethod
     def _from_rest_object(cls, obj: MonitoringThreshold) -> "CustomMonitoringMetricThreshold":
-        return cls(
-            metric_name=obj.metric,
-            threshold=obj.threshold.value
-        )
+        return cls(metric_name=obj.metric, threshold=obj.threshold.value)

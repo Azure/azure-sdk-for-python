@@ -10,8 +10,9 @@ from typing import Dict, Optional, Union
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger
+from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
@@ -76,14 +77,30 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         )
 
     def _to_rest_object(self) -> RestSchedule:
-        rest_schedule_properties = ScheduleProperties(
-            description=self.description,
-            properties=self.properties,
-            tags=self.tags,
-            action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object()),
-            display_name=self.display_name,
-            is_enabled=self._is_enabled
+        return RestSchedule(
+            properties=ScheduleProperties(
+                description=self.description,
+                properties=self.properties,
+                tags=self.tags,
+                action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object()),
+                display_name=self.display_name,
+                is_enabled=self._is_enabled,
+                trigger=self.trigger._to_rest_object(),
+            )
         )
-        rest_schedule = RestSchedule(
 
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "MonitorSchedule":
+        properties = obj.properties
+        return cls(
+            trigger=TriggerBase._from_rest_object(properties.trigger),
+            create_monitor=MonitorDefinition._from_rest_object(properties.action.monitor_definition),
+            name=obj.name,
+            display_name=properties.display_name,
+            description=properties.description,
+            tags=properties.tags,
+            properties=properties.properties,
+            provisioning_state=properties.provisioning_state,
+            is_enabled=properties.is_enabled,
+            creation_context=SystemData._from_rest_object(obj.system_data),
         )
