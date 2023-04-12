@@ -16,13 +16,13 @@ from ._models import CorrelationChanges
 from ._models import DiagnosticsInfo
 from ._models import ErrorResponse
 from ._models import ModelInfo
+from ._models import ModelList
 from ._models import ModelState
 from ._models import MultivariateBatchDetectionOptions
 from ._models import MultivariateBatchDetectionResultSummary
 from ._models import MultivariateDetectionResult
 from ._models import MultivariateLastDetectionOptions
 from ._models import MultivariateLastDetectionResult
-from ._models import ResponseError
 from ._models import TimeSeriesPoint
 from ._models import UnivariateChangePointDetectionOptions
 from ._models import UnivariateChangePointDetectionResult
@@ -56,13 +56,13 @@ __all__ = [
     "DiagnosticsInfo",
     "ErrorResponse",
     "ModelInfo",
+    "ModelList",
     "ModelState",
     "MultivariateBatchDetectionOptions",
     "MultivariateBatchDetectionResultSummary",
     "MultivariateDetectionResult",
     "MultivariateLastDetectionOptions",
     "MultivariateLastDetectionResult",
-    "ResponseError",
     "TimeSeriesPoint",
     "UnivariateChangePointDetectionOptions",
     "UnivariateChangePointDetectionResult",
