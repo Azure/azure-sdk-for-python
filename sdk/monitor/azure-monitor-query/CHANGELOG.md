@@ -14,6 +14,8 @@
 
 ### Other Changes
 
+- Improved client configuration logic for non-public Azure clouds where credential scope will be determined based on the configured endpoint. ([#29602](https://github.com/Azure/azure-sdk-for-python/pull/29602))
+
 ## 1.1.1 (2023-02-13)
 
 ### Bugs Fixed

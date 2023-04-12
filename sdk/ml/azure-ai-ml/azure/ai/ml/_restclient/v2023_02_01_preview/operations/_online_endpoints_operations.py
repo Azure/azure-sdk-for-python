@@ -10,7 +10,13 @@ from typing import TYPE_CHECKING
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -26,7 +32,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -442,16 +449,15 @@ class OnlineEndpointsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.OnlineEndpointTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpointTrackedResourceArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OnlineEndpointTrackedResourceArmPaginatedResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -464,13 +470,13 @@ class OnlineEndpointsOperations(object):
                     tags=tags,
                     properties=properties,
                     order_by=order_by,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -501,9 +507,7 @@ class OnlineEndpointsOperations(object):
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -514,11 +518,9 @@ class OnlineEndpointsOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -528,30 +530,25 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
             api_version=api_version,
-            template_url=self._delete_initial.metadata['url'],
+            template_url=self._delete_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -561,16 +558,16 @@ class OnlineEndpointsOperations(object):
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
+            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
+                "duration", response.headers.get("x-ms-async-operation-timeout")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
-
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     @distributed_trace
     def begin_delete(  # pylint: disable=inconsistent-return-statements
@@ -603,43 +600,42 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 endpoint_name=endpoint_name,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -665,30 +661,25 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.OnlineEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpoint"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OnlineEndpoint"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -697,15 +688,14 @@ class OnlineEndpointsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OnlineEndpoint', pipeline_response)
+        deserialized = self._deserialize("OnlineEndpoint", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     def _update_initial(
         self,
@@ -716,16 +706,14 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.OnlineEndpoint"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OnlineEndpoint"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["_models.OnlineEndpoint"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'PartialMinimalTrackedResourceWithIdentity')
+        _json = self._serialize.body(body, "PartialMinimalTrackedResourceWithIdentity")
 
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -735,15 +723,13 @@ class OnlineEndpointsOperations(object):
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self._update_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -754,21 +740,21 @@ class OnlineEndpointsOperations(object):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('OnlineEndpoint', pipeline_response)
+            deserialized = self._deserialize("OnlineEndpoint", pipeline_response)
 
         if response.status_code == 202:
-            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
+            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
+                "duration", response.headers.get("x-ms-async-operation-timeout")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
-
+    _update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     @distributed_trace
     def begin_update(
@@ -807,15 +793,12 @@ class OnlineEndpointsOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.OnlineEndpoint]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpoint"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OnlineEndpoint"]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
@@ -824,32 +807,34 @@ class OnlineEndpointsOperations(object):
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('OnlineEndpoint', pipeline_response)
+            deserialized = self._deserialize("OnlineEndpoint", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
+    begin_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     def _create_or_update_initial(
         self,
@@ -860,16 +845,14 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.OnlineEndpoint"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpoint"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OnlineEndpoint"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'OnlineEndpoint')
+        _json = self._serialize.body(body, "OnlineEndpoint")
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -879,15 +862,13 @@ class OnlineEndpointsOperations(object):
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_initial.metadata['url'],
+            template_url=self._create_or_update_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -897,21 +878,24 @@ class OnlineEndpointsOperations(object):
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('OnlineEndpoint', pipeline_response)
+            deserialized = self._deserialize("OnlineEndpoint", pipeline_response)
 
         if response.status_code == 201:
-            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
-            
-            deserialized = self._deserialize('OnlineEndpoint', pipeline_response)
+            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
+                "duration", response.headers.get("x-ms-async-operation-timeout")
+            )
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = self._deserialize("OnlineEndpoint", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
-
+    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     @distributed_trace
     def begin_create_or_update(
@@ -949,15 +933,12 @@ class OnlineEndpointsOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.OnlineEndpoint]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpoint"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OnlineEndpoint"]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
@@ -966,32 +947,34 @@ class OnlineEndpointsOperations(object):
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('OnlineEndpoint', pipeline_response)
+            deserialized = self._deserialize("OnlineEndpoint", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
+    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}"}  # type: ignore
 
     @distributed_trace
     def list_keys(
@@ -1017,30 +1000,25 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.EndpointAuthKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EndpointAuthKeys"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.EndpointAuthKeys"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_list_keys_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
             api_version=api_version,
-            template_url=self.list_keys.metadata['url'],
+            template_url=self.list_keys.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1049,15 +1027,14 @@ class OnlineEndpointsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EndpointAuthKeys', pipeline_response)
+        deserialized = self._deserialize("EndpointAuthKeys", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/listKeys"}  # type: ignore
-
+    list_keys.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/listKeys"}  # type: ignore
 
     def _regenerate_keys_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1068,16 +1045,14 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'RegenerateEndpointKeysRequest')
+        _json = self._serialize.body(body, "RegenerateEndpointKeysRequest")
 
         request = build_regenerate_keys_request_initial(
             subscription_id=self._config.subscription_id,
@@ -1087,15 +1062,13 @@ class OnlineEndpointsOperations(object):
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._regenerate_keys_initial.metadata['url'],
+            template_url=self._regenerate_keys_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1105,15 +1078,13 @@ class OnlineEndpointsOperations(object):
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _regenerate_keys_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/regenerateKeys"}  # type: ignore
-
+    _regenerate_keys_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/regenerateKeys"}  # type: ignore
 
     @distributed_trace
     def begin_regenerate_keys(  # pylint: disable=inconsistent-return-statements
@@ -1149,15 +1120,12 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._regenerate_keys_initial(
                 resource_group_name=resource_group_name,
@@ -1166,29 +1134,31 @@ class OnlineEndpointsOperations(object):
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_regenerate_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/regenerateKeys"}  # type: ignore
+    begin_regenerate_keys.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/regenerateKeys"}  # type: ignore
 
     @distributed_trace
     def get_token(
@@ -1214,30 +1184,25 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.EndpointAuthToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EndpointAuthToken"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.EndpointAuthToken"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_get_token_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             endpoint_name=endpoint_name,
             api_version=api_version,
-            template_url=self.get_token.metadata['url'],
+            template_url=self.get_token.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1246,12 +1211,11 @@ class OnlineEndpointsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EndpointAuthToken', pipeline_response)
+        deserialized = self._deserialize("EndpointAuthToken", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_token.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/token"}  # type: ignore
-
+    get_token.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/token"}  # type: ignore

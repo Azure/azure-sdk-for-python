@@ -43,7 +43,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         service_client: ServiceClient022023Preview,
         **kwargs: Dict,
     ):
-
         super(_FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featurestore_entity_versions

@@ -34,12 +34,12 @@ def main():
         managed_instance_name="testInstanceSrc",
         database_name="testDatabase",
         parameters={
-            "destinationManagedDatabaseId": "subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/group1/providers/Microsoft.Sql/managedInstances/testInstanceTgt/databases/testDatabase"
+            "destinationManagedDatabaseId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/group1/providers/Microsoft.Sql/managedInstances/testInstanceTgt/databases/testDatabase"
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/ManagedDatabaseStartMoveMin.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedDatabaseStartMoveMin.json
 if __name__ == "__main__":
     main()

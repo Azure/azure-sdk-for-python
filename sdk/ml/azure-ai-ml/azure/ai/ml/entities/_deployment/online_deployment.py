@@ -53,6 +53,7 @@ from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
+
 # pylint: disable=too-many-instance-attributes
 class OnlineDeployment(Deployment):
     """Online endpoint deployment entity.
