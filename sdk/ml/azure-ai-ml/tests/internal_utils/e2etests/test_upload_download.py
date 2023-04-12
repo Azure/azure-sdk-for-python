@@ -256,7 +256,6 @@ class TestUpload(AzureRecordedTestCase):
         uuid_name: str,
         variable_recorder,
     ) -> None:
-
         # creating nested directory with files here (using a fixture causes issues and directory is limited to this test)
         top_level = tempfile.TemporaryDirectory()
         nested_level = tempfile.TemporaryDirectory(dir=top_level.name)

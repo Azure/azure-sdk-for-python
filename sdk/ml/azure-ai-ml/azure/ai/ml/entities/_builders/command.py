@@ -695,7 +695,9 @@ class Command(BaseNode):
                 setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
-            node._name = self.name
+            # won't copy name to be able to distinguish if a node's name is assigned by user
+            # e.g. node_1 = command_func()
+            # In above example, node_1.name will be None so we can apply node_1 as it's name
             node.compute = self.compute
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.

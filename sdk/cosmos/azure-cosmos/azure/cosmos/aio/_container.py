@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Awaitable
+from typing import Any, Dict, Optional, Union, cast, Awaitable, List
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
@@ -523,6 +523,50 @@ class ContainerProxy(object):
         return result
 
     @distributed_trace_async
+    async def patch_item(
+        self,
+        item: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        patch_operations: List[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """ **Provisional method** Patches the specified item with the provided operations if it
+         exists in the container.
+
+        If the item does not already exist in the container, an exception is raised.
+
+        :param item: The ID (name) or dict representing item to be patched.
+        :type item: Union[str, Dict[str, Any]]
+        :param partition_key: The partition key of the object to patch.
+        :type partition_key: Union[str, int, float, bool]
+        :param patch_operations: The list of patch operations to apply to the item.
+        :type patch_operations: List[Dict[str, Any]]
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the item after the patch operations went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
+            given id does not exist.
+        :rtype: dict[str, Any]
+        """
+        request_options = _build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        request_options["disableAutomaticIdGeneration"] = True
+        request_options["partitionKey"] = partition_key
+
+        item_link = self._get_document_link(item)
+        result = await self.client_connection.PatchItem(
+            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace_async
     async def delete_item(
         self,
         item: Union[str, Dict[str, Any]],
@@ -760,3 +804,26 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+
+    @distributed_trace
+    async def delete_all_items_by_partition_key(
+        self,
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any
+    ) -> None:
+        """Exposes an API to delete all items with a single partition key without the user having
+                 to explicitly call delete on each record in the partition key.
+
+        :param partition_key: Partition key for the items to be deleted.
+        :type partition_key: Any
+        :rtype: None
+        """
+        request_options = _build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
+                                                                  options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, None)

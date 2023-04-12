@@ -28,7 +28,6 @@ class _MaterializationSettings(RestTranslatableMixin):
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
-
         """_MaterializationSettings.
 
         :param schedule: Specifies the schedule details.
