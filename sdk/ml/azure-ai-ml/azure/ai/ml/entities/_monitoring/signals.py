@@ -264,11 +264,21 @@ class FeatureAttributionDriftSignal(ModelSignal):
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
     def _to_rest_object(self) -> RestFeatureAttributionDriftMonitoringSignal:
-        return RestFeatureAttributionDriftMonitoringSignal()
+        return RestFeatureAttributionDriftMonitoringSignal(
+            target_data=self.target_dataset.dataset._to_rest_object(),
+            baseline_data=self.baseline_dataset._to_rest_object(),
+            metric_threshold=self.metric_thresholds._to_rest_object(),
+            model_type=self.model_type,
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestFeatureAttributionDriftMonitoringSignal) -> "FeatureAttributionDriftSignal":
-        return cls()
+        return cls(
+            target_dataset=TargetDataset(dataset=MonitorInputData._from_rest_object(obj.target_data)),
+            baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
+            metric_thresholds=FeatureAttributionDriftSignal._from_rest_object(obj.metric_threshold),
+            model_type=obj.model_type.lower(),
+        )
 
 
 @experimental
@@ -292,7 +302,12 @@ class ModelPerformanceSignal(ModelSignal):
         self.data_segment = data_segment
 
     def _to_rest_object(self) -> RestModelPerformanceSignal:
-        return RestModelPerformanceSignal()
+        return RestModelPerformanceSignal(
+            target_data=self.target_dataset.dataset._to_rest_object(),
+            baseline_data=self.baseline_dataset._to_rest_object(),
+            metric_threshold=self.metric_thresholds._to_rest_object(),
+            model_type=self.model_type,
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestModelPerformanceSignal) -> "ModelPerformanceSignal":
