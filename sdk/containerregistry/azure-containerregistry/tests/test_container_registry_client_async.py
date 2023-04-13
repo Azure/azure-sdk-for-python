@@ -455,6 +455,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             last_updated_on = properties.last_updated_on
             assert last_udpated_on == last_updated_on
     
+    # Live only, as test proxy now cannot handle spaces correctly
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    @pytest.mark.live_test_only
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_oci_manifest_json(self, containerregistry_endpoint):
@@ -475,6 +478,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
 
+    # Live only, as test proxy now cannot handle spaces correctly
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    @pytest.mark.live_test_only
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_oci_manifest_json_with_tag(self, containerregistry_endpoint):
@@ -600,6 +606,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
 
+    # Live only, as test proxy now cannot handle spaces correctly
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    @pytest.mark.live_test_only
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_docker_manifest_json(self, containerregistry_endpoint):
@@ -622,6 +631,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
     
+    # Live only, as test proxy now cannot handle spaces correctly
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    @pytest.mark.live_test_only
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_docker_manifest_json_with_tag(self, containerregistry_endpoint):
