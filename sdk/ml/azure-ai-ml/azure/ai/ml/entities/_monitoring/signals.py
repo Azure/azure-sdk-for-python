@@ -397,12 +397,13 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         self.input_datasets = input_datasets
         self.metric_thresholds = metric_thresholds
         self.component_id = component_id
+        self.alert_enabled = alert_enabled
 
     def _to_rest_object(self) -> RestCustomMonitoringSignal:
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
-            input_assets={input_name: input_value._to_rest_object() for input_name, input_value in self.input_datasets.items()}
+            input_assets={input_name: input_value._to_rest_object() for input_name, input_value in self.input_datasets.items()},
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
