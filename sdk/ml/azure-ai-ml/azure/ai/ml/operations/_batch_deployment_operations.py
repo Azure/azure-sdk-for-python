@@ -72,16 +72,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
-    # @property
-    # def _02_2023_preview_client(self) -> ServiceClient022023Preview:
-    #     workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-    #     mfe_base_uri = _get_mfe_base_url_from_discovery_service(
-    #         workspace_operations, self._workspace_name, self._requests_pipeline
-    #     )
-    #     return ServiceClient022023Preview(
-    #             credential=self._credentials, base_url=mfe_base_uri, subscription_id=self._subscription_id
-    #         )
-
     @distributed_trace
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
@@ -279,7 +269,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """
         component = None
         if isinstance(deployment.component, PipelineComponent):
-            component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
+            deployment.component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
                 name=deployment.component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
@@ -287,15 +277,11 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 version=deployment.component.version,
                 **self._init_kwargs,
             )
-            deployment.component = component
         elif isinstance(deployment.component, str):
             component_id = orchestrators.get_asset_arm_id(
                 deployment.component, azureml_type=AzureMLResourceType.COMPONENT
             )
-            if not deployment.job_definition.name:
-                name, _ = parse_prefixed_name_version(deployment.job_definition.component)
-                deployment.job_definition.name = name
-            deployment.component_id = component_id
+            deployment.component = component_id
         elif isinstance(deployment.job_definition, str):
             job_component = PipelineComponent(source_job_id=deployment.job_definition)
             deployment.component = self._component_operations.create_or_update(

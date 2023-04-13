@@ -278,6 +278,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             provisioning_state=deployment.properties.provisioning_state,
         )
 
+        return deployment
 
 
     @classmethod

@@ -14,7 +14,6 @@ from azure.ai.ml._schema import(
     ArmStr,
     RegistryStr,
 )
-from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job.creation_context import CreationContextSchema
@@ -63,7 +62,7 @@ class BatchDeploymentSchema(DeploymentSchema):
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False)
 
-    job_definition = ArmStr(azureml_type=AzureMLResourceType.JOB),
+    job_definition = ArmStr(azureml_type=AzureMLResourceType.JOB)
     component = UnionField(
         [
             RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),

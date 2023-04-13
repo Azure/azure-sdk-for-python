@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional, Union
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import PipelineComponentBatchDeploymentSchema
 from azure.ai.ml.entities import BatchDeployment, PipelineComponent
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration, IdAssetReference, BatchDeploymentProperties, BatchDeployment as RestBatchDeployment
 
@@ -49,26 +49,39 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         self.settings = settings
 
     def _to_rest_object(self, location: str) -> "RestBatchDeployment": 
+        import debugpy
+        debugpy.connect(('localhost', 5678))
+        debugpy.breakpoint()
         if type(self.component) is PipelineComponent:
             id_asset_ref = IdAssetReference(
                 asset_id=self.component.id
             )
+
             batch_pipeline_config = BatchPipelineComponentDeploymentConfiguration(
                 settings=self.settings,
                 tags=self.component.tags,
                 description=self.component.description,
                 component_id=id_asset_ref
             )
-            return RestBatchDeployment(
-                location=location,
-                properties=BatchDeploymentProperties(deployment_configuration=batch_pipeline_config)
+        else:
+            id_asset_ref = IdAssetReference(
+                asset_id=self.component
             )
+            batch_pipeline_config = BatchPipelineComponentDeploymentConfiguration(
+                settings=self.settings,
+                component_id=id_asset_ref
+            )
+        return RestBatchDeployment(
+            location=location,
+            properties=BatchDeploymentProperties(deployment_configuration=batch_pipeline_config)
+        )
     @classmethod
     def _from_rest_object(cls, deployment: RestBatchDeployment):
         return PipelineComponentBatchDeployment(
             name = deployment.name,
-            component= deployment.properties.deployment_configuration.component_id.asset_id,
-            settings= deployment.properties.deployment_configuration.settings
+            component= deployment.properties.additional_properties['deploymentConfiguration']['componentId']['assetId'],
+            settings= deployment.properties.additional_properties['deploymentConfiguration']['settings'],
+            endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id)
         )
     def _to_dict(self) -> Dict:
         return PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
