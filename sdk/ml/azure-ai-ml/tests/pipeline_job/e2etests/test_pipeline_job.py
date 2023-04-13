@@ -79,6 +79,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
+    @pytest.mark.skip(reason="TODO (2349866): Registry sdk-test does not contain centraluseuap as a region")
     @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registries(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
@@ -1374,6 +1375,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
+    @pytest.mark.skip(reason="TODO (2349866): Registry sdk-test does not contain centraluseuap as a region")
     @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registry_model_as_input(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("name")}]
@@ -1794,7 +1796,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "automl/pipeline_with_instance_type.yml",
             "automl/pipeline_without_instance_type.yml",
             "automl/pipeline_with_instance_type_no_default.yml",
-            "parallel/pipeline_serverless_compute.yml",
+            # "parallel/pipeline_serverless_compute.yml", TODO (2349832): azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33 uses deprecated Python
             "spark/pipeline_serverless_compute.yml",
             "spark/node_serverless_compute_no_default.yml",
         ],
@@ -1878,6 +1880,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             },
         }
 
+    @pytest.mark.skip(reason="Need to create SingularityTestVC cluster.")
     def test_pipeline_job_singularity_short_name(self, client: MLClient) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_short_name.yml"
         pipeline_job = load_job(yaml_path)

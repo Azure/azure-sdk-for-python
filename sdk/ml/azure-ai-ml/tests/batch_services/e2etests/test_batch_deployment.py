@@ -72,6 +72,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
+    @pytest.mark.skip(reason="TODO (2349252): Scoring script not found in code configuration")
     def test_batch_deployment_dependency_label_resolution(
         self,
         client: MLClient,
@@ -135,6 +136,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
+    @pytest.mark.skip(reason="TODO (2349249): 'Environment Id' is not a valid ARM resource identifier")
     def test_batch_job_download(
         self,
         client: MLClient,
