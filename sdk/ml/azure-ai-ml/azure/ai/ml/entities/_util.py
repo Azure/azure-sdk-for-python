@@ -479,5 +479,5 @@ def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutp
     if source._data:
         target._data = copy.deepcopy(source._data)
     # copy pipeline component output's node output to subgraph builder
-    if source._node_output is not None:
-        target._node_output = source._node_output
+    if source._binding_output is not None:
+        target._binding_output = source._binding_output

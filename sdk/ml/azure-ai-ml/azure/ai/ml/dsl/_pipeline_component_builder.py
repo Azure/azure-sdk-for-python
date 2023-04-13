@@ -279,7 +279,7 @@ class PipelineComponentBuilder:
                 owner="pipeline",
                 description=self._args_description.get(key, None),
                 # store original node output to be able to trace back to inner node from a pipeline output builder.
-                node_output=value,
+                binding_output=value,
             )
             # copy node level output setting to pipeline output
             copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)

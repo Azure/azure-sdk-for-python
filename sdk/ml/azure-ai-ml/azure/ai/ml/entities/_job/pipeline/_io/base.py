@@ -367,7 +367,7 @@ class NodeInput(InputOutputBase):
             if isinstance(data, NodeOutput):
                 if isinstance(data._owner, Pipeline):
                     # for input from subgraph's output, trace back to inner node
-                    return _resolve_data_owner(data._node_output)
+                    return _resolve_data_owner(data._binding_output)
                 # for input from another node's output, return the node
                 return _resolve_data_owner(data._owner)
             return None
@@ -385,7 +385,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         *,
         data: Optional[Union[Output, str]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
-        node_output: Optional["NodeOutput"] = None,
+        binding_output: Optional["NodeOutput"] = None,
         **kwargs,
     ):
         """Initialize an Output of a component.
@@ -403,8 +403,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :type mode: str
         :param owner: The owner component of the output, used to calculate binding.
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
-        :param node_output: The node output bound to pipeline output, only available for pipeline.
-        :type node_output: azure.ai.ml.entities.NodeOutput
+        :param binding_output: The node output bound to pipeline output, only available for pipeline.
+        :type binding_output: azure.ai.ml.entities.NodeOutput
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
@@ -428,7 +428,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
         self._is_control = meta.is_control if meta is not None else None
         # store original node output to be able to trace back to inner node from a pipeline output builder.
-        self._node_output = node_output
+        self._binding_output = binding_output
 
     @property
     def is_control(self) -> str:
@@ -578,7 +578,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             data=copy.copy(self._data),
             owner=self._owner,
             meta=self._meta,
-            node_output=self._node_output,
+            binding_output=self._binding_output,
         )
 
 
