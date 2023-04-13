@@ -134,10 +134,12 @@ class ModelPerformanceSignalSchema(ModelSignalSchema):
         return ModelPerformanceSignal(**data)
 
 
-class CustomMonitoringSignalSchema(ModelSignalSchema):
+class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.CUSTOM, required=True)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
-    metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThreshold))
+    metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
+    input_datasets = fields.Dict(keys=fields.Str(), values=NestedField(MonitorInputDataSchema))
+    alert_notification = fields.Bool()
 
     @post_load
     def make(self, data, **kwargs):
