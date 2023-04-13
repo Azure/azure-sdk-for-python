@@ -2,7 +2,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridNamespaceClient
 from azure.eventgrid.models import *
-
+from azure.core.exceptions import HttpResponseError
 
 # Create a client
 EG_KEY = os.environ.get("EG_KEY")
@@ -17,5 +17,5 @@ client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 try:
     receive_response = client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
     print(receive_response)
-except Exception as e:
-    print(e)
+except HttpResponseError:
+    raise

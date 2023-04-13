@@ -2,7 +2,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridNamespaceClient
 from azure.eventgrid.models import *
-
+from azure.core.exceptions import HttpResponseError
 
 # Create a client
 EG_KEY = os.environ.get("EG_KEY")
@@ -18,5 +18,5 @@ try:
     lock_tokens = LockTokenInput(lock_tokens=["token"])
     ack = client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=lock_tokens)
     print(ack)
-except Exception as e:
-    print(e)
+except HttpResponseError:
+    raise

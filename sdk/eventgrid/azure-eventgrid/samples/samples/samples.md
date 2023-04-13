@@ -6,6 +6,7 @@
     from azure.core.credentials import AzureKeyCredential
     from azure.eventgrid.models import *
     from azure.core.messaging import CloudEvent
+    from azure.core.exceptions import HttpResponseError
 
 
     EG_KEY = os.environ.get("EG_KEY")

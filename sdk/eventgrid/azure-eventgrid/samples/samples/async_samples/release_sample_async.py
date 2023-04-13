@@ -3,7 +3,7 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridNamespaceClient
 from azure.eventgrid.models import *
-
+from azure.core.exceptions import HttpResponseError
 
 # Create a client
 EG_KEY = os.environ.get("EG_KEY")
@@ -19,8 +19,8 @@ async def run():
         tokens = [LockToken({'lockToken': 'token'})]
         release = await client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, tokens=tokens)
         print(release)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 
 
 asyncio.run(run())

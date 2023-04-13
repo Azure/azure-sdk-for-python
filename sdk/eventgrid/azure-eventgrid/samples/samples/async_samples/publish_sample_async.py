@@ -4,7 +4,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridNamespaceClient
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
-
+from azure.core.exceptions import HttpResponseError
 
 
 # Create a client
@@ -27,8 +27,8 @@ async def run():
     try:
         list_of_cloud_events = [cloud_event, cloud_event]
         await client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 
 
 asyncio.run(run())
