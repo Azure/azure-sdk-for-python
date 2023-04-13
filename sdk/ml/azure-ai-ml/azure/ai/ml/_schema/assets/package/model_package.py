@@ -35,4 +35,4 @@ class ModelPackageSchema(PathAwareSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import ModelPackage
 
-        return ModelPackage(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        return ModelPackage(**data)
