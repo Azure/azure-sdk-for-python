@@ -54,6 +54,7 @@ from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -98,6 +99,13 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(
             AzureMLResourceType.ENVIRONMENT,
             lambda x: isinstance(x, EnvironmentOperations),
+        )
+
+    @property
+    def _workspace_operations(self) -> WorkspaceOperations:
+        return self._all_operations.get_operation(
+            AzureMLResourceType.WORKSPACE,
+            lambda x: isinstance(x, WorkspaceOperations),
         )
 
     @property
@@ -299,10 +307,11 @@ class ComponentOperations(_ScopeDependentOperations):
             # manually here
             rest_component_resource.properties.name = name or component.name
             rest_component_resource.properties.version = version
+            workspace = self._workspace_operations.get()
             remote_validation_result = self._deployment_operation.begin_validate(
                 resource_group_name=self._resource_group_name,
                 deployment_name=self._workspace_name,
-                parameters=component._to_rest_object_for_validation(location="centraluseuap"),
+                parameters=component._build_rest_object_for_remote_validation(location=workspace.location),
                 **self._init_args,
             )
             check = remote_validation_result.result()

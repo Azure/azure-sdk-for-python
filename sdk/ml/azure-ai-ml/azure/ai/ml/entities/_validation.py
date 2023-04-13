@@ -20,76 +20,14 @@ from marshmallow import Schema, ValidationError
 from strictyaml.ruamel.scanner import ScannerError
 
 from .._schema import PathAwareSchema
+from .._vendor.azure_resources.models import Deployment, DeploymentProperties
 from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
 from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
+from ._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
-
-
-class PreflightResource(msrest.serialization.Model):
-    """Specified resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "api_version": {"key": "apiversion", "type": "str"},
-        "properties": {"key": "properties", "type": "object"},
-    }
-
-    def __init__(self, **kwargs):
-        super(PreflightResource, self).__init__(**kwargs)
-        self.name = kwargs.get("name", None)
-        self.type = kwargs.get("type", None)
-        self.location = kwargs.get("location", None)
-        self.properties = kwargs.get("properties", None)
-        self.api_version = kwargs.get("api_version", None)
-
-
-class ValidationTemplateRequest(msrest.serialization.Model):
-    """Export resource group template request parameters.
-
-    :param resources: The rest objects to be validated.
-    :type resources: list[_models.Resource]
-    :param options: The export template options. A CSV-formatted list containing zero or more of
-     the following: 'IncludeParameterDefaultValue', 'IncludeComments',
-     'SkipResourceNameParameterization', 'SkipAllParameterization'.
-    :type options: str
-    """
-
-    _attribute_map = {
-        "resources": {"key": "resources", "type": "[PreflightResource]"},
-        "content_version": {"key": "contentVersion", "type": "str"},
-        "parameters": {"key": "parameters", "type": "object"},
-        "_schema": {
-            "key": "$schema",
-            "type": "str",
-            "default": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-        },
-    }
-
-    def __init__(self, **kwargs):
-        super(ValidationTemplateRequest, self).__init__(**kwargs)
-        self._schema = kwargs.get("_schema", None)
-        self.content_version = kwargs.get("content_version", None)
-        self.parameters = kwargs.get("parameters", None)
-        self.resources = kwargs.get("resources", None)
 
 
 class Diagnostic(object):
@@ -717,4 +655,105 @@ class _YamlLocationResolver:
         return (
             f"{source_path.resolve().absolute()}#line {loaded_yaml.start_line}",
             None if attrs else loaded_yaml.value,
+        )
+
+
+class PreflightResource(msrest.serialization.Model):
+    """Specified resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "api_version": {"key": "apiversion", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
+    }
+
+    def __init__(self, **kwargs):
+        super(PreflightResource, self).__init__(**kwargs)
+        self.name = kwargs.get("name", None)
+        self.type = kwargs.get("type", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.api_version = kwargs.get("api_version", None)
+
+
+class ValidationTemplateRequest(msrest.serialization.Model):
+    """Export resource group template request parameters.
+
+    :param resources: The rest objects to be validated.
+    :type resources: list[_models.Resource]
+    :param options: The export template options. A CSV-formatted list containing zero or more of
+     the following: 'IncludeParameterDefaultValue', 'IncludeComments',
+     'SkipResourceNameParameterization', 'SkipAllParameterization'.
+    :type options: str
+    """
+
+    _attribute_map = {
+        "resources": {"key": "resources", "type": "[PreflightResource]"},
+        "content_version": {"key": "contentVersion", "type": "str"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "_schema": {
+            "key": "$schema",
+            "type": "str",
+            "default": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        },
+    }
+
+    def __init__(self, **kwargs):
+        super(ValidationTemplateRequest, self).__init__(**kwargs)
+        self._schema = kwargs.get("_schema", None)
+        self.content_version = kwargs.get("content_version", None)
+        self.parameters = kwargs.get("parameters", None)
+        self.resources = kwargs.get("resources", None)
+
+
+class RemoteValidatableMixin(RestTranslatableMixin):
+    @classmethod
+    def _get_resource_type(cls) -> str:
+        """Return resource type to be used in remote validation.
+
+        Should be overridden by subclass.
+        """
+        raise NotImplementedError()
+
+    def _to_preflight_resource(self, location: str) -> PreflightResource:
+        """Return the preflight resource to be used in remote validation.
+
+        :param location: The location of the resource.
+        :type location: str
+        """
+        return PreflightResource(
+            type=self._get_resource_type(),
+            name="xmwang_test/train_test_3/0",
+            location=location,
+            properties=self._to_rest_object().properties,
+            api_version="2023-03-01-preview",
+        )
+
+    def _build_rest_object_for_remote_validation(self, location: str) -> Deployment:
+        return Deployment(
+            properties=DeploymentProperties(
+                mode="Incremental",
+                template=ValidationTemplateRequest(
+                    _schema="https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    content_version="1.0.0.0",
+                    parameters={},
+                    resources=[self._to_preflight_resource(location=location)],
+                ),
+            )
         )

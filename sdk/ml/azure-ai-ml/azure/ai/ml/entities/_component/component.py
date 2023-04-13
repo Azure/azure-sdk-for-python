@@ -19,7 +19,6 @@ from ..._schema import PathAwareSchema
 from ..._schema.component import ComponentSchema
 from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from ..._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
-from ..._vendor.azure_resources.models import Deployment, DeploymentProperties
 from ...constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
@@ -33,15 +32,10 @@ from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets import Code
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
-from ...entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import (
-    MutableValidationResult,
-    PreflightResource,
-    SchemaValidatableMixin,
-    ValidationTemplateRequest,
-)
+from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .code import ComponentIgnoreFile
 
@@ -54,7 +48,7 @@ COMPONENT_PLACEHOLDER = "COMPONENT_PLACEHOLDER"
 
 class Component(
     Asset,
-    RestTranslatableMixin,
+    RemoteValidatableMixin,
     TelemetryMixin,
     YamlTranslatableMixin,
     SchemaValidatableMixin,
@@ -438,6 +432,10 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
+    @classmethod
+    def _get_resource_type(cls) -> str:
+        return "Microsoft.MachineLearningServices/workspaces/components/versions"
+
     def _validate(self, raise_error=False) -> MutableValidationResult:
         origin_name = self.name
         # skip name validation for anonymous component as ANONYMOUS_COMPONENT_NAME will be used in component creation
@@ -447,26 +445,6 @@ class Component(
             return super()._validate(raise_error)
         finally:
             self.name = origin_name
-
-    def _to_rest_object_for_validation(self, location):
-        resource = PreflightResource(
-            type="Microsoft.MachineLearningServices/workspaces/components/versions",
-            name="xmwang_test/train_test_3/0",
-            location=location,
-            properties=self._to_rest_object().properties,
-            api_version="2023-03-01-preview",
-        )
-        return Deployment(
-            properties=DeploymentProperties(
-                mode="Incremental",
-                template=ValidationTemplateRequest(
-                    _schema="https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    content_version="1.0.0.0",
-                    parameters={},
-                    resources=[resource],
-                ),
-            )
-        )
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
