@@ -791,6 +791,7 @@ class TestComponent(AzureRecordedTestCase):
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
+    pytest.mark.skip(reason="TODO (2349963): Message: User/tenant/subscription is not allowed to access registry sdk-test")
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",
@@ -1000,6 +1001,7 @@ class TestComponent(AzureRecordedTestCase):
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
 
+    @pytest.mark.skip(reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world")
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
         component_path = "./tests/test_configs/components/component_ipp.yml"
