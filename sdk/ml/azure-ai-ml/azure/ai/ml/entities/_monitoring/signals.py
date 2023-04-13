@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Union
+from typing import Dict, List, Union
 
 from typing_extensions import Literal
 
