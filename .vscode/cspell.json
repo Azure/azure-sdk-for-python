@@ -585,7 +585,10 @@
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
-        "udpated"
+        "udpated",
+        "cncf",
+        "oras",
+        "rootfs"
       ]
     },
     {
