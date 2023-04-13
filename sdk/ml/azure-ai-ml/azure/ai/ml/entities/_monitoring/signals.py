@@ -402,12 +402,8 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
-            input_assets={
-                "target_dataset": self.target_dataset.dataset._to_rest_object(),
-                "baseline_dataset": self.baseline_dataset._to_rest_object(),
-            },
+            input_assets={input_name: input_value._to_rest_object() for input_name, input_value in self.input_datasets.items()}
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period) if self.target_dataset.lookback_period else None,
         )
 
     @classmethod
