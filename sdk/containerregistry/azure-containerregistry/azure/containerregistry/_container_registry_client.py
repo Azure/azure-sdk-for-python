@@ -891,7 +891,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if isinstance(manifest, MutableMapping):
                 data = BytesIO(_serialize_manifest(manifest))
             else:
-                data = manifest
+                data: IO[bytes] = manifest
             tag_or_digest = tag
             if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
