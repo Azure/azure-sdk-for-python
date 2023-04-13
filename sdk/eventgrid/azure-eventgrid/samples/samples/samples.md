@@ -17,7 +17,7 @@
 
 # Async Create Client
 ```python
-    from azure.messaging.eventgrid.aio import eventgridClient
+    from azure.messaging.eventgrid.aio import EventGridNamespaceClient
 
     # Create a client
     client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
