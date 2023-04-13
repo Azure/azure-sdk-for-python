@@ -204,40 +204,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             value = value.lower()
         self._name = value
 
-    def get_predecessors(self) -> List["BaseNode"]:
-        """Return list of predecessors for current node.
-
-        Note: Only non-control flow nodes in @pipeline are supported.
-        Node: For sub-graph node, we will trace back to inner node and return.
-        Example:
-            @pipeline
-            def sub_pipeline():
-                inner_node = component_func()
-                return inner_node.outputs
-            @pipeline
-            def root_pipeline():
-                pipeline_node = sub_pipeline()
-                node1 = component_func(input1=pipeline_node.outputs.output1)
-                node2 = component_func(
-                    input1=pipeline_node.outputs.output1
-                    input2=node1.outputs.output1
-                )
-                # pipeline_node.get_predecessors() will return []
-                # node1.get_predecessors() will return [inner_node]
-                # node2.get_predecessors() will return [inner_node, node1]
-        """
-        from azure.ai.ml.entities._job.pipeline._io import NodeInput
-
-        # use {id: instance} dict to avoid nodes with component and parameters being duplicated
-        predecessors = {}
-        for _, input_value in self.inputs.items():
-            if not isinstance(input_value, NodeInput):
-                continue
-            owner = input_value._get_data_owner()
-            if owner is not None:
-                predecessors[owner._instance_id] = owner
-        return list(predecessors.values())
-
     @classmethod
     def _get_supported_inputs_types(cls):
         # supported input types for node input

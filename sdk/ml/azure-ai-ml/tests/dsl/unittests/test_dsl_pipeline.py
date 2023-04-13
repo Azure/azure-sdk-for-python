@@ -53,7 +53,7 @@ from azure.ai.ml.exceptions import (
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
 
-from .._util import _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, get_predecessors
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
@@ -3235,9 +3235,9 @@ class TestDSLPipeline:
         def pipeline1():
             node1 = component_func()
             node1.name = "node1"
-            assert node1.get_predecessors() == []
+            assert get_predecessors(node1) == []
             node2 = component_func(input1=node1.outputs.output1, input2=node1.outputs.output2)
-            assert ["node1"] == [n.name for n in node2.get_predecessors()]
+            assert ["node1"] == [n.name for n in get_predecessors(node2)]
             return node1.outputs
 
         pipeline1()
@@ -3247,14 +3247,14 @@ class TestDSLPipeline:
         def pipeline2():
             node1 = component_func()
             node1.name = "node1"
-            assert node1.get_predecessors() == []
+            assert get_predecessors(node1) == []
 
             node2 = component_func()
             node2.name = "node2"
-            assert node2.get_predecessors() == []
+            assert get_predecessors(node2) == []
 
             node2 = component_func(input1=node1.outputs.output1, input2=node2.outputs.output2)
-            assert ["node1", "node2"] == [n.name for n in node2.get_predecessors()]
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node2)]
             return node2.outputs
 
         pipeline2()
@@ -3264,7 +3264,7 @@ class TestDSLPipeline:
         def pipeline3():
             sub1 = pipeline1()
             node3 = component_func(input1=sub1.outputs.output1, input2=sub1.outputs.output2)
-            assert ["node1"] == [n.name for n in node3.get_predecessors()]
+            assert ["node1"] == [n.name for n in get_predecessors(node3)]
 
         pipeline3()
 
@@ -3274,7 +3274,7 @@ class TestDSLPipeline:
             sub1 = pipeline1()
             sub2 = pipeline2()
             node3 = component_func(input1=sub1.outputs.output1, input2=sub2.outputs.output2)
-            assert ["node1", "node2"] == [n.name for n in node3.get_predecessors()]
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node3)]
 
         pipeline4()
 
@@ -3282,7 +3282,7 @@ class TestDSLPipeline:
         @dsl.pipeline()
         def sub_pipeline_1(input1: Input, input2: Input):
             node1 = component_func(input1=input1, input2=input2)
-            assert ["outer1", "outer2"] == [n.name for n in node1.get_predecessors()]
+            assert ["outer1", "outer2"] == [n.name for n in get_predecessors(node1)]
 
         @dsl.pipeline()
         def pipeline5():
@@ -3298,7 +3298,7 @@ class TestDSLPipeline:
         @dsl.pipeline()
         def sub_pipeline_2(input1: Input, input2: Input):
             node1 = component_func(input1=input1, input2=input2)
-            assert ["outer1"] == [n.name for n in node1.get_predecessors()]
+            assert ["outer1"] == [n.name for n in get_predecessors(node1)]
 
         @dsl.pipeline()
         def pipeline6():
@@ -3312,7 +3312,7 @@ class TestDSLPipeline:
         @dsl.pipeline()
         def sub_pipeline_3(input1: Input, input2: Input):
             node1 = component_func(input1=input1, input2=input2)
-            assert [] == [n.name for n in node1.get_predecessors()]
+            assert [] == [n.name for n in get_predecessors(node1)]
 
         @dsl.pipeline()
         def pipeline7():
@@ -3324,7 +3324,7 @@ class TestDSLPipeline:
         @dsl.pipeline()
         def sub_pipeline_4(input1: Input, input2: Input):
             node1 = component_func(input1=input1, input2=input2)
-            assert ["node1", "node2"] == [n.name for n in node1.get_predecessors()]
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node1)]
 
         @dsl.pipeline()
         def pipeline8():

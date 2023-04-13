@@ -6,6 +6,8 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
+
+from dsl._util import get_predecessors
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
@@ -2097,6 +2099,6 @@ class TestPipelineJobEntity:
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
         pipeline: PipelineJob = load_job(source=test_path)
         # get_predecessors is not supported for YAML job
-        assert pipeline.jobs["hello_world_component_1"].get_predecessors() == []
-        assert pipeline.jobs["hello_world_component_2"].get_predecessors() == []
-        assert pipeline.jobs["merge_component_outputs"].get_predecessors() == []
+        assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
+        assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
+        assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []
