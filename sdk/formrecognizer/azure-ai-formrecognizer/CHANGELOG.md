@@ -1,5 +1,15 @@
 # Release History
 
+## 3.3.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 3.3.0b1 (2023-04-13)
 
 This version of the client library defaults to the service API version `2023-02-28-preview`.
