@@ -10,14 +10,12 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AssetContainerTypeFeedRename(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     WORKSPACE = "Workspace"
     FEED = "Feed"
     REGISTRY = "Registry"
 
 
 class BatchendpointsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -25,7 +23,6 @@ class BatchendpointsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta
 
 
 class DatasetsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -33,7 +30,6 @@ class DatasetsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
 
 
 class DataStoreAnnotationsDataStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     AZURE_BLOB = "AzureBlob"
     AZURE_FILE = "AzureFile"
     GLUSTER_FS = "GlusterFs"
@@ -48,7 +44,6 @@ class DataStoreAnnotationsDataStoreType(with_metaclass(CaseInsensitiveEnumMeta, 
 
 
 class DatastoresUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -56,7 +51,6 @@ class DatastoresUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, st
 
 
 class EntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -64,7 +58,6 @@ class EntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 
 class EnvironmentsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -72,7 +65,6 @@ class EnvironmentsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, st
 
 
 class ExperimentStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     FAILED = "Failed"
@@ -82,7 +74,6 @@ class ExperimentStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 
 class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     STRING = "String"
     INTEGER = "Integer"
     LONG = "Long"
@@ -94,7 +85,6 @@ class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 
 class FeatureentitiesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -102,7 +92,6 @@ class FeatureentitiesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta,
 
 
 class FeaturesetsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -110,14 +99,12 @@ class FeaturesetsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str
 
 
 class FeatureSourceDtoType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     MLTABLE = "mltable"
     CSV = "csv"
     PARQUET = "parquet"
 
 
 class FeaturestoreentitiesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -125,27 +112,23 @@ class FeaturestoreentitiesVersionedEntityKind(with_metaclass(CaseInsensitiveEnum
 
 
 class GenericTriggerAnnotationsEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class GenericTriggerAnnotationsManagedType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     CUSTOMER = "Customer"
     SYSTEM = "System"
 
 
 class GenericTriggerAnnotationsProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     COMPLETED = "Completed"
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
 
 class GenericTriggerAnnotationsScheduleActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     CREATE_JOB = "CreateJob"
     INVOKE_ENDPOINT = "InvokeEndpoint"
     IMPORT_DATA = "ImportData"
@@ -153,19 +136,16 @@ class GenericTriggerAnnotationsScheduleActionType(with_metaclass(CaseInsensitive
 
 
 class GenericTriggerAnnotationsScheduleMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     CRON = "Cron"
     RECURRENCE = "Recurrence"
 
 
 class GenericTriggerAnnotationsTriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     SCHEDULE = "Schedule"
     ONCE = "Once"
 
 
 class GenerictriggersUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -173,14 +153,12 @@ class GenerictriggersUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMet
 
 
 class IndependentPipelineAnnotationsEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class IndependentPipelineAnnotationsLastRunStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     FAILED = "Failed"
@@ -192,7 +170,6 @@ class IndependentPipelineAnnotationsLastRunStatusCode(with_metaclass(CaseInsensi
 
 
 class IndependentpipelinesUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -200,7 +177,6 @@ class IndependentpipelinesUnversionedEntityKind(with_metaclass(CaseInsensitiveEn
 
 
 class IndexColumnDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     STRING = "String"
     INTEGER = "Integer"
     LONG = "Long"
@@ -212,7 +188,6 @@ class IndexColumnDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 
 class IndexColumnDtoType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     STRING = "string"
     INTEGER = "integer"
     LONG = "long"
@@ -224,13 +199,11 @@ class IndexColumnDtoType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 
 class IndexEntitiesRequestOrderDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ASC = "Asc"
     DESC = "Desc"
 
 
 class MaterializationSettingsMaterializationStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     NONE = "None"
     ONLINE = "Online"
     OFFLINE = "Offline"
@@ -238,7 +211,6 @@ class MaterializationSettingsMaterializationStoreType(with_metaclass(CaseInsensi
 
 
 class ModelsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -246,27 +218,23 @@ class ModelsVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
 
 
 class ModuleAnnotationsAmlModuleEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class ModuleAnnotationsEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class ModuleAnnotationsModuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     USER = "User"
     BUILTIN = "Builtin"
 
 
 class ModulesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -274,14 +242,12 @@ class ModulesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, En
 
 
 class NotificationSettingEmailOnItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     JOB_COMPLETED = "JobCompleted"
     JOB_FAILED = "JobFailed"
     JOB_CANCELLED = "JobCancelled"
 
 
 class OnlineendpointsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -289,14 +255,12 @@ class OnlineendpointsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMet
 
 
 class PipelineAnnotationsEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class PipelineAnnotationsLastRunStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     FAILED = "Failed"
@@ -308,14 +272,12 @@ class PipelineAnnotationsLastRunStatusCode(with_metaclass(CaseInsensitiveEnumMet
 
 
 class PipelineDraftAnnotationsEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class PipelinedraftsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -323,14 +285,12 @@ class PipelinedraftsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta
 
 
 class PipelineRunAnnotationsEntityStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     DISABLED = "Disabled"
 
 
 class PipelinerunsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -338,7 +298,6 @@ class PipelinerunsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, 
 
 
 class PipelinesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -346,7 +305,6 @@ class PipelinesVersionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, 
 
 
 class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     MONTH = "Month"
     WEEK = "Week"
     DAY = "Day"
@@ -355,7 +313,6 @@ class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 
 class RecurrenceScheduleWeekDaysItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
     WEDNESDAY = "Wednesday"
@@ -366,7 +323,6 @@ class RecurrenceScheduleWeekDaysItem(with_metaclass(CaseInsensitiveEnumMeta, str
 
 
 class RecurrenceTriggerFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     MONTH = "Month"
     WEEK = "Week"
     DAY = "Day"
@@ -375,7 +331,6 @@ class RecurrenceTriggerFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, En
 
 
 class RunsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INVALID = "Invalid"
     LINEAGE_ROOT = "LineageRoot"
     VERSIONED = "Versioned"
@@ -383,7 +338,6 @@ class RunsUnversionedEntityKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
 
 
 class StructuredInterfaceParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
     INT = "Int"
     DOUBLE = "Double"
     BOOL = "Bool"

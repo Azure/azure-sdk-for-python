@@ -59,6 +59,7 @@ def build_get_entites_cross_region_request(
         **kwargs
     )
 
+
 # fmt: on
 class IndexEntitiesOperations(object):
     """IndexEntitiesOperations operations.

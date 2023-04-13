@@ -805,7 +805,6 @@ def enable_private_preview_schema_features():
             enable_internal_components_in_pipeline(force=True)
 
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
-
         _reload_related_classes()
         yield
     _reload_related_classes()

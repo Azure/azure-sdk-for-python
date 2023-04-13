@@ -81,9 +81,7 @@ class MaterializationSettings(RestTranslatableMixin):
             if obj.schedule
             else None,
             notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
-            resource=MaterializationComputeResource._from_rest_object(  # pylint: disable=protected-access
-                obj.resource
-            ),
+            resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,
             offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE,
             online_enabled=obj.store_type == MaterializationStoreType.ONLINE,

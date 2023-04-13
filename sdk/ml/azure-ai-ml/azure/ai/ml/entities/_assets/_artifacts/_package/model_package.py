@@ -80,7 +80,6 @@ class PackageInputPathVersion:
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
     ):
-
         self.input_path_type = input_path_type
         self.resource_name = resource_name
         self.resource_version = resource_version
