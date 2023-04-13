@@ -2,3 +2,5 @@
 ../azure-core
 -e ../../../tools/azure-devtools
 opentelemetry-sdk<2.0.0,>=1.0.0
+opentelemetry-instrumentation-requests
+requests

@@ -36,12 +36,14 @@ class OutboundRule:
         self.name = name
         self.type = kwargs.pop("type", None)
         self.category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
+        self.status = "Inactive"
 
     @classmethod
     def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
         if isinstance(rest_obj, RestFqdnOutboundRule):
             rule = FqdnDestination(destination=rest_obj.destination, name=name)
             rule.category = rest_obj.category
+            rule.status = rest_obj.status
             return rule
         if isinstance(rest_obj, RestPrivateEndpointOutboundRule):
             rule = PrivateEndpointDestination(
@@ -51,6 +53,7 @@ class OutboundRule:
                 name=name,
             )
             rule.category = rest_obj.category
+            rule.status = rest_obj.status
             return rule
         if isinstance(rest_obj, RestServiceTagOutboundRule):
             rule = ServiceTagDestination(
@@ -60,6 +63,7 @@ class OutboundRule:
                 name=name,
             )
             rule.category = rest_obj.category
+            rule.status = rest_obj.status
             return rule
 
 
@@ -79,6 +83,7 @@ class FqdnDestination(OutboundRule):
             "type": OutboundRuleType.FQDN,
             "category": self.category,
             "destination": self.destination,
+            "status": self.status,
         }
 
 
@@ -120,6 +125,7 @@ class PrivateEndpointDestination(OutboundRule):
                 "subresource_target": self.subresource_target,
                 "spark_enabled": self.spark_enabled,
             },
+            "status": self.status,
         }
 
 
@@ -159,6 +165,7 @@ class ServiceTagDestination(OutboundRule):
                 "protocol": self.protocol,
                 "port_ranges": self.port_ranges,
             },
+            "status": self.status,
         }
 
 
@@ -169,10 +176,14 @@ class ManagedNetwork:
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
         network_id: Optional[str] = None,
+        **kwargs,
     ) -> None:
         self.isolation_mode = isolation_mode
         self.network_id = network_id
         self.outbound_rules = outbound_rules
+        status = kwargs.pop("status", False)
+        if status:
+            self.status = status
 
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
@@ -196,5 +207,8 @@ class ManagedNetwork:
             else {}
         )
         return ManagedNetwork(
-            isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules, network_id=obj.network_id
+            isolation_mode=obj.isolation_mode,
+            outbound_rules=from_rest_outbound_rules,
+            network_id=obj.network_id,
+            status=obj.status,
         )
