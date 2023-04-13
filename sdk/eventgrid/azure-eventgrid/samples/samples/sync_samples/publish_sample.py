@@ -1,6 +1,6 @@
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.messaging.eventgrid import EventGridMessagingClient
+from azure.messaging.eventgrid import EventGridNamespaceClient
 from azure.messaging.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 
@@ -12,7 +12,7 @@ EG_ENDPOINT = os.environ.get("EG_ENDPOINT")
 TOPIC_NAME = os.environ.get("TOPIC_NAME")
 ES_NAME = os.environ.get("ES_NAME")
 
-client = EventGridMessagingClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 
 
 # Publish a CloudEvent

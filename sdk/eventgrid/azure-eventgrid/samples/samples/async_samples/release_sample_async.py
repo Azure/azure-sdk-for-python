@@ -1,7 +1,7 @@
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
-from azure.messaging.eventgrid.aio import EventGridMessagingClient
+from azure.messaging.eventgrid.aio import EventGridNamespaceClient
 from azure.messaging.eventgrid.models import *
 
 
@@ -11,7 +11,7 @@ EG_ENDPOINT = os.environ.get("EG_ENDPOINT")
 TOPIC_NAME = os.environ.get("TOPIC_NAME")
 ES_NAME = os.environ.get("ES_NAME")
 
-client = EventGridMessagingClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 
 async def run():
     # Release a LockToken

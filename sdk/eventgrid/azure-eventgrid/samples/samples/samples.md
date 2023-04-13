@@ -20,15 +20,15 @@
     from azure.messaging.eventgrid.aio import eventgridClient
 
     # Create a client
-    client = EventGridMessagingClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+    client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 ```
 
 # Sync Create Client
 ```python
-    from azure.messaging.eventgrid import EventGridMessagingClient
+    from azure.messaging.eventgrid import EventGridNamespaceClient
 
     # Create a client
-    client = EventGridMessagingClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+    client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 ```
 
 # Publish Samples
