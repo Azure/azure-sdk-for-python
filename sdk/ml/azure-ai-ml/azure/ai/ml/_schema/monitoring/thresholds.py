@@ -104,7 +104,7 @@ class ModelPerformanceMetricThresholdSchema(MetricThresholdSchema):
         return ModelPerformanceMetricThreshold(**data)
 
 
-class CustomMonitoringMetricThreshold(MetricThresholdSchema):
+class CustomMonitoringMetricThresholdSchema(MetricThresholdSchema):
     metric_name = fields.Str()
 
     @post_load

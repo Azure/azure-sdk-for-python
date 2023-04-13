@@ -384,23 +384,18 @@ class ModelPerformanceSignal(ModelSignal):
 
 
 @experimental
-class CustomMonitoringSignal(MonitoringSignal):
+class CustomMonitoringSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
+        input_datasets: Dict[str, MonitorInputData],
         metric_thresholds: List[CustomMonitoringMetricThreshold] = None,
         component_id: str = None,
         alert_enabled: bool = True,
     ):
-        super().__init__(
-            target_dataset=target_dataset,
-            baseline_dataset=baseline_dataset,
-            metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled,
-        )
         self.type = MonitorSignalType.CUSTOM
+        self.input_datasets = input_datasets
+        self.metric_thresholds = metric_thresholds
         self.component_id = component_id
 
     def _to_rest_object(self) -> RestCustomMonitoringSignal:
