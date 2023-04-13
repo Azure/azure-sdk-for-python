@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Mar 2023 01:29:22 GMT",
+        "Date": "Tue, 28 Mar 2023 06:20:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14939.4 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14990.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Mar 2023 01:29:22 GMT",
+        "Date": "Tue, 28 Mar 2023 06:20:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14939.4 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "11378176-014c-48b4-958c-2867d20a8e7b",
+        "client-request-id": "ab846ac0-bfdf-4448-9b2f-540132c41a57",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "11378176-014c-48b4-958c-2867d20a8e7b",
+        "client-request-id": "ab846ac0-bfdf-4448-9b2f-540132c41a57",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Mar 2023 01:29:22 GMT",
+        "Date": "Tue, 28 Mar 2023 06:20:12 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14939.4 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14990.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -219,7 +219,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-sql/4.0.0b9 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-sql/4.0.0b10 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -228,15 +228,15 @@
         "Content-Encoding": "gzip",
         "Content-Length": "12",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Mar 2023 01:29:22 GMT",
+        "Date": "Tue, 28 Mar 2023 06:20:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d9b68bde-ad63-4db9-ae65-5c46d956b063",
+        "x-ms-correlation-request-id": "9f29f43b-586e-4c00-9766-983dfa4fb839",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-routing-request-id": "NORTHCENTRALUS:20230324T012922Z:d9b68bde-ad63-4db9-ae65-5c46d956b063"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230328T062013Z:9f29f43b-586e-4c00-9766-983dfa4fb839"
       },
       "ResponseBody": {
         "value": []

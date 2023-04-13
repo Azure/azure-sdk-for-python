@@ -10,6 +10,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
+
 # Entity representation of a federated learning silo.
 # Used by Federated Learning DSL nodes as inputs for creating
 # FL subgraphs in pipelines.

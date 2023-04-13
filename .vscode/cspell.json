@@ -91,6 +91,11 @@
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -484,6 +489,20 @@
       ]
     },
     {
+      "filename": "sdk/translation/azure-ai-translation-text/**",
+      "words": [
+        "akhtabar",
+        "deserializers",
+        "Esto",
+        "hudha",
+        "mosca",
+        "mros",
+        "NOACTION",
+        "prueba",
+        "wordomatic"
+      ]
+    },
+    {
       "filename": "sdk/textanalytics/azure-ai-textanalytics/**",
       "words": [
         "Forndexter",
@@ -636,7 +655,9 @@
         "mymodel",
         "heif",
         "racwd",
-        "rrggbb"
+        "rrggbb",
+        "UPCA",
+        "UPCE"
       ]
     },
     {
