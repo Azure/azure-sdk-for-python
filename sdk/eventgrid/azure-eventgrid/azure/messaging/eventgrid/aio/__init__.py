@@ -16,7 +16,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "EventGridClient",
+   
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 

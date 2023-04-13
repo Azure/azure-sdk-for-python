@@ -105,6 +105,7 @@ class EventGridEvent(InternalEventGridEvent):
         :param event: The json string that should be converted into a EventGridEvent. This can also be
          a storage QueueMessage, eventhub's EventData or ServiceBusMessage
         :type event: object
+        :return: The deserialized EventGridEvent object.
         :rtype: EventGridEvent
         :raises ValueError: If the provided JSON is invalid.
         """
