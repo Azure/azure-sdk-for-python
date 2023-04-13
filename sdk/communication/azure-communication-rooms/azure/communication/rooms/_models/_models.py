@@ -18,8 +18,8 @@ class RoomParticipant():
 
     All required parameters must be populated in order to send to Azure.
 
-    :vartype communication_identifier:
-    ~azure.communication.rooms._shared.models.CommunicationIdentifier
+    :ivar communication_identifier: Communication Identifier.
+    :vartype communication_identifier:~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
     :vartype role: Union[str, ParticipantRole]
     """
@@ -28,7 +28,6 @@ class RoomParticipant():
         :keyword communication_identifier: Raw ID representation of the communication identifier. Please refer to the
          following document for additional information on Raw ID. :code:`<br>`
          https://learn.microsoft.com/azure/communication-services/concepts/identifiers?pivots=programming-language-rest#raw-id-representation.
-        :paramtype raw_id: str
         :keyword role: The role of a room participant. The default value is Attendee. Known
          values are: "Presenter", "Attendee", and "Consumer".
         :paramtype role: str or ~azure.communication.rooms.models.ParticipantRole
