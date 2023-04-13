@@ -34,7 +34,7 @@ class RoomParticipant():
         """
         super().__init__(**kwargs)
         self.communication_identifier = communication_identifier
-        self.role = role
+        self.role = role or ParticipantRole.ATTENDEE
 
 
     def __eq__(self, other):
