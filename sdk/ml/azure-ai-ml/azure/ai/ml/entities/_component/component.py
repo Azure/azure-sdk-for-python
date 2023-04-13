@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
+import uuid
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Tuple, Union
 
 from marshmallow import INCLUDE
 
@@ -435,6 +436,13 @@ class Component(
     @classmethod
     def _get_resource_type(cls) -> str:
         return "Microsoft.MachineLearningServices/workspaces/components/versions"
+
+    def _get_resource_name_version(self) -> Tuple[str, str]:
+        if not self.version and not self._auto_increment_version:
+            version = str(uuid.uuid4())
+        else:
+            version = self.version
+        return self.name or ANONYMOUS_COMPONENT_NAME, version
 
     def _validate(self, raise_error=False) -> MutableValidationResult:
         origin_name = self.name

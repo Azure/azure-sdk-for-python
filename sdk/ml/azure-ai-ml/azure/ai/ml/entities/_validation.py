@@ -20,7 +20,7 @@ from marshmallow import Schema, ValidationError
 from strictyaml.ruamel.scanner import ScannerError
 
 from .._schema import PathAwareSchema
-from .._vendor.azure_resources.models import Deployment, DeploymentProperties
+from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
 from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
 from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
@@ -178,7 +178,7 @@ class MutableValidationResult(ValidationResult):
 
     def merge_with(
         self,
-        target: ValidationResult,
+        target: typing.Union[ValidationResult, DeploymentValidateResult],
         field_name: Optional[str] = None,
         condition_skip: Optional[typing.Callable] = None,
         overwrite: bool = False,
@@ -189,8 +189,8 @@ class MutableValidationResult(ValidationResult):
         If field_name is not None, then yaml_path in the other validation result will be updated accordingly.
         * => field_name, jobs.job_a => field_name.jobs.job_a e.g.. If None, then no update.
 
-        :param target: Validation result to merge.
-        :type target: ValidationResult
+        :param target: Validation result to merge. Also accept DeploymentValidateResult.
+        :type target: Union[ValidationResult, DeploymentValidateResult]
         :param field_name: The base field name for the target to merge.
         :type field_name: str
         :param condition_skip: A function to determine whether to skip the merge of a diagnostic in the target.
@@ -201,6 +201,9 @@ class MutableValidationResult(ValidationResult):
         :return: The current validation result.
         :rtype: MutableValidationResult
         """
+        if isinstance(target, DeploymentValidateResult):
+            target = _ValidationResultBuilder.from_rest_object(target)
+            return self.merge_with(target, field_name, condition_skip, overwrite)
         for source_diagnostics, target_diagnostics in [
             (target._errors, self._errors),
             (target._warnings, self._warnings),
@@ -482,18 +485,19 @@ class _ValidationResultBuilder:
         return MutableValidationResult()
 
     @classmethod
-    def from_rest_object(cls, rest_obj: dict):
+    def from_rest_object(cls, rest_obj: DeploymentValidateResult):
         """Create a validation result from a rest object. Note that the created validation result does not have
         target_obj so should only be used for merging.
         """
-        if "error" not in rest_obj or "details" not in rest_obj["error"]:
+        if not rest_obj.error or not rest_obj.error.details:
             return cls.success()
         result = MutableValidationResult(target_obj=None)
-        for detail in rest_obj["error"]["details"]:
+        details: List[ErrorResponse] = rest_obj.error.details
+        for detail in details:
             result.append_error(
-                message=detail["message"],
-                yaml_path=detail["target"].replace("/", "."),
-                error_code=detail["innerError"]["code"],
+                message=detail.message,
+                yaml_path=detail.target.replace("/", "."),
+                error_code=detail.code,  # will always be UserError for now, not sure if innerError can be passed back
             )
         return result
 
@@ -731,21 +735,29 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """
         raise NotImplementedError()
 
-    def _to_preflight_resource(self, location: str) -> PreflightResource:
+    def _get_resource_name_version(self) -> typing.Tuple[str, str]:
+        """Return resource name and version to be used in remote validation.
+
+        Should be overridden by subclass.
+        """
+        raise NotImplementedError()
+
+    def _to_preflight_resource(self, location: str, workspace_name: str) -> PreflightResource:
         """Return the preflight resource to be used in remote validation.
 
         :param location: The location of the resource.
         :type location: str
         """
+        name, version = self._get_resource_name_version()
         return PreflightResource(
             type=self._get_resource_type(),
-            name="xmwang_test/train_test_3/0",
+            name=f"{workspace_name}/{name}/{version}",
             location=location,
             properties=self._to_rest_object().properties,
             api_version="2023-03-01-preview",
         )
 
-    def _build_rest_object_for_remote_validation(self, location: str) -> Deployment:
+    def _build_rest_object_for_remote_validation(self, location: str, workspace_name: str) -> Deployment:
         return Deployment(
             properties=DeploymentProperties(
                 mode="Incremental",
@@ -753,7 +765,7 @@ class RemoteValidatableMixin(RestTranslatableMixin):
                     _schema="https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     content_version="1.0.0.0",
                     parameters={},
-                    resources=[self._to_preflight_resource(location=location)],
+                    resources=[self._to_preflight_resource(location=location, workspace_name=workspace_name)],
                 ),
             )
         )

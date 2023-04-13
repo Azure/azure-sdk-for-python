@@ -19,7 +19,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
     "enable_environment_id_arm_expansion",
 )
 @pytest.mark.pipeline_test
-class TestComponent(AzureRecordedTestCase):
+class TestComponentValidate(AzureRecordedTestCase):
     def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
         component: CommandComponent = load_component(source=component_path)
@@ -32,21 +32,16 @@ class TestComponent(AzureRecordedTestCase):
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
+    @pytest.mark.skip(reason="Enable this test after server-side is ready.")
     def test_component_remote_validate_basic(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
-        # we must use a valid component yaml here, or validation error will be raise in load_component
+        # we must use a valid component yaml here, or validation error will be raised in load_component
         component: CommandComponent = load_component(source=component_path)
         component.name = "DPv2_register_flow_test"
         validation_result = client.components.validate(component)
         assert validation_result.passed is False
         assert validation_result._to_dict() == {
             "errors": [
-                {
-                    "location": f"{Path(component_path).absolute()}#line 21",
-                    "message": "at #/inputs/component_in_path/type; '[ path, uri_folder ]' has incorrect type: Array. The expected type(s) is [ string ]. ",
-                    "path": "inputs.component_in_path.type",
-                    "value": "uri_folder",
-                },
                 {
                     "location": f"{Path(component_path).absolute()}#line 3",
                     "message": 'at #/name; "DPv2_register_flow_test" does not match the expected pattern. Component name should only contain lower letter, number, underscore and start with a lower letter.',

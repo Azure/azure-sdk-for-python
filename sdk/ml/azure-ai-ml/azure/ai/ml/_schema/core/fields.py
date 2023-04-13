@@ -848,7 +848,7 @@ class PythonFuncNameStr(fields.Str):
             raise ValidationError(
                 f"{self._get_field_name()} name should only contain "
                 "lower letter, number, underscore and start with a lower letter. "
-                "Currently got {name}."
+                f"Currently got {name}."
             )
         return name
 

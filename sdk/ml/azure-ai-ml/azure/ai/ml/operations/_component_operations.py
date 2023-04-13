@@ -32,6 +32,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
@@ -44,7 +45,6 @@ from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarge
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
-from .._vendor.azure_resources.operations import DeploymentsOperations
 from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
@@ -74,14 +74,13 @@ class ComponentOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
+        preflight_operation: Optional[DeploymentsOperations],
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
-        self._deployment_operation = DeploymentsOperations(
-            service_client._client, service_client._config, service_client._serialize, service_client._deserialize
-        )
+        self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
         self._init_args = kwargs
@@ -247,47 +246,12 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._validate(component, raise_on_failure=raise_on_failure)
 
-    def _build_rest_component(self, component, version, is_anonymous, try_get_next_version=False, skip_validation=True):
-        # Update component when the input is a component function
-        if isinstance(component, types.FunctionType):
-            component = _refine_component(component)
-        if version is not None:
-            component.version = version
-        # In non-registry scenario, if component does not have version, no need to get next version here.
-        # As Component property version has setter that updates `_auto_increment_version` in-place, then
-        # a component will get a version after its creation, and it will always use this version in its
-        # future creation operations, which breaks version auto increment mechanism.
-        if try_get_next_version and self._registry_name and not component.version and component._auto_increment_version:
-            component.version = _get_next_version_from_container(
-                name=component.name,
-                container_operation=self._container_operation,
-                resource_group_name=self._operation_scope.resource_group_name,
-                workspace_name=self._workspace_name,
-                registry_name=self._registry_name,
-                **self._init_args,
-            )
-
-        if not component._is_anonymous:
-            component._is_anonymous = is_anonymous
-
-        if not skip_validation:
-            self._validate(component, raise_on_failure=True)
-
-        # Create all dependent resources
-        # Only upload dependencies if component is NOT IPP
-        if not component._intellectual_property:
-            self._resolve_arm_id_or_upload_dependencies(component)
-
-        name, version = component._get_rest_name_version()
-        rest_component_resource = component._to_rest_object()
-        return name, version, rest_component_resource
-
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
-        skip_remote_validate: bool = False,
+        skip_remote_validation: bool = False,
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
@@ -299,23 +263,18 @@ class ComponentOperations(_ScopeDependentOperations):
         # local validation
         result = component._validate(raise_error=raise_on_failure)
         # remote validation
-        if not skip_remote_validate:
-            name, version, rest_component_resource = self._build_rest_component(
-                component, version=None, is_anonymous=False
-            )
-            # current validate API doesn't accept name and version as parameters, so set them to rest object
-            # manually here
-            rest_component_resource.properties.name = name or component.name
-            rest_component_resource.properties.version = version
+        if not skip_remote_validation:
             workspace = self._workspace_operations.get()
-            remote_validation_result = self._deployment_operation.begin_validate(
+            remote_validation_result = self._preflight_operation.begin_validate(
                 resource_group_name=self._resource_group_name,
                 deployment_name=self._workspace_name,
-                parameters=component._build_rest_object_for_remote_validation(location=workspace.location),
+                parameters=component._build_rest_object_for_remote_validation(
+                    location=workspace.location,
+                    workspace_name=self._workspace_name,
+                ),
                 **self._init_args,
             )
-            check = remote_validation_result.result()
-            print(type(check))
+            result.merge_with(remote_validation_result.result(), overwrite=True)
         # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
         return result.try_raise(
@@ -355,13 +314,38 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
         """
-        name, version, rest_component_resource = self._build_rest_component(
-            component=component,
-            version=version,
-            is_anonymous=kwargs.pop("is_anonymous", False),
-            try_get_next_version=True,
-            skip_validation=skip_validation,
-        )
+        # Update component when the input is a component function
+        if isinstance(component, types.FunctionType):
+            component = _refine_component(component)
+        if version is not None:
+            component.version = version
+        # In non-registry scenario, if component does not have version, no need to get next version here.
+        # As Component property version has setter that updates `_auto_increment_version` in-place, then
+        # a component will get a version after its creation, and it will always use this version in its
+        # future creation operations, which breaks version auto increment mechanism.
+        if self._registry_name and not component.version and component._auto_increment_version:
+            component.version = _get_next_version_from_container(
+                name=component.name,
+                container_operation=self._container_operation,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                registry_name=self._registry_name,
+                **self._init_args,
+            )
+
+        if not component._is_anonymous:
+            component._is_anonymous = kwargs.pop("is_anonymous", False)
+
+        if not skip_validation:
+            self._validate(component, raise_on_failure=True, skip_remote_validation=True)
+
+        # Create all dependent resources
+        # Only upload dependencies if component is NOT IPP
+        if not component._intellectual_property:
+            self._resolve_arm_id_or_upload_dependencies(component)
+
+        name, version = component._get_rest_name_version()
+        rest_component_resource = component._to_rest_object()
         result = None
         try:
             if self._registry_name:

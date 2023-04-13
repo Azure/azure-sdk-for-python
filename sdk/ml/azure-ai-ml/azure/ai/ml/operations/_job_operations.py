@@ -92,7 +92,6 @@ from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -602,6 +601,8 @@ class JobOperations(_ScopeDependentOperations):
                 )
             return self._resolve_azureml_id(Job._from_rest_object(result))
         except Exception as ex:  # pylint: disable=broad-except
+            from marshmallow.exceptions import ValidationError as SchemaValidationError
+
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
