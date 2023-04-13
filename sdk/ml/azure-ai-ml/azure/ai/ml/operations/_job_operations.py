@@ -115,7 +115,6 @@ from ._operation_orchestrator import (
     is_singularity_short_name_for_resource,
 )
 from ._run_operations import RunOperations
-from ._virtual_cluster_operations import VirtualClusterOperations
 
 try:
     pass
@@ -180,10 +179,17 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @property
-    def _virtual_cluster_operations(self) -> VirtualClusterOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
-        )
+    def _virtual_cluster_operations(self):
+        try:
+            from ._virtual_cluster_operations import VirtualClusterOperations
+
+            return self._all_operations.get_operation(
+                AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
+            )
+        except ModuleNotFoundError:
+            return self._all_operations.get_operation(
+                AzureMLResourceType.VIRTUALCLUSTER, lambda x: type(x).__name__ == "VirtualClusterOperations"
+            )
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
