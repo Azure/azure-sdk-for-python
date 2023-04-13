@@ -20,15 +20,20 @@ from azure.ai.ml import (
     dsl,
     load_component,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import ANONYMOUS_COMPONENT_NAME, AssetTypes, InputOutputModes
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_singularity_id_for_resource
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_COMPONENT_NAME,
+    AssetTypes,
+    InputOutputModes,
+    SINGULARITY_ID_FORMAT,
+)
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Data, PipelineJob
+from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from devtools_testutils import AzureRecordedTestCase, is_live
@@ -3134,3 +3139,125 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "type": "command",
             },
         }
+
+    def test_pipeline_singularity_strong_type_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        instance_type = "Singularity.ND40rs_v2"
+
+        @dsl.pipeline
+        def pipeline_func():
+            # basic job_tier + Low priority
+            basic_low_node = component_func()
+            basic_low_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
+            # standard job_tier + Medium priority
+            standard_medium_node = component_func()
+            standard_medium_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
+            # premium job_tier + High priority
+            premium_high_node = component_func()
+            premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+            # properties
+            node_with_properties = component_func()
+            properties = {"Singularity": {"imageVersion": "", "interactive": False}}
+            node_with_properties.resources = JobResourceConfiguration(
+                instance_count=2, instance_type=instance_type, properties=properties
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+        # this pipeline job is expected to fail as Singularity is mocked, focus on REST object assertion
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        # basic job_tier + Low priority
+        basic_low_node_dict = rest_obj.properties.jobs["basic_low_node"]
+        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
+        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # standard job_tier + Medium priority
+        standard_medium_node_dict = rest_obj.properties.jobs["standard_medium_node"]
+        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
+        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # premium job_tier + High priority
+        premium_high_node_dict = rest_obj.properties.jobs["premium_high_node"]
+        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
+        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # properties
+        node_with_properties_dict = rest_obj.properties.jobs["node_with_properties"]
+        assert node_with_properties_dict["resources"] == {
+            "instance_count": 2,
+            "instance_type": instance_type,
+            # the mapping Singularity => AISuperComputer is expected
+            "properties": {"AISuperComputer": {"imageVersion": "", "interactive": False}},
+        }
+
+    def test_pipeline_singularity_property_bag_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # property bag is supported, with lower priority than strong type
+        vc_config = {
+            "instance_type": "Singularity.ND40rs_v2",
+            "instance_count": 2,
+            "properties": {
+                "AISuperComputer": {
+                    "interactive": False,
+                    "imageVersion": "pytorch",
+                    "slaTier": "Premium",
+                    "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                }
+            },
+        }
+
+        @dsl.pipeline
+        def pipeline_func():
+            node = component_func()
+            node.resources = vc_config
+            node.compute = mock_singularity_arm_id
+
+        pipeline_job = pipeline_func()
+        # as Singularity is mocked and expected to fail validation, skip it for submission;
+        # then manually cancel it as other tests.
+        created_pipeline_job = client.create_or_update(pipeline_job, skip_validation=True)
+        client.jobs.begin_cancel(created_pipeline_job.name).result()
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["computeId"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["node"]["resources"] == vc_config
+
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_singularity_live(self, client: MLClient, singularity_vc):
+        # full name and short name are syntax sugar, SDK will resolve it to Singularity ARM id before request,
+        # this needs client to get & search available VCs - that's why we place this test in end-to-end test -
+        # and compute values in returned REST object should all be ARM id.
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # generate Singularity ARM id, full name and short name from VC
+        arm_id = SINGULARITY_ID_FORMAT.format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        @dsl.pipeline
+        def pipeline_func():
+            node_with_id = component_func()
+            node_with_id.compute = arm_id
+            node_with_full_name = component_func()
+            node_with_full_name.compute = full_name
+            node_with_short_name = component_func()
+            node_with_short_name.compute = short_name
+
+        pipeline_job = pipeline_func()
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        for node_name in ["node_with_id", "node_with_full_name", "node_with_short_name"]:
+            node_compute = rest_obj.properties.jobs[node_name]["computeId"]
+            assert is_singularity_id_for_resource(node_compute)
+            assert node_compute.endswith(singularity_vc.name)

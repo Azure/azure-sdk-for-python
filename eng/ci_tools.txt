@@ -13,7 +13,6 @@ pathlib2==2.3.5
 doc-warden==0.7.2
 # we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
 coverage==4.5.4
-codecov==2.1.0
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
 pip==20.3.3
