@@ -1,0 +1,127 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/00000/validate?api-version=2020-06-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1478",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "template": {
+            "resources": [
+              {
+                "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+                "name": "xmwang_test/train_test_3/0",
+                "location": "centraluseuap",
+                "apiversion": "2023-03-01-preview",
+                "properties": {
+                  "description": "This is the basic command component",
+                  "properties": {},
+                  "tags": {
+                    "tag": "tagvalue",
+                    "owner": "sdkteam"
+                  },
+                  "isAnonymous": false,
+                  "isArchived": false,
+                  "componentSpec": {
+                    "command": "echo Hello World \u0026 echo $[[${{inputs.component_in_number}}]] \u0026 echo ${{inputs.component_in_path}} \u0026 echo ${{outputs.component_out_path}} \u003E ${{outputs.component_out_path}}/component_in_number",
+                    "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+                    "name": "DPv2_register_flow_test",
+                    "description": "This is the basic command component",
+                    "tags": {
+                      "tag": "tagvalue",
+                      "owner": "sdkteam"
+                    },
+                    "version": "0.0.1",
+                    "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
+                    "display_name": "CommandComponentBasic",
+                    "is_deterministic": true,
+                    "inputs": {
+                      "component_in_number": {
+                        "type": "number",
+                        "optional": true,
+                        "default": "10.99",
+                        "description": "A number"
+                      },
+                      "component_in_path": {
+                        "type": "uri_folder",
+                        "description": "A path"
+                      }
+                    },
+                    "outputs": {
+                      "component_out_path": {
+                        "type": "uri_folder"
+                      }
+                    },
+                    "type": "command",
+                    "_source": "YAML.COMPONENT"
+                  }
+                }
+              }
+            ],
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#"
+          },
+          "mode": "Incremental"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 13 Apr 2023 07:15:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "ad924967-6058-49ca-b62b-d1d5b430cf9a",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "JAPANEAST:20230413T071545Z:ad924967-6058-49ca-b62b-d1d5b430cf9a"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/00000",
+        "name": "00000",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "6020552074094898986",
+          "parameters": {},
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "0001-01-01T00:00:00Z",
+          "duration": "PT0S",
+          "correlationId": "ad924967-6058-49ca-b62b-d1d5b430cf9a",
+          "providers": [
+            {
+              "namespace": "Microsoft.MachineLearningServices",
+              "resourceTypes": [
+                {
+                  "resourceType": "workspaces/components/versions",
+                  "locations": [
+                    "centraluseuap"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [],
+          "validatedResources": [
+            {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/xmwang_test/components/train_test_3/versions/0"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

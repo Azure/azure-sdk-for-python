@@ -13,6 +13,7 @@ from os import PathLike
 from pathlib import Path
 from typing import List, Optional
 
+import msrest
 import pydash
 import strictyaml
 from marshmallow import Schema, ValidationError
@@ -25,6 +26,70 @@ from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_e
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
+
+
+class PreflightResource(msrest.serialization.Model):
+    """Specified resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "api_version": {"key": "apiversion", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
+    }
+
+    def __init__(self, **kwargs):
+        super(PreflightResource, self).__init__(**kwargs)
+        self.name = kwargs.get("name", None)
+        self.type = kwargs.get("type", None)
+        self.location = kwargs.get("location", None)
+        self.properties = kwargs.get("properties", None)
+        self.api_version = kwargs.get("api_version", None)
+
+
+class ValidationTemplateRequest(msrest.serialization.Model):
+    """Export resource group template request parameters.
+
+    :param resources: The rest objects to be validated.
+    :type resources: list[_models.Resource]
+    :param options: The export template options. A CSV-formatted list containing zero or more of
+     the following: 'IncludeParameterDefaultValue', 'IncludeComments',
+     'SkipResourceNameParameterization', 'SkipAllParameterization'.
+    :type options: str
+    """
+
+    _attribute_map = {
+        "resources": {"key": "resources", "type": "[PreflightResource]"},
+        "content_version": {"key": "contentVersion", "type": "str"},
+        "parameters": {"key": "parameters", "type": "object"},
+        "_schema": {
+            "key": "$schema",
+            "type": "str",
+            "default": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        },
+    }
+
+    def __init__(self, **kwargs):
+        super(ValidationTemplateRequest, self).__init__(**kwargs)
+        self._schema = kwargs.get("_schema", None)
+        self.content_version = kwargs.get("content_version", None)
+        self.parameters = kwargs.get("parameters", None)
+        self.resources = kwargs.get("resources", None)
 
 
 class Diagnostic(object):
@@ -175,9 +240,10 @@ class MutableValidationResult(ValidationResult):
 
     def merge_with(
         self,
-        target: "MutableValidationResult",
+        target: ValidationResult,
         field_name: Optional[str] = None,
         condition_skip: Optional[typing.Callable] = None,
+        overwrite: bool = False,
     ):
         """Merge errors & warnings in another validation results into current one.
 
@@ -186,16 +252,27 @@ class MutableValidationResult(ValidationResult):
         * => field_name, jobs.job_a => field_name.jobs.job_a e.g.. If None, then no update.
 
         :param target: Validation result to merge.
-        :type target: MutableValidationResult
+        :type target: ValidationResult
         :param field_name: The base field name for the target to merge.
         :type field_name: str
         :param condition_skip: A function to determine whether to skip the merge of a diagnostic in the target.
         :type condition_skip: typing.Callable
+        :param overwrite: Whether to overwrite the current validation result. If False, all diagnostics will be kept;
+            if True, current diagnostics with the same yaml_path will be dropped.
+        :type overwrite: bool
         :return: The current validation result.
         :rtype: MutableValidationResult
         """
-        for target_attr in ["_errors", "_warnings"]:
-            for diagnostic in getattr(target, target_attr):
+        for source_diagnostics, target_diagnostics in [
+            (target._errors, self._errors),
+            (target._warnings, self._warnings),
+        ]:
+            if overwrite:
+                keys_to_remove = set(map(lambda x: x.yaml_path, source_diagnostics))
+                target_diagnostics[:] = [
+                    diagnostic for diagnostic in target_diagnostics if diagnostic.yaml_path not in keys_to_remove
+                ]
+            for diagnostic in source_diagnostics:
                 if condition_skip and condition_skip(diagnostic):
                     continue
                 new_diagnostic = copy.deepcopy(diagnostic)
@@ -204,7 +281,7 @@ class MutableValidationResult(ValidationResult):
                         new_diagnostic.yaml_path = field_name
                     else:
                         new_diagnostic.yaml_path = field_name + "." + new_diagnostic.yaml_path
-                getattr(self, target_attr).append(new_diagnostic)
+                target_diagnostics.append(new_diagnostic)
         return self
 
     def try_raise(
@@ -465,6 +542,22 @@ class _ValidationResultBuilder:
     def success(cls):
         """Create a validation result with success status."""
         return MutableValidationResult()
+
+    @classmethod
+    def from_rest_object(cls, rest_obj: dict):
+        """Create a validation result from a rest object. Note that the created validation result does not have
+        target_obj so should only be used for merging.
+        """
+        if "error" not in rest_obj or "details" not in rest_obj["error"]:
+            return cls.success()
+        result = MutableValidationResult(target_obj=None)
+        for detail in rest_obj["error"]["details"]:
+            result.append_error(
+                message=detail["message"],
+                yaml_path=detail["target"].replace("/", "."),
+                error_code=detail["innerError"]["code"],
+            )
+        return result
 
     @classmethod
     def from_single_message(
