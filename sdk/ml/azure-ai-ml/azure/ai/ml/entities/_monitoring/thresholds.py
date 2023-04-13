@@ -10,7 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class MetricThreshold:
-    def __init__(self, threshold: float = None):
+    def __init__(self, *, threshold: float = None):
         self.applicable_feature_type = None
         self.metric_name = None
         self.threshold = threshold
@@ -20,6 +20,7 @@ class MetricThreshold:
 class DataDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
+        *,
         applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
         metric_name: Literal[
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
@@ -39,6 +40,7 @@ class DataDriftMetricThreshold(MetricThreshold):
 class PredictionDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
+        *,
         applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
         metric_name: Literal[
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
@@ -58,6 +60,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 class DataQualityMetricThreshold(MetricThreshold):
     def __init__(
         self,
+        *,
         applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
         metric_name: Literal[
             MonitorMetricName.NULL_VALUE_RATE,
@@ -73,7 +76,7 @@ class DataQualityMetricThreshold(MetricThreshold):
 
 @experimental
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
-    def __init__(self, threshold: float = None):
+    def __init__(self, *, threshold: float = None):
         super().__init__(threshold=threshold)
         self.applicable_feature_type = MonitorFeatureType.ALL_FEATURE_TYPES
         self.metric_name = MonitorMetricName.NORMALIZED_DISCOUNTED_CUMULATIVE_GAIN
@@ -83,6 +86,7 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 class ModelPerformanceMetricThreshold(MetricThreshold):
     def __init__(
         self,
+        *,
         metric_name: Literal[
             MonitorMetricName.ACCURACY,
             MonitorMetricName.PRECISION,
@@ -103,6 +107,7 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
 class CustomMonitoringMetricThreshold(MetricThreshold):
     def __init__(
         self,
+        *,
         metric_name: str,
         threshold: float = None,
     ):
