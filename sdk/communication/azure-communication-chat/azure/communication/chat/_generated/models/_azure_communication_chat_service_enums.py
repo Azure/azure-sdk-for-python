@@ -34,7 +34,16 @@ class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnu
     GCCH = "gcch"
 
 
-class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identifier kind, for example 'communicationUser' or 'phoneNumber'."""
+
+    UNKNOWN = "unknown"
+    COMMUNICATION_USER = "communicationUser"
+    PHONE_NUMBER = "phoneNumber"
+    MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Retention Policy Type."""
 
     THREAD_CREATION_DATE = "threadCreationDate"

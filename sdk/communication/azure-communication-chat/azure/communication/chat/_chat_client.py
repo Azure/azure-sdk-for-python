@@ -130,7 +130,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         :keyword thread_participants: Optional. Participants to be added to the thread.
         :paramtype thread_participants: List[~azure.communication.chat.ChatParticipant]
         :keyword retention_policy: Data retention policy for auto deletion.
-        :paramtype retention_policy: ~azure.communication.chat.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
         :keyword idempotency_token: Optional. If specified, the client directs that the request is
          repeatable; that is, the client can make the request multiple times with the same
          Idempotency_Token and get back an appropriate response without the server executing the

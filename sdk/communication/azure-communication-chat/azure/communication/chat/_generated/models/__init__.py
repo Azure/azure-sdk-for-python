@@ -17,6 +17,7 @@ from ._models_py3 import ChatMessageReadReceiptsCollection
 from ._models_py3 import ChatMessagesCollection
 from ._models_py3 import ChatParticipant
 from ._models_py3 import ChatParticipantsCollection
+from ._models_py3 import ChatRetentionPolicy
 from ._models_py3 import ChatThreadItem
 from ._models_py3 import ChatThreadProperties
 from ._models_py3 import ChatThreadsItemCollection
@@ -27,7 +28,6 @@ from ._models_py3 import CreateChatThreadRequest
 from ._models_py3 import CreateChatThreadResult
 from ._models_py3 import MicrosoftTeamsUserIdentifierModel
 from ._models_py3 import PhoneNumberIdentifierModel
-from ._models_py3 import RetentionPolicy
 from ._models_py3 import SendChatMessageRequest
 from ._models_py3 import SendChatMessageResult
 from ._models_py3 import SendReadReceiptRequest
@@ -39,7 +39,8 @@ from ._models_py3 import UpdateChatThreadRequest
 from ._azure_communication_chat_service_enums import AttachmentType
 from ._azure_communication_chat_service_enums import ChatMessageType
 from ._azure_communication_chat_service_enums import CommunicationCloudEnvironmentModel
-from ._azure_communication_chat_service_enums import PolicyType
+from ._azure_communication_chat_service_enums import CommunicationIdentifierModelKind
+from ._azure_communication_chat_service_enums import Kind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -56,6 +57,7 @@ __all__ = [
     "ChatMessagesCollection",
     "ChatParticipant",
     "ChatParticipantsCollection",
+    "ChatRetentionPolicy",
     "ChatThreadItem",
     "ChatThreadProperties",
     "ChatThreadsItemCollection",
@@ -66,7 +68,6 @@ __all__ = [
     "CreateChatThreadResult",
     "MicrosoftTeamsUserIdentifierModel",
     "PhoneNumberIdentifierModel",
-    "RetentionPolicy",
     "SendChatMessageRequest",
     "SendChatMessageResult",
     "SendReadReceiptRequest",
@@ -77,7 +78,8 @@ __all__ = [
     "AttachmentType",
     "ChatMessageType",
     "CommunicationCloudEnvironmentModel",
-    "PolicyType",
+    "CommunicationIdentifierModelKind",
+    "Kind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

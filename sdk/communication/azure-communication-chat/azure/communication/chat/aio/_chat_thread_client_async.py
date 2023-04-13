@@ -27,7 +27,7 @@ from .._generated.models import (
     SendChatMessageResult,
     ChatMessageType,
     ChatError,
-    RetentionPolicy
+    ChatRetentionPolicy
 )
 from .._models import (
     ChatParticipant,

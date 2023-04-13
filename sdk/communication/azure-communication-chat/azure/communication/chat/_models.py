@@ -204,7 +204,7 @@ class ChatThreadProperties(object):
     :ivar created_by: the chat thread owner.
     :vartype created_by: CommunicationIdentifier
     :ivar retention_policy: Data retention policy for auto deletion.
-    :vartype retention_policy: ~azure.communication.chat.models.RetentionPolicy
+    :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy
     """
 
     # pylint:disable=protected-access

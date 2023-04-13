@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+from io import IOBase
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
@@ -178,7 +179,7 @@ class ChatOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(create_chat_thread_request, (IO, bytes)):
+        if isinstance(create_chat_thread_request, (IOBase, bytes)):
             _content = create_chat_thread_request
         else:
             _json = self._serialize.body(create_chat_thread_request, "CreateChatThreadRequest")

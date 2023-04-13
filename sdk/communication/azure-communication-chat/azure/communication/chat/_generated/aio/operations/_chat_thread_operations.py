@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+from io import IOBase
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
@@ -286,7 +287,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(send_read_receipt_request, (IO, bytes)):
+        if isinstance(send_read_receipt_request, (IOBase, bytes)):
             _content = send_read_receipt_request
         else:
             _json = self._serialize.body(send_read_receipt_request, "SendReadReceiptRequest")
@@ -425,7 +426,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(send_chat_message_request, (IO, bytes)):
+        if isinstance(send_chat_message_request, (IOBase, bytes)):
             _content = send_chat_message_request
         else:
             _json = self._serialize.body(send_chat_message_request, "SendChatMessageRequest")
@@ -774,7 +775,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/merge-patch+json"
         _json = None
         _content = None
-        if isinstance(update_chat_message_request, (IO, bytes)):
+        if isinstance(update_chat_message_request, (IOBase, bytes)):
             _content = update_chat_message_request
         else:
             _json = self._serialize.body(update_chat_message_request, "UpdateChatMessageRequest")
@@ -1109,7 +1110,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(participant_communication_identifier, (IO, bytes)):
+        if isinstance(participant_communication_identifier, (IOBase, bytes)):
             _content = participant_communication_identifier
         else:
             _json = self._serialize.body(participant_communication_identifier, "CommunicationIdentifierModel")
@@ -1253,7 +1254,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(add_chat_participants_request, (IO, bytes)):
+        if isinstance(add_chat_participants_request, (IOBase, bytes)):
             _content = add_chat_participants_request
         else:
             _json = self._serialize.body(add_chat_participants_request, "AddChatParticipantsRequest")
@@ -1397,7 +1398,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/merge-patch+json"
         _json = None
         _content = None
-        if isinstance(update_chat_thread_request, (IO, bytes)):
+        if isinstance(update_chat_thread_request, (IOBase, bytes)):
             _content = update_chat_thread_request
         else:
             _json = self._serialize.body(update_chat_thread_request, "UpdateChatThreadRequest")
@@ -1615,7 +1616,7 @@ class ChatThreadOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(send_typing_notification_request, (IO, bytes)):
+        if isinstance(send_typing_notification_request, (IOBase, bytes)):
             _content = send_typing_notification_request
         else:
             if send_typing_notification_request is not None:
