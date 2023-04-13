@@ -150,7 +150,6 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = "https://master.api.azureml-test.ms/mferp/managementfrontend/" # will be removed after 4/12
         self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
