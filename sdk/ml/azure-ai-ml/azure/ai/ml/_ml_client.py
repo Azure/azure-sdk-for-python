@@ -261,7 +261,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient122022Preview(
+        self._rp_service_client = ServiceClient042023Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,

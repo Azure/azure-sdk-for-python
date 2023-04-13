@@ -6,8 +6,8 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -42,7 +42,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -177,7 +177,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict) -> LROPoller:
         """Delete a workspace.
 
         :param name: Name of the workspace
@@ -189,7 +189,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        return super().begin_delete(name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(name, delete_dependent_resources=delete_dependent_resources, force_to_purge=force_to_purge, **kwargs)
 
     @distributed_trace
     @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
