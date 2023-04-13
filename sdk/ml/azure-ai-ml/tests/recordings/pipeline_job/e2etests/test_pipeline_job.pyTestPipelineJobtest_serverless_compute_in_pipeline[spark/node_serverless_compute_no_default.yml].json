@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions?api-version=2023-04-01\u0026hash=d34e16ae30a8d74e4f0033367587d48cd57334e04a416f95e87e5a2b180d2dd2\u0026hashVersion=202208",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions?api-version=2023-04-01\u0026hash=047aff4df8670a0dff4b3dcce6711b8da26626210f8f4bc7344eadf8450f640d\u0026hashVersion=202208",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -15,75 +15,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:13 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:03 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-e28a92228c627c0e07c5fdc04b06bb45-0b49bc51e17f4994-01\u0022",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "Vary": [
-          "Accept-Encoding",
-          "Accept-Encoding"
-        ],
-        "x-aml-cluster": "vienna-test-westus2-02",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a25788d0-4430-4dd5-8a05-0b4e8ee14c02",
-        "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225113Z:a25788d0-4430-4dd5-8a05-0b4e8ee14c02",
-        "x-request-time": "0.104"
-      },
-      "ResponseBody": {
-        "value": [
-          {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
-            "name": "1",
-            "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
-            "properties": {
-              "description": null,
-              "tags": {},
-              "properties": {
-                "hash_sha256": "d34e16ae30a8d74e4f0033367587d48cd57334e04a416f95e87e5a2b180d2dd2",
-                "hash_version": "202208"
-              },
-              "isArchived": false,
-              "isAnonymous": false,
-              "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-3501fd31-bec4-5f56-9194-f2f5f6fa03f8/src",
-              "provisioningState": "Succeeded"
-            },
-            "systemData": {
-              "createdAt": "2023-04-09T01:05:42.5850053\u002B00:00",
-              "createdBy": "Diondra Peck",
-              "createdByType": "User",
-              "lastModifiedAt": "2023-04-09T01:05:42.5850053\u002B00:00",
-              "lastModifiedBy": "Diondra Peck",
-              "lastModifiedByType": "User"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions?api-version=2023-04-01\u0026hash=d34e16ae30a8d74e4f0033367587d48cd57334e04a416f95e87e5a2b180d2dd2\u0026hashVersion=202208",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Encoding": "gzip",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:13 GMT",
-        "Expires": "-1",
-        "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-a4246eb804f43e29af0330403eac0822-ca27e854161cecbc-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-10567e3a197412c3d3c37ea9baac5430-7e6cdaba32dc5428-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -92,35 +28,35 @@
         ],
         "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d5557385-85ee-4e69-8b05-b57767000516",
-        "x-ms-ratelimit-remaining-subscription-reads": "11990",
+        "x-ms-correlation-request-id": "a062dfb8-478e-4d60-8eb1-4ec3347ebcaa",
+        "x-ms-ratelimit-remaining-subscription-reads": "11960",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225113Z:d5557385-85ee-4e69-8b05-b57767000516",
-        "x-request-time": "0.071"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221504Z:a062dfb8-478e-4d60-8eb1-4ec3347ebcaa",
+        "x-request-time": "0.089"
       },
       "ResponseBody": {
         "value": [
           {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
             "name": "1",
             "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
             "properties": {
               "description": null,
               "tags": {},
               "properties": {
-                "hash_sha256": "d34e16ae30a8d74e4f0033367587d48cd57334e04a416f95e87e5a2b180d2dd2",
+                "hash_sha256": "047aff4df8670a0dff4b3dcce6711b8da26626210f8f4bc7344eadf8450f640d",
                 "hash_version": "202208"
               },
               "isArchived": false,
               "isAnonymous": false,
-              "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-3501fd31-bec4-5f56-9194-f2f5f6fa03f8/src",
+              "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-67002e97-43f1-5a0d-b778-be2444d05849/src",
               "provisioningState": "Succeeded"
             },
             "systemData": {
-              "createdAt": "2023-04-09T01:05:42.5850053\u002B00:00",
+              "createdAt": "2023-04-13T21:16:10.4631854\u002B00:00",
               "createdBy": "Diondra Peck",
               "createdByType": "User",
-              "lastModifiedAt": "2023-04-09T01:05:42.5850053\u002B00:00",
+              "lastModifiedAt": "2023-04-13T21:16:10.4631854\u002B00:00",
               "lastModifiedBy": "Diondra Peck",
               "lastModifiedByType": "User"
             }
@@ -129,7 +65,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1?api-version=2023-04-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions?api-version=2023-04-01\u0026hash=047aff4df8670a0dff4b3dcce6711b8da26626210f8f4bc7344eadf8450f640d\u0026hashVersion=202208",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -143,27 +79,91 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:13 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:03 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-2a7ce3f28bd99cd2a7d0d937e7bd508c-fab4c712a56c9fee-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-6276169e1324efe29721fbd17898d48a-2bd6f1ec00f0b7f6-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e37d353f-d976-4ebb-88e6-5ba197506829",
-        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-correlation-request-id": "39448380-ad17-43bd-b262-a3ca218716fb",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225114Z:e37d353f-d976-4ebb-88e6-5ba197506829",
-        "x-request-time": "0.221"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221504Z:39448380-ad17-43bd-b262-a3ca218716fb",
+        "x-request-time": "0.098"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
+            "name": "1",
+            "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+            "properties": {
+              "description": null,
+              "tags": {},
+              "properties": {
+                "hash_sha256": "047aff4df8670a0dff4b3dcce6711b8da26626210f8f4bc7344eadf8450f640d",
+                "hash_version": "202208"
+              },
+              "isArchived": false,
+              "isAnonymous": false,
+              "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-67002e97-43f1-5a0d-b778-be2444d05849/src",
+              "provisioningState": "Succeeded"
+            },
+            "systemData": {
+              "createdAt": "2023-04-13T21:16:10.4631854\u002B00:00",
+              "createdBy": "Diondra Peck",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-04-13T21:16:10.4631854\u002B00:00",
+              "lastModifiedBy": "Diondra Peck",
+              "lastModifiedByType": "User"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1?api-version=2023-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 13 Apr 2023 22:15:03 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-11637c2c0cca5b092e99480569199b5d-2d9a3d6c740d1fc1-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "95016320-dc93-4da4-8d38-6a079f6e9319",
+        "x-ms-ratelimit-remaining-subscription-reads": "11959",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230413T221504Z:95016320-dc93-4da4-8d38-6a079f6e9319",
+        "x-request-time": "0.076"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
@@ -175,21 +175,21 @@
           },
           "isArchived": false,
           "isAnonymous": false,
-          "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-3501fd31-bec4-5f56-9194-f2f5f6fa03f8/src",
+          "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-67002e97-43f1-5a0d-b778-be2444d05849/src",
           "provisioningState": "Succeeded"
         },
         "systemData": {
-          "createdAt": "2023-04-09T01:05:42.5850053\u002B00:00",
+          "createdAt": "2023-04-13T21:16:10.4631854\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-09T01:05:42.5850053\u002B00:00",
+          "lastModifiedAt": "2023-04-13T21:16:10.4631854\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1?api-version=2023-04-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -203,11 +203,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:13 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:03 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-fc436117c0af05c1e9bcac018d494c2c-be8072c84d526f13-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-56352fd7df96099e85f4089c041adc9f-f74316fe63291cf2-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -216,14 +216,14 @@
         ],
         "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "651512f7-8311-45b3-a4c0-a29722c97a24",
-        "x-ms-ratelimit-remaining-subscription-reads": "11989",
+        "x-ms-correlation-request-id": "16afce24-d5ec-42da-8500-e4cdf1dcbb3b",
+        "x-ms-ratelimit-remaining-subscription-reads": "11983",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225114Z:651512f7-8311-45b3-a4c0-a29722c97a24",
-        "x-request-time": "0.075"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221504Z:16afce24-d5ec-42da-8500-e4cdf1dcbb3b",
+        "x-request-time": "0.114"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
@@ -235,14 +235,14 @@
           },
           "isArchived": false,
           "isAnonymous": false,
-          "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-3501fd31-bec4-5f56-9194-f2f5f6fa03f8/src",
+          "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-67002e97-43f1-5a0d-b778-be2444d05849/src",
           "provisioningState": "Succeeded"
         },
         "systemData": {
-          "createdAt": "2023-04-09T01:05:42.5850053\u002B00:00",
+          "createdAt": "2023-04-13T21:16:10.4631854\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-09T01:05:42.5850053\u002B00:00",
+          "lastModifiedAt": "2023-04-13T21:16:10.4631854\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
@@ -255,40 +255,38 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "787",
+        "Content-Length": "931",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
       },
       "RequestBody": {
         "properties": {
+          "description": "Aml Spark dataset word count test module",
           "properties": {},
           "tags": {},
           "isAnonymous": true,
           "isArchived": false,
           "componentSpec": {
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
             "entry": {
-              "file": "add_greeting_column.py"
+              "file": "wordcount.py"
             },
-            "py_files": [
-              "utils.zip"
-            ],
-            "files": [
-              "my_files.txt"
-            ],
             "conf": {
-              "spark.driver.cores": 2,
-              "spark.driver.memory": "1g",
-              "spark.executor.cores": 1,
-              "spark.executor.memory": "1g",
-              "spark.executor.instances": 1
+              "spark.driver.cores": 1,
+              "spark.driver.memory": "2g",
+              "spark.executor.cores": 2,
+              "spark.executor.memory": "2g",
+              "spark.executor.instances": 4
             },
-            "args": "--file_input ${{inputs.file_input}}",
+            "args": "--input1 ${{inputs.input1}}",
             "name": "azureml_anonymous",
+            "description": "Aml Spark dataset word count test module",
             "version": "1",
+            "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
+            "display_name": "Aml Spark dataset word count test module",
             "is_deterministic": true,
             "inputs": {
-              "file_input": {
+              "input1": {
                 "type": "uri_file",
                 "mode": "direct"
               }
@@ -301,26 +299,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1653",
+        "Content-Length": "1714",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:15 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:06 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/000000000000000000000?api-version=2022-10-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-898c243b37a1cd4bd5a108bc58646aed-9a22aa26085956ec-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-bbaf8c5d628fbea9f5d4d1ddb9731bd3-47f1d818a792b2ce-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1bf78cd0-e32e-41a3-968c-b12f4acdae9f",
-        "x-ms-ratelimit-remaining-subscription-writes": "1194",
+        "x-ms-correlation-request-id": "67abbdb3-db36-4c10-a984-2b3895f10606",
+        "x-ms-ratelimit-remaining-subscription-writes": "1190",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225115Z:1bf78cd0-e32e-41a3-968c-b12f4acdae9f",
-        "x-request-time": "0.498"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221506Z:67abbdb3-db36-4c10-a984-2b3895f10606",
+        "x-request-time": "0.472"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b188c005-9f00-4c33-9884-bbf02d9b905b",
-        "name": "b188c005-9f00-4c33-9884-bbf02d9b905b",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01451963-473b-4cbc-a359-a8047c1ef975",
+        "name": "01451963-473b-4cbc-a359-a8047c1ef975",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -329,41 +327,38 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
+            "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
             "name": "azureml_anonymous",
             "version": "1",
+            "display_name": "Aml Spark dataset word count test module",
             "is_deterministic": "True",
             "type": "spark",
+            "description": "Aml Spark dataset word count test module",
             "inputs": {
-              "file_input": {
+              "input1": {
                 "type": "uri_file",
                 "optional": "False"
               }
             },
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
-            "args": "--file_input ${{inputs.file_input}}",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
+            "args": "--input1 ${{inputs.input1}}",
             "entry": {
-              "file": "add_greeting_column.py"
+              "file": "wordcount.py"
             },
-            "files": [
-              "my_files.txt"
-            ],
-            "py_files": [
-              "utils.zip"
-            ],
             "conf": {
-              "spark.driver.cores": "2",
-              "spark.driver.memory": "1g",
-              "spark.executor.cores": "1",
-              "spark.executor.memory": "1g",
-              "spark.executor.instances": "1"
+              "spark.driver.cores": "1",
+              "spark.driver.memory": "2g",
+              "spark.executor.cores": "2",
+              "spark.executor.memory": "2g",
+              "spark.executor.instances": "4"
             }
           }
         },
         "systemData": {
-          "createdAt": "2023-04-09T01:05:45.2176\u002B00:00",
+          "createdAt": "2023-04-13T21:16:12.7336603\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-09T01:05:45.5830656\u002B00:00",
+          "lastModifiedAt": "2023-04-13T21:16:13.113985\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
@@ -376,47 +371,51 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "874",
+        "Content-Length": "1206",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
       },
       "RequestBody": {
         "properties": {
+          "description": "Aml Spark dataset sample test module",
           "properties": {},
           "tags": {},
           "isAnonymous": true,
           "isArchived": false,
           "componentSpec": {
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
             "entry": {
-              "file": "count_by_row.py"
+              "file": "sampleword.py"
             },
-            "jars": [
-              "scalaproj.jar"
-            ],
-            "files": [
-              "my_files.txt"
-            ],
             "conf": {
-              "spark.driver.cores": 2,
-              "spark.driver.memory": "1g",
-              "spark.executor.cores": 1,
-              "spark.executor.memory": "1g",
-              "spark.executor.instances": 1
+              "spark.driver.cores": 1,
+              "spark.driver.memory": "2g",
+              "spark.executor.cores": 2,
+              "spark.executor.memory": "2g",
+              "spark.dynamicAllocation.enabled": true,
+              "spark.dynamicAllocation.minExecutors": 1,
+              "spark.dynamicAllocation.maxExecutors": 4
             },
-            "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
+            "args": "--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
             "name": "azureml_anonymous",
+            "description": "Aml Spark dataset sample test module",
             "version": "1",
+            "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
+            "display_name": "Aml Spark dataset sample test module",
             "is_deterministic": true,
             "inputs": {
-              "file_input": {
+              "input1": {
                 "type": "uri_file",
                 "mode": "direct"
+              },
+              "sample_rate": {
+                "type": "number",
+                "default": "0.01"
               }
             },
             "outputs": {
-              "output": {
-                "type": "uri_folder",
+              "output1": {
+                "type": "uri_file",
                 "mode": "direct"
               }
             },
@@ -428,26 +427,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1767",
+        "Content-Length": "2107",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:15 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:05 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/000000000000000000000?api-version=2022-10-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-ae3e6246c673ea4f40a213090f40cc3c-26173f5cc490ea4a-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-e227542c3a8707c51c0e808256d467a3-b0251fb3bc131a4e-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3963e333-b3c5-42d7-8880-caee49e48ba1",
-        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-correlation-request-id": "02b73a3c-9bbb-43e3-8dbb-f4b8b38b49f3",
+        "x-ms-ratelimit-remaining-subscription-writes": "1169",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225115Z:3963e333-b3c5-42d7-8880-caee49e48ba1",
-        "x-request-time": "0.495"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221506Z:02b73a3c-9bbb-43e3-8dbb-f4b8b38b49f3",
+        "x-request-time": "0.548"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/e994d07d-089a-4c07-91b7-dffc36f27062",
-        "name": "e994d07d-089a-4c07-91b7-dffc36f27062",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/84b31d3a-099b-48be-a8e2-fccc7ece7387",
+        "name": "84b31d3a-099b-48be-a8e2-fccc7ece7387",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -456,46 +455,50 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
+            "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
             "name": "azureml_anonymous",
             "version": "1",
+            "display_name": "Aml Spark dataset sample test module",
             "is_deterministic": "True",
             "type": "spark",
+            "description": "Aml Spark dataset sample test module",
             "inputs": {
-              "file_input": {
+              "input1": {
                 "type": "uri_file",
                 "optional": "False"
+              },
+              "sample_rate": {
+                "type": "number",
+                "optional": "False",
+                "default": "0.01"
               }
             },
             "outputs": {
-              "output": {
-                "type": "uri_folder"
+              "output1": {
+                "type": "uri_file"
               }
             },
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/81e61f1d-c035-426b-a238-4605d9478244/versions/1",
-            "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/000000000000000000000/versions/1",
+            "args": "--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
             "entry": {
-              "file": "count_by_row.py"
+              "file": "sampleword.py"
             },
-            "files": [
-              "my_files.txt"
-            ],
-            "jars": [
-              "scalaproj.jar"
-            ],
             "conf": {
-              "spark.driver.cores": "2",
-              "spark.driver.memory": "1g",
-              "spark.executor.cores": "1",
-              "spark.executor.memory": "1g",
-              "spark.executor.instances": "1"
+              "spark.driver.cores": "1",
+              "spark.driver.memory": "2g",
+              "spark.executor.cores": "2",
+              "spark.executor.memory": "2g",
+              "spark.dynamicAllocation.enabled": "true",
+              "spark.dynamicAllocation.minExecutors": "1",
+              "spark.dynamicAllocation.maxExecutors": "4"
             }
           }
         },
         "systemData": {
-          "createdAt": "2023-04-10T17:56:59.4252692\u002B00:00",
+          "createdAt": "2023-04-13T22:14:22.1863276\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-10T17:56:59.7955631\u002B00:00",
+          "lastModifiedAt": "2023-04-13T22:14:22.5960445\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
@@ -516,24 +519,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:15 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:06 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-b9d4e29d671af75971b18848d393048d-9bed880d34b04366-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-caf8a1cc926f69fb11af16a29c6d8333-0ce67097f01b16b9-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "af7d5a9d-5e0f-43f8-9633-191ed8877346",
-        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-correlation-request-id": "a99e1f7b-b8be-48ef-8f4d-906d3baba6b5",
+        "x-ms-ratelimit-remaining-subscription-reads": "11958",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225116Z:af7d5a9d-5e0f-43f8-9633-191ed8877346",
-        "x-request-time": "0.229"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221506Z:a99e1f7b-b8be-48ef-8f4d-906d3baba6b5",
+        "x-request-time": "0.170"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore",
@@ -580,21 +583,21 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:16 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:06 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-f1b71d7825c83db76c1e4109f0cd404d-ae204871e2dc2637-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-ca7e9faa86800ef7e7785f55890ebb7b-ab2345a6426a6711-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1555d750-eca9-4808-a37d-37a7fea9e6cf",
-        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-correlation-request-id": "170f520f-34e4-440a-98c6-5548ef0e71e1",
+        "x-ms-ratelimit-remaining-subscription-writes": "1185",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225116Z:1555d750-eca9-4808-a37d-37a7fea9e6cf",
-        "x-request-time": "0.184"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221507Z:170f520f-34e4-440a-98c6-5548ef0e71e1",
+        "x-request-time": "0.129"
       },
       "ResponseBody": {
         "secretsType": "AccountKey",
@@ -602,26 +605,26 @@
       }
     },
     {
-      "RequestUri": "https://sab6b272nokaeak.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/iris.csv",
+      "RequestUri": "https://sab6b272nokaeak.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/shakespeare.txt",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.15.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)",
-        "x-ms-date": "Thu, 13 Apr 2023 22:51:16 GMT",
+        "x-ms-date": "Thu, 13 Apr 2023 22:15:07 GMT",
         "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Accept-Ranges": "bytes",
-        "Content-Length": "4759",
-        "Content-MD5": "KozNjCoSdWCmMsSpKgfD\u002Bw==",
+        "Content-Length": "5571940",
+        "Content-MD5": "F5mM7xf/JNJNT5/lrZkb5A==",
         "Content-Type": "application/octet-stream",
-        "Date": "Thu, 13 Apr 2023 22:51:16 GMT",
-        "ETag": "\u00220x8DB38968DA38F42\u0022",
-        "Last-Modified": "Sun, 09 Apr 2023 01:05:47 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:06 GMT",
+        "ETag": "\u00220x8DB39EABC943140\u0022",
+        "Last-Modified": "Mon, 10 Apr 2023 17:40:55 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -630,32 +633,32 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Sun, 09 Apr 2023 01:05:47 GMT",
+        "x-ms-creation-time": "Mon, 10 Apr 2023 17:40:55 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-meta-name": "9d33fca2-525c-4339-afbd-dc2815b7e4f6",
+        "x-ms-meta-name": "ffd90f1d-24ce-4aec-8275-c038cec14f35",
         "x-ms-meta-upload_status": "completed",
-        "x-ms-meta-version": "ee0d1893-8f9b-4921-97f7-255e0ae2eca3",
+        "x-ms-meta-version": "649b1726-cfee-47b3-a83a-47e69db4b8c9",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2021-12-02"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://sab6b272nokaeak.blob.core.windows.net/000000000000000000000000000000000000/az-ml-artifacts/00000000000000000000000000000000/iris.csv",
+      "RequestUri": "https://sab6b272nokaeak.blob.core.windows.net/000000000000000000000000000000000000/az-ml-artifacts/00000000000000000000000000000000/shakespeare.txt",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-blob/12.15.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)",
-        "x-ms-date": "Thu, 13 Apr 2023 22:51:17 GMT",
+        "x-ms-date": "Thu, 13 Apr 2023 22:15:07 GMT",
         "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
-        "Date": "Thu, 13 Apr 2023 22:51:16 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:06 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -668,118 +671,116 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_484275691378?api-version=2023-02-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "2385",
+        "Content-Length": "2549",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
       },
       "RequestBody": {
         "properties": {
-          "description": "submit a pipeline with spark job",
           "properties": {},
           "tags": {},
-          "displayName": "test_484275691378",
-          "experimentName": "azure-ai-ml",
+          "displayName": "Spark - node serverless compute with no default",
+          "experimentName": "Serverless in Pipeline",
           "isArchived": false,
           "jobType": "Pipeline",
           "inputs": {
-            "iris_data": {
+            "input1": {
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris.csv",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/shakespeare.txt",
               "jobInputType": "uri_file"
+            },
+            "sample_rate": {
+              "jobInputType": "literal",
+              "value": "0.01"
             }
           },
           "jobs": {
-            "add_greeting_column": {
+            "sample_word": {
               "type": "spark",
               "resources": {
-                "instance_type": "standard_e4s_v3",
-                "runtime_version": "3.1.0"
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0"
               },
-              "py_files": [
-                "utils.zip"
-              ],
-              "files": [
-                "my_files.txt"
-              ],
               "identity": {
                 "identity_type": "UserIdentity"
               },
               "conf": {
-                "spark.driver.cores": 2,
-                "spark.driver.memory": "1g",
-                "spark.executor.cores": 1,
-                "spark.executor.memory": "1g",
-                "spark.executor.instances": 1
+                "spark.driver.cores": 1,
+                "spark.driver.memory": "2g",
+                "spark.executor.cores": 2,
+                "spark.executor.memory": "2g",
+                "spark.executor.instances": 1,
+                "spark.dynamicAllocation.enabled": true,
+                "spark.dynamicAllocation.minExecutors": 1,
+                "spark.dynamicAllocation.maxExecutors": 4
               },
-              "args": "--file_input ${{inputs.file_input}}",
-              "name": "add_greeting_column",
+              "args": "--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
+              "name": "sample_word",
               "inputs": {
-                "file_input": {
+                "input1": {
                   "job_input_type": "literal",
-                  "value": "${{parent.inputs.iris_data}}"
-                }
-              },
-              "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b188c005-9f00-4c33-9884-bbf02d9b905b",
-              "entry": {
-                "spark_job_entry_type": "SparkJobPythonEntry",
-                "file": "add_greeting_column.py"
-              }
-            },
-            "count_by_row": {
-              "type": "spark",
-              "resources": {
-                "instance_type": "standard_e4s_v3",
-                "runtime_version": "3.1.0"
-              },
-              "jars": [
-                "scalaproj.jar"
-              ],
-              "files": [
-                "my_files.txt"
-              ],
-              "identity": {
-                "identity_type": "UserIdentity"
-              },
-              "conf": {
-                "spark.driver.cores": 2,
-                "spark.driver.memory": "1g",
-                "spark.executor.cores": 1,
-                "spark.executor.memory": "1g",
-                "spark.executor.instances": 1
-              },
-              "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-              "name": "count_by_row",
-              "inputs": {
-                "file_input": {
+                  "value": "${{parent.inputs.input1}}"
+                },
+                "sample_rate": {
                   "job_input_type": "literal",
-                  "value": "${{parent.inputs.iris_data}}"
+                  "value": "${{parent.inputs.sample_rate}}"
                 }
               },
               "outputs": {
-                "output": {
-                  "value": "${{parent.outputs.output}}",
+                "output1": {
+                  "value": "${{parent.outputs.output1}}",
                   "type": "literal"
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/e994d07d-089a-4c07-91b7-dffc36f27062",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/84b31d3a-099b-48be-a8e2-fccc7ece7387",
               "entry": {
                 "spark_job_entry_type": "SparkJobPythonEntry",
-                "file": "count_by_row.py"
+                "file": "sampleword.py"
+              }
+            },
+            "count_word": {
+              "type": "spark",
+              "resources": {
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0"
+              },
+              "identity": {
+                "identity_type": "UserIdentity"
+              },
+              "conf": {
+                "spark.driver.cores": 1,
+                "spark.driver.memory": "2g",
+                "spark.executor.cores": 2,
+                "spark.executor.memory": "2g",
+                "spark.executor.instances": 4
+              },
+              "args": "--input1 ${{inputs.input1}}",
+              "name": "count_word",
+              "inputs": {
+                "input1": {
+                  "job_input_type": "literal",
+                  "value": "${{parent.jobs.sample_word.outputs.output1}}"
+                }
+              },
+              "_source": "YAML.JOB",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01451963-473b-4cbc-a359-a8047c1ef975",
+              "entry": {
+                "spark_job_entry_type": "SparkJobPythonEntry",
+                "file": "wordcount.py"
               }
             }
           },
           "outputs": {
-            "output": {
+            "output1": {
               "mode": "Direct",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_file"
             }
           },
           "settings": {
@@ -790,29 +791,29 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "5223",
+        "Content-Length": "5466",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Apr 2023 22:51:20 GMT",
+        "Date": "Thu, 13 Apr 2023 22:15:10 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_484275691378?api-version=2023-02-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-b2bf6b840402cf9b5ebee50eb9702e87-a8fe1437946b9a3c-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-a422fa3965595c4792ee1849f1282a31-927843cde389d32a-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "42adc5bb-faa7-4121-829e-b82705bea74e",
-        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-correlation-request-id": "04ca6f91-d929-4566-91ec-0ff1bc5c5f94",
+        "x-ms-ratelimit-remaining-subscription-writes": "1168",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230413T225120Z:42adc5bb-faa7-4121-829e-b82705bea74e",
-        "x-request-time": "2.653"
+        "x-ms-routing-request-id": "WESTUS2:20230413T221511Z:04ca6f91-d929-4566-91ec-0ff1bc5c5f94",
+        "x-request-time": "2.536"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_484275691378",
-        "name": "test_484275691378",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
+        "name": "000000000000000000000",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
-          "description": "submit a pipeline with spark job",
+          "description": null,
           "tags": {},
           "properties": {
             "azureml.DevPlatv2": "true",
@@ -820,16 +821,16 @@
             "azureml.runsource": "azureml.PipelineRun",
             "runSource": "MFE",
             "runType": "HTTP",
-            "azureml.parameters": "{}",
+            "azureml.parameters": "{\u0022sample_rate\u0022:\u00220.01\u0022}",
             "azureml.continue_on_step_failure": "True",
             "azureml.continue_on_failed_optional_input": "True",
             "azureml.enforceRerun": "False",
             "azureml.defaultDataStoreName": "workspaceblobstore",
             "azureml.pipelineComponent": "pipelinerun"
           },
-          "displayName": "test_484275691378",
+          "displayName": "Spark - node serverless compute with no default",
           "status": "Preparing",
-          "experimentName": "azure-ai-ml",
+          "experimentName": "Serverless in Pipeline",
           "services": {
             "Tracking": {
               "jobServiceType": "Tracking",
@@ -843,7 +844,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_484275691378?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/000000000000000000000?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -860,116 +861,177 @@
             "_source": "YAML.JOB"
           },
           "jobs": {
-            "add_greeting_column": {
+            "sample_word": {
               "type": "spark",
               "resources": {
-                "instance_type": "standard_e4s_v3",
-                "runtime_version": "3.1.0"
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0"
               },
-              "py_files": [
-                "utils.zip"
-              ],
-              "files": [
-                "my_files.txt"
-              ],
               "identity": {
                 "identity_type": "UserIdentity"
               },
               "conf": {
-                "spark.driver.cores": 2,
-                "spark.driver.memory": "1g",
-                "spark.executor.cores": 1,
-                "spark.executor.memory": "1g",
-                "spark.executor.instances": 1
+                "spark.driver.cores": 1,
+                "spark.driver.memory": "2g",
+                "spark.executor.cores": 2,
+                "spark.executor.memory": "2g",
+                "spark.executor.instances": 1,
+                "spark.dynamicAllocation.enabled": true,
+                "spark.dynamicAllocation.minExecutors": 1,
+                "spark.dynamicAllocation.maxExecutors": 4
               },
-              "args": "--file_input ${{inputs.file_input}}",
-              "name": "add_greeting_column",
+              "args": "--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
+              "name": "sample_word",
               "inputs": {
-                "file_input": {
+                "input1": {
                   "job_input_type": "literal",
-                  "value": "${{parent.inputs.iris_data}}"
-                }
-              },
-              "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b188c005-9f00-4c33-9884-bbf02d9b905b",
-              "entry": {
-                "spark_job_entry_type": "SparkJobPythonEntry",
-                "file": "add_greeting_column.py"
-              }
-            },
-            "count_by_row": {
-              "type": "spark",
-              "resources": {
-                "instance_type": "standard_e4s_v3",
-                "runtime_version": "3.1.0"
-              },
-              "jars": [
-                "scalaproj.jar"
-              ],
-              "files": [
-                "my_files.txt"
-              ],
-              "identity": {
-                "identity_type": "UserIdentity"
-              },
-              "conf": {
-                "spark.driver.cores": 2,
-                "spark.driver.memory": "1g",
-                "spark.executor.cores": 1,
-                "spark.executor.memory": "1g",
-                "spark.executor.instances": 1
-              },
-              "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-              "name": "count_by_row",
-              "inputs": {
-                "file_input": {
+                  "value": "${{parent.inputs.input1}}"
+                },
+                "sample_rate": {
                   "job_input_type": "literal",
-                  "value": "${{parent.inputs.iris_data}}"
+                  "value": "${{parent.inputs.sample_rate}}"
                 }
               },
               "outputs": {
-                "output": {
-                  "value": "${{parent.outputs.output}}",
+                "output1": {
+                  "value": "${{parent.outputs.output1}}",
                   "type": "literal"
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/e994d07d-089a-4c07-91b7-dffc36f27062",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/84b31d3a-099b-48be-a8e2-fccc7ece7387",
               "entry": {
                 "spark_job_entry_type": "SparkJobPythonEntry",
-                "file": "count_by_row.py"
+                "file": "sampleword.py"
+              }
+            },
+            "count_word": {
+              "type": "spark",
+              "resources": {
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0"
+              },
+              "identity": {
+                "identity_type": "UserIdentity"
+              },
+              "conf": {
+                "spark.driver.cores": 1,
+                "spark.driver.memory": "2g",
+                "spark.executor.cores": 2,
+                "spark.executor.memory": "2g",
+                "spark.executor.instances": 4
+              },
+              "args": "--input1 ${{inputs.input1}}",
+              "name": "count_word",
+              "inputs": {
+                "input1": {
+                  "job_input_type": "literal",
+                  "value": "${{parent.jobs.sample_word.outputs.output1}}"
+                }
+              },
+              "_source": "YAML.JOB",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01451963-473b-4cbc-a359-a8047c1ef975",
+              "entry": {
+                "spark_job_entry_type": "SparkJobPythonEntry",
+                "file": "wordcount.py"
               }
             }
           },
           "inputs": {
-            "iris_data": {
+            "input1": {
               "description": null,
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris.csv",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/shakespeare.txt",
               "mode": "Direct",
               "jobInputType": "uri_file"
+            },
+            "sample_rate": {
+              "description": null,
+              "jobInputType": "literal",
+              "value": "0.01"
             }
           },
           "outputs": {
-            "output": {
+            "output1": {
               "description": null,
               "uri": null,
               "assetName": null,
               "assetVersion": null,
               "mode": "Direct",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_file"
             }
           },
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-04-13T22:51:19.9642815\u002B00:00",
+          "createdAt": "2023-04-13T22:15:10.872543\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User"
         }
       }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000/cancel?api-version=2023-02-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 13 Apr 2023 22:15:14 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:061273aa-2956-4aff-8628-0fad8c820f9e:000000000000000000000?api-version=2023-02-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT1H",
+        "x-ms-correlation-request-id": "bdc2c247-1115-4f0e-8710-c464cf591ca3",
+        "x-ms-ratelimit-remaining-subscription-writes": "1184",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230413T221514Z:bdc2c247-1115-4f0e-8710-c464cf591ca3",
+        "x-request-time": "0.657"
+      },
+      "ResponseBody": "null"
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:061273aa-2956-4aff-8628-0fad8c820f9e:000000000000000000000?api-version=2023-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Thu, 13 Apr 2023 22:15:14 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-0f636d5ed1f92dc0a1c850fd94f43196-bd4023c293bd6f0d-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "6b172dfa-573b-472b-bb4e-28bdf92f92eb",
+        "x-ms-ratelimit-remaining-subscription-reads": "11957",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230413T221514Z:6b172dfa-573b-472b-bb4e-28bdf92f92eb",
+        "x-request-time": "0.098"
+      },
+      "ResponseBody": null
     }
   ],
-  "Variables": {
-    "name": "test_484275691378"
-  }
+  "Variables": {}
 }
