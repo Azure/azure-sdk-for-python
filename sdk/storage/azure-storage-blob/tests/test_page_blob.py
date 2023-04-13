@@ -2331,3 +2331,42 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_bad_crc64(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
+                                max_page_size=4 * 1024, logging_enable=True)
+        self._setup(bsc)
+        source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
+        src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            source_blob_client.account_name,
+            source_blob_client.container_name,
+            source_blob_client.blob_name,
+            snapshot=source_blob_client.snapshot,
+            account_key=source_blob_client.credential.account_key,
+            permission=BlobSasPermissions(read=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
+
+        resp = destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas,
+                                                             offset=0,
+                                                             length=SOURCE_BLOB_SIZE,
+                                                             source_offset=0,
+                                                             source_contentcrc64=b'bad apple')
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
+
+        # Assert the destination blob is constructed correctly
+        blob_properties = destination_blob_client.get_blob_properties()
+        self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data, bsc)
+        assert blob_properties.get('etag') == resp.get('etag')
+        assert blob_properties.get('last_modified') == resp.get('last_modified')
