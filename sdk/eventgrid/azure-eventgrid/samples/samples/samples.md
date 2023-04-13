@@ -4,7 +4,7 @@
     import os
     import asyncio
     from azure.core.credentials import AzureKeyCredential
-    from azure.messaging.eventgrid.models import *
+    from azure.eventgrid.models import *
     from azure.core.messaging import CloudEvent
 
 
@@ -17,7 +17,7 @@
 
 # Async Create Client
 ```python
-    from azure.messaging.eventgrid.aio import EventGridNamespaceClient
+    from azure.eventgrid.aio import EventGridNamespaceClient
 
     # Create a client
     client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
@@ -25,7 +25,7 @@
 
 # Sync Create Client
 ```python
-    from azure.messaging.eventgrid import EventGridNamespaceClient
+    from azure.eventgrid import EventGridNamespaceClient
 
     # Create a client
     client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
@@ -41,16 +41,16 @@
         try:
             cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
             await client.publish(topic_name=TOPIC_NAME, body=cloud_event)
-        except Exception as e:
-            print(e)
+        except HttpResponseError:
+            raise
 
 
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event, cloud_event]
             await client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
-        except Exception as e:
-            print(e)
+        except HttpResponseError:
+            raise
 
     asyncio.run(main())
 ```
@@ -61,15 +61,15 @@
     try:
         cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
         client.publish(topic_name=TOPIC_NAME, body=cloud_event)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 
     # Publish a list of CloudEvents
     try:
         list_of_cloud_events = [cloud_event, cloud_event]
         client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 ```
 
 
@@ -84,8 +84,8 @@
         try:
             receive_response = await client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
             print(receive_response)
-        except Exception as e:
-            print(e)
+        except HttpResponseError:
+            raise
 
     asyncio.run(main())
 ```
@@ -96,8 +96,8 @@
     try:
         receive_response = client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
         print(receive_response)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 ```
 
 # Release Samples
@@ -111,8 +111,8 @@
             tokens = [LockToken({'lockToken': 'token'})]
             release = await client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, tokens=tokens)
             print(release)
-        except Exception as e:
-            print(e)
+        except HttpResponseError:
+            raise
 
     asyncio.run(main())
 ```
@@ -124,8 +124,8 @@
         tokens = [LockToken({'lockToken': 'token'})]
         release = client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, tokens=tokens)
         print(release)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 
 ```
 
@@ -141,8 +141,8 @@
             lock_tokens = LockTokenInput(lock_tokens=["token"])
             ack = await client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=lock_tokens)
             print(ack)
-        except Exception as e:
-            print(e)
+        except HttpResponseError:
+            raise
 
     asyncio.run(main())
 ```
@@ -154,6 +154,6 @@
         lock_tokens = LockTokenInput(lock_tokens=["token"])
         ack = client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=lock_tokens)
         print(ack)
-    except Exception as e:
-        print(e)
+    except HttpResponseError:
+        raise
 ```
