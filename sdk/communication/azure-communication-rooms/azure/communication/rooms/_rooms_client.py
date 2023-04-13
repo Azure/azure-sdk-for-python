@@ -16,7 +16,6 @@ from azure.communication.rooms._models import (
     RemoveParticipantsResult
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
-from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
 from ._generated._client import AzureCommunicationRoomsService
 from ._generated.models import (
     CommunicationRoom,

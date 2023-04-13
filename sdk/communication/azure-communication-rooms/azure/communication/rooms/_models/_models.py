@@ -3,8 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Union
 from .._generated.models import (
     ParticipantRole
 )
@@ -23,7 +22,12 @@ class RoomParticipant():
     :ivar role: Role Name.
     :vartype role: Union[str, ParticipantRole]
     """
-    def __init__(self, *, communication_identifier: CommunicationIdentifier, role: Union[str, ParticipantRole] = ParticipantRole.ATTENDEE, **kwargs: Any) -> None:
+    def __init__(self,
+                *,
+                communication_identifier: CommunicationIdentifier,
+                role: Union[str, ParticipantRole] = ParticipantRole.ATTENDEE,
+                **kwargs: Any
+    ) -> None:
         """
         :keyword communication_identifier: Raw ID representation of the communication identifier. Please refer to the
          following document for additional information on Raw ID. :code:`<br>`
