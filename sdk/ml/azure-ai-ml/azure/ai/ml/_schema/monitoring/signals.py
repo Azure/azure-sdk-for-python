@@ -17,7 +17,7 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     PredictionDriftMetricThresholdSchema,
     FeatureAttributionDriftMetricThresholdSchema,
     ModelPerformanceMetricThresholdSchema,
-    CustomMonitoringMetricThreshold,
+    CustomMonitoringMetricThresholdSchema,
 )
 
 
