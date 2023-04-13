@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
 from ...models import ReceiveResponse
-from ...operations._patch import _cloud_event_to_generated
+from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 
