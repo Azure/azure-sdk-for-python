@@ -85,7 +85,7 @@ class DataSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled
+            alert_enabled=alert_enabled,
         )
         self.features = features
 
@@ -122,7 +122,10 @@ class PredictionDriftSignal(MonitoringSignal):
         alert_enabled: bool = True,
     ):
         super().__init__(
-            target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds, alert_enabled=alert_enabled,
+            target_dataset=target_dataset,
+            baseline_dataset=baseline_dataset,
+            metric_thresholds=metric_thresholds,
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.PREDICTION_DRIFT
 
@@ -163,7 +166,7 @@ class ModelSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled
+            alert_enabled=alert_enabled,
         )
         self.model_type = model_type
 
@@ -227,7 +230,7 @@ class CustomMonitoringSignal(MonitoringSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            alert_enabled=alert_enabled
+            alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.CUSTOM
         self.component_id = component_id
