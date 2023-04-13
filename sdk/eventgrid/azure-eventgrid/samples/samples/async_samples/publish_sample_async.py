@@ -1,8 +1,8 @@
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
-from azure.messaging.eventgrid.aio import EventGridNamespaceClient
-from azure.messaging.eventgrid.models import *
+from azure.eventgrid.aio import EventGridNamespaceClient
+from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 
 

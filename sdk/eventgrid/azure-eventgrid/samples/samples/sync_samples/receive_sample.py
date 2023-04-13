@@ -1,7 +1,7 @@
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.messaging.eventgrid import EventGridNamespaceClient
-from azure.messaging.eventgrid.models import *
+from azure.eventgrid import EventGridNamespaceClient
+from azure.eventgrid.models import *
 
 
 # Create a client
