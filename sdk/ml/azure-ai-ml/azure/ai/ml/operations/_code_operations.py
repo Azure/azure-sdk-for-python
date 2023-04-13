@@ -104,28 +104,29 @@ class CodeOperations(_ScopeDependentOperations):
                 )
             else:
                 _, _, asset_hash = _get_snapshot_path_info(code)
-                existing_assets = list(self._version_operation.list(
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name,
-                    name=name,
-                    hash=asset_hash,
-                    hash_version=str(get_content_hash_version()),
-                ))
+                existing_assets = list(
+                    self._version_operation.list(
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        name=name,
+                        hash=asset_hash,
+                        hash_version=str(get_content_hash_version()),
+                    )
+                )
 
                 if len(existing_assets) > 0:
                     existing_asset = existing_assets[0]
                     name, version = _get_existing_asset_name_and_version(existing_asset)
                     return self.get(name=name, version=version)
-                else:
-                    sas_info = get_storage_info_for_non_registry_asset(
-                        service_client=self._service_client,
-                        workspace_name=self._workspace_name,
-                        name=name,
-                        version=version,
-                        resource_group=self._resource_group_name,
-                    )
-                    sas_uri = sas_info["sas_uri"]
-                    blob_uri = sas_info["blob_uri"]
+                sas_info = get_storage_info_for_non_registry_asset(
+                    service_client=self._service_client,
+                    workspace_name=self._workspace_name,
+                    name=name,
+                    version=version,
+                    resource_group=self._resource_group_name,
+                )
+                sas_uri = sas_info["sas_uri"]
+                blob_uri = sas_info["blob_uri"]
 
             code, _ = _check_and_upload_path(
                 artifact=code,

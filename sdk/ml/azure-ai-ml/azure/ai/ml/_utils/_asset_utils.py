@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-lines
 
 import hashlib
 import logging
@@ -969,7 +969,9 @@ class DirectoryUploadProgressBar(tqdm):
             self.update(current - self.n)
 
 
-def get_storage_info_for_non_registry_asset(service_client, workspace_name, name, version, resource_group) -> Dict[str, str]:
+def get_storage_info_for_non_registry_asset(
+    service_client, workspace_name, name, version, resource_group
+) -> Dict[str, str]:
     """Get SAS uri and blob uri for non-registry asset.
     :param service_client: Service client
     :type service_client: AzureMachineLearningWorkspaces

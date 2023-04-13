@@ -290,7 +290,7 @@ def _upload_to_datastore(
     ignore_file: Optional[IgnoreFile] = None,
     sas_uri: Optional[str] = None,
     blob_uri: Optional[str] = None,
-    ) -> ArtifactStorageInfo:
+) -> ArtifactStorageInfo:
     _validate_path(path, _type=artifact_type)
     if not ignore_file:
         ignore_file = get_ignore_file(path)

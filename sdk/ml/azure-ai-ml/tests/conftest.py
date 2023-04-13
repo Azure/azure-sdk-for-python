@@ -37,7 +37,11 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, ANONYMOUS_COMPONENT_NAME, SINGULARITY_ID_FORMAT
+from azure.ai.ml.constants._common import (
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    ANONYMOUS_COMPONENT_NAME,
+    SINGULARITY_ID_FORMAT,
+)
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -105,6 +109,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='sig=([^/\\s"]{46,52})',
         group_for_replace="1",
     )
+
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -532,6 +537,8 @@ def storage_account_guid_sanitizer_443(test_proxy):
         regex='.blob.core.windows.net:443\\/([^/\\s"]{46,52})',
         group_for_replace="1",
     )
+
+
 @pytest.fixture
 def storage_account_guid_sanitizer(test_proxy):
     # masks blob storage account info in SAS uris

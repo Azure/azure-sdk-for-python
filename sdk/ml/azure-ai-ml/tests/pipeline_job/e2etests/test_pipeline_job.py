@@ -50,7 +50,7 @@ def assert_job_input_output_types(job: PipelineJob):
     "mock_set_headers_with_user_aml_token",
     "enable_environment_id_arm_expansion",
     "mock_anon_component_version",
-    "storage_account_guid_sanitizer"
+    "storage_account_guid_sanitizer",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
