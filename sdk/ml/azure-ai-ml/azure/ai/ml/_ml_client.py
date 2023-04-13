@@ -99,7 +99,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    HubOperations
+    HubOperations,
 )
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -541,7 +541,7 @@ class MLClient:
         )
 
         self._hubs = HubOperations(
-             self._operation_scope,
+            self._operation_scope,
             self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
@@ -562,15 +562,6 @@ class MLClient:
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.HUB, self._hubs)
-
-        self._leans = LeanOperations(
-            self._operation_scope,
-            self._service_client_04_2023_preview,
-            self._operation_container,
-            self._credential,
-            **app_insights_handler_kwargs,
-        )
-        self._operation_container.add(AzureMLResourceType.LEAN, self._leans)
 
     @classmethod
     def from_config(

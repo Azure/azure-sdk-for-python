@@ -146,9 +146,7 @@ class HubOperations(WorkspaceOperationsBase):
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
-        if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND
-        ):
+        if not (rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND):
             raise ValidationError("{0} is not a hub workspace".format(workspace_hub.name))
 
         def deserialize_callback(rest_obj):
@@ -177,9 +175,7 @@ class HubOperations(WorkspaceOperationsBase):
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND
-        ):
+        if not (rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)

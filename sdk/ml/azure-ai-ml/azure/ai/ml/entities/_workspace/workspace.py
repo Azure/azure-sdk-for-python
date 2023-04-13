@@ -51,7 +51,7 @@ class Workspace(Resource):
         key_vaults: Optional[List[str]] = None,
         container_registries: Optional[List[str]] = None,
         existing_workspaces: Optional[List[str]] = None,
-        workspace_hub: Optional['Workspace'] = None,
+        workspace_hub: Optional["Workspace"] = None,
         hub_resource_id: Optional[str] = None,
         **kwargs,
     ):
@@ -142,9 +142,21 @@ class Workspace(Resource):
         if workspace_hub:
             if workspace_hub._kind.lower() != HUB_KIND:
                 raise ValidationError("workspace_hub should be a workspaceHub")
-            if all(x is None for x in [storage_account, location, container_registry, key_vault,\
-                                        public_network_access, managed_network, storage_accounts, \
-                                            key_vaults, container_registries, existing_workspaces]):
+            if all(
+                x is None
+                for x in [
+                    storage_account,
+                    location,
+                    container_registry,
+                    key_vault,
+                    public_network_access,
+                    managed_network,
+                    storage_accounts,
+                    key_vaults,
+                    container_registries,
+                    existing_workspaces,
+                ]
+            ):
                 self._kind = LEAN_KIND
                 self.hub_resource_id = workspace_hub.id
                 self.location = workspace_hub.location
@@ -275,7 +287,7 @@ class Workspace(Resource):
             key_vaults=rest_obj.key_vaults,
             container_registries=rest_obj.container_registries,
             existing_workspaces=rest_obj.existing_workspaces,
-            hub_resource_id=rest_obj.hub_resource_id
+            hub_resource_id=rest_obj.hub_resource_id,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -309,5 +321,5 @@ class Workspace(Resource):
             container_registries=self.container_registries,
             key_vaults=self.key_vaults,
             existing_workspaces=self.existing_workspaces,
-            hub_resource_id=self.hub_resource_id
+            hub_resource_id=self.hub_resource_id,
         )

@@ -43,5 +43,5 @@ __all__ = [
     "WorkspaceConnectionsOperations",
     "RegistryOperations",
     "ScheduleOperations",
-    "HubOperations"
+    "HubOperations",
 ]

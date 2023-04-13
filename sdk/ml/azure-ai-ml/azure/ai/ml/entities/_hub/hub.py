@@ -20,6 +20,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 
 from ._constants import HUB_KIND
 
+
 class WorkspaceHub(Workspace):
     def __init__(
         self,

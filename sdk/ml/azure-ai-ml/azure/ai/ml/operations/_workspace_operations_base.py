@@ -292,7 +292,7 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            if workspace.storage_accounts is not  None:
+            if workspace.storage_accounts is not None:
                 for storageaccount in workspace.storage_accounts:
                     delete_resource_by_arm_id(
                         self._credentials,
@@ -300,7 +300,7 @@ class WorkspaceOperationsBase:
                         storageaccount,
                         ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
                     )
-            if workspace.key_vaults is not  None:
+            if workspace.key_vaults is not None:
                 for keyvault in workspace.key_vaults:
                     delete_resource_by_arm_id(
                         self._credentials,
@@ -308,7 +308,7 @@ class WorkspaceOperationsBase:
                         keyvault,
                         ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
                     )
-            if workspace.container_registries is not  None:
+            if workspace.container_registries is not None:
                 for containerregistry in workspace.container_registries:
                     delete_resource_by_arm_id(
                         self._credentials,
@@ -496,7 +496,7 @@ class WorkspaceOperationsBase:
             managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
 
-        #Hub related param
+        # Hub related param
         if workspace.storage_accounts:
             _set_val(param["storage_accounts"], workspace.storage_accounts)
         if workspace.key_vaults:
@@ -506,7 +506,7 @@ class WorkspaceOperationsBase:
         if workspace.existing_workspaces:
             _set_val(param["existing_workspaces"], workspace.existing_workspaces)
 
-        #Lean related param
+        # Lean related param
         if workspace.hub_resource_id:
             _set_val(param["hub_resource_id"], workspace.hub_resource_id)
 
