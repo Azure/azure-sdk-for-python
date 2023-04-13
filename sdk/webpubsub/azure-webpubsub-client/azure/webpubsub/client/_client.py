@@ -10,7 +10,6 @@ import logging
 import threading
 import urllib.parse
 import websocket  # pylint: disable=import-error
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import RetryMode
 
 from .models._models import (
@@ -245,7 +244,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._group_map[name] = WebPubSubGroup(name=name)
         return self._group_map[name]
 
-    @distributed_trace
     def join_group(self, group_name: str, **kwargs: Any) -> None:
         """Join the client to group.
 
@@ -269,7 +267,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             **kwargs,
         )
 
-    @distributed_trace
     def leave_group(self, group_name: str, **kwargs: Any) -> None:
         """Leave the client from group
         :param group_name: The group name. Required.
@@ -289,7 +286,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._retry(leave_group_attempt)
 
-    @distributed_trace
     def send_event(
         self,
         event_name: str,
@@ -302,7 +298,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         :param event_name: The event name. Required.
         :type event_name: str.
-        :param content: The data content that you want to send to event handler that registered in web 
+        :param content: The data content that you want to send to event handler that registered in web
          pubsub. Required.
         :type content: Any.
         :param data_type: The data type. Required.
@@ -330,7 +326,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._retry(send_event_attempt)
 
-    @distributed_trace
     def send_to_group(
         self,
         group_name: str,
@@ -661,7 +656,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._url = self._credential.get_client_access_url()
         self._connect(self._url)
 
-    @distributed_trace
     def _start(self) -> None:
         """start the client and connect to service"""
 
@@ -677,7 +671,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._is_stopping = False
             raise e
 
-    @distributed_trace
     def _stop(self) -> None:
         """stop the client"""
 
@@ -704,9 +697,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         _LOGGER.info("stop client successfully")
 
     @overload
-    def on(
-        self, event: Literal[CallbackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]
-    ) -> None:
+    def on(self, event: Literal[CallbackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
         """Add handler for connected event.
         :param event: The event name. Required.
         :type event: str
@@ -715,9 +706,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def on(
-        self, event: Literal[CallbackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]
-    ) -> None:
+    def on(self, event: Literal[CallbackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
         """Add handler for disconnected event.
         :param event: The event name. Required.
         :type event: str
@@ -771,7 +760,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type listener: callable.
         """
 
-    @distributed_trace
     def on(
         self, event: Union[CallbackType, str], listener: Callable, **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
@@ -781,9 +769,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.error("wrong event type: %s", event)
 
     @overload
-    def off(
-        self, event: Literal[CallbackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]
-    ) -> None:
+    def off(self, event: Literal[CallbackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
         :type event: str
@@ -792,9 +778,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def off(
-        self, event: Literal[CallbackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]
-    ) -> None:
+    def off(self, event: Literal[CallbackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
         :type event: str
@@ -848,7 +832,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type listener: callable.
         """
 
-    @distributed_trace
     def off(
         self, event: Union[CallbackType, str], listener: Callable, **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
