@@ -128,7 +128,10 @@ def _parse_exp_time(raw_token):
     return time.time()
 
 def _serialize_manifest(manifest: JSON) -> bytes:
-    return json.dumps(manifest).encode('utf-8')
+    # Trim spaces while dumping to make all manifest tests in JSON type pass in playback
+    # as test proxy cannot handle spaces correctly
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    return json.dumps(manifest, separators=(',', ':')).encode('utf-8')
 
 def _deserialize_manifest(manifest: bytes) -> JSON:
     return json.loads(manifest.decode('utf-8'))

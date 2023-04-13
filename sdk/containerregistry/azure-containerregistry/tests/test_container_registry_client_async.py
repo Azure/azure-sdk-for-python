@@ -477,33 +477,13 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_set_oci_manifest_stream(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream)
-            
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-
-    @acr_preparer()
-    @recorded_by_proxy_async
     async def test_set_oci_manifest_json_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_oci_manifest_prerequisites(repo, client)
-            
+
             with open(path, "rb") as manifest_stream:
                 manifest_json = _deserialize_manifest(manifest_stream.read())
                 with pytest.raises(HttpResponseError):
@@ -522,10 +502,34 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
+    async def test_set_oci_manifest_stream(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_oci_manifest_prerequisites(repo, client)
+
+            with open(path, "rb") as manifest_stream:
+                with pytest.raises(HttpResponseError):
+                    await client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
+                manifest_stream.seek(0)
+                digest = await client.set_manifest(repo, manifest_stream)
+            
+            response = await client.get_manifest(repo, digest)
+            assert response.media_type == OCI_IMAGE_MANIFEST
+
+            await client.delete_manifest(repo, digest)
+            await client.delete_repository(repo)
+
+    @acr_preparer()
+    @recorded_by_proxy_async
     async def test_set_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_oci_manifest_prerequisites(repo, client)
             
@@ -549,7 +553,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_set_docker_manifest_stream(self, containerregistry_endpoint):
         repo = "library/hello-world"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_docker_manifest_prerequisites(repo, client)
 
@@ -571,7 +577,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_set_docker_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = "library/hello-world"
         tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_docker_manifest_prerequisites(repo, client)
 

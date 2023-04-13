@@ -499,7 +499,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_set_oci_manifest_stream(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_oci_manifest_prerequisites(repo, client)
 
@@ -520,7 +522,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_set_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_oci_manifest_prerequisites(repo, client)
             
@@ -544,7 +548,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_set_docker_manifest_stream(self, containerregistry_endpoint):
         repo = "library/hello-world"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
 
@@ -566,7 +572,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_set_docker_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = "library/hello-world"
         tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
+        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
 
