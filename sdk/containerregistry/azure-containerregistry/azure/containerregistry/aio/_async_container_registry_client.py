@@ -898,7 +898,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             or the digest in the response does not match the digest of the set manifest.
         """
         try:
-            if isinstance(manifest, dict):
+            if isinstance(manifest, MutableMapping):
                 data = _UnclosableBytesIO(_serialize_manifest(manifest))
             else:
                 data = _UnclosableBytesIO(manifest.read())
