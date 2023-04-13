@@ -7,22 +7,24 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 
-from azure.core import AsyncPipelineClient
+from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 
-from .._serialization import Deserializer, Serializer
-from ._configuration import EventGridClientConfiguration
-from ._operations import EventGridClientOperationsMixin
+from ._configuration import EventGridNamespaceClientConfiguration
+from ._operations import EventGridNamespaceClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 
-class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridNamespaceClient(
+    EventGridNamespaceClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Messaging EventGrid Client.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -31,32 +33,30 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
     :param credential: Credential needed for the client to connect to Azure. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+     ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-06-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = EventGridNamespaceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -64,7 +64,7 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -75,12 +75,12 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self) -> None:
+        self._client.close()
 
-    async def __aenter__(self) -> "EventGridClient":
-        await self._client.__aenter__()
+    def __enter__(self) -> "EventGridNamespaceClient":
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)

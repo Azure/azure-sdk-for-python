@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 from typing import List, overload, Union, Any, Optional
-from ._operations import EventGridClientOperationsMixin as OperationsMixin
+from ._operations import EventGridNamespaceClientOperationsMixin as OperationsMixin
 from azure.core.messaging import CloudEvent
 from ..models._models import CloudEventEvent as InternalCloudEvent
 from ..models import ReceiveResponse
@@ -39,7 +39,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
     return internal_event
 
 
-class EventGridClientOperationsMixin(OperationsMixin):
+class EventGridNamespaceClientOperationsMixin(OperationsMixin):
     
     @overload
     def publish(self, topic_name: str, body: List[CloudEvent], *, content_type: str = "application/cloudevents-batch+json; charset=utf-8", **kwargs: Any) -> None:
@@ -143,7 +143,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         return deserialized_response
 
 
-__all__: List[str] = ["EventGridClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["EventGridNamespaceClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

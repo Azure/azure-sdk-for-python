@@ -18,170 +18,29 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
-from .._serialization import Serializer
-from .._vendor import EventGridClientMixinABC, _format_url_section
+from ... import models as _models
+from ..._model_base import AzureJSONEncoder, _deserialize
+from ..._operations._operations import (
+    build_event_grid_namespace_acknowledge_batch_of_cloud_events_request,
+    build_event_grid_namespace_publish_batch_of_cloud_events_request,
+    build_event_grid_namespace_publish_cloud_event_request,
+    build_event_grid_namespace_receive_batch_of_cloud_events_request,
+    build_event_grid_namespace_release_batch_of_cloud_events_request,
+)
+from .._vendor import EventGridNamespaceClientMixinABC
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-def build_event_grid_publish_cloud_event_request(  # pylint: disable=name-too-long
-    topic_name: str, *, content: _models._models.CloudEventEvent, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    # Construct URL
-    _url = "/topics/{topicName}:publish"
-    path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
-
-
-def build_event_grid_publish_batch_of_cloud_events_request(  # pylint: disable=name-too-long
-    topic_name: str, *, content: List[_models._models.CloudEventEvent], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    # Construct URL
-    _url = "/topics/{topicName}:publish"
-    path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
-
-
-def build_event_grid_receive_batch_of_cloud_events_request(  # pylint: disable=name-too-long
-    topic_name: str,
-    event_subscription_name: str,
-    *,
-    max_events: Optional[int] = None,
-    timeout: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:receive"
-    path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if max_events is not None:
-        _params["maxEvents"] = _SERIALIZER.query("max_events", max_events, "int")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_event_grid_acknowledge_batch_of_cloud_events_request(  # pylint: disable=name-too-long
-    topic_name: str, event_subscription_name: str, *, content: _models.LockTokenInput, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:acknowledge"
-    path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
-
-
-def build_event_grid_release_batch_of_cloud_events_request(  # pylint: disable=name-too-long
-    topic_name: str, event_subscription_name: str, *, content: List[_models.LockToken], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:release"
-    path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
-
-
-class EventGridClientOperationsMixin(EventGridClientMixinABC):
-    @distributed_trace
-    def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
+    @distributed_trace_async
+    async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
         self, topic_name: str, event: _models._models.CloudEventEvent, **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic.
@@ -189,7 +48,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event: Single Cloud Event being published. Required.
-        :type event: ~azure.messaging.eventgrid.models.CloudEventEvent
+        :type event: ~azure.eventgrid.models.CloudEventEvent
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -217,7 +76,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_publish_cloud_event_request(
+        request = build_event_grid_namespace_publish_cloud_event_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -231,7 +90,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -244,8 +103,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def _publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def _publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
         self, topic_name: str, events: List[_models._models.CloudEventEvent], **kwargs: Any
     ) -> None:
         """Publish Batch of Cloud Events to namespace topic.
@@ -253,7 +112,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param events: Array of Cloud Events being published. Required.
-        :type events: list[~azure.messaging.eventgrid.models.CloudEventEvent]
+        :type events: list[~azure.eventgrid.models.CloudEventEvent]
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -281,7 +140,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_publish_batch_of_cloud_events_request(
+        request = build_event_grid_namespace_publish_batch_of_cloud_events_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -295,7 +154,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -308,8 +167,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def _receive_batch_of_cloud_events(
+    @distributed_trace_async
+    async def _receive_batch_of_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -332,7 +191,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ReceiveResponse. The ReceiveResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgrid.models.ReceiveResponse
+        :rtype: ~azure.eventgrid.models.ReceiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -348,7 +207,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         cls: ClsType[_models.ReceiveResponse] = kwargs.pop("cls", None)
 
-        request = build_event_grid_receive_batch_of_cloud_events_request(
+        request = build_event_grid_namespace_receive_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             max_events=max_events,
@@ -363,7 +222,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -383,8 +242,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def acknowledge_batch_of_cloud_events(
+    @distributed_trace_async
+    async def acknowledge_batch_of_cloud_events(
         self, topic_name: str, event_subscription_name: str, lock_tokens: _models.LockTokenInput, **kwargs: Any
     ) -> _models.LockTokensResponse:
         """Acknowledge Cloud Events.
@@ -395,13 +254,13 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type lock_tokens: ~azure.messaging.eventgrid.models.LockTokenInput
+        :type lock_tokens: ~azure.eventgrid.models.LockTokenInput
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: LockTokensResponse. The LockTokensResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgrid.models.LockTokensResponse
+        :rtype: ~azure.eventgrid.models.LockTokensResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -420,7 +279,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         _content = json.dumps(lock_tokens, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_acknowledge_batch_of_cloud_events_request(
+        request = build_event_grid_namespace_acknowledge_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,
@@ -435,7 +294,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -455,8 +314,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def release_batch_of_cloud_events(
+    @distributed_trace_async
+    async def release_batch_of_cloud_events(
         self, topic_name: str, event_subscription_name: str, tokens: List[_models.LockToken], **kwargs: Any
     ) -> _models.LockTokensResponse:
         """Release Cloud Events.
@@ -467,13 +326,13 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :type event_subscription_name: str
         :param tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type tokens: list[~azure.messaging.eventgrid.models.LockToken]
+        :type tokens: list[~azure.eventgrid.models.LockToken]
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: LockTokensResponse. The LockTokensResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgrid.models.LockTokensResponse
+        :rtype: ~azure.eventgrid.models.LockTokensResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -492,7 +351,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         _content = json.dumps(tokens, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_release_batch_of_cloud_events_request(
+        request = build_event_grid_namespace_release_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,
@@ -507,7 +366,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 

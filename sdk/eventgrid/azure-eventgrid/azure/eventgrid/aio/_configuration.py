@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for EventGridClient.
+class EventGridNamespaceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for EventGridNamespaceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,7 +41,7 @@ class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-i
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        super(EventGridClientConfiguration, self).__init__(**kwargs)
+        super(EventGridNamespaceClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2023-06-01-preview")
 
         if endpoint is None:
@@ -53,7 +53,7 @@ class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-i
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://eventgrid.azure.net/.default"])
-        kwargs.setdefault("sdk_moniker", "eventgridclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "eventgrid/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _infer_policy(self, **kwargs):

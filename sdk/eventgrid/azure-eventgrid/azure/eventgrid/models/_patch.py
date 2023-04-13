@@ -9,7 +9,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, overload, Any, Mapping
 from azure.core.messaging import CloudEvent
 from ._models import ReceiveDetails as InternalReceiveDetails, BrokerProperties
-from .._legacy import EventGridEvent, generate_sas, SystemEventNames
 
 class ReceiveDetails(InternalReceiveDetails):
     """Receive operation details per Cloud Event.
@@ -41,7 +40,7 @@ class ReceiveDetails(InternalReceiveDetails):
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
-__all__: List[str] = ["ReceiveDetails", "EventGridEvent", "generate_sas", "SystemEventNames"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["ReceiveDetails"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

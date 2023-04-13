@@ -11,9 +11,9 @@ from azure.core.messaging import CloudEvent
 from ...models import ReceiveResponse
 from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._operations import EventGridClientOperationsMixin as OperationsMixin
+from ._operations import EventGridNamespaceClientOperationsMixin as OperationsMixin
 
-class EventGridClientOperationsMixin(OperationsMixin):
+class EventGridNamespaceClientOperationsMixin(OperationsMixin):
 
     @overload
     async def publish(self, topic_name: str, body: List[CloudEvent], *, content_type: str = "application/cloudevents-batch+json; charset=utf-8", **kwargs: Any) -> None:
@@ -115,7 +115,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             deserialized_response.append(detail_item)
         return deserialized_response
 
-__all__: List[str] = ["EventGridClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["EventGridNamespaceClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
