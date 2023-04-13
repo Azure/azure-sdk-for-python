@@ -14,7 +14,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
@@ -23,7 +23,6 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
-    is_private_preview_enabled,
     modified_operation_client,
 )
 from azure.ai.ml._utils._package_utils import package_deployment
@@ -116,7 +115,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_config=self._operation_config,
         )
         upload_dependencies(deployment, orchestrators)
-        if type(deployment) is PipelineComponentBatchDeployment:
+        if isinstance(deployment, PipelineComponentBatchDeployment):
             self._validate_component(deployment, orchestrators)
         try:
             location = self._get_workspace_location()
@@ -124,7 +123,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 deployment = package_deployment(deployment, self._all_operations.all_operations)
                 module_logger.info("\nStarting deployment")
             deployment_rest = deployment._to_rest_object(location=location)
-            if type(deployment) is PipelineComponentBatchDeployment:
+            if isinstance(deployment, PipelineComponentBatchDeployment): # pylint: disable=no-else-return
                 return self._component_batch_deployment_operations.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
@@ -132,7 +131,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     deployment_name=deployment.name,
                     body=deployment_rest,
                     **self._init_kwargs,
-            )
+                )
             else:
                 return self._batch_deployment.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
@@ -267,7 +266,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :param orchestrators: Operation Orchestrator
         :type orchestrators: _operation_orchestrator.OperationOrchestrator
         """
-        component = None
         if isinstance(deployment.component, PipelineComponent):
             deployment.component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
                 name=deployment.component.name,

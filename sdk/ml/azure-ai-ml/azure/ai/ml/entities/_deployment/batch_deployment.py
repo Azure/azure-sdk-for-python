@@ -16,10 +16,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as Rest
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled, snake_to_pascal
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
-from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
@@ -27,7 +25,6 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
 
@@ -229,18 +226,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             properties=self.properties,
         )
 
-        if is_private_preview_enabled() and self.job_definition:
-            if not self.job_definition.settings:
-                self.job_definition.settings = {}
-            self.job_definition.settings[PipelineConstants.DEFAULT_COMPUTE] = self.compute
-            non_flat_data = {}
-            non_flat_data["component_deployment"] = self.job_definition._to_dict()
-            flat_data = flatten(non_flat_data, ".")
-            flat_data_keys = flat_data.keys()
-            for k in flat_data_keys:
-                pascal_key = self._flat_key_snake_to_pascal(k)
-                self.properties[pascal_key] = flat_data[k]
-
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
     @classmethod
@@ -279,7 +264,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         )
 
         return deployment
-
 
     @classmethod
     def _load(
@@ -324,35 +308,3 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-
-    def _flat_key_snake_to_pascal(self, key_str: str) -> str:  # pylint: disable=no-self-use
-        key_arr = key_str.split(".")
-        pascal_array = []
-        for key in key_arr:
-            # pylint: disable=line-too-long
-            if key not in [
-                PipelineConstants.CONTINUE_ON_STEP_FAILURE,
-                PipelineConstants.DEFAULT_COMPUTE,
-                PipelineConstants.DEFAULT_DATASTORE,
-            ]:
-                pascal_array.append(snake_to_pascal(key))
-            else:
-                pascal_array.append(key)
-        return ".".join(pascal_array)
-
-    @classmethod
-    def _flat_key_pascal_to_snake(cls, key_str: str) -> str:
-        key_arr = key_str.split(".")
-        snake_array = []
-        for key in key_arr:
-            # pylint: disable=line-too-long
-            if key not in [
-                PipelineConstants.CONTINUE_ON_STEP_FAILURE,
-                PipelineConstants.DEFAULT_COMPUTE,
-                PipelineConstants.DEFAULT_DATASTORE,
-            ]:
-                snake_array.append(camel_to_snake(key))
-            else:
-                snake_array.append(key)
-
-        return ".".join(snake_array)

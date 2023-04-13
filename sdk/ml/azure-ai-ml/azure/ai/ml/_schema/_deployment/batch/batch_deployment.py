@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument,no-self-use,no-else-return
 
 import logging
 from typing import Any
 
 from marshmallow import fields, post_load
-from azure.ai.ml._schema import(
+from marshmallow.exceptions import ValidationError
+from azure.ai.ml._schema import (
     UnionField,
     ArmVersionedStr,
     ArmStr,
@@ -60,7 +61,9 @@ class BatchDeploymentSchema(DeploymentSchema):
         metadata={"description": "Indicates maximum number of parallelism per instance."}
     )
     resources = NestedField(JobResourceConfigurationSchema)
-    type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False)
+    type = StringTransformedEnum(
+        allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False
+    )
 
     job_definition = ArmStr(azureml_type=AzureMLResourceType.JOB)
     component = UnionField(
@@ -77,14 +80,17 @@ class BatchDeploymentSchema(DeploymentSchema):
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import BatchDeployment, ModelBatchDeployment, PipelineComponentBatchDeployment
+
         try:
             if data["type"]:
                 if data["type"] == BatchDeploymentType.COMPONENT:
                     return PipelineComponentBatchDeployment(**data)
                 elif data["type"] == BatchDeploymentType.MODEL:
                     return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
-        except Exception as ex:
-            if type(ex) is KeyError:
+                else:
+                    raise ValidationError(f"Deployment type must be of type {BatchDeploymentType.COMPONENT} or {BatchDeploymentType.MODEL}.") #pylint: disable=line-too-long
+        except Exception as ex: # pylint: disable=broad-except
+            if isinstance(ex) is KeyError:
                 return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
             else:
                 raise ex

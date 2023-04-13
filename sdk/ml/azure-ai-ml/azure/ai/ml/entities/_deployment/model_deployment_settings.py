@@ -2,15 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._job.job import Job
+
 
 class ModelDeploymentSettings:
     """Job Definition entity.

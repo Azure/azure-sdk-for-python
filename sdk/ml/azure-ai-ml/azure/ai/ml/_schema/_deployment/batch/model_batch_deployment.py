@@ -53,12 +53,14 @@ class ModelBatchDeploymentSchema(BatchDeploymentSchema):
         metadata={"description": "Indicates maximum number of parallelism per instance."}
     )
     resources = NestedField(JobResourceConfigurationSchema)
-    type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False)
+    type = StringTransformedEnum(
+        allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False
+    )
 
     job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import ModelBatchDeployment
-            
+
         return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)

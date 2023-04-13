@@ -230,7 +230,7 @@ __all__ = [
     "Environment",
     "BuildContext",
     "Model",
-    "ModelBatchDeployment", 
+    "ModelBatchDeployment",
     "ModelDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
