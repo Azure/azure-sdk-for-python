@@ -82,7 +82,7 @@
 
         # Receive CloudEvents
         try:
-            receive_response = await lient.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
+            receive_response = await client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
             print(receive_response)
         except Exception as e:
             print(e)
