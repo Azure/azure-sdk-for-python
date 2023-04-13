@@ -82,7 +82,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
 
         links = kwargs.pop("links", None)
-        self._span_instance = span or tracer.start_span(name=name, **kwargs)
+        self._span_instance = span or tracer.start_span(name=name)
         if kind is not None:
             self._span_instance.span_kind = kind
 
