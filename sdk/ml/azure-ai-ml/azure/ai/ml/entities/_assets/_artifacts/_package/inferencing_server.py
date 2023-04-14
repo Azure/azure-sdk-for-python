@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,redefined-builtin
+# pylint: disable=protected-access,redefined-builtin,unused-argument
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
