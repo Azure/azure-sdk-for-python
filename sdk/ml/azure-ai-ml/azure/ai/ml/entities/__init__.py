@@ -146,7 +146,7 @@ from ._assets._artifacts._package.inferencing_server import (
     Route,
 )
 from ._assets._artifacts._package.model_configuration import ModelConfiguration
-from ._assets._artifacts._package.base_environment_source import BaseEnvironmentId
+from ._assets._artifacts._package.base_environment_source import BaseEnvironment
 from ._assets._artifacts._package.model_package import (
     ModelPackage,
     PackageInputPathId,
@@ -350,7 +350,7 @@ __all__ = [
     "TritonInferencingServer",
     "CustomInferencingServer",
     "ModelConfiguration",
-    "BaseEnvironmentId",
+    "BaseEnvironment",
     "PackageInputPathId",
     "PackageInputPathUrl",
     "PackageInputPathVersion",
