@@ -135,7 +135,7 @@ class AsyncLROBasePolling(
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str) -> AsyncPipelineResponseType:
+    async def request_status(self, status_link: str) -> "AsyncPipelineResponseType":
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -156,7 +156,7 @@ class AsyncLROBasePolling(
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                AsyncPipelineResponseType,
+                "AsyncPipelineResponseType",
                 await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config),
             )
         # if I am a azure.core.pipeline.transport.HttpResponse
