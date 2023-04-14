@@ -7,6 +7,7 @@ import re
 import shutil
 import time
 import uuid
+from collections import namedtuple
 from datetime import datetime
 from functools import partial
 from importlib import reload
@@ -22,7 +23,6 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
-    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -37,7 +37,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, SINGULARITY_ID_FORMAT
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -100,22 +100,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
 
-    identity_json_paths = [
-        ".systemData.createdBy",
-        ".systemData.lastModifiedBy",
-        ".createdBy.userName",
-        ".lastModifiedBy.userName",
-        ".runMetadata.createdBy.userName",
-        ".runMetadata.lastModifiedBy.userName",
-    ]
-    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
-
-    for path in identity_json_paths:
-        for replacement, regexp in identity_replacements:
-            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
-            # Try to match in arrays too
-            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
-
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -135,13 +119,6 @@ def mock_credential():
 def mock_workspace_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
-    )
-
-
-@pytest.fixture
-def mock_registry_scope() -> OperationScope:
-    yield OperationScope(
-        subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Registry_Name
     )
 
 
@@ -173,7 +150,7 @@ def mock_registry_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription,
         resource_group_name=Test_Resource_Group,
-        workspace_name=Test_Workspace_Name,
+        workspace_name=None,
         registry_name=Test_Registry_Name,
     )
 
@@ -414,6 +391,14 @@ def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCr
         credential=auth,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="sdk-test",
+    )
+
+
+@pytest.fixture
+def ipp_registry_client(auth: ClientSecretCredential) -> MLClient:
+    "return a machine learning client to use for IPP asset registration"
+    return MLClient(
+        credential=auth, logging_enable=getenv(E2E_TEST_LOGGING_ENABLED), registry_name="UnsecureTest-hello-world"
     )
 
 
@@ -735,7 +720,6 @@ def _get_week_format() -> str:
 
 @pytest.fixture
 def auth() -> Union[AzureCliCredential, ClientSecretCredential, FakeTokenCredential]:
-
     if is_live():
         tenant_id = os.environ.get("ML_TENANT_ID")
         sp_id = os.environ.get("ML_CLIENT_ID")
@@ -795,21 +779,33 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 @pytest.fixture()
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
+    from azure.ai.ml._internal._setup import _registered, enable_internal_components_in_pipeline
     from azure.ai.ml._schema.component import command_component as command_component_schema
+    from azure.ai.ml._schema.component import component as component_schema
     from azure.ai.ml._schema.component import input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml._schema.pipeline import pipeline_job as pipeline_job_schema
     from azure.ai.ml.entities._component import command_component as command_component_entity
     from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
+    from azure.ai.ml.entities._job.pipeline import pipeline_job as pipeline_job_entity
 
     def _reload_related_classes():
+        reload(component_schema)
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+        reload(pipeline_job_schema)
 
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+        pipeline_job_entity.PipelineJobSchema = pipeline_job_schema.PipelineJobSchema
+
+        # check internal flag after reload, force register if it is set as True
+        if _registered:
+            enable_internal_components_in_pipeline(force=True)
 
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
+
         _reload_related_classes()
         yield
     _reload_related_classes()
@@ -913,3 +909,48 @@ def disable_internal_components():
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
+
+
+@pytest.fixture()
+def federated_learning_components_folder() -> Path:
+    return Path("./tests/test_configs/components/fl_test_components")
+
+
+@pytest.fixture()
+def federated_learning_local_data_folder() -> Path:
+    return Path("./tests/test_configs/fl-e2e-test-data")
+
+
+@pytest.fixture()
+def mock_set_headers_with_user_aml_token(mocker: MockFixture):
+    if not is_live() or not is_live_and_not_recording():
+        mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")
+
+
+@pytest.fixture
+def mock_singularity_arm_id(environment_variables, e2e_ws_scope: OperationScope) -> str:
+    # Singularity ARM id contains information like subscription id and resource group,
+    # we prefer not exposing these to public, so make this a fixture.
+
+    # During local development, set ML_SINGULARITY_ARM_ID in environment variables to configure Singularity.
+    singularity_compute_id_in_environ = environment_variables.get("ML_SINGULARITY_ARM_ID")
+    if singularity_compute_id_in_environ is not None:
+        return singularity_compute_id_in_environ
+    # If not set, concatenate fake Singularity ARM id from subscription id and resource group name;
+    # note that this does not affect job submission, but the created pipeline job shall not complete.
+    return SINGULARITY_ID_FORMAT.format(
+        e2e_ws_scope.subscription_id, e2e_ws_scope.resource_group_name, "SingularityTestVC"
+    )
+
+
+SingularityVirtualCluster = namedtuple("SingularityVirtualCluster", ["subscription_id", "resource_group_name", "name"])
+
+
+@pytest.fixture
+def singularity_vc(client: MLClient) -> SingularityVirtualCluster:
+    """Returns a valid Singularity VC, NOT use this fixture for recording for potential information leak."""
+    # according to virtual cluster end-to-end test, client here should have available Singularity computes.
+    for vc in client._virtual_clusters.list():
+        return SingularityVirtualCluster(
+            subscription_id=vc["subscriptionId"], resource_group_name=vc["resourceGroup"], name=vc["name"]
+        )

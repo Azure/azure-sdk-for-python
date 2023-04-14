@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes,too-many-lines
+# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes,too-many-lines,using-constant-test
 
 import json
 import logging
@@ -48,6 +48,10 @@ from azure.ai.ml._restclient.v2022_12_01_preview import (
 from azure.ai.ml._restclient.v2023_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022023Preview,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
+
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -91,11 +95,10 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    WorkspaceOutboundRuleOperations,
 )
+from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
@@ -128,6 +131,8 @@ class MLClient:
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: typing.Optional[bool]
+    :param enable_telemetry: Whether to enable telemetry. Will be overridden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: typing.Optional[bool]
     :keyword cloud: The cloud name to use, defaults to AzureCloud.
     :paramtype cloud: str
 
@@ -307,6 +312,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023_preview = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._service_client_12_2022_preview = ServiceClient122022Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -373,8 +385,14 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview
+            if registry_name
+            else self._service_client_02_2023_preview
+            if is_private_preview_enabled
+            else self._service_client_05_2022,
             self._datastores,
+            self._operation_container,
+            requests_pipeline=self._requests_pipeline,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
@@ -479,7 +497,18 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
-        self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
+        try:
+            from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
+
+            self._virtual_clusters = VirtualClusterOperations(
+                self._operation_scope,
+                self._credential,
+                _service_client_kwargs=kwargs,
+                **ops_kwargs,
+            )
+            self._operation_container.add(AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters)
+        except Exception as ex:  # pylint: disable=broad-except
+            module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
         self._featurestores = _FeatureStoreOperations(
             self._operation_scope,

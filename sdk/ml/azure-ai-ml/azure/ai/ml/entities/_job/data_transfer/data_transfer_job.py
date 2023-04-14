@@ -23,7 +23,12 @@ from azure.ai.ml.constants._component import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 
 from ..job import Job
@@ -66,12 +71,13 @@ class DataTransferJob(Job, JobIOMixin):
 
     def __init__(
         self,
+        task: str,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.DATA_TRANSFER
         self._parameters = kwargs.pop("parameters", {})
-
         super().__init__(**kwargs)
+        self.task = task
 
     @property
     def parameters(self) -> Dict[str, str]:
@@ -110,7 +116,7 @@ class DataTransferJob(Job, JobIOMixin):
             component_io = io_dict
         else:
             if isinstance(io_dict, dict):
-                data_type = io_dict.get("type", None)
+                data_type = io_dict.pop("type", None)
                 if data_type == ExternalDataType.DATABASE:
                     component_io = Database(**io_dict)
                 elif data_type == ExternalDataType.FILE_SYSTEM:
@@ -118,9 +124,15 @@ class DataTransferJob(Job, JobIOMixin):
                 else:
                     msg = "Type in source or sink only support {} and {}, currently got {}."
                     raise ValidationException(
-                        message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                        message=msg.format(
+                            ExternalDataType.DATABASE,
+                            ExternalDataType.FILE_SYSTEM,
+                            data_type,
+                        ),
                         no_personal_data_message=msg.format(
-                            ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                            ExternalDataType.DATABASE,
+                            ExternalDataType.FILE_SYSTEM,
+                            "data_type",
                         ),
                         target=ErrorTarget.DATA_TRANSFER_JOB,
                         error_category=ErrorCategory.USER_ERROR,
@@ -145,15 +157,14 @@ class DataTransferCopyJob(DataTransferJob):
         *,
         inputs: Optional[Dict[str, Union[Input, str]]] = None,
         outputs: Optional[Dict[str, Union[Output]]] = None,
-        task: str = DataTransferTaskType.COPY_DATA,
         data_copy_mode: str = None,
         **kwargs,
     ):
+        kwargs["task"] = DataTransferTaskType.COPY_DATA
         super().__init__(**kwargs)
 
         self.outputs = outputs
         self.inputs = inputs
-        self.task = task
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
@@ -171,7 +182,9 @@ class DataTransferCopyJob(DataTransferJob):
         :param kwargs: Extra arguments.
         :return: Translated data transfer copy component.
         """
-        from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent
+        from azure.ai.ml.entities._component.datatransfer_component import (
+            DataTransferCopyComponent,
+        )
 
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
@@ -184,7 +197,6 @@ class DataTransferCopyJob(DataTransferJob):
             description=self.description,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
-            task=self.task,
             data_copy_mode=self.data_copy_mode,
         )
 
@@ -216,14 +228,13 @@ class DataTransferImportJob(DataTransferJob):
         self,
         *,
         outputs: Optional[Dict[str, Union[Output]]] = None,
-        task: str = DataTransferTaskType.IMPORT_DATA,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
+        kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(**kwargs)
 
         self.outputs = outputs
-        self.task = task
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
@@ -268,7 +279,6 @@ class DataTransferImportJob(DataTransferJob):
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
-            task=self.task,
             properties=self.properties,
         )
 
@@ -278,14 +288,13 @@ class DataTransferExportJob(DataTransferJob):
         self,
         *,
         inputs: Optional[Dict[str, Union[Input]]] = None,
-        task: str = DataTransferTaskType.EXPORT_DATA,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
+        kwargs["task"] = DataTransferTaskType.EXPORT_DATA
         super().__init__(**kwargs)
 
         self.inputs = inputs
-        self.task = task
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
@@ -334,6 +343,5 @@ class DataTransferExportJob(DataTransferJob):
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
-            task=self.task,
             properties=self.properties,
         )

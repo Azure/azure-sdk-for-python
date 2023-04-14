@@ -139,19 +139,20 @@ class _FeatureSet(Artifact):
     ) -> "_FeatureSet":
         data = data or {}
         params_override = params_override or []
+        base_path = Path(yaml_path).parent if yaml_path else Path("./")
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            BASE_PATH_CONTEXT_KEY: base_path,
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(FeatureSetSchema, data, context, **kwargs)
-        return _FeatureSet(**loaded_schema)
+        feature_set = _FeatureSet(base_path=base_path, **loaded_schema)
+        return feature_set
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-
         # if datastore_arm_id is null, capture the full_storage_path
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path

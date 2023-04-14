@@ -18,7 +18,6 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchEndpointSchema(EndpointSchema):
-
     defaults = NestedField(BatchEndpointsDefaultsSchema)
 
     @post_load

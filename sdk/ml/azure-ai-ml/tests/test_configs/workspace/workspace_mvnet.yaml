@@ -3,19 +3,19 @@ location: centraluseuap
 managed_network:
   isolation_mode: allow_only_approved_outbound
   outbound_rules:
-    my-service:
-      destination:
-        port_ranges: 80, 8080-8089
-        protocol: TCP
-        service_tag: DataFactory
-      type: service_tag
-    my-storage:
-      destination:
-        service_resource_id: /subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount
-        spark_enabled: false
-        subresource_target: blob
-      type: private_endpoint
-    pytorch:
-      destination: '*.pytorch.org'
-      type: fqdn
+  - name: my-service
+    destination:
+      port_ranges: 80, 8080-8089
+      protocol: TCP
+      service_tag: DataFactory
+    type: service_tag
+  - name: my-storage
+    destination:
+      service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Storage/storageAccounts/mvnetteststorage
+      spark_enabled: false
+      subresource_target: blob
+    type: private_endpoint
+  - name: pytorch
+    destination: '*.pytorch.org'
+    type: fqdn
 tags: {}

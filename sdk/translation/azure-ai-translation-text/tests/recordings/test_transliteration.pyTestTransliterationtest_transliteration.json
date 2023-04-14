@@ -1,0 +1,34 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeEndpoint.cognitive.microsofttranslator.com/transliterate?language=zh-Hans\u0026fromScript=Hans\u0026toScript=Latn\u0026api-version=3.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "57",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Region": "fakeregion",
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
+      },
+      "RequestBody": "[{\u0022text\u0022: \u0022\\u8fd9\\u91cc\\u600e\\u4e48\\u4e00\\u56de\\u4e8b?\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "X-RequestId",
+          "X-Metered-Usage"
+        ],
+        "Content-Length": "56",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 03 Apr 2023 21:49:54 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Metered-Usage": "8",
+        "X-RequestId": "TLIT.MW1P.99BE.0403T2149.2FCA79C"
+      },
+      "ResponseBody": "[{\u0022text\u0022:\u0022zh\u00E8l\u01D0 z\u011Bnme y\u00EChu\u00EDsh\u00EC?\u0022,\u0022script\u0022:\u0022Latn\u0022}]"
+    }
+  ],
+  "Variables": {}
+}

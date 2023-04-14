@@ -1,5 +1,57 @@
 # Release History
 
+## 2.0.0 (2023-03-20)
+
+### Features Added
+
+  - Added operation ContainerAppsOperations.get_auth_token
+  - Added operation ManagedEnvironmentsOperations.get_auth_token
+  - Added operation ManagedEnvironmentsOperations.list_workload_profile_states
+  - Added operation group AvailableWorkloadProfilesOperations
+  - Added operation group BillingMetersOperations
+  - Added operation group ConnectedEnvironmentsCertificatesOperations
+  - Added operation group ConnectedEnvironmentsDaprComponentsOperations
+  - Added operation group ConnectedEnvironmentsOperations
+  - Added operation group ConnectedEnvironmentsStoragesOperations
+  - Added operation group ContainerAppsDiagnosticsOperations
+  - Added operation group ManagedEnvironmentDiagnosticsOperations
+  - Added operation group ManagedEnvironmentsDiagnosticsOperations
+  - Model CertificateProperties has a new parameter subject_alternative_names
+  - Model Configuration has a new parameter max_inactive_revisions
+  - Model ContainerApp has a new parameter environment_id
+  - Model ContainerApp has a new parameter event_stream_endpoint
+  - Model ContainerApp has a new parameter extended_location
+  - Model ContainerApp has a new parameter latest_ready_revision_name
+  - Model ContainerApp has a new parameter workload_profile_type
+  - Model CustomHostnameAnalysisResult has a new parameter conflict_with_environment_custom_domain
+  - Model Dapr has a new parameter enable_api_logging
+  - Model Dapr has a new parameter http_max_request_size
+  - Model Dapr has a new parameter http_read_buffer_size
+  - Model Dapr has a new parameter log_level
+  - Model DaprComponent has a new parameter secret_store_component
+  - Model Ingress has a new parameter client_certificate_mode
+  - Model Ingress has a new parameter cors_policy
+  - Model Ingress has a new parameter exposed_port
+  - Model Ingress has a new parameter ip_security_restrictions
+  - Model ManagedEnvironment has a new parameter custom_domain_configuration
+  - Model ManagedEnvironment has a new parameter event_stream_endpoint
+  - Model ManagedEnvironment has a new parameter kind
+  - Model ManagedEnvironment has a new parameter sku
+  - Model ManagedEnvironment has a new parameter workload_profiles
+  - Model ReplicaContainer has a new parameter exec_endpoint
+  - Model ReplicaContainer has a new parameter log_stream_endpoint
+  - Model Revision has a new parameter last_active_time
+  - Model ScaleRule has a new parameter tcp
+  - Model Template has a new parameter init_containers
+  - Model VnetConfiguration has a new parameter outbound_settings
+
+### Breaking Changes
+
+  - Model CustomHostnameAnalysisResult no longer has parameter id
+  - Model CustomHostnameAnalysisResult no longer has parameter name
+  - Model CustomHostnameAnalysisResult no longer has parameter system_data
+  - Model CustomHostnameAnalysisResult no longer has parameter type
+
 ## 2.0.0b2 (2022-12-29)
 
 ### Features Added

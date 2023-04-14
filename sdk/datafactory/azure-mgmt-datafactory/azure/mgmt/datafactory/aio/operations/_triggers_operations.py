@@ -230,8 +230,8 @@ class TriggersOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param filter_parameters: Parameters to filter the triggers. Is either a model type or a IO
-         type. Required.
+        :param filter_parameters: Parameters to filter the triggers. Is either a
+         TriggerFilterParameters type or a IO type. Required.
         :type filter_parameters: ~azure.mgmt.datafactory.models.TriggerFilterParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -388,7 +388,8 @@ class TriggersOperations:
         :type factory_name: str
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :param trigger: Trigger resource definition. Is either a model type or a IO type. Required.
+        :param trigger: Trigger resource definition. Is either a TriggerResource type or a IO type.
+         Required.
         :type trigger: ~azure.mgmt.datafactory.models.TriggerResource or IO
         :param if_match: ETag of the trigger entity.  Should only be specified for update, for which it
          should match existing entity or can be * for unconditional update. Default value is None.

@@ -22,7 +22,12 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from .materialization_store import _MaterializationStore
-from ._constants import OFFLINE_STORE_CONNECTION_NAME, DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
+from ._constants import (
+    OFFLINE_STORE_CONNECTION_NAME,
+    ONLINE_STORE_CONNECTION_NAME,
+    DEFAULT_SPARK_RUNTIME_VERSION,
+    FEATURE_STORE_KIND,
+)
 
 
 @experimental
@@ -33,6 +38,7 @@ class _FeatureStore(Workspace):
         name: str,
         compute_runtime: Optional[_ComputeRuntime] = None,
         offline_store: Optional[_MaterializationStore] = None,
+        online_store: Optional[_MaterializationStore] = None,
         materialization_identity: Optional[ManagedIdentityConfiguration] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -51,7 +57,6 @@ class _FeatureStore(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
-
         """FeatureStore.
 
         :param name: Name of the feature store.
@@ -61,6 +66,9 @@ class _FeatureStore(Workspace):
         :param offline_store: Offline store for feature store.
         materialization_identity is required when offline_store is passed.
         :type offline_store: ~azure.ai.ml.entities._MaterializationStore
+        :param online_store: Online store for feature store.
+        materialization_identity is required when online_store is passed.
+        :type online_store: ~azure.ai.ml.entities._MaterializationStore
         :param materialization_identity: Identity used for materialization.
         :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
         :param description: Description of the feature store.
@@ -109,6 +117,9 @@ class _FeatureStore(Workspace):
         if offline_store and not materialization_identity:
             raise ValidationError("materialization_identity is required to setup offline store")
 
+        if online_store and not materialization_identity:
+            raise ValidationError("materialization_identity is required to setup online store")
+
         feature_store_settings = _FeatureStoreSettings(
             compute_runtime=compute_runtime
             if compute_runtime
@@ -116,7 +127,11 @@ class _FeatureStore(Workspace):
             offline_store_connection_name=(
                 OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
             ),
+            online_store_connection_name=(
+                ONLINE_STORE_CONNECTION_NAME if materialization_identity and online_store else None
+            ),
         )
+        self._workspace_id = kwargs.pop("workspace_id", "")
         super().__init__(
             name=name,
             description=description,
@@ -139,6 +154,7 @@ class _FeatureStore(Workspace):
             **kwargs,
         )
         self.offline_store = offline_store
+        self.online_store = online_store
         self.materialization_identity = materialization_identity
         self.identity = identity
 
@@ -171,6 +187,7 @@ class _FeatureStore(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+            workspace_id=rest_obj.workspace_id,
         )
 
     @classmethod
