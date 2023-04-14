@@ -62,7 +62,7 @@ class BatchDeploymentSchema(DeploymentSchema):
     )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(
-        allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False
+        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
     )
 
     job_definition = ArmStr(azureml_type=AzureMLResourceType.JOB)
@@ -83,14 +83,14 @@ class BatchDeploymentSchema(DeploymentSchema):
 
         try:
             if data["type"]:
-                if data["type"] == BatchDeploymentType.COMPONENT:
+                if data["type"] == BatchDeploymentType.PIPELINE:
                     return PipelineComponentBatchDeployment(**data)
                 elif data["type"] == BatchDeploymentType.MODEL:
                     return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
                 else:
                     raise ValidationError(
-                        f"Deployment type must be of type {BatchDeploymentType.COMPONENT} or {BatchDeploymentType.MODEL}."
-                    )  # pylint: disable=line-too-long
+                        f"Deployment type must be of type {BatchDeploymentType.PIPELINE} or {BatchDeploymentType.MODEL}."  # pylint: disable=line-too-long
+                    )
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, KeyError):
                 return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)

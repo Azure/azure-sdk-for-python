@@ -54,7 +54,7 @@ class ModelBatchDeploymentSchema(BatchDeploymentSchema):
     )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(
-        allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False
+        allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
     )
 
     job_definition = ExperimentalField(NestedField(JobDefinitionSchema))

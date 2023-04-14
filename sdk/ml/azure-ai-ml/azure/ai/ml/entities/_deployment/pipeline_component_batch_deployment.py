@@ -80,8 +80,4 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         )
 
     def _to_dict(self) -> Dict:
-        return PipelineComponentBatchDeploymentSchema(
-            context={BASE_PATH_CONTEXT_KEY: "./"}
-        ).dump(  # pylint: disable=no-member
-            self
-        )
+        return PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self) # pylint: disable=no-member
