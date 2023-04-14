@@ -27,7 +27,7 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable, Dict, List, Generic, TypeVar
+from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable, Dict, List, Generic, TypeVar, cast
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -498,6 +498,12 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
     def _get_request_id(self) -> str:
         return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]
 
+    def _extract_delay(self) -> float:
+        delay = get_retry_after(self._pipeline_response)
+        if delay:
+            return delay
+        return self._timeout
+
 
 class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"], PollingMethod[PollingReturnType]):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
@@ -566,12 +572,6 @@ class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"],
     def _sleep(self, delay: float) -> None:
         self._transport.sleep(delay)
 
-    def _extract_delay(self) -> float:
-        delay = get_retry_after(self._pipeline_response)
-        if delay:
-            return delay
-        return self._timeout
-
     def _delay(self) -> None:
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
@@ -585,7 +585,7 @@ class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"],
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    def request_status(self, status_link: str):
+    def request_status(self, status_link: str) -> "PipelineResponseType":
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -603,7 +603,9 @@ class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"],
             from azure.core.rest import HttpRequest as RestHttpRequest
 
             rest_request = RestHttpRequest("GET", status_link)
-            return self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config)
+            # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
+            # declared in the typing of "send_request"
+            return cast("PipelineResponseType", self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config))
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
         return self._client._pipeline.run(  # pylint: disable=protected-access

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar, cast
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
         AsyncHttpTransport
     )
     from azure.core._pipeline_client_async import _AsyncContextManagerCloseable
-    from azure.core.pipeline.policies._universal import HTTPRequestType
+    from azure.core.pipeline.policies._universal import HTTPRequestType, HTTPResponseType
 
     AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
     AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
@@ -135,7 +135,7 @@ class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelin
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str):
+    async def request_status(self, status_link: str) -> AsyncPipelineResponseType:
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -153,7 +153,9 @@ class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelin
             from azure.core.rest import HttpRequest as RestHttpRequest
 
             request = RestHttpRequest("GET", status_link)
-            return await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config)
+            # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
+            # declared in the typing of "send_request"
+            return cast(AsyncPipelineResponseType, await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config))
         # if I am a azure.core.pipeline.transport.HttpResponse
         legacy_request = self._client.get(status_link)
 
