@@ -14,11 +14,35 @@ version = "3.0.0"
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="azure-ai-anomalydetector",
-    author_email="",
-    url="",
+    description="Microsoft {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
+    long_description=open("README.md", "r").read(),
+    long_description_content_type="text/markdown",
+    license="MIT License",
+    author="Microsoft Corporation",
+    author_email="azpysdkhelp@microsoft.com",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
-    packages=find_packages(),
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "License :: OSI Approved :: MIT License",
+    ],
+    zip_safe=False,
+    packages=find_packages(
+        exclude=[
+            "tests",
+            # Exclude packages that will be covered by PEP420 or nspkg
+            "azure",
+            "azure.ai",
+        ]
+    ),
     include_package_data=True,
     install_requires=[
         "isodate<1.0.0,>=0.6.1",

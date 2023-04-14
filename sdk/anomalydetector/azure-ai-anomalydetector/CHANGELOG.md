@@ -2,13 +2,9 @@
 
 ## 3.0.0 (2023-04-12)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+
+  - GA release
 
 ## 3.0.0b6 (2022-12-08)
   **Features**
