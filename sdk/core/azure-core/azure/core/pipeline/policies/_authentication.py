@@ -184,6 +184,30 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers[self._name] = self._credential.key
 
 
+class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy):
+    """Adds a key header for the provided credential, using HTTP Authorization spec.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param str auth_scheme: The name of the auth schema used for the credential.
+    :raises: ValueError or TypeError
+    """
+
+    def __init__(
+        self, credential: "AzureKeyCredential", auth_scheme: str = "Basic", **kwargs  # pylint: disable=unused-argument
+    ) -> None:
+        super(AzureHttpKeyCredentialPolicy, self).__init__()
+        self._credential = credential
+        if not auth_scheme:
+            raise ValueError("Auth scheme can not be None or empty")
+        if not isinstance(auth_scheme, str):
+            raise TypeError("name must be a string.")
+        self._auth_scheme = auth_scheme
+
+    def on_request(self, request):
+        request.http_request.headers["Authorization"] = f"{self._auth_scheme} {self._credential.key}"
+
+
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     """Adds a shared access signature to query for the provided credential.
 
