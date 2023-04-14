@@ -40,9 +40,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 if TYPE_CHECKING:
     from azure.core import PipelineClient
     from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import (
-        HttpTransport
-    )
+    from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies._universal import HTTPResponseType
 
     PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
@@ -290,7 +288,6 @@ class LocationPolling(LongRunningOperation):
     _location_url: str
     """Location header"""
 
-
     def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         response = pipeline_response.http_response
@@ -372,7 +369,7 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
     """The deserialization callback that returns the final instance."""
 
     _operation: LongRunningOperation
-    """The algorithm this poller has currently decided to use. Will loop through 'can_poll' of the input algorithms to decide."""
+    """The algorithm this poller has decided to use. Will loop through 'can_poll' of the input algorithms to decide."""
 
     _status: str
     """Hold the current of this poller"""
@@ -398,7 +395,6 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
         self._operation_config = operation_config
         self._lro_options = lro_options
         self._path_format_arguments = path_format_arguments
-
 
     def initialize(
         self,
@@ -490,9 +486,9 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
         # This "type ignore" has been discussed with architects.
         # We have a typing problem that if the Swagger/TSP describes a return type (PollingReturnType is not None), BUT
         # the returned payload is actually empty, we don't want to fail, but return None.
-        # To make it clean, we would have to make the polling return type Optional "just in case the Swagger/TSP is wrong"
-        # This is reducing the quality and the value of the typing annotations for a case that is not supposed to happen
-        # in the first place. So we decided to ignore the type error here.
+        # To make it clean, we would have to make the polling return type Optional
+        # "just in case the Swagger/TSP is wrong". This is reducing the quality and the value of the typing annotations
+        # for a case that is not supposed to happen in the first place. So we decided to ignore the type error here.
         return None  # type: ignore
 
     def _get_request_id(self) -> str:
@@ -505,7 +501,9 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
         return self._timeout
 
 
-class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"], PollingMethod[PollingReturnType]):  # pylint: disable=too-many-instance-attributes
+class LROBasePolling(
+    _SansIOLROBasePolling[PollingReturnType, "PipelineClient"], PollingMethod[PollingReturnType]
+):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
     This assumes a basic flow:
@@ -605,7 +603,10 @@ class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"],
             rest_request = RestHttpRequest("GET", status_link)
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
-            return cast("PipelineResponseType", self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config))
+            return cast(
+                "PipelineResponseType",
+                self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
+            )
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
         return self._client._pipeline.run(  # pylint: disable=protected-access

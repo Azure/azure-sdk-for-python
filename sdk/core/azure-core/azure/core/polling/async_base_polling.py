@@ -40,9 +40,7 @@ from ..pipeline._tools import is_rest
 if TYPE_CHECKING:
     from azure.core import AsyncPipelineClient
     from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import (
-        AsyncHttpTransport
-    )
+    from azure.core.pipeline.transport import AsyncHttpTransport
     from azure.core._pipeline_client_async import _AsyncContextManagerCloseable
     from azure.core.pipeline.policies._universal import HTTPRequestType, HTTPResponseType
 
@@ -54,7 +52,10 @@ PollingReturnType = TypeVar("PollingReturnType")
 __all__ = ["AsyncLROBasePolling"]
 
 
-class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]"], AsyncPollingMethod[PollingReturnType]):
+class AsyncLROBasePolling(
+    _SansIOLROBasePolling[PollingReturnType, "AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]"],
+    AsyncPollingMethod[PollingReturnType],
+):
     """A base LRO async poller.
 
     This assumes a basic flow:
@@ -70,7 +71,6 @@ class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelin
 
     _pipeline_response: "AsyncPipelineResponseType"
     """Store the latest received HTTP response, initialized by the first answer."""
-
 
     @property
     def _transport(self) -> "AsyncHttpTransport":
@@ -155,7 +155,10 @@ class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelin
             request = RestHttpRequest("GET", status_link)
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
-            return cast(AsyncPipelineResponseType, await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config))
+            return cast(
+                AsyncPipelineResponseType,
+                await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config),
+            )
         # if I am a azure.core.pipeline.transport.HttpResponse
         legacy_request = self._client.get(status_link)
 
