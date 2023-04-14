@@ -64,7 +64,7 @@ class PollingMethod(Generic[PollingReturnType]):
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
-class NoPolling(PollingMethod[PollingReturnType], Generic[PollingReturnType]):
+class NoPolling(PollingMethod[PollingReturnType]):
     """An empty poller that returns the deserialized initial response."""
 
     _deserialization_callback: Callable[[Any], PollingReturnType]
