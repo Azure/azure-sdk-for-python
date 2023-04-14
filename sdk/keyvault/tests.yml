@@ -30,11 +30,12 @@ stages:
             MatrixFilters:
               - ArmTemplateParameters=^(?!.*enableHsm.*true)
         ${{ if or(eq(service, 'azure-keyvault-keys'), eq(service, 'azure-keyvault-administration')) }}:
-          AdditionalMatrixConfigs:
-            - Name: keyvault_test_matrix_addons
-              Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
-              Selection: sparse
-              GenerateVMJobs: true
+          ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
+            AdditionalMatrixConfigs:
+              - Name: keyvault_test_matrix_addons
+                Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
+                Selection: sparse
+                GenerateVMJobs: true
         EnvVars:
           AZURE_TEST_RUN_LIVE: true
           AZURE_SKIP_LIVE_RECORDING: 'True'
