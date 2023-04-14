@@ -30,7 +30,7 @@ from azure.ai.ml._utils.utils import snake_to_pascal, dump_yaml_to_file
 from azure.ai.ml._utils._experimental import experimental
 from .model_configuration import ModelConfiguration
 from .inferencing_server import AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer
-from .base_environment_source import BaseEnvironmentId
+from .base_environment_source import BaseEnvironment
 
 
 @experimental
@@ -205,7 +205,7 @@ class ModelPackage(Resource, PackageRequest):
         *,
         target_environment_name: str,
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
-        base_environment_source: BaseEnvironmentId = None,
+        base_environment_source: BaseEnvironment = None,
         target_environment_version: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
