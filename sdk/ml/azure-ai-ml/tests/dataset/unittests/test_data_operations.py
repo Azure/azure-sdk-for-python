@@ -592,7 +592,13 @@ class TestDataOperations:
             return_value=Data(),
         ):
             data = load_data(source=p)
-            data_to_promote = mock_data_operations._prepare_to_copy(data, "new_name", "new_version")
+            data_to_promote = mock_data_operations.share(
+                name=data.name,
+                version=data.version,
+                share_with_name="new_name",
+                share_with_version="new_version",
+                registry_name="new_registry",
+            )
             assert data_to_promote.name == "new_name"
             assert data_to_promote.version == "new_version"
             mock_data_operations_in_registry._operation.get.side_effect = Mock(
