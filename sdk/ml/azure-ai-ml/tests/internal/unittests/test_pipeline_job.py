@@ -3,12 +3,11 @@
 # ---------------------------------------------------------
 import json
 from pathlib import Path
+from typing import Any, Dict
 
 import pydash
 import pytest
 import yaml
-from test_utilities.utils import parse_local_path
-
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
     Ae365exepool,
@@ -32,10 +31,18 @@ from azure.ai.ml._internal import (
     TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJobLimits,
+    Data,
+    JobResourceConfiguration,
+    PipelineJob,
+    SparkResourceConfiguration,
+)
+from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
@@ -47,7 +54,7 @@ from .._utils import (
 )
 
 
-@pytest.mark.usefixtures("enable_internal_components")
+@pytest.mark.usefixtures("enable_internal_components", "enable_pipeline_private_preview_features")
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestPipelineJob:
@@ -198,7 +205,26 @@ class TestPipelineJob:
         }
         assert pipeline_rest_dict.jobs["node"]["inputs"]["input_path"] == expected_rest_obj
 
-    @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    def test_internal_component_node_output_type(self):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
+        component_func = load_component(yaml_path)
+
+        @pipeline
+        def pipeline_func():
+            node = component_func()
+            # node level should have correct output type when type not configured
+            node.outputs.data_any_file.mode = "mount"
+
+        pipeline_job = pipeline_func()
+        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
+            "data_any_file": {"mode": "ReadWriteMount", "job_output_type": "uri_file"}
+        }
+
     def test_internal_component_output_as_pipeline_component_output(self):
         from azure.ai.ml._utils.utils import try_enable_internal_components
 
@@ -375,30 +401,30 @@ class TestPipelineJob:
         properties_rest_dict = node._to_rest_object()["resources"]["properties"]
         assert properties_rest_dict == {
             JobComputePropertyFields.AISUPERCOMPUTER: {
-                "instance_type": "STANDARD_D2_V2",
-                "image_version": "1.0",
-                "locations": ["eastus2euap"],
-                "ai_super_computer_storage_data": {
+                "InstanceType": "STANDARD_D2_V2",
+                "ImageVersion": "1.0",
+                "Locations": ["eastus2euap"],
+                "AISuperComputerStorageData": {
                     "data": {
-                        "container_name": "container_name",
-                        "relative_path": "relative_path",
+                        "ContainerName": "container_name",
+                        "RelativePath": "relative_path",
                     }
                 },
-                "interactive": True,
-                "scale_policy": {
-                    "auto_scale_instance_type_count_set": [1, 2, 3],
-                    "auto_scale_interval_in_sec": 60,
-                    "max_instance_type_count": 3,
-                    "min_instance_type_count": 1,
+                "Interactive": True,
+                "ScalePolicy": {
+                    "AutoScaleInstanceTypeCountSet": [1, 2, 3],
+                    "AutoScaleIntervalInSec": 60,
+                    "MaxInstanceTypeCount": 3,
+                    "MinInstanceTypeCount": 1,
                 },
-                "virtual_cluster_arm_id": "virtual_cluster_arm_id",
-                "tensorboard_log_directory": "tensorboard_log_directory",
-                "ssh_public_key": "ssh_public_key",
-                "enable_azml_int": True,
-                "priority": "Medium",
-                "sla_tier": "Standard",
-                "suspend_on_idle_time_hours": 1,
-                "user_alias": "user_alias",
+                "VirtualClusterArmId": "virtual_cluster_arm_id",
+                "TensorboardLogDirectory": "tensorboard_log_directory",
+                "SSHPublicKey": "ssh_public_key",
+                "EnableAzmlInt": True,
+                "Priority": "Medium",
+                "SLATier": "Standard",
+                "SuspendOnIdleTimeHours": 1,
+                "UserAlias": "user_alias",
             }
         }
 
@@ -604,3 +630,70 @@ class TestPipelineJob:
             assert len(node_dict["properties"]) == 1
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
+
+    @pytest.mark.parametrize(
+        "component_path, fields_to_test, fake_inputs",
+        [
+            pytest.param(
+                "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "limits.timeout": CommandJobLimits(timeout=100),
+                },
+                {},
+                id="command",
+            ),
+            pytest.param(
+                "./tests/test_configs/internal/batch_inference/batch_score.yaml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "limits.timeout": CommandJobLimits(timeout=100),
+                },
+                {
+                    "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
+                    "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+                },
+                id="parallel.resources",
+            ),
+            pytest.param(
+                "tests/test_configs/internal/spark-component/spec.yaml",
+                {
+                    "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
+                },
+                {
+                    "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                    "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                },
+                id="spark",
+            ),
+        ],
+    )
+    def test_data_binding_expression_on_node_runsettings(
+        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+    ):
+        component = load_component(component_path)
+
+        @pipeline()
+        def pipeline_func(param: str = "2"):
+            node = component(**fake_inputs)
+            for field, value in fields_to_test.items():
+                attr, sub_attr = field.split(".")
+                setattr(node, attr, value)
+                setattr(getattr(node, attr), sub_attr, str(param))
+
+        pipeline_job: PipelineJob = pipeline_func()
+        rest_object = pipeline_job._to_rest_object()
+        regenerated_job = PipelineJob._from_rest_object(rest_object)
+        expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
+
+        assert actual_dict == expected_dict
+
+        # directly update component to arm id
+        for _node in pipeline_job.jobs.values():
+            _node._component = (
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
+                "Microsoft.MachineLearningServices/workspaces/ws/components/component_name/"
+                "versions/1.0.0"
+            )
+        # check if all the fields are correctly serialized
+        pipeline_job.component._get_anonymous_hash()

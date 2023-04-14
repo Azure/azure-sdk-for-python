@@ -138,6 +138,22 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._assets._artifacts._package.inferencing_server import (
+    AzureMLOnlineInferencingServer,
+    AzureMLBatchInferencingServer,
+    CustomInferencingServer,
+    TritonInferencingServer,
+    Route,
+)
+from ._assets._artifacts._package.model_configuration import ModelConfiguration
+from ._assets._artifacts._package.base_environment_source import BaseEnvironment
+from ._assets._artifacts._package.model_package import (
+    ModelPackage,
+    PackageInputPathId,
+    PackageInputPathUrl,
+    PackageInputPathVersion,
+)
+
 
 from ._assets._artifacts.feature_set import _FeatureSet
 from ._workspace.compute_runtime import _ComputeRuntime
@@ -328,5 +344,16 @@ __all__ = [
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
     "EndpointAuthToken",
+    "ModelPackage",
+    "AzureMLOnlineInferencingServer",
+    "AzureMLBatchInferencingServer",
+    "TritonInferencingServer",
+    "CustomInferencingServer",
+    "ModelConfiguration",
+    "BaseEnvironment",
+    "PackageInputPathId",
+    "PackageInputPathUrl",
+    "PackageInputPathVersion",
+    "Route",
     "AccessKeyConfiguration",
 ]

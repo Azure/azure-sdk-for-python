@@ -180,7 +180,6 @@ class TestJobLogManager:
         ) as get_run_mock, patch.object(time, "sleep",) as fake_time, my_vcr.use_cassette(
             "cassettes/test_stream_logs.yaml"
         ):
-
             stream_logs_until_completion(mock_run_operations, DummyJob())
 
             # get_run_mock was called, and all the sequence of run details was consumed
