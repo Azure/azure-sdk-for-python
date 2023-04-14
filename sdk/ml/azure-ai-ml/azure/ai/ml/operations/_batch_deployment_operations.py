@@ -123,7 +123,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 deployment = package_deployment(deployment, self._all_operations.all_operations)
                 module_logger.info("\nStarting deployment")
             deployment_rest = deployment._to_rest_object(location=location)
-            if isinstance(deployment, PipelineComponentBatchDeployment): # pylint: disable=no-else-return
+            if isinstance(deployment, PipelineComponentBatchDeployment):  # pylint: disable=no-else-return
                 return self._component_batch_deployment_operations.begin_create_or_update(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,

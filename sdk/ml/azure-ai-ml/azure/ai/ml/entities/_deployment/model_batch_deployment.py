@@ -102,7 +102,7 @@ class ModelBatchDeployment(BatchDeployment):
             output_file_name=deployment_settings.output_file_name,
             output_action=BatchDeployment._yaml_output_action_to_rest_output_action(deployment_settings.output_action),
             error_threshold=deployment_settings.error_threshold,
-            retry_settings=deployment_settings.retry_settings._to_rest_object() # pylint: disable=protected-access
+            retry_settings=deployment_settings.retry_settings._to_rest_object()  # pylint: disable=protected-access
             if deployment_settings.retry_settings
             else None,
             logging_level=deployment_settings.logging_level,
