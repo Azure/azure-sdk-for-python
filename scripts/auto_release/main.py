@@ -112,10 +112,6 @@ def set_test_env_var():
         file_out.writelines(list_in)
 
 
-def start_test_proxy():
-    print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
-
-
 class CodegenTestPR:
     """
     This class can generate SDK code, run live test and create RP
@@ -434,7 +430,6 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
-        start_test_proxy()
 
     @return_origin_path
     def run_test_proc(self):
