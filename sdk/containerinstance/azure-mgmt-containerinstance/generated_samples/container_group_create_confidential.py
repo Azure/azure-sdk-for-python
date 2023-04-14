@@ -47,6 +47,7 @@ def main():
                             "image": "confiimage",
                             "ports": [{"port": 8000}],
                             "resources": {"requests": {"cpu": 1, "memoryInGB": 1.5}},
+                            "securityContext": {"capabilities": {"add": ["CAP_NET_ADMIN"]}, "privileged": False},
                         },
                     }
                 ],
@@ -60,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2022-10-01-preview/examples/ContainerGroupCreateConfidential.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2023-05-01/examples/ContainerGroupCreateConfidential.json
 if __name__ == "__main__":
     main()

@@ -59,8 +59,8 @@ class AzureFileVolume(_serialization.Model):
         storage_account_name: str,
         read_only: Optional[bool] = None,
         storage_account_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword share_name: The name of the Azure File share to be mounted as a volume. Required.
         :paramtype share_name: str
@@ -102,7 +102,7 @@ class CachedImages(_serialization.Model):
         "image": {"key": "image", "type": "str"},
     }
 
-    def __init__(self, *, os_type: str, image: str, **kwargs):
+    def __init__(self, *, os_type: str, image: str, **kwargs: Any) -> None:
         """
         :keyword os_type: The OS type of the cached image. Required.
         :paramtype os_type: str
@@ -129,8 +129,8 @@ class CachedImagesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CachedImages"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.CachedImages"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of cached images.
         :paramtype value: list[~azure.mgmt.containerinstance.models.CachedImages]
@@ -179,7 +179,7 @@ class Capabilities(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "CapabilitiesCapabilities"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -215,7 +215,7 @@ class CapabilitiesCapabilities(_serialization.Model):
         "max_gpu_count": {"key": "maxGpuCount", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.max_memory_in_gb = None
@@ -238,8 +238,8 @@ class CapabilitiesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Capabilities"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.Capabilities"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of capabilities.
         :paramtype value: list[~azure.mgmt.containerinstance.models.Capabilities]
@@ -281,8 +281,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -314,7 +314,7 @@ class ConfidentialComputeProperties(_serialization.Model):
         "cce_policy": {"key": "ccePolicy", "type": "str"},
     }
 
-    def __init__(self, *, cce_policy: Optional[str] = None, **kwargs):
+    def __init__(self, *, cce_policy: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cce_policy: The base64 encoded confidential compute enforcement policy.
         :paramtype cce_policy: str
@@ -323,7 +323,7 @@ class ConfidentialComputeProperties(_serialization.Model):
         self.cce_policy = cce_policy
 
 
-class Container(_serialization.Model):
+class Container(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A container instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -350,6 +350,8 @@ class Container(_serialization.Model):
     :vartype liveness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
     :ivar readiness_probe: The readiness probe.
     :vartype readiness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
+    :ivar security_context: The container security properties.
+    :vartype security_context: ~azure.mgmt.containerinstance.models.SecurityContextDefinition
     """
 
     _validation = {
@@ -370,6 +372,7 @@ class Container(_serialization.Model):
         "volume_mounts": {"key": "properties.volumeMounts", "type": "[VolumeMount]"},
         "liveness_probe": {"key": "properties.livenessProbe", "type": "ContainerProbe"},
         "readiness_probe": {"key": "properties.readinessProbe", "type": "ContainerProbe"},
+        "security_context": {"key": "properties.securityContext", "type": "SecurityContextDefinition"},
     }
 
     def __init__(
@@ -384,8 +387,9 @@ class Container(_serialization.Model):
         volume_mounts: Optional[List["_models.VolumeMount"]] = None,
         liveness_probe: Optional["_models.ContainerProbe"] = None,
         readiness_probe: Optional["_models.ContainerProbe"] = None,
-        **kwargs
-    ):
+        security_context: Optional["_models.SecurityContextDefinition"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The user-provided name of the container instance. Required.
         :paramtype name: str
@@ -406,6 +410,8 @@ class Container(_serialization.Model):
         :paramtype liveness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
         :keyword readiness_probe: The readiness probe.
         :paramtype readiness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
+        :keyword security_context: The container security properties.
+        :paramtype security_context: ~azure.mgmt.containerinstance.models.SecurityContextDefinition
         """
         super().__init__(**kwargs)
         self.name = name
@@ -418,6 +424,7 @@ class Container(_serialization.Model):
         self.volume_mounts = volume_mounts
         self.liveness_probe = liveness_probe
         self.readiness_probe = readiness_probe
+        self.security_context = security_context
 
 
 class ContainerAttachResponse(_serialization.Model):
@@ -435,7 +442,7 @@ class ContainerAttachResponse(_serialization.Model):
         "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(self, *, web_socket_uri: Optional[str] = None, password: Optional[str] = None, **kwargs):
+    def __init__(self, *, web_socket_uri: Optional[str] = None, password: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword web_socket_uri: The uri for the output stream from the attach.
         :paramtype web_socket_uri: str
@@ -459,7 +466,7 @@ class ContainerExec(_serialization.Model):
         "command": {"key": "command", "type": "[str]"},
     }
 
-    def __init__(self, *, command: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, command: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword command: The commands to execute within the container.
         :paramtype command: list[str]
@@ -487,8 +494,8 @@ class ContainerExecRequest(_serialization.Model):
         *,
         command: Optional[str] = None,
         terminal_size: Optional["_models.ContainerExecRequestTerminalSize"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword command: The command to be executed.
         :paramtype command: str
@@ -514,7 +521,7 @@ class ContainerExecRequestTerminalSize(_serialization.Model):
         "cols": {"key": "cols", "type": "int"},
     }
 
-    def __init__(self, *, rows: Optional[int] = None, cols: Optional[int] = None, **kwargs):
+    def __init__(self, *, rows: Optional[int] = None, cols: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword rows: The row size of the terminal.
         :paramtype rows: int
@@ -540,7 +547,7 @@ class ContainerExecResponse(_serialization.Model):
         "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(self, *, web_socket_uri: Optional[str] = None, password: Optional[str] = None, **kwargs):
+    def __init__(self, *, web_socket_uri: Optional[str] = None, password: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword web_socket_uri: The uri for the exec websocket.
         :paramtype web_socket_uri: str
@@ -663,8 +670,8 @@ class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-man
         extensions: Optional[List["_models.DeploymentExtensionSpec"]] = None,
         confidential_compute_properties: Optional["_models.ConfidentialComputeProperties"] = None,
         priority: Optional[Union[str, "_models.ContainerGroupPriority"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity of the container group, if configured.
         :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
@@ -772,8 +779,8 @@ class Resource(_serialization.Model):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location.
         :paramtype location: str
@@ -926,8 +933,8 @@ class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity of the container group, if configured.
         :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
@@ -1039,7 +1046,7 @@ class ContainerGroupDiagnostics(_serialization.Model):
         "log_analytics": {"key": "logAnalytics", "type": "LogAnalytics"},
     }
 
-    def __init__(self, *, log_analytics: Optional["_models.LogAnalytics"] = None, **kwargs):
+    def __init__(self, *, log_analytics: Optional["_models.LogAnalytics"] = None, **kwargs: Any) -> None:
         """
         :keyword log_analytics: Container group log analytics information.
         :paramtype log_analytics: ~azure.mgmt.containerinstance.models.LogAnalytics
@@ -1087,8 +1094,8 @@ class ContainerGroupIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentities"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the container group. The type 'SystemAssigned,
          UserAssigned' includes both an implicitly created identity and a set of user assigned
@@ -1122,8 +1129,8 @@ class ContainerGroupListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ContainerGroup"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ContainerGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of container groups.
         :paramtype value: list[~azure.mgmt.containerinstance.models.ContainerGroup]
@@ -1156,7 +1163,7 @@ class ContainerGroupPropertiesInstanceView(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.events = None
@@ -1183,7 +1190,9 @@ class ContainerGroupSubnetId(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, id: str, name: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, name: Optional[str] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: Resource ID of virtual network and subnet. Required.
         :paramtype id: str
@@ -1228,8 +1237,8 @@ class ContainerHttpGet(_serialization.Model):
         path: Optional[str] = None,
         scheme: Optional[Union[str, "_models.Scheme"]] = None,
         http_headers: Optional[List["_models.HttpHeader"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The path to probe.
         :paramtype path: str
@@ -1268,8 +1277,8 @@ class ContainerPort(_serialization.Model):
     }
 
     def __init__(
-        self, *, port: int, protocol: Optional[Union[str, "_models.ContainerNetworkProtocol"]] = None, **kwargs
-    ):
+        self, *, port: int, protocol: Optional[Union[str, "_models.ContainerNetworkProtocol"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword protocol: The protocol associated with the port. Known values are: "TCP" and "UDP".
         :paramtype protocol: str or ~azure.mgmt.containerinstance.models.ContainerNetworkProtocol
@@ -1320,8 +1329,8 @@ class ContainerProbe(_serialization.Model):
         failure_threshold: Optional[int] = None,
         success_threshold: Optional[int] = None,
         timeout_seconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exec_property: The execution command to probe.
         :paramtype exec_property: ~azure.mgmt.containerinstance.models.ContainerExec
@@ -1377,7 +1386,7 @@ class ContainerPropertiesInstanceView(_serialization.Model):
         "events": {"key": "events", "type": "[Event]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.restart_count = None
@@ -1420,7 +1429,7 @@ class ContainerState(_serialization.Model):
         "detail_status": {"key": "detailStatus", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.state = None
@@ -1467,8 +1476,8 @@ class DeploymentExtensionSpec(_serialization.Model):
         version: Optional[str] = None,
         settings: Optional[JSON] = None,
         protected_settings: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the extension. Required.
         :paramtype name: str
@@ -1513,8 +1522,13 @@ class DnsConfiguration(_serialization.Model):
     }
 
     def __init__(
-        self, *, name_servers: List[str], search_domains: Optional[str] = None, options: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name_servers: List[str],
+        search_domains: Optional[str] = None,
+        options: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_servers: The DNS servers for the container group. Required.
         :paramtype name_servers: list[str]
@@ -1558,8 +1572,8 @@ class EncryptionProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, vault_base_url: str, key_name: str, key_version: str, identity: Optional[str] = None, **kwargs
-    ):
+        self, *, vault_base_url: str, key_name: str, key_version: str, identity: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword vault_base_url: The keyvault base url. Required.
         :paramtype vault_base_url: str
@@ -1600,7 +1614,9 @@ class EnvironmentVariable(_serialization.Model):
         "secure_value": {"key": "secureValue", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: Optional[str] = None, secure_value: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, name: str, value: Optional[str] = None, secure_value: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the environment variable. Required.
         :paramtype name: str
@@ -1652,7 +1668,7 @@ class Event(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.count = None
@@ -1688,7 +1704,9 @@ class GitRepoVolume(_serialization.Model):
         "revision": {"key": "revision", "type": "str"},
     }
 
-    def __init__(self, *, repository: str, directory: Optional[str] = None, revision: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, repository: str, directory: Optional[str] = None, revision: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword directory: Target directory name. Must not contain or start with '..'.  If '.' is
          supplied, the volume directory will be the git repository.  Otherwise, if specified, the volume
@@ -1726,7 +1744,7 @@ class GpuResource(_serialization.Model):
         "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(self, *, count: int, sku: Union[str, "_models.GpuSku"], **kwargs):
+    def __init__(self, *, count: int, sku: Union[str, "_models.GpuSku"], **kwargs: Any) -> None:
         """
         :keyword count: The count of the GPU resource. Required.
         :paramtype count: int
@@ -1753,7 +1771,7 @@ class HttpHeader(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The header name.
         :paramtype name: str
@@ -1803,8 +1821,8 @@ class ImageRegistryCredential(_serialization.Model):
         password: Optional[str] = None,
         identity: Optional[str] = None,
         identity_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server: The Docker image registry server without a protocol such as "http" and
          "https". Required.
@@ -1846,6 +1864,8 @@ class InitContainerDefinition(_serialization.Model):
      ~azure.mgmt.containerinstance.models.InitContainerPropertiesDefinitionInstanceView
     :ivar volume_mounts: The volume mounts available to the init container.
     :vartype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
+    :ivar security_context: The container security properties.
+    :vartype security_context: ~azure.mgmt.containerinstance.models.SecurityContextDefinition
     """
 
     _validation = {
@@ -1860,6 +1880,7 @@ class InitContainerDefinition(_serialization.Model):
         "environment_variables": {"key": "properties.environmentVariables", "type": "[EnvironmentVariable]"},
         "instance_view": {"key": "properties.instanceView", "type": "InitContainerPropertiesDefinitionInstanceView"},
         "volume_mounts": {"key": "properties.volumeMounts", "type": "[VolumeMount]"},
+        "security_context": {"key": "properties.securityContext", "type": "SecurityContextDefinition"},
     }
 
     def __init__(
@@ -1870,8 +1891,9 @@ class InitContainerDefinition(_serialization.Model):
         command: Optional[List[str]] = None,
         environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         volume_mounts: Optional[List["_models.VolumeMount"]] = None,
-        **kwargs
-    ):
+        security_context: Optional["_models.SecurityContextDefinition"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name for the init container. Required.
         :paramtype name: str
@@ -1884,6 +1906,8 @@ class InitContainerDefinition(_serialization.Model):
          list[~azure.mgmt.containerinstance.models.EnvironmentVariable]
         :keyword volume_mounts: The volume mounts available to the init container.
         :paramtype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
+        :keyword security_context: The container security properties.
+        :paramtype security_context: ~azure.mgmt.containerinstance.models.SecurityContextDefinition
         """
         super().__init__(**kwargs)
         self.name = name
@@ -1892,6 +1916,7 @@ class InitContainerDefinition(_serialization.Model):
         self.environment_variables = environment_variables
         self.instance_view = None
         self.volume_mounts = volume_mounts
+        self.security_context = security_context
 
 
 class InitContainerPropertiesDefinitionInstanceView(_serialization.Model):
@@ -1923,7 +1948,7 @@ class InitContainerPropertiesDefinitionInstanceView(_serialization.Model):
         "events": {"key": "events", "type": "[Event]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.restart_count = None
@@ -1986,8 +2011,8 @@ class IpAddress(_serialization.Model):
         ip: Optional[str] = None,
         dns_name_label: Optional[str] = None,
         auto_generated_domain_name_label_scope: Union[str, "_models.DnsNameLabelReusePolicy"] = "Unsecure",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ports: The list of ports exposed on the container group. Required.
         :paramtype ports: list[~azure.mgmt.containerinstance.models.Port]
@@ -2058,8 +2083,8 @@ class LogAnalytics(_serialization.Model):
         log_type: Optional[Union[str, "_models.LogAnalyticsLogType"]] = None,
         metadata: Optional[Dict[str, str]] = None,
         workspace_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: The workspace id for log analytics. Required.
         :paramtype workspace_id: str
@@ -2092,7 +2117,7 @@ class Logs(_serialization.Model):
         "content": {"key": "content", "type": "str"},
     }
 
-    def __init__(self, *, content: Optional[str] = None, **kwargs):
+    def __init__(self, *, content: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content: The content of the log.
         :paramtype content: str
@@ -2135,8 +2160,8 @@ class Operation(_serialization.Model):
         display: "_models.OperationDisplay",
         properties: Optional[JSON] = None,
         origin: Optional[Union[str, "_models.ContainerInstanceOperationsOrigin"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the operation. Required.
         :paramtype name: str
@@ -2182,8 +2207,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The name of the provider of the operation.
         :paramtype provider: str
@@ -2215,7 +2240,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of operations.
         :paramtype value: list[~azure.mgmt.containerinstance.models.Operation]
@@ -2248,8 +2275,12 @@ class Port(_serialization.Model):
     }
 
     def __init__(
-        self, *, port: int, protocol: Optional[Union[str, "_models.ContainerGroupNetworkProtocol"]] = None, **kwargs
-    ):
+        self,
+        *,
+        port: int,
+        protocol: Optional[Union[str, "_models.ContainerGroupNetworkProtocol"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protocol: The protocol associated with the port. Known values are: "TCP" and "UDP".
         :paramtype protocol: str or ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol
@@ -2284,8 +2315,8 @@ class ResourceLimits(_serialization.Model):
         memory_in_gb: Optional[float] = None,
         cpu: Optional[float] = None,
         gpu: Optional["_models.GpuResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword memory_in_gb: The memory limit in GB of this container instance.
         :paramtype memory_in_gb: float
@@ -2324,7 +2355,9 @@ class ResourceRequests(_serialization.Model):
         "gpu": {"key": "gpu", "type": "GpuResource"},
     }
 
-    def __init__(self, *, memory_in_gb: float, cpu: float, gpu: Optional["_models.GpuResource"] = None, **kwargs):
+    def __init__(
+        self, *, memory_in_gb: float, cpu: float, gpu: Optional["_models.GpuResource"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword memory_in_gb: The memory request in GB of this container instance. Required.
         :paramtype memory_in_gb: float
@@ -2360,8 +2393,8 @@ class ResourceRequirements(_serialization.Model):
     }
 
     def __init__(
-        self, *, requests: "_models.ResourceRequests", limits: Optional["_models.ResourceLimits"] = None, **kwargs
-    ):
+        self, *, requests: "_models.ResourceRequests", limits: Optional["_models.ResourceLimits"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword requests: The resource requests of this container instance. Required.
         :paramtype requests: ~azure.mgmt.containerinstance.models.ResourceRequests
@@ -2371,6 +2404,99 @@ class ResourceRequirements(_serialization.Model):
         super().__init__(**kwargs)
         self.requests = requests
         self.limits = limits
+
+
+class SecurityContextCapabilitiesDefinition(_serialization.Model):
+    """The capabilities to add or drop from a container.
+
+    :ivar add: The capabilities to add to the container.
+    :vartype add: list[str]
+    :ivar drop: The capabilities to drop from the container.
+    :vartype drop: list[str]
+    """
+
+    _attribute_map = {
+        "add": {"key": "add", "type": "[str]"},
+        "drop": {"key": "drop", "type": "[str]"},
+    }
+
+    def __init__(self, *, add: Optional[List[str]] = None, drop: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword add: The capabilities to add to the container.
+        :paramtype add: list[str]
+        :keyword drop: The capabilities to drop from the container.
+        :paramtype drop: list[str]
+        """
+        super().__init__(**kwargs)
+        self.add = add
+        self.drop = drop
+
+
+class SecurityContextDefinition(_serialization.Model):
+    """The security context for the container.
+
+    :ivar privileged: The flag to determine if the container permissions is elevated to Privileged.
+    :vartype privileged: bool
+    :ivar allow_privilege_escalation: A boolean value indicating whether the init process can
+     elevate its privileges.
+    :vartype allow_privilege_escalation: bool
+    :ivar capabilities: The capabilities to add or drop from a container.
+    :vartype capabilities:
+     ~azure.mgmt.containerinstance.models.SecurityContextCapabilitiesDefinition
+    :ivar run_as_group: Sets the User GID for the container.
+    :vartype run_as_group: int
+    :ivar run_as_user: Sets the User UID for the container.
+    :vartype run_as_user: int
+    :ivar seccomp_profile: a base64 encoded string containing the contents of the JSON in the
+     seccomp profile.
+    :vartype seccomp_profile: str
+    """
+
+    _attribute_map = {
+        "privileged": {"key": "privileged", "type": "bool"},
+        "allow_privilege_escalation": {"key": "allowPrivilegeEscalation", "type": "bool"},
+        "capabilities": {"key": "capabilities", "type": "SecurityContextCapabilitiesDefinition"},
+        "run_as_group": {"key": "runAsGroup", "type": "int"},
+        "run_as_user": {"key": "runAsUser", "type": "int"},
+        "seccomp_profile": {"key": "seccompProfile", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        privileged: Optional[bool] = None,
+        allow_privilege_escalation: Optional[bool] = None,
+        capabilities: Optional["_models.SecurityContextCapabilitiesDefinition"] = None,
+        run_as_group: Optional[int] = None,
+        run_as_user: Optional[int] = None,
+        seccomp_profile: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword privileged: The flag to determine if the container permissions is elevated to
+         Privileged.
+        :paramtype privileged: bool
+        :keyword allow_privilege_escalation: A boolean value indicating whether the init process can
+         elevate its privileges.
+        :paramtype allow_privilege_escalation: bool
+        :keyword capabilities: The capabilities to add or drop from a container.
+        :paramtype capabilities:
+         ~azure.mgmt.containerinstance.models.SecurityContextCapabilitiesDefinition
+        :keyword run_as_group: Sets the User GID for the container.
+        :paramtype run_as_group: int
+        :keyword run_as_user: Sets the User UID for the container.
+        :paramtype run_as_user: int
+        :keyword seccomp_profile: a base64 encoded string containing the contents of the JSON in the
+         seccomp profile.
+        :paramtype seccomp_profile: str
+        """
+        super().__init__(**kwargs)
+        self.privileged = privileged
+        self.allow_privilege_escalation = allow_privilege_escalation
+        self.capabilities = capabilities
+        self.run_as_group = run_as_group
+        self.run_as_user = run_as_user
+        self.seccomp_profile = seccomp_profile
 
 
 class Usage(_serialization.Model):
@@ -2406,7 +2532,7 @@ class Usage(_serialization.Model):
         "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2433,7 +2559,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2460,7 +2586,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2468,7 +2594,9 @@ class UsageName(_serialization.Model):
 
 
 class UserAssignedIdentities(_serialization.Model):
-    """The list of user identities associated with the container group. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    """The list of user identities associated with the container group. The user identity dictionary
+    key references will be ARM resource ids in the form:
+    '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2488,7 +2616,7 @@ class UserAssignedIdentities(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -2532,8 +2660,8 @@ class Volume(_serialization.Model):
         empty_dir: Optional[JSON] = None,
         secret: Optional[Dict[str, str]] = None,
         git_repo: Optional["_models.GitRepoVolume"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the volume. Required.
         :paramtype name: str
@@ -2579,7 +2707,7 @@ class VolumeMount(_serialization.Model):
         "read_only": {"key": "readOnly", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, mount_path: str, read_only: Optional[bool] = None, **kwargs):
+    def __init__(self, *, name: str, mount_path: str, read_only: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the volume mount. Required.
         :paramtype name: str
