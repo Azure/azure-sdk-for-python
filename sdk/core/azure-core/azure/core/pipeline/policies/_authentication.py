@@ -18,9 +18,9 @@ if TYPE_CHECKING:
         AzureSasCredential,
     )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.policies._universal import HTTPRequestType
 
 HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
-HTTPRequestTypeVar = TypeVar("HTTPRequestTypeVar")
 
 
 # pylint:disable=too-few-public-methods
@@ -187,7 +187,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers[self._name] = self._credential.key
 
 
-class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]):
+class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTypeVar]):
     """Adds a key header for the provided credential, using HTTP Authorization spec.
 
     :param credential: The credential used to authenticate requests.
@@ -197,7 +197,10 @@ class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestTypeVar, HTTPResp
     """
 
     def __init__(
-        self, credential: "AzureKeyCredential", auth_scheme: str = "Basic", **kwargs: Any  # pylint: disable=unused-argument
+        self,
+        credential: "AzureKeyCredential",
+        auth_scheme: str = "Basic",
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super(AzureHttpKeyCredentialPolicy, self).__init__()
         self._credential = credential
@@ -207,7 +210,7 @@ class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestTypeVar, HTTPResp
             raise TypeError("name must be a string.")
         self._auth_scheme = auth_scheme
 
-    def on_request(self, request: "PipelineRequest[HTTPRequestTypeVar]") -> None:
+    def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
         request.http_request.headers["Authorization"] = f"{self._auth_scheme} {self._credential.key}"
 
 
