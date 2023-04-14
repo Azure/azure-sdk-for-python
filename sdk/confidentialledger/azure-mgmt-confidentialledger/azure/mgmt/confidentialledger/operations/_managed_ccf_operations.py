@@ -38,7 +38,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_request(resource_group_name: str, ledger_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(resource_group_name: str, app_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -48,14 +48,14 @@ def build_get_request(resource_group_name: str, ledger_name: str, subscription_i
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "ledgerName": _SERIALIZER.url("ledger_name", ledger_name, "str", pattern=r"^[a-zA-Z0-9]"),
+        "appName": _SERIALIZER.url("app_name", app_name, "str", pattern=r"^[a-zA-Z0-9]"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -69,9 +69,7 @@ def build_get_request(resource_group_name: str, ledger_name: str, subscription_i
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
-    resource_group_name: str, ledger_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_delete_request(resource_group_name: str, app_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -81,14 +79,14 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "ledgerName": _SERIALIZER.url("ledger_name", ledger_name, "str", pattern=r"^[a-zA-Z0-9]"),
+        "appName": _SERIALIZER.url("app_name", app_name, "str", pattern=r"^[a-zA-Z0-9]"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -102,9 +100,7 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_request(
-    resource_group_name: str, ledger_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_create_request(resource_group_name: str, app_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -115,14 +111,14 @@ def build_create_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "ledgerName": _SERIALIZER.url("ledger_name", ledger_name, "str", pattern=r"^[a-zA-Z0-9]"),
+        "appName": _SERIALIZER.url("app_name", app_name, "str", pattern=r"^[a-zA-Z0-9]"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -138,9 +134,7 @@ def build_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_request(
-    resource_group_name: str, ledger_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_update_request(resource_group_name: str, app_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -151,14 +145,14 @@ def build_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "ledgerName": _SERIALIZER.url("ledger_name", ledger_name, "str", pattern=r"^[a-zA-Z0-9]"),
+        "appName": _SERIALIZER.url("app_name", app_name, "str", pattern=r"^[a-zA-Z0-9]"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -186,7 +180,7 @@ def build_list_by_resource_group_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -218,7 +212,9 @@ def build_list_by_subscription_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.ConfidentialLedger/ledgers/")
+    _url = kwargs.pop(
+        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.ConfidentialLedger/managedCCFs/"
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
@@ -236,14 +232,14 @@ def build_list_by_subscription_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class LedgerOperations:
+class ManagedCCFOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.confidentialledger.ConfidentialLedger`'s
-        :attr:`ledger` attribute.
+        :attr:`managed_ccf` attribute.
     """
 
     models = _models
@@ -256,19 +252,19 @@ class LedgerOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, resource_group_name: str, ledger_name: str, **kwargs: Any) -> _models.ConfidentialLedger:
-        """Retrieves information about a Confidential Ledger resource.
+    def get(self, resource_group_name: str, app_name: str, **kwargs: Any) -> _models.ManagedCCF:
+        """Retrieves information about a Managed CCF resource.
 
-        Retrieves the properties of a Confidential Ledger.
+        Retrieves the properties of a Managed CCF app.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ConfidentialLedger or the result of cls(response)
-        :rtype: ~azure.mgmt.confidentialledger.models.ConfidentialLedger
+        :return: ManagedCCF or the result of cls(response)
+        :rtype: ~azure.mgmt.confidentialledger.models.ManagedCCF
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -283,11 +279,11 @@ class LedgerOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ConfidentialLedger] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedCCF] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
-            ledger_name=ledger_name,
+            app_name=app_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -309,7 +305,7 @@ class LedgerOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ConfidentialLedger", pipeline_response)
+        deserialized = self._deserialize("ManagedCCF", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -317,11 +313,11 @@ class LedgerOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, ledger_name: str, **kwargs: Any
+        self, resource_group_name: str, app_name: str, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -339,7 +335,7 @@ class LedgerOperations:
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
-            ledger_name=ledger_name,
+            app_name=app_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self._delete_initial.metadata["url"],
@@ -365,20 +361,20 @@ class LedgerOperations:
             return cls(pipeline_response, None, {})
 
     _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
     @distributed_trace
-    def begin_delete(self, resource_group_name: str, ledger_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes a Confidential Ledger resource.
+    def begin_delete(self, resource_group_name: str, app_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Deletes a Managed CCF resource.
 
-        Deletes an existing Confidential Ledger.
+        Deletes an existing Managed CCF.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -402,7 +398,7 @@ class LedgerOperations:
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
-                ledger_name=ledger_name,
+                app_name=app_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -431,16 +427,12 @@ class LedgerOperations:
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
     def _create_initial(
-        self,
-        resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: Union[_models.ConfidentialLedger, IO],
-        **kwargs: Any
-    ) -> _models.ConfidentialLedger:
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
+    ) -> Optional[_models.ManagedCCF]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -454,19 +446,19 @@ class LedgerOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ConfidentialLedger] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.ManagedCCF]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(confidential_ledger, (IO, bytes)):
-            _content = confidential_ledger
+        if isinstance(managed_ccf, (IO, bytes)):
+            _content = managed_ccf
         else:
-            _json = self._serialize.body(confidential_ledger, "ConfidentialLedger")
+            _json = self._serialize.body(managed_ccf, "ManagedCCF")
 
         request = build_create_request(
             resource_group_name=resource_group_name,
-            ledger_name=ledger_name,
+            app_name=app_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -491,42 +483,40 @@ class LedgerOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("ConfidentialLedger", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ConfidentialLedger", pipeline_response)
+            deserialized = self._deserialize("ManagedCCF", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
     @overload
     def begin_create(
         self,
         resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: _models.ConfidentialLedger,
+        app_name: str,
+        managed_ccf: _models.ManagedCCF,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.ConfidentialLedger]:
-        """Creates a  Confidential Ledger.
+    ) -> LROPoller[_models.ManagedCCF]:
+        """Creates a Managed CCF.
 
-        Creates a  Confidential Ledger with the specified ledger parameters.
+        Creates a Managed CCF with the specified Managed CCF parameters.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
-        :param confidential_ledger: Confidential Ledger Create Request Body. Required.
-        :type confidential_ledger: ~azure.mgmt.confidentialledger.models.ConfidentialLedger
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Create Request Body. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -538,9 +528,8 @@ class LedgerOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ConfidentialLedger or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An instance of LROPoller that returns either ManagedCCF or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -548,23 +537,23 @@ class LedgerOperations:
     def begin_create(
         self,
         resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: IO,
+        app_name: str,
+        managed_ccf: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.ConfidentialLedger]:
-        """Creates a  Confidential Ledger.
+    ) -> LROPoller[_models.ManagedCCF]:
+        """Creates a Managed CCF.
 
-        Creates a  Confidential Ledger with the specified ledger parameters.
+        Creates a Managed CCF with the specified Managed CCF parameters.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
-        :param confidential_ledger: Confidential Ledger Create Request Body. Required.
-        :type confidential_ledger: IO
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Create Request Body. Required.
+        :type managed_ccf: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -576,32 +565,27 @@ class LedgerOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ConfidentialLedger or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An instance of LROPoller that returns either ManagedCCF or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_create(
-        self,
-        resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: Union[_models.ConfidentialLedger, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.ConfidentialLedger]:
-        """Creates a  Confidential Ledger.
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
+    ) -> LROPoller[_models.ManagedCCF]:
+        """Creates a Managed CCF.
 
-        Creates a  Confidential Ledger with the specified ledger parameters.
+        Creates a Managed CCF with the specified Managed CCF parameters.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
-        :param confidential_ledger: Confidential Ledger Create Request Body. Is either a
-         ConfidentialLedger type or a IO type. Required.
-        :type confidential_ledger: ~azure.mgmt.confidentialledger.models.ConfidentialLedger or IO
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Managed CCF Create Request Body. Is either a ManagedCCF type or a IO type.
+         Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -613,9 +597,8 @@ class LedgerOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ConfidentialLedger or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An instance of LROPoller that returns either ManagedCCF or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -623,15 +606,15 @@ class LedgerOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ConfidentialLedger] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedCCF] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
-                ledger_name=ledger_name,
-                confidential_ledger=confidential_ledger,
+                app_name=app_name,
+                managed_ccf=managed_ccf,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -642,7 +625,7 @@ class LedgerOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ConfidentialLedger", pipeline_response)
+            deserialized = self._deserialize("ManagedCCF", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -665,16 +648,12 @@ class LedgerOperations:
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
-    def _update_initial(
-        self,
-        resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: Union[_models.ConfidentialLedger, IO],
-        **kwargs: Any
-    ) -> Optional[_models.ConfidentialLedger]:
+    def _update_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
+    ) -> None:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -688,19 +667,19 @@ class LedgerOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.ConfidentialLedger]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(confidential_ledger, (IO, bytes)):
-            _content = confidential_ledger
+        if isinstance(managed_ccf, (IO, bytes)):
+            _content = managed_ccf
         else:
-            _json = self._serialize.body(confidential_ledger, "ConfidentialLedger")
+            _json = self._serialize.body(managed_ccf, "ManagedCCF")
 
         request = build_update_request(
             resource_group_name=resource_group_name,
-            ledger_name=ledger_name,
+            app_name=app_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -720,45 +699,39 @@ class LedgerOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("ConfidentialLedger", pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
+            return cls(pipeline_response, None, {})
 
     _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
     @overload
     def begin_update(
         self,
         resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: _models.ConfidentialLedger,
+        app_name: str,
+        managed_ccf: _models.ManagedCCF,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.ConfidentialLedger]:
-        """Update Confidential Ledger properties.
+    ) -> LROPoller[None]:
+        """Update Managed CCF properties.
 
-        Updates properties of Confidential Ledger.
+        Updates properties of Managed CCF.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
-        :param confidential_ledger: Confidential Ledger request body for Updating Ledger. Required.
-        :type confidential_ledger: ~azure.mgmt.confidentialledger.models.ConfidentialLedger
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Request body for Updating Managed CCF App. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -770,9 +743,8 @@ class LedgerOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ConfidentialLedger or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -780,23 +752,23 @@ class LedgerOperations:
     def begin_update(
         self,
         resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: IO,
+        app_name: str,
+        managed_ccf: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.ConfidentialLedger]:
-        """Update Confidential Ledger properties.
+    ) -> LROPoller[None]:
+        """Update Managed CCF properties.
 
-        Updates properties of Confidential Ledger.
+        Updates properties of Managed CCF.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
-        :param confidential_ledger: Confidential Ledger request body for Updating Ledger. Required.
-        :type confidential_ledger: IO
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Request body for Updating Managed CCF App. Required.
+        :type managed_ccf: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -808,32 +780,27 @@ class LedgerOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ConfidentialLedger or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_update(
-        self,
-        resource_group_name: str,
-        ledger_name: str,
-        confidential_ledger: Union[_models.ConfidentialLedger, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.ConfidentialLedger]:
-        """Update Confidential Ledger properties.
+        self, resource_group_name: str, app_name: str, managed_ccf: Union[_models.ManagedCCF, IO], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Update Managed CCF properties.
 
-        Updates properties of Confidential Ledger.
+        Updates properties of Managed CCF.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param ledger_name: Name of the Confidential Ledger. Required.
-        :type ledger_name: str
-        :param confidential_ledger: Confidential Ledger request body for Updating Ledger. Is either a
-         ConfidentialLedger type or a IO type. Required.
-        :type confidential_ledger: ~azure.mgmt.confidentialledger.models.ConfidentialLedger or IO
+        :param app_name: Name of the Managed CCF. Required.
+        :type app_name: str
+        :param managed_ccf: Request body for Updating Managed CCF App. Is either a ManagedCCF type or a
+         IO type. Required.
+        :type managed_ccf: ~azure.mgmt.confidentialledger.models.ManagedCCF or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -845,9 +812,8 @@ class LedgerOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either ConfidentialLedger or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -855,15 +821,15 @@ class LedgerOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ConfidentialLedger] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_initial(
+            raw_result = self._update_initial(  # type: ignore
                 resource_group_name=resource_group_name,
-                ledger_name=ledger_name,
-                confidential_ledger=confidential_ledger,
+                app_name=app_name,
+                managed_ccf=managed_ccf,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -873,11 +839,9 @@ class LedgerOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ConfidentialLedger", pipeline_response)
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -895,17 +859,17 @@ class LedgerOperations:
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers/{ledgerName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs/{appName}"
     }
 
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.ConfidentialLedger"]:
-        """Retrieves information about all Confidential Ledger resources under the given subscription and
-        resource group.
+    ) -> Iterable["_models.ManagedCCF"]:
+        """Retrieves information about all Managed CCF resources under the given subscription and resource
+        group.
 
-        Retrieves the properties of all Confidential Ledgers.
+        Retrieves the properties of all Managed CCF apps.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -914,15 +878,15 @@ class LedgerOperations:
          Default value is None.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ConfidentialLedger or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An iterator like instance of either ManagedCCF or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ConfidentialLedgerList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedCCFList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -966,7 +930,7 @@ class LedgerOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ConfidentialLedgerList", pipeline_response)
+            deserialized = self._deserialize("ManagedCCFList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -991,30 +955,28 @@ class LedgerOperations:
         return ItemPaged(get_next, extract_data)
 
     list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/ledgers"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConfidentialLedger/managedCCFs"
     }
 
     @distributed_trace
-    def list_by_subscription(
-        self, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.ConfidentialLedger"]:
-        """Retrieves information about all Confidential Ledger resources under the given subscription.
+    def list_by_subscription(self, filter: Optional[str] = None, **kwargs: Any) -> Iterable["_models.ManagedCCF"]:
+        """Retrieves information about all Managed CCF resources under the given subscription.
 
-        Retrieves the properties of all Confidential Ledgers.
+        Retrieves the properties of all Managed CCF.
 
         :param filter: The filter to apply on the list operation. eg. $filter=ledgerType eq 'Public'.
          Default value is None.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ConfidentialLedger or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.confidentialledger.models.ConfidentialLedger]
+        :return: An iterator like instance of either ManagedCCF or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.confidentialledger.models.ManagedCCF]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ConfidentialLedgerList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedCCFList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1057,7 +1019,7 @@ class LedgerOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ConfidentialLedgerList", pipeline_response)
+            deserialized = self._deserialize("ManagedCCFList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1082,5 +1044,5 @@ class LedgerOperations:
         return ItemPaged(get_next, extract_data)
 
     list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ConfidentialLedger/ledgers/"
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ConfidentialLedger/managedCCFs/"
     }
