@@ -55,7 +55,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/code_snippets.py
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
             :start-after: [START workload_identity_credential]
             :end-before: [END workload_identity_credential]
             :language: python

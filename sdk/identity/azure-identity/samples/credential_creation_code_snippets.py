@@ -2,10 +2,26 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Contains code snippets for use in docstrings."""
+"""Code snippets demonstrating how to create various credentials."""
 
 
-def workload_identity_credential_snippet():
+def create_azure_developer_cli_credential():
+    # [START azure_developer_cli_credential]
+    from azure.identity import AzureDeveloperCliCredential
+
+    credential = AzureDeveloperCliCredential()
+    # [END azure_developer_cli_credential]
+
+
+def create_azure_developer_cli_credential_async():
+    # [START azure_developer_cli_credential_async]
+    from azure.identity.aio import AzureDeveloperCliCredential
+
+    credential = AzureDeveloperCliCredential()
+    # [END azure_developer_cli_credential_async]
+
+
+def create_workload_identity_credential():
     # [START workload_identity_credential]
     from azure.identity import WorkloadIdentityCredential
 
@@ -23,7 +39,7 @@ def workload_identity_credential_snippet():
     # [END workload_identity_credential]
 
 
-def workload_identity_credential_async_snippet():
+def create_workload_identity_credential_async():
     # [START workload_identity_credential_async]
     from azure.identity.aio import WorkloadIdentityCredential
 
@@ -39,19 +55,3 @@ def workload_identity_credential_async_snippet():
     #   - AZURE_FEDERATED_TOKEN_FILE
     credential = WorkloadIdentityCredential()
     # [END workload_identity_credential_async]
-
-
-def azure_developer_cli_credential_snippet():
-    # [START azure_developer_cli_credential]
-    from azure.identity import AzureDeveloperCliCredential
-
-    credential = AzureDeveloperCliCredential()
-    # [END azure_developer_cli_credential]
-
-
-def azure_developer_cli_credential_async_snippet():
-    # [START azure_developer_cli_credential_async]
-    from azure.identity.aio import AzureDeveloperCliCredential
-
-    credential = AzureDeveloperCliCredential()
-    # [END azure_developer_cli_credential_async]
