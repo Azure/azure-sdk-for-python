@@ -6,7 +6,8 @@ from ._generated.models import (
     ChatThreadItem,
     ChatMessageType,
     ChatError,
-    ChatRetentionPolicy
+    ChatRetentionPolicy,
+    ThreadCreationDateRetentionPolicy
 )
 
 from ._models import (
@@ -35,6 +36,7 @@ from ._shared.models import (
 __all__ = [
     'ChatClient',
     'ChatRetentionPolicy',
+    'ThreadCreationDateRetentionPolicy',
     'ChatThreadClient',
     'ChatMessage',
     'ChatMessageContent',
