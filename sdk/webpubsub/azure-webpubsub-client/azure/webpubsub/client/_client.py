@@ -221,6 +221,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             ack_id = self._next_ack_id()
 
         message = message_provider(ack_id)
+        # Unless receive ack message, we assume the message is not sent successfully.
         if ack_id not in self._ack_map:
             self._ack_map[ack_id] = SendMessageErrorOptions(
                 error_detail=AckMessageError(name="", message="timeout to receive ack message")
@@ -231,10 +232,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._ack_map.pop(ack_id)
             raise e
 
-        with self._ack_map[ack_id].cv:
-            self._ack_map[ack_id].cv.wait(self._ack_timeout)
-            options = self._ack_map.pop(ack_id)
-            if options.error_detail is not None:
+        message_ack = self._ack_map[ack_id]
+        with message_ack.cv:
+            message_ack.cv.wait(self._ack_timeout)
+            self._ack_map.pop(ack_id, None)
+            if message_ack.error_detail is not None:
                 raise SendMessageError(
                     message="Failed to send message.", ack_id=options.ack_id, error_detail=options.error_detail
                 )
@@ -304,14 +306,14 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param data_type: The data type. Required.
         :type data_type: Union[WebPubSubDataType, str].
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
-        :keyword bool ack: If true, the message won't contains ackId and no AckMessage
-         will be returned from the service.
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
         """
 
         def send_event_attempt():
-            ack = kwargs.pop("ack", False)
+            ack = kwargs.pop("ack", True)
             ack_id = kwargs.pop("ack_id", None)
-            if not ack:
+            if ack:
                 self._send_message_with_ack_id(
                     message_provider=lambda id: SendEventMessage(
                         data_type=data_type, data=content, ack_id=id, event=event_name
@@ -340,15 +342,15 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: Any.
         :param data_type: The data type. Required.
         :type data_type: Any.
-        :keyword bool ack: If true, the message won't contains ackId and no AckMessage
-         will be returned from the service.
-        :keyword int no_echo: Whether the message needs to echo to sender
+        :keyword bool ack: If False, the message won't contains ackId and no AckMessage
+         will be returned from the service. Default is True.
+        :keyword bool no_echo: Whether the message needs to echo to sender. Default is False.
         """
 
         def send_to_group_attempt():
-            ack = kwargs.pop("ack", False)
+            ack = kwargs.pop("ack", True)
             no_echo = kwargs.pop("no_echo", False)
-            if not ack:
+            if ack:
                 self._send_message_with_ack_id(
                     message_provider=lambda id: SendToGroupMessage(
                         group=group_name, data_type=data_type, data=content, ack_id=id, no_echo=no_echo
@@ -450,7 +452,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         return None
 
     def _is_connected(self) -> bool:
-        """check whether the client is still coneected to server after start"""
+        """check whether the client is still connected to server after start"""
         return bool(
             self._state == WebPubSubClientState.CONNECTED
             and self._thread
@@ -458,6 +460,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             and self._ws
             and self._ws.sock
         )
+
+    def _clear_ack_map(self):
+        for key in list(self._ack_map.keys()):
+            with self._ack_map[key].cv:
+                self._ack_map[key].cv.notify()
+            self._ack_map.pop(key)
 
     def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
@@ -563,7 +571,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
-                self._ack_map.clear()
+                self._clear_ack_map()
 
                 if self._is_stopping:
                     _LOGGER.warning("The client is stopping state. Stop recovery.")
