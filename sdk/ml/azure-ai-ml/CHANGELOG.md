@@ -20,6 +20,8 @@
 - Error message improvement when a local path fails to match with data asset type.
 - Error message improvement when an asset does not exist in a registry
 - Fix an issue when submit spark pipeline job with referring a registered component
+- Fix latest label resolution for environment/model assets
+- Fix model download from Public registry
 
 ### Other Changes
 
