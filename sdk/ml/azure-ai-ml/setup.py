@@ -66,7 +66,6 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
-        "isodate<1.0.0,>=0.6.1",
         "azure-core<2.0.0,>=1.23.0",
         "azure-mgmt-core<2.0.0,>=1.3.0",
         "marshmallow<4.0.0,>=3.5",
@@ -81,7 +80,7 @@ setup(
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
         "pydash<6.0.0",
-        "isodate",
+        "isodate<1.0.0,>=0.6.1",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
