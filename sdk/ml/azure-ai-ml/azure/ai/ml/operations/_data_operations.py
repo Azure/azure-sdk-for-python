@@ -87,7 +87,6 @@ class DataOperations(_ScopeDependentOperations):
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions

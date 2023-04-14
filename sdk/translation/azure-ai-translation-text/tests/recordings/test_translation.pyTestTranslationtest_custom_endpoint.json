@@ -1,0 +1,34 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeCustomEndpoint.cognitiveservices.azure.com/translator/text/v3.0/translate?to=fr\u0026api-version=3.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "39",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Region": "fakeregion",
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
+      },
+      "RequestBody": "[{\u0022text\u0022: \u0022It is a beautiful morning\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "X-RequestId,X-Metered-Usage",
+        "apim-request-id": "c49a5453-bb37-4484-8c01-81d5b31ce7b1",
+        "Content-Length": "117",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 03 Apr 2023 21:49:54 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Metered-Usage": "25",
+        "x-ms-region": "West US 2",
+        "X-MT-System": "Microsoft",
+        "X-RequestId": "TRAN.MW1P.9A67.0403T2149.2EB3559"
+      },
+      "ResponseBody": "[{\u0022detectedLanguage\u0022:{\u0022language\u0022:\u0022en\u0022,\u0022score\u0022:1.0},\u0022translations\u0022:[{\u0022text\u0022:\u0022C\u2019est une belle matin\u00E9e\u0022,\u0022to\u0022:\u0022fr\u0022}]}]"
+    }
+  ],
+  "Variables": {}
+}

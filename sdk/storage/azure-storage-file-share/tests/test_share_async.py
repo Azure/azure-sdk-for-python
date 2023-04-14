@@ -95,16 +95,15 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_name = self.get_resource_name(TEST_SHARE_PREFIX)
-        share = ShareClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=share_name,
-            credential=token_credential,
-            file_request_intent=TEST_INTENT
-        )
 
         # Act
-        with pytest.raises(ResourceExistsError):
-            await share.create_share()
+        with pytest.raises(ValueError):
+            share = ShareClient(
+                self.account_url(storage_account_name, "file"),
+                share_name=share_name,
+                credential=token_credential,
+                file_request_intent=TEST_INTENT
+            )
 
     @FileSharePreparer()
     @recorded_by_proxy_async
