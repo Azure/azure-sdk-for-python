@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncryptionMixin):  # type: ignore
+class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncryptionMixin):  # type: ignore[misc]
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -94,14 +94,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         super(QueueClient, self).__init__(
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureQueueStorage(self.url, base_url=self.url,  # type: ignore
-                                         pipeline=self._pipeline, loop=loop)
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
 
     @distributed_trace_async
-    async def create_queue(  # type: ignore
+    async def create_queue(  # type: ignore[override]
         self, *,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -138,14 +137,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.queue.create(  # type: ignore
+            return self._client.queue.create(
                 metadata=metadata, timeout=timeout, headers=headers, cls=deserialize_queue_creation, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_queue(self, **kwargs: Any) -> None:  # type: ignore
+    async def delete_queue(self, **kwargs: Any) -> None:  # type: ignore[override]
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -175,12 +174,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            await self._client.queue.delete(timeout=timeout, **kwargs)  # type: ignore
+            return self._client.queue.delete(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":  # type: ignore
+    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":  # type: ignore[override]
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -201,7 +200,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = await self._client.queue.get_properties(  # type: ignore
+            response = await self._client.queue.get_properties(
                 timeout=timeout, cls=deserialize_queue_properties, **kwargs
             )
         except HttpResponseError as error:
@@ -210,7 +209,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         return response
 
     @distributed_trace_async
-    async def set_queue_metadata(  # type: ignore
+    async def set_queue_metadata(  # type: ignore[override]
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
@@ -242,14 +241,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.queue.set_metadata(  # type: ignore
+            return self._client.queue.set_metadata(
                 timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:  # type: ignore
+    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:  # type: ignore[override]
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -264,7 +263,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            _, identifiers = await self._client.queue.get_access_policy(  # type: ignore
+            _, identifiers = await self._client.queue.get_access_policy(
                 timeout=timeout, cls=return_headers_and_deserialized, **kwargs
             )
         except HttpResponseError as error:
@@ -272,7 +271,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_queue_access_policy(  # type: ignore
+    async def set_queue_access_policy(  # type: ignore[override]
         self, signed_identifiers: Dict[str, AccessPolicy],
         **kwargs: Any
     ) -> None:
@@ -324,12 +323,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
         try:
-            await self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)  # type: ignore
+            return self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def send_message(  # type: ignore
+    async def send_message(  # type: ignore[override]
         self, content: Any,
         *,
         visibility_timeout: Optional[int] = None,
@@ -407,7 +406,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
-            enqueued = await self._client.messages.enqueue(  # type: ignore
+            enqueued = await self._client.messages.enqueue(
                 queue_message=new_message,
                 visibilitytimeout=visibility_timeout,
                 message_time_to_live=time_to_live,
@@ -425,7 +424,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def receive_message(  # type: ignore
+    async def receive_message(  # type: ignore[override]
         self, *,
         visibility_timeout: Optional[int] = None,
         **kwargs: Any
@@ -473,7 +472,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function)
         try:
-            message = await self._client.messages.dequeue(  # type: ignore
+            message = await self._client.messages.dequeue(
                 number_of_messages=1,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
@@ -487,7 +486,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(  # type: ignore
+    def receive_messages(  # type: ignore[override]
         self, *,
         messages_per_page: Optional[int] = None,
         visibility_timeout: Optional[int] = None,
@@ -565,7 +564,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def update_message(  # type: ignore
+    async def update_message(  # type: ignore[override]
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
         content: Optional[Any] = None,
@@ -668,7 +667,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         else:
             updated = None
         try:
-            response = await self._client.message_id.update(  # type: ignore
+            response = await self._client.message_id.update(
                 queue_message=updated,
                 visibilitytimeout=visibility_timeout or 0,
                 timeout=timeout,
@@ -689,7 +688,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def peek_messages(  # type: ignore
+    async def peek_messages(  # type: ignore[override]
         self, max_messages: Optional[int] = None,
         **kwargs: Any
     ) -> List[QueueMessage]:
@@ -741,7 +740,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             resolver=self.key_resolver_function
         )
         try:
-            messages = await self._client.messages.peek(  # type: ignore
+            messages = await self._client.messages.peek(
                 number_of_messages=max_messages, timeout=timeout, cls=self.message_decode_policy, **kwargs
             )
             wrapped_messages = []
@@ -752,7 +751,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(self, **kwargs: Any) -> None:  # type: ignore
+    async def clear_messages(self, **kwargs: Any) -> None:  # type: ignore[override]
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -773,12 +772,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            await self._client.messages.clear(timeout=timeout, **kwargs)  # type: ignore
+            return self._client.messages.clear(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_message(  # type: ignore
+    async def delete_message(  # type: ignore[override]
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
         **kwargs: Any
@@ -830,7 +829,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         try:
-            await self._client.message_id.delete(  # type: ignore
+            return self._client.message_id.delete(
                 pop_receipt=receipt, timeout=timeout, queue_message_id=message_id, **kwargs
             )
         except HttpResponseError as error:
