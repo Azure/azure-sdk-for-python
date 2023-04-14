@@ -343,7 +343,7 @@ class TestWorkspace(AzureRecordedTestCase):
         condition=not is_live(),
         reason="ARM template makes playback complex, so the test is flaky when run against recording",
     )
-    def test_workspace_create_update_delete_with_managed_network(
+    def test_workspace_create_delete_with_managed_network(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
         # resource name key word
@@ -369,37 +369,24 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        assert "my-service" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
-        assert "my-storage" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-storage"], PrivateEndpointDestination)
-        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], ServiceTagDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], FqdnDestination)
 
         # test get
         workspace = client.workspaces.get(name=wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        assert "my-service" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
-        assert "my-storage" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-storage"], PrivateEndpointDestination)
-        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
-
-        """
-        # this will fail right now, need to remove the rules that arent PE rules first
-        # test update 
-        workspace_poller = client.workspaces.begin_update(
-            workspace,
-            managed_network=IsolationMode.ALLOW_INTERNET_OUTBOUND,
-        )
-        assert isinstance(workspace_poller, LROPoller)
-        workspace = workspace_poller.result()
-        assert isinstance(workspace, Workspace)
-        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_INTERNET_OUTBOUND
-        """
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], ServiceTagDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], FqdnDestination)
 
         # test workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)

@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- Removed `dynamic_classification` client method and related types: `DynamicClassificationResult` and `ClassificationType`.
 
 ### Bugs Fixed
 

@@ -4,9 +4,12 @@
 
 ### Features Added
 
-### Bugs Fixed
+## 12.11.0 (2023-04-12)
 
-## 12.11.0b1 (Unreleased)
+### Features Added
+- Stable release of features from 12.11.0b1
+
+## 12.11.0b1 (2023-03-28)
 
 ### Features Added
 - Added support for service version 2022-11-02.

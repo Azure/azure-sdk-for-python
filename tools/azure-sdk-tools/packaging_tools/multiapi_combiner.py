@@ -11,7 +11,7 @@ import json
 import argparse
 from pathlib import Path
 import shutil
-from typing import Dict, Optional, List, Any, TypeVar, Callable
+from typing import Dict, Optional, List, Any, TypeVar, Callable, Set
 
 from jinja2 import PackageLoader, Environment
 
@@ -32,6 +32,15 @@ def modify_relative_imports(regex: str, file: str) -> str:
     original_str = regex.replace("(.*)", dots)
     new_str = regex.replace("(.*)", "." * (len(dots) - 1))
     return file.replace(original_str, new_str)
+
+
+def strip_version_from_docs(input: str) -> str:
+    return re.sub(r".v20[^.]*", "", input)
+
+
+def remove_file(file_path: str) -> None:
+    if (Path(file_path)).exists():
+        os.remove(file_path)
 
 
 class VersionedObject:
@@ -77,6 +86,19 @@ def _combine_helper(
     return objs
 
 
+def _sort_models_helper(current: "ModelAndEnum", seen_model_names: Set[str]) -> List["ModelAndEnum"]:
+    if current.name in seen_model_names:
+        return []
+    ancestors: List["ModelAndEnum"] = [current]
+    for parent in current.parents:
+        if parent.name in seen_model_names:
+            continue
+        ancestors = _sort_models_helper(parent, seen_model_names) + ancestors
+        seen_model_names.add(parent.name)
+    seen_model_names.add(current.name)
+    return ancestors
+
+
 class Parameter(VersionedObject):
     def __init__(
         self,
@@ -105,7 +127,7 @@ class Operation(VersionedObject):
         self._request_builder: Optional[str] = None
 
     def source_code(self, async_mode: bool) -> str:
-        return inspect.getsource(self._get_op(self.api_versions[-1], async_mode))
+        return strip_version_from_docs(inspect.getsource(self._get_op(self.api_versions[-1], async_mode)))
 
     @property
     def request_builder_name(self) -> Optional[str]:
@@ -256,6 +278,9 @@ class OperationGroup(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
+    def doc(self, async_mode: bool) -> str:
+        return strip_version_from_docs(self.generated_class(async_mode).__doc__)
+
 
 class Client:
     def __init__(self, code_model: "CodeModel") -> None:
@@ -279,6 +304,29 @@ class Client:
         return list(self.code_model.api_version_to_metadata.values())[-1]["client"]["name"]
 
 
+class ModelAndEnum(VersionedObject):
+    def __init__(self, code_model: "CodeModel", name: str) -> None:
+        super().__init__(code_model, name)
+        self._parents: List["ModelAndEnum"] = []
+
+    @property
+    def generated_class(self):
+        folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
+        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}.models")
+        return getattr(module, self.name)
+
+    @property
+    def source_code(self) -> str:
+        return strip_version_from_docs(inspect.getsource(self.generated_class))
+
+    @property
+    def parents(self) -> List["ModelAndEnum"]:
+        if not self._parents:
+            for parent in self.generated_class.__mro__[1 : len(self.generated_class.__mro__) - 2]:
+                self._parents.append(self.code_model.models[parent.__name__])
+        return self._parents
+
+
 class CodeModel:
     def __init__(self, pkg_path: Path):
         self._root_of_code = pkg_path
@@ -297,6 +345,9 @@ class CodeModel:
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
+        self.models: Dict[str, ModelAndEnum] = {}
+        self.enums: List[ModelAndEnum] = []
+        self._combine_models_and_enums()
         self.client = Client(self)
 
     def get_root_of_code(self, async_mode: bool) -> Path:
@@ -342,6 +393,35 @@ class CodeModel:
             for operation in operation_group.operations:
                 operation.combine_parameters()
         return ogs
+
+    def _combine_models_and_enums(self) -> None:
+        def _get_model(code_model: "CodeModel", name: str) -> ModelAndEnum:
+            return ModelAndEnum(code_model, name)
+
+        def _get_names_by_api_version(api_version: str):
+            folder_api_version = self.api_version_to_folder_api_version[api_version]
+            module = importlib.import_module(f"{self.module_name}.{folder_api_version}.models")
+            return [m for m in dir(module) if m[0] != "_"]
+
+        models_and_enums = _combine_helper(
+            code_model=self,
+            sorted_api_versions=self.sorted_api_versions,
+            get_cls=_get_model,
+            get_names_by_api_version=_get_names_by_api_version,
+        )
+        for m in models_and_enums:
+            if hasattr(m.generated_class, "from_dict"):
+                self.models[m.name] = m
+            else:
+                self.enums.append(m)
+        self._sort_models()
+
+    def _sort_models(self) -> None:
+        seen_model_names: Set[str] = set()
+        sorted_models: Dict[str, ModelAndEnum] = {}
+        for model in self.models.values():
+            sorted_models.update({m.name: m for m in _sort_models_helper(model, seen_model_names)})
+        self.models = sorted_models
 
 
 class Serializer:
@@ -453,7 +533,7 @@ class Serializer:
         validation_relative = "..." if async_mode else ".."
         imports += f"\nfrom {validation_relative}_validation import api_version_validation\n"
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
-        with open(f"{operations_folder}/_operations.py", "w") as fd:
+        with open(f"{operations_folder}/_operations.py", "w", encoding="utf-8") as fd:
             fd.write(template.render(code_model=self.code_model, imports=imports, async_mode=async_mode))
         with open(f"{operations_folder}/__init__.py", "w") as fd:
             fd.write(self.env.get_template("operations_init.py.jinja2").render(code_model=self.code_model))
@@ -486,7 +566,9 @@ class Serializer:
 
         main_client_source = "class" + "class".join(split_main_client_source[1:])
 
-        client_initialization = re.search(r"((?s).*?)    @classmethod", main_client_source).group(1)
+        client_initialization = strip_version_from_docs(
+            re.search(r"([\s\S]*?)    @classmethod", main_client_source).group(1)
+        )
 
         # TODO: switch to current file path
         with open(f"{self.code_model.get_root_of_code(async_mode)}/_client.py", "w") as fd:
@@ -532,33 +614,51 @@ class Serializer:
         with open(f"{self.code_model.get_root_of_code(False)}/_validation.py", "w") as fd:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
+    def serialize_models_folder(self):
+        # serialize init file
+        models_folder = self.code_model.get_root_of_code(False) / "models"
+        Path(models_folder).mkdir(parents=True, exist_ok=True)
+        with open(f"{models_folder}/__init__.py", "w") as fd:
+            fd.write(self.env.get_template("models_init.py.jinja2").render(code_model=self.code_model))
+        default_api_version = self.code_model.default_folder_api_version
+        default_models_folder_name = f"{self.code_model.module_name}.{default_api_version}.models"
+
+        # serialize models file
+        default_models_module = importlib.import_module(f"{default_models_folder_name}._models_py3")
+        imports = inspect.getsource(default_models_module).split("class")[0]
+        imports = modify_relative_imports(r"from (.*) import _serialization", imports)
+        with open(f"{models_folder}/_models.py", "w", encoding="utf-8") as fd:
+            fd.write(self.env.get_template("models.py.jinja2").render(code_model=self.code_model, imports=imports))
+
+        # serialize enums file
+        default_enums_module = importlib.import_module(
+            f"{default_models_folder_name}.{self.code_model.client.generated_filename}_enums"
+        )
+        imports = inspect.getsource(default_enums_module).split("class")[0]
+        if self.code_model.enums:
+            with open(f"{models_folder}/_enums.py", "w", encoding="utf-8") as fd:
+                fd.write(self.env.get_template("enums.py.jinja2").render(code_model=self.code_model, imports=imports))
+
+        # serialize patch file
+        with open(f"{models_folder}/_patch.py", "w") as wfd:
+            with open(f"{self.code_model.get_root_of_code(False)}/{default_api_version}/models/_patch.py", "r") as rfd:
+                wfd.write(rfd.read())
+
     def remove_versioned_files(self):
         root_of_code = self.code_model.get_root_of_code(False)
         for api_version_folder_stem in self.code_model.api_version_to_folder_api_version.values():
             api_version_folder = root_of_code / api_version_folder_stem
-            shutil.rmtree(api_version_folder / Path("operations"), ignore_errors=True)
-            shutil.rmtree(api_version_folder / Path("aio"), ignore_errors=True)
-            files_to_remove = [
-                "__init__.py",
-                "_configuration.py",
-                "_metadata.json",
-                "_patch.py",
-                "_vendor.py",
-                "_version.py",
-                "py.typed",
-                f"{self.code_model.client.generated_filename}.py",
-            ]
-            for file in files_to_remove:
-                os.remove(f"{api_version_folder}/{file}")
-
-            # add empty init file so we can still see the models folder
-            with open(f"{api_version_folder}/__init__.py", "w") as f:
-                f.write("")
+            shutil.rmtree(api_version_folder, ignore_errors=True)
 
     def remove_top_level_files(self, async_mode: bool):
-        top_level_files = [self.code_model.client.generated_filename, "_operations_mixin"]
+        top_level_files = [
+            self.code_model.client.generated_filename,
+            "_operations_mixin",
+        ]
+        if not async_mode:
+            top_level_files.append("models")
         for file in top_level_files:
-            os.remove(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
+            remove_file(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
     def remove_old_code(self):
         self.remove_versioned_files()
@@ -571,8 +671,8 @@ class Serializer:
         self.serialize_client(async_mode=False)
         self.serialize_client(async_mode=True)
         self.serialize_general()
+        self.serialize_models_folder()
         self.remove_old_code()
-        # self.serialize_models_file()
 
 
 def get_args() -> argparse.Namespace:

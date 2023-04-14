@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from marshmallow import ValidationError
 
@@ -5,8 +7,10 @@ from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
+from azure.ai.ml.dsl._do_while import do_while
 from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, PipelineInput
 from azure.ai.ml.exceptions import ValidationException
 from test_utilities.utils import omit_with_wildcard
 
@@ -206,6 +210,145 @@ class TestIfElseUT(TestControlFlowPipelineUT):
 
 
 class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
+    def test_invalid_do_while_pipeline(self):
+        basic_component_func = load_component(
+            "./tests/test_configs/dsl_pipeline/do_while/basic_component/component.yml"
+        )
+
+        @pipeline
+        def do_while_body_pipeline_component(
+            component_in_number: Input(type="integer", optional=True),
+            component_in_number_1: Input(type="integer", optional=True),
+            component_in_path: Input(type="uri_folder"),
+        ):
+            """E2E dummy train-score-eval pipeline with components defined via yaml."""
+            # Call component obj as function: apply given inputs & parameters to create a node in pipeline
+            train_with_sample_data = basic_component_func(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number_1,
+                component_in_path=component_in_path,
+            )
+            return train_with_sample_data.outputs
+
+        @pipeline
+        def pipeline_with_do_while(
+            component_in_number: Input(type="integer"),
+            component_in_path: Input(type="uri_folder"),
+        ):
+            # Create two training pipeline component with different learning rate
+            do_while_body_pipeline_1 = do_while_body_pipeline_component(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number,
+                component_in_path=component_in_path,
+            )
+            empty_mapping = do_while(  # noqa: F841
+                body=do_while_body_pipeline_1,
+                condition=do_while_body_pipeline_1.outputs.is_number_larger_than_zero,
+                mapping=None,
+                max_iteration_count=5,
+            )
+
+            do_while_body_pipeline_2 = do_while_body_pipeline_component(  # noqa: F841
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number,
+                component_in_path=component_in_path,
+            )
+            out_of_max_iteration_count_range = do_while(  # noqa: F841
+                body=do_while_body_pipeline_2,
+                condition=do_while_body_pipeline_2.outputs.is_number_larger_than_zero,
+                mapping={
+                    do_while_body_pipeline_2.outputs.output_in_number: [
+                        do_while_body_pipeline_2.inputs.component_in_number,
+                        do_while_body_pipeline_2.inputs.component_in_number_1,
+                    ],
+                    do_while_body_pipeline_2.outputs.output_in_path: do_while_body_pipeline_2.inputs.component_in_path,
+                },
+                max_iteration_count=1001,
+            )
+
+            body_in_other_loop = do_while(  # noqa: F841
+                body=do_while_body_pipeline_1,
+                condition=do_while_body_pipeline_1.outputs.is_number_larger_than_zero,
+                mapping={
+                    do_while_body_pipeline_1.outputs.output_in_number: [
+                        do_while_body_pipeline_1.inputs.component_in_number,
+                        do_while_body_pipeline_1.inputs.component_in_number_1,
+                    ],
+                    do_while_body_pipeline_1.outputs.output_in_path: do_while_body_pipeline_1.inputs.component_in_path,
+                },
+                max_iteration_count=5,
+            )
+
+            do_while_body_pipeline_3 = do_while_body_pipeline_component(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number,
+                component_in_path=component_in_path,
+            )
+            invalid_mapping = do_while(  # noqa: F841
+                body=do_while_body_pipeline_3,
+                condition=do_while_body_pipeline_1.outputs.is_number_larger_than_zero,
+                mapping={
+                    do_while_body_pipeline_3.outputs.output_in_number: [
+                        do_while_body_pipeline_3.inputs.component_in_number,
+                        do_while_body_pipeline_1.inputs.component_in_number_1,
+                    ],
+                    do_while_body_pipeline_1.outputs.output_in_path: do_while_body_pipeline_1.outputs.output_in_path,
+                },
+                max_iteration_count=5,
+            )
+
+            do_while_body_pipeline_4 = do_while_body_pipeline_component(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number,
+                component_in_path=component_in_path,
+            )
+            invalid_condition = do_while(  # noqa: F841
+                body=do_while_body_pipeline_4,
+                condition=do_while_body_pipeline_4.outputs.output_in_path,
+                mapping={
+                    do_while_body_pipeline_4.outputs.output_in_number: [
+                        do_while_body_pipeline_4.inputs.component_in_number,
+                        do_while_body_pipeline_4.inputs.component_in_number_1,
+                    ]
+                },
+                max_iteration_count=5,
+            )
+
+        pipeline_job = pipeline_with_do_while(
+            component_in_number=2,
+            component_in_path=Input(type="uri_folder", path=str(Path(__file__).parent)),
+        )
+        # set pipeline level compute
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        result = pipeline_job._customized_validate()
+        validate_errors = result._to_dict()["errors"]
+
+        def validate_error_message(expect_errors, validate_errors):
+            for path, msg in expect_errors.items():
+                acture_errors = list(filter(lambda error: error["path"] == path, validate_errors))
+                assert acture_errors, f"Cannot find the error of {path} in validation results."
+                for acture_error in acture_errors:
+                    assert acture_error["message"] in msg
+
+        expect_errors = {
+            "jobs.empty_mapping.mapping": ["Missing data for required field."],
+            "jobs.out_of_max_iteration_count_range.limit.max_iteration_count": [
+                "The max iteration count cannot be less than 0 or larger than 1000."
+            ],
+            "jobs.body_in_other_loop.body": ["The body of loop node cannot be promoted as another loop again."],
+            "jobs.invalid_mapping.condition": [
+                "is_number_larger_than_zero is the output of do_while_body_pipeline_1, dowhile only accept output of the body: do_while_body_pipeline_3."
+            ],
+            "jobs.invalid_mapping.mapping": [
+                "component_in_number_1 is the input of do_while_body_pipeline_1, dowhile only accept input of the body: do_while_body_pipeline_3.",
+                "output_in_path is the output of do_while_body_pipeline_1, dowhile only accept output of the body: do_while_body_pipeline_3.",
+            ],
+            "jobs.invalid_condition.condition": [
+                "output_in_path is not a control output. The condition of dowhile must be the control output of the body."
+            ],
+        }
+        validate_error_message(expect_errors, validate_errors)
+
     def test_infer_dynamic_input_type_from_mapping(self):
         # Pass None to dynamic input in do-while loop body, and provide it in mapping for next iteration,
         # which is a valid case in federated learning.
@@ -499,3 +642,87 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
 
         my_job = my_pipeline()
         assert my_job.jobs["foreach_node"]._source == ComponentSource.DSL
+
+    @pytest.mark.parametrize(
+        "items, rest_input_str",
+        [
+            (
+                # asset input with path on datastore
+                {
+                    "silo1": {"uri_file_input": Input(path="path/on/datastore")},
+                },
+                '{"silo1": {"uri_file_input": {"uri": "path/on/datastore", "job_input_type": "uri_folder"}}}',
+            ),
+            (
+                # asset input with name + version
+                {
+                    "silo1": {"name_version": Input(path="test-data:1")},
+                },
+                '{"silo1": {"name_version": {"uri": "test-data:1", "job_input_type": "uri_folder"}}}',
+            ),
+            (
+                # asset input with uri
+                {
+                    "silo1": {"uri": Input(path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")},
+                },
+                '{"silo1": {"uri": {"uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                '"job_input_type": "uri_folder"}}}',
+            ),
+            (
+                # asset input binding
+                {
+                    "silo1": {"binding": PipelineInput(name="input1", owner="pipeline", meta=None)},
+                },
+                '{"silo1": {"binding": "${{parent.inputs.input1}}"}}',
+            ),
+            (
+                # primitive type input
+                {
+                    "silo1": dict(
+                        component_in_string="component_in_string",
+                        component_in_ranged_integer=10,
+                        component_in_enum="world",
+                        component_in_boolean=True,
+                        component_in_ranged_number=5.5,
+                    ),
+                },
+                '{"silo1": {"component_in_string": "component_in_string", '
+                '"component_in_ranged_integer": 10, "component_in_enum": "world", '
+                '"component_in_boolean": true, "component_in_ranged_number": 5.5}}',
+            ),
+        ],
+    )
+    def test_to_rest_items(self, items, rest_input_str):
+        assert ParallelFor._to_rest_items(items) == rest_input_str
+
+    @pytest.mark.parametrize(
+        "items, error_message",
+        [
+            (
+                # unsupported item value type
+                [
+                    {"component_in_number": CustomizedObject()},
+                ],
+                "Unsupported type",
+            ),
+            (
+                # local file input
+                [{"component_in_path": Input(path="./tests/test_configs/components/helloworld_component.yml")}],
+                "Local file input",
+            ),
+            (
+                # empty path
+                [{"component_in_path": Input(path=None)}],
+                "Input path not provided",
+            ),
+            (
+                # dict Input
+                [{"component_in_path": {"job_input_path": "azureml://path/to/file"}}],
+                "Unsupported type",
+            ),
+        ],
+    )
+    def test_to_rest_items_unsupported(self, items, error_message):
+        with pytest.raises(ValidationException) as e:
+            ParallelFor._to_rest_items(items)
+        assert error_message in str(e.value)
