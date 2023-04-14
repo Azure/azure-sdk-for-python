@@ -45,3 +45,18 @@ class TestDSLPipeline:
             " or specify input default value.",
             "jobs.pipeline_no_arg.jobs.microsoftsamples_command_component_basic.compute": "Compute not set",
         }
+
+    def test_assign_value_to_unknow_filed(self, client: MLClient):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(source=path)
+
+        @dsl.pipeline()
+        def pipeline_func(input):
+            node = component_func()
+            node.unknown_field = input
+
+        pipeline_job: PipelineJob = pipeline_func(job_in_path=Input(path="./some/path"))
+        job_res = client.jobs.create_or_update(
+            pipeline_job, experiment_name="test_unknown_field"
+        )
+        print(job_res)
