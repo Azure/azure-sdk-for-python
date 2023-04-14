@@ -16,7 +16,7 @@ from azure.ai.formrecognizer.aio import (
     DocumentAnalysisClient,
     DocumentModelAdministrationClient
 )
-from azure.ai.formrecognizer import FormRecognizerApiVersion, DocumentAnalysisApiVersion
+from azure.ai.formrecognizer import FormRecognizerApiVersion, DocumentAnalysisApiVersion, AnalysisFeature
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
@@ -175,3 +175,33 @@ class TestMultiapi(AsyncFormRecognizerTest):
 
             assert first_model.model_name is None
             assert first_model.properties is None
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
+    @recorded_by_proxy_async
+    async def test_v2022_08_31_dac_compatibility(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
+
+        async with client:
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_analyze_document("prebuilt-layout", self.form_jpg, features=[AnalysisFeature.OCR_FONT])
+            assert "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_analyze_document("prebuilt-layout", self.form_jpg, query_fields=["Charges"])
+            assert "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
+
+            # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_classify_document("foo", self.form_jpg)
+            assert (
+                    "Method 'begin_classify_document()' is only available for API version "
+                    "V2023_02_28_PREVIEW and later"
+                ) == str(excinfo.value)
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_classify_document_from_url("foo", self.form_url_jpg)
+                assert (
+                    "Method 'begin_classify_document_from_url()' is only available for API version "
+                    "V2023_02_28_PREVIEW and later"
+                ) == str(excinfo.value)
