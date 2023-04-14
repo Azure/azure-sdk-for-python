@@ -207,7 +207,7 @@ class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestTypeVar, HTTPResp
             raise TypeError("name must be a string.")
         self._auth_scheme = auth_scheme
 
-    def on_request(self, request: PipelineRequest[HTTPRequestTypeVar]) -> None:
+    def on_request(self, request: "PipelineRequest[HTTPRequestTypeVar]") -> None:
         request.http_request.headers["Authorization"] = f"{self._auth_scheme} {self._credential.key}"
 
 
