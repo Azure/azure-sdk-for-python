@@ -544,7 +544,20 @@ class ModelOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
+    def begin_package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> None:
+        """Package a model asset
+
+        :param name: Name of model asset.
+        :type name: str
+        :param version: Version of model asset.
+        :type version: str
+        :param package_request: Model package request.
+        :type package_request: ~azure.ai.ml.entities.ModelPackage
+        :return: None
+        :rtype: None
+
+        """
+
         if not kwargs.get("skip_to_rest", False):
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
@@ -593,8 +606,8 @@ class ModelOperations(_ScopeDependentOperations):
         module_logger.info("Creating package with name: %s", package_request.target_environment_name)
 
         package_out = self._model_versions_operation.begin_package(
-            name=model_name,
-            version=model_version,
+            name=name,
+            version=version,
             workspace_name=self._workspace_name,
             body=package_request,
             **self._scope_kwargs,
