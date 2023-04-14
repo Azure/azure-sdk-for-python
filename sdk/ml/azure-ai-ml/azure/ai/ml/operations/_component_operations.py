@@ -74,7 +74,7 @@ class ComponentOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
-        preflight_operation: Optional[DeploymentsOperations],
+        preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
@@ -233,6 +233,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
+        **kwargs,
     ) -> ValidationResult:
         """validate a specified component. if there are inline defined
         entities, e.g. Environment, Code, they won't be created.
@@ -244,14 +245,19 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: All validation errors
         :type: ValidationResult
         """
-        return self._validate(component, raise_on_failure=raise_on_failure)
+        return self._validate(
+            component,
+            raise_on_failure=raise_on_failure,
+            # TODO 2330505: change this to True after remote validation is ready
+            skip_remote_validation=kwargs.pop("skip_remote_validation", True),
+        )
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
-        raise_on_failure: bool = False,
-        skip_remote_validation: bool = False,
+        raise_on_failure: bool,
+        skip_remote_validation: bool,
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
@@ -262,8 +268,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
         # local validation
         result = component._validate(raise_error=raise_on_failure)
-        # remote validation
-        if not skip_remote_validation:
+        # remote validation, note that preflight_operation is not available for registry client
+        if not skip_remote_validation and self._preflight_operation:
             workspace = self._workspace_operations.get()
             remote_validation_result = self._preflight_operation.begin_validate(
                 resource_group_name=self._resource_group_name,

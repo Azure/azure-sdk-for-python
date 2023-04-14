@@ -2,9 +2,10 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml.entities import CommandComponent
-from devtools_testutils import AzureRecordedTestCase
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -25,7 +26,7 @@ class TestComponentValidate(AzureRecordedTestCase):
         component: CommandComponent = load_component(source=component_path)
         component.name = None
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = client.components.validate(component)
+        validation_result = client.components.validate(component, skip_remote_validation=False)
         assert validation_result.passed is False
         assert validation_result.error_messages == {
             "name": "Missing data for required field.",
