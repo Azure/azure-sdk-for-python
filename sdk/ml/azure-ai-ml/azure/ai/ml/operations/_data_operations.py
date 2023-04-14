@@ -283,7 +283,9 @@ class DataOperations(_ScopeDependentOperations):
                         )
                     data_res_obj = data._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
+                        resource_group_name=self._resource_group_name,
+                        registry_name=self._registry_name,
+                        body=data_res_obj,
                     ).result()
 
                     if not result:
@@ -604,7 +606,7 @@ class DataOperations(_ScopeDependentOperations):
         sub_ = self._operation_scope._subscription_id
         registry_ = self._operation_scope.registry_name
         client_ = self._service_client
-        data_versions_operation_ = self._data_versions_operation
+        data_versions_operation_ = self._operation
 
         try:
             _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
@@ -612,14 +614,14 @@ class DataOperations(_ScopeDependentOperations):
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
             self._service_client = _client
-            self._data_versions_operation = _client.data_versions
+            self._operation = _client.data_versions
             yield
         finally:
             self._operation_scope.registry_name = registry_
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
-            self._data_versions_operation = data_versions_operation_
+            self._operation = data_versions_operation_
 
 
 def _assert_local_path_matches_asset_type(
