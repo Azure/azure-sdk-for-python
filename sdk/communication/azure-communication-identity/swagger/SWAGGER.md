@@ -20,16 +20,13 @@ require:
     -  https://raw.githubusercontent.com/Azure/azure-rest-api-specs/a8c4340400f1ab1ae6a43b10e8d635ecb9c49a2a/specification/communication/data-plane/Identity/readme.md
 output-folder: ../azure/communication/identity/_generated/
 namespace: azure.communication.identity
+title: Communication Identity Client
 license-header: MICROSOFT_MIT_NO_VERSION
 payload-flattening-threshold: 3
 no-namespace-folders: true
 clear-output-folder: true
 v3: true
 python: true
-title: Communication Identity Client
-no-async: false
-add-credential: false
-disable-async-iterators: true
 models-mode: msrest
 ```
 
