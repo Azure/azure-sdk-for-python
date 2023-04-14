@@ -155,6 +155,7 @@ class Workspace(Resource):
                     key_vaults,
                     container_registries,
                     existing_workspaces,
+                    customer_managed_key,
                 ]
             ):
                 self._kind = LEAN_KIND
