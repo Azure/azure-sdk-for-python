@@ -35,18 +35,17 @@ from ..pipeline.policies._utils import get_retry_after
 from ..pipeline._tools import is_rest
 from .._enum_meta import CaseInsensitiveEnumMeta
 
+HTTPRequestType = TypeVar("HTTPRequestType")
+
 if TYPE_CHECKING:
     from azure.core import PipelineClient
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import (
-        HttpResponse,
-        AsyncHttpResponse,
-        HttpRequest,
         HttpTransport
     )
+    from azure.core.pipeline.policies._universal import HTTPResponseType
 
-    ResponseType = Union[HttpResponse, AsyncHttpResponse]
-    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+    PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
 
 ABC = abc.ABC
@@ -88,7 +87,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response: "ResponseType") -> Dict[str, Any]:
+def _as_json(response: "HTTPResponseType") -> Dict[str, Any]:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -101,7 +100,7 @@ def _as_json(response: "ResponseType") -> Dict[str, Any]:
         raise DecodeError("Error occurred in deserializing the response body.")
 
 
-def _raise_if_bad_http_status_and_method(response: "ResponseType") -> None:
+def _raise_if_bad_http_status_and_method(response: "HTTPResponseType") -> None:
     """Check response status code is valid.
 
     Must be 200, 201, 202, or 204.
@@ -114,7 +113,7 @@ def _raise_if_bad_http_status_and_method(response: "ResponseType") -> None:
     raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
 
-def _is_empty(response: "ResponseType") -> bool:
+def _is_empty(response: "HTTPResponseType") -> bool:
     """Check if response body contains meaningful content.
 
     :rtype: bool
@@ -261,7 +260,7 @@ class OperationResourcePolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response: "ResponseType") -> None:
+    def _set_async_url_if_present(self, response: "HTTPResponseType") -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
@@ -487,7 +486,14 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
         response = pipeline_response.http_response
         if not _is_empty(response):
             return self._deserialization_callback(pipeline_response)
-        return None
+
+        # This "type ignore" has been discussed with architects.
+        # We have a typing problem that if the Swagger/TSP describes a return type (PollingReturnType is not None), BUT
+        # the returned payload is actually empty, we don't want to fail, but return None.
+        # To make it clean, we would have to make the polling return type Optional "just in case the Swagger/TSP is wrong"
+        # This is reducing the quality and the value of the typing annotations for a case that is not supposed to happen
+        # in the first place. So we decided to ignore the type error here.
+        return None  # type: ignore
 
     def _get_request_id(self) -> str:
         return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]

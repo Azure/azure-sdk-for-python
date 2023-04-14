@@ -36,23 +36,25 @@ from .base_polling import (
 from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
 
+
 if TYPE_CHECKING:
     from azure.core import AsyncPipelineClient
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import (
-        AsyncHttpResponse,
-        HttpRequest,
         AsyncHttpTransport
     )
+    from azure.core._pipeline_client_async import _AsyncContextManagerCloseable
+    from azure.core.pipeline.policies._universal import HTTPRequestType
 
-    AsyncPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
+    AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
+    AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
 
 PollingReturnType = TypeVar("PollingReturnType")
 
 __all__ = ["AsyncLROBasePolling"]
 
 
-class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelineClient"], AsyncPollingMethod[PollingReturnType]):
+class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]"], AsyncPollingMethod[PollingReturnType]):
     """A base LRO async poller.
 
     This assumes a basic flow:
@@ -153,10 +155,10 @@ class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelin
             request = RestHttpRequest("GET", status_link)
             return await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config)
         # if I am a azure.core.pipeline.transport.HttpResponse
-        request = self._client.get(status_link)
+        legacy_request = self._client.get(status_link)
 
         return await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
+            legacy_request, stream=False, **self._operation_config
         )
 
 

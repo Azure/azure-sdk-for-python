@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, runtime_checkable
 import urllib.parse
 from typing_extensions import Protocol
 
@@ -49,15 +49,17 @@ from ._base import SansIOHTTPPolicy
 _LOGGER = logging.getLogger(__name__)
 
 
+@runtime_checkable
 class HTTPRequestType(Protocol):
     """Protocol compatible with new rest request and legacy transport request"""
 
     headers: MutableMapping[str, str]
     url: str
     method: str
-    body: bytes
+    body: Optional[Union[bytes, Dict[str, Union[str, int]]]]
 
 
+@runtime_checkable
 class HTTPResponseType(Protocol):
     """Protocol compatible with new rest response and legacy transport response"""
 
@@ -73,7 +75,14 @@ class HTTPResponseType(Protocol):
     def content_type(self) -> Optional[str]:
         ...
 
+    @property
+    def request(self) -> HTTPRequestType:
+        ...
+
     def text(self, encoding: Optional[str] = None) -> str:
+        ...
+
+    def body(self) -> bytes:
         ...
 
 
