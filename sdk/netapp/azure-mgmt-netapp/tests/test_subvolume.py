@@ -2,12 +2,10 @@ import random
 import string
 from azure.mgmt.netapp.models import SubvolumeInfo, SubvolumePatchRequest
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
-from test_volume import create_volume, delete_volume, delete_pool, delete_account, create_virtual_network
+from test_volume import create_volume, delete_volume, delete_pool, delete_account, create_virtual_network, wait_for_volume
 from setup import *
 import azure.mgmt.netapp.models
 import time
-
-from tests.test_volume import wait_for_volume
 
 LIVE = False
 
