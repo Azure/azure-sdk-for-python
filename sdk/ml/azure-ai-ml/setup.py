@@ -66,6 +66,7 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
+        "msrest>=0.6.18",
         "azure-core<2.0.0,>=1.23.0",
         "azure-mgmt-core<2.0.0,>=1.3.0",
         "marshmallow<4.0.0,>=3.5",
