@@ -1,6 +1,6 @@
 # Python SDK Pylint Guide
 
-Cheat sheet for pylint general guidelines in the Python client SDK library. 
+Cheat sheet for the Python SDK pylint general guidelines for your client library 
 
 # Table of contents
   - [How to Prepare your SDK?](#how-to-prepare-your-sdk-for-a-new-pylint-update)
@@ -31,11 +31,11 @@ One way to run pylint is to run at the package level with tox:
 
     .../azure-sdk-for-python/sdk/eventgrid/azure-eventgrid>tox -e pylint -c ../../../eng/tox/tox.ini
 
-If you don't want to use tox you can also install and run pylint on its own:
+If you don't want to use tox, you can also install and run pylint on its own:
 
  - If taking this approach, in order to run with the pylintrc formatting and the custom pylint checkers you must also install the custom checkers and `SET` the pylintrc path. 
 
-- More info on how to run the custom pylint checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/pylint-guidelines-checker/README.md)
+- Additional information about custom checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
 
         pip install pylint
         pip install pylint-guidelines-checker --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
@@ -56,13 +56,13 @@ There are three ways to ignore pylint checkers:
 
 # Pylint Warnings and Where to Find Them 
 
-Info on the custom pylint checkers [here](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker).
+Info on the custom pylint checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker).
 
 In addition to being a part of the CI, the custom pylint checkers are also integrated into ApiView and will show as warnings there. 
 
 ## Next Pylint
 
-There is now a new step on the CI pipeline called `Run Pylint Next`. This is merely a duplicate of the `Run Pylint` step with the exception that `Run Pylint Next` has the newer version of pylint and the newer version of the custom pylint checkers. 
+There is now a new step on the CI pipeline called `Run Pylint Next`. This is merely a duplicate of the `Run Pylint` step with the exception that `Run Pylint Next` has the newer versions of pylint and the custom pylint checkers.
 
 This next-pylint env can also be run locally through tox:
 
