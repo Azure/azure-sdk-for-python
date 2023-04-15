@@ -187,7 +187,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers[self._name] = self._credential.key
 
 
-class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTypeVar]):
+class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseTypeVar]):
     """Adds a key header for the provided credential, using HTTP Authorization spec.
 
     :param credential: The credential used to authenticate requests.
