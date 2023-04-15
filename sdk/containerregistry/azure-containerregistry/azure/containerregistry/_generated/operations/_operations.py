@@ -497,10 +497,7 @@ def build_container_registry_blob_delete_blob_request(  # pylint: disable=name-t
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, **kwargs)
 
 
 def build_container_registry_blob_mount_blob_request(  # pylint: disable=name-too-long
@@ -2042,15 +2039,17 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace
-    def delete_blob(self, name: str, digest: str, **kwargs: Any) -> Iterator[bytes]:
+    def delete_blob(  # pylint: disable=inconsistent-return-statements
+        self, name: str, digest: str, **kwargs: Any
+    ) -> None:
         """Removes an already uploaded blob.
 
         :param name: Name of the image (including the namespace). Required.
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2064,7 +2063,7 @@ class ContainerRegistryBlobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_container_registry_blob_delete_blob_request(
             name=name,
@@ -2077,7 +2076,7 @@ class ContainerRegistryBlobOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -2093,12 +2092,8 @@ class ContainerRegistryBlobOperations:
             "str", response.headers.get("Docker-Content-Digest")
         )
 
-        deserialized = response.iter_bytes()
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, response_headers)
 
     @distributed_trace
     def mount_blob(  # pylint: disable=inconsistent-return-statements

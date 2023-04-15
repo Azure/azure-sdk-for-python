@@ -317,7 +317,7 @@ class ModelOperations(_ScopeDependentOperations):
         model_uri = self.get(name=name, version=version).path
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
-            sas_uri = get_storage_details_for_registry_assets(
+            sas_uri, auth_type = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
                 asset_name=name,
                 asset_version=version,
@@ -326,7 +326,15 @@ class ModelOperations(_ScopeDependentOperations):
                 rg_name=self._resource_group_name,
                 uri=model_uri,
             )
-            storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            if auth_type == "SAS":
+                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            else:
+                parts = sas_uri.split("/")
+                storage_account = parts[2].split(".")[0]
+                container_name = parts[3]
+                storage_client = get_storage_client(
+                    credential=None, storage_account=storage_account, container_name=container_name
+                )
 
         else:
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
@@ -544,7 +552,20 @@ class ModelOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
+    def begin_package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> None:
+        """Package a model asset
+
+        :param name: Name of model asset.
+        :type name: str
+        :param version: Version of model asset.
+        :type version: str
+        :param package_request: Model package request.
+        :type package_request: ~azure.ai.ml.entities.ModelPackage
+        :return: None
+        :rtype: None
+
+        """
+
         if not kwargs.get("skip_to_rest", False):
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
@@ -593,8 +614,8 @@ class ModelOperations(_ScopeDependentOperations):
         module_logger.info("Creating package with name: %s", package_request.target_environment_name)
 
         package_out = self._model_versions_operation.begin_package(
-            name=model_name,
-            version=model_version,
+            name=name,
+            version=version,
             workspace_name=self._workspace_name,
             body=package_request,
             **self._scope_kwargs,

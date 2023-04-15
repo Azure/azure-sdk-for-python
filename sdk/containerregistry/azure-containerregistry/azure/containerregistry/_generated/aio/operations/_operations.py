@@ -1418,15 +1418,17 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def delete_blob(self, name: str, digest: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def delete_blob(  # pylint: disable=inconsistent-return-statements
+        self, name: str, digest: str, **kwargs: Any
+    ) -> None:
         """Removes an already uploaded blob.
 
         :param name: Name of the image (including the namespace). Required.
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :return: Async iterator of the response bytes
-        :rtype: AsyncIterator[bytes]
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1440,7 +1442,7 @@ class ContainerRegistryBlobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_container_registry_blob_delete_blob_request(
             name=name,
@@ -1453,7 +1455,7 @@ class ContainerRegistryBlobOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -1469,12 +1471,8 @@ class ContainerRegistryBlobOperations:
             "str", response.headers.get("Docker-Content-Digest")
         )
 
-        deserialized = response.iter_bytes()
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
     async def mount_blob(  # pylint: disable=inconsistent-return-statements

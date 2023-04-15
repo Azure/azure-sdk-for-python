@@ -735,32 +735,27 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_set_audience(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = get_audience(authority)
 
+        async with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
+            async for repo in client.list_repository_names():
+                pass
+
+        valid_audience = get_audience(authority)
         async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
-            assert client._client._config.api_version == "2021-07-01"
             async for repo in client.list_repository_names():
                 pass
-        
-        async with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
-                async for repo in client.list_repository_names():
-                    pass
 
-                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
-                invalid_client = ContainerRegistryClient(
-                    endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
-                )
-                with pytest.raises(ClientAuthenticationError):
-                    async for repo in invalid_client.list_repository_names():
-                        pass
-            else:
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            async with ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            ) as client:
                 with pytest.raises(ClientAuthenticationError):
                     async for repo in client.list_repository_names():
                         pass
-    
+
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tags_in_empty_repo(self, containerregistry_endpoint):

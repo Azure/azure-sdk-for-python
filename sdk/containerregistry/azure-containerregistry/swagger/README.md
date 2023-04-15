@@ -102,6 +102,7 @@ directive:
 ### Change "parameters.ApiVersionParameter.required" to true
 
 so that the generated client/clientcontext constructors take api_version as a parameter.
+
 ```yaml
 directive:
   - from: swagger-document
@@ -143,11 +144,36 @@ directive:
       };
 ```
 
-# Rename parameter "Range" to "RangeHeader"
+### Rename parameter "Range" to "RangeHeader"
 ``` yaml
 directive:
   from: swagger-document
   where: $.parameters.Range
   transform: >
     $["x-ms-client-name"] = "RangeHeader"
+```
+
+### Remove security definitions
+
+as it is incorrect in swagger
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.
+    transform: >
+      delete $["securityDefinitions"];
+      delete $["security"];
+```
+
+### Remove stream response from `deleteBlob`
+
+as we don't care about the stream that is returned and we don't want to clean it up
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.paths["/v2/{name}/blobs/{digest}"]["delete"]
+    transform: >
+      delete $.responses["202"].schema;
 ```

@@ -728,31 +728,27 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_set_audience(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = get_audience(authority)
+        
+        with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
+            for repo in client.list_repository_names():
+                pass
 
+        valid_audience = get_audience(authority)
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
             for repo in client.list_repository_names():
                 pass
-        
-        with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
-                for repo in client.list_repository_names():
-                    pass
-                
-                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
-                invalid_client = ContainerRegistryClient(
-                    endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
-                )
-                with pytest.raises(ClientAuthenticationError):           
-                    for repo in invalid_client.list_repository_names():
-                        pass
-            else:
+
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            with ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            ) as client:
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
-    
+
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tags_in_empty_repo(self, containerregistry_endpoint):

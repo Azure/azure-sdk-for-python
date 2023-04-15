@@ -23,8 +23,8 @@ SUPPORTED_API_VERSIONS = [
 ]
 DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
 
-# Public cloud audience
-AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
+# The default audience used for all clouds when audience is not set
+DEFAULT_AUDIENCE = "https://containerregistry.azure.net"
 
 # Known manifest media types
 OCI_IMAGE_MANIFEST = "application/vnd.oci.image.manifest.v1+json"
