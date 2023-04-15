@@ -318,6 +318,8 @@ class CommandComponent(Component, ParameterizedCommand):
             )
 
             additional_includes.cleanup()
-        else:
+        elif self.code is not None:
             yield code
-            return
+        else:
+            yield None
+
