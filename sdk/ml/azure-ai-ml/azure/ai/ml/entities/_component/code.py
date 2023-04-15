@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional
 
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
 
@@ -16,8 +16,10 @@ class ComponentIgnoreFile(IgnoreFile):
         directory_path: Union[str, Path],
         *,
         skip_ignore_file: bool = False,
+        extra_ignore_list: Optional[List[IgnoreFile]] = None,
     ):
         self._base_path = Path(directory_path)
+        self._extra_ignore_list: List[IgnoreFile] = extra_ignore_list or []
         # note: the parameter changes to directory path in this class, rather than file path
         file_path = None if skip_ignore_file else get_ignore_file(directory_path).path
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
@@ -30,6 +32,24 @@ class ComponentIgnoreFile(IgnoreFile):
     def base_path(self) -> Path:
         # for component ignore file, the base path can be different from file.parent
         return self._base_path
+
+    def rebase(self, directory_path: Union[str, Path]) -> "ComponentIgnoreFile":
+        """Rebase the ignore file to a new directory."""
+        self._base_path = directory_path
+        return self
+
+    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+        """Override to add custom ignores for internal component."""
+        for ignore_file in self._extra_ignore_list:
+            if ignore_file.is_file_excluded(file_path):
+                return True
+        return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
+
+    def merge(self, other_path: Path) -> "ComponentIgnoreFile":
+        """Merge ignore list from another InternalComponentIgnoreFile object."""
+        if other_path.is_file():
+            return self
+        return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
 
     def _get_ignore_list(self) -> List[str]:
         """Override to add custom ignores."""

@@ -2,8 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
+from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
+from contextlib import contextmanager
+from uuid import UUID
 
 from marshmallow import Schema
 
@@ -21,8 +24,13 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
+from .code import ComponentIgnoreFile
+from ._additional_includes import AdditionalIncludes
+
+from ...entities._assets import Code
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
+from ..._utils._asset_utils import IgnoreFile
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
@@ -101,6 +109,7 @@ class CommandComponent(Component, ParameterizedCommand):
         # this is to support the case of CommandComponent being the trial of
         # a SweepJob, where environment_variables is stored as part of trial
         environment_variables = kwargs.pop("environment_variables", None)
+        additional_includes = kwargs.pop("additional_includes", None)
         super().__init__(
             name=name,
             version=version,
@@ -133,6 +142,11 @@ class CommandComponent(Component, ParameterizedCommand):
                 error_category=ErrorCategory.USER_ERROR,
             )
         self.instance_count = instance_count
+        self._additional_includes = additional_includes
+
+    @property
+    def additional_includes(self):
+        return self._additional_includes
 
     @property
     def instance_count(self) -> int:
@@ -236,3 +250,74 @@ class CommandComponent(Component, ParameterizedCommand):
             return self._to_yaml()
         except BaseException:  # pylint: disable=broad-except
             return super(CommandComponent, self).__str__()
+
+    @classmethod
+    def _get_snapshot_id(
+        cls,
+        code_path: Union[str, PathLike],
+        ignore_file: IgnoreFile,
+    ) -> str:
+        """Get the snapshot id of a component with specific working directory in ml-components. Use this as the name of
+        code asset to reuse steps in a pipeline job from ml-components runs.
+
+        :param code_path: The path of the working directory.
+        :type code_path: str
+        :param ignore_file: The ignore file of the snapshot.
+        :type ignore_file: IgnoreFile
+        :return: The snapshot id of a component in ml-components with code_path as its working directory.
+        """
+        from azure.ai.ml._internal.entities._merkle_tree import create_merkletree
+        curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
+        snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
+        return snapshot_id
+
+    @contextmanager
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
+        """
+        # if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
+
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            yield code
+            return
+
+        if self.additional_includes is not None:
+            additional_includes = AdditionalIncludes(
+                code_path=self.code,
+                yaml_path=self._source_path,
+                additional_includes=self.additional_includes
+            )
+            additional_includes.resolve()
+
+            # use absolute path in case temp folder & work dir are in different drive
+            tmp_code_dir = additional_includes.code.absolute() if additional_includes.code else additional_includes.yaml_path.absolute()
+            rebased_ignore_file = ComponentIgnoreFile(
+                tmp_code_dir,
+            )
+
+            yield Code(
+                # name=self._get_snapshot_id(
+                #     # use absolute path in case temp folder & work dir are in different drive
+                #     self.additional_includes.code.absolute(),
+                #     # this ignore-file should be rebased to the resolved code path
+                #     rebased_ignore_file,
+                # ),
+                # version="1",
+                base_path=self._base_path,
+                path=tmp_code_dir,
+                # is_anonymous=True,
+                ignore_file=rebased_ignore_file,
+            )
+
+            additional_includes.cleanup()
+        else:
+            yield code
+            return

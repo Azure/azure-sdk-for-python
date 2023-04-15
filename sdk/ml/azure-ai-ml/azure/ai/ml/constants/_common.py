@@ -854,3 +854,7 @@ class InferenceServerType:
 class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "all"
     NONE = "none"
+
+
+class AzureDevopsArtifactsType:
+    ARTIFACT = "artifact"

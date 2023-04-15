@@ -21,8 +21,8 @@ class InternalComponentIgnoreFile(ComponentIgnoreFile):
         super(InternalComponentIgnoreFile, self).__init__(
             directory_path=directory_path,
             skip_ignore_file=skip_ignore_file,
+            extra_ignore_list=extra_ignore_list,
         )
-        self._extra_ignore_list: List[IgnoreFile] = extra_ignore_list or []
         # only the additional include file in root directory is ignored
         # additional include files in subdirectories are not processed so keep them
         self._additional_includes_file_name = additional_includes_file_name
@@ -34,18 +34,13 @@ class InternalComponentIgnoreFile(ComponentIgnoreFile):
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):
                 return True
-        return super(InternalComponentIgnoreFile, self).is_file_excluded(file_path)
+        return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
 
     def merge(self, other_path: Path) -> "InternalComponentIgnoreFile":
         """Merge ignore list from another InternalComponentIgnoreFile object."""
         if other_path.is_file():
             return self
         return InternalComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
-
-    def rebase(self, directory_path: Union[str, Path]) -> "InternalComponentIgnoreFile":
-        """Rebase the ignore file to a new directory."""
-        self._base_path = directory_path
-        return self
 
 
 class InternalCode(Code):

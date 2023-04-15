@@ -581,3 +581,23 @@ class TestCommandComponentEntity:
         assert from_rest_dict["intellectual_property"]
         assert from_rest_dict["intellectual_property"] == yaml_dict
         assert from_rest_dict["outputs"] == expected_output_dict
+
+    def test_resolve_local_code(self) -> None:
+        # internal component code (snapshot) default includes items in base directory when code is None,
+        # rather than COMPONENT_PLACEHOLDER in v2, this test targets to this case.
+        from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+
+        # create a mock function for param `get_arm_id_and_fill_back`
+        def mock_get_arm_id_and_fill_back(asset, *args, **kwargs):
+            return asset
+
+        yaml_path = (
+            "./tests/test_configs/components/component_with_additional_includes/helloworld_additional_includes.yml"
+        )
+        component = load_component(source=yaml_path)
+        _try_resolve_code_for_component(
+            component=component,
+            get_arm_id_and_fill_back=mock_get_arm_id_and_fill_back,
+        )
+        assert component.code.path.name != COMPONENT_PLACEHOLDER
