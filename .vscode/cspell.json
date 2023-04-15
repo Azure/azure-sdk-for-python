@@ -212,6 +212,7 @@
     "ints",
     "iohttp",
     "IOHTTP",
+    "IOLRO",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -765,7 +766,7 @@
         "xoperex",
         "Zocor"
       ]
-    },    
+    },
     {
       "filename": "sdk/keyvault/**",
       "words": [
