@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMappinggst
+from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping
 import urllib.parse
 from typing_extensions import Protocol, runtime_checkable
 
