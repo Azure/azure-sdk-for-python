@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Union, List
 
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 
 from .code import ComponentIgnoreFile
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
@@ -19,7 +20,6 @@ from ...entities._util import _general_copy
 
 
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
-ARTIFACT_KEY = "artifact"
 
 
 class AdditionalIncludes:
@@ -70,7 +70,7 @@ class AdditionalIncludes:
     @property
     def is_artifact_includes(self):
         try:
-            return any(map(lambda x: isinstance(x, dict) and x.get("type", None) == ARTIFACT_KEY, self.additional_includes))
+            return any(map(lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT, self.additional_includes))
         except Exception:  # pylint: disable=broad-except
             return False
 
@@ -118,7 +118,7 @@ class AdditionalIncludes:
 
     def _resolve_additional_include_config(self, additional_include_config):
         result = []
-        if isinstance(additional_include_config, dict) and additional_include_config.get("type") == ARTIFACT_KEY:
+        if isinstance(additional_include_config, dict) and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT:
             try:
                 # Get the artifacts package from devops to the local
                 artifact_path = self._get_artifacts_by_config(additional_include_config)

@@ -2,11 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 from contextlib import contextmanager
-from uuid import UUID
 
 from marshmallow import Schema
 
