@@ -261,7 +261,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient042023Preview(
+        self._rp_service_client = ServiceClient122022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -335,7 +335,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,

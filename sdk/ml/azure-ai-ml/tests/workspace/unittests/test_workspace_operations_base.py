@@ -28,13 +28,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_workspace_operation_base(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2022_12_01_preview: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceOperationsBase:
     yield WorkspaceOperationsBase(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2022_12_01_preview,
+        service_client=mock_aml_services_2023_04_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
