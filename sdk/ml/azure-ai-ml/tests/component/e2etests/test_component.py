@@ -155,7 +155,7 @@ class TestComponent(AzureRecordedTestCase):
         assert_component_basic_workflow(
             client=client,
             randstr=randstr,
-            path=r"C:\Users\chenyin\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\test_configs\components\write_jokes\spec.yaml",
+            path="./tests/test_configs/components/helloworld_component.yml",
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "code", "environment"],
             recorded_component_name="component_name",
