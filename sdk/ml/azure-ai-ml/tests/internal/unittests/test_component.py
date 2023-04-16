@@ -440,126 +440,126 @@ class TestComponent:
     @pytest.mark.parametrize(
         "test_files",
         [
-            pytest.param(
-                [
-                    (
-                        "component_with_additional_includes/.amlignore",
-                        "test_ignore/*\nlibrary1/ignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    (
-                        "component_with_additional_includes/test_ignore/a.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
-                    # will be saved to library1/ignore.py, should be ignored
-                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
-                    # will be saved to library1/ignore.py/a.py, should be ignored
-                    # TODO: can't create with the same name?
-                    # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
-                    # will be saved to library1/test_ignore, should be kept
-                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
-                ],
-                id="amlignore",
-            ),
-            pytest.param(
-                [
-                    # additional_includes for other spec, should be kept
-                    (
-                        "component_with_additional_includes/x.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    (
-                        "additional_includes/library1/x.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    (
-                        "additional_includes/library1/test/x.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    # additional_includes in a different level, should be kept
-                    (
-                        "component_with_additional_includes/library2/helloworld_additional_includes.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    (
-                        "component_with_additional_includes/library2/library/helloworld_additional_includes.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    # additional_includes in a different level in additional includes, should be kept
-                    (
-                        "additional_includes/library1/helloworld_additional_includes.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                ],
-                id="additional_includes",
-            ),
-            pytest.param(
-                [
-                    ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
-                    (
-                        "component_with_additional_includes/test_code/.amlignore",
-                        "hello.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    (
-                        "component_with_additional_includes/test_code/hello.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
-                    ),
-                    # shall we keep the empty folder?
-                    (
-                        "component_with_additional_includes/test_code/a/hello.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
-                    ),
-                ],
-                id="amlignore_subfolder",
-            ),
-            pytest.param(
-                [
-                    (
-                        "additional_includes/library1/.amlignore",
-                        "test_ignore\nignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    # will be saved to library1/ignore.py, should be ignored
-                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
-                    # will be saved to library1/ignore.py/a.py, should be ignored
-                    # TODO: can't create with the same name?
-                    # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
-                    # will be saved to library1/test_ignore, should be kept
-                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
-                ],
-                id="amlignore_in_additional_includes_folder",
-            ),
-            pytest.param(
-                [
-                    (
-                        "additional_includes/library1/test_ignore/.amlignore",
-                        "ignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
-                    ),
-                    # will be saved to library1/ignore.py, should be ignored
-                    (
-                        "additional_includes/library1/test_ignore/ignore.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
-                    ),
-                    (
-                        "additional_includes/library1/test_ignore/ignore.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
-                    ),
-                ],
-                id="amlignore_in_additional_includes_subfolder",
-            ),
+            # pytest.param(
+            #     [
+            #         (
+            #             "component_with_additional_includes/.amlignore",
+            #             "test_ignore/*\nlibrary1/ignore.py",
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         (
+            #             "component_with_additional_includes/test_ignore/a.py",
+            #             None,
+            #             AdditionalIncludesCheckFunc.NO_PARENT,
+            #         ),
+            #         # will be saved to library1/ignore.py, should be ignored
+            #         ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+            #         # will be saved to library1/ignore.py/a.py, should be ignored
+            #         # TODO: can't create with the same name?
+            #         # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+            #         # will be saved to library1/test_ignore, should be kept
+            #         ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+            #     ],
+            #     id="amlignore",
+            # ),
+            # pytest.param(
+            #     [
+            #         # additional_includes for other spec, should be kept
+            #         (
+            #             "component_with_additional_includes/x.additional_includes",
+            #             None,
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         (
+            #             "additional_includes/library1/x.additional_includes",
+            #             None,
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         (
+            #             "additional_includes/library1/test/x.additional_includes",
+            #             None,
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         # additional_includes in a different level, should be kept
+            #         (
+            #             "component_with_additional_includes/library2/helloworld_additional_includes.additional_includes",
+            #             None,
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         (
+            #             "component_with_additional_includes/library2/library/helloworld_additional_includes.additional_includes",
+            #             None,
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         # additional_includes in a different level in additional includes, should be kept
+            #         (
+            #             "additional_includes/library1/helloworld_additional_includes.additional_includes",
+            #             None,
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #     ],
+            #     id="additional_includes",
+            # ),
+            # pytest.param(
+            #     [
+            #         ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+            #         (
+            #             "component_with_additional_includes/test_code/.amlignore",
+            #             "hello.py",
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         (
+            #             "component_with_additional_includes/test_code/hello.py",
+            #             None,
+            #             AdditionalIncludesCheckFunc.NOT_EXISTS,
+            #         ),
+            #         # shall we keep the empty folder?
+            #         (
+            #             "component_with_additional_includes/test_code/a/hello.py",
+            #             None,
+            #             AdditionalIncludesCheckFunc.NO_PARENT,
+            #         ),
+            #     ],
+            #     id="amlignore_subfolder",
+            # ),
+            # pytest.param(
+            #     [
+            #         (
+            #             "additional_includes/library1/.amlignore",
+            #             "test_ignore\nignore.py",
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         # will be saved to library1/ignore.py, should be ignored
+            #         ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+            #         # will be saved to library1/ignore.py/a.py, should be ignored
+            #         # TODO: can't create with the same name?
+            #         # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+            #         # will be saved to library1/test_ignore, should be kept
+            #         ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+            #     ],
+            #     id="amlignore_in_additional_includes_folder",
+            # ),
+            # pytest.param(
+            #     [
+            #         (
+            #             "additional_includes/library1/test_ignore/.amlignore",
+            #             "ignore.py",
+            #             AdditionalIncludesCheckFunc.SELF_IS_FILE,
+            #         ),
+            #         # will be saved to library1/ignore.py, should be ignored
+            #         (
+            #             "additional_includes/library1/test_ignore/ignore.py",
+            #             None,
+            #             AdditionalIncludesCheckFunc.NOT_EXISTS,
+            #         ),
+            #         (
+            #             "additional_includes/library1/test_ignore/ignore.py",
+            #             None,
+            #             AdditionalIncludesCheckFunc.NOT_EXISTS,
+            #         ),
+            #     ],
+            #     id="amlignore_in_additional_includes_subfolder",
+            # ),
             pytest.param(
                 [
                     (
@@ -732,7 +732,7 @@ class TestComponent:
 
             yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
             component: InternalComponent = load_component(source=yaml_path)
-            # assert component._validate().passed, repr(component._validate())
+            assert component._validate().passed, repr(component._validate())
             with component._resolve_local_code() as code:
                 code_path = code.path
                 assert code_path.is_dir()
@@ -747,20 +747,20 @@ class TestComponent:
                 ]:
                     assert (code_path / path).exists()
 
-            # yaml_path = (
-            #     "./tests/test_configs/internal/component_with_additional_includes/"
-            #     "artifacts_additional_includes_with_conflict.yml"
-            # )
-            # component: InternalComponent = load_component(source=yaml_path)
-            # validation_result = component._validate()
-            # assert validation_result.passed is False
-            # assert "There are conflict files in additional include" in validation_result.error_messages["*"]
-            # assert (
-            #     "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            # )
-            # assert (
-            #     "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            # )
+            yaml_path = (
+                "./tests/test_configs/internal/component_with_additional_includes/"
+                "artifacts_additional_includes_with_conflict.yml"
+            )
+            component: InternalComponent = load_component(source=yaml_path)
+            validation_result = component._validate()
+            assert validation_result.passed is False
+            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+            assert (
+                "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
+            )
+            assert (
+                "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
+            )
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",

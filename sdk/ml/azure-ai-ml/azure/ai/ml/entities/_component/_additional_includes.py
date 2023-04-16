@@ -55,8 +55,7 @@ class AdditionalIncludes:
     @property
     def yaml_path(self) -> Path:
         if self._yaml_path is None:
-            # if yaml path is not specified, use a not created
-            # temp file name
+            # if yaml path is not specified, take working directory as root folder and use a not created temp file name
             return Path.cwd() / PLACEHOLDER_FILE_NAME
         return Path(self._yaml_path)
 
@@ -69,13 +68,25 @@ class AdditionalIncludes:
         return len(self.includes) != 0 or not self.artifact_validate_result.passed
 
     @property
+    def is_artifact_includes(self):
+        try:
+            return any(map(lambda x: isinstance(x, dict) and x.get("type", None) == ARTIFACT_KEY, self.additional_includes))
+        except Exception:  # pylint: disable=broad-except
+            return False
+
+    @property
     def includes(self):
         if self._includes is None:
-            self._includes = self._load_artifact_additional_includes()
+            if self.is_artifact_includes:
+                self._includes = self._load_artifact_additional_includes()
+            else:
+                self._includes = self.additional_includes
         return self._includes
 
     @property
     def artifact_validate_result(self):
+        if not self.is_artifact_includes:
+            return _ValidationResultBuilder.success()
         if self._artifact_validate_result is None:
             # artifact validation is done on loading now, so trigger it here
             self._load_artifact_additional_includes()
@@ -342,17 +353,18 @@ class AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            dst_path = Path(self.code_path) / src_path.name
-            if dst_path.is_symlink():
-                # if destination path is symbolic link, check if it points to the same file/folder as source path
-                if dst_path.resolve() != src_path.resolve():
-                    error_msg = (
-                        f"A symbolic link already exists for additional include {additional_include} "
-                        f"for {self.yaml_name}."
-                    )
+            dst_path = Path(self.code_path) / src_path.name if self.code_path else None
+            if dst_path:
+                if dst_path.is_symlink():
+                    # if destination path is symbolic link, check if it points to the same file/folder as source path
+                    if dst_path.resolve() != src_path.resolve():
+                        error_msg = (
+                            f"A symbolic link already exists for additional include {additional_include} "
+                            f"for {self.yaml_name}."
+                        )
+                        validation_result.append_error(message=error_msg)
+                        continue
+                elif dst_path.exists():
+                    error_msg = f"A file already exists for additional include {additional_include} for {self.yaml_name}."
                     validation_result.append_error(message=error_msg)
-                    continue
-            elif dst_path.exists():
-                error_msg = f"A file already exists for additional include {additional_include} for {self.yaml_name}."
-                validation_result.append_error(message=error_msg)
         return validation_result
