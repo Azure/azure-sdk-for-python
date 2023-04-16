@@ -177,7 +177,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict) -> LROPoller:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict
+    ) -> LROPoller:
         """Delete a workspace.
 
         :param name: Name of the workspace
@@ -189,7 +191,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        return super().begin_delete(name, delete_dependent_resources=delete_dependent_resources, force_to_purge=force_to_purge, **kwargs)
+        return super().begin_delete(
+            name, delete_dependent_resources=delete_dependent_resources, force_to_purge=force_to_purge, **kwargs
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
