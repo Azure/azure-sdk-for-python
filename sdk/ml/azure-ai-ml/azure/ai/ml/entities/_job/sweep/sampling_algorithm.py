@@ -47,16 +47,19 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         *,
         rule=None,
         seed=None,
+        logbase=None,
     ) -> None:
         super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
         self.seed = seed
+        self.logbase = logbase
 
     def _to_rest_object(self) -> RestRandomSamplingAlgorithm:
         return RestRandomSamplingAlgorithm(
             rule=self.rule,
             seed=self.seed,
+            logbase=self.logbase,
         )
 
     @classmethod
@@ -64,6 +67,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         return cls(
             rule=obj.rule,
             seed=obj.seed,
+            logbase=obj.logbase,
         )
 
 

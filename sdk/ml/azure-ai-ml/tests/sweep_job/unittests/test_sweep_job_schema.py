@@ -338,6 +338,7 @@ class TestSweepJobSchema:
         [
             ("./tests/test_configs/sweep_job/sampling_algorithm_properties/sweep_job_random_seed.yml", "seed", 999),
             ("./tests/test_configs/sweep_job/sampling_algorithm_properties/sweep_job_random_rule.yml", "rule", "sobol"),
+            ("./tests/test_configs/sweep_job/sampling_algorithm_properties/sweep_job_random_logbase.yml", "logbase", "e"),
         ],
     )
     def test_sampling_algorithm_object_properties(self, yaml_path: str, property_name: str, expected_value: Any):

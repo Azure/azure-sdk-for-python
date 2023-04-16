@@ -12521,6 +12521,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
     _attribute_map = {
         'sampling_algorithm_type': {'key': 'samplingAlgorithmType', 'type': 'str'},
+        "logbase": {"key": "logbase", "type": "str"},
         'rule': {'key': 'rule', 'type': 'str'},
         'seed': {'key': 'seed', 'type': 'int'},
     }
@@ -12528,6 +12529,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     def __init__(
         self,
         *,
+        logbase: Optional[str] = None,
         rule: Optional[Union[str, "RandomSamplingAlgorithmRule"]] = None,
         seed: Optional[int] = None,
         **kwargs
@@ -12541,6 +12543,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         """
         super(RandomSamplingAlgorithm, self).__init__(**kwargs)
         self.sampling_algorithm_type = 'Random'  # type: str
+        self.logbase = logbase
         self.rule = rule
         self.seed = seed
 

@@ -25,6 +25,8 @@ class RandomSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
 
     seed = fields.Int()
 
+    logbase = fields.Str()
+
     rule = StringTransformedEnum(
         allowed_values=[
             RandomSamplingAlgorithmRule.RANDOM,
