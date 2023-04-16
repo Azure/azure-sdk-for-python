@@ -79,8 +79,6 @@ from azure.ai.ml.entities import (
     OnlineEndpoint,
     Registry,
     Workspace,
-    _HubWorkspace,
-    _LeanWorkspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -553,15 +551,6 @@ class MLClient:
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
             self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
-        
-        self._hubs = HubOperations(
-            self._operation_scope,
-            self._service_client_04_2023_preview,
-            self._operation_container,
-            self._credential,
-            **app_insights_handler_kwargs,
-        )
-        self._operation_container.add(AzureMLResourceType.HUB, self._hubs)
 
     @classmethod
     def from_config(

@@ -173,8 +173,6 @@ from ._feature_set.feature_set_materialization_response import _FeatureSetMateri
 from ._feature_store.feature_store import _FeatureStore
 from ._feature_store.materialization_store import _MaterializationStore
 from ._notification.notification import _Notification
-from ._hub.hub import _HubWorkspace
-from ._hub.lean import _LeanWorkspace
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
