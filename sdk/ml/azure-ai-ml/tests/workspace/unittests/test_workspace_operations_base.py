@@ -3,7 +3,7 @@ from unittest.mock import DEFAULT, Mock, patch
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
 )
