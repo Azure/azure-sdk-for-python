@@ -6,6 +6,7 @@
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 - Added support to make JobService and ServiceInstance objects serializable when printed
 - Support Singularity compute in pipeline job
+- Added purge operation support for workspace resource
 
 ### Bugs Fixed
 
