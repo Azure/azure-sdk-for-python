@@ -1,8 +1,7 @@
 aiohttp>=3.0
 opencensus-ext-azure
 psutil
-git+https://github.com/l0lawrence/azure-sdk-for-python.git@llaw/servicebus_stress#subdirectory=sdk/servicebus/azure-servicebus&egg=azure-servicebus
+git+https://github.com/kashifkhan/azure-sdk-for-python.git@sb_pyamqp_mem#subdirectory=sdk/servicebus/azure-servicebus&egg=azure-servicebus
 python-dotenv
 websocket-client
-uamqp==1.6.3
 memray

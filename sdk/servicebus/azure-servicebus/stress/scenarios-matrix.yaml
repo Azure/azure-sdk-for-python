@@ -34,10 +34,10 @@ matrix:
       testTarget: memraychaos
     amemraychaos:
       testTarget: amemraychaos
-    queueuamqp:
-      testTarget: queueuamqp
-    aqueueuamqp:
-     testTarget: aqueueuamqp
+    # queueuamqp:
+    #   testTarget: queueuamqp
+    # aqueueuamqp:
+    #  testTarget: aqueueuamqp
     # sendreceiveslow:
     #   testTarget: send_receive_slow
     # receivedelete:

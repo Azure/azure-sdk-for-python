@@ -40,7 +40,7 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
     stress_logger = logging.getLogger(logger_name)
     stress_logger.setLevel(logging.WARNING)
     eventhub_logger = logging.getLogger("azure.servicebus")
-    eventhub_logger.setLevel(logging.INFO)
+    eventhub_logger.setLevel(logging.DEBUG)
     uamqp_logger = logging.getLogger("azure.servicebus._pyamqp.aio.connection")
     uamqp_logger.setLevel(logging.DEBUG)
 
@@ -62,21 +62,21 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
                 maxBytes=log_file_max_bytes,
                 backupCount=log_file_backup_count
             )
-            # uamqp_file_handler = RotatingFileHandler(
-            #     "uamqp_" + log_filename,
-            #     maxBytes=log_file_max_bytes,
-            #     backupCount=log_file_backup_count
-            # )
+            uamqp_file_handler = RotatingFileHandler(
+                "pyamqp_" + log_filename,
+                maxBytes=log_file_max_bytes,
+                backupCount=log_file_backup_count
+            )
             stress_file_handler = RotatingFileHandler(
                 log_filename,
                 maxBytes=log_file_max_bytes,
                 backupCount=log_file_backup_count
             )
             eventhub_file_handler.setFormatter(formatter)
-            # uamqp_file_handler.setFormatter(formatter)
+            uamqp_file_handler.setFormatter(formatter)
             stress_file_handler.setFormatter(formatter)
             eventhub_logger.addHandler(eventhub_file_handler)
-            # uamqp_logger.addHandler(uamqp_file_handler)
+            uamqp_logger.addHandler(uamqp_file_handler)
             stress_logger.addHandler(stress_file_handler)
         except:
             pass

@@ -25,12 +25,12 @@ from logger import get_logger
 from app_insights_metric import AbstractMonitorMetric
 from process_monitor import ProcessMonitor
 
-# LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "/success"
-LOGFILE_NAME = None
+LOGFILE_NAME = os.environ.get("DEBUG_SHARE")
+# LOGFILE_NAME = None
 PRINT_CONSOLE = True
 
-# _logger = logger.get_base_logger(LOGFILE_NAME, "stress_test", logging.INFO)
-_logger = get_logger(None, "stress_test", level=logging.INFO, print_console=PRINT_CONSOLE)
+_logger = get_logger(LOGFILE_NAME, "stress_test", logging.INFO)
+# _logger = get_logger(None, "stress_test", level=logging.INFO, print_console=PRINT_CONSOLE)
 
 
 class ReceiveType:

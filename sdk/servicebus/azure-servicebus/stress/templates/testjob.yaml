@@ -16,60 +16,60 @@ spec:
           cpu: "1"
 
       {{ if eq .Stress.testTarget "aqueuew" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuew" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method send_receive --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method send_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueuepullw" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuepullw" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "abatchw" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "batchw" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueue" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queue" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method send_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method send_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueuepull" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuepull" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "abatch" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "batch" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable']
       {{- end -}}
 
-      {{ if eq .Stress.testTarget "aqueueuamqp" }}
-      command: ['bash', '-c', 'python test_stress_queues_async.py --method uamqp --duration 300000 --logging-enable']
-      {{- end -}}
+      # {{ if eq .Stress.testTarget "aqueueuamqp" }}
+      # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues_async.py --method uamqp --duration 300000 --logging-enable']
+      # {{- end -}}
 
-      {{ if eq .Stress.testTarget "queueuamqp" }}
-      command: ['bash', '-c', 'python test_stress_queues.py --method uamqp --duration 300000 --logging-enable']
-      {{- end -}}
+      # {{ if eq .Stress.testTarget "queueuamqp" }}
+      # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE python test_stress_queues.py --method uamqp --duration 300000 --logging-enable']
+      # {{- end -}}
 
       {{ if eq .Stress.testTarget "amemray" }}
       command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sb_async_memray_output.bin test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable']
