@@ -1,0 +1,4 @@
+[run]
+omit =
+    # omit the _serialization file
+    azure/communication/identity/_generated/_serialization.py
