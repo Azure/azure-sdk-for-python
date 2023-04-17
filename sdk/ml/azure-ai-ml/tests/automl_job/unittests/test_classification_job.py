@@ -6,8 +6,8 @@ from typing import Any, Tuple
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomNCrossValidations, MLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomNCrossValidations, MLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import ClassificationModels, ClassificationPrimaryMetrics, classification
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import AssetTypes
