@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
-from ...models import ReceiveResponse
+from ...models import ReceiveResponse, LockTokensResponse, LockToken
 from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import EventGridNamespaceClientOperationsMixin as OperationsMixin
@@ -100,7 +100,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         event_subscription_name: str,
         *,
         max_events: Optional[int] = None,
-        timeout: Optional[int] = None,
+        max_wait_time: Optional[int] = None,
         **kwargs: Any
     ) -> List[ReceiveResponse]:
         """Receive Batch of Cloud Events from the Event Subscription.
@@ -111,9 +111,9 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         :type event_subscription_name: str
         :keyword max_events: Max Events count to be received. Default value is None.
         :paramtype max_events: int
-        :keyword timeout: Timeout value for receive operation in Seconds. Default is 60 seconds.
+        :keyword max_wait_time: Timeout value for receive operation in Seconds. Default is 60 seconds.
          Default value is None.
-        :paramtype timeout: int
+        :paramtype max_wait_time: int
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ReceiveResponse. The ReceiveResponse is compatible with MutableMapping
@@ -123,7 +123,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
 
         deserialized_response = []
         received_response = await self._receive_batch_of_cloud_events(
-            topic_name, event_subscription_name, max_events=max_events, timeout=timeout, **kwargs
+            topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
         )
         for detail_item in received_response.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
@@ -131,6 +131,15 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
             deserialized_response.append(detail_item)
         return deserialized_response
 
+    @distributed_trace_async
+    async def release(self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
+    ) -> LockTokensResponse:
+        await self.release_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
+
+    @distributed_trace_async
+    async def acknowledge(self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
+    ) -> LockTokensResponse:
+        await self.acknowledge_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
 
 __all__: List[str] = [
     "EventGridNamespaceClientOperationsMixin"
