@@ -230,4 +230,3 @@ class CustomMonitoringSignal:
         self.metric_thresholds = metric_thresholds
         self.component_id = component_id
         self.alert_enabled = alert_enabled
-

@@ -4,6 +4,9 @@
 
 from typing import Dict, Union
 
+from typing_extensions import Literal
+
+from azure.ai.ml.constants._monitoring import AZMONITORING
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.signals import (
     DataDriftSignal,
@@ -35,7 +38,7 @@ class MonitorDefinition:
                 CustomMonitoringSignal,
             ],
         ] = None,
-        alert_notification: AlertNotification = None,
+        alert_notification: Union[Literal[AZMONITORING], AlertNotification] = None,
     ):
         self.compute = compute
         self.monitoring_target = monitoring_target
