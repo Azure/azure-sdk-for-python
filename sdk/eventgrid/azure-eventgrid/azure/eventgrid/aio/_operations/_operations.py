@@ -26,19 +26,19 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import AzureJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_event_grid_namespace_acknowledge_batch_of_cloud_events_request,
-    build_event_grid_namespace_publish_batch_of_cloud_events_request,
-    build_event_grid_namespace_publish_cloud_event_request,
-    build_event_grid_namespace_receive_batch_of_cloud_events_request,
-    build_event_grid_namespace_release_batch_of_cloud_events_request,
+    build_event_grid_acknowledge_batch_of_cloud_events_request,
+    build_event_grid_publish_batch_of_cloud_events_request,
+    build_event_grid_publish_cloud_event_request,
+    build_event_grid_receive_batch_of_cloud_events_request,
+    build_event_grid_release_batch_of_cloud_events_request,
 )
-from .._vendor import EventGridNamespaceClientMixinABC
+from .._vendor import EventGridClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
+class EventGridClientOperationsMixin(EventGridClientMixinABC):
     @distributed_trace_async
     async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
         self, topic_name: str, event: _models._models.CloudEventEvent, **kwargs: Any
@@ -76,7 +76,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
 
         _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_namespace_publish_cloud_event_request(
+        request = build_event_grid_publish_cloud_event_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -140,7 +140,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
 
         _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_namespace_publish_batch_of_cloud_events_request(
+        request = build_event_grid_publish_batch_of_cloud_events_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -207,7 +207,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
 
         cls: ClsType[_models.ReceiveResponse] = kwargs.pop("cls", None)
 
-        request = build_event_grid_namespace_receive_batch_of_cloud_events_request(
+        request = build_event_grid_receive_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             max_events=max_events,
@@ -244,7 +244,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
 
     @distributed_trace_async
     async def acknowledge_batch_of_cloud_events(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: _models.LockTokenInput, **kwargs: Any
+        self, topic_name: str, event_subscription_name: str, lock_tokens: List[_models.LockToken], **kwargs: Any
     ) -> _models.LockTokensResponse:
         """Acknowledge Cloud Events.
 
@@ -254,7 +254,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type lock_tokens: ~azure.eventgrid.models.LockTokenInput
+        :type lock_tokens: list[~azure.eventgrid.models.LockToken]
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -279,7 +279,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
 
         _content = json.dumps(lock_tokens, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_namespace_acknowledge_batch_of_cloud_events_request(
+        request = build_event_grid_acknowledge_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,
@@ -351,7 +351,7 @@ class EventGridNamespaceClientOperationsMixin(EventGridNamespaceClientMixinABC):
 
         _content = json.dumps(tokens, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_event_grid_namespace_release_batch_of_cloud_events_request(
+        request = build_event_grid_release_batch_of_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,

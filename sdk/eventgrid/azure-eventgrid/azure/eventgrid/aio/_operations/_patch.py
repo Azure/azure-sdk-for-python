@@ -13,10 +13,17 @@ from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import EventGridNamespaceClientOperationsMixin as OperationsMixin
 
-class EventGridNamespaceClientOperationsMixin(OperationsMixin):
 
+class EventGridNamespaceClientOperationsMixin(OperationsMixin):
     @overload
-    async def publish(self, topic_name: str, body: List[CloudEvent], *, content_type: str = "application/cloudevents-batch+json; charset=utf-8", **kwargs: Any) -> None:
+    async def publish(
+        self,
+        topic_name: str,
+        body: List[CloudEvent],
+        *,
+        content_type: str = "application/cloudevents-batch+json; charset=utf-8",
+        **kwargs: Any
+    ) -> None:
         """Publish Batch of Cloud Events to namespace topic.
 
         :param topic_name: Topic Name. Required.
@@ -34,7 +41,14 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(self, topic_name: str, body: CloudEvent, *, content_type: str = "application/cloudevents+json; charset=utf-8", **kwargs: Any) -> None:
+    async def publish(
+        self,
+        topic_name: str,
+        body: CloudEvent,
+        *,
+        content_type: str = "application/cloudevents+json; charset=utf-8",
+        **kwargs: Any
+    ) -> None:
         """Publish Single Cloud Event to namespace topic.
 
         :param topic_name: Topic Name. Required.
@@ -78,7 +92,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
             await self._publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
-    
+
     @distributed_trace_async
     async def receive(
         self,
@@ -87,8 +101,8 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         *,
         max_events: Optional[int] = None,
         timeout: Optional[int] = None,
-        **kwargs:Any
-        ) -> List[ReceiveResponse]:
+        **kwargs: Any
+    ) -> List[ReceiveResponse]:
         """Receive Batch of Cloud Events from the Event Subscription.
 
         :param topic_name: Topic Name. Required.
@@ -108,14 +122,19 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         """
 
         deserialized_response = []
-        received_response = await self._receive_batch_of_cloud_events(topic_name, event_subscription_name, max_events=max_events, timeout=timeout, **kwargs)
+        received_response = await self._receive_batch_of_cloud_events(
+            topic_name, event_subscription_name, max_events=max_events, timeout=timeout, **kwargs
+        )
         for detail_item in received_response.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
             detail_item["event"] = deserialized_cloud_event
             deserialized_response.append(detail_item)
         return deserialized_response
 
-__all__: List[str] = ["EventGridNamespaceClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "EventGridNamespaceClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

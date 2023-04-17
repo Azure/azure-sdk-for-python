@@ -9,7 +9,6 @@
 from ._models import BrokerProperties
 from ._models import FailedLockToken
 from ._models import LockToken
-from ._models import LockTokenInput
 from ._models import LockTokensResponse
 from ._models import ReceiveResponse
 from ._patch import __all__ as _patch_all
@@ -20,7 +19,6 @@ __all__ = [
     "BrokerProperties",
     "FailedLockToken",
     "LockToken",
-    "LockTokenInput",
     "LockTokensResponse",
     "ReceiveResponse",
 ]

@@ -13,8 +13,8 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import EventGridNamespaceClientConfiguration
-from ._operations import EventGridNamespaceClientOperationsMixin
+from ._configuration import EventGridClientConfiguration
+from ._operations import EventGridClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -22,9 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EventGridNamespaceClient(
-    EventGridNamespaceClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Messaging EventGrid Client.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -42,7 +40,7 @@ class EventGridNamespaceClient(
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = EventGridNamespaceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -78,7 +76,7 @@ class EventGridNamespaceClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "EventGridNamespaceClient":
+    def __enter__(self) -> "EventGridClient":
         self._client.__enter__()
         return self
 

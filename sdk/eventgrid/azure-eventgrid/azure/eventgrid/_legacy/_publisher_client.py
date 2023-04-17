@@ -26,7 +26,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    map_error
+    map_error,
 )
 from azure.core.messaging import CloudEvent
 
@@ -66,7 +66,7 @@ SendType = Union[
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
-class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-version-keyword
+class EventGridPublisherClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
@@ -124,13 +124,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
         return policies
 
     @distributed_trace
-    def send(
-        self,
-        events: SendType,
-        *,
-        channel_name: Optional[str] = None,
-        **kwargs: Any
-        ) -> None:
+    def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -203,15 +197,10 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [
-                    _cloud_event_to_generated(e, **kwargs)
-                    for e in events  # pylint: disable=protected-access
-                ]
+                events = [_cloud_event_to_generated(e, **kwargs) for e in events]  # pylint: disable=protected-access
             except AttributeError:
                 ## this is either a dictionary or a CNCF cloud event
-                events = [
-                    _from_cncf_events(e) for e in events
-                ]
+                events = [_from_cncf_events(e) for e in events]
             content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:

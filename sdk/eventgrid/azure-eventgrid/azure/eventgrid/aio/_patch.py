@@ -12,6 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 from ._client import EventGridNamespaceClient as ServiceClientGenerated
 from .._legacy.aio import EventGridPublisherClient
 
+
 class EventGridNamespaceClient(ServiceClientGenerated):
     """Azure Messaging EventGrid Namespace Client.
 
@@ -34,11 +35,8 @@ class EventGridNamespaceClient(ServiceClientGenerated):
             # Otherwise, we use the default
             if not kwargs.get("authentication_policy"):
                 kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(credential)
-        super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            **kwargs
-        )
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -48,4 +46,7 @@ def patch_sdk():
     """
 
 
-__all__: List[str] = ["EventGridNamespaceClient",  "EventGridPublisherClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "EventGridNamespaceClient",
+    "EventGridPublisherClient",
+]  # Add all objects you want publicly available to users at this package level

@@ -36,8 +36,7 @@ class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
             return
 
         if (
-            request.http_request.headers["content-type"]
-            == CloudEventDistributedTracingPolicy._CONTENT_TYPE
+            request.http_request.headers["content-type"] == CloudEventDistributedTracingPolicy._CONTENT_TYPE
             and traceparent is not None
         ):
 

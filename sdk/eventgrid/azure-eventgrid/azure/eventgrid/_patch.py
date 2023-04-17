@@ -9,24 +9,20 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureKeyCredential
-from ._client import EventGridNamespaceClient as ServiceClientGenerated
-from ._legacy import  EventGridPublisherClient, EventGridEvent, generate_sas, SystemEventNames
-
+from ._client import EventGridClient as ServiceClientGenerated
+from ._legacy import EventGridPublisherClient
 
 
 class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
-    def __init__(
-        self,
-        credential: "AzureKeyCredential",
-        **kwargs # pylint: disable=unused-argument
-    ) -> None:
+    def __init__(self, credential: "AzureKeyCredential", **kwargs) -> None:  # pylint: disable=unused-argument
         super(EventGridSharedAccessKeyPolicy, self).__init__()
         self._credential = credential
 
     def on_request(self, request):
         request.http_request.headers["Authorization"] = "SharedAccessKey " + self._credential.key
 
-class EventGridNamespaceClient(ServiceClientGenerated): 
+
+class EventGridNamespaceClient(ServiceClientGenerated):
     """Azure Messaging EventGrid Namespace Client.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -48,11 +44,8 @@ class EventGridNamespaceClient(ServiceClientGenerated):
             # Otherwise, we use the default
             if not kwargs.get("authentication_policy"):
                 kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(credential)
-        super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            **kwargs
-        )
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -62,4 +55,7 @@ def patch_sdk():
     """
 
 
-__all__: List[str] = ["EventGridNamespaceClient", "EventGridPublisherClient", "EventGridEvent", "generate_sas", "SystemEventNames"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "EventGridNamespaceClient",
+    "EventGridPublisherClient",
+]  # Add all objects you want publicly available to users at this package level

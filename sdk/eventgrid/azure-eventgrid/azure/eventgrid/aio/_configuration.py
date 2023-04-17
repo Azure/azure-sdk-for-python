@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EventGridNamespaceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for EventGridNamespaceClient.
+class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for EventGridClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,7 +41,7 @@ class EventGridNamespaceClientConfiguration(Configuration):  # pylint: disable=t
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        super(EventGridNamespaceClientConfiguration, self).__init__(**kwargs)
+        super(EventGridClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2022-05-01")
 
         if endpoint is None:
