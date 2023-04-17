@@ -1,6 +1,6 @@
 # Release History
 
-## 12.16.0 (Unreleased)
+## 12.16.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.16.0 (2023-04-12)
+
+### Features Added
+- Stable release of features from 12.16.0b1
 
 ## 12.16.0b1 (2023-03-28)
 

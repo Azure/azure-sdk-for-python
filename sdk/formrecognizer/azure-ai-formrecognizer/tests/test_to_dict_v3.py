@@ -697,6 +697,60 @@ class TestToDict(FormRecognizerTest):
                     ],
                 ),
             ],
+            kind="document",
+            annotations=[
+                _models.DocumentAnnotation(
+                    kind="check",
+                    polygon=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    confidence=0.8
+                )
+            ],
+            barcodes=[
+                _models.DocumentBarcode(
+                    kind="QRCode",
+                    value="15",
+                    polygon=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    span=_models.DocumentSpan(offset=5, length=2),
+                    confidence=0.8
+                )
+            ],
+            formulas=[
+                _models.DocumentFormula(
+                    kind="inline",
+                    value="2+2=4",
+                    polygon=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    span=_models.DocumentSpan(offset=5, length=2),
+                    confidence=0.8
+                )
+            ],
+            images=[
+                _models.DocumentImage(
+                    page_number=1,
+                    polygon=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    span=_models.DocumentSpan(offset=5, length=2),
+                    confidence=0.8
+                )
+            ]
         )
 
         d = model.to_dict()
@@ -762,6 +816,69 @@ class TestToDict(FormRecognizerTest):
                     ],
                 },
             ],
+            "kind": "document",
+            "annotations": [
+                {
+                    "kind": "check",
+                    "polygon": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0}
+                    ],
+                    "confidence": 0.8
+                }
+            ],
+            "barcodes": [
+                {
+                    "kind": "QRCode",
+                    "polygon": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0}
+                    ],
+                    "confidence": 0.8,
+                    "span": {
+                        "offset": 5,
+                        "length": 2
+                    },
+                    "value": "15"
+                }
+            ],
+            "formulas": [
+                {
+                    "kind": "inline",
+                    "polygon": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0}
+                    ],
+                    "confidence": 0.8,
+                    "span": {
+                        "offset": 5,
+                        "length": 2
+                    },
+                    "value": "2+2=4"
+                }
+            ],
+            "images": [
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0}
+                    ],
+                    "confidence": 0.8,
+                    "span": {
+                        "offset": 5,
+                        "length": 2
+                    }
+                }
+            ]
         }
 
         assert d == final
@@ -1181,6 +1298,60 @@ class TestToDict(FormRecognizerTest):
                             spans=[_models.DocumentSpan(offset=5, length=2)],
                         ),
                     ],
+                    kind="document",
+                    annotations=[
+                        _models.DocumentAnnotation(
+                            kind="check",
+                            polygon=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            confidence=0.8
+                        )
+                    ],
+                    barcodes=[
+                        _models.DocumentBarcode(
+                            kind="QRCode",
+                            value="15",
+                            polygon=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            span=_models.DocumentSpan(offset=5, length=2),
+                            confidence=0.8
+                        )
+                    ],
+                    formulas=[
+                        _models.DocumentFormula(
+                            kind="inline",
+                            value="2+2=4",
+                            polygon=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            span=_models.DocumentSpan(offset=5, length=2),
+                            confidence=0.8
+                        )
+                    ],
+                    images=[
+                        _models.DocumentImage(
+                            page_number=1,
+                            polygon=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            span=_models.DocumentSpan(offset=5, length=2),
+                            confidence=0.8
+                        )
+                    ]
                 ),
             ],
             tables=[
@@ -1411,6 +1582,69 @@ class TestToDict(FormRecognizerTest):
                             ],
                         },
                     ],
+                    "kind": "document",
+                    "annotations": [
+                        {
+                            "kind": "check",
+                            "polygon": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0}
+                            ],
+                            "confidence": 0.8
+                        }
+                    ],
+                    "barcodes": [
+                        {
+                            "kind": "QRCode",
+                            "polygon": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0}
+                            ],
+                            "confidence": 0.8,
+                            "span": {
+                                "offset": 5,
+                                "length": 2
+                            },
+                            "value": "15"
+                        }
+                    ],
+                    "formulas": [
+                        {
+                            "kind": "inline",
+                            "polygon": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0}
+                            ],
+                            "confidence": 0.8,
+                            "span": {
+                                "offset": 5,
+                                "length": 2
+                            },
+                            "value": "2+2=4"
+                        }
+                    ],
+                    "images": [
+                        {
+                            "page_number": 1,
+                            "polygon": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0}
+                            ],
+                            "confidence": 0.8,
+                            "span": {
+                                "offset": 5,
+                                "length": 2
+                            }
+                        }
+                    ]
                 },
             ],
             "paragraphs": [

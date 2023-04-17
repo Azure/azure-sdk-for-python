@@ -7,6 +7,7 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 - Read - Read page information and detected languages from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
+- Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
 
 [Source code][python-fr-src]
 | [Package (PyPI)][python-fr-pypi]
@@ -15,9 +16,6 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 | [Product documentation][python-fr-product-docs]
 | [Samples][python-fr-samples]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -32,15 +30,16 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer
+pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2022-08-31` version of the service.
+> Note: This version of the client library defaults to the `2023-02-28-preview` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
+|3.3.0bX - Latest beta release | 2.0, 2.1, 2022-08-31, 2023-02-28-preview (default)
 |3.2.X - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
@@ -52,6 +51,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |API version|Supported clients
 |-|-
+|2023-02-28-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
@@ -174,7 +174,9 @@ document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 ### DocumentAnalysisClient
 
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
+Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models]. 
+The `DocumentAnalysisClient` also provides operations for classifying documents through the `begin_classify_document` and `begin_classify_document_from_url` APIs. 
+Custom classification models can classify each page in an input file to identify the document(s) within and can also identify multiple documents or multiple instances of a single document within an input file.
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
@@ -188,6 +190,7 @@ More information about analyzing documents, including supported features, locale
 - Managing models created in your account.
 - Listing operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
+- Build and manage a custom classification model to classify the documents you process within your application.
 
 Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 
@@ -214,6 +217,7 @@ The following section provides several code snippets covering some of the most c
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
+* [Classify Documents][classify_sample]
 
 ### Extract Layout
 
@@ -761,6 +765,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
+[classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

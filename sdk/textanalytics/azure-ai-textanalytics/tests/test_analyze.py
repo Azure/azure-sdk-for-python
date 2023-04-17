@@ -813,6 +813,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("Flaky test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy

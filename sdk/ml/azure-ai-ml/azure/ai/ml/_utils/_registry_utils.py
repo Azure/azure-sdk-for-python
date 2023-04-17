@@ -170,7 +170,10 @@ def get_storage_details_for_registry_assets(
     sas_uri = service_client.data_references.get_blob_reference_sas(
         name=asset_name, version=asset_version, resource_group_name=rg_name, registry_name=reg_name, body=body
     )
-    return sas_uri.blob_reference_for_consumption.credential["sasUri"]
+    if sas_uri.blob_reference_for_consumption.credential["credentialType"] == "NoCredentials":
+        return sas_uri.blob_reference_for_consumption.blob_uri, "NoCredentials"
+
+    return sas_uri.blob_reference_for_consumption.credential["sasUri"], "SAS"
 
 
 def get_registry_client(credential, registry_name, **kwargs):
