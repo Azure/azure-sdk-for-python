@@ -22,9 +22,9 @@ from azure.iot.deviceprovisioningservice._generated._version import VERSION
 from azure.iot.deviceprovisioningservice._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
-from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
+from .._auth import SharedKeyCredentialPolicy
 
-from ..util.connection_strings import parse_iot_dps_connection_string
+from .._util import parse_connection_string
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -85,7 +85,7 @@ class ProvisioningServiceClient(
          <azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient>`
         :raises: ValueError if connection string is invalid
         """
-        cs_args = parse_iot_dps_connection_string(connection_string=connection_string)
+        cs_args = parse_connection_string(connection_string=connection_string)
         host_name, shared_access_key_name, shared_access_key = (
             cs_args["HostName"],
             cs_args["SharedAccessKeyName"],

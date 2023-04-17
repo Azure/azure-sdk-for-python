@@ -21,13 +21,12 @@ from azure.core.pipeline.transport import (
     RequestsTransport,
 )  # pylint: disable=no-name-in-module
 
-from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
 from azure.iot.deviceprovisioningservice._generated._version import VERSION
 from azure.iot.deviceprovisioningservice._generated import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
-
-from .util.connection_strings import parse_iot_dps_connection_string
+from ._auth import SharedKeyCredentialPolicy
+from ._util import parse_connection_string
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -88,7 +87,7 @@ class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-v
          <azure.iot.deviceprovisioningservice.ProvisioningServiceClient>`
         :raises: ValueError if connection string is invalid
         """
-        cs_args = parse_iot_dps_connection_string(connection_string)
+        cs_args = parse_connection_string(connection_string)
         host_name, shared_access_key_name, shared_access_key = (
             cs_args["HostName"],
             cs_args["SharedAccessKeyName"],

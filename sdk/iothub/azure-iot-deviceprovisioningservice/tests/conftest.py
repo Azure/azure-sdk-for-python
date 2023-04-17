@@ -4,7 +4,7 @@ import os
 import pytest
 import responses
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
-from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
+from azure.iot.deviceprovisioningservice._auth import SharedKeyCredentialPolicy
 from devtools_testutils import (
     add_body_key_sanitizer,
     EnvironmentVariableLoader,
@@ -16,10 +16,6 @@ from devtools_testutils import (
 
 from urllib3.util.retry import Retry
 
-# TODO - Tests
-#   1. Create DPS before running test if connection string is not given
-#   2. Convert DPS creation / cleanup to setup/teardown fixtures
-#   3. Figure out automated IoT Hub linkage for device registration tests
 
 # cSpell:disable
 mock_dps_target = {}

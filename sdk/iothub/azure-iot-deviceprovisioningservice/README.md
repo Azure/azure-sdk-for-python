@@ -92,7 +92,8 @@ The Device Provisioning Service client library for Python allows you to interact
 The following sections provide several code snippets covering some of the most common DPS service, including:
 
 * [Create an individual device enrollment](#create-an-individual-device-enrollment "Create an individual device enrollment")
-* [Create an enrollment group](#create-an-enrollment-group "Create an enrollment group")
+* [Create an intermediate x509 enrollment group](#create-an-intermediate-x509-enrollment-group "Create an intermediate x509 enrollment group")
+* [Create an x509 CA certificate enrollment group](#create-an-x509-ca-certificate-enrollment-group "Create an x509 CA certificate enrollment group")
 * [Check device registration status](#check-device-registration-status "Check device registration status")
 
 ### Create an individual device enrollment
@@ -117,8 +118,8 @@ client.individual_enrollments.create_or_update(
 )
 ```
 
-### Create an enrollment group
-Create an x509 enrollment group to provision an individual device using x509 attestation.
+### Create an intermediate x509 enrollment group
+Create an x509 enrollment group to provision one or more devices using x509 attestation.
 ```python
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
@@ -129,7 +130,7 @@ client = ProvisioningServiceClient.from_connection_string(connection_string="<co
 certificate = open("certificate.pem", "rt", encoding="utf-8")
 cert_contents = certificate.read()
 
-# Create x509 enrollment group
+# Create x509 enrollment group with an intermediate cert
 client.enrollment_groups.create_or_update(
     id="<enrollment_group_id>",
     enrollment_group={
@@ -140,6 +141,37 @@ client.enrollment_groups.create_or_update(
                 "signingCertificates": {
                     "primary": {"certificate": f"{cert_contents}"},
                     "secondary": {"certificate": f"{cert_contents}"},
+                }
+            },
+        },
+    }
+)
+```
+
+### Create an x509 CA certificate enrollment group
+Create an enrollment group with an x509 CA certificate attestation. 
+This will ensure a registered device's certificate chain has been signed by the target CA cert at the control plane layer.
+```python
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+
+# Initialize client
+client = ProvisioningServiceClient.from_connection_string(connection_string="<connection_string>")
+
+# Load certificate contents
+ca_certificate = open("ca_certificate.pem", "rt", encoding="utf-8")
+ca_contents = certificate.read()
+
+# Create x509 enrollment group with CA References
+client.enrollment_groups.create_or_update(
+    id="<enrollment_group_id>",
+    enrollment_group={
+        "enrollmentGroupId": "<enrollment_group_id>",
+        "attestation": {
+            "type": "x509",
+            "x509": {
+                "caReferences": {
+                    "primary": f"{ca_contents}",
+                    "secondary": f"{ca_contents}",
                 }
             },
         },
@@ -211,5 +243,3 @@ This project welcomes contributions and suggestions.  Most contributions require
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-ion
-

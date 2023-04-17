@@ -42,7 +42,7 @@ def _parse_connection_string(
     return decomposed
 
 
-def parse_iot_dps_connection_string(connection_string: str) -> Dict[str, str]:
+def parse_connection_string(connection_string: str) -> Dict[str, str]:
     """
     Function to parse a Device Provisioning Service connection string into
     key/value pairs.

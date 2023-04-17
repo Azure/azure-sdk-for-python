@@ -7,8 +7,10 @@
 # --------------------------------------------------------------------------
 
 from .client import ProvisioningServiceClient
+from ._auth import generate_sas_token
+from ._util import parse_connection_string
 from ._generated import VERSION
 
-__all__ = ["ProvisioningServiceClient"]
+__all__ = ["ProvisioningServiceClient", "generate_sas_token", "parse_connection_string"]
 
 __version__ = VERSION
