@@ -1,0 +1,5975 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf:detect-batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "189",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+        "topContributorCount": 10,
+        "startTime": "2021-01-02T00:00:00Z",
+        "endTime": "2021-01-02T05:00:00Z"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "1ae1687e-029d-4fff-b1ff-5c22fb5ed32b",
+        "Content-Length": "342",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:56 GMT",
+        "operation-id": "81d34da2-ca2d-49d9-b78b-574666859b6e",
+        "operation-location": "00000000000000000000000000000000:443/anomalydetector/v1.1/multivariate/detect-batch/",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "358",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "resultId": "81d34da2-ca2d-49d9-b78b-574666859b6e",
+        "summary": {
+          "status": "CREATED",
+          "errors": [],
+          "variableStates": [],
+          "setupInfo": {
+            "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+            "topContributorCount": 10,
+            "startTime": "2021-01-02T00:00:00Z",
+            "endTime": "2021-01-02T05:00:00Z"
+          }
+        },
+        "results": []
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/detect-batch/81d34da2-ca2d-49d9-b78b-574666859b6e",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "10ffbf76-7e70-4696-9301-988bdc252064",
+        "Content-Length": "342",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:56 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "91",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "resultId": "81d34da2-ca2d-49d9-b78b-574666859b6e",
+        "summary": {
+          "status": "CREATED",
+          "errors": [],
+          "variableStates": [],
+          "setupInfo": {
+            "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+            "topContributorCount": 10,
+            "startTime": "2021-01-02T00:00:00Z",
+            "endTime": "2021-01-02T05:00:00Z"
+          }
+        },
+        "results": []
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/detect-batch/81d34da2-ca2d-49d9-b78b-574666859b6e",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "dcef7086-c630-4c94-8e93-98fee4e8cc13",
+        "Content-Length": "342",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:56 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "99",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "resultId": "81d34da2-ca2d-49d9-b78b-574666859b6e",
+        "summary": {
+          "status": "CREATED",
+          "errors": [],
+          "variableStates": [],
+          "setupInfo": {
+            "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+            "topContributorCount": 10,
+            "startTime": "2021-01-02T00:00:00Z",
+            "endTime": "2021-01-02T05:00:00Z"
+          }
+        },
+        "results": []
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/detect-batch/81d34da2-ca2d-49d9-b78b-574666859b6e",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "cdb47187-1977-4383-b078-b8bf16b4e570",
+        "Content-Length": "84582",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:15:12 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "630",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "resultId": "81d34da2-ca2d-49d9-b78b-574666859b6e",
+        "summary": {
+          "status": "READY",
+          "errors": [],
+          "variableStates": [
+            {
+              "variable": "series_0",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_1",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_2",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_3",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_4",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_5",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_6",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_7",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_8",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            },
+            {
+              "variable": "series_9",
+              "filledNARatio": 0.0,
+              "effectiveCount": 500,
+              "firstTimestamp": "2021-01-01T20:41:00Z",
+              "lastTimestamp": "2021-01-02T05:00:00Z"
+            }
+          ],
+          "setupInfo": {
+            "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+            "topContributorCount": 10,
+            "startTime": "2021-01-02T00:00:00Z",
+            "endTime": "2021-01-02T05:00:00Z"
+          }
+        },
+        "results": [
+          {
+            "timestamp": "2021-01-02T00:00:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21564148664474486,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:01:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3413193702697754,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:02:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34093167781829836,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:03:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21573456525802612,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:04:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2800266742706299,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:05:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38049793243408203,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:06:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4027051568031311,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:07:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.29653392999387573,
+              "score": 0.5095288634300232,
+              "interpretation": [
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.255158843638535,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.20466787775196138,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.11315359868012963,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.09614029672985681,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.07291816864007501,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.06964411129291612,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.0632627163780472,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.05358520170344286,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.039568223378488136,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.03190096180654802,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_6"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:08:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.31582074165344237,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:09:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4502347707748413,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:10:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2903966784477234,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:11:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3649375796318054,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:12:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3298805751778453,
+              "score": 0.5668277978897095,
+              "interpretation": [
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.29664571857530775,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.14707282148451528,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.13291928433684844,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.1244112332042075,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.08157065552766432,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.07608618249121822,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.07486840617046489,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.03366984120494576,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.030189575957515122,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.0025662810473128734,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_9",
+                      "series_4",
+                      "series_6",
+                      "series_7"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:13:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4405306577682495,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:14:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.31186429020111345,
+              "score": 0.5358707427978515,
+              "interpretation": [
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.32065227837206967,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.1815830567722582,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.15544185080935938,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.12718414731984912,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.056162920634446056,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.05228735051642531,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.04080314742164637,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.026574734134755362,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.02208755738553326,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.017222956633657305,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_6",
+                      "series_1"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:15:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4712658405303955,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:16:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4649625301361084,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:17:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.24116066694259644,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:18:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4078863739967346,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:19:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.46391260623931885,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:20:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21864898204803468,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:21:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2651094436645508,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:22:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4232643723487854,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:23:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34608185291290283,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:24:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.39618744850158694,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:25:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3217490392113215,
+              "score": 0.5528555274009704,
+              "interpretation": [
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.16181656710305434,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.1534442709312741,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.12620858974071197,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.11494666426805786,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.11390338587438056,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.11130157238036027,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.10537476181829641,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.05338769748712952,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.04693704835661336,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.012679442040121584,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:26:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3189330220222473,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:27:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26210460662841795,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:28:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34795938730239867,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:29:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38681156635284425,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:30:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.329961895942688,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:31:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.1693519949913025,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:32:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.30182795524597167,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:33:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4349847316741943,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:34:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.27592586278915404,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:35:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4150471448898315,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:36:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3858180999755859,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:37:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4832725524902344,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:38:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3334971785545349,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:39:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3007566213607788,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:40:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26239728927612305,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:41:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3386292338371277,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:42:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2835039973258972,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:43:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21696624755859376,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:44:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.29338703155517576,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:45:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3134934224270702,
+              "score": 0.5386700510978699,
+              "interpretation": [
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.20935324225136925,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.16790542855997773,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.15147941376574048,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.12539126644151152,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.1215282458182201,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.10844742479565823,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.03602876752893907,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.03368959499097515,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.027127209093410418,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.019049406754198046,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_4",
+                      "series_3"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:46:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.31276479959487913,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:47:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3627082347869873,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:48:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26217453479766845,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:49:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.269238805770874,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:50:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48441022634506226,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:51:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.39546372890472414,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:52:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.30482676029205324,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:53:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3330163359642029,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:54:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.32726929187774656,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:55:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4179691433906555,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:56:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.32582891501358524,
+              "score": 0.5598659038543701,
+              "interpretation": [
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.27350810250945407,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.16474852015191924,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.16397903151447646,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.07627932196934242,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.06768067663046463,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.06748812880821181,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.06661771385455999,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.059778444165901064,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.055923420858735605,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.003996639536934731,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_4",
+                      "series_1"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:57:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2460065722465515,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:58:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4603074550628662,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T00:59:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.24558076858520508,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:00:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41320024728775023,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:01:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.44221689701080324,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:02:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.24080963134765626,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:03:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3234069347381592,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:04:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3823129892349243,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:05:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.36897350549697877,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:06:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48522037267684937,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:07:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38453561067581177,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:08:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4067240595817566,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:09:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3754369139671326,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:10:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.32375943660736084,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:11:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.39196865558624266,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:12:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.29695851741601303,
+              "score": 0.510258424282074,
+              "interpretation": [
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.1885573633924397,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.1647715252969851,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.1582024484447901,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.11531407221811989,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.09043232109165451,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.07747994624468202,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.07303017815402772,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.0500171025418225,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.04169910651630323,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.04049593609917526,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_4"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:13:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4103848338127136,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:14:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2980502247810364,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:15:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3382993102073669,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:16:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.307822356696426,
+              "score": 0.5289255619049072,
+              "interpretation": [
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.18684827403478046,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.17632054475629336,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.13627697157317015,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.13006590203917592,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.09211978356660022,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.0910117699792461,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.06601961996770213,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.04687080933899356,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.04026428790304834,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.03420203684098975,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_8",
+                      "series_7",
+                      "series_4",
+                      "series_2"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:17:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3758007287979126,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:18:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3882192685531731,
+              "score": 0.6670701146125794,
+              "interpretation": [
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.2489304771406974,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.23101868892606883,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.1256305968753615,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.1207618113311156,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.0638650698399191,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.05525686571101841,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.051710288540686225,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.03859249749861043,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.034952832484037064,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.02928087165248544,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_5",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:19:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.49291549921035765,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:20:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.46572800874710085,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:21:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2492610454559326,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:22:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4329859852790833,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:23:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.30123158049534926,
+              "score": 0.5176007509231567,
+              "interpretation": [
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.23788377286167614,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.12957607202183685,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.12322908477661351,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.12136803147747126,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.11237361611136086,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.09512569675494638,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.07877357310763936,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.04520966594316683,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.03503824479960593,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.021422242145683033,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_5",
+                      "series_7",
+                      "series_8",
+                      "series_0"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:24:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3201723575592041,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:25:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.434308123588562,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:26:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.20711952447891235,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:27:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3521113991737366,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:28:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.32959096431732177,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:29:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4055861711502075,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:30:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38772385120391845,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:31:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3557399153709412,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:32:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.36557224988937376,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:33:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.45179325342178345,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:34:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.30283557176589965,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:35:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.29137492179870605,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:36:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2837821364402771,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:37:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.250520658493042,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:38:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34122610092163086,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:39:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3368860721588135,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:40:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.42295974493026733,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:41:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41377356052398684,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:42:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41708194017410277,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:43:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.22732119560241698,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:44:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2683462381362915,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:45:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4148454785346985,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:46:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.16069799661636353,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:47:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3168549545877826,
+              "score": 0.5444461107254028,
+              "interpretation": [
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.24667099468048423,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.19699308868012733,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.1924894436239708,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.14491624417442409,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.10045479177910928,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.05122585335039725,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.04385137761117723,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.014561569645807175,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.007279996584299383,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.0015566398702033767,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_3",
+                      "series_1",
+                      "series_5",
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:48:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48195600509643555,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:49:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2226623296737671,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:50:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2819380521774292,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:51:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.433342719078064,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:52:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3467947840690613,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:53:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4382111430168152,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:54:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3437703847885132,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:55:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48750396966934206,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:56:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2700756788253784,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:57:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.39513046741485597,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:58:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3373660445213318,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T01:59:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.28820295333862306,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:00:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3886523485183716,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:01:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3182822227478027,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:02:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.193131160736084,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:03:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3623753547668457,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:04:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.28571012020111086,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:05:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.42508324384689333,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:06:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.13020827770233154,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:07:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3332888960838318,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:08:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.22427161931991577,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:09:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.18678498268127441,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:10:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.1954084038734436,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:11:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48073520660400393,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:12:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.35097068548202515,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:13:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.49822593927383424,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:14:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3360320806503296,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:15:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3400107741355896,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:16:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.22940372228622435,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:17:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3455556511878967,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:18:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.28951784372329714,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:19:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3504969716072083,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:20:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.19451446533203126,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:21:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2460329532623291,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:22:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34820692539215087,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:23:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4769368886947632,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:24:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3446275949478149,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:25:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34676519632339475,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:26:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48625110387802123,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:27:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3248066663742065,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:28:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33436764478683473,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:29:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4409600496292114,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:30:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.2976898900637534,
+              "score": 0.5115151286125184,
+              "interpretation": [
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.21762334749407694,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.1726679058628238,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.1155294720345259,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.1078727797868228,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.10024936727142016,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.09553632327801448,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.08701039611760694,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.056769466936294644,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.045299425418896394,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.0014415157995179518,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_6",
+                      "series_5"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:31:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3431336283683777,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:32:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.35140416622161863,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:33:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.29241754106084866,
+              "score": 0.5024557471275329,
+              "interpretation": [
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.2740444664425714,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.17917410366826123,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.14639924327582005,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.11250758409864726,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.07724087590790614,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.07258551516816171,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.05475388848093182,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.040185016774876715,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.03726713320632215,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.005842172976501507,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_2",
+                      "series_7",
+                      "series_4",
+                      "series_5"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:34:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.1923245906829834,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:35:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3045625686645508,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:36:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34174745082855223,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:37:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38746525049209596,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:38:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.44421528577804564,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:39:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.20626498460769654,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:40:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.37479684352874754,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:41:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.35954933166503905,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:42:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.324253523349762,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:43:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.255338716506958,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:44:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.31375169923346435,
+              "score": 0.5391138434410095,
+              "interpretation": [
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.2828967011804557,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.13912342006141099,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.11852327474523731,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.10871762821750955,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.10236573395182003,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.08698452620897416,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.07678543942465073,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.05523896337945302,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.016813849468515128,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.012550463361973416,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_9",
+                      "series_6"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:45:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.32912216186523435,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:46:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48587173223495483,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:47:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33247103691101076,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:48:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.16885955333709718,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:49:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2616936802864075,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:50:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33956209421157835,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:51:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3535503625869751,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:52:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3913635118566742,
+              "score": 0.6724728107452392,
+              "interpretation": [
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.24760860928312203,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.19852451754714692,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.1535034199292806,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.1420415638707185,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.11371648647638688,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.07632122737245296,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.02823981049973349,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.01845960905430186,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.015732238409499066,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.005852517557357675,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_1",
+                      "series_2",
+                      "series_9",
+                      "series_7"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:53:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.290218722820282,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:54:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3632274031639099,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:55:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.37208818197250365,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:56:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3917530059814453,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:57:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3537174820899963,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:58:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.20744504928588867,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T02:59:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2760523080825806,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:00:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.31476664543151855,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:01:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.31202106475830077,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:02:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.23758797645568847,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:03:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.19206089973449708,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:04:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33331267833709716,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:05:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2894107818603516,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:06:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3452091455459595,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:07:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.32530453205108645,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:08:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3068650603294373,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:09:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.27501598596572874,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:10:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41079163551330566,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:11:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2500026822090149,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:12:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4767313003540039,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:13:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4331896185874939,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:14:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.49612592458724974,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:15:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.30050930976867674,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:16:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4274271488189697,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:17:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.40566333532333376,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:18:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26493058204650877,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:19:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.30246910020141404,
+              "score": 0.5197271585464478,
+              "interpretation": [
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.3074149441323676,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.15218680158578377,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.11196094103120718,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.10918429187625067,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.1074175543513888,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.08750394571992204,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.05966692320822801,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.03173267118483806,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.026076500886258815,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.006855426023755196,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_6",
+                      "series_3",
+                      "series_8"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:20:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33799210786819456,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:21:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38480820655822756,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:22:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.48141744136810305,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:23:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4776671051979065,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:24:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4120230793952942,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:25:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4005466103553772,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:26:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.39028947353363036,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:27:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4447882413864136,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:28:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.44884049892425537,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:29:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.32098045349121096,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:30:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3252143144607544,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:31:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4091145396232605,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:32:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.27155907154083253,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:33:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4932261824607849,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:34:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3479858756065369,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:35:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.13570010662078857,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:36:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.28177905082702637,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:37:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3482076168060303,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:38:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.35024710893630984,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:39:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.24606674909591675,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:40:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26578855514526367,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:41:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.30404989745073613,
+              "score": 0.522443413734436,
+              "interpretation": [
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.20039844173730822,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.15390290133216267,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.14783870114656392,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.14755854608696767,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.08564927498070199,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.06863899357751715,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.060110966776822664,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.05546314915918116,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.049108548790858714,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.03133047641191602,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_8",
+                      "series_9",
+                      "series_2",
+                      "series_0",
+                      "series_7"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:42:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3034638904934539,
+              "score": 0.5214364886283874,
+              "interpretation": [
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.236517907587625,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.17232163598019565,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.15905567244366037,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.1447978765496552,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.10191555282708688,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.05149752991814618,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.041770650289636134,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.03828300522552356,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.03605316563447197,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.017787003543999178,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_0",
+                      "series_8",
+                      "series_2",
+                      "series_7"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:43:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.37262741327285764,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:44:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.17168378829956055,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:45:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38529651165008544,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:46:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3079314351081848,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:47:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.24448710680007935,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:48:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2768808245658875,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:49:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38837156295776365,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:50:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3373269158476376,
+              "score": 0.5796227097511292,
+              "interpretation": [
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.29644831318780074,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.24556287234347335,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.21999582619300204,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.05751077844420984,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.05629787761687919,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.04955911464203949,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.03061567848827812,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.01867327192430745,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.013900397959560799,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.011435869200449004,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_4",
+                      "series_1",
+                      "series_0"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:51:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.29316622018814087,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:52:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41341997385025026,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:53:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26181665658950803,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:54:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4170761823654175,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:55:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2522040605545044,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:56:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3317689895629883,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:57:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2662762999534607,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:58:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3506479859352112,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T03:59:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3386500120162964,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:00:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4076264023780823,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:01:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3117685079574585,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:02:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21699211597442628,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:03:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.3339554766470752,
+              "score": 0.5738296270370483,
+              "interpretation": [
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.21802772700645695,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.1656076810860357,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.14399088438795837,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.11846562506089477,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.11492096258795698,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.08019175874648327,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.05489898500338144,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.04861836337378359,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.030176196692069387,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.025101816054979527,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_6",
+                      "series_7",
+                      "series_0"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:04:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4545232653617859,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:05:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.18196356296539307,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:06:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3566367983818054,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:07:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41565394401550293,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:08:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4022199034690857,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:09:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4054579854011536,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:10:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3528607845306396,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:11:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4482364296913147,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:12:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4452498435974121,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:13:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.35250123739242556,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:14:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.26271997690200805,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:15:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21496992111206054,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:16:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3947348237037659,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:17:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.488529109954834,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:18:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34362409114837644,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:19:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.38174120921234905,
+              "score": 0.655938982963562,
+              "interpretation": [
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.1590057456589516,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.15687842520057105,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.1565499149010026,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.14007129596731618,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.0923818723233344,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.08428700852262144,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.08416989630916608,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.059446788364745304,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.05207727879485645,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.015131773957435056,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_9"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:20:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3541688084602356,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:21:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.2979959121420292,
+              "score": 0.5120409607887269,
+              "interpretation": [
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.3355750569766673,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.1349041579271945,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.13034676954350383,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.1182969083797869,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.0782657665129665,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.0659911020643465,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.06488671169297663,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.04469455284366028,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.020250245447890627,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.006788728611006947,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_2",
+                      "series_7",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:22:00Z",
+            "value": {
+              "isAnomaly": true,
+              "severity": 0.345414452901887,
+              "score": 0.5935193777084351,
+              "interpretation": [
+                {
+                  "variable": "series_0",
+                  "contributionScore": 0.27023142557965857,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_4",
+                  "contributionScore": 0.150319713495702,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_9",
+                  "contributionScore": 0.11804521867451873,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_5",
+                  "contributionScore": 0.10251095775782501,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_3",
+                  "contributionScore": 0.09949858614565345,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_2",
+                  "contributionScore": 0.07800160496460051,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_6",
+                  "contributionScore": 0.06049496169901455,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_1",
+                  "contributionScore": 0.04991809876168188,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_8",
+                  "contributionScore": 0.037875501521309925,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                },
+                {
+                  "variable": "series_7",
+                  "contributionScore": 0.033103931400035355,
+                  "correlationChanges": {
+                    "changedVariables": [
+                      "series_7",
+                      "series_2",
+                      "series_8",
+                      "series_6"
+                    ]
+                  }
+                }
+              ]
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:23:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41938530206680297,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:24:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.2446368932723999,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:25:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.23969343900680543,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:26:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33244565725326536,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:27:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.410190212726593,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:28:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3912408471107483,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:29:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.33968056440353395,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:30:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.36876165866851807,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:31:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3411797046661377,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:32:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.23018509149551392,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:33:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.41226840019226074,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:34:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.38447960615158083,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:35:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.22486039400100707,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:36:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.40004290342330934,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:37:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.47546766996383666,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:38:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3843865394592285,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:39:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.341547691822052,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:40:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.23053816556930543,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:41:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34666905403137205,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:42:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3540247559547424,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:43:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.31187437772750853,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:44:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3309465408325195,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:45:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4027451157569885,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:46:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.35429245233535767,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:47:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.37473554611206056,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:48:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3383312225341797,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:49:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4037105917930603,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:50:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.373227059841156,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:51:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3251563549041748,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:52:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.34763001203536986,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:53:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4504562735557556,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:54:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.21873422861099243,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:55:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4328305125236511,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:56:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3181850552558899,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:57:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.29124754667282104,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:58:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.40346015691757203,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T04:59:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.3541887283325195,
+              "interpretation": []
+            },
+            "errors": []
+          },
+          {
+            "timestamp": "2021-01-02T05:00:00Z",
+            "value": {
+              "isAnomaly": false,
+              "severity": 0.0,
+              "score": 0.4021592974662781,
+              "interpretation": []
+            },
+            "errors": []
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

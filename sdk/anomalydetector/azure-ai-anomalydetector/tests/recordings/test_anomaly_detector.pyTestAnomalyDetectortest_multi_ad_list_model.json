@@ -1,31 +1,2172 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//anomalydetector/v1.1/multivariate/models?skip=0\u0026top=10",
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models?skip=0\u0026top=10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
-        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0b6 Python/3.9.12 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "292ef9bc-88b3-479b-b3e1-561400952a7c",
-        "Content-Length": "68",
+        "apim-request-id": "0dd1b125-b1cc-41dd-b273-94c2c1dfdfc4",
+        "Content-Length": "42311",
         "Content-Type": "application/json",
-        "Date": "Wed, 07 Dec 2022 07:07:03 GMT",
+        "Date": "Mon, 17 Apr 2023 17:14:02 GMT",
         "Server": "istio-envoy",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "12",
-        "x-ms-region": "Central US EUAP"
+        "x-envoy-upstream-service-time": "800",
+        "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "models": [],
-        "currentCount": 0,
+        "models": [
+          {
+            "modelId": "660e92ad-a7c1-4e51-897b-5a3f7b1932c2",
+            "createdTime": "2023-04-17T15:19:58Z",
+            "lastUpdatedTime": "2023-04-17T15:20:36Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.2538018226623535,
+                    0.24773812294006348,
+                    0.24981379508972168,
+                    0.24682998657226562,
+                    0.24952220916748047,
+                    0.24905729293823242,
+                    0.24925827980041504,
+                    0.24808144569396973,
+                    0.24569416046142578,
+                    0.24628996849060059
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "b61afc70-5a6b-412e-9a3d-085788034ea2",
+            "createdTime": "2023-04-17T15:15:22Z",
+            "lastUpdatedTime": "2023-04-17T15:16:00Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.25299882888793945,
+                    0.24814844131469727,
+                    0.25322437286376953,
+                    0.25261592864990234,
+                    0.2506382465362549,
+                    0.2511730194091797,
+                    0.25032782554626465,
+                    0.24940848350524902,
+                    0.24867010116577148,
+                    0.2481834888458252
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "1d338e24-29cd-493b-b4a9-9f156ecebab4",
+            "createdTime": "2023-04-17T15:11:11Z",
+            "lastUpdatedTime": "2023-04-17T15:11:52Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.2799544334411621,
+                    0.2804117202758789,
+                    0.27404141426086426,
+                    0.27781248092651367,
+                    0.2867875099182129,
+                    0.27340245246887207,
+                    0.2753164768218994,
+                    0.2813849449157715,
+                    0.27802515029907227,
+                    0.2826352119445801
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "887752fa-a40f-4280-8bfe-1e5c61d07c57",
+            "createdTime": "2023-04-17T15:06:30Z",
+            "lastUpdatedTime": "2023-04-17T15:07:13Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.2892141342163086,
+                    0.2794375419616699,
+                    0.2828347682952881,
+                    0.28250598907470703,
+                    0.28085827827453613,
+                    0.2857809066772461,
+                    0.3038332462310791,
+                    0.28728246688842773,
+                    0.2871990203857422,
+                    0.2818717956542969
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "02ef3f61-8e85-48f1-8cde-b1551389292e",
+            "createdTime": "2023-04-17T15:00:26Z",
+            "lastUpdatedTime": "2023-04-17T15:01:04Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.25675249099731445,
+                    0.25123167037963867,
+                    0.24548697471618652,
+                    0.24948430061340332,
+                    0.2522754669189453,
+                    0.2534210681915283,
+                    0.24836063385009766,
+                    0.24738335609436035,
+                    0.24938726425170898,
+                    0.252277135848999
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "871565a8-2ab9-4c56-abd2-9703ad3ddcdb",
+            "createdTime": "2023-04-17T14:56:27Z",
+            "lastUpdatedTime": "2023-04-17T14:57:05Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.24893689155578613,
+                    0.25036168098449707,
+                    0.2547638416290283,
+                    0.2514655590057373,
+                    0.2506687641143799,
+                    0.24888157844543457,
+                    0.24956846237182617,
+                    0.2547461986541748,
+                    0.25460171699523926,
+                    0.2487492561340332
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "c2e3ea1c-6d34-4393-93ee-ffd606a87d43",
+            "createdTime": "2023-04-17T14:53:41Z",
+            "lastUpdatedTime": "2023-04-17T14:54:19Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.2477703094482422,
+                    0.24890947341918945,
+                    0.24744677543640137,
+                    0.24693751335144043,
+                    0.2466895580291748,
+                    0.24836444854736328,
+                    0.25067782402038574,
+                    0.24585270881652832,
+                    0.24968957901000977,
+                    0.24715304374694824
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "a03f8b3e-225f-437c-96dd-57cfef857262",
+            "createdTime": "2023-04-17T14:51:40Z",
+            "lastUpdatedTime": "2023-04-17T14:52:18Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.2604813575744629,
+                    0.2453908920288086,
+                    0.2478024959564209,
+                    0.2483363151550293,
+                    0.25032925605773926,
+                    0.25069189071655273,
+                    0.25665807723999023,
+                    0.2494807243347168,
+                    0.2478938102722168,
+                    0.2463219165802002
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "fb445275-cf16-416c-842c-79ed8b24f111",
+            "createdTime": "2023-04-17T14:49:42Z",
+            "lastUpdatedTime": "2023-04-17T14:50:20Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.24886369705200195,
+                    0.25832605361938477,
+                    0.2599937915802002,
+                    0.2527964115142822,
+                    0.25757455825805664,
+                    0.2516186237335205,
+                    0.2496626377105713,
+                    0.2526590824127197,
+                    0.2479393482208252,
+                    0.2524385452270508
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "modelId": "a484a8f0-5819-407b-817f-8d4ae6434649",
+            "createdTime": "2023-04-17T14:42:40Z",
+            "lastUpdatedTime": "2023-04-17T14:43:18Z",
+            "modelInfo": {
+              "dataSource": "https://fake_ad_resource.blob.core.windows.net/sample-onetable/data_20x52880.csv",
+              "dataSchema": "OneTable",
+              "startTime": "2021-01-02T00:00:00Z",
+              "endTime": "2021-01-02T05:00:00Z",
+              "displayName": "sample",
+              "slidingWindow": 200,
+              "alignPolicy": {
+                "alignMode": "Outer",
+                "fillNAMethod": "Linear",
+                "paddingValue": 0.0
+              },
+              "status": "READY",
+              "errors": [],
+              "diagnosticsInfo": {
+                "modelState": {
+                  "epochIds": [
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100
+                  ],
+                  "trainLosses": [
+                    2.993269205093384,
+                    1.5361846089363098,
+                    1.243550032377243,
+                    1.208218902349472,
+                    1.4302737414836884,
+                    1.2311743795871735,
+                    1.1850247979164124,
+                    1.1744596660137177,
+                    1.1833149790763855,
+                    1.1842331886291504
+                  ],
+                  "validationLosses": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "latenciesInSeconds": [
+                    0.2667052745819092,
+                    0.24962782859802246,
+                    0.2453150749206543,
+                    0.24752020835876465,
+                    0.2592897415161133,
+                    0.2512059211730957,
+                    0.24747323989868164,
+                    0.24845385551452637,
+                    0.24797439575195312,
+                    0.24913978576660156
+                  ]
+                },
+                "variableStates": [
+                  {
+                    "variable": "series_0",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_1",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_10",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_11",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_12",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_13",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_14",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_15",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_16",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_17",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_18",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_19",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_2",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_3",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_4",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_5",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_6",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_7",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_8",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  },
+                  {
+                    "variable": "series_9",
+                    "filledNARatio": 0.0,
+                    "effectiveCount": 500,
+                    "firstTimestamp": "2021-01-01T20:41:00Z",
+                    "lastTimestamp": "2021-01-02T05:00:00Z"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "currentCount": 42,
         "maxCount": 1000,
         "nextLink": ""
       }

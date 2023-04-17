@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//anomalydetector/v1.1/timeseries/entire/detect",
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/timeseries/entire/detect",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -10,7 +10,7 @@
         "Content-Length": "2856",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
-        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0b6 Python/3.9.12 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "series": [
@@ -207,17 +207,17 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d06c1d63-9ffb-44ea-af83-3cd5d1bfd7a0",
+        "apim-request-id": "aecd1915-9e7d-4423-9c72-e8d0d5569693",
         "Content-Length": "3930",
         "Content-Type": "application/json",
         "csp-billing-usage": "CognitiveServices.AnomalyDetector.DataPoints=1",
-        "Date": "Wed, 07 Dec 2022 07:07:02 GMT",
+        "Date": "Mon, 17 Apr 2023 17:14:01 GMT",
         "model-id": "10",
         "Server": "istio-envoy",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "40",
-        "x-ms-region": "Central US EUAP"
+        "x-envoy-upstream-service-time": "45",
+        "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
         "expectedValues": [

@@ -1,0 +1,643 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "319",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+        "startTime": "2021-01-02T00:00:00Z",
+        "endTime": "2021-01-02T05:00:00Z",
+        "dataSchema": "OneTable",
+        "displayName": "sample",
+        "slidingWindow": 200,
+        "alignPolicy": {
+          "alignMode": "Outer",
+          "fillNAMethod": "Linear",
+          "paddingValue": 0
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "baece5c4-6c3c-4ada-83c5-9d4a0fa4f78e",
+        "Content-Length": "649",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:03 GMT",
+        "Location": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "242",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "modelId": "7601d2a5-a273-4833-83a4-5055de8133cf",
+        "createdTime": "2023-04-17T17:14:03Z",
+        "lastUpdatedTime": "2023-04-17T17:14:03Z",
+        "modelInfo": {
+          "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+          "dataSchema": "OneTable",
+          "startTime": "2021-01-02T00:00:00Z",
+          "endTime": "2021-01-02T05:00:00Z",
+          "displayName": "sample",
+          "slidingWindow": 200,
+          "alignPolicy": {
+            "alignMode": "Outer",
+            "fillNAMethod": "Linear",
+            "paddingValue": 0.0
+          },
+          "status": "CREATED",
+          "errors": [],
+          "diagnosticsInfo": {
+            "modelState": {
+              "epochIds": [],
+              "trainLosses": [],
+              "validationLosses": [],
+              "latenciesInSeconds": []
+            },
+            "variableStates": []
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f7084a6b-4dd3-4647-8312-c4432df4a990",
+        "Content-Length": "649",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:03 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "86",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "modelId": "7601d2a5-a273-4833-83a4-5055de8133cf",
+        "createdTime": "2023-04-17T17:14:03Z",
+        "lastUpdatedTime": "2023-04-17T17:14:03Z",
+        "modelInfo": {
+          "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+          "dataSchema": "OneTable",
+          "startTime": "2021-01-02T00:00:00Z",
+          "endTime": "2021-01-02T05:00:00Z",
+          "displayName": "sample",
+          "slidingWindow": 200,
+          "alignPolicy": {
+            "alignMode": "Outer",
+            "fillNAMethod": "Linear",
+            "paddingValue": 0.0
+          },
+          "status": "CREATED",
+          "errors": [],
+          "diagnosticsInfo": {
+            "modelState": {
+              "epochIds": [],
+              "trainLosses": [],
+              "validationLosses": [],
+              "latenciesInSeconds": []
+            },
+            "variableStates": []
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "6e02b3a2-fc39-4896-a8ea-57470759a828",
+        "Content-Length": "649",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:14 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "115",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "modelId": "7601d2a5-a273-4833-83a4-5055de8133cf",
+        "createdTime": "2023-04-17T17:14:03Z",
+        "lastUpdatedTime": "2023-04-17T17:14:14Z",
+        "modelInfo": {
+          "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+          "dataSchema": "OneTable",
+          "startTime": "2021-01-02T00:00:00Z",
+          "endTime": "2021-01-02T05:00:00Z",
+          "displayName": "sample",
+          "slidingWindow": 200,
+          "alignPolicy": {
+            "alignMode": "Outer",
+            "fillNAMethod": "Linear",
+            "paddingValue": 0.0
+          },
+          "status": "RUNNING",
+          "errors": [],
+          "diagnosticsInfo": {
+            "modelState": {
+              "epochIds": [],
+              "trainLosses": [],
+              "validationLosses": [],
+              "latenciesInSeconds": []
+            },
+            "variableStates": []
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "443125e3-4946-49db-8f5f-ffec7e20e717",
+        "Content-Length": "2326",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:24 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "155",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "modelId": "7601d2a5-a273-4833-83a4-5055de8133cf",
+        "createdTime": "2023-04-17T17:14:03Z",
+        "lastUpdatedTime": "2023-04-17T17:14:22Z",
+        "modelInfo": {
+          "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+          "dataSchema": "OneTable",
+          "startTime": "2021-01-02T00:00:00Z",
+          "endTime": "2021-01-02T05:00:00Z",
+          "displayName": "sample",
+          "slidingWindow": 200,
+          "alignPolicy": {
+            "alignMode": "Outer",
+            "fillNAMethod": "Linear",
+            "paddingValue": 0.0
+          },
+          "status": "RUNNING",
+          "errors": [],
+          "diagnosticsInfo": {
+            "modelState": {
+              "epochIds": [
+                10,
+                20,
+                30
+              ],
+              "trainLosses": [
+                1.9332236796617508,
+                0.9662235826253891,
+                0.750158041715622
+              ],
+              "validationLosses": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latenciesInSeconds": [
+                0.2519655227661133,
+                0.25039172172546387,
+                0.2521641254425049
+              ]
+            },
+            "variableStates": [
+              {
+                "variable": "series_0",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_1",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_2",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_3",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_4",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_5",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_6",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_7",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_8",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_9",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3fe22ff5-550a-4453-b876-21a7d4114865",
+        "Content-Length": "2524",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:35 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "137",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "modelId": "7601d2a5-a273-4833-83a4-5055de8133cf",
+        "createdTime": "2023-04-17T17:14:03Z",
+        "lastUpdatedTime": "2023-04-17T17:14:33Z",
+        "modelInfo": {
+          "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+          "dataSchema": "OneTable",
+          "startTime": "2021-01-02T00:00:00Z",
+          "endTime": "2021-01-02T05:00:00Z",
+          "displayName": "sample",
+          "slidingWindow": 200,
+          "alignPolicy": {
+            "alignMode": "Outer",
+            "fillNAMethod": "Linear",
+            "paddingValue": 0.0
+          },
+          "status": "RUNNING",
+          "errors": [],
+          "diagnosticsInfo": {
+            "modelState": {
+              "epochIds": [
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70
+              ],
+              "trainLosses": [
+                1.9332236796617508,
+                0.9662235826253891,
+                0.750158041715622,
+                0.6728361696004868,
+                0.666601300239563,
+                0.6386464685201645,
+                0.6468776762485504
+              ],
+              "validationLosses": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latenciesInSeconds": [
+                0.2519655227661133,
+                0.25039172172546387,
+                0.2521641254425049,
+                0.2531881332397461,
+                0.25359177589416504,
+                0.24833893775939941,
+                0.25670313835144043
+              ]
+            },
+            "variableStates": [
+              {
+                "variable": "series_0",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_1",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_2",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_3",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_4",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_5",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_6",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_7",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_8",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_9",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com/anomalydetector/v1.1/multivariate/models/7601d2a5-a273-4833-83a4-5055de8133cf",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c63b554d-b060-4ce5-8073-5c4ef8a3b627",
+        "Content-Length": "2668",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Apr 2023 17:14:45 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "111",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "modelId": "7601d2a5-a273-4833-83a4-5055de8133cf",
+        "createdTime": "2023-04-17T17:14:03Z",
+        "lastUpdatedTime": "2023-04-17T17:14:41Z",
+        "modelInfo": {
+          "dataSource": "https://fake_ad_resource.blob.core.windows.net/adtestdata/adtestdata.csv",
+          "dataSchema": "OneTable",
+          "startTime": "2021-01-02T00:00:00Z",
+          "endTime": "2021-01-02T05:00:00Z",
+          "displayName": "sample",
+          "slidingWindow": 200,
+          "alignPolicy": {
+            "alignMode": "Outer",
+            "fillNAMethod": "Linear",
+            "paddingValue": 0.0
+          },
+          "status": "READY",
+          "errors": [],
+          "diagnosticsInfo": {
+            "modelState": {
+              "epochIds": [
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ],
+              "trainLosses": [
+                1.9332236796617508,
+                0.9662235826253891,
+                0.750158041715622,
+                0.6728361696004868,
+                0.666601300239563,
+                0.6386464685201645,
+                0.6468776762485504,
+                0.6344695389270782,
+                0.6818110793828964,
+                0.746865764260292
+              ],
+              "validationLosses": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "latenciesInSeconds": [
+                0.2519655227661133,
+                0.25039172172546387,
+                0.2521641254425049,
+                0.2531881332397461,
+                0.25359177589416504,
+                0.24833893775939941,
+                0.25670313835144043,
+                0.252255916595459,
+                0.2538902759552002,
+                0.2590510845184326
+              ]
+            },
+            "variableStates": [
+              {
+                "variable": "series_0",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_1",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_2",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_3",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_4",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_5",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_6",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_7",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_8",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              },
+              {
+                "variable": "series_9",
+                "filledNARatio": 0.0,
+                "effectiveCount": 500,
+                "firstTimestamp": "2021-01-01T20:41:00Z",
+                "lastTimestamp": "2021-01-02T05:00:00Z"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
