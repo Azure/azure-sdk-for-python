@@ -23,7 +23,6 @@ class DataSchema(ArtifactSchema):
         dump_default=AssetTypes.URI_FOLDER,
         error_messages={"validator_failed": "value must be uri_file, uri_folder, or mltable."},
     )
-    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema()), dump_only=True)
 
 
 class AnonymousDataSchema(DataSchema, AnonymousAssetSchema):

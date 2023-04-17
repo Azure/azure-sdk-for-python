@@ -27,22 +27,10 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-<<<<<<< HEAD
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations, OperationsContainer
-
-=======
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
-from azure.ai.ml._scope_dependent_operations import (
-    OperationConfig,
-    OperationScope,
-    _ScopeDependentOperations,
-    OperationsContainer,
-)
 from azure.ai.ml.entities._assets._artifacts.code import Code
->>>>>>> 28cc2073fc8d471bf662ede1b4048d850c1e27ad
 
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
