@@ -8,6 +8,8 @@ from typing import Any, Dict
 import pydash
 import pytest
 import yaml
+from test_utilities.utils import parse_local_path
+
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
     Ae365exepool,
@@ -42,7 +44,6 @@ from azure.ai.ml.entities import (
     PipelineJob,
     SparkResourceConfiguration,
 )
-from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
@@ -697,3 +698,21 @@ class TestPipelineJob:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_promote_node_outputs(self):
+        component_path = "./tests/test_configs/internal/command-component-single-file-output/component_spec.yaml"
+        component = load_component(component_path)
+
+        @pipeline()
+        def pipeline_func():
+            node = component()
+            # when we give node output a setting, the setting will be partially copied to pipeline output
+            # then pipeline_output._data will be an Output with a type of None and then filled by URI_FOLDER in
+            # rest object;
+            # Or pipeline_output._data will be None and no bug will be hit
+            node.outputs["output"].mode = "mount"
+            return node.outputs
+
+        pipeline_job: PipelineJob = pipeline_func()
+        rest_object = pipeline_job._to_rest_object()
+        assert rest_object.properties.outputs["output"].job_output_type == "uri_file"
