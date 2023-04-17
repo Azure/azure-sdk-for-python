@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List, Union
+from typing import List
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._utils._experimental import experimental

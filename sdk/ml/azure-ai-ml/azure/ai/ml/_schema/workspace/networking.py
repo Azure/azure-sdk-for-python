@@ -49,6 +49,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
     )
+    status = fields.Str(dump_only=True)
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -117,6 +118,7 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     )
     outbound_rules = fields.List(NestedField(OutboundRuleSchema, allow_none=False), allow_none=True)
     network_id = fields.Str(required=False)
+    status = fields.Raw(dump_only=True, required=False)
 
     @post_load
     def make(self, data, **kwargs):

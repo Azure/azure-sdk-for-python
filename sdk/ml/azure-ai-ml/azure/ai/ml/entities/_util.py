@@ -13,7 +13,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from .._restclient.v2023_02_01_preview.models import JobInputType as JobInputType10
+from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (
@@ -478,3 +478,6 @@ def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutp
         return
     if source._data:
         target._data = copy.deepcopy(source._data)
+    # copy pipeline component output's node output to subgraph builder
+    if source._binding_output is not None:
+        target._binding_output = source._binding_output

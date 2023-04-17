@@ -1072,7 +1072,8 @@
         "ruamel",
         "reprcrash",
         "etests",
-        "RMSE"
+        "RMSE",
+        "azmonitoring"
       ]
     },
     {

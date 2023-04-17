@@ -8,11 +8,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleActionType as RestScheduleActionType
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
@@ -80,11 +80,11 @@ class Schedule(Resource):
 
     @property
     def create_job(self) -> None:
-        module_logger.warning(f"create_job is not a valid property of {type(self)}")
+        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
 
     @create_job.setter
     def create_job(self, value) -> None:  # pylint: disable=unused-argument
-        module_logger.warning(f"create_job is not a valid property of {type(self)}")
+        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
 
     @property
     def is_enabled(self):
