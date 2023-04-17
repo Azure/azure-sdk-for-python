@@ -677,13 +677,17 @@ class PipelineOutput(NodeOutput):
     def _to_job_output(self):
         if isinstance(self._data, Output):
             # For pipeline output with type Output, always pass to backend.
-            return self._data
-        if self._data is None and self._meta and self._meta.type:
+            result = self._data
+        elif self._data is None and self._meta and self._meta.type:
             # For un-configured pipeline output with meta, we need to return Output with accurate type,
             # so it won't default to uri_folder.
-            return Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
-
-        return super(PipelineOutput, self)._to_job_output()
+            result = Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
+        else:
+            result = super(PipelineOutput, self)._to_job_output()
+        # Copy meta type to avoid built output's None type default to uri_folder.
+        if self.type and not result.type:
+            result.type = self.type
+        return result
 
     def _data_binding(self):
         return f"${{{{parent.outputs.{self._port_name}}}}}"
