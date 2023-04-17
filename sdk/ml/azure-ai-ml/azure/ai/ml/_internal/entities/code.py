@@ -34,7 +34,7 @@ class InternalComponentIgnoreFile(ComponentIgnoreFile):
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):
                 return True
-        return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
+        return IgnoreFile.is_file_excluded(self, file_path)
 
 
 class InternalCode(Code):
