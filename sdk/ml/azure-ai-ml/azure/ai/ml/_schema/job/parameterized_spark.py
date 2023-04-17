@@ -54,15 +54,6 @@ CONF_KEY_MAP = {
 
 
 class SparkConfSchema(metaclass=PatchedSchemaMeta):
-    driver_cores = fields.Int()
-    driver_memory = fields.Str(validate=validate.Regexp(re_memory_pattern))
-    executor_cores = fields.Int()
-    executor_memory = fields.Str(validate=validate.Regexp(re_memory_pattern))
-    executor_instances = fields.Int()
-    dynamic_allocation_enabled = fields.Bool()
-    dynamic_allocation_min_executors = fields.Int()
-    dynamic_allocation_max_executors = fields.Int()
-
     conf = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
