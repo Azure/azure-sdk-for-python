@@ -10,6 +10,9 @@ from azure.core import CaseInsensitiveEnumMeta
 ALL_FEATURES = "all_features"
 
 
+AZMONITORING = "azmonitoring"
+
+
 class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_DRIFT = "data_drift"
     DATA_QUALITY = "data_quality"

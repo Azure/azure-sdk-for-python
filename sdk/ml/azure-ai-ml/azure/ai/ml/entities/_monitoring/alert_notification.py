@@ -19,21 +19,16 @@ class AlertNotification(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        azure_monitor_signals: Dict[str, str] = None,
         emails: List[str] = None,
     ):
-        self.azure_monitoring_signals = azure_monitor_signals
         self.emails = emails
 
     def _to_rest_object(
         self,
     ) -> Union[EmailMonitoringAlertNotificationSettings, AzMonMonitoringAlertNotificationSettings]:
-        if self.emails:
-            return EmailMonitoringAlertNotificationSettings(
-                email_notification_setting=NotificationSetting(emails=self.emails)
-            )
-        elif self.azure_monitoring_signals:
-            return AzMonMonitoringAlertNotificationSettings()
+        return EmailMonitoringAlertNotificationSettings(
+            email_notification_setting=NotificationSetting(emails=self.emails)
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: MonitoringAlertNotificationSettingsBase) -> "AlertNotification":

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from abc import abstractmethod
 import typing
 import logging
 from os import PathLike
@@ -41,9 +40,6 @@ class Schedule(Resource):
     :type name: str
     :param trigger: Trigger of the schedule.
     :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param create_job: The schedule action job definition, or the existing job name. This param
-        only applies for JobSchedule and will be ignored for other schedule types.
-    :type create_job: Union[Job, str]
     :param display_name: Display name of the schedule.
     :type display_name: str
     :param description: Description of the schedule, defaults to None

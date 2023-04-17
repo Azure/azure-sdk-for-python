@@ -4,6 +4,9 @@
 
 from typing import Dict, Union
 
+from typing_extensions import Literal
+
+from azure.ai.ml.constants._monitoring import AZMONITORING
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.signals import (
     MonitoringSignal,
@@ -16,7 +19,10 @@ from azure.ai.ml.entities._monitoring.signals import (
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitorDefinition as RestMonitorDefinition
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MonitorDefinition as RestMonitorDefinition,
+    AzMonMonitoringAlertNotificationSettings,
+)
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -38,7 +44,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 CustomMonitoringSignal,
             ],
         ] = None,
-        alert_notification: AlertNotification = None,
+        alert_notification: Union[Literal[AZMONITORING], AlertNotification] = None,
     ):
         self.compute = compute
         self.monitoring_target = monitoring_target
@@ -46,6 +52,12 @@ class MonitorDefinition(RestTranslatableMixin):
         self.alert_notification = alert_notification
 
     def _to_rest_object(self) -> RestMonitorDefinition:
+        rest_alert_notification = None
+        if self.alert_notification:
+            if isinstance(self.alert_notification, str) and self.alert_notification.lower() == AZMONITORING:
+                rest_alert_notification = AzMonMonitoringAlertNotificationSettings()
+            else:
+                rest_alert_notification = self.alert_notification._to_rest_object()
         return RestMonitorDefinition(
             compute_id=self.compute,
             monitoring_target=self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id,
