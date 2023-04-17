@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import JobScheduleAction
 from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.v2023_02_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleActionType as RestScheduleActionType
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -105,6 +106,22 @@ class Schedule(Resource):
         :rtype: str
         """
         return self._provisioning_state
+
+    @classmethod
+    def _from_rest_object(self, obj: RestSchedule) -> "Schedule":
+        from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
+            return JobSchedule._from_rest_object(obj)
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_MONITOR:
+            return MonitorSchedule._from_rest_object(obj)
+        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
+        raise ScheduleException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SCHEDULE,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
 
 class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
