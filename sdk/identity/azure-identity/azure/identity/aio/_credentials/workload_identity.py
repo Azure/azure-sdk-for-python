@@ -47,7 +47,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         super().__init__(
             tenant_id=tenant_id,
             client_id=client_id,
-            func=self.get_service_account_token,
+            func=self._get_service_account_token,
             file=file,
             **kwargs
         )
