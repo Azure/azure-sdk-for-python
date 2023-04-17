@@ -1,12 +1,12 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 * Added `TpmAttestationResult` model
-* Changed `attestTpm` parameter from str to bytes to match `attestOpenEnclave` and `attestSgxEnclave`
+* Changed `attest_tpm` parameter from str to bytes to match `attest_open_enclave` and `attest_sgx_enclave`
 
 ### Bugs Fixed
 

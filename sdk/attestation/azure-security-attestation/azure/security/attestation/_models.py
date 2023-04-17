@@ -953,8 +953,8 @@ class TpmAttestationResult(object):
     """Represents the Tpm Attestation response data returned from the attestation service
     as a result of a call to :meth:`azure.security.attestation.AttestationClient.attest_tpm`.
 
-    :keyword bytes result: The result of the operation.
+    :keyword bytes data: The result of the operation.
     """
 
-    def __init__(self, result: bytes):
-        self.result = result
+    def __init__(self, data: bytes):
+        self.data = data

@@ -359,7 +359,7 @@ class AttestationClient(object):
 
         :param bytes content: Attestation request for Trusted Platform Module (TPM) attestation.
         :returns: attestation response for Trusted Platform Module (TPM) attestation.
-        :rtype: TpmAttestationResult
+        :rtype: ~azure.security.attestation.TpmAttestationResult
         """
 
         response = self._client.attestation.attest_tpm(
