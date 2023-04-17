@@ -6,6 +6,8 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
+
+from dsl._util import get_predecessors
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
@@ -2092,3 +2094,11 @@ class TestPipelineJobEntity:
         # similar to sweep job, automl job job_tier value is also lowercase.
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
+
+    def test_get_predecessors_for_pipeline_job(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+        # get_predecessors is not supported for YAML job
+        assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
+        assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
+        assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []

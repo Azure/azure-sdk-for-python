@@ -53,7 +53,7 @@ from azure.ai.ml.exceptions import (
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
 
-from .._util import _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, get_predecessors
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
@@ -3225,6 +3225,114 @@ class TestDSLPipeline:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_get_predecessors(self):
+        component_yaml = components_dir / "2in2out.yaml"
+        component_func = load_component(source=component_yaml)
+
+        # case1.1: predecessor from same node
+        @dsl.pipeline()
+        def pipeline1():
+            node1 = component_func()
+            node1.name = "node1"
+            assert get_predecessors(node1) == []
+            node2 = component_func(input1=node1.outputs.output1, input2=node1.outputs.output2)
+            assert ["node1"] == [n.name for n in get_predecessors(node2)]
+            return node1.outputs
+
+        pipeline1()
+
+        # case1.2: predecessor from different node
+        @dsl.pipeline()
+        def pipeline2():
+            node1 = component_func()
+            node1.name = "node1"
+            assert get_predecessors(node1) == []
+
+            node2 = component_func()
+            node2.name = "node2"
+            assert get_predecessors(node2) == []
+
+            node2 = component_func(input1=node1.outputs.output1, input2=node2.outputs.output2)
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node2)]
+            return node2.outputs
+
+        pipeline2()
+
+        # case 2.1: predecessor from same sub pipeline
+        @dsl.pipeline()
+        def pipeline3():
+            sub1 = pipeline1()
+            node3 = component_func(input1=sub1.outputs.output1, input2=sub1.outputs.output2)
+            assert ["node1"] == [n.name for n in get_predecessors(node3)]
+
+        pipeline3()
+
+        # case 2.2: predecessor from different sub pipeline
+        @dsl.pipeline()
+        def pipeline4():
+            sub1 = pipeline1()
+            sub2 = pipeline2()
+            node3 = component_func(input1=sub1.outputs.output1, input2=sub2.outputs.output2)
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node3)]
+
+        pipeline4()
+
+        # case 3.1: predecessor from different outer node
+        @dsl.pipeline()
+        def sub_pipeline_1(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert ["outer1", "outer2"] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline5():
+            outer1 = component_func()
+            outer1.name = "outer1"
+            outer2 = component_func()
+            outer2.name = "outer2"
+            sub_pipeline_1(input1=outer1.outputs.output1, input2=outer2.outputs.output2)
+
+        pipeline5()
+
+        # case 3.2: predecessor from same outer node
+        @dsl.pipeline()
+        def sub_pipeline_2(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert ["outer1"] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline6():
+            outer1 = component_func()
+            outer1.name = "outer1"
+            sub_pipeline_2(input1=outer1.outputs.output1, input2=outer1.outputs.output2)
+
+        pipeline6()
+
+        # case 3.3: predecessor from outer literal value
+        @dsl.pipeline()
+        def sub_pipeline_3(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert [] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline7():
+            sub_pipeline_3(input1=Input(), input2=Input())
+
+        pipeline7()
+
+        # case 3.4: predecessor from outer subgraph
+        @dsl.pipeline()
+        def sub_pipeline_4(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline8():
+            sub1 = pipeline1()
+            sub2 = pipeline2()
+            sub_pipeline_4(input1=sub1.outputs.output1, input2=sub2.outputs.output2)
+
+        pipeline8()
 
     def test_pipeline_singularity_strong_type(self, mock_singularity_arm_id: str):
         component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
