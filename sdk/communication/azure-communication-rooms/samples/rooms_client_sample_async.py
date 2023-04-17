@@ -26,14 +26,15 @@
 # --------------------------------------------------------------------------
 import os
 import sys
+import asyncio
 
 from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
-    ParticipantRole,
-    RoomsClient,
-    RoomParticipant
+    RoomParticipant,
+    ParticipantRole
 )
 
 sys.path.append("..")
@@ -54,17 +55,17 @@ class RoomsSample(object):
             communication_identifier=self.identity_client.create_user(),
             role=ParticipantRole.CONSUMER)
 
-    def tearDown(self):
-        self.delete_room_all_rooms()
+    async def tearDown(self):
+        await self.delete_room_all_rooms()
 
-    def create_single_room(self):
+    async def create_single_room(self):
 
         valid_from =  datetime.now()
         valid_until = valid_from + timedelta(weeks=4)
         participants = [self.participant_1]
 
         try:
-            create_room_response = self.rooms_client.create_room(
+            create_room_response = await self.rooms_client.create_room(
                 valid_from=valid_from,
                 valid_until=valid_until,
                 participants=participants)
@@ -76,9 +77,11 @@ class RoomsSample(object):
         except HttpResponseError as ex:
             print(ex)
 
-    def create_single_room_with_default_attributes(self):
+    async def create_single_room_with_default_attributes(self):
+        rooms_client = RoomsClient.from_connection_string(self.connection_string)
+
         try:
-            create_room_response = self.rooms_client.create_room()
+            create_room_response = await rooms_client.create_room()
             self.printRoom(response=create_room_response)
             # all created room to a list
             self.rooms.append(create_room_response.id)
@@ -86,18 +89,18 @@ class RoomsSample(object):
         except HttpResponseError as ex:
             print(ex)
 
-    def update_single_room(self, room_id):
+    async def update_single_room(self, room_id):
         # set attributes you want to change
         valid_from =  datetime.now()
         valid_until = valid_from + timedelta(weeks=7)
 
         try:
-            update_room_response = self.rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
+            update_room_response = await self.rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
             self.printRoom(response=update_room_response)
         except HttpResponseError as ex:
             print(ex)
 
-    def upsert_participants(self, room_id):
+    async def upsert_participants(self, room_id):
         self.participant_1.role = ParticipantRole.ATTENDEE
         participants = [
             self.participant_1, # Update participant_1 role from Presenter to Attendee
@@ -105,34 +108,34 @@ class RoomsSample(object):
             ]
 
         try:
-            self.rooms_client.upsert_participants(room_id=room_id, participants=participants)
+            await self.rooms_client.upsert_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
-    def list_participants(self, room_id):
+    async def list_participants(self, room_id):
         try:
-            get_participants_response = self.rooms_client.list_participants(room_id=room_id)
-            print("participants: \n", self.convert_participant_list_to_string(get_participants_response))
+            list_participants_response = await self.rooms_client.list_participants(room_id=room_id)
+            print("participants: \n", self.convert_participant_list_to_string(list_participants_response))
         except HttpResponseError as ex:
             print(ex)
 
-    def remove_participants(self, room_id):
+    async def remove_participants(self, room_id):
         participants = [self.participant_1.communication_identifier]
 
         try:
-            self.rooms_client.remove_participants(room_id=room_id, communication_identifiers=participants)
+            await self.rooms_client.remove_participants(room_id=room_id, communication_identifiers=participants)
         except HttpResponseError as ex:
             print(ex)
 
-    def delete_room_all_rooms(self):
+    async def delete_room_all_rooms(self):
         for room in self.rooms:
             print("deleting: ", room)
-            self.rooms_client.delete_room(room_id=room)
+            await self.rooms_client.delete_room(room_id=room)
 
-    def get_room(self, room_id):
+    async def get_room(self, room_id):
 
         try:
-            get_room_response = self.rooms_client.get_room(room_id=room_id)
+            get_room_response = await self.rooms_client.get_room(room_id=room_id)
             self.printRoom(response=get_room_response)
 
         except HttpResponseError as ex:
@@ -144,23 +147,26 @@ class RoomsSample(object):
         print("valid_from: ", response.valid_from)
         print("valid_until: ", response.valid_until)
 
-    def convert_participant_list_to_string(self, participants):
+    async def convert_participant_list_to_string(self, participants):
         result = ''
-        for p in participants:
+        async for p in participants:
             result += "id: {}\n role: {}\n".format(
                 p.communication_identifier.properties["id"], p.role)
         return result
 
-if __name__ == '__main__':
+async def main():
     sample = RoomsSample()
     sample.setUp()
-    sample.create_single_room()
-    sample.create_single_room_with_default_attributes()
+    await sample.create_single_room()
+    await sample.create_single_room_with_default_attributes()
     if len(sample.rooms) > 0:
-        sample.get_room(room_id=sample.rooms[0] )
-        sample.update_single_room(room_id=sample.rooms[0])
-        sample.upsert_participants(room_id=sample.rooms[0])
-        sample.list_participants(room_id=sample.rooms[0])
-        sample.remove_participants(room_id=sample.rooms[0])
-        sample.get_room(room_id=sample.rooms[0])
-    sample.tearDown()
+        await sample.get_room(room_id=sample.rooms[0] )
+        await sample.update_single_room(room_id=sample.rooms[0])
+        await sample.upsert_participants(room_id=sample.rooms[0])
+        await sample.list_participants(room_id=sample.rooms[0])
+        await sample.remove_participants(room_id=sample.rooms[0])
+        await sample.get_room(room_id=sample.rooms[0])
+    await sample.tearDown()
+
+if __name__ == '__main__':
+    asyncio.run(main())
