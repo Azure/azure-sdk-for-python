@@ -208,8 +208,6 @@ class Environment(Asset):
             environment_version.description = self.description
         if self.properties:
             environment_version.properties = self.properties
-        if self._intellectual_property:
-            environment_version.intellectual_property = self._intellectual_property._to_rest_object()
 
         environment_version_resource = EnvironmentVersion(properties=environment_version)
 

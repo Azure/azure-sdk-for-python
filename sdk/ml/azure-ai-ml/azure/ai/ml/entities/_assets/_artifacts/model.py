@@ -163,9 +163,6 @@ class Model(Artifact):
             model_type=self.type,
             model_uri=self.path,
             is_anonymous=self._is_anonymous,
-            intellectual_property=self._intellectual_property._to_rest_object()
-            if self._intellectual_property
-            else None,
         )
         model_version_resource = ModelVersion(properties=model_version)
 
