@@ -254,7 +254,9 @@ class WorkspaceOperationsBase:
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict) -> LROPoller[None]:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         if delete_dependent_resources:
