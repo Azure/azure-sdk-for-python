@@ -43,7 +43,7 @@ async def find_database(client, id):
     # return several databases using queries, we do not need to await the function. However, attempting
     # to cast this object into a list directly will throw an error; instead, iterate over the databases
     # to populate your list using an async for loop like shown here or in the list_databases() method
-    query_databases_response = client.query_databases({
+    query_databases_response = client.query_databases(query={
         "query": "SELECT * FROM r WHERE r.id=@id",
         "parameters": [
             { "name":"@id", "value": id }

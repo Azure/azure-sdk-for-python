@@ -36,8 +36,16 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
 SINGULARITY_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
+)
+SINGULARITY_ID_REGEX_FORMAT = (
     "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
+SINGULARITY_FULL_NAME_REGEX_FORMAT = (
+    "^(azureml:)?//subscriptions/(?P<subscription_id>[^/]+)/resourceGroups/(?P<resource_group_name>[^/]+)/"
+    "virtualclusters/(?P<name>[^/]+)"
+)
+SINGULARITY_SHORT_NAME_REGEX_FORMAT = "^(azureml:)?//virtualclusters/(?P<name>[^/]+)"
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
@@ -303,6 +311,7 @@ class ArmConstants:
     STORAGE = "StorageAccount"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
+    LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
@@ -833,6 +842,13 @@ class Boolean:
     """True boolean type."""
     FALSE = "false"
     """False boolean type."""
+
+
+class InferenceServerType:
+    AZUREML_ONLINE = "azureml_online"
+    AZUREML_BATCH = "azureml_batch"
+    TRITON = "triton"
+    CUSTOM = "custom"
 
 
 class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):

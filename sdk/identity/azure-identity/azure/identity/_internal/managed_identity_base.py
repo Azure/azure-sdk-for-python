@@ -44,7 +44,9 @@ class ManagedIdentityBase(GetTokenMixin):
             raise CredentialUnavailableError(message=self.get_unavailable_message())
         return super(ManagedIdentityBase, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(ManagedIdentityClient, self._client).get_cached_token(*scopes)

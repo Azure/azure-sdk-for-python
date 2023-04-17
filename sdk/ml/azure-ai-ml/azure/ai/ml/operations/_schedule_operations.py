@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 from typing import Any, Iterable
 
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -43,14 +43,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_02_2023_preview: ServiceClient022023Preview,
+        service_client_04_2023_preview: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self.service_client = service_client_02_2023_preview.schedules
+        self.service_client = service_client_04_2023_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed

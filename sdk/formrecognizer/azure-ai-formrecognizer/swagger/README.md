@@ -115,6 +115,15 @@ directive:
             $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```
 
+``` yaml
+directive:
+    -   from: swagger-document
+        where: '$.paths["/documentClassifiers:build"].post'
+        transform: >
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
+```
+
 ### Override unique items in composed models due to msrest validation issue
 
 ``` yaml

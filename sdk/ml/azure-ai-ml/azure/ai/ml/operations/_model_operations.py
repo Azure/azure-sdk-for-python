@@ -21,16 +21,30 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
+<<<<<<< HEAD
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations, OperationsContainer
 
+=======
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+    OperationsContainer,
+)
+from azure.ai.ml.entities._assets._artifacts.code import Code
+>>>>>>> 28cc2073fc8d471bf662ede1b4048d850c1e27ad
 
+from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -47,7 +61,8 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model, WorkspaceAssetReference
+from azure.ai.ml.entities._assets import Model, ModelPackage
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -58,6 +73,7 @@ from azure.ai.ml.exceptions import (
 )
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -77,6 +93,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
+        all_operations: OperationsContainer = None,
         **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
@@ -85,6 +102,7 @@ class ModelOperations(_ScopeDependentOperations):
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
         self._datastore_operation = datastore_operations
+        self._all_operations = all_operations
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
@@ -165,9 +183,6 @@ class ModelOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
-                if not sas_uri:
-                    module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
-                    return self.get(name=model.name, version=model.version)
 
             model, indicator_file = _check_and_upload_path(
                 artifact=model,
@@ -240,6 +255,7 @@ class ModelOperations(_ScopeDependentOperations):
                     name=name,
                     version=version,
                     workspace_name=self._workspace_name,
+                    api_version="2023-02-01-preview",
                     **self._scope_kwargs,
                 )
             )
@@ -308,7 +324,7 @@ class ModelOperations(_ScopeDependentOperations):
         model_uri = self.get(name=name, version=version).path
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
-            sas_uri = get_storage_details_for_registry_assets(
+            sas_uri, auth_type = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
                 asset_name=name,
                 asset_version=version,
@@ -317,7 +333,15 @@ class ModelOperations(_ScopeDependentOperations):
                 rg_name=self._resource_group_name,
                 uri=model_uri,
             )
-            storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            if auth_type == "SAS":
+                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            else:
+                parts = sas_uri.split("/")
+                storage_account = parts[2].split(".")[0]
+                container_name = parts[3]
+                storage_client = get_storage_client(
+                    credential=None, storage_account=storage_account, container_name=container_name
+                )
 
         else:
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
@@ -501,6 +525,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._model_versions_operation,
             self._resource_group_name,
             self._workspace_name,
+            self._registry_name,
         )
         return Model._from_rest_object(result)
 
@@ -531,3 +556,83 @@ class ModelOperations(_ScopeDependentOperations):
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
             self._model_versions_operation = model_versions_operation_
+
+    @experimental
+    @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
+    def begin_package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> None:
+        """Package a model asset
+
+        :param name: Name of model asset.
+        :type name: str
+        :param version: Version of model asset.
+        :type version: str
+        :param package_request: Model package request.
+        :type package_request: ~azure.ai.ml.entities.ModelPackage
+        :return: None
+        :rtype: None
+
+        """
+
+        if not kwargs.get("skip_to_rest", False):
+            orchestrators = OperationOrchestrator(
+                operation_container=self._all_operations,
+                operation_scope=self._operation_scope,
+                operation_config=self._operation_config,
+            )
+
+            # Create a code asset if code is not already an ARM ID
+            if hasattr(package_request.inferencing_server, "code_configuration"):
+                if package_request.inferencing_server.code_configuration and not is_ARM_id_for_resource(
+                    package_request.inferencing_server.code_configuration.code, AzureMLResourceType.CODE
+                ):
+                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
+                            azureml_type=AzureMLResourceType.CODE,
+                        )
+                    else:
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+                            Code(
+                                base_path=package_request._base_path,
+                                path=package_request.inferencing_server.code_configuration.code,
+                            ),
+                            azureml_type=AzureMLResourceType.CODE,
+                        )
+                if package_request.inferencing_server.code_configuration and hasattr(
+                    package_request.inferencing_server.code_configuration, "code"
+                ):
+                    package_request.inferencing_server.code_configuration.code = (
+                        "azureml:/" + package_request.inferencing_server.code_configuration.code
+                    )
+
+            if package_request.base_environment_source and hasattr(
+                package_request.base_environment_source, "resource_id"
+            ):
+                package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
+                    package_request.base_environment_source.resource_id, azureml_type=AzureMLResourceType.ENVIRONMENT
+                )
+
+                package_request.base_environment_source.resource_id = (
+                    "azureml:/" + package_request.base_environment_source.resource_id
+                )
+
+            package_request = package_request._to_rest_object()
+
+        module_logger.info("Creating package with name: %s", package_request.target_environment_name)
+
+        package_out = self._model_versions_operation.begin_package(
+            name=name,
+            version=version,
+            workspace_name=self._workspace_name,
+            body=package_request,
+            **self._scope_kwargs,
+        ).result()
+
+        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
+            environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
+            module_logger.info("\nPackage Created")
+            package_out = environment_operation.get(
+                name=package_out.target_environment_name, version=package_out.target_environment_version
+            )
+
+        return package_out

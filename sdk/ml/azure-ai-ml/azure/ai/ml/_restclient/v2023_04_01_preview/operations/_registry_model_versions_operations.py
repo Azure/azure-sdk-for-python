@@ -57,8 +57,8 @@ def build_list_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "modelName": _SERIALIZER.url("model_name", model_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "modelName": _SERIALIZER.url("model_name", model_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -113,8 +113,8 @@ def build_delete_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "modelName": _SERIALIZER.url("model_name", model_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "modelName": _SERIALIZER.url("model_name", model_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
 
@@ -154,8 +154,8 @@ def build_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "modelName": _SERIALIZER.url("model_name", model_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "modelName": _SERIALIZER.url("model_name", model_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
 
@@ -196,7 +196,7 @@ def build_create_or_update_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
         "modelName": _SERIALIZER.url("model_name", model_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
@@ -222,7 +222,7 @@ def build_create_or_update_request_initial(
     )
 
 
-def build_create_or_get_pending_upload_request(
+def build_create_or_get_start_pending_upload_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
@@ -236,12 +236,12 @@ def build_create_or_get_pending_upload_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/pendingUpload/{version}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}/startPendingUpload")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "modelName": _SERIALIZER.url("model_name", model_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "modelName": _SERIALIZER.url("model_name", model_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
 
@@ -311,7 +311,7 @@ class RegistryModelVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param model_name: Container name. This is case-sensitive.
         :type model_name: str
@@ -492,7 +492,7 @@ class RegistryModelVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param model_name: Container name.
         :type model_name: str
@@ -565,7 +565,7 @@ class RegistryModelVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param model_name: Container name. This is case-sensitive.
         :type model_name: str
@@ -700,7 +700,7 @@ class RegistryModelVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param model_name: Container name.
         :type model_name: str
@@ -752,7 +752,7 @@ class RegistryModelVersionsOperations(object):
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -767,7 +767,7 @@ class RegistryModelVersionsOperations(object):
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
 
     @distributed_trace
-    def create_or_get_pending_upload(
+    def create_or_get_start_pending_upload(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
@@ -783,7 +783,7 @@ class RegistryModelVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param model_name: Model name. This is case-sensitive.
         :type model_name: str
@@ -807,7 +807,7 @@ class RegistryModelVersionsOperations(object):
 
         _json = self._serialize.body(body, 'PendingUploadRequestDto')
 
-        request = build_create_or_get_pending_upload_request(
+        request = build_create_or_get_start_pending_upload_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
@@ -816,7 +816,7 @@ class RegistryModelVersionsOperations(object):
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_get_pending_upload.metadata['url'],
+            template_url=self.create_or_get_start_pending_upload.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -840,5 +840,5 @@ class RegistryModelVersionsOperations(object):
 
         return deserialized
 
-    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/pendingUpload/{version}"}  # type: ignore
+    create_or_get_start_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}/startPendingUpload"}  # type: ignore
 

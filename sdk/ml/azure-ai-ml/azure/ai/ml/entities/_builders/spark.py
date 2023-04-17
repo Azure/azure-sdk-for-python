@@ -12,11 +12,8 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from ..._restclient.v2023_02_01_preview.models import IdentityConfiguration
-from ..._restclient.v2023_02_01_preview.models import JobBase as JobBaseData
-from ..._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
-from ..._restclient.v2023_02_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from ..._restclient.v2023_02_01_preview.models import SparkResourceConfiguration as RestSparkResourceConfiguration
+from ..._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
+from ..._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from ..._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
@@ -299,16 +296,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
         obj = super()._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestSparkResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = SparkResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = SparkResourceConfiguration._from_rest_object(obj["resources"])
 
         if "identity" in obj and obj["identity"]:
-            identity = IdentityConfiguration.from_dict(obj["identity"])
-            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(identity)
+            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(obj["identity"])
 
         if "entry" in obj and obj["entry"]:
-            entry = RestSparkJobEntry.from_dict(obj["entry"])
-            obj["entry"] = SparkJobEntry._from_rest_object(entry)
+            obj["entry"] = SparkJobEntry._from_rest_object(obj["entry"])
         if "conf" in obj and obj["conf"]:
             identify_schema = UnionField(
                 [

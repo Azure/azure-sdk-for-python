@@ -3,16 +3,26 @@
 ## 1.6.0 (Unreleased)
 
 ### Features Added
+- Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 - Added support to make JobService and ServiceInstance objects serializable when printed
+- Support Singularity compute in pipeline job
+- Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
 
 ### Bugs Fixed
 
 - Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
 - Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
+- Fixed the bug when setting `node.limits.timeout` to a pipeline input.
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
+- Removed Experimental Tag from JobService classes
+
+### Breaking Changes
+
+- Renamed `JobServiceBase.job_service_type` to `type`
 
 ### Other Changes
 
-- 
+- Remove the default placeholder for CommandComponent.code
 
 ## 1.5.0 (2023-03-20)
 

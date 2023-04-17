@@ -79,7 +79,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs) -> AccessToken:

@@ -13,11 +13,8 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -45,8 +42,8 @@ from azure.ai.ml.entities._job.distribution import (
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.job_service import (
-    JobServiceBase,
     JobService,
+    JobServiceBase,
     JupyterLabJobService,
     SshJobService,
     TensorBoardJobService,
@@ -464,9 +461,9 @@ class Command(BaseNode):
             UserIdentityConfiguration]
         :param queue_settings: Queue settings for the job.
         :type queue_settings: QueueSettings
-        :param job_tier: determines the job tier.
+        :param job_tier: **Experimental** determines the job tier.
         :type job_tier: str
-        :param priority: controls the priority on the compute.
+        :param priority: **Experimental** controls the priority on the compute.
         :type priority: str
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
@@ -554,7 +551,7 @@ class Command(BaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["resources", "distribution", "limits", "environment_variables"]
+        return ["resources", "distribution", "limits", "environment_variables", "queue_settings"]
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
@@ -592,8 +589,7 @@ class Command(BaseNode):
         obj = BaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -609,15 +605,13 @@ class Command(BaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
 
         if "queue_settings" in obj and obj["queue_settings"]:
-            queue_settings = RestQueueSettings.from_dict(obj["queue_settings"])
-            obj["queue_settings"] = QueueSettings._from_rest_object(queue_settings)
+            obj["queue_settings"] = QueueSettings._from_rest_object(obj["queue_settings"])
 
         return obj
 
@@ -701,7 +695,9 @@ class Command(BaseNode):
                 setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
-            node._name = self.name
+            # won't copy name to be able to distinguish if a node's name is assigned by user
+            # e.g. node_1 = command_func()
+            # In above example, node_1.name will be None so we can apply node_1 as it's name
             node.compute = self.compute
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.

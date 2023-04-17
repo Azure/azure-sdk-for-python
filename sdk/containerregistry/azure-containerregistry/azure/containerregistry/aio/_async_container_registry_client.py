@@ -3,7 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, Optional, overload, Union, cast
+# pylint: disable=too-many-lines
+import functools
+import hashlib
+from io import BytesIO
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -14,13 +18,30 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
+from ._async_download_stream import AsyncDownloadBlobStream
+from .._container_registry_client import _return_response_headers, _return_response_and_headers
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from .._helpers import (
+    _is_tag,
+    _parse_next_link,
+    SUPPORTED_API_VERSIONS,
+    DEFAULT_AUDIENCE,
+    DEFAULT_CHUNK_SIZE,
+)
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
+
+
+class _UnclosableBytesIO(BytesIO):
+    def close(self):
+        pass
+
+    def manual_close(self):
+        super().close()
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -30,20 +51,20 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         credential: Optional[AsyncTokenCredential] = None,
         *,
         api_version: Optional[str] = None,
-        audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+        audience: str = DEFAULT_AUDIENCE,
         **kwargs
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
-        :param credential: The credential with which to authenticate.
-        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :param credential: The credential with which to authenticate. This should be None in anonymous access.
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
             may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
             "https://management.azure.com", "https://management.chinacloudapi.cn" or
-            "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
+            "https://management.usgovcloudapi.net". The default value is "https://containerregistry.azure.net".
         :paramtype audience: str
         :returns: None
         :rtype: None
@@ -384,8 +405,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
+        manifest_properties = await self._client.container_registry.get_manifest_properties(
+            repository, tag_or_digest, **kwargs
+        )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
+            manifest_properties.manifest, # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -411,8 +435,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for tag in client.list_tag_properties("my_repository"):
                 tag_properties = await client.get_tag_properties("my_repository", tag.name)
         """
+        tag_properties = await self._client.container_registry.get_tag_properties(
+            repository, tag, **kwargs
+        )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            tag_properties.tag, # type: ignore
             repository=repository,
         )
 
@@ -715,13 +742,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
+        manifest_properties = await self._client.container_registry.update_manifest_properties(
+            repository,
+            tag_or_digest,
+            value=properties._to_generated(),  # pylint: disable=protected-access
+            **kwargs
+        )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.update_manifest_properties(
-                repository,
-                tag_or_digest,
-                value=properties._to_generated(),  # pylint: disable=protected-access
-                **kwargs
-            ),
+            manifest_properties.manifest, # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -824,11 +852,110 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_read = kwargs.pop("can_read", properties.can_read)
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
+        tag_attributes = await self._client.container_registry.update_tag_attributes(
+            repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+        )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.update_tag_attributes(
-                repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
-            ),
+            tag_attributes.tag, # type: ignore
             repository=repository
+        )
+
+    @distributed_trace_async
+    async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
+        """Upload an artifact blob.
+
+        :param str repository: Name of the repository.
+        :param data: The blob to upload. Note: This must be a seekable stream.
+        :type data: IO
+        :returns: The digest and size in bytes of the uploaded blob.
+        :rtype: Tuple[str, int]
+        :raises ValueError: If the parameter repository or data is None.
+        """
+        try:
+            start_upload_response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.start_upload(
+                    repository, cls=_return_response_headers, **kwargs
+                )
+            )
+            digest, location, blob_size = await self._upload_blob_chunk(
+                start_upload_response_headers['Location'], data, **kwargs
+            )
+            complete_upload_response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.complete_upload(
+                    digest=digest,
+                    next_link=location,
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
+        except Exception as e:
+            if repository is None or data is None:
+                raise ValueError("The parameter repository and data cannot be None.") from e
+            raise
+        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
+
+    async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
+        hasher = hashlib.sha256()
+        blob_size = 0
+        buffer = data.read(DEFAULT_CHUNK_SIZE)
+
+        while len(buffer) > 0:
+            try:
+                buffer_stream = _UnclosableBytesIO(buffer)
+                response_headers = cast(
+                    Dict[str, str],
+                    await self._client.container_registry_blob.upload_chunk(
+                        location,
+                        buffer_stream,
+                        cls=_return_response_headers,
+                        **kwargs
+                    )
+                )
+                blob_size += len(buffer)
+                hasher.update(buffer)
+                location = response_headers['Location']
+                buffer = data.read(DEFAULT_CHUNK_SIZE)
+            finally:
+                buffer_stream.manual_close()
+
+        return f"sha256:{hasher.hexdigest()}", location, blob_size
+
+    @distributed_trace_async
+    async def download_blob(self, repository: str, digest: str, **kwargs) -> AsyncDownloadBlobStream:
+        """Download a blob that is part of an artifact to a stream.
+
+        :param str repository: Name of the repository.
+        :param str digest: The digest of the blob to download.
+        :returns: AsyncDownloadBlobStream
+        :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
+        :raises ValueError: If the requested digest does not match the digest of the received blob.
+        """
+        end_range = DEFAULT_CHUNK_SIZE - 1
+        first_chunk, headers = cast(
+            Tuple[PipelineResponse, Dict[str, str]],
+            await self._client.container_registry_blob.get_chunk(
+                repository,
+                digest,
+                range_header=f"bytes=0-{end_range}",
+                cls=_return_response_and_headers,
+                **kwargs
+            )
+        )
+        return AsyncDownloadBlobStream(
+            response=first_chunk,
+            digest=digest,
+            get_next=functools.partial(
+                self._client.container_registry_blob.get_chunk,
+                name=repository,
+                digest=digest,
+                cls=_return_response_and_headers,
+                **kwargs
+            ),
+            blob_size=int(headers["Content-Range"].split("/")[1]),
+            downloaded=int(headers["Content-Length"]),
+            chunk_size=DEFAULT_CHUNK_SIZE
         )
 
     @distributed_trace_async
@@ -856,3 +983,29 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
+
+    @distributed_trace_async
+    async def delete_blob(self, repository: str, digest: str, **kwargs) -> None:
+        """Delete a blob. If the blob cannot be found or a response status code of
+        404 is returned an error will not be raised.
+
+        :param str repository: Name of the repository the manifest belongs to
+        :param str digest: Digest of the blob to be deleted
+        :returns: None
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry.aio import ContainerRegistryClient
+            from azure.identity.aio import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            await client.delete_blob("my_repository", "my_digest")
+        """
+        try:
+            await self._client.container_registry_blob.delete_blob(repository, digest, **kwargs)
+        except HttpResponseError as error:
+            if error.status_code == 404:
+                return
+            raise

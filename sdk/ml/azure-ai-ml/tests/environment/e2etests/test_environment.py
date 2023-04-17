@@ -203,7 +203,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert name in get_environment_list()
 
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
-
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
 
