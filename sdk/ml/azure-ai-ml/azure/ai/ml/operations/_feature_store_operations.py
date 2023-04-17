@@ -17,9 +17,9 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._feature_store.feature_store import _FeatureStore
-from azure.ai.ml.entities._workspace.feature_store_settings import _FeatureStoreSettings
-from azure.ai.ml.entities._feature_store.materialization_store import _MaterializationStore
+from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
+from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
     IdentityConfiguration,
@@ -37,14 +37,16 @@ from azure.ai.ml.entities._feature_store._constants import (
 )
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml._utils._experimental import experimental
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class _FeatureStoreOperations(WorkspaceOperationsBase):
-    """_FeatureStoreOperations.
+@experimental
+class FeatureStoreOperations(WorkspaceOperationsBase):
+    """FeatureStoreOperations.
 
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
@@ -70,27 +72,27 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
         self._workspace_connection_operation = service_client.workspace_connections
 
     # @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[_FeatureStore]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[FeatureStore]:
         """List all feature stores that the user has access to in the current
         resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
         :return: An iterator like instance of FeatureStore objects
-        :rtype: ~azure.core.paging.ItemPaged[_FeatureStore]
+        :rtype: ~azure.core.paging.ItemPaged[FeatureStore]
         """
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [
-                    _FeatureStore._from_rest_object(filterObj)
+                    FeatureStore._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
                 ]
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
-                _FeatureStore._from_rest_object(filterObj)
+                FeatureStore._from_rest_object(filterObj)
                 for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
             ],
         )
@@ -98,20 +100,20 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Dict) -> _FeatureStore:
+    def get(self, name: str, **kwargs: Dict) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
         :type name: str
         :return: The feature store with the provided name.
-        :rtype: _FeatureStore
+        :rtype: FeatureStore
         """
 
         feature_store = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
-            feature_store = _FeatureStore._from_rest_object(rest_workspace_obj)
+            feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
         if feature_store:
             offline_store_connection = None
@@ -131,7 +133,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     offline_store_connection.properties
                     and offline_store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
                 ):
-                    feature_store.offline_store = _MaterializationStore(
+                    feature_store.offline_store = MaterializationStore(
                         type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=offline_store_connection.properties.target
                     )
 
@@ -152,7 +154,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     online_store_connection.properties
                     and online_store_connection.properties.category == ONLINE_STORE_CONNECTION_CATEGORY
                 ):
-                    feature_store.online_store = _MaterializationStore(
+                    feature_store.online_store = MaterializationStore(
                         type=ONLINE_MATERIALIZATION_STORE_TYPE, target=online_store_connection.properties.target
                     )
 
@@ -174,10 +176,10 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-differ
     def begin_create(
         self,
-        feature_store: _FeatureStore,
+        feature_store: FeatureStore,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[_FeatureStore]:
+    ) -> LROPoller[FeatureStore]:
         """Create a new FeatureStore.
 
         Returns the feature store if already exists.
@@ -186,7 +188,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
         :type feature store: FeatureStore
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a FeatureStore.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._FeatureStore]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
         if feature_store.offline_store and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("offline store type should be azure_data_lake_gen2")
@@ -216,11 +218,11 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-renamed
     def begin_update(
         self,
-        feature_store: _FeatureStore,
+        feature_store: FeatureStore,
         *,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[_FeatureStore]:
+    ) -> LROPoller[FeatureStore]:
         """Update friendly name, description, materialization identities or tags of a feature store.
 
         :param feature store: FeatureStore resource.
@@ -235,7 +237,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
         :param container_registry: Container registry resource for feature store.
         :type feature store: FeatureStore
         :return: An instance of LROPoller that returns a FeatureStore.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._FeatureStore]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, feature_store.name)
@@ -297,7 +299,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                 if not materialization_identity:
                     raise ValidationError("Materialization identity is required to setup online store connection")
 
-        feature_store_settings = _FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
+        feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
 
         if offline_store and materialization_identity:
             offline_store_connection_name = (
@@ -350,7 +352,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             )
 
         def deserialize_callback(rest_obj):
-            return _FeatureStore._from_rest_object(rest_obj=rest_obj)
+            return FeatureStore._from_rest_object(rest_obj=rest_obj)
 
         return super().begin_update(
             workspace=feature_store,
