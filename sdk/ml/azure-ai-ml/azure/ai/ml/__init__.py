@@ -31,6 +31,7 @@ from .entities._load_functions import (
     load_registry,
     load_workspace,
     load_workspace_connection,
+    load_workspace_hub,
     load_model_package,
 )
 
@@ -64,6 +65,7 @@ __all__ = [
     "load_workspace",
     "load_registry",
     "load_workspace_connection",
+    "load_workspace_hub",
     "load_model_package",
 ]
 

@@ -1,0 +1,11 @@
+name: workspace_hub
+location: WestCentralUS
+display_name: wshub
+description: some desc
+image_build_compute: some_compute_name
+public_network_access: enabled
+hbi_workspace: true
+tags:
+  purpose: testing
+  team: ws-management
+
