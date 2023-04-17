@@ -27,9 +27,13 @@ class MonitorInputData(RestTranslatableMixin):
         self.pre_processing_component = pre_processing_component
 
     def _to_rest_object(self) -> RestMonitoringInputData:
+        rest_asset = {
+            "uri": self.input_dataset.path,
+            "jobInputType": self.input_dataset.type
+        }
         return RestMonitoringInputData(
             data_context=snake_to_camel(self.dataset_context),
-            asset=self.input_dataset._to_rest_object(),
+            asset=rest_asset,
             preprocessing_component_id=self.pre_processing_component,
             target_column_name=self.target_column_name,
         )
@@ -37,6 +41,7 @@ class MonitorInputData(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "MonitorInputData":
         return cls(
+            input_dataset=Input(path=obj.asset["uri"], type=obj.asset["jobInputType"]),
             dataset_context=camel_to_snake(obj.data_context),
             target_column_name=obj.target_column_name,
             pre_processing_component=obj.preprocessing_component_id,

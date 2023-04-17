@@ -5,7 +5,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import AnyStr, Dict, IO, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -19,6 +19,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestS
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import dump_yaml_to_file
 
 module_logger = logging.getLogger(__name__)
 
@@ -79,6 +80,24 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 trigger=self.trigger._to_rest_object(),
             )
         )
+
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+        """Dump the schedule content into a file in yaml format.
+
+        :param dest: The destination to receive this schedule's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[str, PathLike, IO[AnyStr]]
+        """
+        path = kwargs.pop("path", None)
+        yaml_serialized = self._to_dict()
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+
+    def _to_dict(self) -> Dict:
+        return MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "MonitorSchedule":
