@@ -14,7 +14,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     Route,
 )
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField, LocalPathField
-from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (
