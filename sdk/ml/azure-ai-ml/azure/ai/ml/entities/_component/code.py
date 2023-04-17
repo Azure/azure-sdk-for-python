@@ -45,7 +45,7 @@ class ComponentIgnoreFile(IgnoreFile):
         return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
 
     def merge(self, other_path: Path) -> "ComponentIgnoreFile":
-        """Merge ignore list from another InternalComponentIgnoreFile object."""
+        """Merge ignore list from another ComponentIgnoreFile object."""
         if other_path.is_file():
             return self
         return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])

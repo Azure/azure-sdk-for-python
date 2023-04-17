@@ -70,7 +70,12 @@ class AdditionalIncludes:
     @property
     def is_artifact_includes(self):
         try:
-            return any(map(lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT, self.additional_includes))
+            return any(
+                map(
+                    lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT,
+                    self.additional_includes,
+                )
+            )
         except Exception:  # pylint: disable=broad-except
             return False
 
@@ -118,7 +123,10 @@ class AdditionalIncludes:
 
     def _resolve_additional_include_config(self, additional_include_config):
         result = []
-        if isinstance(additional_include_config, dict) and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT:
+        if (
+            isinstance(additional_include_config, dict)
+            and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT
+        ):
             try:
                 # Get the artifacts package from devops to the local
                 artifact_path = self._get_artifacts_by_config(additional_include_config)
@@ -365,6 +373,8 @@ class AdditionalIncludes:
                         validation_result.append_error(message=error_msg)
                         continue
                 elif dst_path.exists():
-                    error_msg = f"A file already exists for additional include {additional_include} for {self.yaml_name}."
+                    error_msg = (
+                        f"A file already exists for additional include {additional_include} for " f"{self.yaml_name}."
+                    )
                     validation_result.append_error(message=error_msg)
         return validation_result

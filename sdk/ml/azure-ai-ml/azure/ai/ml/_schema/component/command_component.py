@@ -61,13 +61,7 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
     )
     properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
 
-    additional_includes = fields.List(
-        UnionField(
-            [
-                fields.Str(),
-                NestedField(AzureDevopsArtifactsSchema)]
-        )
-    )
+    additional_includes = fields.List(UnionField([fields.Str(), NestedField(AzureDevopsArtifactsSchema)]))
 
     @post_dump
     def remove_unnecessary_fields(self, component_schema_dict, **kwargs):

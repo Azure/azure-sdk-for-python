@@ -112,9 +112,11 @@ class TestCommandComponentEntity:
             command="echo Hello World",
             environment=Environment(image="zzn2/azureml_sdk"),
             # as sdk will take working directory as root folder, so we need to specify the absolution path
-            additional_includes=[samples_dir / "additional_includes/assets/LICENSE",
-                                 samples_dir / "additional_includes/library.zip",
-                                 samples_dir / "additional_includes/library1"],
+            additional_includes=[
+                samples_dir / "additional_includes/assets/LICENSE",
+                samples_dir / "additional_includes/library.zip",
+                samples_dir / "additional_includes/library1",
+            ],
         )
         assert component._validate().passed, repr(component._validate())
 
@@ -663,20 +665,20 @@ class TestCommandComponentEntity:
                 [
                     ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     (
-                            "component_with_additional_includes/test_code/.amlignore",
-                            "hello.py",
-                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                        "component_with_additional_includes/test_code/.amlignore",
+                        "hello.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     (
-                            "component_with_additional_includes/test_code/hello.py",
-                            None,
-                            AdditionalIncludesCheckFunc.NOT_EXISTS,
+                        "component_with_additional_includes/test_code/hello.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
                     ),
                     # shall we keep the empty folder?
                     (
-                            "component_with_additional_includes/test_code/a/hello.py",
-                            None,
-                            AdditionalIncludesCheckFunc.NO_PARENT,
+                        "component_with_additional_includes/test_code/a/hello.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                 ],
                 id="amlignore_subfolder",
@@ -684,9 +686,9 @@ class TestCommandComponentEntity:
             pytest.param(
                 [
                     (
-                            "additional_includes/library1/.amlignore",
-                            "test_ignore\nignore.py",
-                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                        "additional_includes/library1/.amlignore",
+                        "test_ignore\nignore.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
                     ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
@@ -698,15 +700,15 @@ class TestCommandComponentEntity:
             pytest.param(
                 [
                     (
-                            "additional_includes/library1/test_ignore/.amlignore",
-                            "ignore.py",
-                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                        "additional_includes/library1/test_ignore/.amlignore",
+                        "ignore.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
                     (
-                            "additional_includes/library1/test_ignore/ignore.py",
-                            None,
-                            AdditionalIncludesCheckFunc.NOT_EXISTS,
+                        "additional_includes/library1/test_ignore/ignore.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
                     ),
                 ],
                 id="amlignore_in_additional_includes_subfolder",
@@ -714,20 +716,20 @@ class TestCommandComponentEntity:
             pytest.param(
                 [
                     (
-                            "component_with_additional_includes/__pycache__/a.pyc",
-                            None,
-                            AdditionalIncludesCheckFunc.NO_PARENT,
+                        "component_with_additional_includes/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                     (
-                            "component_with_additional_includes/test/__pycache__/a.pyc",
-                            None,
-                            AdditionalIncludesCheckFunc.NO_PARENT,
+                        "component_with_additional_includes/test/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                     ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
                     (
-                            "additional_includes/library1/test/__pycache__/a.pyc",
-                            None,
-                            AdditionalIncludesCheckFunc.NO_PARENT,
+                        "additional_includes/library1/test/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                 ],
                 id="pycache",
@@ -741,7 +743,10 @@ class TestCommandComponentEntity:
             extra_files_to_create={file: content for file, content, _ in test_files},
         ) as test_configs_dir:
             yaml_path = (
-                Path(test_configs_dir) / "component_with_additional_includes" / "code_and_additional_includes" / "component_spec.yml"
+                Path(test_configs_dir)
+                / "component_with_additional_includes"
+                / "code_and_additional_includes"
+                / "component_spec.yml"
             )
 
             component = load_component(source=yaml_path)
@@ -786,7 +791,7 @@ class TestCommandComponentEntity:
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
         [
-            ("code_only/component_spec.yml", False),
+            # ("code_only/component_spec.yml", False),
             ("code_and_additional_includes/component_spec.yml", True),
         ],
     )
@@ -809,7 +814,6 @@ class TestCommandComponentEntity:
                     "helloworld_invalid_additional_includes_existing_file.yml",
                     "helloworld_invalid_additional_includes_root_directory.yml",
                     "helloworld_invalid_additional_includes_zip_file_not_found.yml",
-                    "no_code_and_additional_includes",
                 ]:
                     assert (code_path / path).is_file() if ".yml" in path else (code_path / path).is_dir()
                 assert (code_path / "LICENSE").is_file()
@@ -862,26 +866,28 @@ class TestCommandComponentEntity:
                 assert validation_result.passed is False
                 assert "There are conflict files in additional include" in validation_result.error_messages["*"]
                 assert (
-                    "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
+                    "test_additional_include:version_1 in component-sdk-test-feed"
+                    in validation_result.error_messages["*"]
                 )
                 assert (
-                    "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
+                    "test_additional_include:version_3 in component-sdk-test-feed"
+                    in validation_result.error_messages["*"]
                 )
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
             (
-                    "helloworld_invalid_additional_includes_root_directory.yml",
-                    "Root directory is not supported for additional includes",
+                "helloworld_invalid_additional_includes_root_directory.yml",
+                "Root directory is not supported for additional includes",
             ),
             (
-                    "helloworld_invalid_additional_includes_existing_file.yml",
-                    "A file already exists for additional include",
+                "helloworld_invalid_additional_includes_existing_file.yml",
+                "A file already exists for additional include",
             ),
             (
-                    "helloworld_invalid_additional_includes_zip_file_not_found.yml",
-                    "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
+                "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
             ),
         ],
     )

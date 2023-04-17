@@ -28,7 +28,6 @@ from ._additional_includes import AdditionalIncludes
 from ...entities._assets import Code
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
-from ..._utils._asset_utils import IgnoreFile
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
@@ -145,13 +144,15 @@ class CommandComponent(Component, ParameterizedCommand):
 
     @property
     def additional_includes_obj(self):
-        if self._additional_includes_obj is None and self.additional_includes and isinstance(self.additional_includes, list):
+        if (
+            self._additional_includes_obj is None
+            and self.additional_includes
+            and isinstance(self.additional_includes, list)
+        ):
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
             self._additional_includes_obj = AdditionalIncludes(
-                code_path=self.code,
-                yaml_path=self._source_path,
-                additional_includes=self.additional_includes
+                code_path=self.code, yaml_path=self._source_path, additional_includes=self.additional_includes
             )
         return self._additional_includes_obj
 
@@ -282,7 +283,11 @@ class CommandComponent(Component, ParameterizedCommand):
             self.additional_includes_obj.resolve()
 
             # use absolute path in case temp folder & work dir are in different drive
-            tmp_code_dir = self.additional_includes_obj.code.absolute() if self.additional_includes_obj.code else self.additional_includes_obj.yaml_path.absolute()
+            tmp_code_dir = (
+                self.additional_includes_obj.code.absolute()
+                if self.additional_includes_obj.code
+                else self.additional_includes_obj.yaml_path.absolute()
+            )
             rebased_ignore_file = ComponentIgnoreFile(
                 tmp_code_dir,
             )
@@ -298,4 +303,3 @@ class CommandComponent(Component, ParameterizedCommand):
             yield code
         else:
             yield None
-
