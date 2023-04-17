@@ -17,7 +17,7 @@ from ..._utils._asset_utils import IgnoreFile, traverse_directory
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ...entities._util import _general_copy
 from ...entities._validation import MutableValidationResult, _ValidationResultBuilder
-from ._artifact_cache import ArtifactCache
+from ...entities._component._artifact_cache import ArtifactCache
 from .code import InternalComponentIgnoreFile
 
 ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"

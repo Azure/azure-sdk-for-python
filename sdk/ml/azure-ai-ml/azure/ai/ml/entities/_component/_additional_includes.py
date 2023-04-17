@@ -14,6 +14,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult, _Validatio
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 
 from .code import ComponentIgnoreFile
+from ._artifact_cache import ArtifactCache
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ..._utils._asset_utils import traverse_directory, IgnoreFile
 from ...entities._util import _general_copy
@@ -106,8 +107,6 @@ class AdditionalIncludes:
 
     @classmethod
     def _get_artifacts_by_config(cls, artifact_config):
-        from azure.ai.ml._internal.entities._artifact_cache import ArtifactCache
-
         artifact_cache = ArtifactCache()
         if any(item not in artifact_config for item in ["feed", "name", "version"]):
             raise RuntimeError("Feed, name and version are required for artifacts config.")
