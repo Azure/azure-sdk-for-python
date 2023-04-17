@@ -7,7 +7,7 @@ from os import PathLike
 from pathlib import Path
 from typing import AnyStr, Dict, IO, Optional, Union
 
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._system_data import SystemData
@@ -48,6 +48,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             **kwargs,
         )
         self.create_monitor = create_monitor
+        self._type = ScheduleType.MONITOR
 
     @classmethod
     def _load(

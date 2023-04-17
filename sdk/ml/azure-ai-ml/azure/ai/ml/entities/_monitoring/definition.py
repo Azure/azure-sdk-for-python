@@ -60,7 +60,9 @@ class MonitorDefinition(RestTranslatableMixin):
                 rest_alert_notification = self.alert_notification._to_rest_object()
         return RestMonitorDefinition(
             compute_id=self.compute,
-            monitoring_target=(self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id) if self.monitoring_target else None,
+            monitoring_target=(self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id)
+            if self.monitoring_target
+            else None,
             signals={signal_name: signal._to_rest_object() for signal_name, signal in self.monitoring_signals.items()},
             alert_notification_setting=rest_alert_notification,
         )
