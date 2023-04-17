@@ -81,7 +81,7 @@ setup(
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
         "pydash<6.0.0",
-        "isodate",
+        "isodate<1.0.0,>=0.6.1",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
