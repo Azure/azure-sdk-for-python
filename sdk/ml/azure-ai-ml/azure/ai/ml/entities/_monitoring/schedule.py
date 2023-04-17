@@ -37,7 +37,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-        kwargs.pop("create_job", None)
         super().__init__(
             name=name,
             trigger=trigger,
@@ -48,14 +47,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             **kwargs,
         )
         self.create_monitor = create_monitor
-
-    @property
-    def create_job(self):
-        module_logger.warning("create_job is not a valid property of MonitorSchedule")
-
-    @create_job.setter
-    def create_job(self, value):  # pylint: disable=unused-argument
-        module_logger.warning("create_job is not a valid property of MonitorSchedule")
 
     @classmethod
     def _load(

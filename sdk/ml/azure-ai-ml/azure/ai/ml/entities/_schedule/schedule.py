@@ -4,6 +4,7 @@
 # pylint: disable=protected-access
 from abc import abstractmethod
 import typing
+import logging
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
@@ -29,6 +30,8 @@ from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, Validat
 from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+
+module_logger = logging.getLogger(__name__)
 
 
 class Schedule(Resource):
@@ -58,7 +61,6 @@ class Schedule(Resource):
         trigger: Union[CronTrigger, RecurrenceTrigger],
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        create_job: Union[Job, str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
@@ -70,7 +72,6 @@ class Schedule(Resource):
         self.display_name = display_name
         self._is_enabled = is_enabled
         self._provisioning_state = provisioning_state
-        self._create_job = create_job
 
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
@@ -81,14 +82,12 @@ class Schedule(Resource):
         return JobSchedule, None
 
     @property
-    @abstractmethod
-    def create_job(self):
-        pass
+    def create_job(self) -> None:
+        module_logger.warning(f"create_job is not a valid property of {type(self)}")
 
     @create_job.setter
-    @abstractmethod
-    def create_job(self, value):
-        pass
+    def create_job(self, value) -> None: # pylint: disable=unused-argument
+        module_logger.warning(f"create_job is not a valid property of {type(self)}")
 
     @property
     def is_enabled(self):
@@ -150,12 +149,12 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             description=description,
             tags=tags,
             properties=properties,
-            create_job=create_job,
             **kwargs,
         )
+        self._create_job = create_job
 
     @property
-    def create_job(self):
+    def create_job(self) -> Union[Job, str]:
         """
         Return the schedule's action job definition, or the existing job name.
 
@@ -165,7 +164,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         return self._create_job
 
     @create_job.setter
-    def create_job(self, value: Union[Job, str]):
+    def create_job(self, value: Union[Job, str]) -> None:
         """
         Sets the schedule's action to a job definition or an existing job name.
         """
