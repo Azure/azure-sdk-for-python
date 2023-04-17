@@ -29,11 +29,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-<<<<<<< HEAD
 class MetricThreshold(RestTranslatableMixin):
-=======
-class MetricThreshold:
->>>>>>> 841a0fb13da40067e9c282754d3aae75fc5ab906
     def __init__(self, *, threshold: float = None):
         self.applicable_feature_type = None
         self.metric_name = None

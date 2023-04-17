@@ -549,7 +549,7 @@ def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
 
 
 @singledispatch
-def from_iso_duration_format_days(duration: Optional[Any] = None) -> int: # pylint: disable=unused-argument
+def from_iso_duration_format_days(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
     return None
 
 
