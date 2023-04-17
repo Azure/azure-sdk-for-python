@@ -18,6 +18,7 @@ from azure.ai.ml._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
     TensorFlowDistributionSchema,
+    RayDistributionSchema,
 )
 from azure.ai.ml._schema.job.parameterized_command import ParameterizedCommandSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -35,6 +36,7 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
             NestedField(MPIDistributionSchema, unknown=INCLUDE),
             NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
             NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
+            NestedField(RayDistributionSchema, unknown=INCLUDE),
         ],
         metadata={"description": "Provides the configuration for a distributed run."},
     )

@@ -81,6 +81,33 @@ def tensorflow_distribution():
     return create_tensorflow_distribution
 
 
+@pytest.fixture
+def ray_distribution():
+    def create_ray_distribution(has_strs: bool = False):
+        # service returns component with stringified integer values
+        # need to do comparison with object returned by service with strings
+        # comparison with object in SDK is done with integer values
+        if not has_strs:
+            return {
+                "type": "ray",
+                "port": 1234,
+                "include_dashboard": True,
+                "dashboard_port": 4321,
+                "head_node_additional_args": "--disable-usage-stats",
+                "worker_node_additional_args": "--disable-usage-stats",
+            }
+        return {
+            "type": "ray",
+            "port": "1234",
+            "include_dashboard": "True",
+            "dashboard_port": "4321",
+            "head_node_additional_args": "--disable-usage-stats",
+            "worker_node_additional_args": "--disable-usage-stats",
+        }
+
+    return create_ray_distribution
+
+
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 

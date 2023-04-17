@@ -75,3 +75,28 @@ class PyTorchDistributionSchema(metaclass=PatchedSchemaMeta):
         if not isinstance(data, PyTorchDistribution):
             raise ValidationError("Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema")
         return data
+
+
+class RayDistributionSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(required=True, allowed_values=DistributionType.RAY)
+    port = fields.Int()
+    address = fields.Str()
+    include_dashboard = fields.Bool()
+    dashboard_port = fields.Int()
+    head_node_additional_args = fields.Str()
+    worker_node_additional_args = fields.Str()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml import RayDistribution
+
+        data.pop("type", None)
+        return RayDistribution(**data)
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml import RayDistribution
+
+        if not isinstance(data, RayDistribution):
+            raise ValidationError("Cannot dump non-RayDistribution object into RayDistributionSchema")
+        return data

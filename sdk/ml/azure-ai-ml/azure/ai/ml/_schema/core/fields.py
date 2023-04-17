@@ -667,6 +667,7 @@ def DistributionField(**kwargs):
         MPIDistributionSchema,
         PyTorchDistributionSchema,
         TensorFlowDistributionSchema,
+        RayDistributionSchema,
     )
 
     return UnionField(
@@ -674,6 +675,7 @@ def DistributionField(**kwargs):
             NestedField(PyTorchDistributionSchema, **kwargs),
             NestedField(TensorFlowDistributionSchema, **kwargs),
             NestedField(MPIDistributionSchema, **kwargs),
+            NestedField(RayDistributionSchema, **kwargs),
         ]
     )
 
