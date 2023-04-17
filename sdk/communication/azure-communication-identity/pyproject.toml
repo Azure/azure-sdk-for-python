@@ -3,13 +3,3 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
-
-[tool.coverage]
-    [tool.coverage.run]
-    omit = [
-        'azure/communication/identity/_generated/_serialization.py',
-        '*/_serialization.py'
-    ]
-
-    [tool.coverage.report]
-    skip_empty = true
