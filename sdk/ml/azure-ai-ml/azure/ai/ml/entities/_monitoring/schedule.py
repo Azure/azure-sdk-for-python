@@ -7,7 +7,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger
@@ -42,6 +42,7 @@ class MonitorSchedule(Schedule):
             **kwargs,
         )
         self.create_monitor = create_monitor
+        self._type = ScheduleType.MONITOR
 
     @classmethod
     def _load(

@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import SchedulePropertie
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
@@ -68,6 +68,7 @@ class Schedule(Resource):
         self.display_name = display_name
         self._is_enabled = is_enabled
         self._provisioning_state = provisioning_state
+        self._type = None
 
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
@@ -105,6 +106,15 @@ class Schedule(Resource):
         :rtype: str
         """
         return self._provisioning_state
+
+    @property
+    def type(self) -> str:
+        """Type of the schedule, supported are 'job' and 'monitor'.
+
+        :return: Type of the schedule.
+        :rtype: str
+        """
+        return self._type
 
 
 class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
@@ -148,6 +158,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             **kwargs,
         )
         self._create_job = create_job
+        self._type = ScheduleType.JOB
 
     @property
     def create_job(self):

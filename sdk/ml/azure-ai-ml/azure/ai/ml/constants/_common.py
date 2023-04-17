@@ -854,3 +854,8 @@ class InferenceServerType:
 class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "all"
     NONE = "none"
+
+
+class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JOB = "job"
+    MONITOR = "monitor"
