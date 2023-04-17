@@ -6,10 +6,12 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
+
+from dsl._util import get_predecessors
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -1383,9 +1385,9 @@ class TestPipelineJobEntity:
         job = load_job(test_path)
         result = job._validate()
         assert (
-            "jobs.hello_world.conf" in result.error_messages
+            "jobs.hello_world" in result.error_messages
             and "Should not specify min or max executors when dynamic allocation is disabled."
-            == result.error_messages["jobs.hello_world.conf"]
+            == result.error_messages["jobs.hello_world"]
         )
 
     def test_spark_node_in_pipeline_with_invalid_code(
@@ -1435,6 +1437,42 @@ class TestPipelineJobEntity:
             "type": "spark",
         }
         assert actual_dict == expected_dict
+
+    @pytest.mark.parametrize(
+        "test_path, error_messages",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
+                "Input 'file_input1' is using 'None' mode, only 'direct' is supported for Spark job",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
+                "Input 'input1' is using 'mount' mode, only 'direct' is supported for Spark job",
+            ),
+        ],
+    )
+    def test_spark_node_in_pipeline_with_invalid_input_mode(self, test_path, error_messages):
+        job = load_job(test_path)
+        result = job._validate()
+        assert error_messages == result.error_messages["jobs.hello_world"]
+
+    @pytest.mark.parametrize(
+        "test_path, error_messages",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml",
+                "Output 'output' is using 'None' mode, only 'direct' is supported for Spark job",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_output_mode.yml",
+                "Output 'output1' is using 'upload' mode, only 'direct' is supported for Spark job",
+            ),
+        ],
+    )
+    def test_spark_node_in_pipeline_with_invalid_output_mode(self, test_path, error_messages):
+        job = load_job(test_path)
+        result = job._validate()
+        assert error_messages == result.error_messages["jobs.hello_world"]
 
     def test_infer_pipeline_output_type_as_node_type(
         self,
@@ -2034,3 +2072,33 @@ class TestPipelineJobEntity:
         rest_obj = pipeline._to_rest_object()
         expect_resource = {"instance_count": "${{parent.inputs.integer}}", "shm_size": "${{parent.inputs.shm_size}}"}
         assert rest_obj.properties.jobs["component"]["resources"] == expect_resource
+
+    def test_pipeline_job_serverless_compute_with_job_tier(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
+        pipeline_job = load_job(yaml_path)
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
+
+    def test_pipeline_job_sweep_with_job_tier_in_pipeline(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/sweep_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        # for sweep job, its job_tier value will be lowercase due to its implementation,
+        # and service side shall accept both capital and lowercase, so it is expected for now.
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
+
+    def test_pipeline_job_automl_with_job_tier_in_pipeline(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        # similar to sweep job, automl job job_tier value is also lowercase.
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
+
+    def test_get_predecessors_for_pipeline_job(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+        # get_predecessors is not supported for YAML job
+        assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
+        assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
+        assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []

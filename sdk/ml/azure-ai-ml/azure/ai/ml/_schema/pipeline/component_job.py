@@ -8,46 +8,52 @@ import logging
 
 from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
 
-from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
-from azure.ai.ml._schema.component import (
+from ..._schema.assets.environment import AnonymousEnvironmentSchema
+from ..._schema.component import (
     AnonymousCommandComponentSchema,
+    AnonymousDataTransferCopyComponentSchema,
     AnonymousImportComponentSchema,
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
-    AnonymousDataTransferCopyComponentSchema,
     ComponentFileRefField,
+    DataTransferCopyComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
-    DataTransferCopyComponentFileRefField,
 )
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.input_output_entry import OutputSchema, DatabaseSchema, FileSystemSchema
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
-from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
-from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfigurationSchema
-from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType
-from azure.ai.ml.entities._inputs_outputs import Input
-
+from ..._utils.utils import is_data_binding_expression
+from ...constants._common import AzureMLResourceType
+from ...constants._component import DataTransferTaskType, NodeType
+from ...entities._inputs_outputs import Input
 from ...entities._job.pipeline._attr_dict import _AttrDict
 from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
-from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
+from ..core.fields import (
+    ArmVersionedStr,
+    ComputeField,
+    NestedField,
+    RegistryStr,
+    StringTransformedEnum,
+    TypeSensitiveUnionField,
+    UnionField,
+)
+from ..core.schema import PathAwareSchema
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
+from ..job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..job.input_output_entry import DatabaseSchema, FileSystemSchema, OutputSchema
+from ..job.input_output_fields_provider import InputsField
 from ..job.job_limits import CommandJobLimitsSchema
 from ..job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
 from ..job.services import (
     JobServiceSchema,
-    SshJobServiceSchema,
     JupyterLabJobServiceSchema,
-    VsCodeJobServiceSchema,
+    SshJobServiceSchema,
     TensorBoardJobServiceSchema,
+    VsCodeJobServiceSchema,
 )
+from ..pipeline.pipeline_job_io import OutputBindingStr
+from ..spark_resource_configuration import SparkResourceConfigurationSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -76,7 +82,11 @@ class BaseNodeSchema(PathAwareSchema):
         """Support serializing unknown fields for pipeline node."""
         if isinstance(original_data, _AttrDict):
             user_setting_attr_dict = original_data._get_attrs()
-            data.update(user_setting_attr_dict)
+            # TODO: dump _AttrDict values to serializable data like dict instead of original object
+            # skip fields that are already serialized
+            for key, value in user_setting_attr_dict.items():
+                if key not in data:
+                    data[key] = value
         return data
 
     # an alternative would be set schema property to be load_only, but sub-schemas like CommandSchema usually also

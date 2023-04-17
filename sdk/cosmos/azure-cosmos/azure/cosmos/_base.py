@@ -45,26 +45,12 @@ _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
     'pre_trigger_include': 'preTriggerInclude',
     'post_trigger_include': 'postTriggerInclude',
-    'max_item_count': 'maxItemCount',
     'access_condition': 'accessCondition',
-    'indexing_directive': 'indexingDirective',
-    'consistency_level': 'consistencyLevel',
     'session_token': 'sessionToken',
-    'enable_scan_in_query': 'enableScanInQuery',
     'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
-    'offer_type': 'offerType',
-    'offer_throughput': 'offerThroughput',
-    'partition_key': 'partitionKey',
-    'enable_cross_partition_query': 'enableCrossPartitionQuery',
-    'populate_query_metrics': 'populateQueryMetrics',
-    'enable_script_logging': 'enableScriptLogging',
     'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
     'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
-    'change_feed': 'changeFeed',
     'continuation': 'continuation',
-    'is_start_from_beginning': 'isStartFromBeginning',
-    'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
-    'populate_quota_info': 'populateQuotaInfo',
     'content_type': 'contentType',
     'is_query_plan_request': 'isQueryPlanRequest',
     'supported_query_features': 'supportedQueryFeatures',
@@ -241,6 +227,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
+        resource_type = _internal_resourcetype(resource_type)
         authorization = auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
@@ -751,3 +738,13 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
             new_throughput_properties["content"]["offerThroughput"] = throughput
         else:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
+
+
+def _internal_resourcetype(resource_type: str) -> str:
+    """Partitionkey is used as the resource type for deleting all items by partition key in
+    other SDKs, but the colls resource type needs to be sent for the feature to work. In order to keep it consistent
+    with other SDKs, we switch it here.
+    """
+    if resource_type.lower() ==  "partitionkey":
+        return "colls"
+    return resource_type

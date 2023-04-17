@@ -145,6 +145,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-07-01/examples/AzureFirewallPutWithMgmtSubnet.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-09-01/examples/AzureFirewallPutWithMgmtSubnet.json
 if __name__ == "__main__":
     main()

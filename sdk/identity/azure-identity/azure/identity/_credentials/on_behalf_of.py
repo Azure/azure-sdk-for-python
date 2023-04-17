@@ -87,7 +87,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         self._auth_record: Optional[AuthenticationRecord] = None
 
     @wrap_exceptions
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)

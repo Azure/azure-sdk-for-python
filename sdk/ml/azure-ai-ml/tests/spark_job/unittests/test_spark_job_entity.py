@@ -1,9 +1,9 @@
 import pytest
 
 from azure.ai.ml import Input, Output
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken, JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJobPythonEntry
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobPythonEntry
 from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._builders.spark_func import spark
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
@@ -469,7 +469,6 @@ class TestSparkJobEntity:
         assert spark_job_result.entry is None
 
     def test_spark_job_builder_serialization(self) -> None:
-
         node = spark(
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",

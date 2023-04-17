@@ -82,13 +82,13 @@ class TestDevContainerResolver:
         output_labels,
     ):
         devcontainer = DevContainerResolver(
-            image="ubuntu:18.04",
+            image="ubuntu:20.04",
             dockerfile_path="../Dockerfile",
             environment=environment,
             mounts=input_mounts,
             labels=input_labels,
         )
-        assert devcontainer._properties.get("image") == "ubuntu:18.04"
+        assert devcontainer._properties.get("image") == "ubuntu:20.04"
         assert devcontainer._properties.get("build") is None
         assert devcontainer._properties.get("containerEnv") == environment
         assert devcontainer._properties.get("mounts") == output_mounts

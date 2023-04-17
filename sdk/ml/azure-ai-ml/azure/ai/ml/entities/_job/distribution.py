@@ -6,13 +6,13 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DistributionConfiguration as RestDistributionConfiguration,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import DistributionType as RestDistributionType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Mpi as RestMpi
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PyTorch as RestPyTorch
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TensorFlow as RestTensorFlow
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DistributionType as RestDistributionType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi as RestMpi
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PyTorch as RestPyTorch
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as RestTensorFlow
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 

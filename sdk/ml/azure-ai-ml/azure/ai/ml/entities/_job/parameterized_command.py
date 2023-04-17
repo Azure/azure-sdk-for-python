@@ -9,7 +9,7 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SweepJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob
 from azure.ai.ml.entities._assets import Environment
 
 from ..._schema import NestedField, UnionField
@@ -100,5 +100,6 @@ class ParameterizedCommand:
             environment=sweep_job.trial.environment_id,
             distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
             resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
+            queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings),
         )
         return parameterized_command

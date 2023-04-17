@@ -6,7 +6,11 @@ Modern programs, especially programs running in a cloud, generally have many com
 
 Use the client library for App Configuration to create and manage application configuration settings.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration) | [Product documentation][appconfig_docs]
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration)
+| [Package (Pypi)][package]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-appconfiguration/)
+| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration)
+| [Product documentation][appconfig_docs]
 
 ## _Disclaimer_
 
@@ -283,18 +287,7 @@ async for item in config_settings:
 
 ## Troubleshooting
 
-### Logging
-
-This SDK uses Python standard logging library.
-You can configure logging print out debugging information to the stdout or anywhere you want.
-
-```python
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-````
-
-Http request and response details are printed to stdout with this logging config.
+See the [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
 
 ## Next steps
 
@@ -340,3 +333,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md

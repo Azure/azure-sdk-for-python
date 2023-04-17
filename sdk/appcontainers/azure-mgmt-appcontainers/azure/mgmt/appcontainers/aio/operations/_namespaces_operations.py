@@ -133,8 +133,8 @@ class NamespacesOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment. Required.
         :type environment_name: str
-        :param check_name_availability_request: The check name availability request. Is either a model
-         type or a IO type. Required.
+        :param check_name_availability_request: The check name availability request. Is either a
+         CheckNameAvailabilityRequest type or a IO type. Required.
         :type check_name_availability_request:
          ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

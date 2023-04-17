@@ -8,7 +8,7 @@ from azure.ai.ml.entities import (
     FeatureStore,
     Workspace,
 )
-from azure.ai.ml.operations import FeatureStoreOperations
+from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
 from azure.core.polling import LROPoller
 
 
@@ -52,9 +52,10 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation: FeatureStoreOperations,
         mocker: MockFixture,
     ):
-        mocker.patch("azure.ai.ml.operations.FeatureStoreOperations.get", return_value=None)
+        mocker.patch("azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations.FeatureStoreOperations._populate_arm_paramaters", return_value=({}, {}, {})
+            "azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations._populate_arm_paramaters",
+            return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))

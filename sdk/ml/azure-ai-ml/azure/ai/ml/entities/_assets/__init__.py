@@ -9,8 +9,8 @@ from ._artifacts.artifact import Artifact
 from ._artifacts.code import Code
 from ._artifacts.data import Data
 from ._artifacts.model import Model
-from ._artifacts.featureset import Featureset
 from .environment import Environment
+from ._artifacts._package.model_package import ModelPackage
 from .workspace_asset_reference import WorkspaceAssetReference
 
-__all__ = ["Artifact", "Model", "Code", "Data", "Environment", "Featureset", "WorkspaceAssetReference"]
+__all__ = ["Artifact", "Model", "Code", "Data", "Environment", "WorkspaceAssetReference", "ModelPackage"]
