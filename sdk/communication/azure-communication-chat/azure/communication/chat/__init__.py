@@ -7,7 +7,8 @@ from ._generated.models import (
     ChatMessageType,
     ChatError,
     ChatRetentionPolicy,
-    ThreadCreationDateRetentionPolicy
+    ThreadCreationDateRetentionPolicy,
+    Kind
 )
 
 from ._models import (
@@ -58,6 +59,7 @@ __all__ = [
     'PhoneNumberProperties',
     'MicrosoftTeamsUserIdentifier',
     'MicrosoftTeamsUserProperties',
-    'UnknownIdentifier'
+    'UnknownIdentifier',
+    'Kind'
 ]
 __version__ = VERSION
