@@ -7,8 +7,6 @@
 from marshmallow import fields, validate
 
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
-from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 
 from .artifact import ArtifactSchema
 from .asset import AnonymousAssetSchema
