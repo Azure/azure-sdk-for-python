@@ -5,11 +5,11 @@ import os
 import shutil
 import tempfile
 import zipfile
-import yaml
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Union, List
+import yaml
 
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType

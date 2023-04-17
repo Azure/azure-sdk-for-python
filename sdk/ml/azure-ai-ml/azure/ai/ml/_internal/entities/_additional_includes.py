@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import yaml
 from pathlib import Path
 from typing import Union
+import yaml
 
 from .code import InternalComponentIgnoreFile
 from ...entities._component._additional_includes import (
