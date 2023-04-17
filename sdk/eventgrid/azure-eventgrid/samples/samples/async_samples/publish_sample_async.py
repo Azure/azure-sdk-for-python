@@ -1,7 +1,7 @@
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid.aio import EventGridNamespaceClient
+from azure.eventgrid.aio import EventGridClient
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 from azure.core.exceptions import HttpResponseError
@@ -13,7 +13,7 @@ EG_ENDPOINT = os.environ.get("EG_ENDPOINT")
 TOPIC_NAME = os.environ.get("TOPIC_NAME")
 ES_NAME = os.environ.get("ES_NAME")
 
-client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 
 async def run():
     # Publish a CloudEvent

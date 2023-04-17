@@ -18,18 +18,18 @@
 
 # Async Create Client
 ```python
-    from azure.eventgrid.aio import EventGridNamespaceClient
+    from azure.eventgrid.aio import EventGridClient
 
     # Create a client
-    client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+    client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 ```
 
 # Sync Create Client
 ```python
-    from azure.eventgrid import EventGridNamespaceClient
+    from azure.eventgrid import EventGridClient
 
     # Create a client
-    client = EventGridNamespaceClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+    client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 ```
 
 # Publish Samples
