@@ -29,10 +29,10 @@ import plotly.express as px
 
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential, AzureCliCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential = AzureCliCredential()
+credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
 query = (
@@ -54,6 +54,7 @@ try:
         error = response.partial_error
         data = response.partial_data
         print(error)
+        print(data)
     elif response.status == LogsQueryStatus.SUCCESS:
         viz = response.visualization
 
@@ -77,8 +78,11 @@ try:
                 },
                 range_y=[0, viz["yMax"]]
             )
-            fig.show()
+            # Output visualization to a file.
+            fig.write_html('query-visualization.html')
+            # To open in a browser, use:
+            # fig.show()
 
 except HttpResponseError as err:
     print("something fatal happened")
-    print (err)
+    print(err)
