@@ -18,7 +18,7 @@ Cheat sheet for the Python SDK pylint general guidelines for your client library
 
 Pylint is a set of (mostly) [astroid](https://pylint.pycqa.org/projects/astroid/en/latest/index.html) based checkers that run static analysis on your code and check that your formatting aligns with Python's style guide (i.e [PEPs](https://peps.python.org/)). 
 
-In the Azure SDK for Python repository, in addition to the standard pylint library, we added custom checkers that help to align our libraries with the [Azure SDK for Python Guidelines](https://guidelinescollab.github.io/azure-sdk/python_introduction.html).
+In the Azure SDK for Python repository, in addition to the standard pylint library, we added custom checkers (azure-pylint-guidelines-checker) that help to align our libraries with the [Azure SDK for Python Guidelines](https://guidelinescollab.github.io/azure-sdk/python_introduction.html).
 
 ### How to run Pylint?
 
@@ -38,8 +38,6 @@ If you don't want to use tox, you can also install and run pylint on its own:
 
     Note that you may see different errors if running a different [version of pylint](https://github.com/Azure/azure-sdk-for-python/blob/fdf7c49ea760b1e1698ebbbac48794e8382d8de5/eng/tox/tox.ini#L90) than the one in CI.
   
-  - Additional information about custom checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
-
 
 # Ignoring Pylint Checkers
 
@@ -52,7 +50,7 @@ If you don't want to use tox, you can also install and run pylint on its own:
 
 # Pylint Warnings and Where to Find Them 
 
-Info on the custom pylint checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker).
+Information on the custom pylint checkers resides [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md). [This table](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md#rules-list), provides information on each custom check and how to resolve them. 
 
 In addition to being a part of the CI, the custom pylint checkers are also integrated into ApiView and will show as warnings there.
 
