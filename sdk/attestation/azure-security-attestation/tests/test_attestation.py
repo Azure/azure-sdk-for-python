@@ -313,7 +313,7 @@ class TestAttestation(AzureRecordedTestCase):
         payload = base64url_decode(_attest_tpm_payload)
         tpm_response = client.attest_tpm(payload)
 
-        decoded_response = json.loads(tpm_response.result)
+        decoded_response = json.loads(tpm_response.data)
         assert decoded_response["payload"] is not None
         payload = decoded_response["payload"]
         assert payload["challenge"] is not None
