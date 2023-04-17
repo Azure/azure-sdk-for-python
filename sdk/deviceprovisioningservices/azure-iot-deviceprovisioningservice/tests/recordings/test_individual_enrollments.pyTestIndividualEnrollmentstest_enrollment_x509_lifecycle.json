@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:41 GMT",
+        "Date": "Mon, 17 Apr 2023 22:03:59 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14939.4 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15175.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:41 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14939.4 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15049.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,12 +172,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "076a44e4-e64d-4279-8910-7bd208fea442",
+        "client-request-id": "21f4bb09-058f-4833-b94c-39a93f01d76e",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.3 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "076a44e4-e64d-4279-8910-7bd208fea442",
+        "client-request-id": "21f4bb09-058f-4833-b94c-39a93f01d76e",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:41 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:00 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.15049.5 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -213,66 +213,96 @@
       }
     },
     {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp_7ab53d3b?api-version=2021-10-01",
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/x509_enrollment_a94f4307?api-version=2021-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "400",
+        "Content-Length": "489",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
-        "enrollmentGroupId": "sym_enroll_grp_7ab53d3b",
+        "registrationId": "x509_enrollment_a94f4307",
         "attestation": {
-          "type": "symmetricKey",
-          "symmetricKey": {
-            "primaryKey": "primaryKey",
-            "secondaryKey": "secondaryKey"
+          "type": "x509",
+          "x509": {
+            "clientCertificates": {
+              "primary": {
+                "certificate": "certificate"
+              }
+            }
           }
         },
-        "allocationPolicy": "geoLatency",
+        "allocationPolicy": "hashed",
         "capabilities": null,
-        "provisioningStatus": null,
         "reprovisionPolicy": {
           "migrateDeviceData": true,
           "updateHubAssignment": true
         },
+        "customAllocationDefinition": null,
+        "provisioningStatus": "enabled",
+        "deviceId": "x509_device_a94f4307",
+        "optionalDeviceInformation": null,
         "iotHubs": null,
         "iotHubHostName": null,
-        "initialTwin": null,
-        "customAllocationDefinition": null
+        "initialTwin": null
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:41 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
-        "enrollmentGroupId": "sym_enroll_grp_7ab53d3b",
+        "registrationId": "x509_enrollment_a94f4307",
+        "deviceId": "x509_device_a94f4307",
         "attestation": {
-          "type": "symmetricKey",
-          "symmetricKey": {
-            "primaryKey": "primaryKey",
-            "secondaryKey": "secondaryKey"
+          "type": "x509",
+          "x509": {
+            "clientCertificates": {
+              "primary": {
+                "info": {
+                  "subjectName": "CN=enroll_cert_a94f4307",
+                  "sha1Thumbprint": "thumbprint",
+                  "sha256Thumbprint": "thumbprint",
+                  "issuerName": "CN=enroll_cert_a94f4307",
+                  "notBeforeUtc": "2023-04-17T22:04:00Z",
+                  "notAfterUtc": "2023-04-18T22:04:00Z",
+                  "serialNumber": "2333BEDB73548241EC7FEA4593961F18B0D607D3",
+                  "version": 3
+                }
+              },
+              "secondary": {
+                "info": {
+                  "subjectName": "CN=enroll_cert_a94f4307",
+                  "sha1Thumbprint": "thumbprint",
+                  "sha256Thumbprint": "thumbprint",
+                  "issuerName": "CN=enroll_cert_a94f4307",
+                  "notBeforeUtc": "2023-04-17T22:04:00Z",
+                  "notAfterUtc": "2023-04-18T22:04:00Z",
+                  "serialNumber": "2333BEDB73548241EC7FEA4593961F18B0D607D3",
+                  "version": 3
+                }
+              }
+            }
           }
         },
-        "etag": "IjNiMDBlYjljLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMxMDAwMCI=",
-        "provisioningStatus": null,
+        "etag": "IjQ4MDA0MTQyLTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUxMDAwMCI=",
+        "provisioningStatus": "enabled",
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-04-05T21:50:41.8353851Z",
-        "lastUpdatedDateTimeUtc": "2023-04-05T21:50:41.8353851Z",
-        "allocationPolicy": "geoLatency"
+        "createdDateTimeUtc": "2023-04-17T22:04:01.233047Z",
+        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:01.233047Z",
+        "allocationPolicy": "hashed"
       }
     },
     {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/query?api-version=2021-10-01",
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/query?api-version=2021-10-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -288,16 +318,16 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:41 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-item-type": "EnrollmentGroup"
+        "x-ms-item-type": "Enrollment"
       },
-      "ResponseBody": "[{\u0022enrollmentGroupId\u0022:\u0022sym_enroll_grp_7ab53d3b\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjNiMDBlYjljLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMxMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-05T21:50:41.8353851Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-05T21:50:41.8353851Z\u0022,\u0022allocationPolicy\u0022:\u0022geoLatency\u0022}]"
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022x509_enrollment_a94f4307\u0022,\u0022deviceId\u0022:\u0022x509_device_a94f4307\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022x509\u0022,\u0022x509\u0022:{\u0022clientCertificates\u0022:{\u0022primary\u0022:{\u0022info\u0022:{\u0022subjectName\u0022:\u0022CN=enroll_cert_a94f4307\u0022,\u0022sha1Thumbprint\u0022:\u0022thumbprint\u0022,\u0022sha256Thumbprint\u0022:\u0022thumbprint\u0022,\u0022issuerName\u0022:\u0022CN=enroll_cert_a94f4307\u0022,\u0022notBeforeUtc\u0022:\u00222023-04-17T22:04:00Z\u0022,\u0022notAfterUtc\u0022:\u00222023-04-18T22:04:00Z\u0022,\u0022serialNumber\u0022:\u00222333BEDB73548241EC7FEA4593961F18B0D607D3\u0022,\u0022version\u0022:3}},\u0022secondary\u0022:{\u0022info\u0022:{\u0022subjectName\u0022:\u0022CN=enroll_cert_a94f4307\u0022,\u0022sha1Thumbprint\u0022:\u0022thumbprint\u0022,\u0022sha256Thumbprint\u0022:\u0022thumbprint\u0022,\u0022issuerName\u0022:\u0022CN=enroll_cert_a94f4307\u0022,\u0022notBeforeUtc\u0022:\u00222023-04-17T22:04:00Z\u0022,\u0022notAfterUtc\u0022:\u00222023-04-18T22:04:00Z\u0022,\u0022serialNumber\u0022:\u00222333BEDB73548241EC7FEA4593961F18B0D607D3\u0022,\u0022version\u0022:3}}}}},\u0022etag\u0022:\u0022IjQ4MDA0MTQyLTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUxMDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022enabled\u0022,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-17T22:04:01.233047Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-17T22:04:01.233047Z\u0022,\u0022allocationPolicy\u0022:\u0022hashed\u0022}]"
     },
     {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp_7ab53d3b?api-version=2021-10-01",
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/x509_enrollment_a94f4307?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -309,112 +339,149 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
-        "enrollmentGroupId": "sym_enroll_grp_7ab53d3b",
-        "attestation": {
-          "type": "symmetricKey"
+        "registrationId": "x509_enrollment_a94f4307",
+        "deviceId": "x509_device_a94f4307",
+        "registrationState": {
+          "registrationId": "x509_enrollment_a94f4307",
+          "status": "unassigned"
         },
-        "etag": "IjNiMDBlYjljLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMxMDAwMCI=",
-        "provisioningStatus": null,
+        "attestation": {
+          "type": "x509",
+          "x509": {
+            "clientCertificates": {
+              "primary": {
+                "info": {
+                  "subjectName": "CN=enroll_cert_a94f4307",
+                  "sha1Thumbprint": "thumbprint",
+                  "sha256Thumbprint": "thumbprint",
+                  "issuerName": "CN=enroll_cert_a94f4307",
+                  "notBeforeUtc": "2023-04-17T22:04:00Z",
+                  "notAfterUtc": "2023-04-18T22:04:00Z",
+                  "serialNumber": "2333BEDB73548241EC7FEA4593961F18B0D607D3",
+                  "version": 3
+                }
+              },
+              "secondary": {
+                "info": {
+                  "subjectName": "CN=enroll_cert_a94f4307",
+                  "sha1Thumbprint": "thumbprint",
+                  "sha256Thumbprint": "thumbprint",
+                  "issuerName": "CN=enroll_cert_a94f4307",
+                  "notBeforeUtc": "2023-04-17T22:04:00Z",
+                  "notAfterUtc": "2023-04-18T22:04:00Z",
+                  "serialNumber": "2333BEDB73548241EC7FEA4593961F18B0D607D3",
+                  "version": 3
+                }
+              }
+            }
+          }
+        },
+        "etag": "IjQ4MDA0MTQyLTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUxMDAwMCI=",
+        "provisioningStatus": "enabled",
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-04-05T21:50:41.8353851Z",
-        "lastUpdatedDateTimeUtc": "2023-04-05T21:50:41.8353851Z",
-        "allocationPolicy": "geoLatency"
+        "createdDateTimeUtc": "2023-04-17T22:04:01.233047Z",
+        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:01.233047Z",
+        "allocationPolicy": "hashed"
       }
     },
     {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp_7ab53d3b/attestationmechanism?api-version=2021-10-01",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": {
-        "type": "symmetricKey",
-        "symmetricKey": {
-          "primaryKey": "primaryKey",
-          "secondaryKey": "secondaryKey"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp_7ab53d3b?api-version=2021-10-01",
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/x509_enrollment_a94f4307?api-version=2021-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "462",
+        "Content-Length": "553",
         "Content-Type": "application/json",
-        "If-Match": "IjNiMDBlYjljLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMxMDAwMCI=",
+        "If-Match": "IjQ4MDA0MTQyLTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUxMDAwMCI=",
         "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
-        "enrollmentGroupId": "sym_enroll_grp_7ab53d3b",
+        "registrationId": "x509_enrollment_a94f4307",
         "attestation": {
-          "type": "symmetricKey",
-          "symmetricKey": {
-            "primaryKey": "primaryKey",
-            "secondaryKey": "secondaryKey"
+          "type": "x509",
+          "x509": {
+            "clientCertificates": {
+              "primary": {
+                "certificate": "certificate"
+              }
+            }
           }
         },
         "allocationPolicy": "custom",
         "capabilities": null,
-        "provisioningStatus": "disabled",
         "reprovisionPolicy": {
           "migrateDeviceData": true,
           "updateHubAssignment": true
         },
-        "iotHubs": null,
-        "iotHubHostName": null,
-        "initialTwin": null,
         "customAllocationDefinition": {
           "webhookUrl": "https://www.test.test",
           "apiVersion": "2019-03-31"
-        }
+        },
+        "provisioningStatus": "disabled",
+        "deviceId": "x509_device_a94f4307",
+        "optionalDeviceInformation": null,
+        "iotHubs": null,
+        "iotHubHostName": null,
+        "initialTwin": null
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
-        "enrollmentGroupId": "sym_enroll_grp_7ab53d3b",
+        "registrationId": "x509_enrollment_a94f4307",
+        "deviceId": "x509_device_a94f4307",
         "attestation": {
-          "type": "symmetricKey",
-          "symmetricKey": {
-            "primaryKey": "primaryKey",
-            "secondaryKey": "secondaryKey"
+          "type": "x509",
+          "x509": {
+            "clientCertificates": {
+              "primary": {
+                "info": {
+                  "subjectName": "CN=enroll_cert_a94f4307",
+                  "sha1Thumbprint": "thumbprint",
+                  "sha256Thumbprint": "thumbprint",
+                  "issuerName": "CN=enroll_cert_a94f4307",
+                  "notBeforeUtc": "2023-04-17T22:04:00Z",
+                  "notAfterUtc": "2023-04-18T22:04:00Z",
+                  "serialNumber": "2333BEDB73548241EC7FEA4593961F18B0D607D3",
+                  "version": 3
+                }
+              },
+              "secondary": {
+                "info": {
+                  "subjectName": "CN=enroll_cert_a94f4307",
+                  "sha1Thumbprint": "thumbprint",
+                  "sha256Thumbprint": "thumbprint",
+                  "issuerName": "CN=enroll_cert_a94f4307",
+                  "notBeforeUtc": "2023-04-17T22:04:00Z",
+                  "notAfterUtc": "2023-04-18T22:04:00Z",
+                  "serialNumber": "2333BEDB73548241EC7FEA4593961F18B0D607D3",
+                  "version": 3
+                }
+              }
+            }
           }
         },
-        "etag": "IjNiMDAxMTlkLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMyMDAwMCI=",
+        "etag": "IjQ4MDA0MjQyLTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUxMDAwMCI=",
         "provisioningStatus": "disabled",
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-04-05T21:50:41.8353851Z",
-        "lastUpdatedDateTimeUtc": "2023-04-05T21:50:42.5360517Z",
+        "createdDateTimeUtc": "2023-04-17T22:04:01.233047Z",
+        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:01.4753145Z",
         "allocationPolicy": "custom",
         "customAllocationDefinition": {
           "webhookUrl": "https://www.test.test",
@@ -423,66 +490,25 @@
       }
     },
     {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp2_7ab53d3b?api-version=2021-10-01",
-      "RequestMethod": "PUT",
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/x509_enrollment_a94f4307?api-version=2021-10-01",
+      "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "418",
-        "Content-Type": "application/json",
+        "Content-Length": "0",
         "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": {
-        "enrollmentGroupId": "sym_enroll_grp2_7ab53d3b",
-        "attestation": {
-          "type": "symmetricKey",
-          "symmetricKey": {
-            "primaryKey": null,
-            "secondaryKey": null
-          }
-        },
-        "allocationPolicy": "custom",
-        "capabilities": null,
-        "provisioningStatus": null,
-        "reprovisionPolicy": null,
-        "iotHubs": null,
-        "iotHubHostName": null,
-        "initialTwin": null,
-        "customAllocationDefinition": {
-          "webhookUrl": "https://www.test.test",
-          "apiVersion": "2019-03-31"
-        }
-      },
-      "StatusCode": 200,
+      "RequestBody": null,
+      "StatusCode": 204,
       "ResponseHeaders": {
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked"
+        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
-      "ResponseBody": {
-        "enrollmentGroupId": "sym_enroll_grp2_7ab53d3b",
-        "attestation": {
-          "type": "symmetricKey",
-          "symmetricKey": {
-            "primaryKey": "primaryKey",
-            "secondaryKey": "secondaryKey"
-          }
-        },
-        "etag": "IjNiMDAxNjlkLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMyMDAwMCI=",
-        "provisioningStatus": null,
-        "createdDateTimeUtc": "2023-04-05T21:50:42.5948399Z",
-        "lastUpdatedDateTimeUtc": "2023-04-05T21:50:42.5948399Z",
-        "allocationPolicy": "custom",
-        "customAllocationDefinition": {
-          "webhookUrl": "https://www.test.test",
-          "apiVersion": "2019-03-31"
-        }
-      }
+      "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/query?api-version=2021-10-01",
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/query?api-version=2021-10-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -498,72 +524,11 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
+        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-item-type": "EnrollmentGroup"
-      },
-      "ResponseBody": "[{\u0022enrollmentGroupId\u0022:\u0022sym_enroll_grp_7ab53d3b\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjNiMDAxMTlkLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMyMDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022disabled\u0022,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-05T21:50:41.8353851Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-05T21:50:42.5360517Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}},{\u0022enrollmentGroupId\u0022:\u0022sym_enroll_grp2_7ab53d3b\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjNiMDAxNjlkLTAwMDAtMDgwMC0wMDAwLTY0MmRlZDMyMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022createdDateTimeUtc\u0022:\u00222023-04-05T21:50:42.5948399Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-05T21:50:42.5948399Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}}]"
-    },
-    {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp_7ab53d3b?api-version=2021-10-01",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 204,
-      "ResponseHeaders": {
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
-      },
-      "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/sym_enroll_grp2_7ab53d3b?api-version=2021-10-01",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 204,
-      "ResponseHeaders": {
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
-      },
-      "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/query?api-version=2021-10-01",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "21",
-        "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": {
-        "query": "SELECT *"
-      },
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:42 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-item-type": "EnrollmentGroup"
+        "x-ms-item-type": "Enrollment"
       },
       "ResponseBody": "[]"
     }

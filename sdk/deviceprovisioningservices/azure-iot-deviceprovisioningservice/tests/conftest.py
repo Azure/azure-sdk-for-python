@@ -120,8 +120,8 @@ def sdk_client() -> ProvisioningServiceClient:
 
 ProvisioningServicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "iothub",
-    iothub_dps_endpoint="fake-resource.azure-devices-provisioning.net",
-    iothub_dps_conn_str="HostName=mydps;SharedAccessKeyName=name;SharedAccessKey=value",
-    iothub_dps_idscope="IDSCOPE",
+    "deviceprovisioningservices",
+    deviceprovisioningservices_endpoint="fake-resource.azure-devices-provisioning.net",
+    deviceprovisioningservices_conn_str="HostName=mydps;SharedAccessKeyName=name;SharedAccessKey=value",
+    deviceprovisioningservices_idscope="IDSCOPE",
 )

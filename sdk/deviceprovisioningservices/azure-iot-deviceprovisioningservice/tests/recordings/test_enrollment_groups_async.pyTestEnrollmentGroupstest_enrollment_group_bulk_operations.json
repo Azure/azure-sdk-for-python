@@ -6,24 +6,24 @@
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "284",
+        "Content-Length": "189",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fazure-devices-provisioning.net%2F.default\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D",
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fazure-devices-provisioning.net%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:46 GMT",
+        "Date": "Mon, 17 Apr 2023 22:03:57 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.15175.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -46,7 +46,7 @@
       "RequestBody": {
         "enrollmentGroups": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "x509_enroll_grp_95514544",
             "attestation": {
               "type": "x509",
               "x509": {
@@ -70,7 +70,7 @@
             "customAllocationDefinition": null
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "sym_key_enroll_grp_95514544",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -96,7 +96,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:46 GMT",
+        "Date": "Mon, 17 Apr 2023 22:03:58 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -118,7 +118,7 @@
       "RequestBody": {
         "enrollmentGroups": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "x509_enroll_grp_95514544",
             "attestation": {
               "type": "x509",
               "x509": {
@@ -142,7 +142,7 @@
             "customAllocationDefinition": null
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "sym_key_enroll_grp_95514544",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -168,19 +168,19 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:46 GMT",
+        "Date": "Mon, 17 Apr 2023 22:03:58 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "errors": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "x509_enroll_grp_95514544",
             "errorCode": 409202,
             "errorStatus": "EnrollmentGroup already exists."
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "sym_key_enroll_grp_95514544",
             "errorCode": 409202,
             "errorStatus": "EnrollmentGroup already exists."
           }
@@ -201,7 +201,7 @@
       "RequestBody": {
         "enrollmentGroups": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "x509_enroll_grp_95514544",
             "attestation": {
               "type": "x509",
               "x509": {
@@ -225,7 +225,7 @@
             "customAllocationDefinition": null
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_3f273cd4",
+            "enrollmentGroupId": "sym_key_enroll_grp_95514544",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -251,7 +251,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Apr 2023 21:50:46 GMT",
+        "Date": "Mon, 17 Apr 2023 22:03:58 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },

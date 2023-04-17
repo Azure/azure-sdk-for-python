@@ -22,8 +22,8 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_enrollment_group_x509_lifecycle(self, iothub_dps_endpoint):
-        client = self.create_provisioning_service_client(iothub_dps_endpoint)
+    def test_enrollment_group_x509_lifecycle(self, deviceprovisioningservices_endpoint):
+        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
         enrollment_group_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
 
@@ -114,8 +114,8 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_enrollment_group_symmetrickey_lifecycle(self, iothub_dps_endpoint):
-        client = self.create_provisioning_service_client(iothub_dps_endpoint)
+    def test_enrollment_group_symmetrickey_lifecycle(self, deviceprovisioningservices_endpoint):
+        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
         attestation_type = "symmetricKey"
         enrollment_group_id = self.create_random_name("sym_enroll_grp_")
         primary_key = generate_key()
@@ -238,8 +238,8 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_enrollment_group_bulk_operations(self, iothub_dps_endpoint):
-        client = self.create_provisioning_service_client(iothub_dps_endpoint)
+    def test_enrollment_group_bulk_operations(self, deviceprovisioningservices_endpoint):
+        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
         eg1_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
 
