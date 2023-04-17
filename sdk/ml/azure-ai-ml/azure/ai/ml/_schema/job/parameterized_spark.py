@@ -63,26 +63,39 @@ class SparkConfSchema(metaclass=PatchedSchemaMeta):
     dynamic_allocation_min_executors = fields.Int()
     dynamic_allocation_max_executors = fields.Int()
 
+    conf = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                fields.Int(),
+                fields.Str(validate=validate.Regexp(re_memory_pattern)),
+                fields.Bool(),
+            ]
+        ),
+        unknown=INCLUDE,
+    )
+
     @pre_load
     def deserialize_field_names(self, data, **kwargs):
+        conf = {}
         for field_key, dict_key in CONF_KEY_MAP.items():
             value = data.get(dict_key, None)
             if dict_key in data and value is not None:
+                conf[field_key] = value
                 del data[dict_key]
-                data[field_key] = value
+        data["conf"] = conf
         return data
 
     @post_dump(pass_original=True)
     def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
         # pass original data here to dump conf fields which are not defined in SparkConfSchema
-        for field_name, _ in original_data.items():
-            if field_name not in data:
-                data[field_name] = original_data[field_name]
+        conf = data.get("conf", {})
         for field_name, dict_name in CONF_KEY_MAP.items():
-            val = data.get(field_name, None)
-            if field_name in data and val is not None:
-                del data[field_name]
-                data[dict_name] = val
+            val = conf.get(field_name, None)
+            if field_name in conf and val is not None:
+                conf[dict_name] = val
+                del conf[field_name]
+        data.update(conf)
         return data
 
 
