@@ -47,7 +47,7 @@ If you don't want to use tox, you can also install and run pylint on its own:
 
     `# pylint:disable=protected-access`  
     
-- (Not Recommended) The last way to disable a checker is by ignoring the entire package in the [pyproject.toml](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml) or as a temporary fix ignoring parts of the package via the [pylintrc `ignore-paths`](https://github.com/Azure/azure-sdk-for-python/blob/main/pylintrc) option. 
+- (Not Recommended) The last way to disable a checker is by ignoring the entire package in the [pyproject.toml](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml).
 
 
 # Pylint Warnings and Where to Find Them 
