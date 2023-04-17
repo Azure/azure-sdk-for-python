@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
 from azure.ai.ml._schema import SparkJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import SparkJob

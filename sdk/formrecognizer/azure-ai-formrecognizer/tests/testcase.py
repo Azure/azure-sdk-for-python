@@ -41,6 +41,9 @@ class FakeTokenCredential(object):
 class FormRecognizerTest(AzureRecordedTestCase):
 
     testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
+    annotations_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "annotations.jpg")
+    barcode_url_tif = _get_blob_url(testing_container_sas_url, "testingdata", "barcode2.tif")
+    formula_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "formula4.jpg")
     receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
     receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
     business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
@@ -124,6 +127,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert model.model_id == expected.model_id
         assert model.created_on == expected.created_date_time
         assert model.description == expected.description
+        assert model.expires_on == expected.expiration_date_time
 
         for name, field in model.doc_types.items():
             assert name in expected.doc_types
@@ -551,6 +555,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
             self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
             self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
+            assert key_value.common_name == expected.common_name
 
     def assertDocumentLanguagesTransformCorrect(self, transformed_languages, raw_languages, **kwargs):
         if transformed_languages == [] and not raw_languages:
@@ -729,6 +734,8 @@ class FormRecognizerTest(AzureRecordedTestCase):
             assert document_field.value == expected.value_country_region
         if field_type == "signature":
             assert document_field.value == expected.value_signature
+        if field_type == "boolean":
+            assert document_field.value == expected.value_boolean
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertDocumentFieldValueTransformCorrect(document_field.value[i], expected.value_array[i])

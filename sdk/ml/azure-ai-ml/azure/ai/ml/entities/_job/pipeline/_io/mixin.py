@@ -5,8 +5,8 @@
 import copy
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._util import copy_output_setting
@@ -159,7 +159,6 @@ class NodeIOMixin:
 
     @classmethod
     def _input_entity_to_rest_inputs(cls, input_entity: Dict[str, Input]) -> Dict[str, Dict]:
-
         # Convert io entity to rest io objects
         input_bindings, dataset_literal_inputs = process_sdk_component_job_io(
             input_entity, [ComponentJobConstants.INPUT_PATTERN]

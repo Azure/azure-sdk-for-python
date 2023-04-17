@@ -46,7 +46,7 @@ Network interfaces operations are defines in a [network interface file](https://
 
 Being that a given Swagger defines only *one* fixed API version, doing multi-api version in one package implies shipping several Swagger files into one package. This is archived by the `batch` directive of Autorest. More details on how to write Readme for Swagger in the specific page for it [swagger_conf.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger_conf.md).
 
-Python SDK team is responsible to design the correct set of tags to set for the `batch` node. Each line of the batch directive should contains only *one* api version to match the folder name used. this might require adding new tags in the readme.md that are specific to only one API version. These tags are usually suffixed by "-only" ([example with compute](https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager#tag-package-2019-03-01-only))
+Python SDK team is responsible to design the correct set of tags to set for the `batch` node. Each line of the batch directive should contains only *one* api version to match the folder name used. this might require adding new tags in the readme.md that are specific to only one API version. These tags are usually suffixed by "-only" ([example with compute](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/compute/resource-manager#tag-package-2019-03-01-only))
 
  In order to simplify this work, there is script called [multi_api_readme_help](https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/multi_api_readme_help.py) that will scan all the Swaggers of a given folder, and suggest:
 - a list of tags for the main readme.md
@@ -56,7 +56,7 @@ Note that this script is experimental, and the suggested output might need to be
 
 ### Azure profile
 
-An azure profile is an official, stamped by Microsoft, mapping between a set of resource types and the correct supported API versions. A profile is the only way right now to characterize a complete of set of ARM resources mapping together. Profiles are checked in in this place: https://github.com/Azure/azure-rest-api-specs/tree/master/profile
+An azure profile is an official, stamped by Microsoft, mapping between a set of resource types and the correct supported API versions. A profile is the only way right now to characterize a complete of set of ARM resources mapping together. Profiles are checked in in this place: https://github.com/Azure/azure-rest-api-specs/tree/main/profile
 
 ### Overview of a multi-api client
 
@@ -111,9 +111,9 @@ o
 
 ### One operation group is defined across several files.
 
-If this is the same API version, since they will be packed together that's ok (for instance [compute](https://github.com/Azure/azure-rest-api-specs/blob/master/specification/compute/resource-manager/Microsoft.Compute/stable/2019-03-01/compute.json) and [runcommands](https://github.com/Azure/azure-rest-api-specs/blob/master/specification/compute/resource-manager/Microsoft.Compute/stable/2019-03-01/runCommands.json) shares `VirtualMachines_` but exists always in the same API version)
+If this is the same API version, since they will be packed together that's ok (for instance [compute](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2019-03-01/compute.json) and [runcommands](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2019-03-01/runCommands.json) shares `VirtualMachines_` but exists always in the same API version)
 
-If this is not the same API version, then we need to bend the rules a little: we need to understand the intent, and decide which API version we use as folder to ship both (example: [ACR 2019-05-01](https://github.com/Azure/azure-rest-api-specs/blob/master/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2019-05-01/containerregistry.json) and [registry build 2019-06-01-preview](https://github.com/Azure/azure-rest-api-specs/tree/master/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2019-06-01-preview) are shipped as [2019-06-01-preview](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2019_06_01_preview) because they share `BuildRegistry_` operation group).
+If this is not the same API version, then we need to bend the rules a little: we need to understand the intent, and decide which API version we use as folder to ship both (example: [ACR 2019-05-01](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2019-05-01/containerregistry.json) and [registry build 2019-06-01-preview](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2019-06-01-preview) are shipped as [2019-06-01-preview](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2019_06_01_preview) because they share `BuildRegistry_` operation group).
 
 ## Possible improvements
 

@@ -9533,6 +9533,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -9583,6 +9587,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -9606,6 +9611,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9671,6 +9677,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
@@ -9694,6 +9704,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
@@ -10444,6 +10455,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -10486,6 +10501,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(
@@ -10508,6 +10524,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10571,6 +10588,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -10595,6 +10616,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes

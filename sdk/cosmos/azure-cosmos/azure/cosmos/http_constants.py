@@ -437,6 +437,7 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
+    PartitionKey = "partitionkey"
 
     @staticmethod
     def IsCollectionChild(resourceType):
@@ -448,4 +449,5 @@ class ResourceType(object):
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
             ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
         )
