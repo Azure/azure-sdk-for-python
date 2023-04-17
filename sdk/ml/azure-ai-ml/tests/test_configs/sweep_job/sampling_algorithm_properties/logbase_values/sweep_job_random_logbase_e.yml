@@ -1,7 +1,7 @@
 type: sweep
 sampling_algorithm:
   type: random
-  logbase: "e"
+  logbase: e
 search_space:
   lr:
     type: uniform
@@ -18,8 +18,8 @@ objective:
   primary_metric: accuracy
   goal: maximize
 trial:
-  command: python ./sweep_script.py --lr ${{search_space.lr}} --conv_size ${{search_space.conv_size}} --dropout_rate ${{search_space.dropout_rate}}
-  code: ../../python
+  command: python ../sweep_script.py --lr ${{search_space.lr}} --conv_size ${{search_space.conv_size}} --dropout_rate ${{search_space.dropout_rate}}
+  code: ../../../python
   environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 compute: azureml:cpu-cluster
 limits:

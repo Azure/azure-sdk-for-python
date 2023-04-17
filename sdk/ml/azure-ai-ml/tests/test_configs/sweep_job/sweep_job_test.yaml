@@ -1,7 +1,7 @@
 sampling_algorithm: 
   type: random
   seed: 3
-  logbase: "e"
+  logbase: e
 type: sweep
 experiment_name: sdk-cli-v2
 search_space:

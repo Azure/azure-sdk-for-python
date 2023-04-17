@@ -12521,7 +12521,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
     _attribute_map = {
         'sampling_algorithm_type': {'key': 'samplingAlgorithmType', 'type': 'str'},
-        "logbase": {"key": "logbase", "type": "str"},
+        'logbase': {'key': 'logbase', "type": 'str'},
         'rule': {'key': 'rule', 'type': 'str'},
         'seed': {'key': 'seed', 'type': 'int'},
     }
