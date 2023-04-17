@@ -5,6 +5,7 @@ import os
 import shutil
 import tempfile
 import zipfile
+import yaml
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import cpu_count
 from pathlib import Path
@@ -21,18 +22,15 @@ from ...entities._util import _general_copy
 
 
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
+ADDITIONAL_INCLUDES_KEY = "additional_includes"
+ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 
 
 class AdditionalIncludes:
-    def __init__(
-        self,
-        code_path: Union[None, str],
-        yaml_path: str,
-        additional_includes: List[Union[str, dict]],
-    ):
+    def __init__(self, code_path: Union[None, str], yaml_path: str, additional_includes: List[Union[str, dict]] = None):
         self._yaml_path = yaml_path
         self._code_path = code_path
-        self._additional_includes = additional_includes
+        self._additional_includes = additional_includes if additional_includes else []
 
         self._tmp_code_path = None
         self._includes = None
@@ -44,7 +42,7 @@ class AdditionalIncludes:
         return self._additional_includes
 
     @property
-    def code_path(self):
+    def code_path(self) -> Union[None, Path]:
         if self._code_path is not None:
             return (self.yaml_path.parent / self._code_path).resolve()
         return self._code_path
@@ -59,6 +57,10 @@ class AdditionalIncludes:
             # if yaml path is not specified, take working directory as root folder and use a not created temp file name
             return Path.cwd() / PLACEHOLDER_FILE_NAME
         return Path(self._yaml_path)
+
+    @property
+    def additional_includes_file_path(self) -> Path:
+        return self.yaml_path
 
     @property
     def yaml_name(self) -> str:
@@ -86,7 +88,7 @@ class AdditionalIncludes:
             if self.is_artifact_includes:
                 self._includes = self._load_artifact_additional_includes()
             else:
-                self._includes = self.additional_includes
+                self._includes = self.additional_includes if self.additional_includes else []
         return self._includes
 
     @property
@@ -145,65 +147,6 @@ class AdditionalIncludes:
             )
         return result
 
-    def _load_artifact_additional_includes(self):
-        """
-        Load the additional includes by yaml format.
-
-        Addition includes is a list of include files, such as local paths and Azure Devops Artifacts.
-        Yaml format of additional_includes likes below:
-            additional_includes:
-             - your/local/path
-             - type: artifact
-               organization: devops_organization
-               project: devops_project
-               feed: artifacts_feed_name
-               name: universal_package_name
-               version: package_version
-               scope: scope_type
-        If will get the artifacts package from devops to the local, and merge them with the local path into
-        additional include list. If there are files conflict in the artifacts, user error will be raised.
-
-        :return additional_includes: Path list of additional_includes
-        :rtype additional_includes: List[str]
-        """
-        self._artifact_validate_result = _ValidationResultBuilder.success()
-
-        # Load the artifacts config from additional_includes
-        additional_includes_configs = self.additional_includes
-
-        additional_includes, conflict_files = [], {}
-        # Unlike component registration, artifact downloading is a pure download progress; so we can use
-        # more threads to speed up the downloading process.
-        # We use 5 threads per CPU core plus 5 extra threads, and the max number of threads is 64.
-        num_threads = min(64, (int(cpu_count()) * 5) + 5)
-        if (
-            len(additional_includes_configs) > 1
-            and is_concurrent_component_registration_enabled()
-            and is_private_preview_enabled()
-        ):
-            with ThreadPoolExecutor(max_workers=num_threads) as executor:
-                for result in executor.map(self._resolve_additional_include_config, additional_includes_configs):
-                    for local_path, config_info in result:
-                        additional_includes.append(local_path)
-                        self.merge_local_path_to_additional_includes(
-                            local_path=local_path, config_info=config_info, conflict_files=conflict_files
-                        )
-        else:
-            for result in map(self._resolve_additional_include_config, additional_includes_configs):
-                for local_path, config_info in result:
-                    additional_includes.append(local_path)
-                    self.merge_local_path_to_additional_includes(
-                        local_path=local_path, config_info=config_info, conflict_files=conflict_files
-                    )
-
-        # Check the file conflict in local path and artifact package.
-        conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
-        if conflict_files:
-            self.artifact_validate_result.append_error(
-                message=f"There are conflict files in additional include: {conflict_files}"
-            )
-        return additional_includes
-
     @staticmethod
     def _copy(src: Path, dst: Path, *, ignore_file=None) -> None:
         if ignore_file and ignore_file.is_file_excluded(src):
@@ -244,7 +187,7 @@ class AdditionalIncludes:
 
     def _resolve_folder_to_compress(self, include: str, dst_path: Path, ignore_file: IgnoreFile) -> None:
         """resolve the zip additional include, need to compress corresponding folder."""
-        zip_additional_include = (self.yaml_path.parent / include).resolve()
+        zip_additional_include = (self.additional_includes_file_path.parent / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
@@ -262,86 +205,83 @@ class AdditionalIncludes:
             shutil.rmtree(self._tmp_code_path)
         self._tmp_code_path = None  # point code path back to real path
 
-    def resolve(self) -> None:
-        """Resolve code and potential additional includes.
-
-        If no additional includes is specified, just return and use
-        original real code path; otherwise, create a tmp folder and copy
-        all files under real code path and additional includes to it.
+    def _load_artifact_additional_includes(self):
         """
-        if not self.with_includes:
-            return
+        Load the additional includes by yaml format.
 
-        tmp_folder_path = Path(tempfile.mkdtemp())
-        # code can be either file or folder, as additional includes exists, need to copy to temporary folder
-        if self.code_path:
-            if Path(self.code_path).is_file():
-                # use a dummy ignore file to save base path
-                root_ignore_file = ComponentIgnoreFile(
-                    Path(self.code_path).parent,
-                    skip_ignore_file=True,
-                )
-                self._copy(
-                    Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file
-                )
-            else:
-                # current implementation of ignore file is based on absolute path, so it cannot be shared
-                root_ignore_file = ComponentIgnoreFile(
-                    self.code_path,
-                )
-                self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
+        Addition includes is a list of include files, such as local paths and Azure Devops Artifacts.
+        Yaml format of additional_includes likes below:
+            additional_includes:
+             - your/local/path
+             - type: artifact
+               organization: devops_organization
+               project: devops_project
+               feed: artifacts_feed_name
+               name: universal_package_name
+               version: package_version
+               scope: scope_type
+        If will get the artifacts package from devops to the local, and merge them with the local path into
+        additional include list. If there are files conflict in the artifacts, user error will be raised.
+
+        :return additional_includes: Path list of additional_includes
+        :rtype additional_includes: List[str]
+        """
+        self._artifact_validate_result = _ValidationResultBuilder.success()
+        additional_includes, conflict_files = [], {}
+
+        # Load the artifacts config from additional_includes
+        if self.additional_includes:
+            additional_includes_configs = self.additional_includes
+        elif (
+            self.additional_includes_file_path.exists()
+            and self.additional_includes_file_path.suffix == ADDITIONAL_INCLUDES_SUFFIX
+            and self.additional_includes_file_path.is_file()
+        ):
+            with open(self.additional_includes_file_path) as f:
+                additional_includes_configs = yaml.safe_load(f)
+                additional_includes_configs = additional_includes_configs.get(ADDITIONAL_INCLUDES_KEY, [])
         else:
-            root_ignore_file = ComponentIgnoreFile(
-                self.yaml_path.parent,
+            return additional_includes
+
+        # Unlike component registration, artifact downloading is a pure download progress; so we can use
+        # more threads to speed up the downloading process.
+        # We use 5 threads per CPU core plus 5 extra threads, and the max number of threads is 64.
+        num_threads = min(64, (int(cpu_count()) * 5) + 5)
+        if (
+            len(additional_includes_configs) > 1
+            and is_concurrent_component_registration_enabled()
+            and is_private_preview_enabled()
+        ):
+            with ThreadPoolExecutor(max_workers=num_threads) as executor:
+                for result in executor.map(self._resolve_additional_include_config, additional_includes_configs):
+                    for local_path, config_info in result:
+                        additional_includes.append(local_path)
+                        self.merge_local_path_to_additional_includes(
+                            local_path=local_path, config_info=config_info, conflict_files=conflict_files
+                        )
+        else:
+            for result in map(self._resolve_additional_include_config, additional_includes_configs):
+                for local_path, config_info in result:
+                    additional_includes.append(local_path)
+                    self.merge_local_path_to_additional_includes(
+                        local_path=local_path, config_info=config_info, conflict_files=conflict_files
+                    )
+
+        # Check the file conflict in local path and artifact package.
+        conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
+        if conflict_files:
+            self.artifact_validate_result.append_error(
+                message=f"There are conflict files in additional include: {conflict_files}"
             )
-
-        # additional includes
-        base_path = self.yaml_path.parent
-        # additional includes from artifact will be downloaded to a temp local path on calling
-        # self._includes, so no need to add specific logic for artifact
-
-        # copy additional includes disregarding ignore files as current ignore file implementation
-        # is based on absolute path, which is not suitable for additional includes
-        for additional_include in self._includes:
-            src_path = Path(additional_include)
-            if not src_path.is_absolute():
-                src_path = (base_path / additional_include).resolve()
-            dst_path = (tmp_folder_path / src_path.name).resolve()
-
-            root_ignore_file.rebase(src_path.parent)
-            if self._is_folder_to_compress(src_path):
-                self._resolve_folder_to_compress(
-                    additional_include,
-                    Path(tmp_folder_path),
-                    # actual src path is without .zip suffix
-                    ignore_file=root_ignore_file.merge(src_path.parent / src_path.stem),
-                )
-                # early continue as the folder is compressed as a zip file
-                continue
-
-            if not src_path.exists():
-                raise ValueError(f"Unable to find additional include {additional_include} for {self.yaml_name}.")
-
-            if src_path.is_file():
-                self._copy(src_path, dst_path, ignore_file=root_ignore_file)
-            if src_path.is_dir():
-                self._copy(
-                    src_path,
-                    dst_path,
-                    # root ignore file on parent + ignore file on src_path
-                    ignore_file=root_ignore_file.merge(src_path),
-                )
-
-        self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
-        return
+        return additional_includes
 
     def _validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         validation_result.merge_with(self.artifact_validate_result)
         if not self.with_includes:
             return validation_result
-        for additional_include in self._includes:
-            include_path = self.yaml_path.parent / additional_include
+        for additional_include in self.includes:
+            include_path = self.additional_includes_file_path.parent / additional_include
             # if additional include has not supported characters, resolve will fail and raise OSError
             try:
                 src_path = include_path.resolve()
@@ -377,3 +317,86 @@ class AdditionalIncludes:
                     )
                     validation_result.append_error(message=error_msg)
         return validation_result
+
+    def _resolve_code(self, tmp_folder_path):
+        """Resolve code when additional includes is specified.
+
+        create a tmp folder and copy all files under real code path to it.
+        """
+
+        # code can be either file or folder, as additional includes exists, need to copy to temporary folder
+        if self.code_path:
+            if Path(self.code_path).is_file():
+                # use a dummy ignore file to save base path
+                root_ignore_file = ComponentIgnoreFile(
+                    Path(self.code_path).parent,
+                    skip_ignore_file=True,
+                )
+                self._copy(
+                    Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file
+                )
+            else:
+                # current implementation of ignore file is based on absolute path, so it cannot be shared
+                root_ignore_file = ComponentIgnoreFile(
+                    self.code_path,
+                )
+                self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
+        else:
+            root_ignore_file = ComponentIgnoreFile(
+                self.yaml_path.parent,
+            )
+        return root_ignore_file
+
+    def resolve(self) -> None:
+        """Resolve code and potential additional includes.
+
+        If no additional includes is specified, just return and use
+        original real code path; otherwise, create a tmp folder and copy
+        all files under real code path and additional includes to it.
+        """
+        if not self.with_includes:
+            return
+
+        tmp_folder_path = Path(tempfile.mkdtemp())
+        root_ignore_file = self._resolve_code(tmp_folder_path)
+
+        # resolve additional includes
+        base_path = self.additional_includes_file_path.parent
+        # additional includes from artifact will be downloaded to a temp local path on calling
+        # self.includes, so no need to add specific logic for artifact
+
+        # TODO: skip ignored files defined in code when copying additional includes
+        # copy additional includes disregarding ignore files as current ignore file implementation
+        # is based on absolute path, which is not suitable for additional includes
+        for additional_include in self.includes:
+            src_path = Path(additional_include)
+            if not src_path.is_absolute():
+                src_path = (base_path / additional_include).resolve()
+            dst_path = (tmp_folder_path / src_path.name).resolve()
+
+            root_ignore_file.rebase(src_path.parent)
+            if self._is_folder_to_compress(src_path):
+                self._resolve_folder_to_compress(
+                    additional_include,
+                    Path(tmp_folder_path),
+                    # actual src path is without .zip suffix
+                    ignore_file=root_ignore_file.merge(src_path.parent / src_path.stem),
+                )
+                # early continue as the folder is compressed as a zip file
+                continue
+
+            if not src_path.exists():
+                raise ValueError(f"Unable to find additional include {additional_include} for {self.yaml_name}.")
+
+            if src_path.is_file():
+                self._copy(src_path, dst_path, ignore_file=root_ignore_file)
+            if src_path.is_dir():
+                self._copy(
+                    src_path,
+                    dst_path,
+                    # root ignore file on parent + ignore file on src_path
+                    ignore_file=root_ignore_file.merge(src_path),
+                )
+
+        self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
+        return

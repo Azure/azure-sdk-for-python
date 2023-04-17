@@ -23,7 +23,7 @@ from ...entities._system_data import SystemData
 from ...entities._util import convert_ordered_dict_to_dict
 from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
+from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _InternalAdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode, InternalComponentIgnoreFile
@@ -152,7 +152,7 @@ class InternalComponent(Component):
         if self.__additional_includes is None:
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
-            self.__additional_includes = _AdditionalIncludes(
+            self.__additional_includes = _InternalAdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
             )

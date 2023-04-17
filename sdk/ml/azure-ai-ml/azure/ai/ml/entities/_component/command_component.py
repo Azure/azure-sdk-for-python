@@ -286,7 +286,7 @@ class CommandComponent(Component, ParameterizedCommand):
             tmp_code_dir = (
                 self.additional_includes_obj.code.absolute()
                 if self.additional_includes_obj.code
-                else self.additional_includes_obj.yaml_path.absolute()
+                else self.additional_includes_obj._yaml_path.absolute()
             )
             rebased_ignore_file = ComponentIgnoreFile(
                 tmp_code_dir,

@@ -838,7 +838,7 @@ class TestCommandComponentEntity:
                 return str(artifact)
 
             with patch(
-                "azure.ai.ml._internal.entities._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
+                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
             ):
                 yaml_path = "./tests/test_configs/components/component_with_additional_includes/with_artifacts.yml"
                 component = load_component(source=yaml_path)

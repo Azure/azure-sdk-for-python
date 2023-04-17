@@ -726,9 +726,8 @@ class TestComponent:
                 return str(artifact)
 
             mocker.patch(
-                "azure.ai.ml._internal.entities._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
+                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
             )
-            from azure.ai.ml._internal.entities._artifact_cache import ArtifactCache
 
             yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
             component: InternalComponent = load_component(source=yaml_path)
