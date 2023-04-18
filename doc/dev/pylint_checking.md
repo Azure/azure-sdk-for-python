@@ -56,7 +56,7 @@ In addition to being a part of the CI, the custom pylint checkers are also integ
 
 ## Next Pylint
 
-There is now a new step on the CI pipeline called `Run Pylint Next`. This is merely a duplicate of the `Run Pylint` step with the exception that `Run Pylint Next` uses a newer version of pylint and a newer version of the custom pylint checkers.
+There is now a new step on the CI pipeline called `Run Pylint Next`. This is merely a duplicate of the `Run Pylint` step with the exception that `Run Pylint Next` uses the latest version of pylint and the latest version of the custom pylint checkers.
 
 This next-pylint enviornment can also be run locally through tox:
 
