@@ -39,6 +39,11 @@ from .models._models import (
     LeaveGroupMessage,
     AckMessageError,
     AckMap,
+    StartStoppingClientError,
+    StartClientError,
+    OpenWebSocketError,
+    StartNotStoppedClientError,
+    DisconnectedError,
 )
 from .models._enums import WebPubSubDataType, WebPubSubClientState, CallbackType, WebPubSubProtocolType
 from ._util import format_user_agent
@@ -163,6 +168,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             mode=message_retry_mode,
         )
         self._group_map: Dict[str, WebPubSubGroup] = {}
+        self._group_map_lock = threading.Lock()
         self._ack_map: AckMap = AckMap()
         self._sequence_id = SequenceId()
         self._state = WebPubSubClientState.STOPPED
@@ -200,7 +206,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
-            raise Exception("The connection is not connected.")
+            raise DisconnectedError("The connection is not connected.")
 
         self._ws.send(pay_load)
         if kwargs.pop("logging_enable", False) or self._logging_enable:
@@ -246,9 +252,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 )
 
     def _get_or_add_group(self, name: str) -> WebPubSubGroup:
-        if name not in self._group_map:
-            self._group_map[name] = WebPubSubGroup(name=name)
-        return self._group_map[name]
+        with self._group_map_lock:
+            if name not in self._group_map:
+                self._group_map[name] = WebPubSubGroup(name=name)
+            return self._group_map[name]
 
     def join_group(self, group_name: str, **kwargs: Any) -> None:
         """Join the client to group.
@@ -472,7 +479,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     if self._ws:
                         self._ws.close()
                 finally:
-                    raise Exception("The client is stopped")
+                    raise StartStoppingClientError("Can't start a client during stopping")
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
@@ -499,15 +506,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 if not self._is_initial_connected:
                     self._is_initial_connected = True
                     if self._auto_rejoin_groups:
-                        for group_name, group in self._group_map.items():
-                            if group.is_joined:
-                                try:
-                                    self._join_group_core(group_name)
-                                except Exception as e:  # pylint: disable=broad-except
-                                    self._call_back(
-                                        CallbackType.REJOIN_GROUP_FAILED,
-                                        OnRejoinGroupFailedArgs(group=group_name, error=e),
-                                    )
+                        with self._group_map_lock:
+                            for group_name, group in self._group_map.items():
+                                if group.is_joined:
+                                    try:
+                                        self._join_group_core(group_name)
+                                        _LOGGER.debug("rejoin group %s successfully", group_name)
+                                    except Exception as e:  # pylint: disable=broad-except
+                                        self._call_back(
+                                            CallbackType.REJOIN_GROUP_FAILED,
+                                            OnRejoinGroupFailedArgs(group=group_name, error=e),
+                                        )
 
                     self._call_back(
                         CallbackType.CONNECTED,
@@ -608,10 +617,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 self._handle_connection_close_and_no_recovery()
             else:
                 _LOGGER.debug("WebSocket closed before open")
-                raise Exception(f"Fail to start Websocket: {close_status_code}")
+                raise OpenWebSocketError(f"Fail to open Websocket: {close_status_code}")
 
         if self._is_stopping:
-            raise Exception("Can't start a client during stopping")
+            raise StartStoppingClientError("Can't start a client during stopping")
 
         self._ws = websocket.WebSocketApp(
             url=url,
@@ -628,7 +637,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         with self._cv:
             self._cv.wait(timeout=self._start_timeout)
         if not self._is_connected():
-            raise Exception("Fail to start client")
+            raise StartClientError("Fail to start client")
 
         # set thread to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol and (
@@ -646,6 +655,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
             self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically, daemon=True)
             self._thread_seq_ack.start()
+        
+        _LOGGER.info("connected successfully")
 
     def _start_core(self):
         self._state = WebPubSubClientState.CONNECTING
@@ -667,9 +678,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """start the client and connect to service"""
 
         if self._is_stopping:
-            raise Exception("Can't start a client during stopping")
+            raise StartStoppingClientError("Can't start a client during stopping")
         if self._state != WebPubSubClientState.STOPPED:
-            raise Exception("Client can be only started when it's Stopped")
+            raise StartNotStoppedClientError("Client can be only started when it's Stopped")
 
         try:
             self._start_core()

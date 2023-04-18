@@ -537,16 +537,17 @@ class SequenceId:
         self.sequence_id = 0
         self.is_update = False
 
+
 class AckMap:
     def __init__(self) -> None:
         self.ack_map: Dict[int, SendMessageErrorOptions] = {}
         self.lock = threading.Lock()
 
-    def add(self, ack_id: int, error_detail: AckMessageError) -> None:
+    def add(self, ack_id: int, options: SendMessageErrorOptions) -> None:
         with self.lock:
-            self.ack_map[ack_id] = SendMessageErrorOptions(ack_id, error_detail)
+            self.ack_map[ack_id] = options
 
-    def pop(self, ack_id: int) -> Optional[SendMessageErrorOptions]:
+    def pop(self, ack_id: int) -> None:
         with self.lock:
             self.ack_map.pop(ack_id, None)
 
@@ -560,3 +561,23 @@ class AckMap:
                 with self.ack_map[key].cv:
                     self.ack_map[key].cv.notify()
             self.ack_map.clear()
+
+
+class StartStoppingClientError(Exception):
+    """Exception raised when the client is stopping but users want to start it again"""
+
+
+class StartNotStoppedClientError(Exception):
+    """Exception raised when the client is not stopped completely"""
+
+
+class StartClientError(Exception):
+    """Exception raised when fail to start the client"""
+
+
+class OpenWebSocketError(Exception):
+    """Exception raised when fail to open the websocket"""
+
+
+class DisconnectedError(Exception):
+    """Exception raised when the client is not connected to the service."""

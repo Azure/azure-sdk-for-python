@@ -9,7 +9,7 @@ import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
-from azure.webpubsub.client.models import OnGroupDataMessageArgs
+from azure.webpubsub.client.models import OnGroupDataMessageArgs, StartNotStoppedClientError
 
 
 @pytest.mark.live_test_only
@@ -70,7 +70,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_duplicated_start(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
-        with pytest.raises(Exception):
+        with pytest.raises(StartNotStoppedClientError):
             with client:
                 client._start()
         assert not client._is_connected()
