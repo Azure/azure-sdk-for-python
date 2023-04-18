@@ -5,6 +5,7 @@ include =
 omit =
 	*/test*
 	env*
+	sdk/communication/**/_generated/_serialization.py 
 	*/_serialization.py
 
 [paths]
