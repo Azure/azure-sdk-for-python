@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import sys
 import logging
-from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple
+from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict
 import json
 import math
 import threading
@@ -536,3 +536,27 @@ class SequenceId:
     def reset(self):
         self.sequence_id = 0
         self.is_update = False
+
+class AckMap:
+    def __init__(self) -> None:
+        self.ack_map: Dict[int, SendMessageErrorOptions] = {}
+        self.lock = threading.Lock()
+
+    def add(self, ack_id: int, error_detail: AckMessageError) -> None:
+        with self.lock:
+            self.ack_map[ack_id] = SendMessageErrorOptions(ack_id, error_detail)
+
+    def pop(self, ack_id: int) -> Optional[SendMessageErrorOptions]:
+        with self.lock:
+            self.ack_map.pop(ack_id, None)
+
+    def get(self, ack_id: int) -> Optional[SendMessageErrorOptions]:
+        with self.lock:
+            return self.ack_map.get(ack_id)
+
+    def clear(self) -> None:
+        with self.lock:
+            for key in list(self.ack_map.keys()):
+                with self.ack_map[key].cv:
+                    self.ack_map[key].cv.notify()
+            self.ack_map.clear()

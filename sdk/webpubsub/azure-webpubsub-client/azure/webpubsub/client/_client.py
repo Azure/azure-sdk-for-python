@@ -38,6 +38,7 @@ from .models._models import (
     JoinGroupMessage,
     LeaveGroupMessage,
     AckMessageError,
+    AckMap,
 )
 from .models._enums import WebPubSubDataType, WebPubSubClientState, CallbackType, WebPubSubProtocolType
 from ._util import format_user_agent
@@ -51,7 +52,6 @@ else:
 
 
 class WebPubSubClientCredential:
-
     def __init__(self, client_access_url_provider: Union[str, Callable]) -> None:
         """
         Webpubsub client credential.
@@ -163,7 +163,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             mode=message_retry_mode,
         )
         self._group_map: Dict[str, WebPubSubGroup] = {}
-        self._ack_map: Dict[int, SendMessageErrorOptions] = {}
+        self._ack_map: AckMap = AckMap()
         self._sequence_id = SequenceId()
         self._state = WebPubSubClientState.STOPPED
         self._ack_id = 0
@@ -217,20 +217,29 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         message = message_provider(ack_id)
         # Unless receive ack message, we assume the message is not sent successfully.
-        if ack_id not in self._ack_map:
-            self._ack_map[ack_id] = SendMessageErrorOptions(
-                error_detail=AckMessageError(name="", message="Timeout while waiting for ack message.")
+        if not self._ack_map.get(ack_id):
+            self._ack_map.add(
+                ack_id,
+                SendMessageErrorOptions(
+                    error_detail=AckMessageError(name="", message="Timeout while waiting for ack message.")
+                ),
             )
         try:
             self._send_message(message, **kwargs)
         except Exception as e:
-            self._ack_map.pop(ack_id, None)
+            self._ack_map.pop(ack_id)
             raise e
 
-        message_ack = self._ack_map[ack_id]
+        message_ack = self._ack_map.get(ack_id)
+        if not message_ack:
+            raise SendMessageError(
+                message="Failed to send message.",
+                ack_id=ack_id,
+                error_detail=AckMessageError(name="", message="there may be disconnection during sending message."),
+            )
         with message_ack.cv:
             message_ack.cv.wait(self._ack_timeout)
-            self._ack_map.pop(ack_id, None)
+            self._ack_map.pop(ack_id)
             if message_ack.error_detail is not None:
                 raise SendMessageError(
                     message="Failed to send message.", ack_id=message_ack.ack_id, error_detail=message_ack.error_detail
@@ -456,12 +465,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             and self._ws.sock
         )
 
-    def _clear_ack_map(self):
-        for key in list(self._ack_map.keys()):
-            with self._ack_map[key].cv:
-                self._ack_map[key].cv.notify()
-            self._ack_map.pop(key, None)
-
     def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
             if self._is_stopping:
@@ -478,14 +481,15 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         def on_message(_: Any, data: str):
             def handle_ack_message(message: AckMessage):
-                if message.ack_id in self._ack_map:
+                ack_option = self._ack_map.get(message.ack_id)
+                if ack_option:
                     if not (message.success or (message.error and message.error.name == "Duplicate")):
-                        self._ack_map[message.ack_id].error_detail = message.error
+                        ack_option.error_detail = message.error
                     else:
-                        self._ack_map[message.ack_id].error_detail = None
-                    self._ack_map[message.ack_id].ack_id = message.ack_id
-                    with self._ack_map[message.ack_id].cv:
-                        self._ack_map[message.ack_id].cv.notify()
+                        ack_option.error_detail = None
+                    ack_option.ack_id = message.ack_id
+                    with ack_option.cv:
+                        ack_option.cv.notify()
 
             def handle_connected_message(message: ConnectedMessage):
                 _LOGGER.debug("WebSocket is connected with id: %s", message.connection_id)
@@ -566,7 +570,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
-                self._clear_ack_map()
+                self._ack_map.clear()
 
                 if self._is_stopping:
                     _LOGGER.warning("The client is stopping state. Stop recovery.")
