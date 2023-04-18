@@ -33,10 +33,6 @@ class UsernamePasswordCredential(InteractiveCredential):
         "organizations" tenant, which supports only Azure Active Directory work or school accounts.
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
-    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
-        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
-        for more WAM information.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
