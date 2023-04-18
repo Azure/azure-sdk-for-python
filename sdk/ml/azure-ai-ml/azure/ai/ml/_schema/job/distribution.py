@@ -10,6 +10,7 @@ from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml.constants import DistributionType
+from azure.ai.ml._utils._experimental import experimental
 
 from ..core.schema import PatchedSchemaMeta
 
@@ -77,6 +78,7 @@ class PyTorchDistributionSchema(metaclass=PatchedSchemaMeta):
         return data
 
 
+@experimental
 class RayDistributionSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(required=True, allowed_values=DistributionType.RAY)
     port = fields.Int()

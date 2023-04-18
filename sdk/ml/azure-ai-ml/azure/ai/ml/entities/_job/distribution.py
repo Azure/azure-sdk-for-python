@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as Res
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Ray as RestRay
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils._experimental import experimental
 
 SDK_TO_REST = {
     DistributionType.MPI: RestDistributionType.MPI,
@@ -118,6 +119,7 @@ class TensorFlowDistribution(DistributionConfiguration):
         return RestTensorFlow(parameter_server_count=self.parameter_server_count, worker_count=self.worker_count)
 
 
+@experimental
 class RayDistribution(DistributionConfiguration):
     """Ray distribution configuration.
 
