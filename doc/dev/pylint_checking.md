@@ -36,7 +36,7 @@ If you don't want to use tox, you can also install and run pylint on its own:
         .../azure-sdk-for-python>SET PYLINTRC="./pylintrc"
         .../azure-sdk-for-python>pylint ./sdk/eventgrid/azure-eventgrid
 
-    Note that you may see different errors if running a different [version of pylint](https://github.com/Azure/azure-sdk-for-python/blob/fdf7c49ea760b1e1698ebbbac48794e8382d8de5/eng/tox/tox.ini#L90) than the one in CI.
+    Note that you may see different errors if running a different [version of pylint or azure-pylint-guidelines-checker](https://github.com/Azure/azure-sdk-for-python/blob/fdf7c49ea760b1e1698ebbbac48794e8382d8de5/eng/tox/tox.ini#L90) than the one in CI.
   
 
 # Ignoring Pylint Checkers
