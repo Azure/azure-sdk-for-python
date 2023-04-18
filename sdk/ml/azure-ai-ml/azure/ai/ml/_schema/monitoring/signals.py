@@ -150,7 +150,9 @@ class FeatureAttributionDriftSignalSchema(ModelSignalSchema):
         from azure.ai.ml.entities._monitoring.signals import FeatureAttributionDriftSignal
 
         if not isinstance(data, FeatureAttributionDriftSignal):
-            raise ValidationError("Cannot dump non-FeatureAttributionDriftSignal object into FeatureAttributionDriftSignal")
+            raise ValidationError(
+                "Cannot dump non-FeatureAttributionDriftSignal object into FeatureAttributionDriftSignal"
+            )
         return data
 
     @post_load

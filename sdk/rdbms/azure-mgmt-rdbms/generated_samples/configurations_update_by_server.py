@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,22 +24,22 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.server_parameters.begin_list_update_configurations(
-        resource_group_name="TestGroup",
-        server_name="testserver",
+        resource_group_name="testrg",
+        server_name="mysqltestsvc1",
         value=[
-            {"name": "array_nulls", "properties": {"value": "on"}},
-            {"name": "backslash_quote", "properties": {"value": "on"}},
+            {"name": "event_scheduler", "properties": {"value": "OFF"}},
+            {"name": "div_precision_increment", "properties": {"value": "4"}},
         ],
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ConfigurationsUpdateByServer.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/stable/2017-12-01/examples/ConfigurationsUpdateByServer.json
 if __name__ == "__main__":
     main()

@@ -22,7 +22,7 @@ class TokenFileMixin:
         self._last_read_time = 0
         self._file = file
 
-    def get_service_account_token(self) -> str:
+    def _get_service_account_token(self) -> str:
         now = int(time.time())
         if now - self._last_read_time > 600:
             with open(self._file) as f:
@@ -70,7 +70,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         super(WorkloadIdentityCredential, self).__init__(
             tenant_id=tenant_id,
             client_id=client_id,
-            func=self.get_service_account_token,
+            func=self._get_service_account_token,
             file=file,
             **kwargs
         )

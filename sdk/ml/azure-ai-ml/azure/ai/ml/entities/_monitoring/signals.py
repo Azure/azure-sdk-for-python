@@ -196,7 +196,7 @@ class PredictionDriftSignal(MonitoringSignal):
 
     def _to_rest_object(self) -> RestPredictionDriftMonitoringSignal:
         return RestPredictionDriftMonitoringSignal(
-            model_type="classification", # hack this to a random value since the service ignores it and it's mislabled as a required property
+            model_type="classification",  # hack this to a random value since the service ignores it and it's mislabled as a required property
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],

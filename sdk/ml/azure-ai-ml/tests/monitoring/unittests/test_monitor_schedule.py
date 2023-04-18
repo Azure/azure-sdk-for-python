@@ -72,4 +72,3 @@ class TestMonitorSchedule:
         monitor_schedule = load_schedule(yaml_path)
 
         assert monitor_schedule._to_rest_object().as_dict() == deserialized_schedule.as_dict()
-
