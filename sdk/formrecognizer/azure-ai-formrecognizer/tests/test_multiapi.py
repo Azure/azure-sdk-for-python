@@ -182,20 +182,33 @@ class TestMultiapi(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
     @recorded_by_proxy
-    def test_v2022_08_31_dac_compatibility(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_v2022_08_31_dac_compatibility(self, client, **kwargs):
+
+        with open(self.multipage_table_pdf, "rb") as fd:
+            my_file = fd.read()
+        poller = client.begin_analyze_document("prebuilt-layout", my_file)
+        layout = poller.result()
+        assert len(layout.tables) == 3
+        assert layout.tables[0].row_count == 30
+        assert layout.tables[0].column_count == 5
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[2].row_count == 24
+        assert layout.tables[2].column_count == 5
+
         # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
 
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_document("prebuilt-layout", self.form_jpg, features=[AnalysisFeature.OCR_FONT])
+            client.begin_analyze_document("prebuilt-layout", my_file, features=[AnalysisFeature.OCR_FONT])
         assert "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
 
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_document("prebuilt-layout", self.form_jpg, query_fields=["Charges"])
+            client.begin_analyze_document("prebuilt-layout", my_file, query_fields=["Charges"])
         assert "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
 
         # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
         with pytest.raises(ValueError) as excinfo:
-            client.begin_classify_document("foo", self.form_jpg)
+            client.begin_classify_document("foo", my_file)
         assert (
                 "Method 'begin_classify_document()' is only available for API version "
                 "V2023_02_28_PREVIEW and later"
