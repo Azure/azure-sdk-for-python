@@ -139,7 +139,7 @@ class CommandComponent(Component, ParameterizedCommand):
                 error_category=ErrorCategory.USER_ERROR,
             )
         self.instance_count = instance_count
-        self.additional_includes = additional_includes
+        self.additional_includes = additional_includes or []
         self._additional_includes_obj = None
 
     @property
