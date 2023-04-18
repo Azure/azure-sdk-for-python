@@ -74,7 +74,7 @@ class SparkConfSchema(metaclass=PatchedSchemaMeta):
             if dict_key in data and value is not None:
                 conf[field_key] = value
                 del data[dict_key]
-        data["conf"] = conf
+        data = conf
         return data
 
     @post_dump(pass_original=True)
