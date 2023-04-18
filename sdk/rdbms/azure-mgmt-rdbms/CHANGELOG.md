@@ -6,8 +6,6 @@
 
   - Added operation group BackupAndExportOperations
 
-## 10.2.0b7 (2023-04-20)
-
 ### Breaking Changes
 
   - Renamed `SYSTEM_ASSIGNED` to `SYSTEM_MANAGED` in enum `ArmServerKeyType`
