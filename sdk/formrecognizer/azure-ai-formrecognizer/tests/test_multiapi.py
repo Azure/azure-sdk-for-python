@@ -17,12 +17,15 @@ from azure.ai.formrecognizer import (
     AnalysisFeature,
     DocumentAnalysisApiVersion,
     DocumentAnalysisClient,
-    DocumentModelAdministrationClient
+    DocumentModelAdministrationClient,
+    ClassifierDocumentTypeDetails,
+    AzureBlobContentSource
 )
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 
 class TestMultiapi(FormRecognizerTest):
@@ -218,5 +221,86 @@ class TestMultiapi(FormRecognizerTest):
             client.begin_classify_document_from_url("foo", self.form_url_jpg)
             assert (
                 "Method 'begin_classify_document_from_url()' is only available for API version "
+                "V2023_02_28_PREVIEW and later"
+            ) == str(excinfo.value)
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
+    @recorded_by_proxy
+    def test_v2022_08_31_dmac_compatibility(self, client, formrecognizer_storage_container_sas_url, formrecognizer_training_data_classifier, **kwargs):
+
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        model = poller.result()
+
+        assert model.model_id
+        assert model.description is None
+        assert model.created_on
+        for name, doc_type in model.doc_types.items():
+            assert name
+            for key, field in doc_type.field_schema.items():
+                assert key
+                assert field["type"]
+                assert doc_type.field_confidence[key] is not None
+
+        # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
+
+        with pytest.raises(ValueError) as excinfo:
+            client.list_document_classifiers()
+        assert (
+            "Method 'list_document_classifiers()' is only available for API version "
+            "V2023_02_28_PREVIEW and later") == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
+            client.begin_build_document_classifier(
+                        doc_types={
+                            "IRS-1040-A": ClassifierDocumentTypeDetails(
+                                azure_blob_source=AzureBlobContentSource(
+                                    container_url=formrecognizer_training_data_classifier,
+                                    prefix="IRS-1040-A/train"
+                                )
+                            ),
+                            "IRS-1040-B": ClassifierDocumentTypeDetails(
+                                azure_blob_source=AzureBlobContentSource(
+                                    container_url=formrecognizer_training_data_classifier,
+                                    prefix="IRS-1040-B/train"
+                                )
+                            ),
+                            "IRS-1040-C": ClassifierDocumentTypeDetails(
+                                azure_blob_source=AzureBlobContentSource(
+                                    container_url=formrecognizer_training_data_classifier,
+                                    prefix="IRS-1040-C/train"
+                                )
+                            ),
+                            "IRS-1040-D": ClassifierDocumentTypeDetails(
+                                azure_blob_source=AzureBlobContentSource(
+                                    container_url=formrecognizer_training_data_classifier,
+                                    prefix="IRS-1040-D/train"
+                                )
+                            ),
+                            "IRS-1040-E": ClassifierDocumentTypeDetails(
+                                azure_blob_source=AzureBlobContentSource(
+                                    container_url=formrecognizer_training_data_classifier,
+                                    prefix="IRS-1040-E/train"
+                                )
+                            ),
+                        },
+                        description="IRS document classifier"
+                    )
+        assert (
+            "Method 'begin_build_document_classifier()' is only available for API version "
+            "V2023_02_28_PREVIEW and later") == str(excinfo.value)
+
+        # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
+        with pytest.raises(ValueError) as excinfo:
+            client.get_document_classifier("foo")
+        assert (
+                "Method 'get_document_classifier()' is only available for API version "
+                "V2023_02_28_PREVIEW and later"
+            ) == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
+            client.delete_document_classifier("foo")
+            assert (
+                "Method 'delete_document_classifier()' is only available for API version "
                 "V2023_02_28_PREVIEW and later"
             ) == str(excinfo.value)
