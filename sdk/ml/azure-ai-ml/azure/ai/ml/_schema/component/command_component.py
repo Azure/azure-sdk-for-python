@@ -68,7 +68,10 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
         # remove empty properties to keep the component spec unchanged
         if not component_schema_dict.get("properties"):
             component_schema_dict.pop("properties", None)
-        if component_schema_dict.get("additional_includes") is not None and len(component_schema_dict["additional_includes"]) == 0:
+        if (
+            component_schema_dict.get("additional_includes") is not None
+            and len(component_schema_dict["additional_includes"]) == 0
+        ):
             component_schema_dict.pop("additional_includes")
         return component_schema_dict
 
