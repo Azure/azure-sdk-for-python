@@ -18,7 +18,7 @@ Cheat sheet for the Python SDK pylint general guidelines for your client library
 
 Pylint is a set of (mostly) [astroid](https://pylint.pycqa.org/projects/astroid/en/latest/index.html) based checkers that run static analysis on your code and check that your formatting aligns with Python's style guide (i.e [PEPs](https://peps.python.org/)). 
 
-In the Azure SDK for Python repository, in addition to the standard pylint library, there are also custom checkers, within the azure-pylint-guidelines-checker package, that help to customize our libraries to the standards described in the [Azure SDK for Python Guidelines](https://guidelinescollab.github.io/azure-sdk/python_introduction.html).
+In the Azure SDK for Python repository, in addition to the standard pylint library, there are also custom checkers within the azure-pylint-guidelines-checker package that help to customize our libraries to the standards described in the [Azure SDK for Python Guidelines](https://guidelinescollab.github.io/azure-sdk/python_introduction.html).
 
 ## How to run Pylint?
 
