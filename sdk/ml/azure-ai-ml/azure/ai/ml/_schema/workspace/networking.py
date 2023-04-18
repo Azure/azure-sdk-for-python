@@ -39,7 +39,7 @@ class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
 
 @experimental
 class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
-    name = fields.Str()
+    name = fields.Str(required=True)
     type = StringTransformedEnum(
         allowed_values=[OutboundRuleType.FQDN, OutboundRuleType.PRIVATE_ENDPOINT, OutboundRuleType.SERVICE_TAG],
         casing_transform=camel_to_snake,
