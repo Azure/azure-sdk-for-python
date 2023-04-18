@@ -447,7 +447,7 @@ class YAMLRefDocLinks:
     BATCH_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-batch-yaml-reference"
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
-    SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    JOB_SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
@@ -504,8 +504,8 @@ class YAMLRefDocSchemaNames:
     """Command component."""
     PARALLEL_COMPONENT = "ParallelComponent"
     """Parallel component."""
-    SCHEDULE = "Schedule"
-    """Schedule."""
+    JOB_SCHEDULE = "JobSchedule"
+    """Job Schedule."""
 
 
 class DockerTypes:
@@ -858,3 +858,8 @@ class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
+
+
+class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JOB = "job"
+    MONITOR = "monitor"

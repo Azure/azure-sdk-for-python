@@ -5,14 +5,14 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     LearningRateScheduler,
     MLTableJobInput,
     SamplingAlgorithmType,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import image_classification_multilabel
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input

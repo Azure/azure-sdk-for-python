@@ -23,8 +23,8 @@ from ._storage_utils import AzureMLDatastorePathUri
 from .utils import load_yaml
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
-    from azure.ai.ml.operations._feature_store_entity_operations import _FeatureStoreEntityOperations
+    from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
+    from azure.ai.ml.operations._feature_store_entity_operations import FeatureStoreEntityOperations
 
 
 def read_feature_set_metadata_contents(*, path: str) -> Dict:
@@ -52,7 +52,7 @@ def read_remote_feature_set_spec_metadata_contents(
 
 
 def _archive_or_restore(
-    asset_operations: Union["_FeatureSetOperations", "_FeatureStoreEntityOperations"],
+    asset_operations: Union["FeatureSetOperations", "FeatureStoreEntityOperations"],
     version_operation: Union[
         "FeaturesetVersionsOperations",
         "FeaturestoreEntityVersionsOperations",

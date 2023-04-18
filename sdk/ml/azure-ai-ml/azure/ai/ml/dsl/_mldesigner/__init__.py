@@ -42,5 +42,5 @@ __all__ = [
     "V1_COMPONENT_TO_NODE",
     "try_enable_internal_components",
     "_InternalAdditionalIncludes",
-    "InternalComponent"
+    "InternalComponent",
 ]

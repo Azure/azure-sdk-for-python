@@ -6,10 +6,10 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, TaskType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TextNer as RestTextNER
-from azure.ai.ml._restclient.v2023_02_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TextNer as RestTextNER
+from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
