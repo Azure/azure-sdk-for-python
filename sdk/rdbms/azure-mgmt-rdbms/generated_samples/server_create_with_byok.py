@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python server_create_with_data_encryption_enabled.py
+    python server_create_with_byok.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,48 +24,46 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.servers.begin_create(
         resource_group_name="testrg",
-        server_name="pgtestsvc4",
+        server_name="mysqltestserver",
         parameters={
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-usermanagedidentity": {}
+                    "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity": {}
                 },
             },
-            "location": "westus",
+            "location": "southeastasia",
             "properties": {
                 "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "password",
+                "administratorLoginPassword": "your_password",
                 "availabilityZone": "1",
                 "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
-                "createMode": "Create",
+                "createMode": "Default",
                 "dataEncryption": {
-                    "primaryKeyURI": "https://test-kv.vault.azure.net/keys/test-key1/77f57315bab34b0189daa113fbc78787",
-                    "primaryUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testresourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-usermanagedidentity",
+                    "geoBackupKeyURI": "https://test-geo.vault.azure.net/keys/key/c8a92236622244c0a4fdb892666f671a",
+                    "geoBackupUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-geo-identity",
+                    "primaryKeyURI": "https://test.vault.azure.net/keys/key/c8a92236622244c0a4fdb892666f671a",
+                    "primaryUserAssignedIdentityId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity",
                     "type": "AzureKeyVault",
                 },
-                "highAvailability": {"mode": "ZoneRedundant"},
-                "network": {
-                    "delegatedSubnetResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-vnet-subnet",
-                    "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
-                },
-                "storage": {"storageSizeGB": 512},
-                "version": "12",
+                "highAvailability": {"mode": "ZoneRedundant", "standbyAvailabilityZone": "3"},
+                "storage": {"autoGrow": "Disabled", "iops": 600, "storageSizeGB": 100},
+                "version": "5.7",
             },
-            "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
-            "tags": {"ElasticServer": "1"},
+            "sku": {"name": "Standard_D2ds_v4", "tier": "GeneralPurpose"},
+            "tags": {"num": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2022-12-01/examples/ServerCreateWithDataEncryptionEnabled.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2022-09-30-preview/examples/ServerCreateWithBYOK.json
 if __name__ == "__main__":
     main()

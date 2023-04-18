@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python capabilities_by_location.py
+    python configurations_batch_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,18 +24,25 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.location_based_capabilities.execute(
-        location_name="westus",
-    )
-    for item in response:
-        print(item)
+    response = client.configurations.begin_batch_update(
+        resource_group_name="testrg",
+        server_name="mysqltestserver",
+        parameters={
+            "resetAllToDefault": "False",
+            "value": [
+                {"name": "event_scheduler", "properties": {"value": "OFF"}},
+                {"name": "div_precision_increment", "properties": {"value": "8"}},
+            ],
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2022-12-01/examples/CapabilitiesByLocation.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/Configurations/preview/2021-12-01-preview/examples/ConfigurationsBatchUpdate.json
 if __name__ == "__main__":
     main()
