@@ -15,11 +15,15 @@ class ComponentIgnoreFile(IgnoreFile):
         self,
         directory_path: Union[str, Path],
         *,
+        additional_includes_file_name: Optional[str] = None,
         skip_ignore_file: bool = False,
         extra_ignore_list: Optional[List[IgnoreFile]] = None,
     ):
         self._base_path = Path(directory_path)
         self._extra_ignore_list: List[IgnoreFile] = extra_ignore_list or []
+        # only the additional include file in root directory is ignored
+        # additional include files in subdirectories are not processed so keep them
+        self._additional_includes_file_name = additional_includes_file_name
         # note: the parameter changes to directory path in this class, rather than file path
         file_path = None if skip_ignore_file else get_ignore_file(directory_path).path
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
@@ -39,6 +43,9 @@ class ComponentIgnoreFile(IgnoreFile):
         return self
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+        """Override to add custom ignores for internal component."""
+        if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
+            return True
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):
                 return True

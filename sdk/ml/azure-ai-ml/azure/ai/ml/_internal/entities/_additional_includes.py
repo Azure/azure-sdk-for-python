@@ -6,12 +6,12 @@ from pathlib import Path
 from typing import Union
 import yaml
 
-from .code import InternalComponentIgnoreFile
 from ...entities._component._additional_includes import (
     AdditionalIncludes,
     ADDITIONAL_INCLUDES_KEY,
     ADDITIONAL_INCLUDES_SUFFIX,
 )
+from ...entities._component.code import ComponentIgnoreFile
 
 
 class _InternalAdditionalIncludes(AdditionalIncludes):
@@ -68,7 +68,7 @@ class _InternalAdditionalIncludes(AdditionalIncludes):
         # code can be either file or folder, as additional includes exists, need to copy to temporary folder
         if Path(self.code_path).is_file():
             # use a dummy ignore file to save base path
-            root_ignore_file = InternalComponentIgnoreFile(
+            root_ignore_file = ComponentIgnoreFile(
                 Path(self.code_path).parent,
                 additional_includes_file_name=self.additional_includes_file_path.name,
                 skip_ignore_file=True,
@@ -76,7 +76,7 @@ class _InternalAdditionalIncludes(AdditionalIncludes):
             self._copy(Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file)
         else:
             # current implementation of ignore file is based on absolute path, so it cannot be shared
-            root_ignore_file = InternalComponentIgnoreFile(
+            root_ignore_file = ComponentIgnoreFile(
                 self.code_path,
                 additional_includes_file_name=self.additional_includes_file_path.name,
             )
