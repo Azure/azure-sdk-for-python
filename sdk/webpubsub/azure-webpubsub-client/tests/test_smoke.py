@@ -8,7 +8,7 @@ from typing import List, Any
 import time
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
+from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, on_group_message, TEST_RESULT
 from azure.webpubsub.client.models import OnGroupDataMessageArgs, StartNotStoppedClientError
 
 
@@ -90,3 +90,27 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with client:
             # please register event handler in azure portal before run this test
             client.send_event("event", "test_send_event", "text")
+
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_rejoin_group(self, webpubsubclient_connection_string):
+        def _test(enable_auto_rejoin, test_group_name, assert_func):
+            client = self.create_client(
+                connection_string=webpubsubclient_connection_string, auto_rejoin_groups=enable_auto_rejoin
+            )
+            group_name = test_group_name
+            client.on("group-message", on_group_message)
+            with client:
+                client.join_group(group_name)
+
+            with client:
+                client.send_to_group(group_name, "test_rejoin_group", "text")
+                time.sleep(1)  # wait for on_group_message to be called
+                assert assert_func(test_group_name)
+
+        _test(enable_auto_rejoin=True, test_group_name="test_rejoin_group", assert_func=lambda x: x in TEST_RESULT)
+        _test(
+            enable_auto_rejoin=False,
+            test_group_name="test_disable_rejoin_group",
+            assert_func=lambda x: x not in TEST_RESULT,
+        )

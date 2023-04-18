@@ -244,6 +244,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 error_detail=AckMessageError(name="", message="there may be disconnection during sending message."),
             )
         with message_ack.cv:
+            _LOGGER.debug("wait for ack message with ackId: %s", ack_id)
             message_ack.cv.wait(self._ack_timeout)
             self._ack_map.pop(ack_id)
             if message_ack.error_detail is not None:
@@ -472,6 +473,20 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             and self._ws.sock
         )
 
+    def _rejoin_group(self, group_name: str):
+        def _rejoin_group():
+            try:
+                self._join_group_core(group_name)
+                _LOGGER.debug("rejoin group %s successfully", group_name)
+            except Exception as e:  # pylint: disable=broad-except
+                _LOGGER.debug("fail to rejoin group %s", group_name)
+                self._call_back(
+                    CallbackType.REJOIN_GROUP_FAILED,
+                    OnRejoinGroupFailedArgs(group=group_name, error=e),
+                )
+        threading.Thread(target=_rejoin_group, daemon=True).start()
+
+
     def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
             if self._is_stopping:
@@ -495,6 +510,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     else:
                         ack_option.error_detail = None
                     ack_option.ack_id = message.ack_id
+                    _LOGGER.debug("Ack message received. Ack id is : %d", message.ack_id)
                     with ack_option.cv:
                         ack_option.cv.notify()
 
@@ -509,14 +525,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                         with self._group_map_lock:
                             for group_name, group in self._group_map.items():
                                 if group.is_joined:
-                                    try:
-                                        self._join_group_core(group_name)
-                                        _LOGGER.debug("rejoin group %s successfully", group_name)
-                                    except Exception as e:  # pylint: disable=broad-except
-                                        self._call_back(
-                                            CallbackType.REJOIN_GROUP_FAILED,
-                                            OnRejoinGroupFailedArgs(group=group_name, error=e),
-                                        )
+                                    self._rejoin_group(group_name)
 
                     self._call_back(
                         CallbackType.CONNECTED,

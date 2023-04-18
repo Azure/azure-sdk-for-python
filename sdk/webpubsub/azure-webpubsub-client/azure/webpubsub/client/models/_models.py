@@ -558,6 +558,7 @@ class AckMap:
     def clear(self) -> None:
         with self.lock:
             for key in list(self.ack_map.keys()):
+                _LOGGER.debug("clear ack map with ack id: %s", key)
                 with self.ack_map[key].cv:
                     self.ack_map[key].cv.notify()
             self.ack_map.clear()

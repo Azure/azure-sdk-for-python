@@ -33,6 +33,7 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
             client.on("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close the connection to trigger auto connect
+            time.sleep(3)  # wait for reconnect
             client.send_to_group(group_name, name, "text")
             time.sleep(1)  # wait for on_group_message to be called
             conn_id1 = client._connection_id
