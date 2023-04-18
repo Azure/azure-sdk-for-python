@@ -15,7 +15,7 @@ from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._schema.core.fields import NestedField, UnionField
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -251,7 +251,7 @@ class Command(BaseNode):
                     NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
                     NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
                     NestedField(MPIDistributionSchema, unknown=INCLUDE),
-                    NestedField(RayDistributionSchema, unknown=INCLUDE),
+                    ExperimentalField(NestedField(RayDistributionSchema, unknown=INCLUDE)),
                 ]
             )
             value = dist_schema._deserialize(value=value, attr=None, data=None)
