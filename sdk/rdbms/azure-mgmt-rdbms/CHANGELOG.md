@@ -1,6 +1,10 @@
 # Release History
 
-## 10.2.0b7 (2023-04-20)
+## 10.2.0b7 (2023-04-18)
+
+### Features Added
+
+  - Added operation group BackupAndExportOperations
 
 ### Breaking Changes
 
