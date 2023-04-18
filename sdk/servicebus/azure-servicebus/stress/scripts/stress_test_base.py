@@ -25,12 +25,9 @@ from logger import get_logger
 from app_insights_metric import AbstractMonitorMetric
 from process_monitor import ProcessMonitor
 
-LOGFILE_NAME = os.environ.get("DEBUG_SHARE")
-# LOGFILE_NAME = None
+LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "output"
 PRINT_CONSOLE = True
-
-_logger = get_logger(LOGFILE_NAME, "stress_test", logging.INFO)
-# _logger = get_logger(None, "stress_test", level=logging.INFO, print_console=PRINT_CONSOLE)
+_logger = get_logger(LOGFILE_NAME, "stress_test", logging.DEBUG)
 
 
 class ReceiveType:
@@ -60,7 +57,6 @@ class StressTestRunnerState(object):
         self.total_received = 0
         self.cpu_percent = None
         self.memory_bytes = None
-        self.memory_percent = None
         self.timestamp = None
         self.exceptions = []
 
@@ -72,7 +68,6 @@ class StressTestRunnerState(object):
         try:
             self.cpu_percent = psutil.cpu_percent()
             self.memory_bytes = psutil.virtual_memory().percent
-            self.memory_percent = monitor.memory_usage_percent
         except NameError:
             return  # psutil was not installed, fall back to simply not capturing these stats.
 
@@ -233,7 +228,7 @@ class StressTestRunner:
             raise
 
     def _receive(self, receiver, end_time):
-        # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.INFO, print_console=PRINT_CONSOLE)
+        # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.DEBUG, print_console=PRINT_CONSOLE)
         self._schedule_interval_logger(end_time, "Receiver " + str(self))
         delivery_ids = []
         try:
