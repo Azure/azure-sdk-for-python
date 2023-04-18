@@ -12,11 +12,11 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     StochasticOptimizer,
 )

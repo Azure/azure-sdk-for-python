@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
@@ -33,11 +33,11 @@ def main():
         resource_group_name="Default",
         server_name="test-svr",
         private_endpoint_connection_name="private-endpoint-connection-name",
-        parameters={"tags": {"key1": "val1", "key2": "val2", "key3": "val3"}},
+        parameters={"tags": {"key1": "val1", "key2": "val2"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2018-06-01/examples/PrivateEndpointConnectionUpdateTags.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/stable/2018-06-01/examples/PrivateEndpointConnectionUpdateTags.json
 if __name__ == "__main__":
     main()

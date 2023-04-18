@@ -7,7 +7,7 @@
 from functools import singledispatch
 from pathlib import Path
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as JobBaseData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml.constants._common import DEFAULT_EXPERIMENT_NAME
 from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._builders.pipeline import Pipeline
