@@ -18,9 +18,9 @@ class ActiveDirectoryAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ArmServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Data encryption type to depict if it is System assigned vs Azure Key vault."""
+    """Data encryption type to depict if it is System Managed vs Azure Key vault."""
 
-    SYSTEM_ASSIGNED = "SystemAssigned"
+    SYSTEM_MANAGED = "SystemManaged"
     AZURE_KEY_VAULT = "AzureKeyVault"
 
 
@@ -136,11 +136,7 @@ class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     PRIMARY = "Primary"
-    SECONDARY = "Secondary"
-    WAL_REPLICA = "WalReplica"
-    SYNC_REPLICA = "SyncReplica"
     ASYNC_REPLICA = "AsyncReplica"
-    GEO_SYNC_REPLICA = "GeoSyncReplica"
     GEO_ASYNC_REPLICA = "GeoAsyncReplica"
 
 
