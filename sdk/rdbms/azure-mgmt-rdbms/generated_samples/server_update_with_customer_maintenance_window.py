@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,24 +24,23 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.servers.begin_update(
         resource_group_name="testrg",
-        server_name="pgtestsvc4",
+        server_name="mysqltestserver",
         parameters={
             "properties": {
-                "createMode": "Update",
-                "maintenanceWindow": {"customWindow": "Enabled", "dayOfWeek": 0, "startHour": 8, "startMinute": 0},
+                "maintenanceWindow": {"customWindow": "Enabled", "dayOfWeek": 1, "startHour": 8, "startMinute": 0}
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2022-12-01/examples/ServerUpdateWithCustomerMaintenanceWindow.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2022-09-30-preview/examples/ServerUpdateWithCustomerMaintenanceWindow.json
 if __name__ == "__main__":
     main()

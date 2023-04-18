@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 from abc import ABC
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_02_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
-from azure.ai.ml._restclient.v2023_02_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml._utils.utils import camel_to_snake

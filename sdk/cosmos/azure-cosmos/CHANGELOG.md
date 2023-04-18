@@ -1,12 +1,21 @@
 ## Release History
 
-### 4.4.0b1 (Unreleased)
+### 4.4.0b2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.4.0b1 (2023-04-11)
 
 #### Features Added
  - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186).
  - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
 
-#### Breaking Changes
 
 #### Bugs Fixed
 * Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally. See [PR 29136](https://github.com/Azure/azure-sdk-for-python/pull/29136).
