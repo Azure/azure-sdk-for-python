@@ -2267,9 +2267,9 @@ class TestDSLPipeline:
         @dsl.pipeline(description="submit a pipeline with spark job")
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column = add_greeting_column_func(file_input=iris_data)
-            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
             count_by_row = count_by_row_func(file_input=iris_data)
-            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
             count_by_row.identity = {"type": "managed"}
 
             return {"output": count_by_row.outputs.output}
@@ -2319,7 +2319,7 @@ class TestDSLPipeline:
             "jobs": {
                 "add_greeting_column": {
                     "type": "spark",
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
                     "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
                     "py_files": ["utils.zip"],
                     "files": ["my_files.txt"],
@@ -2355,7 +2355,7 @@ class TestDSLPipeline:
                     "jars": ["scalaproj.jar"],
                     "name": "count_by_row",
                     "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
             },
