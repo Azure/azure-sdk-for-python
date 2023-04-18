@@ -4,7 +4,7 @@ Azure Communication Network Traversal is managing TURN credentials for Azure Com
 
 It will provide TURN credentials to a user.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication)
 
 ## _Disclaimer_
 
@@ -141,4 +141,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 <!-- LINKS -->
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
