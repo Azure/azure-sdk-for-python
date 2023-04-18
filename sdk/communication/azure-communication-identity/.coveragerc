@@ -1,9 +1,0 @@
-[run]
-branch = True
-omit =
-    # omit the _serialization file
-    azure/communication/identity/_generated/_serialization.py
-
-[report]
-omit =
-    azure/communication/identity/_generated/_serialization.py
