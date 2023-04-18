@@ -187,7 +187,7 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> FeatureAttributionMetricThreshold:
         return FeatureAttributionMetricThreshold(
-            metric=snake_to_camel(self.metric_name), threshold=MonitoringThreshold(value=self.metric_name)
+            metric=snake_to_camel(self.metric_name), threshold=MonitoringThreshold(value=self.threshold)
         )
 
     @classmethod
@@ -253,5 +253,5 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: MonitoringThreshold) -> "CustomMonitoringMetricThreshold":
+    def _from_rest_object(cls, obj: CustomMetricThreshold) -> "CustomMonitoringMetricThreshold":
         return cls(metric_name=obj.metric, threshold=obj.threshold.value)

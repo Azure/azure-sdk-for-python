@@ -1,0 +1,37 @@
+name: data-drift-test
+trigger:
+  type: recurrence
+  frequency: week
+  start_time: "2023-04-03T00:00:37"
+  time_zone: utc
+  interval: 1
+  schedule:
+    hours: 22
+    minutes: 0
+    week_days:
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+create_monitor:
+  compute: azureml:mycompute
+  monitoring_signals:
+    testSignal:
+      type: custom
+      input_datasets:
+        test_data_1:
+          input_dataset:
+            type: mltable
+            path: Direct
+          dataset_context: Test
+        test_data_2:
+          input_dataset:
+            type: mltable
+            path: Direct
+          dataset_context: Test
+      metric_thresholds:
+        - metric_name: metric1
+          threshold: 0.1
+        - metric_name: metric2
+          threshold: 0.2

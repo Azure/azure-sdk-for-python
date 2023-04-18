@@ -181,7 +181,6 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        model_type: MonitorModelType = None,
         target_dataset: TargetDataset = None,
         baseline_dataset: MonitorInputData = None,
         metric_thresholds: List[PredictionDriftMetricThreshold] = None,
@@ -193,12 +192,11 @@ class PredictionDriftSignal(MonitoringSignal):
             metric_thresholds=metric_thresholds,
             alert_enabled=alert_enabled,
         )
-        self.model_type = model_type
         self.type = MonitorSignalType.PREDICTION_DRIFT
 
     def _to_rest_object(self) -> RestPredictionDriftMonitoringSignal:
         return RestPredictionDriftMonitoringSignal(
-            model_type=self.model_type,
+            model_type="classification", # hack this to a random value since the service ignores it and it's mislabled as a required property
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
@@ -316,7 +314,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
 
     def _to_rest_object(self) -> RestFeatureAttributionDriftMonitoringSignal:
         return RestFeatureAttributionDriftMonitoringSignal(
-            target_dataset=self.target_dataset.dataset._to_rest_object(),
+            target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(),
             model_type=self.model_type,

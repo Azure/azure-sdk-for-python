@@ -1,0 +1,63 @@
+{
+    "properties": {
+        "action": {
+            "actionType": "CreateMonitor",
+            "monitorDefinition": {
+                "computeId": "mycompute",
+                "signals": {
+                    "testSignal": {
+                        "signalType": "DataQuality",
+                        "mode": "Enabled",
+                        "targetData": {
+                            "dataContext": "test",
+                            "asset": {
+                                "jobInputType": "mltable",
+                                "uri": "Direct"
+                            }
+                        },
+                        "baselineData": {
+                            "dataContext": "test",
+                            "asset": {
+                                "jobInputType": "mltable",
+                                "uri": "Direct"
+                            }
+                        },
+                        "metricThresholds": [
+                            {
+                                "dataType": "Numerical",
+                                "metric": "nullValueRate",
+                                "threshold": {
+                                    "value": 0.5
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "trigger": {
+            "triggerType": "Recurrence",
+            "startTime": "2023-04-03 00:00:37",
+            "timeZone": "utc",
+            "frequency": "week",
+            "interval": 1,
+            "schedule": {
+                "hours": [
+                    22
+                ],
+                "minutes": [
+                    0
+                ],
+                "weekDays": [
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday"
+                ]
+            }
+        },
+        "properties": {},
+        "tags": {}
+    }
+}

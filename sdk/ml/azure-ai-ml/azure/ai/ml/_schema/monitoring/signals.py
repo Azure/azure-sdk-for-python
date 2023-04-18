@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument,no-self-use
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, pre_dump, ValidationError
 
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
@@ -35,6 +35,14 @@ class DataSegmentSchema(metaclass=PatchedSchemaMeta):
 class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
     top_n_feature_importance = fields.Int()
 
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import MonitorFeatureFilter
+
+        if not isinstance(data, MonitorFeatureFilter):
+            raise ValidationError("Cannot dump non-MonitorFeatureFilter object into MonitorFeatureFilter")
+        return data
+
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.signals import MonitorFeatureFilter
@@ -62,9 +70,9 @@ class MonitoringSignalSchema(metaclass=PatchedSchemaMeta):
 class DataSignalSchema(MonitoringSignalSchema):
     features = UnionField(
         union_fields=[
-            fields.List(fields.Str),
             NestedField(MonitorFeatureFilterSchema),
             StringTransformedEnum(allowed_values=ALL_FEATURES),
+            fields.List(fields.Str),
         ]
     )
 
@@ -72,6 +80,14 @@ class DataSignalSchema(MonitoringSignalSchema):
 class DataDriftSignalSchema(DataSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.DATA_DRIFT, required=True)
     metric_thresholds = fields.List(NestedField(DataDriftMetricThresholdSchema))
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import DataDriftSignal
+
+        if not isinstance(data, DataDriftSignal):
+            raise ValidationError("Cannot dump non-DataDriftSignal object into DataDriftSignal")
+        return data
 
     @post_load
     def make(self, data, **kwargs):
@@ -85,6 +101,14 @@ class DataQualitySignalSchema(DataSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.DATA_QUALITY, required=True)
     metric_thresholds = fields.List(NestedField(DataQualityMetricThresholdSchema))
 
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import DataQualitySignal
+
+        if not isinstance(data, DataQualitySignal):
+            raise ValidationError("Cannot dump non-DataQualitySignal object into DataQualitySignal")
+        return data
+
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.signals import DataQualitySignal
@@ -96,6 +120,14 @@ class DataQualitySignalSchema(DataSignalSchema):
 class PredictionDriftSignalSchema(MonitoringSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.PREDICTION_DRIFT, required=True)
     metric_thresholds = fields.List(NestedField(PredictionDriftMetricThresholdSchema))
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import PredictionDriftSignal
+
+        if not isinstance(data, PredictionDriftSignal):
+            raise ValidationError("Cannot dump non-PredictionDriftSignal object into PredictionDriftSignal")
+        return data
 
     @post_load
     def make(self, data, **kwargs):
@@ -113,6 +145,14 @@ class FeatureAttributionDriftSignalSchema(ModelSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT, required=True)
     metric_thresholds = NestedField(FeatureAttributionDriftMetricThresholdSchema)
 
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import FeatureAttributionDriftSignal
+
+        if not isinstance(data, FeatureAttributionDriftSignal):
+            raise ValidationError("Cannot dump non-FeatureAttributionDriftSignal object into FeatureAttributionDriftSignal")
+        return data
+
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.signals import FeatureAttributionDriftSignal
@@ -125,6 +165,14 @@ class ModelPerformanceSignalSchema(ModelSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.MODEL_PERFORMANCE, required=True)
     data_segment = NestedField(DataSegmentSchema)
     metric_thresholds = NestedField(ModelPerformanceMetricThresholdSchema)
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import ModelPerformanceSignal
+
+        if not isinstance(data, ModelPerformanceSignal):
+            raise ValidationError("Cannot dump non-ModelPerformanceSignal object into ModelPerformanceSignal")
+        return data
 
     @post_load
     def make(self, data, **kwargs):
@@ -140,6 +188,14 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
     input_datasets = fields.Dict(keys=fields.Str(), values=NestedField(MonitorInputDataSchema))
     alert_notification = fields.Bool()
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import CustomMonitoringSignal
+
+        if not isinstance(data, CustomMonitoringSignal):
+            raise ValidationError("Cannot dump non-CustomMonitoringSignal object into CustomMonitoringSignal")
+        return data
 
     @post_load
     def make(self, data, **kwargs):
