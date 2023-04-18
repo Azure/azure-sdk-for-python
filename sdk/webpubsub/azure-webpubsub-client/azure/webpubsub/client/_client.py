@@ -224,7 +224,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         # Unless receive ack message, we assume the message is not sent successfully.
         if ack_id not in self._ack_map:
             self._ack_map[ack_id] = SendMessageErrorOptions(
-                error_detail=AckMessageError(name="", message="timeout to receive ack message")
+                error_detail=AckMessageError(name="", message="Timeout while waiting for ack message.")
             )
         try:
             self._send_message(message, **kwargs)
