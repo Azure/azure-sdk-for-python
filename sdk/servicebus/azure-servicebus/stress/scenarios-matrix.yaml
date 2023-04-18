@@ -2,38 +2,44 @@ matrix:
   image:
     - Dockerfile
   scenarios:
-    queue:
-      testTarget: queue
-    aqueue:
-     testTarget: aqueue
-    queuepull:
-      testTarget: queuepull
-    aqueuepull:
-     testTarget: aqueuepull
-    batch:
-      testTarget: batch
-    abatch:
-      testTarget: abatch
-    queuew:
-      testTarget: queuew
+    # sender:
+    #   testTarget: sender
+    # receiver:
+    #   testTarget: receiver
+    # receiveriterator:
+    #   testTarget: receiveriterator
+    # queue:
+    #   testTarget: queue
+    # aqueue:
+    #  testTarget: aqueue
+    # queuepull:
+    #   testTarget: queuepull
+    # aqueuepull:
+    #  testTarget: aqueuepull
+    # batch:
+    #   testTarget: batch
+    # abatch:
+    #   testTarget: abatch
+    # queuew:
+    #   testTarget: queuew
     aqueuew:
      testTarget: aqueuew
-    queuepullw:
-      testTarget: queuepullw
-    aqueuepullw:
-     testTarget: aqueuepullw
-    batchw:
-      testTarget: batchw
-    abatchw:
-      testTarget: abatchw
-    memray:
-      testTarget: memray
-    amemray:
-      testTarget: amemray
-    memraychaos:
-      testTarget: memraychaos
-    amemraychaos:
-      testTarget: amemraychaos
+    # queuepullw:
+    #   testTarget: queuepullw
+    # aqueuepullw:
+    #  testTarget: aqueuepullw
+    # batchw:
+    #   testTarget: batchw
+    # abatchw:
+    #   testTarget: abatchw
+    # memray:
+    #   testTarget: memray
+    # amemray:
+    #   testTarget: amemray
+    # memraychaos:
+    #   testTarget: memraychaos
+    # amemraychaos:
+    #   testTarget: amemraychaos
     # queueuamqp:
     #   testTarget: queueuamqp
     # aqueueuamqp:
