@@ -1,5 +1,5 @@
 
-# None client library for Python
+# Azure Ai Contentsafety client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -14,7 +14,7 @@ python -m pip install azure-ai-contentsafety
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing None instance.
+- An existing Azure Ai Contentsafety instance.
 
 ## Contributing
 

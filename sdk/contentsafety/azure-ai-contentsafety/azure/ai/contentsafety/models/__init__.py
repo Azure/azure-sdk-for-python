@@ -6,20 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import BatchCreateTextListItemsRequest
-from ._models import BatchCreateTextListItemsResponse
-from ._models import BatchDeleteTextListItemsRequest
-from ._models import Image
-from ._models import ImageDetectMultiSeverityResult
-from ._models import ImageDetectRequest
-from ._models import ImageDetectResponse
-from ._models import TextDetectMultiSeverityResult
-from ._models import TextDetectRequest
-from ._models import TextDetectResponse
-from ._models import TextList
-from ._models import TextListItem
-from ._models import TextListItemInfo
-from ._models import TextListMatchResult
+from ._models import AddBlockItemsOptions
+from ._models import AddBlockItemsResult
+from ._models import AnalyzeImageOptions
+from ._models import AnalyzeImageResult
+from ._models import AnalyzeTextOptions
+from ._models import AnalyzeTextResult
+from ._models import ImageAnalyzeSeverityResult
+from ._models import ImageData
+from ._models import RemoveBlockItemsOptions
+from ._models import TextAnalyzeSeverityResult
+from ._models import TextBlockItem
+from ._models import TextBlockItemInfo
+from ._models import TextBlocklist
+from ._models import TextBlocklistMatchResult
 
 from ._enums import ImageCategory
 from ._enums import TextCategory
@@ -28,20 +28,20 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "BatchCreateTextListItemsRequest",
-    "BatchCreateTextListItemsResponse",
-    "BatchDeleteTextListItemsRequest",
-    "Image",
-    "ImageDetectMultiSeverityResult",
-    "ImageDetectRequest",
-    "ImageDetectResponse",
-    "TextDetectMultiSeverityResult",
-    "TextDetectRequest",
-    "TextDetectResponse",
-    "TextList",
-    "TextListItem",
-    "TextListItemInfo",
-    "TextListMatchResult",
+    "AddBlockItemsOptions",
+    "AddBlockItemsResult",
+    "AnalyzeImageOptions",
+    "AnalyzeImageResult",
+    "AnalyzeTextOptions",
+    "AnalyzeTextResult",
+    "ImageAnalyzeSeverityResult",
+    "ImageData",
+    "RemoveBlockItemsOptions",
+    "TextAnalyzeSeverityResult",
+    "TextBlockItem",
+    "TextBlockItemInfo",
+    "TextBlocklist",
+    "TextBlocklistMatchResult",
     "ImageCategory",
     "TextCategory",
 ]
