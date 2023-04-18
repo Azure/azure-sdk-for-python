@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
-from typing import Union
 import yaml
 
 from ...entities._component._additional_includes import (
@@ -11,18 +10,9 @@ from ...entities._component._additional_includes import (
     ADDITIONAL_INCLUDES_KEY,
     ADDITIONAL_INCLUDES_SUFFIX,
 )
-from ...entities._component.code import ComponentIgnoreFile
 
 
 class _InternalAdditionalIncludes(AdditionalIncludes):
-    def __init__(
-        self,
-        code_path: Union[None, str],
-        yaml_path: str,
-    ):
-        super(_InternalAdditionalIncludes, self).__init__(code_path, yaml_path)
-        self._yaml_path = yaml_path
-        self._code_path = code_path
 
     @property
     def includes(self):
@@ -48,6 +38,10 @@ class _InternalAdditionalIncludes(AdditionalIncludes):
         return self.yaml_path.with_suffix(ADDITIONAL_INCLUDES_SUFFIX)
 
     @property
+    def base_path(self) -> Path:
+        return self.additional_includes_file_path.parent
+
+    @property
     def is_artifact_includes(self):
         try:
             with open(self.additional_includes_file_path) as f:
@@ -58,27 +52,3 @@ class _InternalAdditionalIncludes(AdditionalIncludes):
                 )
         except Exception:  # pylint: disable=broad-except
             return False
-
-    def _resolve_code(self, tmp_folder_path):
-        """Resolve code when additional includes is specified.
-
-        create a tmp folder and copy all files under real code path to it.
-        """
-
-        # code can be either file or folder, as additional includes exists, need to copy to temporary folder
-        if Path(self.code_path).is_file():
-            # use a dummy ignore file to save base path
-            root_ignore_file = ComponentIgnoreFile(
-                Path(self.code_path).parent,
-                additional_includes_file_name=self.additional_includes_file_path.name,
-                skip_ignore_file=True,
-            )
-            self._copy(Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file)
-        else:
-            # current implementation of ignore file is based on absolute path, so it cannot be shared
-            root_ignore_file = ComponentIgnoreFile(
-                self.code_path,
-                additional_includes_file_name=self.additional_includes_file_path.name,
-            )
-            self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
-        return root_ignore_file

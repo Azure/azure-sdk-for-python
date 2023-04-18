@@ -59,8 +59,8 @@ class AdditionalIncludes:
         return Path(self._yaml_path)
 
     @property
-    def additional_includes_file_path(self) -> Path:
-        return self.yaml_path
+    def base_path(self) -> Path:
+        return self.yaml_path.parent
 
     @property
     def yaml_name(self) -> str:
@@ -187,7 +187,7 @@ class AdditionalIncludes:
 
     def _resolve_folder_to_compress(self, include: str, dst_path: Path, ignore_file: IgnoreFile) -> None:
         """resolve the zip additional include, need to compress corresponding folder."""
-        zip_additional_include = (self.additional_includes_file_path.parent / include).resolve()
+        zip_additional_include = (self.base_path / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
@@ -233,7 +233,8 @@ class AdditionalIncludes:
         if self.additional_includes:
             additional_includes_configs = self.additional_includes
         elif (
-            self.additional_includes_file_path.exists()
+            hasattr(self, "additional_includes_file_path")
+            and self.additional_includes_file_path.exists()
             and self.additional_includes_file_path.suffix == ADDITIONAL_INCLUDES_SUFFIX
             and self.additional_includes_file_path.is_file()
         ):
@@ -281,7 +282,7 @@ class AdditionalIncludes:
         if not self.with_includes:
             return validation_result
         for additional_include in self.includes:
-            include_path = self.additional_includes_file_path.parent / additional_include
+            include_path = self.base_path / additional_include
             # if additional include has not supported characters, resolve will fail and raise OSError
             try:
                 src_path = include_path.resolve()
@@ -331,6 +332,8 @@ class AdditionalIncludes:
                 root_ignore_file = ComponentIgnoreFile(
                     Path(self.code_path).parent,
                     skip_ignore_file=True,
+                    additional_includes_file_name=self.additional_includes_file_path.name if
+                    hasattr(self, "additional_includes_file_path") else None,
                 )
                 self._copy(
                     Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file
@@ -339,6 +342,8 @@ class AdditionalIncludes:
                 # current implementation of ignore file is based on absolute path, so it cannot be shared
                 root_ignore_file = ComponentIgnoreFile(
                     self.code_path,
+                    additional_includes_file_name=self.additional_includes_file_path.name if
+                    hasattr(self, "additional_includes_file_path") else None,
                 )
                 self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
         else:
@@ -361,7 +366,7 @@ class AdditionalIncludes:
         root_ignore_file = self._resolve_code(tmp_folder_path)
 
         # resolve additional includes
-        base_path = self.additional_includes_file_path.parent
+        base_path = self.base_path
         # additional includes from artifact will be downloaded to a temp local path on calling
         # self.includes, so no need to add specific logic for artifact
 
