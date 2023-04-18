@@ -230,6 +230,7 @@ class AdditionalIncludes:
         additional_includes, conflict_files = [], {}
 
         # Load the artifacts config from additional_includes
+        # pylint: disable=no-member
         if self.additional_includes:
             additional_includes_configs = self.additional_includes
         elif (
@@ -326,14 +327,16 @@ class AdditionalIncludes:
         """
 
         # code can be either file or folder, as additional includes exists, need to copy to temporary folder
+        # pylint: disable=no-member
         if self.code_path:
             if Path(self.code_path).is_file():
                 # use a dummy ignore file to save base path
                 root_ignore_file = ComponentIgnoreFile(
                     Path(self.code_path).parent,
                     skip_ignore_file=True,
-                    additional_includes_file_name=self.additional_includes_file_path.name if
-                    hasattr(self, "additional_includes_file_path") else None,
+                    additional_includes_file_name=self.additional_includes_file_path.name
+                    if hasattr(self, "additional_includes_file_path")
+                    else None,
                 )
                 self._copy(
                     Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file
@@ -342,8 +345,9 @@ class AdditionalIncludes:
                 # current implementation of ignore file is based on absolute path, so it cannot be shared
                 root_ignore_file = ComponentIgnoreFile(
                     self.code_path,
-                    additional_includes_file_name=self.additional_includes_file_path.name if
-                    hasattr(self, "additional_includes_file_path") else None,
+                    additional_includes_file_name=self.additional_includes_file_path.name
+                    if hasattr(self, "additional_includes_file_path")
+                    else None,
                 )
                 self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
         else:
