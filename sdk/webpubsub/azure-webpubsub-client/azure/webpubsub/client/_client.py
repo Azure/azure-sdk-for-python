@@ -51,13 +51,6 @@ else:
 
 
 class WebPubSubClientCredential:
-    @overload
-    def __init__(self, client_access_url_provider: str) -> None:
-        ...
-
-    @overload
-    def __init__(self, client_access_url_provider: Callable[[], str]) -> None:
-        ...
 
     def __init__(self, client_access_url_provider: Union[str, Callable]) -> None:
         """
@@ -174,6 +167,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._sequence_id = SequenceId()
         self._state = WebPubSubClientState.STOPPED
         self._ack_id = 0
+        self._ack_id_lock = threading.Lock()
         self._url = None
         self._ws: Optional[websocket.WebSocketApp] = None
         self._handler: Dict[str, List[Callable]] = {
@@ -199,7 +193,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._logging_enable: bool = logging_enable
 
     def _next_ack_id(self) -> int:
-        self._ack_id = self._ack_id + 1
+        with self._ack_id_lock:
+            self._ack_id = self._ack_id + 1
         return self._ack_id
 
     def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
@@ -229,7 +224,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         try:
             self._send_message(message, **kwargs)
         except Exception as e:
-            self._ack_map.pop(ack_id)
+            self._ack_map.pop(ack_id, None)
             raise e
 
         message_ack = self._ack_map[ack_id]
@@ -238,7 +233,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._ack_map.pop(ack_id, None)
             if message_ack.error_detail is not None:
                 raise SendMessageError(
-                    message="Failed to send message.", ack_id=options.ack_id, error_detail=options.error_detail
+                    message="Failed to send message.", ack_id=message_ack.ack_id, error_detail=message_ack.error_detail
                 )
 
     def _get_or_add_group(self, name: str) -> WebPubSubGroup:
@@ -465,7 +460,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         for key in list(self._ack_map.keys()):
             with self._ack_map[key].cv:
                 self._ack_map[key].cv.notify()
-            self._ack_map.pop(key)
+            self._ack_map.pop(key, None)
 
     def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
