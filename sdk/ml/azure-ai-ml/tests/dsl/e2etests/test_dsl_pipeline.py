@@ -734,7 +734,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "type": "spark",
                 }
             },
-            "outputs": {"pipeline_output": {"mode": "Direct", "job_output_type": "uri_folder"}},
+            "outputs": {"pipeline_output": {"mode": "Direct", "job_output_type": "uri_file"}},
             "settings": {},
         }
         assert expected_job == actual_job
@@ -2867,7 +2867,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = outer_pipeline()
         pipeline_job_dict = pipeline_job._to_dict()
         assert pipeline_job_dict["outputs"] == {
-            "component_out_path": {"path": "azureml://datastores/workspaceblobstore/paths/outputs/1"}
+            "component_out_path": {
+                "path": "azureml://datastores/workspaceblobstore/paths/outputs/1",
+                "type": "uri_folder",
+            }
         }
         pipeline_component = pipeline_job.jobs["node1"].component
         pipeline_component_dict = pipeline_component._to_dict()
