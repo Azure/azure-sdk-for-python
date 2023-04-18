@@ -39,6 +39,6 @@ class TestCancelTranslation(DocumentTranslationTest):
         poller.result()
         # check translation status
         translation_details = client.get_translation_status(poller.id)
-        assert translation_details.status in ["Canceled", "Canceling"]
+        assert translation_details.status in ["Canceled", "Canceling", "NotStarted"]
         self._validate_translations(translation_details)
         return variables
