@@ -2,36 +2,29 @@ import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.contentsafety.models import *
-import base64
 
 class AnalyzeImage(object):
     def analyze_image(self):
-        SUBSCRIPTION_KEY = "19b54286b8ac49fc8d064eded98dd48e"
-        CONTENT_SAFETY_ENDPOINT = "https://cm-carnegie-ppe-use.ppe.cognitiveservices.azure.com/"
+        CONTENT_SAFETY_KEY = os.environ["CONTENT_SAFETY_KEY"]
+        CONTENT_SAFETY_ENDPOINT = os.environ["CONTENT_SAFETY_ENDPOINT"]
         IMAGE_DATA_PATH = os.path.join("sample_data", "image.jpg")
 
-        #create an Content Safety client
-        client = ContentSafetyClient(CONTENT_SAFETY_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
+        # Create an Content Safety client
+        client = ContentSafetyClient(CONTENT_SAFETY_ENDPOINT, AzureKeyCredential(CONTENT_SAFETY_KEY))
 
-        #read sample data
-        with open(IMAGE_DATA_PATH, "rb") as image_file:
-            encoded_bytes = base64.b64encode(image_file.read())
-            print(encoded_bytes)
-            image = Image(content=base64.b64decode(encoded_bytes))
-            print(image)
+        # Build request
+        with open(IMAGE_DATA_PATH, 'rb') as file:
+            request = AnalyzeImageOptions(image=ImageData(content=file.read()))
 
-        #build request
-        request = ImageDetectRequest(image=image)
-
-        # analyze image
+        # Analyze image
         try:
-            response = client.detect(request)
-            print(response)
+            response = client.analyze_image(request)
         except Exception as e:
-            print(
-                "Error code: {}".format(e.error.code),
-                "Error message: {}".format(e.error.message),
-            )
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return
+
+        print(response)
 
 if __name__=="__main__":
     sample = AnalyzeImage()

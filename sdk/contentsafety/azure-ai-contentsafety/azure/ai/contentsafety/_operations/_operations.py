@@ -66,7 +66,7 @@ def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_analyze_request(**kwargs: Any) -> HttpRequest:
+def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -434,7 +434,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def analyze(
+    def analyze_image(
         self, body: _models.AnalyzeImageOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
@@ -455,7 +455,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @overload
-    def analyze(
+    def analyze_image(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
@@ -476,7 +476,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @overload
-    def analyze(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> _models.AnalyzeImageResult:
+    def analyze_image(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
         A sync API for harmful content analysis for image. Currently we support four categories: Hate,
@@ -495,7 +497,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @distributed_trace
-    def analyze(self, body: Union[_models.AnalyzeImageOptions, JSON, IO], **kwargs: Any) -> _models.AnalyzeImageResult:
+    def analyze_image(
+        self, body: Union[_models.AnalyzeImageOptions, JSON, IO], **kwargs: Any
+    ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
         A sync API for harmful content analysis for image. Currently we support four categories: Hate,
@@ -534,7 +538,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_content_safety_analyze_request(
+        request = build_content_safety_analyze_image_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

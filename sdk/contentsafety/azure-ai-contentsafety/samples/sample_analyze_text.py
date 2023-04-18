@@ -6,30 +6,30 @@ from azure.ai.contentsafety.models import *
 
 class AnalyzeText(object):
     def analyze_text(self):
-        SUBSCRIPTION_KEY = "19b54286b8ac49fc8d064eded98dd48e"
-        CONTENT_SAFETY_ENDPOINT = "https://cm-carnegie-ppe-use.ppe.cognitiveservices.azure.com/"
+        CONTENT_SAFETY_KEY = os.environ["CONTENT_SAFETY_KEY"]
+        CONTENT_SAFETY_ENDPOINT = os.environ["CONTENT_SAFETY_ENDPOINT"]
         TEXT_DATA_PATH = os.path.join("sample_data", "text.txt")
 
-        #create an Content Safety client
-        client = ContentSafetyClient(CONTENT_SAFETY_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
+        # Create an Content Safety client
+        client = ContentSafetyClient(CONTENT_SAFETY_ENDPOINT, AzureKeyCredential(CONTENT_SAFETY_KEY))
 
-        #read sample data
+        # Read sample data
         with open(TEXT_DATA_PATH) as f:
             text = f.readline()
 
-        #build request
-        request = TextDetectRequest(text=text, categories=[TextCategory.HATE, TextCategory.SELF_HARM])
+        # Build request
+        request = AnalyzeTextOptions(text=text, categories=[TextCategory.HATE, TextCategory.SELF_HARM])
 
-        # analyze text
+        # Analyze text
         try:
-            response = client.analyze(request)
-            print(response.hate_result)
-            print(response.self_harm_result)
+            response = client.analyze_text(request)
         except Exception as e:
-            print(
-                "Error code: {}".format(e.error.code),
-                "Error message: {}".format(e.error.message),
-            )
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return
+
+        print(response.hate_result)
+        print(response.self_harm_result)
 
 if __name__=="__main__":
     sample = AnalyzeText()

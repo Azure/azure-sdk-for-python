@@ -1,0 +1,55 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "00000000000000000000000000000000/contentsafety/text:analyze?api-version=2023-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "46",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "https://fake_cs_resource.cognitiveservices.azure.com/",
+        "User-Agent": "azsdk-python-ai-contentsafety/1.0.0b1 Python/3.8.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "text": "You are an idiot",
+        "categories": []
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-12-30-preview,2023-04-30-preview",
+        "apim-request-id": "f9bfc1cf-504f-49f6-b3ba-f26041c7d92d",
+        "apim-subscription-id": "973fda3f71b6448db2933f4e72c9d160",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 18 Apr 2023 12:44:32 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "4530",
+        "x-ms-region": "Central US EUAP"
+      },
+      "ResponseBody": {
+        "blocklistsMatchResults": [],
+        "hateResult": {
+          "category": "Hate",
+          "severity": 2
+        },
+        "selfHarmResult": {
+          "category": "SelfHarm",
+          "severity": 0
+        },
+        "sexualResult": {
+          "category": "Sexual",
+          "severity": 0
+        },
+        "violenceResult": {
+          "category": "Violence",
+          "severity": 0
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

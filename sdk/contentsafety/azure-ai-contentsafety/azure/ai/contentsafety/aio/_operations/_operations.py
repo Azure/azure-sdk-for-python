@@ -32,7 +32,7 @@ from ... import models as _models
 from ..._model_base import AzureJSONEncoder, _deserialize
 from ..._operations._operations import (
     build_content_safety_add_block_items_request,
-    build_content_safety_analyze_request,
+    build_content_safety_analyze_image_request,
     build_content_safety_analyze_text_request,
     build_content_safety_create_or_update_text_blocklist_request,
     build_content_safety_delete_text_blocklist_request,
@@ -193,7 +193,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def analyze(
+    async def analyze_image(
         self, body: _models.AnalyzeImageOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
@@ -214,7 +214,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @overload
-    async def analyze(
+    async def analyze_image(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
@@ -235,7 +235,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @overload
-    async def analyze(
+    async def analyze_image(
         self, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
@@ -256,7 +256,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @distributed_trace_async
-    async def analyze(
+    async def analyze_image(
         self, body: Union[_models.AnalyzeImageOptions, JSON, IO], **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
@@ -297,7 +297,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_content_safety_analyze_request(
+        request = build_content_safety_analyze_image_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
