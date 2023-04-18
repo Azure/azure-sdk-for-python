@@ -10,6 +10,19 @@
 
 ### Other Changes
 
+ - Updated tracing ([#29934](https://github.com/Azure/azure-sdk-for-python/pull/29934)):
+   - Span names renamed:
+     - `Azure.EventHubs.send` to `EventHubs.send`
+     - `Azure.EventHubs.message` to `EventHubs.message`
+     - `Azure.EventHubs.process` to `EventHubs.process`
+   - An `EventHubs.receive` span will be created upon receiving events.
+   - Additional attributes added to spans:
+     - `messaging.system` - messaging system (i.e., `eventhubs`)
+     - `messaging.operation` - type of operation (i.e., `publish`, `receive`, or `process`)
+     - `messaging.batch.message_count` - number of messages sent, received, or processed (if more than one)
+     - `messaging.source.name` added to process spans in place of `message_bus.destination`
+   - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
+
 ## 5.11.2 (2023-03-20)
 
 ### Bugs Fixed
