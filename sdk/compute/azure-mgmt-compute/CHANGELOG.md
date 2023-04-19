@@ -1,5 +1,45 @@
 # Release History
 
+## 29.2.0 (2023-04-19)
+
+### Features Added
+
+  - Added operation DedicatedHostsOperations.list_available_sizes
+  - Added operation VirtualMachineScaleSetsOperations.begin_reapply
+  - Model DedicatedHostUpdate has a new parameter sku
+  - Model LinuxVMGuestPatchAutomaticByPlatformSettings has a new parameter bypass_platform_safety_checks_on_user_schedule
+  - Model RestorePointSourceMetadata has a new parameter hyper_v_generation
+  - Model RestorePointSourceVMDataDisk has a new parameter write_accelerator_enabled
+  - Model RestorePointSourceVMOSDisk has a new parameter write_accelerator_enabled
+  - Model VirtualMachineExtension has a new parameter provision_after_extensions
+  - Model VirtualMachineRunCommand has a new parameter error_blob_managed_identity
+  - Model VirtualMachineRunCommand has a new parameter output_blob_managed_identity
+  - Model VirtualMachineRunCommand has a new parameter treat_failure_as_deployment_failure
+  - Model VirtualMachineRunCommandScriptSource has a new parameter script_uri_managed_identity
+  - Model VirtualMachineRunCommandUpdate has a new parameter error_blob_managed_identity
+  - Model VirtualMachineRunCommandUpdate has a new parameter output_blob_managed_identity
+  - Model VirtualMachineRunCommandUpdate has a new parameter treat_failure_as_deployment_failure
+  - Model VirtualMachineScaleSetUpdate has a new parameter priority_mix_policy
+  - Model VirtualMachineScaleSetUpdate has a new parameter spot_restore_policy
+  - Model VirtualMachineScaleSetVMExtension has a new parameter location
+  - Model VirtualMachineScaleSetVMExtension has a new parameter provision_after_extensions
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter computer_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter hyper_v_generation
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_version
+  - Model VirtualMachineScaleSetVMProfile has a new parameter security_posture_reference
+  - Model WindowsVMGuestPatchAutomaticByPlatformSettings has a new parameter bypass_platform_safety_checks_on_user_schedule
+  - Operation VirtualMachineScaleSetsOperations.begin_deallocate has a new optional parameter hibernate
+  - Operation VirtualMachinesOperations.list has a new optional parameter expand
+  - Operation VirtualMachinesOperations.list_all has a new optional parameter expand
+
+### Breaking Changes
+
+  - Model VirtualMachineScaleSetIPConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetNetworkConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetUpdateIPConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration no longer has parameter id
+
 ## 29.2.0b2 (2023-04-12)
 
 ### Features Added

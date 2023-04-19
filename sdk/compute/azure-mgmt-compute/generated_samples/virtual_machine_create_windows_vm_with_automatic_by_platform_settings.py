@@ -52,7 +52,10 @@ def main():
                         "enableAutomaticUpdates": True,
                         "patchSettings": {
                             "assessmentMode": "AutomaticByPlatform",
-                            "automaticByPlatformSettings": {"rebootSetting": "Never"},
+                            "automaticByPlatformSettings": {
+                                "bypassPlatformSafetyChecksOnUserSchedule": False,
+                                "rebootSetting": "Never",
+                            },
                             "patchMode": "AutomaticByPlatform",
                         },
                         "provisionVMAgent": True,
@@ -78,6 +81,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-11-01/examples/virtualMachineExamples/VirtualMachine_Create_WindowsVmWithAutomaticByPlatformSettings.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-03-01/examples/virtualMachineExamples/VirtualMachine_Create_WindowsVmWithAutomaticByPlatformSettings.json
 if __name__ == "__main__":
     main()

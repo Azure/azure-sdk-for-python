@@ -33,11 +33,23 @@ def main():
         resource_group_name="myResourceGroup",
         vm_name="myVM",
         run_command_name="myRunCommand",
-        run_command={"properties": {"source": {"script": "Write-Host Script Source Updated!"}}},
+        run_command={
+            "properties": {
+                "asyncExecution": False,
+                "errorBlobManagedIdentity": {"objectId": "4231e4d2-33e4-4e23-96b2-17888afa6072"},
+                "errorBlobUri": "https://mystorageaccount.blob.core.windows.net/mycontainer/MyScriptError.txt",
+                "outputBlobUri": "https://mystorageaccount.blob.core.windows.net/myscriptoutputcontainer/MyScriptoutput.txt?sp=racw&st=2022-10-07T19:40:21Z&se=2022-10-08T03:40:21Z&spr=https&sv=2021-06-08&sr=b&sig=Yh7B%2Fy83olbYBdfsfbUREvd7ol8Dq5EVP3lAO4Kj4xDcN8%3D",
+                "parameters": [{"name": "param1", "value": "value1"}, {"name": "param2", "value": "value2"}],
+                "runAsPassword": "<runAsPassword>",
+                "runAsUser": "user1",
+                "source": {"script": "Write-Host Hello World! ; Remove-Item C:\test\testFile.txt"},
+                "timeoutInSeconds": 3600,
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-11-01/examples/runCommandExamples/VirtualMachineRunCommand_Update.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-03-01/examples/runCommandExamples/VirtualMachineRunCommand_Update.json
 if __name__ == "__main__":
     main()
