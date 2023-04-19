@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_285344547789?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_574449479297?api-version=2023-04-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "660",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/0.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.8 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -18,18 +18,18 @@
           },
           "tags": {},
           "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
-          "displayName": "test_285344547789",
+          "displayName": "test_574449479297",
           "experimentName": "mfe-test1",
           "isArchived": false,
           "jobType": "Command",
           "command": "echo ${{inputs.test1}}",
-          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
           "environmentVariables": {},
           "inputs": {
             "test1": {
+              "jobInputType": "uri_file",
               "mode": "ReadOnlyMount",
-              "uri": "https://test.blob.core.windows.net/non-existent-ds/testdata/data.csv",
-              "jobInputType": "uri_file"
+              "uri": "https://test.blob.core.windows.net/non-existent-ds/testdata/data.csv"
             }
           },
           "outputs": {}
@@ -38,26 +38,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2629",
+        "Content-Length": "2862",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 03 Oct 2022 22:57:34 GMT",
+        "Date": "Wed, 19 Apr 2023 21:25:05 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_285344547789?api-version=2022-10-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_574449479297?api-version=2023-04-01-preview",
         "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-0ed3115db02ec236039cde06a746d80a-387a14529ea57e95-01\u0022",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-504f3ec9dcd4ddf13ada88e9596d36dd-06a28e1bc3b103b0-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "143cedc9-2e81-44b6-bdc1-c38460be1228",
-        "x-ms-ratelimit-remaining-subscription-writes": "1189",
+        "x-ms-correlation-request-id": "88121789-da9d-4e77-8f4c-815d63770ae6",
+        "x-ms-ratelimit-remaining-subscription-writes": "1187",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221003T225734Z:143cedc9-2e81-44b6-bdc1-c38460be1228",
-        "x-request-time": "2.291"
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230419T212505Z:88121789-da9d-4e77-8f4c-815d63770ae6",
+        "x-request-time": "0.970"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_285344547789",
-        "name": "test_285344547789",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_574449479297",
+        "name": "test_574449479297",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": null,
@@ -66,14 +66,14 @@
             "test_property": "test_value",
             "_azureml.ComputeTargetType": "amlctrain"
           },
-          "displayName": "test_285344547789",
+          "displayName": "test_574449479297",
           "status": "Starting",
           "experimentName": "mfe-test1",
           "services": {
             "Tracking": {
               "jobServiceType": "Tracking",
               "port": null,
-              "endpoint": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -82,7 +82,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_285344547789?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_574449479297?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -93,17 +93,21 @@
           "isArchived": false,
           "identity": null,
           "componentId": null,
+          "notificationSetting": null,
+          "secretsConfiguration": null,
           "jobType": "Command",
           "resources": {
             "instanceCount": 1,
+            "maxInstanceCount": null,
             "instanceType": null,
+            "locations": null,
             "properties": null,
             "shmSize": "2g",
             "dockerArgs": null
           },
           "codeId": null,
           "command": "echo ${{inputs.test1}}",
-          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
           "inputs": {
             "test1": {
               "description": null,
@@ -115,8 +119,11 @@
           "outputs": {
             "default": {
               "description": null,
-              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_285344547789",
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_574449479297",
+              "assetName": null,
+              "assetVersion": null,
               "mode": "ReadWriteMount",
+              "autoDeleteSetting": null,
               "jobOutputType": "uri_folder"
             }
           },
@@ -124,17 +131,18 @@
           "autologgerSettings": null,
           "limits": null,
           "environmentVariables": {},
-          "parameters": {}
+          "parameters": {},
+          "queueSettings": null
         },
         "systemData": {
-          "createdAt": "2022-10-03T22:57:34.6998333\u002B00:00",
-          "createdBy": "Tony Ponwin Jeparatnam",
+          "createdAt": "2023-04-19T21:25:05.5447532\u002B00:00",
+          "createdBy": "Mayank Kumar",
           "createdByType": "User"
         }
       }
     }
   ],
   "Variables": {
-    "job_name": "test_285344547789"
+    "job_name": "test_574449479297"
   }
 }
