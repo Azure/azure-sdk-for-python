@@ -6,7 +6,7 @@
 # ------------------------------------
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -228,7 +228,7 @@ class TestMultiapi(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
     @recorded_by_proxy
     def test_v2022_08_31_dmac_compatibility(self, client, formrecognizer_storage_container_sas_url, formrecognizer_training_data_classifier, **kwargs):
-
+        set_bodiless_matcher()
         poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
 

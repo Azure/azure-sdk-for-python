@@ -7,6 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -231,7 +232,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
     @recorded_by_proxy_async
     async def test_v2022_08_31_dmac_compatibility(self, client, formrecognizer_storage_container_sas_url, formrecognizer_training_data_classifier, **kwargs):
-
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await poller.result()
