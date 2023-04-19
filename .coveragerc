@@ -5,8 +5,9 @@ include =
 omit =
 	*/test*
 	env*
-	sdk/communication/**/_generated/_serialization.py 
-	*/_serialization.py
+	sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py
+	*/_generated/_serialization.py 
+	**/_serialization.py
 
 [paths]
 source =
@@ -21,3 +22,4 @@ exclude_lines =
 	if headers:
 	if response.status_code not in
 	if TYPE_CHECKING:
+omit = sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py
