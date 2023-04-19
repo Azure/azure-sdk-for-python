@@ -126,7 +126,7 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
 
-    credential = DefaultAzureCredential(exclude_azd_cli_credential=True)
+    credential = DefaultAzureCredential(exclude_developer_cli_credential=True)
     assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
