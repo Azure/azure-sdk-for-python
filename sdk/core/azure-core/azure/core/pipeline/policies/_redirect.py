@@ -39,7 +39,7 @@ from ._utils import get_domain
 _LOGGER = logging.getLogger(__name__)
 
 
-def domain_changed(original_domain, url):
+def domain_changed(original_domain: str, url: str) -> bool:
     domain = get_domain(url)
     if not original_domain:
         return False
