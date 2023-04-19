@@ -188,7 +188,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
-        :param force_to_purge: Whether to purge the workspace permanently, if set to True this workspace won't be able to recover.
+        :param force_to_purge: Whether to purge the workspace permanently, 
+            if set to True this workspace won't be able to recover.
         :type force_to_purge: true
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
