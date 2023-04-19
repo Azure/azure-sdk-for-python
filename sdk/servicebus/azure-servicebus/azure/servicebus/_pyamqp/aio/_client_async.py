@@ -272,7 +272,7 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = False
 
         if self._keep_alive_interval:
-            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+            self._keep_alive_thread = asyncio.create_task(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session

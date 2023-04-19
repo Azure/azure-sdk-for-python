@@ -215,7 +215,7 @@ class AutoLockRenewer:
                 time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
             )
 
-        renew_future = asyncio.ensure_future(
+        renew_future = asyncio.create_task(
             self._auto_lock_renew(
                 receiver,
                 renewable,
