@@ -1,21 +1,17 @@
 [run]
-relative_files = True
-source =
-	azure*
-	sdk*
 include =
-	azure*
+	azure*,
 	sdk*
 omit =
-	*/test*
-	env*
-	*sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py
-	*/sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py
+	*/test*,
+	env*,
+	*sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py,
+	*/sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py,
 	*_serialization.py
 
 [paths]
 source =
-	sdk/
+	sdk/,
 	**/sdk
 
 [report]
@@ -27,6 +23,6 @@ exclude_lines =
 	if response.status_code not in
 	if TYPE_CHECKING:
 omit = 
-	*sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py
-	*/sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py
+	*sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py,
+	*/sdk/communication/azure-communication-identity/azure/communication/identity/_generated/_serialization.py,
 	*_serialization.py
