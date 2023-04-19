@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from azure.core.exceptions import TooManyRedirectsError
 from . import AsyncHTTPPolicy
-from ._redirect import RedirectPolicyBase
+from ._redirect import RedirectPolicyBase, domain_changed
 from ._utils import get_domain
 
 
@@ -59,14 +59,14 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
-        self._original_domain = get_domain(request.http_request.url) if self.allow else None
+        original_domain = get_domain(request.http_request.url) if self.allow else None
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
                 redirects_remaining = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
-                if self._domain_changed(request.http_request.url):
+                if domain_changed(original_domain, request.http_request.url):
                     request.context.options["insecure_domain_change"] = True
                 continue
             return response

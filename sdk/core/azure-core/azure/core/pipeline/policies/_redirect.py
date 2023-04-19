@@ -38,6 +38,15 @@ from ._utils import get_domain
 _LOGGER = logging.getLogger(__name__)
 
 
+def domain_changed(original_domain, url):
+    domain = get_domain(url)
+    if not original_domain:
+        return False
+    if original_domain == domain:
+        return False
+    return True
+
+
 class RedirectPolicyBase:
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
@@ -52,7 +61,6 @@ class RedirectPolicyBase:
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get("redirect_on_status_codes", []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
-        self._original_domain = None
         super(RedirectPolicyBase, self).__init__()
 
     @classmethod
@@ -123,15 +131,6 @@ class RedirectPolicyBase:
             response.http_request.headers.pop(non_redirect_header, None)
         return settings["redirects"] >= 0
 
-    def _domain_changed(self, url):
-        domain = get_domain(url)
-        if not self._original_domain:
-            self._original_domain = domain
-            return False
-        if self._original_domain == domain:
-            return False
-        return True
-
 
 class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
     """A redirect policy.
@@ -163,14 +162,14 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         """
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
-        self._original_domain = get_domain(request.http_request.url) if self.allow else None
+        original_domain = get_domain(request.http_request.url) if self.allow else None
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
-                if self._domain_changed(request.http_request.url):
+                if domain_changed(original_domain, request.http_request.url):
                     request.context.options["insecure_domain_change"] = True
                 continue
             return response
