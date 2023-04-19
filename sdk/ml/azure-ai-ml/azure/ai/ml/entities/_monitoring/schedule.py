@@ -31,7 +31,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         *,
         name: str,
         trigger: Union[CronTrigger, RecurrenceTrigger],
-        create_monitor: MonitorDefinition = None,
+        create_monitor: MonitorDefinition,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
