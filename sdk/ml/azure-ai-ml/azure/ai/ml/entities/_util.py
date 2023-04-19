@@ -14,6 +14,7 @@ from marshmallow.exceptions import ValidationError
 
 from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
 from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
+from .._restclient.v2023_04_01_preview._serialization import Model as GeneratedSdkBaseModel
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (
@@ -283,7 +284,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
             return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
 
-    if isinstance(target_obj, msrest.serialization.Model):
+    if isinstance(target_obj, (msrest.serialization.Model, GeneratedSdkBaseModel)):
         # can't use result.as_dict() as data binding expression may not fit rest object structure
         return get_rest_dict_for_node_attrs(target_obj.__dict__, clear_empty_value=clear_empty_value)
 
