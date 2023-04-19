@@ -50,6 +50,8 @@ from .._common.utils import (
     receive_trace_context_manager,
     utc_from_timestamp,
     get_receive_links,
+    settle_trace_context_manager,
+    create_span_link_from_message,
 )
 from ._async_utils import create_authentication, get_running_loop
 
@@ -481,15 +483,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 error=message.auto_renew_error,
             )
 
-        await self._do_retryable_operation(
-            self._settle_message,
-            timeout=None,
-            message=message,
-            settle_operation=settle_operation,
-            dead_letter_reason=dead_letter_reason,
-            dead_letter_error_description=dead_letter_error_description,
-        )
-        message._settled = True
+        links = []
+        link = create_span_link_from_message(message)
+        if link:
+            links = [link]
+        with settle_trace_context_manager(self, settle_operation, links=links):
+            await self._do_retryable_operation(
+                self._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
 
     async def _settle_message(  # type: ignore
         self,

@@ -387,8 +387,18 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    def _add_span_request_attributes(self, span):
-        return BaseHandlerSync._add_span_request_attributes(  # pylint: disable=protected-access
+    def _add_send_span_attributes(self, span, message_count=0):
+        return BaseHandlerSync._add_send_span_attributes(  # pylint: disable=protected-access
+            self, span, message_count
+        )
+
+    def _add_receive_span_attributes(self, span, message_count=0):
+        return BaseHandlerSync._add_receive_span_attributes(  # pylint: disable=protected-access
+            self, span, message_count
+        )
+
+    def _add_settle_span_attributes(self, span):
+        return BaseHandlerSync._add_send_span_attributes(  # pylint: disable=protected-access
             self, span
         )
 

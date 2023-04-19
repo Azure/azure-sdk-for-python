@@ -34,7 +34,9 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
-    MESSAGE_STATE_NAME
+    MESSAGE_STATE_NAME,
+    TRACE_NET_PEER_NAME_ATTRIBUTE,
+    TRACE_MESSAGING_DESTINATION_ATTRIBUTE
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -678,6 +680,10 @@ class ServiceBusMessageBatch(object):
         self._count = 0
         self._messages = []  # type: List[ServiceBusMessage]
 
+        # For tracing.
+        self._fully_qualified_namespace: Optional[str] = None
+        self._entity_name: Optional[str] = None
+
     def __repr__(self):
         # type: () -> str
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
@@ -689,21 +695,21 @@ class ServiceBusMessageBatch(object):
         # type: () -> int
         return self._count
 
-    def _from_list(self, messages: Iterable[ServiceBusMessage], parent_span: Optional["AbstractSpan"] = None) -> None:
+    def _from_list(self, messages: Iterable[ServiceBusMessage]) -> None:
         for message in messages:
-            self._add(message, parent_span)
+            self._add(message)
 
-    def _add(
-        self,
-        add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
-        parent_span: Optional["AbstractSpan"] = None
-    ) -> None:
+    def _add(self, add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage]) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_if_needed(add_message, ServiceBusMessage)
         message = cast(ServiceBusMessage, message)
         trace_message(
-            message, parent_span
-        )  # parent_span is e.g. if built as part of a send operation.
+            message,
+            additional_attributes={
+                TRACE_NET_PEER_NAME_ATTRIBUTE: self._fully_qualified_namespace,
+                TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._entity_name,
+            }
+        )
         message_size = (
             message.message.get_message_encoded_size()
         )

@@ -37,11 +37,17 @@ from ._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
     ASSOCIATEDLINKPROPERTYNAME,
-    TRACE_NAMESPACE_PROPERTY,
+    TRACE_NAMESPACE_ATTRIBUTE,
+    TRACE_NAMESPACE,
+    TRACE_NET_PEER_NAME_ATTRIBUTE,
+    TRACE_MESSAGING_SYSTEM,
+    TRACE_MESSAGING_SYSTEM_ATTRIBUTE,
+    TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE,
+    TRACE_MESSAGING_DESTINATION_ATTRIBUTE,
+    TRACE_MESSAGING_SOURCE_ATTRIBUTE,
+    TRACE_MESSAGING_OPERATION_ATTRIBUTE,
     TRACE_COMPONENT_PROPERTY,
     TRACE_COMPONENT,
-    TRACE_PEER_ADDRESS_PROPERTY,
-    TRACE_BUS_DESTINATION_PROPERTY,
 )
 
 if TYPE_CHECKING:
@@ -523,11 +529,28 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    def _add_span_request_attributes(self, span):
+    def _add_base_attributes(self, span, message_count=0):
+        span.add_attribute(TRACE_NAMESPACE_ATTRIBUTE, TRACE_NAMESPACE)
+        span.add_attribute(TRACE_NET_PEER_NAME_ATTRIBUTE, self.fully_qualified_namespace)
+        span.add_attribute(TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TRACE_MESSAGING_SYSTEM)
+        if message_count:
+            span.add_attribute(TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE, message_count)
+
+    def _add_send_span_attributes(self, span, message_count=0):
+        self._add_base_attributes(span, message_count)
         span.add_attribute(TRACE_COMPONENT_PROPERTY, TRACE_COMPONENT)
-        span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE_PROPERTY)
-        span.add_attribute(TRACE_BUS_DESTINATION_PROPERTY, self._entity_path)
-        span.add_attribute(TRACE_PEER_ADDRESS_PROPERTY, self.fully_qualified_namespace)
+        span.add_attribute(TRACE_MESSAGING_DESTINATION_ATTRIBUTE, self._entity_name)
+        span.add_attribute(TRACE_MESSAGING_OPERATION_ATTRIBUTE, "publish")
+
+    def _add_receive_span_attributes(self, span, message_count=0):
+        self._add_base_attributes(span, message_count)
+        span.add_attribute(TRACE_MESSAGING_SOURCE_ATTRIBUTE, self._entity_name)
+        span.add_attribute(TRACE_MESSAGING_OPERATION_ATTRIBUTE, "receive")
+
+    def _add_settle_span_attributes(self, span):
+        self._add_base_attributes(span)
+        span.add_attribute(TRACE_MESSAGING_SOURCE_ATTRIBUTE, self._entity_name)
+        span.add_attribute(TRACE_MESSAGING_OPERATION_ATTRIBUTE, "settle")
 
     def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")

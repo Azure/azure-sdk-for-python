@@ -23,6 +23,8 @@ from ._common.utils import (
     create_authentication,
     get_receive_links,
     receive_trace_context_manager,
+    settle_trace_context_manager,
+    create_span_link_from_message
 )
 from ._common.constants import (
     CONSUMER_IDENTIFIER,
@@ -490,16 +492,20 @@ class ServiceBusReceiver(
                 error=message.auto_renew_error,
             )
 
-        self._do_retryable_operation(
-            self._settle_message,
-            timeout=None,
-            message=message,
-            settle_operation=settle_operation,
-            dead_letter_reason=dead_letter_reason,
-            dead_letter_error_description=dead_letter_error_description,
-        )
-
-        message._settled = True
+        links = []
+        link = create_span_link_from_message(message)
+        if link:
+            links = [link]
+        with settle_trace_context_manager(self, settle_operation, links=links):
+            self._do_retryable_operation(
+                self._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
 
     def _settle_message(
         self,

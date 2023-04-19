@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+from __future__ import annotations
 import sys
 import datetime
 import logging
@@ -46,13 +46,18 @@ from .constants import (
     USER_AGENT_PREFIX,
     SPAN_NAME_SEND,
     SPAN_NAME_MESSAGE,
+    DIAGNOSTIC_ID_PROPERTY,
     TRACE_PARENT_PROPERTY,
+    TRACE_STATE_PROPERTY,
     TRACE_NAMESPACE,
-    TRACE_NAMESPACE_PROPERTY,
+    TRACE_NAMESPACE_ATTRIBUTE,
     TRACE_PROPERTY_ENCODING,
     TRACE_ENQUEUED_TIME_PROPERTY,
+    TRACE_MESSAGING_SYSTEM_ATTRIBUTE,
+    TRACE_MESSAGING_SYSTEM,
     SPAN_ENQUEUED_TIME_PROPERTY,
     SPAN_NAME_RECEIVE,
+
 )
 from ..amqp import AmqpAnnotatedMessage
 
@@ -60,10 +65,12 @@ if TYPE_CHECKING:
     from .message import (
         ServiceBusReceivedMessage,
         ServiceBusMessage,
+        ServiceBusMessageBatch
     )
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
-    from .receiver_mixins import ReceiverMixin
+    from .._servicebus_receiver import ServiceBusReceiver
+    from ..aio._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
     from .._servicebus_session import BaseSession
 
     MessagesType = Union[
@@ -264,12 +271,17 @@ def strip_protocol_from_uri(uri):
     return uri
 
 
+def is_tracing_enabled():
+    span_impl_type = settings.tracing_implementation()
+    return span_impl_type is not None
+
+
 @contextmanager
-def send_trace_context_manager(span_name=SPAN_NAME_SEND):
+def send_trace_context_manager(span_name=SPAN_NAME_SEND, links=None):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
-        with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
+        with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links) as child:
             yield child
     else:
         yield None
@@ -277,7 +289,7 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
 
 @contextmanager
 def receive_trace_context_manager(
-    receiver: "ReceiverMixin",
+    receiver: Union[ServiceBusReceiver, ServiceBusReceiverAsync],
     span_name: str = SPAN_NAME_RECEIVE,
     links: Optional[List[Link]] = None
 ) -> Iterator[None]:
@@ -286,17 +298,41 @@ def receive_trace_context_manager(
     if span_impl_type is None:
         yield
     else:
-        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
-        receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
+        receive_span = span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links)
+        receiver._add_receive_span_attributes(  # pylint: disable=protected-access
+            receive_span,
+            message_count=len(links) if links else 0
+        )
 
         with receive_span:
             yield
 
-def trace_message(message, parent_span=None):
-    # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
+
+@contextmanager
+def settle_trace_context_manager(
+    receiver: Union[ServiceBusReceiver, ServiceBusReceiverAsync],
+    operation: str,
+    links: Optional[List[Link]] = None
+):
+    span_impl_type = settings.tracing_implementation()
+    if span_impl_type is None:
+        yield
+    else:
+        settle_span = span_impl_type(name=f"ServiceBus.{operation}", kind=SpanKind.CLIENT, links=links)
+        receiver._add_settle_span_attributes(settle_span)  # pylint: disable=protected-access
+
+        with settle_span:
+            yield
+
+
+def trace_message(
+        message: "ServiceBusMessage",
+        additional_attributes: Optional[Dict[str, Any]] = None,
+        parent_span: Optional[AbstractSpan] = None
+    ) -> None:
     """Add tracing information to this message.
-    Will open and close a "Azure.Servicebus.message" span, and
-    add the "DiagnosticId" as app properties of the message.
+
+    Will open and close a "Servicebus.message" span, and add the "DiagnosticId" as app properties of the message.
     """
     try:
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
@@ -304,23 +340,50 @@ def trace_message(message, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            link = Link({
-                'traceparent': current_span.get_trace_parent()
-            })
-            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
-                message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
-                # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
+
+            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
+                context = {}
+                headers = message_span.to_header()
+
+                if "traceparent" in headers:
+                    context["traceparent"] = headers["traceparent"]
+                if "tracestate" in headers:
+                    context["tracestate"] = headers["tracestate"]
+
                 if not message.message.application_properties:
                     message.message.application_properties = dict()
-                message.message.application_properties.setdefault(
-                    TRACE_PARENT_PROPERTY,
-                    message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
-                )
+
+                if "traceparent" in context:
+                    message.message.application_properties.setdefault(
+                        DIAGNOSTIC_ID_PROPERTY,
+                        context["traceparent"].encode(TRACE_PROPERTY_ENCODING),
+                    )
+                    message.message.application_properties.setdefault(
+                        TRACE_PARENT_PROPERTY,
+                        context["traceparent"].encode(TRACE_PROPERTY_ENCODING),
+                    )
+                if "tracestate" in context:
+                    message.message.application_properties.setdefault(
+                        TRACE_STATE_PROPERTY,
+                        context["tracestate"].encode(TRACE_PROPERTY_ENCODING),
+                    )
+
+                message_span.add_attribute(TRACE_NAMESPACE_ATTRIBUTE, TRACE_NAMESPACE)
+                message_span.add_attribute(TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TRACE_MESSAGING_SYSTEM)
+
+                if additional_attributes:
+                    for key, value in additional_attributes.items():
+                        if value is not None:
+                            message_span.add_attribute(key, value)
+
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
 
 
 def get_receive_links(messages):
+    if not is_tracing_enabled():
+        return []
+
     trace_messages = (
         messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
         else (messages,)
@@ -328,21 +391,61 @@ def get_receive_links(messages):
 
     links = []
     try:
-        for message in trace_messages:  # type: ignore
+        for message in trace_messages:
             if message.message.application_properties:
-                traceparent = message.message.application_properties.get(
-                    TRACE_PARENT_PROPERTY, ""
-                ).decode(TRACE_PROPERTY_ENCODING)
+                headers = {}
+
+                traceparent = message.application_properties.get(
+                    TRACE_PARENT_PROPERTY, b"").decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
-                    links.append(Link({'traceparent': traceparent},
-                        {
-                            SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
-                                TRACE_ENQUEUED_TIME_PROPERTY
-                            )
-                        }))
+                    headers["traceparent"] = traceparent
+
+                tracestate = message.application_properties.get(
+                    TRACE_STATE_PROPERTY, b"").decode(TRACE_PROPERTY_ENCODING)
+                if tracestate:
+                    headers["tracestate"] = tracestate
+
+                enqueued_time = message.message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)
+                attributes = {SPAN_ENQUEUED_TIME_PROPERTY: enqueued_time} if enqueued_time else None
+
+                if headers:
+                    links.append(Link(headers, attributes=attributes))
     except AttributeError:
         pass
     return links
+
+
+def create_span_links_from_batch(batch: ServiceBusMessageBatch) -> List[Link]:
+    """Create span links from a batch of events."""
+    links = []
+    for message in batch._messages:  # pylint: disable=protected-access
+        link = create_span_link_from_message(message)
+        if link:
+            links.append(link)
+    return links
+
+
+def create_span_link_from_message(message: ServiceBusMessage) -> Optional[Link]:
+    """Create a span link from a message.
+
+    This will extract the traceparent and tracestate from the message application properties and create span links
+    based on these values.
+    """
+    headers = {}
+    try:
+        if message.message.application_properties:
+            traceparent = message.message.application_properties.get(
+                TRACE_PARENT_PROPERTY, b"").decode(TRACE_PROPERTY_ENCODING)
+            if traceparent:
+                headers["traceparent"] = traceparent
+
+            tracestate = message.message.application_properties.get(
+                TRACE_STATE_PROPERTY, b"").decode(TRACE_PROPERTY_ENCODING)
+            if tracestate:
+                headers["tracestate"] = tracestate
+    except AttributeError:
+        return None
+    return Link(headers) if headers else None
 
 
 def parse_sas_credential(credential):

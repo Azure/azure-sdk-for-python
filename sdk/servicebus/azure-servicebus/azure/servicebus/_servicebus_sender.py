@@ -29,6 +29,9 @@ from ._common.utils import (
     transform_messages_if_needed,
     send_trace_context_manager,
     trace_message,
+    is_tracing_enabled,
+    create_span_links_from_batch,
+    create_span_link_from_message
 )
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -40,6 +43,8 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
     SPAN_NAME_SCHEDULE,
+    TRACE_NET_PEER_NAME_ATTRIBUTE,
+    TRACE_MESSAGING_DESTINATION_ATTRIBUTE,
 )
 
 if TYPE_CHECKING:
@@ -94,7 +99,7 @@ class SenderMixin(object):
         self._handler._msg_timeout = timeout * 1000  # type: ignore
 
     @classmethod
-    def _build_schedule_request(cls, schedule_time_utc, send_span, *messages):
+    def _build_schedule_request(cls, schedule_time_utc, namespace, entity_name, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
             if not isinstance(message, ServiceBusMessage):
@@ -106,7 +111,13 @@ class SenderMixin(object):
                 )
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message = transform_messages_if_needed(message, ServiceBusMessage)
-            trace_message(message, send_span)
+            trace_message(
+                message,
+                additional_attributes={
+                    TRACE_NET_PEER_NAME_ATTRIBUTE: namespace,
+                    TRACE_MESSAGING_DESTINATION_ATTRIBUTE: entity_name,
+                }
+            )
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
             if message.session_id:
@@ -319,19 +330,29 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
+        if isinstance(obj_messages, ServiceBusMessage):
+            request_body = self._build_schedule_request(
+                schedule_time_utc, self.fully_qualified_namespace, self.entity_name, obj_messages
+            )
+        else:
+            if len(obj_messages) == 0:
+                return []  # No-op on empty list.
+            request_body = self._build_schedule_request(
+                schedule_time_utc, self.fully_qualified_namespace, self.entity_name, *obj_messages
+            )
+
+        links = []
+        if is_tracing_enabled():
             if isinstance(obj_messages, ServiceBusMessage):
-                request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, obj_messages
-                )
-            else:
-                if len(obj_messages) == 0:
-                    return []  # No-op on empty list.
-                request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, *obj_messages
-                )
+                obj_messages = [obj_messages]
+            for message in obj_messages:
+                link = create_span_link_from_message(message)
+                if link:
+                    links.append(link)
+
+        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE, links=links) as send_span:
             if send_span:
-                self._add_span_request_attributes(send_span)
+                self._add_send_span_attributes(send_span, message_count=len(links))
             return self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
                 request_body,
@@ -428,29 +449,42 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        with send_trace_context_manager() as send_span:
-            if isinstance(message, ServiceBusMessageBatch):
-                obj_message = message  # type: MessageObjTypes
-            else:
-                obj_message = transform_messages_if_needed(  # type: ignore
-                    message, ServiceBusMessage
+        if isinstance(message, ServiceBusMessageBatch):
+            obj_message = message
+        else:
+            obj_message = transform_messages_if_needed(  # type: ignore
+                message, ServiceBusMessage
+            )
+            try:
+                batch = self.create_message_batch()
+                batch._from_list(obj_message)  # type: ignore # pylint: disable=protected-access
+                obj_message = batch
+            except TypeError:  # Message was not a list or generator. Do needed tracing.
+                trace_message(
+                    cast(ServiceBusMessage, obj_message),
+                    additional_attributes={
+                        TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+                        TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+                    }
                 )
-                try:
-                    batch = self.create_message_batch()
-                    batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
-                    obj_message = batch
-                except TypeError:  # Message was not a list or generator. Do needed tracing.
-                    trace_message(cast(ServiceBusMessage, obj_message), send_span)
 
-            if (
-                isinstance(obj_message, ServiceBusMessageBatch)
-                and len(obj_message) == 0
-            ):  # pylint: disable=len-as-condition
-                return  # Short circuit noop if an empty list or batch is provided.
+        if (
+            isinstance(obj_message, ServiceBusMessageBatch)
+            and len(obj_message) == 0
+        ):  # pylint: disable=len-as-condition
+            return  # Short circuit noop if an empty list or batch is provided.
 
+        links = []
+        if is_tracing_enabled():
+            if isinstance(obj_message, ServiceBusMessageBatch):
+                links = create_span_links_from_batch(obj_message)
+            else:
+                link = create_span_link_from_message(cast(ServiceBusMessage, obj_message))
+                links = [link] if link else []
+
+        with send_trace_context_manager(links=links) as send_span:
             if send_span:
-                self._add_span_request_attributes(send_span)
-
+                self._add_send_span_attributes(send_span, message_count=len(links))
             self._do_retryable_operation(
                 self._send,
                 message=obj_message,
@@ -491,9 +525,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 )
             )
 
-        return ServiceBusMessageBatch(
+        batch = ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )
+        # Embed tracing data into the batch so they can be added to message spans.
+        batch._fully_qualified_namespace = self.fully_qualified_namespace  # pylint: disable=protected-access
+        batch._entity_name = self.entity_name  # pylint: disable=protected-access
+        return batch
 
     @property
     def client_identifier(self) -> str:
