@@ -16,7 +16,8 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
     :keyword str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
     :keyword str client_id: The client ID of an Azure AD app registration.
-    :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates the identity.
+    :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
+        the identity.
     """
     def __init__(
             self,
