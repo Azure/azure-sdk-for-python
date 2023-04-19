@@ -123,8 +123,8 @@ except HttpResponseError as e:
 
 ```
 
-### Upsert participants in a room
-In order to insert new participants or update existing participants, call the `upsert_participants` function from RoomsClient.
+### Add or update participants in a room
+In order to insert new participants or update existing participants, call the `add_or_update_participants` function from RoomsClient.
 
 ```python
 participants = []
@@ -132,7 +132,7 @@ participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI i
 participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.ATTENDEE))
 participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.CONSUMER))
 try:
-    response = client.upsert_participants(
+    response = client.add_or_update_participants(
         room_id="id of the room to be updated",
         participants=participants
     )

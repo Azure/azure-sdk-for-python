@@ -10,9 +10,7 @@ from ._generated.models import (
     CommunicationRoom
 )
 from ._models import (
-    RoomParticipant,
-    UpsertParticipantsResult,
-    RemoveParticipantsResult
+    RoomParticipant
 )
 
 from ._version import VERSION
@@ -21,9 +19,7 @@ __all__ = [
     'CommunicationRoom',
     'ParticipantRole',
     'RoomsClient',
-    'RoomParticipant',
-    "UpsertParticipantsResult",
-    "RemoveParticipantsResult"
+    'RoomParticipant'
 ]
 
 __VERSION__ = VERSION

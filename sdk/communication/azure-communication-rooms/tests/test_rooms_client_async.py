@@ -11,9 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
     ParticipantRole,
-    RoomParticipant,
-    UpsertParticipantsResult,
-    RemoveParticipantsResult
+    RoomParticipant
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -168,7 +166,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
             raised = True
         assert raised == True
 
-    async def test_upsert_participants(self):
+    async def test_add_or_update_participants(self):
         raised = False
         updated_participant = RoomParticipant(
             communication_identifier=CommunicationUserIdentifier(
@@ -184,14 +182,12 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
-        response = None
         try:
-            response = await rooms_client.upsert_participants(room_id=self.room_id, participants=[updated_participant])
+            await rooms_client.add_or_update_participants(room_id=self.room_id, participants=[updated_participant])
         except:
             raised = True
             raise
         self.assertFalse(raised, 'Expected is no exception raised')
-        assert isinstance(response, UpsertParticipantsResult)
 
     async def test_remove_participants(self):
         raised = False
@@ -204,15 +200,13 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
-        response = None
         try:
-            response = await rooms_client.remove_participants(room_id=self.room_id, communication_identifiers=[user_to_remove])
+            await rooms_client.remove_participants(room_id=self.room_id, participant_identifiers=[user_to_remove])
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        assert isinstance(response, RemoveParticipantsResult)
 
     async def test_list_participants(self):
         raised = False

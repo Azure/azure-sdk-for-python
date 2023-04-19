@@ -13,9 +13,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.communication.rooms._models import (
-    RoomParticipant,
-    UpsertParticipantsResult,
-    RemoveParticipantsResult)
+    RoomParticipant
+)
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from .._generated.aio._client import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
@@ -121,7 +120,7 @@ class RoomsClient(object):
             valid_from=valid_from,
             valid_until=valid_until,
             # pylint: disable=protected-access
-            participants=self._convert_room_participants_to_dictionary_for_upsert(participants)
+            participants=self._convert_room_participants_to_dictionary_for_add_or_update(participants)
         )
 
         repeatability_request_id = uuid.uuid1()
@@ -149,7 +148,7 @@ class RoomsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
-        await self._rooms_service_client.rooms.delete(room_id=room_id, **kwargs)
+        return await self._rooms_service_client.rooms.delete(room_id=room_id, **kwargs)
 
     @distributed_trace_async
     async def update_room(
@@ -216,13 +215,13 @@ class RoomsClient(object):
 
 
     @distributed_trace_async
-    async def upsert_participants(
+    async def add_or_update_participants(
         self,
         *,
         room_id: str,
         participants: List[RoomParticipant],
         **kwargs
-    ) -> UpsertParticipantsResult:
+    ) -> None:
         """Update participants to a room. It looks for the room participants based on their
         communication identifier and replace those participants with the value passed in
         this API.
@@ -230,41 +229,39 @@ class RoomsClient(object):
         :type room_id: str
         :param participants: Required. Collection of identities to be updated
         :type participants: List[~azure.communication.rooms.RoomParticipant]
-        :return: Upsert participants result
-        :rtype: ~azure.communication.rooms.UpsertParticipantsResult
+        :returns: None.
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_participants_request = UpdateParticipantsRequest(
             # pylint: disable=protected-access
-            participants=self._convert_room_participants_to_dictionary_for_upsert(participants)
+            participants=self._convert_room_participants_to_dictionary_for_add_or_update(participants)
         )
         await self._rooms_service_client.participants.update(
             room_id=room_id, update_participants_request=update_participants_request, **kwargs)
-        return UpsertParticipantsResult()
 
     @distributed_trace_async
     async def remove_participants(
         self,
         *,
         room_id: str,
-        communication_identifiers: List[CommunicationIdentifier],
+        participant_identifiers: List[CommunicationIdentifier],
         **kwargs
-    ) -> RemoveParticipantsResult:
+    ) -> None:
         """Remove participants from a room
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities to be removed from the room.
         :type participants: List[~azure.communication.rooms._shared.models.CommunicationIdentifier]
-        :return: Upsert participants result
-        :rtype: ~azure.communication.rooms.RemoveParticipantsResult
+        :returns: None.
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         remove_participants_request = UpdateParticipantsRequest(
-            participants=self._convert_communication_identifiers_to_dictionary_for_remove(communication_identifiers)
+            participants=self._convert_participant_identifiers_to_dictionary_for_remove(participant_identifiers)
         )
         await self._rooms_service_client.participants.update(
             room_id=room_id, update_participants_request=remove_participants_request, **kwargs)
-        return RemoveParticipantsResult()
 
     @distributed_trace
     def list_participants(
@@ -285,22 +282,22 @@ class RoomsClient(object):
             **kwargs)
 
     @staticmethod
-    def _convert_room_participants_to_dictionary_for_upsert(
+    def _convert_room_participants_to_dictionary_for_add_or_update(
         room_participants : List[RoomParticipant]
     ):
-        upsert_dictionary = dict()
+        add_or_update_dictionary = dict()
         for participant in room_participants or []:
-            upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(
+            add_or_update_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(
                 role=participant.role
             )
-        return upsert_dictionary
+        return add_or_update_dictionary
 
     @staticmethod
-    def _convert_communication_identifiers_to_dictionary_for_remove(
-        communication_identifiers : List[CommunicationIdentifier]
+    def _convert_participant_identifiers_to_dictionary_for_remove(
+        identifiers : List[CommunicationIdentifier]
     ):
         remove_dictionary = dict()
-        for identifier in communication_identifiers or []:
+        for identifier in identifiers or []:
             remove_dictionary[identifier.raw_id] = None
         return remove_dictionary
 

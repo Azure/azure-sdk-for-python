@@ -7,13 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._models import (
-    RoomParticipant,
-    UpsertParticipantsResult,
-    RemoveParticipantsResult
+    RoomParticipant
 )
 
 __all__ = [
-    "RoomParticipant",
-    "UpsertParticipantsResult",
-    "RemoveParticipantsResult"
+    "RoomParticipant"
 ]

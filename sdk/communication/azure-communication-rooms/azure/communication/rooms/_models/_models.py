@@ -52,13 +52,3 @@ class RoomParticipant():
             communication_identifier=identifier_from_raw_id(room_participant.raw_id),
             role=room_participant.role
         )
-
-class UpsertParticipantsResult():
-    def __init__(self):
-        # empty constructor
-        pass
-
-class RemoveParticipantsResult():
-    def __init__(self):
-        # empty constructor
-        pass

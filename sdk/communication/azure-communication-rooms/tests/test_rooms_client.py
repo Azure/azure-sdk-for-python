@@ -11,9 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
     ParticipantRole,
-    RoomParticipant,
-    RemoveParticipantsResult,
-    UpsertParticipantsResult
+    RoomParticipant
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -161,7 +159,7 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(self.valid_from, items[0].valid_from)
         self.assertEqual(self.valid_until, items[0].valid_until)
 
-    def test_upsert_participants(self):
+    def test_add_or_update_participants(self):
         raised = False
         updated_participant = RoomParticipant(
             communication_identifier=CommunicationUserIdentifier(
@@ -177,13 +175,12 @@ class TestRoomsClient(unittest.TestCase):
         response = None
 
         try:
-            response = rooms_client.upsert_participants(room_id=self.room_id, participants=[updated_participant])
+            response = rooms_client.add_or_update_participants(room_id=self.room_id, participants=[updated_participant])
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        assert isinstance(response, UpsertParticipantsResult)
 
     def test_remove_participants(self):
         raised = False
@@ -196,15 +193,13 @@ class TestRoomsClient(unittest.TestCase):
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
-        response = None
         try:
-            response = rooms_client.remove_participants(room_id=self.room_id, communication_identifiers=[user_to_remove])
+            rooms_client.remove_participants(room_id=self.room_id, participant_identifiers=[user_to_remove])
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        assert isinstance(response, RemoveParticipantsResult)
 
     def test_list_participants(self):
         raised = False

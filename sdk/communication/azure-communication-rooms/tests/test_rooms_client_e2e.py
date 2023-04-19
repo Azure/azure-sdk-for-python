@@ -294,7 +294,7 @@ class RoomsClientTest(RoomsTestCase):
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
-    def test_upsert_participants(self):
+    def test_add_or_update_participants(self):
         # add john and chris to room
         create_participants = [
             self.users["john"],
@@ -304,7 +304,7 @@ class RoomsClientTest(RoomsTestCase):
 
         # update join to consumer and add fred to room
         self.users["john"].role = ParticipantRole.CONSUMER
-        upsert_participants = [
+        add_or_update_participants = [
             self.users["john"],
             self.users["fred"]
         ]
@@ -324,7 +324,7 @@ class RoomsClientTest(RoomsTestCase):
             )
         ]
 
-        self.rooms_client.upsert_participants(room_id=create_response.id, participants=upsert_participants)
+        self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
         update_response = self.rooms_client.list_participants(room_id=create_response.id)
         participants = []
         for participant in update_response:
@@ -334,7 +334,7 @@ class RoomsClientTest(RoomsTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
-    def test_upsert_participants_with_null_role(self):
+    def test_add_or_update_participants_with_null_role(self):
         create_participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
@@ -372,8 +372,8 @@ class RoomsClientTest(RoomsTestCase):
         assert len(participants) == 3
         self.assertCountEqual(expected_participants, participants)
 
-        # Check participants were upserted properly
-        upsert_participants = [
+        # Check participants were added or updated properly
+        add_or_update_participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id1),
                 role=None
@@ -407,7 +407,7 @@ class RoomsClientTest(RoomsTestCase):
                 role=ParticipantRole.ATTENDEE
             )
         ]
-        self.rooms_client.upsert_participants(room_id=create_response.id, participants=upsert_participants)
+        self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
         update_response = self.rooms_client.list_participants(room_id=create_response.id)
         updated_participants = []
         for participant in update_response:
@@ -437,7 +437,7 @@ class RoomsClientTest(RoomsTestCase):
                 role=ParticipantRole.ATTENDEE
             )
         ]
-        self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=removed_participants)
+        self.rooms_client.remove_participants(room_id=create_response.id, participant_identifiers=removed_participants)
         update_response = self.rooms_client.list_participants(room_id=create_response.id)
         participants = []
         for participant in update_response:
@@ -447,7 +447,7 @@ class RoomsClientTest(RoomsTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
-    def test_upsert_participants_incorrectMri(self):
+    def test_add_or_update_participants_incorrectMri(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
 
@@ -460,7 +460,7 @@ class RoomsClientTest(RoomsTestCase):
 
         # update room attributes
         with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.upsert_participants(room_id=create_response.id, participants=participants)
+            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
@@ -477,7 +477,7 @@ class RoomsClientTest(RoomsTestCase):
 
         # update room attributes
         with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.upsert_participants(room_id=create_response.id, participants=participants)
+            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
