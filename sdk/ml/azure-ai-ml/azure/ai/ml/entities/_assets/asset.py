@@ -39,7 +39,6 @@ class Asset(Resource):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
 

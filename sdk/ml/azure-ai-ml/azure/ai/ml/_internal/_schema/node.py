@@ -18,7 +18,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
     component = UnionField(
         [
             # for registry type assets
-            RegistryStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # inline component or component file reference starting with FILE prefix
@@ -53,6 +53,9 @@ class ScopeSchema(InternalBaseNodeSchema):
     scope_param = fields.Str()
     custom_job_name_suffix = fields.Str()
     priority = fields.Int()
+    auto_token = fields.Int()
+    tokens = fields.Int()
+    vcp = fields.Float()
 
 
 class HDInsightSchema(InternalBaseNodeSchema):

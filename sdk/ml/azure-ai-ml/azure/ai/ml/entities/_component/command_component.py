@@ -16,12 +16,13 @@ from azure.ai.ml.entities._job.distribution import (
     MpiDistribution,
     PyTorchDistribution,
     TensorFlowDistribution,
+    RayDistribution,
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from ..._restclient.v2022_05_01.models import ComponentVersionData
+from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -51,7 +52,7 @@ class CommandComponent(Component, ParameterizedCommand):
     :param environment: Environment that component will run in.
     :type environment: Union[Environment, str]
     :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
+    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
     :param resources: Compute Resource configuration for the component.
     :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param inputs: Inputs of the component.
@@ -80,7 +81,9 @@ class CommandComponent(Component, ParameterizedCommand):
         command: Optional[str] = None,
         code: Optional[str] = None,
         environment: Optional[Union[str, Environment]] = None,
-        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
+        distribution: Optional[
+            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+        ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
@@ -166,7 +169,7 @@ class CommandComponent(Component, ParameterizedCommand):
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # put it here as distribution is shared by some components, e.g. command
         distribution = obj.properties.component_spec.pop("distribution", None)
         init_kwargs = super()._from_rest_object_to_init_params(obj)

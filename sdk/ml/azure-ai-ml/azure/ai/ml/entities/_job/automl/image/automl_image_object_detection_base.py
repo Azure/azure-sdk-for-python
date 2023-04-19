@@ -6,7 +6,7 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,

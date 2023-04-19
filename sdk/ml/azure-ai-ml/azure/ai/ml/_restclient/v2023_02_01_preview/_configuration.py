@@ -44,7 +44,7 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
     ):
         # type: (...) -> None
         super(AzureMachineLearningWorkspacesConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -54,23 +54,24 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
         self.credential = credential
         self.subscription_id = subscription_id
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'mgmt-machinelearningservices/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "mgmt-machinelearningservices/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or ARMHttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or ARMHttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = ARMChallengeAuthenticationPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

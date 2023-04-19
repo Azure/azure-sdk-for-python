@@ -99,6 +99,20 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource. Unknown is the default state for Communication Services."""
+
+    UNKNOWN = "Unknown"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    RUNNING = "Running"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+
+
 class UserEngagementTracking(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes whether user engagement tracking is enabled or disabled."""
 

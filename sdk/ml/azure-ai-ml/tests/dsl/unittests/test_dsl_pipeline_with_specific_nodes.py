@@ -1146,7 +1146,7 @@ class TestDSLPipelineWithSpecificNodes:
             args="--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
             compute=synapse_compute_name,
             # For HOBO spark, provide 'resources'
-            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
         )
 
         @dsl.pipeline(experiment_name="test_pipeline_with_spark_function")
@@ -1376,7 +1376,7 @@ class TestDSLPipelineWithSpecificNodes:
             args="--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
             compute=synapse_compute_name,
             # For HOBO spark, provide 'resources'
-            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
         )
 
         @dsl.pipeline(experiment_name="test_pipeline_with_spark_function")
@@ -2764,15 +2764,15 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_pipeline_with_command_services_with_deprecatable_JobService(self):
         services = {
-            "my_ssh": JobService(job_service_type="ssh"),
+            "my_ssh": JobService(type="ssh"),
             "my_tensorboard": JobService(
-                job_service_type="tensor_board",
+                type="tensor_board",
                 properties={
                     "logDir": "~/tblog",
                 },
             ),
-            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
-            "my_vscode": JobService(job_service_type="vs_code"),
+            "my_jupyterlab": JobService(type="jupyter_lab"),
+            "my_vscode": JobService(type="vs_code"),
         }
         rest_services = {
             "my_ssh": {"job_service_type": "SSH"},
@@ -2827,7 +2827,7 @@ class TestDSLPipelineWithSpecificNodes:
         assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
 
         # test set services in pipeline
-        new_services = {"my_jupyter": JobService(job_service_type="jupyter_lab")}
+        new_services = {"my_jupyter": JobService(type="jupyter_lab")}
         rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
 
         @dsl.pipeline()

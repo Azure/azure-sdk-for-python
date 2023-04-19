@@ -2,9 +2,9 @@
   "include": [
     {
       "Agent": {
-        "ubuntu-18.04_ManagedHSM": {
-          "OSVmImage": "MMSUbuntu18.04",
-          "Pool": "azsdk-pool-mms-ubuntu-1804-general",
+        "ubuntu-20.04_ManagedHSM": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
           "ArmTemplateParameters": "@{ enableHsm = $true }"
         }
       },

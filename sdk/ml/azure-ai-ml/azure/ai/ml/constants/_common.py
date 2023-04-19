@@ -36,8 +36,16 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
 SINGULARITY_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
+)
+SINGULARITY_ID_REGEX_FORMAT = (
     "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
+SINGULARITY_FULL_NAME_REGEX_FORMAT = (
+    "^(azureml:)?//subscriptions/(?P<subscription_id>[^/]+)/resourceGroups/(?P<resource_group_name>[^/]+)/"
+    "virtualclusters/(?P<name>[^/]+)"
+)
+SINGULARITY_SHORT_NAME_REGEX_FORMAT = "^(azureml:)?//virtualclusters/(?P<name>[^/]+)"
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
@@ -303,6 +311,7 @@ class ArmConstants:
     STORAGE = "StorageAccount"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
+    LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
@@ -438,7 +447,7 @@ class YAMLRefDocLinks:
     BATCH_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-batch-yaml-reference"
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
-    SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    JOB_SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
@@ -495,8 +504,8 @@ class YAMLRefDocSchemaNames:
     """Command component."""
     PARALLEL_COMPONENT = "ParallelComponent"
     """Parallel component."""
-    SCHEDULE = "Schedule"
-    """Schedule."""
+    JOB_SCHEDULE = "JobSchedule"
+    """Job Schedule."""
 
 
 class DockerTypes:
@@ -833,3 +842,20 @@ class Boolean:
     """True boolean type."""
     FALSE = "false"
     """False boolean type."""
+
+
+class InferenceServerType:
+    AZUREML_ONLINE = "azureml_online"
+    AZUREML_BATCH = "azureml_batch"
+    TRITON = "triton"
+    CUSTOM = "custom"
+
+
+class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ALL = "all"
+    NONE = "none"
+
+
+class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JOB = "job"
+    MONITOR = "monitor"

@@ -112,6 +112,27 @@ class InternalInput(Input):
         return InternalInput(**_input)
 
 
+def _map_v1_io_type(output_type: str) -> str:
+    """Map v1 IO type to v2."""
+
+    # TODO: put it in a common place
+    def _map_primitive_type(_type):
+        """Convert double and float to number type."""
+        _type = _type.lower()
+        if _type in ["double", "float"]:
+            return InputTypes.NUMBER
+        return _type
+
+    if output_type in list(get_all_enum_values_iter(AssetTypes)):
+        return output_type
+    if output_type in SUPPORTED_INTERNAL_PARAM_TYPES:
+        return _map_primitive_type(output_type)
+    if output_type in ["AnyFile"]:
+        return AssetTypes.URI_FILE
+    # Handle AnyDirectory and the other types.
+    return AssetTypes.URI_FOLDER
+
+
 class InternalOutput(Output):
     def __init__(self, *, datastore_mode=None, is_link_mode=None, **kwargs):
         self.datastore_mode = datastore_mode
@@ -133,19 +154,5 @@ class InternalOutput(Output):
 
     def map_pipeline_output_type(self):
         """Map output type to pipeline output type."""
-
-        def _map_primitive_type(_type):
-            """Convert double and float to number type."""
-            _type = _type.lower()
-            if _type in ["double", "float"]:
-                return InputTypes.NUMBER
-            return _type
-
-        if self.type in list(get_all_enum_values_iter(AssetTypes)):
-            return self.type
-        if self.type in SUPPORTED_INTERNAL_PARAM_TYPES:
-            return _map_primitive_type(self.type)
-        if self.type in ["AnyFile"]:
-            return AssetTypes.URI_FILE
-        # Handle AnyDirectory and the other types.
-        return AssetTypes.URI_FOLDER
+        # TODO: call this for node output
+        return _map_v1_io_type(self.type)
