@@ -86,7 +86,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type distribution: Union[
         azure.ai.ml.PyTorchDistribution,
         azure.ai.ml.MpiDistribution,
-        azure.ai.ml.TensorFlowDistribution]
+        azure.ai.ml.TensorFlowDistribution,
+        azure.ai.ml.RayDistribution]
     :param environment: Environment that training job will run in.
     :type environment: Union[azure.ai.ml.entities.Environment, str]
     :param identity: Identity that training job will use while running on compute.
