@@ -34,7 +34,7 @@ from .._schema.compute.compute_instance import ComputeInstanceSchema
 from .._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
 from .._schema.job import CommandJobSchema, ParallelJobSchema
 from .._schema.pipeline.pipeline_job import PipelineJobSchema
-from .._schema.schedule.schedule import ScheduleSchema
+from .._schema.schedule.schedule import JobScheduleSchema
 from .._schema.workspace import WorkspaceSchema
 from .._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from ..constants._common import (
@@ -110,8 +110,8 @@ REF_DOC_ERROR_MESSAGE_MAP = {
     PipelineJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.PIPELINE_JOB, YAMLRefDocLinks.PIPELINE_JOB
     ),
-    ScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
-        YAMLRefDocSchemaNames.SCHEDULE, YAMLRefDocLinks.SCHEDULE
+    JobScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
+        YAMLRefDocSchemaNames.JOB_SCHEDULE, YAMLRefDocLinks.JOB_SCHEDULE
     ),
     SweepJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.SWEEP_JOB, YAMLRefDocLinks.SWEEP_JOB
