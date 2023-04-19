@@ -1,4 +1,8 @@
 [run]
+relative_files = True
+source =
+	azure*
+	sdk*
 include =
 	azure*
 	sdk*
