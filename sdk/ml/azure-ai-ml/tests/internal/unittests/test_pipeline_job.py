@@ -697,3 +697,24 @@ class TestPipelineJob:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_node_output_type_promotion(self):
+        test_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        component: InternalComponent = load_component(test_path)
+
+        @pipeline()
+        def pipeline_func():
+            node = component(
+                training_data=Input(path="./tests/test_configs/data"),
+                max_epochs=1,
+            )
+            node.outputs.model_output.mode = "mount"
+            return node.outputs
+
+        pipeline_job = pipeline_func()
+        pipeline_dict = pipeline_job._to_rest_object().as_dict()
+        # type will be preserved & mode will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["model_output"] == {
+            "job_output_type": "uri_folder",
+            "mode": "ReadWriteMount",
+        }

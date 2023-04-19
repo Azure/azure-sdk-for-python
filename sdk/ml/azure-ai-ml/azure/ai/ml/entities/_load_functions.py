@@ -31,7 +31,7 @@ from azure.ai.ml.entities._feature_store_entity.feature_store_entity import Feat
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.entities._schedule.schedule import JobSchedule
+from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
@@ -643,7 +643,7 @@ def load_schedule(
     source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> JobSchedule:
+) -> Schedule:
     """Construct a schedule object from yaml file.
 
     :param source: The local yaml source of a schedule object. Must be either a
@@ -663,9 +663,9 @@ def load_schedule(
     :type params_override: List[Dict]
 
     :return: Constructed schedule object.
-    :rtype: JobSchedule
+    :rtype: Schedule
     """
-    return load_common(JobSchedule, source, relative_origin, **kwargs)
+    return load_common(Schedule, source, relative_origin, **kwargs)
 
 
 def _load_feature_store(

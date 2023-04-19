@@ -4,7 +4,7 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -57,8 +57,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
 
         # runtime_version type is either float or str
         if isinstance(self.runtime_version, float):
-            if self.runtime_version < 3.1 or self.runtime_version >= 3.3:
-                msg = "runtime version should be either 3.1 or 3.2"
+            if self.runtime_version < 3.2 or self.runtime_version >= 3.4:
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -73,7 +73,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             except ValueError:
                 raise ValueError("runtime_version should only contain numbers")
             if len(runtime_arr) <= 1:
-                msg = "runtime version should be either 3.1 or 3.2"
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -82,8 +82,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                 )
             first_number = int(runtime_arr[0])
             second_number = int(runtime_arr[1])
-            if first_number != 3 or second_number not in (1, 2):
-                msg = "runtime version should be either 3.1 or 3.2"
+            if first_number != 3 or second_number not in (2, 3):
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,

@@ -114,7 +114,7 @@ from ._registry.registry_support_classes import (
     SystemCreatedStorageAccount,
 )
 from ._resource import Resource
-from ._schedule.schedule import JobSchedule
+from ._schedule.schedule import Schedule, JobSchedule
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
@@ -285,6 +285,7 @@ __all__ = [
     "RecurrenceTrigger",
     "RecurrencePattern",
     "JobSchedule",
+    "Schedule",
     "ComputePowerAction",
     "ComputeSchedules",
     "ComputeStartStopSchedule",
