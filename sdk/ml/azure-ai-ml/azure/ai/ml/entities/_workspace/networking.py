@@ -36,7 +36,7 @@ class OutboundRule:
         self.name = name
         self.type = kwargs.pop("type", None)
         self.category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        self.status = "Inactive"
+        self.status = kwargs.pop("status", None)
 
     @classmethod
     def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
@@ -71,8 +71,7 @@ class OutboundRule:
 class FqdnDestination(OutboundRule):
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
         self.destination = destination
-        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        OutboundRule.__init__(self, type=OutboundRuleType.FQDN, category=category, name=name)
+        OutboundRule.__init__(self, type=OutboundRuleType.FQDN, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestFqdnOutboundRule:
         return RestFqdnOutboundRule(type=self.type, category=self.category, destination=self.destination)
@@ -101,8 +100,7 @@ class PrivateEndpointDestination(OutboundRule):
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
         self.spark_enabled = spark_enabled
-        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, category=category, name=name)
+        OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
         return RestPrivateEndpointOutboundRule(
@@ -143,8 +141,7 @@ class ServiceTagDestination(OutboundRule):
         self.service_tag = service_tag
         self.protocol = protocol
         self.port_ranges = port_ranges
-        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        OutboundRule.__init__(self, type=OutboundRuleType.SERVICE_TAG, category=category, name=name)
+        OutboundRule.__init__(self, type=OutboundRuleType.SERVICE_TAG, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestServiceTagOutboundRule:
         return RestServiceTagOutboundRule(
@@ -181,9 +178,7 @@ class ManagedNetwork:
         self.isolation_mode = isolation_mode
         self.network_id = network_id
         self.outbound_rules = outbound_rules
-        status = kwargs.pop("status", False)
-        if status:
-            self.status = status
+        self.status = kwargs.pop("status", None)
 
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
