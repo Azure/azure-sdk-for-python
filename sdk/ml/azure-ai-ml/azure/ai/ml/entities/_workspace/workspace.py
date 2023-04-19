@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
