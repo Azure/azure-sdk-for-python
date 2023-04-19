@@ -15,19 +15,19 @@ spec:
           memory: "2000Mi"
           cpu: "1"
 
-      # {{ if eq .Stress.testTarget "sender" }}
-      # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sender.bin test_stress_queues_async.py --method sender --duration 14400 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "receiver" }}
-      # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/receiver.bin test_stress_queues_async.py --method receiver --duration 14400 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "receiveriterator" }}
-      # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/receiveriterator.bin test_stress_queues_async.py --method receiveriterator --duration 14400 --logging-enable']
-      # {{- end -}}
-
-      {{ if eq .Stress.testTarget "aqueuew" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable --transport']
+      {{ if eq .Stress.testTarget "sender" }}
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method sender --duration 14400 --logging-enable --transport']
       {{- end -}}
+      {{ if eq .Stress.testTarget "receiver" }}
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method receiver --duration 14400 --logging-enable --transport']
+      {{- end -}}
+      {{ if eq .Stress.testTarget "receiveriterator" }}
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method receiveriterator --duration 14400 --logging-enable --transport']
+      {{- end -}}
+
+      # {{ if eq .Stress.testTarget "aqueuew" }}
+      # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues.py --method send_receive --duration 300000 --logging-enable --transport']
+      # {{- end -}}
 
       # {{ if eq .Stress.testTarget "queuew" }}
       # command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat $DEBUG_SHARE/output.bin && python test_stress_queues.py --method send_receive --duration 300000 --logging-enable --transport']

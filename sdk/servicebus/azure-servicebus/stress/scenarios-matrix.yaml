@@ -2,12 +2,12 @@ matrix:
   image:
     - Dockerfile
   scenarios:
-    # sender:
-    #   testTarget: sender
-    # receiver:
-    #   testTarget: receiver
-    # receiveriterator:
-    #   testTarget: receiveriterator
+    sender:
+      testTarget: sender
+    receiver:
+      testTarget: receiver
+    receiveriterator:
+      testTarget: receiveriterator
     # queue:
     #   testTarget: queue
     # aqueue:
@@ -22,8 +22,8 @@ matrix:
     #   testTarget: abatch
     # queuew:
     #   testTarget: queuew
-    aqueuew:
-     testTarget: aqueuew
+    # aqueuew:
+    #  testTarget: aqueuew
     # queuepullw:
     #   testTarget: queuepullw
     # aqueuepullw:

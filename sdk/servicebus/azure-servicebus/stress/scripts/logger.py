@@ -14,14 +14,11 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
                     log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
     logger = logging.getLogger(logger_name)
-    logger.setLevel(level)
+    logger.setLevel(logging.DEBUG)
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-
-    if print_console:
-        console_handler = logging.StreamHandler(stream=sys.stdout)
-        if not logger.handlers:
-            console_handler.setFormatter(formatter)
-            logger.addHandler(console_handler)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
     return logger
 
 def get_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
@@ -30,23 +27,23 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
     stress_logger.setLevel(logging.DEBUG)
     servicebus_logger = logging.getLogger("azure.servicebus")
     servicebus_logger.setLevel(logging.DEBUG)
-    # pyamqp_logger = logging.getLogger("azure.servicebus._pyamqp.aio.connection")
-    # pyamqp_logger.setLevel(logging.DEBUG)
+    pyamqp_logger = logging.getLogger("azure.servicebus._pyamqp")
+    pyamqp_logger.setLevel(logging.DEBUG)
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 
     console_handler = logging.FileHandler(log_filename)
-    # console_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
     servicebus_logger.addHandler(console_handler)
-    # pyamqp_logger.addHandler(console_handler)
-    # stress_logger.addHandler(console_handler)
+    pyamqp_logger.addHandler(console_handler)
+    stress_logger.addHandler(console_handler)
 
     return stress_logger
 
 
 def get_azure_logger(logger_name, level=logging.INFO):
     logger = logging.getLogger("azure_logger_" + logger_name)
-    logger.setLevel(level)
+    logger.setLevel(logging.DEBUG)
     # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'
     logger.addHandler(AzureLogHandler())
     return logger

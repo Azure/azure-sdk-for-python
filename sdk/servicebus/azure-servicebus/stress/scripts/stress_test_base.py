@@ -193,14 +193,18 @@ class StressTestRunner:
             return message
 
     def _send(self, sender, end_time):
-        self._schedule_interval_logger(end_time, "Sender " + str(self))
+        # self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
+            _logger.debug("Starting send loop")
+            # log sender
+            _logger.debug("Sender: {}".format(sender))
             with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     try:
                         message = self._construct_message()
                         if self.send_session_id != None:
                             message.session_id = self.send_session_id
+                        _logger.debug("Sending message: {}".format(message))
                         sender.send_messages(message)
                         self.azure_monitor_metric.record_messages_cpu_memory(
                             self.send_batch_size,
@@ -229,8 +233,10 @@ class StressTestRunner:
 
     def _receive(self, receiver, end_time):
         # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.DEBUG, print_console=PRINT_CONSOLE)
-        self._schedule_interval_logger(end_time, "Receiver " + str(self))
+        # self._schedule_interval_logger(end_time, "Receiver " + str(self))
         delivery_ids = []
+        #log receiver
+        _logger.debug("Receiver: {}".format(receiver))
         try:
             with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
@@ -247,6 +253,8 @@ class StressTestRunner:
                             batch = []
 
                         for message in batch:
+                            # log reciever
+                            _logger.debug("Received message: {}".format(message))
                             self.on_receive(self._state, message, receiver)
                             try:
                                 if self.should_complete_messages:
