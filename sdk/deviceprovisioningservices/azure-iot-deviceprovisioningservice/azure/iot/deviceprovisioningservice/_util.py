@@ -35,9 +35,7 @@ def _parse_connection_string(
         for k in validate:
             if not any([decomposed.get(k), decomposed_lower.get(k.lower())]):
                 raise ValueError(
-                    "{} connection string has missing property: {}".format(
-                        cstring_type, k
-                    )
+                    f"{cstring_type} connection string has missing property: {k}"
                 )
     return decomposed
 

@@ -4,8 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Union
 
+from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -20,11 +21,11 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import (
     RequestsTransport,
 )  # pylint: disable=no-name-in-module
-
-from azure.iot.deviceprovisioningservice._generated._version import VERSION
 from azure.iot.deviceprovisioningservice._generated import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
+from azure.iot.deviceprovisioningservice._generated._version import VERSION
+
 from ._auth import SharedKeyCredentialPolicy
 from ._util import parse_connection_string
 
@@ -33,7 +34,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class ProvisioningServiceClient(
+    object
+):  # pylint: disable=client-accepts-api-version-keyword
     """
     API for connecting to, and conducting operations on a Device Provisioning Service instance
 
@@ -44,9 +47,15 @@ class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-v
     def __init__(
         self,
         endpoint: str,
-        credential: Optional["TokenCredential"] = None,
+        credential: Union[
+            "TokenCredential", AzureNamedKeyCredential, SharedKeyCredentialPolicy
+        ],
         **kwargs,
     ) -> None:
+        self._pipeline = self._create_pipeline(
+            credential=credential, base_url=endpoint, **kwargs
+        )
+
         # Validate endpoint
         try:
             if not endpoint.lower().startswith("http"):
@@ -55,15 +64,9 @@ class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-v
             raise ValueError("Endpoint URL must be a string.")
         endpoint = endpoint.rstrip("/")
 
-        if not credential:
-            raise ValueError("Credential cannot be None")
-
-        self._pipeline = self._create_pipeline(
-            credential=credential, base_url=endpoint, **kwargs
-        )
         # Generate base client
         self._runtime_client = GeneratedProvisioningServiceClient(
-            credential=credential,
+            credential=credential,  # type: ignore
             endpoint=endpoint,
             pipeline=self._pipeline,
             **kwargs,
@@ -102,7 +105,10 @@ class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-v
 
     def _create_pipeline(
         self,
-        credential: "TokenCredential",
+        credential: Union[
+            "TokenCredential", AzureNamedKeyCredential, SharedKeyCredentialPolicy
+        ],
+        base_url: str,
         **kwargs,
     ) -> Pipeline:
         transport = kwargs.get("transport") or RequestsTransport(**kwargs)
@@ -118,6 +124,12 @@ class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-v
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential  # type: ignore
+        elif isinstance(credential, AzureNamedKeyCredential):
+            name = credential.named_key.name
+            key = credential.named_key.key
+            self._credential_policy = SharedKeyCredentialPolicy(
+                endpoint=base_url, key=key, policy_name=name
+            )  # type: ignore
         elif credential is not None:
             raise TypeError(f"Unsupported credential: {credential}")
 

@@ -1,5 +1,4 @@
 import pytest
-
 from azure.iot.deviceprovisioningservice.aio import (
     ProvisioningServiceClient as AsyncProvisioningServiceClient,
 )
@@ -11,7 +10,7 @@ endpoint = "fake_endpoint"
 class TestProvisioningClientInitialization(object):
     def test_client_init_errors(self):
         with pytest.raises(ValueError):
-            ProvisioningServiceClient(["bad_endpoint"])
+            ProvisioningServiceClient(["bad_endpoint"], credential=None)
 
         with pytest.raises(TypeError):
             ProvisioningServiceClient(endpoint=endpoint, credential=True)
@@ -19,7 +18,7 @@ class TestProvisioningClientInitialization(object):
     @pytest.mark.asyncio
     async def test_client_init_errors_async(self):
         with pytest.raises(ValueError):
-            AsyncProvisioningServiceClient(["bad_endpoint"])
+            AsyncProvisioningServiceClient(["bad_endpoint"], credential=None)
 
         with pytest.raises(TypeError):
             AsyncProvisioningServiceClient(endpoint=endpoint, credential=True)

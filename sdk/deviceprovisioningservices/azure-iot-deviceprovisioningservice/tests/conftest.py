@@ -122,6 +122,6 @@ ProvisioningServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "deviceprovisioningservices",
     deviceprovisioningservices_endpoint="fake-resource.azure-devices-provisioning.net",
-    deviceprovisioningservices_conn_str="HostName=mydps;SharedAccessKeyName=name;SharedAccessKey=value",
+    deviceprovisioningservices_conn_str="HostName=mydps;SharedAccessKeyName=name;SharedAccessKey=fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
     deviceprovisioningservices_idscope="IDSCOPE",
 )

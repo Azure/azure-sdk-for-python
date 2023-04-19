@@ -29,7 +29,7 @@ def generate_sas_token(audience: str, policy: str, key: str, expiry: int = 3600)
     encoded_uri = quote_plus(audience)
 
     ttl = int(time() + expiry)
-    sign_key = "%s\n%d" % (encoded_uri, ttl)
+    sign_key = f"{encoded_uri}\n{ttl}"
     signature = b64encode(
         HMAC(b64decode(key), sign_key.encode("utf-8"), sha256).digest()
     )

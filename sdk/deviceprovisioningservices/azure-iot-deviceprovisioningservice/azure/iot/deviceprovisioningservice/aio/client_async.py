@@ -5,8 +5,9 @@
 # --------------------------------------------------------------------------------------------
 
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Union
 
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -22,8 +23,8 @@ from azure.iot.deviceprovisioningservice._generated._version import VERSION
 from azure.iot.deviceprovisioningservice._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
-from .._auth import SharedKeyCredentialPolicy
 
+from .._auth import SharedKeyCredentialPolicy
 from .._util import parse_connection_string
 
 if TYPE_CHECKING:
@@ -44,9 +45,18 @@ class ProvisioningServiceClient(
     def __init__(
         self,
         endpoint: str,
-        credential: Optional["AsyncTokenCredential"] = None,
+        credential: Union[
+            AzureSasCredential,
+            AzureNamedKeyCredential,
+            "AsyncTokenCredential",
+            SharedKeyCredentialPolicy,
+        ],
         **kwargs: Any,
     ) -> None:
+        self._pipeline = self._create_pipeline(
+            credential=credential, base_url=endpoint, **kwargs
+        )
+
         # Validate endpoint
         try:
             if not endpoint.lower().startswith("http"):
@@ -58,13 +68,9 @@ class ProvisioningServiceClient(
         if not credential:
             raise ValueError("Credential cannot be None")
 
-        self._pipeline = self._create_pipeline(
-            credential=credential, base_url=endpoint, **kwargs
-        )
-
         # Generate protocol client
         self._runtime_client = GeneratedProvisioningServiceClient(
-            credential=credential, endpoint=endpoint, pipeline=self._pipeline, **kwargs
+            credential=credential, endpoint=endpoint, pipeline=self._pipeline, **kwargs  # type: ignore
         )
 
         self.individual_enrollment = self._runtime_client.individual_enrollment
@@ -100,7 +106,13 @@ class ProvisioningServiceClient(
 
     def _create_pipeline(
         self,
-        credential: "AsyncTokenCredential",
+        credential: Union[
+            AzureSasCredential,
+            AzureNamedKeyCredential,
+            "AsyncTokenCredential",
+            SharedKeyCredentialPolicy,
+        ],
+        base_url: str,
         **kwargs: Any,
     ) -> AsyncPipeline:
         transport = kwargs.get("transport")
@@ -112,10 +124,16 @@ class ProvisioningServiceClient(
         self._credential_policy = None  # type: ignore
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(  # type: ignore
-                credential, "https://azure-devices-provisioning.net/.default"
+                credential, "https://azure-devices-provisioning.net/.default"  # type: ignore
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential  # type: ignore
+        elif isinstance(credential, AzureNamedKeyCredential):
+            name = credential.named_key.name
+            key = credential.named_key.key
+            self._credential_policy = SharedKeyCredentialPolicy(
+                endpoint=base_url, key=key, policy_name=name
+            )  # type: ignore
         elif credential is not None:
             raise TypeError(f"Unsupported credential: {credential}")
 
