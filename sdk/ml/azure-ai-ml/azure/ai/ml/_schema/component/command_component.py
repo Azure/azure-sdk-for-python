@@ -21,6 +21,7 @@ from azure.ai.ml._schema.job.distribution import (
     TensorFlowDistributionSchema,
 )
 from azure.ai.ml._schema.job.parameterized_command import ParameterizedCommandSchema
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureDevopsArtifactsType
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 
@@ -61,7 +62,12 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
     )
     properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
 
-    additional_includes = fields.List(UnionField([fields.Str(), NestedField(AzureDevopsArtifactsSchema)]))
+    # Note: AzureDevopsArtifactsSchema only available when private preview flag opened before init of command component
+    # schema class.
+    if is_private_preview_enabled():
+        additional_includes = fields.List(UnionField([fields.Str(), NestedField(AzureDevopsArtifactsSchema)]))
+    else:
+        additional_includes = fields.List(fields.Str())
 
     @post_dump
     def remove_unnecessary_fields(self, component_schema_dict, **kwargs):
