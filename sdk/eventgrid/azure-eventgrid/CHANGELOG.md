@@ -1,14 +1,19 @@
 # Release History
 
-## 4.9.2 (Unreleased)
+## 4.10.0 (2023-04-11)
 
 ### Features Added
 
-### Breaking Changes
+- Added new enum values to `SystemEventNames` related to Azure Communication Services, DataBox and ApiManagementGateway APIs.
 
 ### Bugs Fixed
 
+- `SystemEventNames` enums for APIManagement were incorrectly capitalized, changed `Api` to `API`.
+
 ### Other Changes
+
+- Removed `msrest` dependency and `six` dependency
+- Added `isodate` dependency
 
 ## 4.9.1 (2022-11-08)
 

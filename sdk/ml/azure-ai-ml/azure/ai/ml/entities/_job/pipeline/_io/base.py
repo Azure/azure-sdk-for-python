@@ -337,6 +337,43 @@ class NodeInput(InputOutputBase):
             meta=self._meta,
         )
 
+    def _get_data_owner(self) -> Optional["BaseNode"]:
+        """Return the node if Input is from another node's output. Returns None if for literal value.
+        Note: This only works for @pipeline, not for YAML pipeline.
+
+        Note: Inner step will be returned as the owner when node's input is from sub pipeline's output.
+            @pipeline
+            def sub_pipeline():
+                inner_node = component_func()
+                return inner_node.outputs
+
+            @pipeline
+            def root_pipeline():
+                pipeline_node = sub_pipeline()
+                node = copy_files_component_func(input_dir=pipeline_node.outputs.output_dir)
+                owner = node.inputs.input_dir._get_data_owner()
+                assert owner == pipeline_node.nodes[0]
+        """
+        from azure.ai.ml.entities import Pipeline
+        from azure.ai.ml.entities._builders import BaseNode
+
+        def _resolve_data_owner(data) -> Optional["BaseNode"]:
+            if isinstance(data, BaseNode) and not isinstance(data, Pipeline):
+                return data
+            while isinstance(data, PipelineInput):
+                # for pipeline input, it's original value(can be literal value or another node's output)
+                # is stored in _original_data
+                return _resolve_data_owner(data._original_data)
+            if isinstance(data, NodeOutput):
+                if isinstance(data._owner, Pipeline):
+                    # for input from subgraph's output, trace back to inner node
+                    return _resolve_data_owner(data._binding_output)
+                # for input from another node's output, return the node
+                return _resolve_data_owner(data._owner)
+            return None
+
+        return _resolve_data_owner(self._data)
+
 
 class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     """Define one output of a Component."""
@@ -348,6 +385,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         *,
         data: Optional[Union[Output, str]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
+        binding_output: Optional["NodeOutput"] = None,
         **kwargs,
     ):
         """Initialize an Output of a component.
@@ -365,6 +403,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :type mode: str
         :param owner: The owner component of the output, used to calculate binding.
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
+        :param binding_output: The node output bound to pipeline output, only available for pipeline.
+        :type binding_output: azure.ai.ml.entities.NodeOutput
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
@@ -387,6 +427,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         self._assert_name_and_version()
 
         self._is_control = meta.is_control if meta is not None else None
+        # store original node output to be able to trace back to inner node from a pipeline output builder.
+        self._binding_output = binding_output
 
     @property
     def is_control(self) -> str:
@@ -536,6 +578,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             data=copy.copy(self._data),
             owner=self._owner,
             meta=self._meta,
+            binding_output=self._binding_output,
         )
 
 
@@ -634,13 +677,17 @@ class PipelineOutput(NodeOutput):
     def _to_job_output(self):
         if isinstance(self._data, Output):
             # For pipeline output with type Output, always pass to backend.
-            return self._data
-        if self._data is None and self._meta and self._meta.type:
+            result = self._data
+        elif self._data is None and self._meta and self._meta.type:
             # For un-configured pipeline output with meta, we need to return Output with accurate type,
             # so it won't default to uri_folder.
-            return Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
-
-        return super(PipelineOutput, self)._to_job_output()
+            result = Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
+        else:
+            result = super(PipelineOutput, self)._to_job_output()
+        # Copy meta type to avoid built output's None type default to uri_folder.
+        if self.type and not result.type:
+            result.type = self.type
+        return result
 
     def _data_binding(self):
         return f"${{{{parent.outputs.{self._port_name}}}}}"

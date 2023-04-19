@@ -24,12 +24,12 @@ def generate_dsl_pipeline() -> PipelineJob:
         # create anonymous component here to avoid code conflict
         train_func = CommandComponent(
             inputs=dict(
-                training_data=dict(type="path"),
+                training_data=dict(type="uri_folder"),
                 max_epocs=dict(type="integer"),
                 learning_rate=dict(type="number", default=0.01),
                 learning_rate_schedule=dict(type="string", default="time-based"),
             ),
-            outputs=dict(model_output=dict(type="path")),
+            outputs=dict(model_output=dict(type="uri_folder")),
             code=parent_dir + "/train_src",
             environment=environment,
             command="python train.py --training_data ${{inputs.training_data}} --max_epocs ${{inputs.max_epocs}} "
@@ -45,10 +45,10 @@ def generate_dsl_pipeline() -> PipelineJob:
 
         score_func = CommandComponent(
             inputs=dict(
-                model_input=dict(type="path"),
-                test_data=dict(type="path"),
+                model_input=dict(type="uri_folder"),
+                test_data=dict(type="uri_folder"),
             ),
-            outputs=dict(score_output=dict(type="path")),
+            outputs=dict(score_output=dict(type="uri_folder")),
             code=parent_dir + "/score_src",
             environment=environment,
             command="python score.py --model_input ${{inputs.model_input}} --test_data ${{inputs.test_data}} "
@@ -61,9 +61,9 @@ def generate_dsl_pipeline() -> PipelineJob:
 
         eval_func = CommandComponent(
             inputs=dict(
-                scoring_result=dict(type="path"),
+                scoring_result=dict(type="uri_folder"),
             ),
-            outputs=dict(eval_output=dict(type="path")),
+            outputs=dict(eval_output=dict(type="uri_folder")),
             code=parent_dir + "/eval_src",
             environment=environment,
             command="python eval.py --scoring_result ${{inputs.scoring_result}} --eval_output ${{outputs.eval_output}}",

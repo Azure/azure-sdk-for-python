@@ -40,3 +40,5 @@ extends:
       safeName: azurepurviewadministration
     - name: azure-purview-workflow
       safeName: azurepurviewworkflow
+    - name: azure-purview-sharing
+      safeNAme: azurepurviewsharing

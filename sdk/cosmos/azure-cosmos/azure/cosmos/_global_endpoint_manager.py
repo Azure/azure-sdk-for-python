@@ -25,7 +25,7 @@ database service.
 
 import threading
 
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 
 from . import _constants as constants
 from . import exceptions
@@ -137,8 +137,7 @@ class _GlobalEndpointManager(object):
                     return database_account
                 except exceptions.CosmosHttpResponseError:
                     pass
-
-            return None
+            raise
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client.

@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -50,7 +50,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -59,7 +59,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -85,7 +86,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -139,7 +140,7 @@ class Configuration(ProxyResource):
         "source": {"key": "properties.source", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Value of the configuration.
         :paramtype value: str
@@ -166,7 +167,7 @@ class ConfigurationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Configuration]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Configuration"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Configuration"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of server configurations.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Configuration]
@@ -208,7 +209,7 @@ class Database(ProxyResource):
         "collation": {"key": "properties.collation", "type": "str"},
     }
 
-    def __init__(self, *, charset: Optional[str] = None, collation: Optional[str] = None, **kwargs):
+    def __init__(self, *, charset: Optional[str] = None, collation: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword charset: The charset of the database.
         :paramtype charset: str
@@ -231,7 +232,7 @@ class DatabaseListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Database]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of databases housed in a server.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Database]
@@ -261,7 +262,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -269,7 +270,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -301,7 +303,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -356,7 +358,7 @@ class FirewallRule(ProxyResource):
         "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs):
+    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs: Any) -> None:
         """
         :keyword start_ip_address: The start IP address of the server firewall rule. Must be IPv4
          format. Required.
@@ -381,7 +383,7 @@ class FirewallRuleListResult(_serialization.Model):
         "value": {"key": "value", "type": "[FirewallRule]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.FirewallRule"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.FirewallRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of firewall rules in a server.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.FirewallRule]
@@ -440,8 +442,8 @@ class LogFile(ProxyResource):
         size_in_kb: Optional[int] = None,
         type_properties_type: Optional[str] = None,
         url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword size_in_kb: Size of the log file.
         :paramtype size_in_kb: int
@@ -469,7 +471,7 @@ class LogFileListResult(_serialization.Model):
         "value": {"key": "value", "type": "[LogFile]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.LogFile"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.LogFile"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of log files.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.LogFile]
@@ -501,8 +503,8 @@ class NameAvailability(_serialization.Model):
         message: Optional[str] = None,
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message: Error Message.
         :paramtype message: str
@@ -537,7 +539,7 @@ class NameAvailabilityRequest(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: str, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name to verify. Required.
         :paramtype name: str
@@ -579,7 +581,7 @@ class Operation(_serialization.Model):
         "properties": {"key": "properties", "type": "{object}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -617,7 +619,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -637,7 +639,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resource provider operations.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Operation]
@@ -657,7 +659,7 @@ class PerformanceTierListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PerformanceTierProperties]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PerformanceTierProperties"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PerformanceTierProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of performance tiers.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties]
@@ -715,8 +717,8 @@ class PerformanceTierProperties(_serialization.Model):
         max_large_storage_mb: Optional[int] = None,
         min_storage_mb: Optional[int] = None,
         service_level_objectives: Optional[List["_models.PerformanceTierServiceLevelObjectives"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: ID of the performance tier.
         :paramtype id: str
@@ -795,8 +797,8 @@ class PerformanceTierServiceLevelObjectives(_serialization.Model):
         min_backup_retention_days: Optional[int] = None,
         max_storage_mb: Optional[int] = None,
         min_storage_mb: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: ID for the service level objective.
         :paramtype id: str
@@ -875,8 +877,8 @@ class PrivateEndpointConnection(ProxyResource):
         *,
         private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
         :paramtype private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
@@ -912,7 +914,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -930,7 +932,7 @@ class PrivateEndpointProperty(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource id of the private endpoint.
         :paramtype id: str
@@ -970,7 +972,7 @@ class PrivateLinkResource(ProxyResource):
         "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.properties = None
@@ -997,7 +999,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1025,7 +1027,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "required_members": {"key": "requiredMembers", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -1059,7 +1061,7 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
         "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(self, *, status: str, description: str, **kwargs):
+    def __init__(self, *, status: str, description: str, **kwargs: Any) -> None:
         """
         :keyword status: The private link service connection status. Required.
         :paramtype status: str
@@ -1123,7 +1125,7 @@ class RecoverableServerResource(ProxyResource):
         "version": {"key": "properties.version", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.last_available_backup_date_time = None
@@ -1159,7 +1161,7 @@ class ResourceIdentity(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.IdentityType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.IdentityType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Set this to 'SystemAssigned' in order to automatically create
          and assign an Azure Active Directory principal for the resource. "SystemAssigned"
@@ -1172,7 +1174,8 @@ class ResourceIdentity(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1207,7 +1210,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1343,8 +1346,8 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         master_server_id: Optional[str] = None,
         replica_capacity: Optional[int] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1458,8 +1461,8 @@ class ServerAdministratorResource(ProxyResource):
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword administrator_type: The type of administrator. Default value is "ActiveDirectory".
         :paramtype administrator_type: str
@@ -1488,7 +1491,7 @@ class ServerAdministratorResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ServerAdministratorResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ServerAdministratorResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ServerAdministratorResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of server Active Directory Administrators for the server.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.ServerAdministratorResource]
@@ -1535,8 +1538,8 @@ class ServerForCreate(_serialization.Model):
         identity: Optional["_models.ResourceIdentity"] = None,
         sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The Azure Active Directory identity of the server.
         :paramtype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
@@ -1603,8 +1606,8 @@ class ServerKey(ProxyResource):
         *,
         server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server_key_type: The key type like 'AzureKeyVault'. "AzureKeyVault"
         :paramtype server_key_type: str or ~azure.mgmt.rdbms.postgresql.models.ServerKeyType
@@ -1639,7 +1642,7 @@ class ServerKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1657,7 +1660,7 @@ class ServerListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Server]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Server"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Server"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of servers.
         :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Server]
@@ -1688,7 +1691,7 @@ class ServerPrivateEndpointConnection(_serialization.Model):
         "properties": {"key": "properties", "type": "ServerPrivateEndpointConnectionProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1732,8 +1735,8 @@ class ServerPrivateEndpointConnectionProperties(_serialization.Model):
         private_link_service_connection_state: Optional[
             "_models.ServerPrivateLinkServiceConnectionStateProperty"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
         :paramtype private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
@@ -1779,8 +1782,8 @@ class ServerPrivateLinkServiceConnectionStateProperty(_serialization.Model):
     }
 
     def __init__(
-        self, *, status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"], description: str, **kwargs
-    ):
+        self, *, status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"], description: str, **kwargs: Any
+    ) -> None:
         """
         :keyword status: The private link service connection status. Required. Known values are:
          "Approved", "Pending", "Rejected", and "Disconnected".
@@ -1860,8 +1863,8 @@ class ServerPropertiesForCreate(_serialization.Model):
         infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", and
          "11".
@@ -1958,8 +1961,8 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
         infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", and
          "11".
@@ -2003,7 +2006,8 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
 
 
 class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
-    """The properties used to create a new server by restoring to a different region from a geo replicated backup.
+    """The properties used to create a new server by restoring to a different region from a geo
+    replicated backup.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2059,8 +2063,8 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
         infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", and
          "11".
@@ -2156,8 +2160,8 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
         infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", and
          "11".
@@ -2259,8 +2263,8 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", and
          "11".
@@ -2366,8 +2370,8 @@ class ServerSecurityAlertPolicy(ProxyResource):
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         retention_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the policy, whether it is enabled or disabled. Known
          values are: "Enabled" and "Disabled".
@@ -2421,7 +2425,7 @@ class ServerSecurityAlertPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2485,8 +2489,8 @@ class ServerUpdateParameters(_serialization.Model):
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         replication_role: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The Azure Active Directory identity of the server.
         :paramtype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
@@ -2569,8 +2573,8 @@ class Sku(_serialization.Model):
         capacity: Optional[int] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1, GP_Gen5_8.
          Required.
@@ -2621,8 +2625,8 @@ class StorageProfile(_serialization.Model):
         geo_redundant_backup: Optional[Union[str, "_models.GeoRedundantBackup"]] = None,
         storage_mb: Optional[int] = None,
         storage_autogrow: Optional[Union[str, "_models.StorageAutogrow"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_retention_days: Backup retention days for the server.
         :paramtype backup_retention_days: int
@@ -2653,7 +2657,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2706,8 +2710,8 @@ class VirtualNetworkRule(ProxyResource):
         *,
         virtual_network_subnet_id: Optional[str] = None,
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
         :paramtype virtual_network_subnet_id: str
@@ -2742,7 +2746,7 @@ class VirtualNetworkRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None

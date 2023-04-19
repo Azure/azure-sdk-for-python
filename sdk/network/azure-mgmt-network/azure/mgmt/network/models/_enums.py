@@ -283,6 +283,62 @@ class ApplicationGatewayFirewallMode(str, Enum, metaclass=CaseInsensitiveEnumMet
     DETECTION = "Detection"
     PREVENTION = "Prevention"
 
+class ApplicationGatewayRedirectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Redirect type enum."""
+
+    PERMANENT = "Permanent"
+    FOUND = "Found"
+    SEE_OTHER = "SeeOther"
+    TEMPORARY = "Temporary"
+
+class ApplicationGatewaySslCipherSuite(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Ssl cipher suites enums."""
+
+    TLS_ECDHE_RSA_WITH_AES256_CBC_SHA384 = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
+    TLS_ECDHE_RSA_WITH_AES128_CBC_SHA256 = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+    TLS_ECDHE_RSA_WITH_AES256_CBC_SHA = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
+    TLS_ECDHE_RSA_WITH_AES128_CBC_SHA = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
+    TLS_DHE_RSA_WITH_AES256_GCM_SHA384 = "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"
+    TLS_DHE_RSA_WITH_AES128_GCM_SHA256 = "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
+    TLS_DHE_RSA_WITH_AES256_CBC_SHA = "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"
+    TLS_DHE_RSA_WITH_AES128_CBC_SHA = "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
+    TLS_RSA_WITH_AES256_GCM_SHA384 = "TLS_RSA_WITH_AES_256_GCM_SHA384"
+    TLS_RSA_WITH_AES128_GCM_SHA256 = "TLS_RSA_WITH_AES_128_GCM_SHA256"
+    TLS_RSA_WITH_AES256_CBC_SHA256 = "TLS_RSA_WITH_AES_256_CBC_SHA256"
+    TLS_RSA_WITH_AES128_CBC_SHA256 = "TLS_RSA_WITH_AES_128_CBC_SHA256"
+    TLS_RSA_WITH_AES256_CBC_SHA = "TLS_RSA_WITH_AES_256_CBC_SHA"
+    TLS_RSA_WITH_AES128_CBC_SHA = "TLS_RSA_WITH_AES_128_CBC_SHA"
+    TLS_ECDHE_ECDSA_WITH_AES256_GCM_SHA384 = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+    TLS_ECDHE_ECDSA_WITH_AES128_GCM_SHA256 = "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+    TLS_ECDHE_ECDSA_WITH_AES256_CBC_SHA384 = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
+    TLS_ECDHE_ECDSA_WITH_AES128_CBC_SHA256 = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
+    TLS_ECDHE_ECDSA_WITH_AES256_CBC_SHA = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
+    TLS_ECDHE_ECDSA_WITH_AES128_CBC_SHA = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"
+    TLS_DHE_DSS_WITH_AES256_CBC_SHA256 = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256"
+    TLS_DHE_DSS_WITH_AES128_CBC_SHA256 = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256"
+    TLS_DHE_DSS_WITH_AES256_CBC_SHA = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
+    TLS_DHE_DSS_WITH_AES128_CBC_SHA = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
+    TLS_RSA_WITH3_DES_EDE_CBC_SHA = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+    TLS_DHE_DSS_WITH3_DES_EDE_CBC_SHA = "TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA"
+    TLS_ECDHE_RSA_WITH_AES128_GCM_SHA256 = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+    TLS_ECDHE_RSA_WITH_AES256_GCM_SHA384 = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+
+class ApplicationGatewaySslPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Ssl predefined policy name enums."""
+
+    APP_GW_SSL_POLICY20150501 = "AppGwSslPolicy20150501"
+    APP_GW_SSL_POLICY20170401 = "AppGwSslPolicy20170401"
+    APP_GW_SSL_POLICY20170401_S = "AppGwSslPolicy20170401S"
+    APP_GW_SSL_POLICY20220101 = "AppGwSslPolicy20220101"
+    APP_GW_SSL_POLICY20220101_S = "AppGwSslPolicy20220101S"
+
+class ApplicationGatewaySslPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Ssl Policy."""
+
+    PREDEFINED = "Predefined"
+    CUSTOM = "Custom"
+    CUSTOM_V2 = "CustomV2"
+
 class ApplicationGatewaySslProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ssl protocol enums."""
 
@@ -297,6 +353,12 @@ class AssociationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASSOCIATED = "Associated"
     CONTAINS = "Contains"
 
+class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VPN client authentication method."""
+
+    EAPTLS = "EAPTLS"
+    EAPMSCHA_PV2 = "EAPMSCHAPv2"
+
 class BgpPeerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The BGP peer state."""
 
@@ -305,6 +367,33 @@ class BgpPeerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IDLE = "Idle"
     CONNECTING = "Connecting"
     CONNECTED = "Connected"
+
+class ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connection state."""
+
+    REACHABLE = "Reachable"
+    UNREACHABLE = "Unreachable"
+    UNKNOWN = "Unknown"
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connection status."""
+
+    UNKNOWN = "Unknown"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DEGRADED = "Degraded"
+
+class DhGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The DH Groups used in IKE Phase 1 for initial SA."""
+
+    NONE = "None"
+    DH_GROUP1 = "DHGroup1"
+    DH_GROUP2 = "DHGroup2"
+    DH_GROUP14 = "DHGroup14"
+    DH_GROUP2048 = "DHGroup2048"
+    ECP256 = "ECP256"
+    ECP384 = "ECP384"
+    DH_GROUP24 = "DHGroup24"
 
 class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The direction of the traffic."""
@@ -326,94 +415,25 @@ class EffectiveRouteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = "Active"
     INVALID = "Invalid"
 
+class EffectiveSecurityRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network protocol this rule applies to."""
+
+    TCP = "Tcp"
+    UDP = "Udp"
+    ALL = "All"
+
+class EvaluationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Connectivity analysis evaluation state."""
+
+    NOT_STARTED = "NotStarted"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+
 class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IP address version."""
 
     I_PV4 = "IPv4"
     I_PV6 = "IPv6"
-
-class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Next hop type."""
-
-    INTERNET = "Internet"
-    VIRTUAL_APPLIANCE = "VirtualAppliance"
-    VIRTUAL_NETWORK_GATEWAY = "VirtualNetworkGateway"
-    VNET_LOCAL = "VnetLocal"
-    HYPER_NET_GATEWAY = "HyperNetGateway"
-    NONE = "None"
-
-class PcError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PcError."""
-
-    INTERNAL_ERROR = "InternalError"
-    AGENT_STOPPED = "AgentStopped"
-    CAPTURE_FAILED = "CaptureFailed"
-    LOCAL_FILE_FAILED = "LocalFileFailed"
-    STORAGE_FAILED = "StorageFailed"
-
-class PcProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Protocol to be filtered on."""
-
-    TCP = "TCP"
-    UDP = "UDP"
-    ANY = "Any"
-
-class PcStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the packet capture session."""
-
-    NOT_STARTED = "NotStarted"
-    RUNNING = "Running"
-    STOPPED = "Stopped"
-    ERROR = "Error"
-    UNKNOWN = "Unknown"
-
-class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Network protocol."""
-
-    TCP = "Tcp"
-    HTTP = "Http"
-    HTTPS = "Https"
-    ICMP = "Icmp"
-
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state."""
-
-    SUCCEEDED = "Succeeded"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    FAILED = "Failed"
-
-class VirtualNetworkPeeringState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the virtual network peering."""
-
-    INITIATED = "Initiated"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-
-class RouteFilterRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The rule type of the rule."""
-
-    COMMUNITY = "Community"
-
-class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The connection status."""
-
-    UNKNOWN = "Unknown"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DEGRADED = "Degraded"
-
-class DhGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The DH Groups used in IKE Phase 1 for initial SA."""
-
-    NONE = "None"
-    DH_GROUP1 = "DHGroup1"
-    DH_GROUP2 = "DHGroup2"
-    DH_GROUP14 = "DHGroup14"
-    DH_GROUP2048 = "DHGroup2048"
-    ECP256 = "ECP256"
-    ECP384 = "ECP384"
-    DH_GROUP24 = "DHGroup24"
 
 class IkeEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The IKE encryption algorithm (IKE phase 2)."""
@@ -472,12 +492,54 @@ class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PORT_THROTTLED = "PortThrottled"
     PLATFORM = "Platform"
 
+class LoadBalancerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of a load balancer SKU."""
+
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    GATEWAY = "Gateway"
+
+class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Next hop type."""
+
+    INTERNET = "Internet"
+    VIRTUAL_APPLIANCE = "VirtualAppliance"
+    VIRTUAL_NETWORK_GATEWAY = "VirtualNetworkGateway"
+    VNET_LOCAL = "VnetLocal"
+    HYPER_NET_GATEWAY = "HyperNetGateway"
+    NONE = "None"
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The origin of the issue."""
 
     LOCAL = "Local"
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
+
+class PcError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PcError."""
+
+    INTERNAL_ERROR = "InternalError"
+    AGENT_STOPPED = "AgentStopped"
+    CAPTURE_FAILED = "CaptureFailed"
+    LOCAL_FILE_FAILED = "LocalFileFailed"
+    STORAGE_FAILED = "StorageFailed"
+
+class PcProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol to be filtered on."""
+
+    TCP = "TCP"
+    UDP = "UDP"
+    ANY = "Any"
+
+class PcStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the packet capture session."""
+
+    NOT_STARTED = "NotStarted"
+    RUNNING = "Running"
+    STOPPED = "Stopped"
+    ERROR = "Error"
+    UNKNOWN = "Unknown"
 
 class PfsGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Pfs Groups used in IKE Phase 2 for new child SA."""
@@ -492,80 +554,45 @@ class PfsGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PFS14 = "PFS14"
     PFSMM = "PFSMM"
 
+class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network protocol."""
+
+    TCP = "Tcp"
+    HTTP = "Http"
+    HTTPS = "Https"
+    ICMP = "Icmp"
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PublicIPAddressSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of a public IP address SKU."""
+
+    BASIC = "Basic"
+    STANDARD = "Standard"
+
+class RouteFilterRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The rule type of the rule."""
+
+    COMMUNITY = "Community"
+
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The severity of the issue."""
 
     ERROR = "Error"
     WARNING = "Warning"
 
-class ApplicationGatewayRedirectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Redirect type enum."""
+class VirtualNetworkPeeringState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the virtual network peering."""
 
-    PERMANENT = "Permanent"
-    FOUND = "Found"
-    SEE_OTHER = "SeeOther"
-    TEMPORARY = "Temporary"
-
-class ApplicationGatewaySslCipherSuite(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Ssl cipher suites enums."""
-
-    TLS_ECDHE_RSA_WITH_AES256_CBC_SHA384 = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
-    TLS_ECDHE_RSA_WITH_AES128_CBC_SHA256 = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-    TLS_ECDHE_RSA_WITH_AES256_CBC_SHA = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
-    TLS_ECDHE_RSA_WITH_AES128_CBC_SHA = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
-    TLS_DHE_RSA_WITH_AES256_GCM_SHA384 = "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"
-    TLS_DHE_RSA_WITH_AES128_GCM_SHA256 = "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
-    TLS_DHE_RSA_WITH_AES256_CBC_SHA = "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"
-    TLS_DHE_RSA_WITH_AES128_CBC_SHA = "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
-    TLS_RSA_WITH_AES256_GCM_SHA384 = "TLS_RSA_WITH_AES_256_GCM_SHA384"
-    TLS_RSA_WITH_AES128_GCM_SHA256 = "TLS_RSA_WITH_AES_128_GCM_SHA256"
-    TLS_RSA_WITH_AES256_CBC_SHA256 = "TLS_RSA_WITH_AES_256_CBC_SHA256"
-    TLS_RSA_WITH_AES128_CBC_SHA256 = "TLS_RSA_WITH_AES_128_CBC_SHA256"
-    TLS_RSA_WITH_AES256_CBC_SHA = "TLS_RSA_WITH_AES_256_CBC_SHA"
-    TLS_RSA_WITH_AES128_CBC_SHA = "TLS_RSA_WITH_AES_128_CBC_SHA"
-    TLS_ECDHE_ECDSA_WITH_AES256_GCM_SHA384 = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-    TLS_ECDHE_ECDSA_WITH_AES128_GCM_SHA256 = "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-    TLS_ECDHE_ECDSA_WITH_AES256_CBC_SHA384 = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
-    TLS_ECDHE_ECDSA_WITH_AES128_CBC_SHA256 = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
-    TLS_ECDHE_ECDSA_WITH_AES256_CBC_SHA = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
-    TLS_ECDHE_ECDSA_WITH_AES128_CBC_SHA = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"
-    TLS_DHE_DSS_WITH_AES256_CBC_SHA256 = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256"
-    TLS_DHE_DSS_WITH_AES128_CBC_SHA256 = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256"
-    TLS_DHE_DSS_WITH_AES256_CBC_SHA = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
-    TLS_DHE_DSS_WITH_AES128_CBC_SHA = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
-    TLS_RSA_WITH3_DES_EDE_CBC_SHA = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
-    TLS_DHE_DSS_WITH3_DES_EDE_CBC_SHA = "TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA"
-    TLS_ECDHE_RSA_WITH_AES128_GCM_SHA256 = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-    TLS_ECDHE_RSA_WITH_AES256_GCM_SHA384 = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-
-class ApplicationGatewaySslPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Ssl predefined policy name enums."""
-
-    APP_GW_SSL_POLICY20150501 = "AppGwSslPolicy20150501"
-    APP_GW_SSL_POLICY20170401 = "AppGwSslPolicy20170401"
-    APP_GW_SSL_POLICY20170401_S = "AppGwSslPolicy20170401S"
-    APP_GW_SSL_POLICY20220101 = "AppGwSslPolicy20220101"
-    APP_GW_SSL_POLICY20220101_S = "AppGwSslPolicy20220101S"
-
-class ApplicationGatewaySslPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Ssl Policy."""
-
-    PREDEFINED = "Predefined"
-    CUSTOM = "Custom"
-    CUSTOM_V2 = "CustomV2"
-
-class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VPN client authentication method."""
-
-    EAPTLS = "EAPTLS"
-    EAPMSCHA_PV2 = "EAPMSCHAPv2"
-
-class EffectiveSecurityRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The network protocol this rule applies to."""
-
-    TCP = "Tcp"
-    UDP = "Udp"
-    ALL = "All"
+    INITIATED = "Initiated"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
 
 class VpnClientProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VPN client protocol enabled for the virtual network gateway."""
@@ -574,32 +601,26 @@ class VpnClientProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SSTP = "SSTP"
     OPEN_VPN = "OpenVPN"
 
-class ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The connection state."""
+class AzureFirewallApplicationRuleProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol type of a Application Rule resource."""
 
-    REACHABLE = "Reachable"
-    UNREACHABLE = "Unreachable"
-    UNKNOWN = "Unknown"
+    HTTP = "Http"
+    HTTPS = "Https"
+    MSSQL = "Mssql"
 
-class EvaluationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Connectivity analysis evaluation state."""
+class AzureFirewallNetworkRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol of a Network Rule resource."""
 
-    NOT_STARTED = "NotStarted"
-    IN_PROGRESS = "InProgress"
-    COMPLETED = "Completed"
+    TCP = "TCP"
+    UDP = "UDP"
+    ANY = "Any"
+    ICMP = "ICMP"
 
-class LoadBalancerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of a load balancer SKU."""
+class AzureFirewallRCActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action type of a rule collection."""
 
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    GATEWAY = "Gateway"
-
-class PublicIPAddressSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of a public IP address SKU."""
-
-    BASIC = "Basic"
-    STANDARD = "Standard"
+    ALLOW = "Allow"
+    DENY = "Deny"
 
 class CircuitConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Express Route Circuit connection state."""
@@ -633,33 +654,6 @@ class HTTPMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GET = "Get"
 
-class IpFlowProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Protocol to be verified on."""
-
-    TCP = "TCP"
-    UDP = "UDP"
-
-class AzureFirewallApplicationRuleProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The protocol type of a Application Rule resource."""
-
-    HTTP = "Http"
-    HTTPS = "Https"
-    MSSQL = "Mssql"
-
-class AzureFirewallNetworkRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The protocol of a Network Rule resource."""
-
-    TCP = "TCP"
-    UDP = "UDP"
-    ANY = "Any"
-    ICMP = "ICMP"
-
-class AzureFirewallRCActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The action type of a rule collection."""
-
-    ALLOW = "Allow"
-    DENY = "Deny"
-
 class HubVirtualNetworkConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the VirtualHub to vnet connection."""
 
@@ -667,6 +661,12 @@ class HubVirtualNetworkConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnum
     CONNECTING = "Connecting"
     CONNECTED = "Connected"
     NOT_CONNECTED = "NotConnected"
+
+class IpFlowProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol to be verified on."""
+
+    TCP = "TCP"
+    UDP = "UDP"
 
 class TunnelConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the tunnel."""
@@ -684,96 +684,25 @@ class VpnConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTED = "Connected"
     NOT_CONNECTED = "NotConnected"
 
-class OutboundRulePropertiesFormatProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Protocol - TCP, UDP or All."""
-
-    TCP = "Tcp"
-    UDP = "Udp"
-    ALL = "All"
-
-class PublicIPPrefixSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of a public IP prefix SKU."""
-
-    STANDARD = "Standard"
-
 class ApplicationGatewayCustomErrorStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status code of the application gateway customer error."""
+    """Status code of the application gateway custom error."""
 
+    HTTP_STATUS400 = "HttpStatus400"
     HTTP_STATUS403 = "HttpStatus403"
+    HTTP_STATUS404 = "HttpStatus404"
+    HTTP_STATUS405 = "HttpStatus405"
+    HTTP_STATUS408 = "HttpStatus408"
+    HTTP_STATUS499 = "HttpStatus499"
+    HTTP_STATUS500 = "HttpStatus500"
     HTTP_STATUS502 = "HttpStatus502"
+    HTTP_STATUS503 = "HttpStatus503"
+    HTTP_STATUS504 = "HttpStatus504"
 
 class AzureFirewallNatRCActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action type of a NAT rule collection."""
 
     SNAT = "Snat"
     DNAT = "Dnat"
-
-class ExpressRouteLinkAdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Administrative state of the physical port."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-class ExpressRouteLinkConnectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Physical fiber port type."""
-
-    LC = "LC"
-    SC = "SC"
-
-class ExpressRoutePortsEncapsulation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Encapsulation method on physical ports."""
-
-    DOT1_Q = "Dot1Q"
-    QIN_Q = "QinQ"
-
-class OfficeTrafficCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The office traffic category."""
-
-    OPTIMIZE = "Optimize"
-    OPTIMIZE_AND_ALLOW = "OptimizeAndAllow"
-    ALL = "All"
-    NONE = "None"
-
-class VerbosityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Verbosity level."""
-
-    NORMAL = "Normal"
-    MINIMUM = "Minimum"
-    FULL = "Full"
-
-class VirtualNetworkGatewayConnectionProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gateway connection protocol."""
-
-    IK_EV2 = "IKEv2"
-    IK_EV1 = "IKEv1"
-
-class VirtualWanSecurityProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The virtual wan security provider type."""
-
-    EXTERNAL = "External"
-    NATIVE = "Native"
-
-class VpnGatewayTunnelingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VPN protocol enabled for the VpnServerConfiguration."""
-
-    IKE_V2 = "IkeV2"
-    OPEN_VPN = "OpenVPN"
-
-class FlowLogFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The file type of flow log."""
-
-    JSON = "JSON"
-
-class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity used for the resource. The type 'SystemAssigned, UserAssigned' includes
-    both an implicitly created identity and a set of user assigned identities. The type 'None' will
-    remove any identities from the virtual machine.
-    """
-
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
-    NONE = "None"
 
 class DdosCustomPolicyProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The protocol for which the DDoS protection policy is being customized."""
@@ -801,6 +730,85 @@ class DdosSettingsProtectionCoverage(str, Enum, metaclass=CaseInsensitiveEnumMet
 
     BASIC = "Basic"
     STANDARD = "Standard"
+
+class ExpressRouteLinkAdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Administrative state of the physical port."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class ExpressRouteLinkConnectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Physical fiber port type."""
+
+    LC = "LC"
+    SC = "SC"
+
+class ExpressRoutePortsEncapsulation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Encapsulation method on physical ports."""
+
+    DOT1_Q = "Dot1Q"
+    QIN_Q = "QinQ"
+
+class FlowLogFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The file type of flow log."""
+
+    JSON = "JSON"
+
+class OfficeTrafficCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The office traffic category."""
+
+    OPTIMIZE = "Optimize"
+    OPTIMIZE_AND_ALLOW = "OptimizeAndAllow"
+    ALL = "All"
+    NONE = "None"
+
+class OutboundRulePropertiesFormatProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol - TCP, UDP or All."""
+
+    TCP = "Tcp"
+    UDP = "Udp"
+    ALL = "All"
+
+class PublicIPPrefixSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of a public IP prefix SKU."""
+
+    STANDARD = "Standard"
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for the resource. The type 'SystemAssigned, UserAssigned' includes
+    both an implicitly created identity and a set of user assigned identities. The type 'None' will
+    remove any identities from the virtual machine.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"
+
+class VerbosityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Verbosity level."""
+
+    NORMAL = "Normal"
+    MINIMUM = "Minimum"
+    FULL = "Full"
+
+class VirtualNetworkGatewayConnectionProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gateway connection protocol."""
+
+    IK_EV2 = "IKEv2"
+    IK_EV1 = "IKEv1"
+
+class VirtualWanSecurityProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The virtual wan security provider type."""
+
+    EXTERNAL = "External"
+    NATIVE = "Native"
+
+class VpnGatewayTunnelingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VPN protocol enabled for the VpnServerConfiguration."""
+
+    IKE_V2 = "IkeV2"
+    OPEN_VPN = "OpenVPN"
 
 class AzureFirewallThreatIntelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation mode for Threat Intel."""
@@ -1439,6 +1447,17 @@ class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
+class NspLinkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of NSP Link/LinkReference."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+    WAIT_FOR_REMOTE_COMPLETION = "WaitForRemoteCompletion"
+
 class NspLinkStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The NSP link state."""
 
@@ -1732,4 +1751,12 @@ class VpnPolicyMemberAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CERTIFICATE_GROUP_ID = "CertificateGroupId"
     AAD_GROUP_ID = "AADGroupId"
     RADIUS_AZURE_GROUP_ID = "RadiusAzureGroupId"
+
+class WebApplicationFirewallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes if the custom rule is in enabled or disabled state. Defaults to Enabled if not
+    specified.
+    """
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 

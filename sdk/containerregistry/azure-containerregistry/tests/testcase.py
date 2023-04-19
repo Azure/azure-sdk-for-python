@@ -8,7 +8,7 @@ import os
 import pytest
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from azure.containerregistry._helpers import _is_tag
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
@@ -21,14 +21,13 @@ logger = logging.getLogger()
 
 
 class ContainerRegistryTestClass(AzureRecordedTestCase):
-    def import_image(self, endpoint, repository, tags):
+    def import_image(self, endpoint, repository, tags, is_anonymous=False):
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
             return
         authority = get_authority(endpoint)
-        registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
-        import_image(authority, repository, tags, registry_name)
+        import_image(authority, repository, tags, is_anonymous=is_anonymous)
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
@@ -54,7 +53,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
         audience = get_audience(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, audience=audience, **kwargs)
 
     def set_all_properties(self, properties, value):
         properties.can_delete = value
@@ -129,7 +128,7 @@ def get_authority(endpoint: str) -> str:
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public cloud auth audience")
-        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+        return "https://management.azure.com"
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China cloud auth audience")
         return "https://management.chinacloudapi.cn"
@@ -137,8 +136,12 @@ def get_audience(authority: str) -> str:
         logger.warning("US Gov cloud auth audience")
         return "https://management.usgovcloudapi.net"
 
-def import_image(authority, repository, tags, registry_name):
+def import_image(authority, repository, tags, is_anonymous=False):
     logger.warning(f"Import image authority: {authority}")
+    if is_anonymous:
+        registry_name = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_NAME")
+    else:
+        registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
     sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
     tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID")
     client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
@@ -173,8 +176,6 @@ def load_registry():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
     authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
-    registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
-    registry_name_anon = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_NAME")
     repos = [
         "library/hello-world",
         "library/alpine",
@@ -193,8 +194,8 @@ def load_registry():
     ]
     for repo, tag in zip(repos, tags):
         try:
-            import_image(authority, repo, tag, registry_name)
-            import_image(authority_anon, repo, tag, registry_name_anon)
+            import_image(authority, repo, tag)
+            import_image(authority_anon, repo, tag, is_anonymous=True)
         except Exception as e:
             print(e)
 

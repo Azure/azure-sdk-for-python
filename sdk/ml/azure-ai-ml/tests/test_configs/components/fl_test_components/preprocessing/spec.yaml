@@ -1,0 +1,37 @@
+
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: helloworld_preprocessing_in_silo
+version: 0.3.0
+display_name: Pre-Processing (in silo)
+type: command
+description: Component for preprocessing raw data in a given silo. The images are transformed using random affine keeping the center invariant, then normalized.
+is_deterministic: true
+
+inputs:
+  raw_training_data:
+    type: uri_file
+    description: the raw training data in a given silo
+  raw_testing_data:
+    type: uri_file
+    description: the raw testing data in a given silo
+  metrics_prefix:
+    type: string
+    description: Metrics prefix
+    default: Default-prefix
+    optional: true
+
+
+outputs:
+  processed_train_data:
+    type: uri_folder
+    description: the output training data after preprocessing
+  processed_test_data:
+    type: uri_folder
+    description: the output testing data after preprocessing
+
+code: .
+
+command: >-
+  python run.py --raw_training_data ${{inputs.raw_training_data}} --raw_testing_data ${{inputs.raw_testing_data}} --train_output ${{outputs.processed_train_data}} --test_output ${{outputs.processed_test_data}} $[[--metrics_prefix ${{inputs.metrics_prefix}}]]
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:30

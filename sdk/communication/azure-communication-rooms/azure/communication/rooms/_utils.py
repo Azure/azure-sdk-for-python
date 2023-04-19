@@ -12,10 +12,9 @@ def verify_datetime_format(input_datetime):
         return True
     try:
         if isinstance(input_datetime, str):
-            input_datetime = isodate.parse_datetime(input_datetime)
+            return isodate.parse_datetime(input_datetime)
         if isinstance(input_datetime, datetime):
             return True
     except:
         raise ValueError("{} is not a valid ISO-8601 datetime format".format(input_datetime)) from None
     return True
-    

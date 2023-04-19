@@ -17,7 +17,7 @@ class Notification(RestTranslatableMixin):
     def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None):
         """
         :keyword email_on: Send email notification to user on specified notification type.
-        :paramtype email_on: list[Literal]. Values can be [jobcompleted, jobfailed, jobcanceled]
+        :paramtype email_on: list[Literal]. Values can be [JobCompleted, JobFailed, JobCancelled]
         :keyword emails: This is the email recipient list which has a limitation of 499 characters in
          total concat with comma seperator.
         :paramtype emails: list[str]

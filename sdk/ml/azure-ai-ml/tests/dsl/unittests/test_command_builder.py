@@ -744,7 +744,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -755,13 +755,13 @@ class TestCommandFunction:
         )
         result = node._validate()
         message = "Should not specify min or max executors when dynamic allocation is disabled."
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_executor_instances_is_mandatory_when_dynamic_allocation_disabled(self):
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -772,13 +772,13 @@ class TestCommandFunction:
             "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
             "spark.executor.instances are mandatory fields."
         )
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -794,7 +794,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -809,13 +809,13 @@ class TestCommandFunction:
             "Executor instances must be a valid non-negative integer and must be between "
             "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
         )
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_spark_job_with_additional_conf(self):
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -841,9 +841,9 @@ class TestCommandFunction:
 
     def test_command_services_nodes(self) -> None:
         services = {
-            "my_jupyterlab": JobService(job_service_type="jupyter_lab", nodes="all"),
+            "my_jupyterlab": JobService(type="jupyter_lab", nodes="all"),
             "my_tensorboard": JobService(
-                job_service_type="tensor_board",
+                type="tensor_board",
                 properties={
                     "logDir": "~/tblog",
                 },
@@ -867,14 +867,14 @@ class TestCommandFunction:
 
     def test_command_services(self) -> None:
         services = {
-            "my_ssh": JobService(job_service_type="ssh"),
+            "my_ssh": JobService(type="ssh"),
             "my_tensorboard": JobService(
-                job_service_type="tensor_board",
+                type="tensor_board",
                 properties={
                     "logDir": "~/tblog",
                 },
             ),
-            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
+            "my_jupyterlab": JobService(type="jupyter_lab"),
         }
         rest_services = {
             "my_ssh": {"job_service_type": "SSH"},

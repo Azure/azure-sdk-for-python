@@ -10,22 +10,41 @@ import pytest
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsQueryResult, LogsQueryPartialResult
-from devtools_testutils import AzureRecordedTestCase
+
+from base_testcase import AzureMonitorQueryLogsTestCase
 
 
-class TestQueryExceptions(AzureRecordedTestCase):
+class TestQueryExceptions(AzureMonitorQueryLogsTestCase):
 
     def test_logs_single_query_fatal_exception(self, recorded_test):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         with pytest.raises(HttpResponseError):
             client.query_workspace('bad_workspace_id', 'AppRequests', timespan=None)
 
     def test_logs_single_query_partial_exception(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """let Weight = 92233720368547758;
         range x from 1 to 3 step 1
         | summarize percentilesw(x, Weight * 100, 50)"""
         response = client.query_workspace(monitor_info['workspace_id'], query, timespan=timedelta(days=1))
+        assert response.__class__ == LogsQueryPartialResult
+        assert response.partial_error is not None
+        assert response.partial_data is not None
+        assert response.partial_error.details is not None
+        assert response.partial_error.code == 'PartialError'
+        assert response.partial_error.__class__ == LogsQueryError
+
+    def test_logs_resource_query_fatal_exception(self, recorded_test):
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        with pytest.raises(HttpResponseError):
+            client.query_resource('/bad/resource/id', 'AzureActivity', timespan=None)
+
+    def test_logs_resource_query_partial_exception(self, recorded_test, monitor_info):
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = """let Weight = 92233720368547758;
+        range x from 1 to 3 step 1
+        | summarize percentilesw(x, Weight * 100, 50)"""
+        response = client.query_resource(monitor_info['metrics_resource_id'], query, timespan=timedelta(days=1))
         assert response.__class__ == LogsQueryPartialResult
         assert response.partial_error is not None
         assert response.partial_data is not None
@@ -39,7 +58,7 @@ class TestQueryExceptions(AzureRecordedTestCase):
             client_secret = 'bad_secret',
             tenant_id = monitor_info['tenant_id']
         )
-        client = LogsQueryClient(credential)
+        client = self.get_client(LogsQueryClient, credential)
         requests = [
             LogsBatchQuery(
                 query="AzureActivity | summarize count()",
@@ -65,7 +84,7 @@ class TestQueryExceptions(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_batch_query_partial_exception(self, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         requests = [
             LogsBatchQuery(
                 query="AzureActivity | summarize count()",
@@ -94,7 +113,7 @@ class TestQueryExceptions(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_batch_query_non_fatal_exception(self, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         requests = [
             LogsBatchQuery(
                 query="AzureActivity | summarize count()",
