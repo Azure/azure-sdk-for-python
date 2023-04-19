@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-02-01/examples/ManagedClustersGetAccessProfile.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-03-01/examples/ManagedClustersGetAccessProfile.json
 if __name__ == "__main__":
     main()

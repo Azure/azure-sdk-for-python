@@ -70,6 +70,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-02-01/examples/ManagedClustersCreate_EnableUltraSSD.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-03-01/examples/ManagedClustersCreate_EnableUltraSSD.json
 if __name__ == "__main__":
     main()

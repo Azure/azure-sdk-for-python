@@ -323,6 +323,8 @@ class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: removed in 1.25."""
     EXEC = "exec"
     """Return exec format kubeconfig. This format requires kubelogin binary in the path."""
+    EXEC_ENUM = "exec"
+    """Return exec format kubeconfig. This format requires kubelogin binary in the path."""
 
 
 class GPUInstanceProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
