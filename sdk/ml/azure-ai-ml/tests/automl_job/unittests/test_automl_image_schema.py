@@ -16,39 +16,39 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_
     StochasticOptimizer,
     ValidationMetricType,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageClassification as RestImageClassification,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageModelDistributionSettingsClassification as RestImageClassificationSearchSpace,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageObjectDetection as RestImageObjectDetection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     InstanceSegmentationPrimaryMetrics,
     JobBase,
     LogVerbosity,

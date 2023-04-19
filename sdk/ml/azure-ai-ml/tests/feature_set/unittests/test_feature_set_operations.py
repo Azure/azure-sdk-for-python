@@ -5,9 +5,7 @@ from unittest.mock import Mock, patch
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
-    FeaturesetContainer,
-    FeaturesetContainerProperties,
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FeaturesetVersion,
     FeaturesetVersionProperties,
     FeaturesetJobArmPaginatedResult,
