@@ -30,6 +30,7 @@ import logging
 from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
@@ -150,7 +151,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
             :caption: Configuring a redirect policy.
     """
 
-    def send(self, request):
+    def send(self, request: PipelineRequest) -> PipelineResponse:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send request to redirect endpoint if necessary.
 
