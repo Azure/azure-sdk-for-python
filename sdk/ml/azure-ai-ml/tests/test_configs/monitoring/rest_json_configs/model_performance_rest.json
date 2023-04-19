@@ -7,9 +7,9 @@
                 "monitoringTarget": "fake_endpoint_id",
                 "signals": {
                     "testSignal": {
-                        "signalType": "DataDrift",
-                        "mode": "Enabled",
+                        "signalType": "ModelPerformanceSignalBase",
                         "lookbackPeriod": "P60D",
+                        "mode": "Enabled",
                         "targetData": {
                             "dataContext": "test",
                             "asset": {
@@ -24,22 +24,13 @@
                                 "uri": "Direct:1"
                             }
                         },
-                        "metricThresholds": [
-                            {
-                                "dataType": "Numerical",
-                                "metric": "jensenShannonDistance",
-                                "threshold": {
-                                    "value": 0.5
-                                }
-                            },
-                            {
-                                "dataType": "Categorical",
-                                "metric": "pearsonsChiSquaredTest",
-                                "threshold": {
-                                    "value": 0.2
-                                }
+                        "metricThreshold": {
+                            "modelType": "Regression",
+                            "metric": "RootMeanSquaredError",
+                            "threshold": {
+                                "value": 0.5
                             }
-                        ],
+                        },
                         "dataSegment": {
                             "feature": "foo",
                             "values": [

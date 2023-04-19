@@ -4,6 +4,7 @@
             "actionType": "CreateMonitor",
             "monitorDefinition": {
                 "computeId": "mycompute",
+                "monitoringTarget": "fake_endpoint_id",
                 "signals": {
                     "testSignal": {
                         "signalType": "Custom",
@@ -13,14 +14,14 @@
                                 "dataContext": "test",
                                 "asset": {
                                     "jobInputType": "mltable",
-                                    "uri": "Direct"
+                                    "uri": "Direct:1"
                                 }
                             },
                             "test_data_2": {
                                 "dataContext": "test",
                                 "asset": {
                                     "jobInputType": "mltable",
-                                    "uri": "Direct"
+                                    "uri": "Direct:1"
                                 }
                             }
                         },
@@ -44,16 +45,15 @@
         },
         "trigger": {
             "triggerType": "Recurrence",
-            "startTime": "2023-04-03 00:00:37",
             "timeZone": "utc",
             "frequency": "week",
             "interval": 1,
             "schedule": {
                 "hours": [
-                    22
+                    22, 20
                 ],
                 "minutes": [
-                    0
+                    0, 0
                 ],
                 "weekDays": [
                     "monday",
@@ -64,7 +64,11 @@
                 ]
             }
         },
-        "properties": {},
-        "tags": {}
+        "properties": {
+            "prop1": "value"
+        },
+        "tags": {
+            "tag1": "tag"
+        }
     }
 }

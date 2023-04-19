@@ -22,6 +22,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelPerformanceMetricThresholdBase,
     ClassificationModelPerformanceMetricThreshold,
     RegressionModelPerformanceMetricThreshold,
+    RegressionModelPerformanceMetric,
     CustomMetricThreshold,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
@@ -72,13 +73,8 @@ class DataDriftMetricThreshold(MetricThreshold):
 
     @classmethod
     def _from_rest_object(cls, obj: DataDriftMetricThresholdBase) -> "DataDriftMetricThreshold":
-        applicable_feature_type = (
-            MonitorFeatureType.CATEGORICAL
-            if isinstance(obj, CategoricalDataDriftMetricThreshold)
-            else MonitorFeatureType.NUMERICAL
-        )
         return cls(
-            applicable_feature_type=applicable_feature_type,
+            applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
             threshold=obj.threshold.value,
         )
@@ -120,13 +116,8 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
     @classmethod
     def _from_rest_object(cls, obj: PredictionDriftMetricThresholdBase) -> "PredictionDriftMetricThreshold":
-        applicable_feature_type = (
-            MonitorFeatureType.CATEGORICAL
-            if isinstance(obj, CategoricalPredictionDriftMetricThreshold)
-            else MonitorFeatureType.NUMERICAL
-        )
         return cls(
-            applicable_feature_type=applicable_feature_type,
+            applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
             threshold=obj.threshold.value,
         )
@@ -166,13 +157,8 @@ class DataQualityMetricThreshold(MetricThreshold):
 
     @classmethod
     def _from_rest_object(cls, obj: DataQualityMetricThresholdBase) -> "DataQualityMetricThreshold":
-        applicable_feature_type = (
-            MonitorFeatureType.CATEGORICAL
-            if isinstance(obj, CategoricalDataQualityMetricThreshold)
-            else MonitorFeatureType.NUMERICAL
-        )
         return cls(
-            applicable_feature_type=applicable_feature_type,
+            applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
             threshold=obj.threshold.value,
         )
@@ -216,14 +202,21 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self, **kwargs) -> ModelPerformanceMetricThresholdBase:
         model_type = kwargs.get("model_type")
-        metric = snake_to_camel(self.metric_name)
+        if self.metric_name.lower() == MonitorMetricName.MAE.lower():
+            metric = RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR
+        elif self.metric_name.lower() == MonitorMetricName.MSE.lower():
+            metric = RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR
+        elif self.metric_name.lower() == MonitorMetricName.RMSE.lower():
+            metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
+        else:
+            metric = snake_to_camel(self.metric_name)
         threshold = MonitoringThreshold(value=self.threshold)
         return (
             RegressionModelPerformanceMetricThreshold(
                 metric=metric,
                 threshold=threshold,
             )
-            if model_type == MonitorModelType.REGRESSION
+            if model_type.lower() == MonitorModelType.REGRESSION.lower()
             else ClassificationModelPerformanceMetricThreshold(
                 metric=metric,
                 threshold=threshold,
@@ -232,7 +225,15 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
 
     @classmethod
     def _from_rest_object(cls, obj: ModelPerformanceMetricThresholdBase) -> "ModelPerformanceMetricThreshold":
-        return cls(metric=camel_to_snake(obj.metric), threshold=obj.threshold.value)
+        if obj.metric == RegressionModelPerformanceMetric.MEAN_ABSOLUTE_ERROR:
+            metric_name = MonitorMetricName.MAE
+        elif obj.metric == RegressionModelPerformanceMetric.MEAN_SQUARED_ERROR:
+            metric_name = MonitorMetricName.MSE
+        elif obj.metric == RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR:
+            metric_name = MonitorMetricName.RMSE
+        else:
+            metric_name = snake_to_camel(obj.metric)
+        return cls(metric_name=metric_name, threshold=obj.threshold.value)
 
 
 @experimental

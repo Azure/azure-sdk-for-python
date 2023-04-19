@@ -80,6 +80,7 @@ class DataSignalSchema(MonitoringSignalSchema):
 class DataDriftSignalSchema(DataSignalSchema):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.DATA_DRIFT, required=True)
     metric_thresholds = fields.List(NestedField(DataDriftMetricThresholdSchema))
+    data_segment = NestedField(DataSegmentSchema)
 
     @pre_dump
     def predump(self, data, **kwargs):

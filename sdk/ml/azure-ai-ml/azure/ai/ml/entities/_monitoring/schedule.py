@@ -107,11 +107,12 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_monitor=MonitorDefinition._from_rest_object(properties.action.monitor_definition),
             name=obj.name,
+            id=obj.id,
             display_name=properties.display_name,
             description=properties.description,
             tags=properties.tags,
             properties=properties.properties,
             provisioning_state=properties.provisioning_state,
             is_enabled=properties.is_enabled,
-            creation_context=SystemData._from_rest_object(obj.system_data),
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )

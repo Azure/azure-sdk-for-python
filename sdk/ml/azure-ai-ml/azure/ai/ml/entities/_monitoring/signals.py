@@ -8,6 +8,7 @@ from typing_extensions import Literal
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MonitoringSignalBase as RestMonitoringSignalBase,
     DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
     DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
@@ -20,6 +21,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AllFeatures as RestAllFeatures,
     FeatureSubset as RestFeatureSubset,
     MonitoringNotificationMode,
+    MonitoringSignalType,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
@@ -104,6 +106,21 @@ class MonitoringSignal(RestTranslatableMixin):
         self.metric_thresholds = metric_thresholds
         self.alert_enabled = alert_enabled
 
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringSignalBase) -> "MonitoringSignal":
+        if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
+            return DataDriftSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.DATA_QUALITY:
+            return DataQualitySignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
+            return PredictionDriftSignal._from_rest_object(obj)
+        if obj.signal_type == "ModelPerformanceSignalBase":
+            return ModelPerformanceSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
+            return FeatureAttributionDriftSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.CUSTOM:
+            return CustomMonitoringSignal._from_rest_object(obj)
+
 
 @experimental
 class DataSignal(MonitoringSignal):
@@ -135,6 +152,7 @@ class DataDriftSignal(DataSignal):
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataDriftMetricThreshold] = None,
         alert_enabled: bool = True,
+        data_segment: DataSegment = None,
     ):
         super().__init__(
             target_dataset=target_dataset,
@@ -144,6 +162,7 @@ class DataDriftSignal(DataSignal):
             alert_enabled=alert_enabled,
         )
         self.type = MonitorSignalType.DATA_DRIFT
+        self.data_segment = data_segment
 
     def _to_rest_object(self) -> RestMonitoringDataDriftSignal:
         rest_features = _to_rest_features(self.features) if self.features else None
@@ -156,10 +175,11 @@ class DataDriftSignal(DataSignal):
             lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
             if self.target_dataset.lookback_period
             else None,
+            data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataDriftSignal":
+    def _from_rest_object(cls, obj: RestMonitoringDataDriftSignal) -> "DataDriftSignal":
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
@@ -173,6 +193,7 @@ class DataDriftSignal(DataSignal):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
         )
 
 
@@ -209,7 +230,6 @@ class PredictionDriftSignal(MonitoringSignal):
     @classmethod
     def _from_rest_object(cls, obj: RestPredictionDriftMonitoringSignal) -> "PredictionDriftSignal":
         return cls(
-            model_type=obj.model_type.lower(),
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
                 lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
@@ -260,7 +280,10 @@ class DataQualitySignal(DataSignal):
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataDriftSignal":
         return cls(
-            target_dataset=TargetDataset(MonitorInputData._from_rest_object(obj.target_data)),
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData._from_rest_object(obj.target_data),
+                lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
+            ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             features=_from_rest_features(obj.features),
             metric_thresholds=[
@@ -332,7 +355,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
                 lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
             ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
-            metric_thresholds=FeatureAttributionDriftSignal._from_rest_object(obj.metric_threshold),
+            metric_thresholds=FeatureAttributionDriftMetricThreshold._from_rest_object(obj.metric_threshold),
             model_type=obj.model_type.lower(),
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
@@ -367,7 +390,7 @@ class ModelPerformanceSignal(ModelSignal):
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(model_type=self.model_type),
-            data_segment=self.data_segment._to_rest_object(),
+            data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
             if self.target_dataset.lookback_period
@@ -420,6 +443,13 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
         return cls(
+            input_datasets={
+                input_name: MonitorInputData._from_rest_object(input_value)
+                for input_name, input_value in obj.input_assets.items()
+            },
+            metric_thresholds=[
+                CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
+            ],
             component_id=obj.component_id,
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
