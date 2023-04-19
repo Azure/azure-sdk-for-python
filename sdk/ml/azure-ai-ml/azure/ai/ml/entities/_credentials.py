@@ -46,12 +46,12 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin

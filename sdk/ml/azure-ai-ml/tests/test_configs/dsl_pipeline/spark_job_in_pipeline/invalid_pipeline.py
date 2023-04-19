@@ -21,7 +21,7 @@ def generate_dsl_pipeline_from_builder_without_entry() -> PipelineJob:
         executor_instances=1,
         inputs=dict(file_input=iris_data),
         args="--file_input ${{inputs.file_input}}",
-        resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+        resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
     )
 
     # Define pipeline
@@ -51,7 +51,7 @@ def generate_dsl_pipeline_from_builder_with_dynamic_allocation_disabled() -> Pip
         dynamic_allocation_min_executors=1,
         inputs=dict(file_input=iris_data),
         args="--file_input ${{inputs.file_input}}",
-        resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+        resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
     )
 
     # Define pipeline

@@ -175,12 +175,12 @@ class Gen2StorageClient:
             download_size_in_mb = 0
             for item in mylist:
                 file_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
+                target_path = Path(destination, file_name)
 
                 if item.is_directory:
-                    os.makedirs(file_name)
+                    target_path.mkdir(parents=True, exist_ok=True)
                     continue
 
-                target_path = Path(destination, file_name)
                 file_client = self.file_system_client.get_file_client(item.name)
 
                 # check if total size of download has exceeded 100 MB

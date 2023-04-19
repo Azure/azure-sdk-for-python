@@ -8,6 +8,7 @@
 - Support Singularity compute in pipeline job
 - Added purge operation support for workspace resource
 - Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
+- Added experimental `distribution: ray` support in command job.
 
 ### Bugs Fixed
 

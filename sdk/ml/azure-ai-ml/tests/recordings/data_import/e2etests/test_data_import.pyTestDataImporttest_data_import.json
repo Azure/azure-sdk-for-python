@@ -1,15 +1,15 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1086",
+        "Content-Length": "1078",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -42,7 +42,7 @@
                 }
               },
               "_source": "BUILTIN",
-              "componentId": "azureml://registries/azureml-preview/components/import_data_database/versions/0.0.1"
+              "componentId": "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
             }
           },
           "outputs": {},
@@ -55,22 +55,22 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "3118",
+        "Content-Length": "2713",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Mar 2023 19:53:43 GMT",
+        "Date": "Tue, 18 Apr 2023 09:44:37 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-09a8879e50d292259d838f37d0c859f8-14d9f799337e7818-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-7f505704bf492854a13c98e550eec618-fd5982efe5b83741-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "int-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "19c0de80-d5dd-47f1-9671-6633d58b53f4",
-        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-correlation-request-id": "d077b132-5847-438c-b8d0-b845b89f3850",
+        "x-ms-ratelimit-remaining-subscription-writes": "1194",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230320T195343Z:19c0de80-d5dd-47f1-9671-6633d58b53f4",
-        "x-request-time": "3.803"
+        "x-ms-routing-request-id": "JAPANEAST:20230418T094437Z:d077b132-5847-438c-b8d0-b845b89f3850",
+        "x-request-time": "0.432"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -80,26 +80,16 @@
           "description": "data_import_my_azuresqldb_asset",
           "tags": {},
           "properties": {
-            "azureml.materializationAssetName": "my_azuresqldb_asset",
-            "azureml.DevPlatv2": "true",
-            "azureml.runsource": "azureml.PipelineRun",
-            "runSource": "MFE",
-            "runType": "HTTP",
-            "azureml.parameters": "{}",
-            "azureml.continue_on_step_failure": "True",
-            "azureml.continue_on_failed_optional_input": "True",
-            "azureml.enforceRerun": "True",
-            "azureml.defaultDataStoreName": "workspaceblobstore",
-            "azureml.pipelineComponent": "pipelinerun"
+            "azureml.materializationAssetName": "my_azuresqldb_asset"
           },
           "displayName": "data_import_my_azuresqldb_asset",
-          "status": "Preparing",
+          "status": "NotStarted",
           "experimentName": "data_import_my_azuresqldb_asset",
           "services": {
             "Tracking": {
               "jobServiceType": "Tracking",
               "port": null,
-              "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "endpoint": "azureml://int.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -120,6 +110,7 @@
           "identity": null,
           "componentId": null,
           "notificationSetting": null,
+          "secretsConfiguration": null,
           "jobType": "Pipeline",
           "settings": {
             "force_rerun": true,
@@ -144,16 +135,16 @@
                 }
               },
               "_source": "BUILTIN",
-              "componentId": "azureml://registries/azureml-preview/components/import_data_database/versions/0.0.1"
+              "componentId": "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
             }
           },
-          "inputs": {},
+          "inputs": null,
           "outputs": {},
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-03-20T19:53:42.9619681\u002B00:00",
-          "createdBy": "Renyi Xiong",
+          "createdAt": "2023-04-18T09:44:37.42383\u002B00:00",
+          "createdBy": "Ying Chen",
           "createdByType": "User"
         }
       }

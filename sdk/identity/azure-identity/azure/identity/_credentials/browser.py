@@ -39,10 +39,9 @@ class InteractiveBrowserCredential(InteractiveCredential):
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
-        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
-        for more WAM information.
+    :keyword bool disable_authority_validation_and_instance_discovery: Determines whether or not instance discovery
+        is performed when attempting to authenticate. Setting this to true will completely disable instance discovery
+        and authority validation.
     :raises ValueError: invalid **redirect_uri**
     """
 

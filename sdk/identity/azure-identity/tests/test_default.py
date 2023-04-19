@@ -162,7 +162,7 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_powershell_credential=True)
     assert_credentials_not_present(credential, AzurePowerShellCredential)
 
-    credential = DefaultAzureCredential(exclude_azd_cli_credential=True)
+    credential = DefaultAzureCredential(exclude_developer_cli_credential=True)
     assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
     # interactive auth is excluded by default
@@ -311,7 +311,7 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
         option: True
         for option in (
             "exclude_cli_credential",
-            "exclude_azd_cli_credential",
+            "exclude_developer_cli_credential",
             "exclude_environment_credential",
             "exclude_managed_identity_credential",
             "exclude_powershell_credential",

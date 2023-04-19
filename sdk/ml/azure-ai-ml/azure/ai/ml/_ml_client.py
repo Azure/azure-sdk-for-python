@@ -51,7 +51,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient042023Preview,
 )
-
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -62,6 +61,7 @@ from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url, is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -333,6 +333,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023_preview = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._service_client_04_2023_preview,
@@ -366,6 +373,11 @@ class MLClient:
             self._rp_service_client,
             self._operation_container,
             self._credential,
+        )
+
+        self._preflight = get_deployments_operation(
+            credentials=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
         )
 
         self._compute = ComputeOperations(
@@ -471,13 +483,14 @@ class MLClient:
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
             self._operation_container,
+            self._preflight,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_02_2023_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -489,7 +502,7 @@ class MLClient:
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_02_2023_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
