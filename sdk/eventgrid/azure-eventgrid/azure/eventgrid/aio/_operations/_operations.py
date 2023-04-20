@@ -318,7 +318,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace_async
     async def release_batch_of_cloud_events(
-        self, topic_name: str, event_subscription_name: str, tokens: List[_models.LockToken], **kwargs: Any
+        self, topic_name: str, event_subscription_name: str, tokens: _models.LockTokenInput, **kwargs: Any
     ) -> _models.LockTokensResponse:
         """Release Cloud Events.
 
@@ -328,7 +328,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :type event_subscription_name: str
         :param tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type tokens: list[~azure.eventgrid.models.LockToken]
+        :type tokens: ~azure.eventgrid.models.LockTokenInput
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You

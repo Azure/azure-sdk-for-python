@@ -15,7 +15,7 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 
 # Acknowledge a batch of CloudEvents
 try:
-    lock_tokens = [LockToken({"lockToken": "token"})]
+    lock_tokens = LockTokenInput(lock_tokens=["token"])
     ack = client.acknowledge_batch_of_cloud_events(
         topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=lock_tokens
     )
