@@ -80,8 +80,7 @@ class Schedule(Resource):
         return JobSchedule, None
 
     @classmethod
-    def _from_rest_object(self, obj: RestSchedule) -> "Schedule":
-        from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
 
         if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
             return JobSchedule._from_rest_object(obj)
