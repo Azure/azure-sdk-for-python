@@ -65,7 +65,7 @@ class MonitorFeatureFilter(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        top_n_feature_importance: int = None,
+        top_n_feature_importance: int = 10,
     ):
         self.top_n_feature_importance = top_n_feature_importance
 
@@ -84,7 +84,7 @@ class TargetDataset:
     def __init__(
         self,
         *,
-        dataset: MonitorInputData = None,
+        dataset: MonitorInputData,
         lookback_period: int = None,
     ):
         self.dataset = dataset
@@ -147,10 +147,10 @@ class DataDriftSignal(DataSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
+        target_dataset: TargetDataset,
+        baseline_dataset: MonitorInputData,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
-        metric_thresholds: List[DataDriftMetricThreshold] = None,
+        metric_thresholds: List[DataDriftMetricThreshold],
         alert_enabled: bool = True,
         data_segment: DataSegment = None,
     ):
@@ -202,9 +202,9 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
-        metric_thresholds: List[PredictionDriftMetricThreshold] = None,
+        target_dataset: TargetDataset,
+        baseline_dataset: MonitorInputData,
+        metric_thresholds: List[PredictionDriftMetricThreshold],
         alert_enabled: bool = True,
     ):
         super().__init__(
@@ -249,10 +249,10 @@ class DataQualitySignal(DataSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
+        target_dataset: TargetDataset,
+        baseline_dataset: MonitorInputData,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
-        metric_thresholds: List[DataQualityMetricThreshold] = None,
+        metric_thresholds: List[DataQualityMetricThreshold],
         alert_enabled: bool = True,
     ):
         super().__init__(
@@ -300,10 +300,10 @@ class ModelSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
-        metric_thresholds: List[MetricThreshold] = None,
-        model_type: MonitorModelType = None,
+        target_dataset: TargetDataset,
+        baseline_dataset: MonitorInputData,
+        metric_thresholds: List[MetricThreshold],
+        model_type: MonitorModelType,
         alert_enabled: bool = True,
     ):
         super().__init__(
@@ -320,10 +320,10 @@ class FeatureAttributionDriftSignal(ModelSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
-        metric_thresholds: FeatureAttributionDriftMetricThreshold = None,
-        model_type: MonitorModelType = None,
+        target_dataset: TargetDataset,
+        baseline_dataset: MonitorInputData,
+        metric_thresholds: FeatureAttributionDriftMetricThreshold,
+        model_type: MonitorModelType,
         alert_enabled: bool = True,
     ):
         super().__init__(
@@ -368,10 +368,10 @@ class ModelPerformanceSignal(ModelSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset = None,
-        baseline_dataset: MonitorInputData = None,
-        metric_thresholds: ModelPerformanceMetricThreshold = None,
-        model_type: MonitorModelType = None,
+        target_dataset: TargetDataset,
+        baseline_dataset: MonitorInputData,
+        metric_thresholds: ModelPerformanceMetricThreshold,
+        model_type: MonitorModelType,
         data_segment: DataSegment = None,
         alert_enabled: bool = True,
     ):
@@ -419,9 +419,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_datasets: Dict[str, MonitorInputData],
-        metric_thresholds: List[CustomMonitoringMetricThreshold] = None,
-        component_id: str = None,
+        input_datasets: Dict[str, MonitorInputData] = None,
+        metric_thresholds: List[CustomMonitoringMetricThreshold],
+        component_id: str,
         alert_enabled: bool = True,
     ):
         self.type = MonitorSignalType.CUSTOM
@@ -436,7 +436,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
             input_assets={
                 input_name: input_value._to_rest_object() for input_name, input_value in self.input_datasets.items()
-            },
+            } if self.input_datasets else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
@@ -446,7 +446,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             input_datasets={
                 input_name: MonitorInputData._from_rest_object(input_value)
                 for input_name, input_value in obj.input_assets.items()
-            },
+            } if obj.input_assets else None,
             metric_thresholds=[
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
             ],
