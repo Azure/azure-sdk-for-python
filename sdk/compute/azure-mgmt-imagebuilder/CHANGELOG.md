@@ -1,5 +1,16 @@
 # Release History
 
+## 1.2.0 (2023-04-20)
+
+### Features Added
+
+  - Added operation group TriggersOperations
+  - Model ImageTemplate has a new parameter optimize
+  - Model ImageTemplateSharedImageDistributor has a new parameter target_regions
+  - Model ImageTemplateSharedImageDistributor has a new parameter versioning
+  - Model ImageTemplateSharedImageVersionSource has a new parameter exact_version
+  - Model ImageTemplateVhdDistributor has a new parameter uri
+
 ## 1.2.0b1 (2022-11-28)
 
 ### Other Changes
