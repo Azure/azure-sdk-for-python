@@ -39,7 +39,7 @@ from ...operations._monitors_operations import (
     build_list_request,
     build_update_request,
 )
-from .._vendor import WorkloadsClientMixinABC
+from .._vendor import WorkloadsMgmtClientMixinABC
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -55,7 +55,7 @@ class MonitorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.workloads.aio.WorkloadsClient`'s
+        :class:`~azure.mgmt.workloads.aio.WorkloadsMgmtClient`'s
         :attr:`monitors` attribute.
     """
 
@@ -83,7 +83,7 @@ class MonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.MonitorListResult] = kwargs.pop("cls", None)
@@ -170,7 +170,7 @@ class MonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.MonitorListResult] = kwargs.pop("cls", None)
@@ -271,7 +271,7 @@ class MonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.Monitor] = kwargs.pop("cls", None)
@@ -324,7 +324,7 @@ class MonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -468,8 +468,8 @@ class MonitorsOperations:
         :type resource_group_name: str
         :param monitor_name: Name of the SAP monitor resource. Required.
         :type monitor_name: str
-        :param monitor_parameter: Request body representing a SAP monitor. Is either a model type or a
-         IO type. Required.
+        :param monitor_parameter: Request body representing a SAP monitor. Is either a Monitor type or
+         a IO type. Required.
         :type monitor_parameter: ~azure.mgmt.workloads.models.Monitor or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -490,7 +490,7 @@ class MonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -554,7 +554,7 @@ class MonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
@@ -624,7 +624,7 @@ class MonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
@@ -747,8 +747,8 @@ class MonitorsOperations:
         :type resource_group_name: str
         :param monitor_name: Name of the SAP monitor resource. Required.
         :type monitor_name: str
-        :param body: The Update SAP workload monitor request body. Is either a model type or a IO type.
-         Required.
+        :param body: The Update SAP workload monitor request body. Is either a UpdateMonitorRequest
+         type or a IO type. Required.
         :type body: ~azure.mgmt.workloads.models.UpdateMonitorRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -769,7 +769,7 @@ class MonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))

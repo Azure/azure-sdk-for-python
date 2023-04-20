@@ -8,12 +8,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrest import Serializer, Deserializer
-from typing import Any, AsyncIterable, Optional, Union
+from .._serialization import Serializer, Deserializer
+import sys
+from typing import Any, AsyncIterable, IO, Optional, Union
 
 from azure.core.async_paging import AsyncItemPaged
 
 from .. import models as _models
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 
 
 class WebSiteManagementClientOperationsMixin(object):
@@ -21,7 +28,7 @@ class WebSiteManagementClientOperationsMixin(object):
     async def check_name_availability(
         self,
         name: str,
-        type: Union[str, "_models.CheckNameResourceTypes"],
+        type: Union[str, _models.CheckNameResourceTypes],
         is_fqdn: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ResourceNameAvailability:
@@ -29,16 +36,18 @@ class WebSiteManagementClientOperationsMixin(object):
 
         Description for Check if a resource name is available.
 
-        :param name: Resource name to verify.
+        :param name: Resource name to verify. Required.
         :type name: str
-        :param type: Resource type used for verification.
-        :type type: str or ~azure.mgmt.web.v2022_03_01.models.CheckNameResourceTypes
+        :param type: Resource type used for verification. Known values are: "Site", "Slot",
+         "HostingEnvironment", "PublishingUser", "Microsoft.Web/sites", "Microsoft.Web/sites/slots",
+         "Microsoft.Web/hostingEnvironments", and "Microsoft.Web/publishingUsers". Required.
+        :type type: str or ~azure.mgmt.web.v2022_09_01.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name. Default value is None.
         :type is_fqdn: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ResourceNameAvailability, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.ResourceNameAvailability
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: ResourceNameAvailability or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.ResourceNameAvailability
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('check_name_availability')
         if api_version == '2016-03-01':
@@ -57,15 +66,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_name_availability'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -80,9 +88,9 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for Gets publishing user.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: User, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.User
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: User or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.User
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_publishing_user')
         if api_version == '2016-03-01':
@@ -101,15 +109,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_publishing_user'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -124,12 +131,12 @@ class WebSiteManagementClientOperationsMixin(object):
 
         Description for Gets source control token.
 
-        :param source_control_type: Type of source control.
+        :param source_control_type: Type of source control. Required.
         :type source_control_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SourceControl, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.SourceControl
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: SourceControl or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.SourceControl
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_source_control')
         if api_version == '2016-03-01':
@@ -148,15 +155,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_source_control'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -171,9 +177,9 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for Gets list of available geo regions plus ministamps.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeploymentLocations, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.DeploymentLocations
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: DeploymentLocations or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.DeploymentLocations
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_subscription_deployment_locations')
         if api_version == '2016-03-01':
@@ -192,15 +198,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_subscription_deployment_locations'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -211,7 +216,7 @@ class WebSiteManagementClientOperationsMixin(object):
         billing_location: Optional[str] = None,
         os_type: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.BillingMeterCollection]:
+    ) -> AsyncIterable["_models.BillingMeter"]:
         """Gets a list of meters for a given location.
 
         Description for Gets a list of meters for a given location.
@@ -221,11 +226,10 @@ class WebSiteManagementClientOperationsMixin(object):
         :param os_type: App Service OS type meters used for. Default value is None.
         :type os_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BillingMeterCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either BillingMeter or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_03_01.models.BillingMeterCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_09_01.models.BillingMeter]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_billing_meters')
         if api_version == '2018-02-01':
@@ -242,15 +246,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_billing_meters'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -260,7 +263,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         hostname: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.CustomHostnameSitesCollection]:
+    ) -> AsyncIterable["_models.CustomHostnameSites"]:
         """Get custom hostnames under this subscription.
 
         Get custom hostnames under this subscription.
@@ -268,22 +271,20 @@ class WebSiteManagementClientOperationsMixin(object):
         :param hostname: Specific hostname. Default value is None.
         :type hostname: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CustomHostnameSitesCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either CustomHostnameSites or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_03_01.models.CustomHostnameSitesCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_09_01.models.CustomHostnameSites]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_custom_host_name_sites')
-        if api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        if api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_custom_host_name_sites'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -291,18 +292,20 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_geo_regions(
         self,
-        sku: Optional[Union[str, "_models.SkuName"]] = None,
+        sku: Optional[Union[str, _models.SkuName]] = None,
         linux_workers_enabled: Optional[bool] = None,
         xenon_workers_enabled: Optional[bool] = None,
         linux_dynamic_workers_enabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.GeoRegionCollection]:
+    ) -> AsyncIterable["_models.GeoRegion"]:
         """Get a list of available geographical regions.
 
         Description for Get a list of available geographical regions.
 
-        :param sku: Name of SKU used to filter the regions. Default value is None.
-        :type sku: str or ~azure.mgmt.web.v2022_03_01.models.SkuName
+        :param sku: Name of SKU used to filter the regions. Known values are: "Free", "Shared",
+         "Basic", "Standard", "Premium", "Dynamic", "Isolated", "IsolatedV2", "PremiumV2", "PremiumV3",
+         "PremiumContainer", "ElasticPremium", and "ElasticIsolated". Default value is None.
+        :type sku: str or ~azure.mgmt.web.v2022_09_01.models.SkuName
         :param linux_workers_enabled: Specify :code:`<code>true</code>` if you want to filter to only
          regions that support Linux workers. Default value is None.
         :type linux_workers_enabled: bool
@@ -313,10 +316,9 @@ class WebSiteManagementClientOperationsMixin(object):
          to only regions that support Linux Consumption Workers. Default value is None.
         :type linux_dynamic_workers_enabled: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either GeoRegionCollection or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_03_01.models.GeoRegionCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either GeoRegion or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_09_01.models.GeoRegion]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_geo_regions')
         if api_version == '2016-03-01':
@@ -335,15 +337,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_geo_regions'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -352,17 +353,16 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_premier_add_on_offers(
         self,
         **kwargs: Any
-    ) -> AsyncIterable[_models.PremierAddOnOfferCollection]:
+    ) -> AsyncIterable["_models.PremierAddOnOffer"]:
         """List all premier add-on offers.
 
         Description for List all premier add-on offers.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PremierAddOnOfferCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either PremierAddOnOffer or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_03_01.models.PremierAddOnOfferCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_09_01.models.PremierAddOnOffer]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_premier_add_on_offers')
         if api_version == '2016-03-01':
@@ -381,15 +381,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_premier_add_on_offers'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -397,21 +396,23 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_site_identifiers_assigned_to_host_name(
         self,
-        name_identifier: _models.NameIdentifier,
+        name_identifier: Union[_models.NameIdentifier, IO],
         **kwargs: Any
-    ) -> AsyncIterable[_models.IdentifierCollection]:
+    ) -> AsyncIterable["_models.Identifier"]:
         """List all apps that are assigned to a hostname.
 
         Description for List all apps that are assigned to a hostname.
 
-        :param name_identifier: Hostname information.
-        :type name_identifier: ~azure.mgmt.web.v2022_03_01.models.NameIdentifier
+        :param name_identifier: Hostname information. Is either a NameIdentifier type or a IO type.
+         Required.
+        :type name_identifier: ~azure.mgmt.web.v2022_09_01.models.NameIdentifier or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either IdentifierCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_03_01.models.IdentifierCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either Identifier or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_09_01.models.Identifier]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_site_identifiers_assigned_to_host_name')
         if api_version == '2016-03-01':
@@ -430,15 +431,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_site_identifiers_assigned_to_host_name'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -453,9 +453,9 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for List all SKUs.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SkuInfos, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.SkuInfos
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: SkuInfos or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.SkuInfos
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_skus')
         if api_version == '2016-03-01':
@@ -474,15 +474,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_skus'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -491,17 +490,16 @@ class WebSiteManagementClientOperationsMixin(object):
     def list_source_controls(
         self,
         **kwargs: Any
-    ) -> AsyncIterable[_models.SourceControlCollection]:
+    ) -> AsyncIterable["_models.SourceControl"]:
         """Gets the source controls available for Azure websites.
 
         Description for Gets the source controls available for Azure websites.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SourceControlCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either SourceControl or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_03_01.models.SourceControlCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2022_09_01.models.SourceControl]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_source_controls')
         if api_version == '2016-03-01':
@@ -520,15 +518,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_source_controls'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -537,21 +534,25 @@ class WebSiteManagementClientOperationsMixin(object):
     async def move(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        move_resource_envelope: _models.CsmMoveResourceEnvelope,
+        move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO],
         **kwargs: Any
     ) -> None:
         """Move resources between resource groups.
 
         Description for Move resources between resource groups.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param move_resource_envelope: Object that represents the resource to move.
-        :type move_resource_envelope: ~azure.mgmt.web.v2022_03_01.models.CsmMoveResourceEnvelope
+        :param move_resource_envelope: Object that represents the resource to move. Is either a
+         CsmMoveResourceEnvelope type or a IO type. Required.
+        :type move_resource_envelope: ~azure.mgmt.web.v2022_09_01.models.CsmMoveResourceEnvelope or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('move')
         if api_version == '2016-03-01':
@@ -570,15 +571,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'move'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -586,19 +586,22 @@ class WebSiteManagementClientOperationsMixin(object):
 
     async def update_publishing_user(
         self,
-        user_details: _models.User,
+        user_details: Union[_models.User, IO],
         **kwargs: Any
     ) -> _models.User:
         """Updates publishing user.
 
         Description for Updates publishing user.
 
-        :param user_details: Details of publishing user.
-        :type user_details: ~azure.mgmt.web.v2022_03_01.models.User
+        :param user_details: Details of publishing user. Is either a User type or a IO type. Required.
+        :type user_details: ~azure.mgmt.web.v2022_09_01.models.User or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: User, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.User
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: User or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.User
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('update_publishing_user')
         if api_version == '2016-03-01':
@@ -617,15 +620,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_publishing_user'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -634,21 +636,25 @@ class WebSiteManagementClientOperationsMixin(object):
     async def update_source_control(
         self,
         source_control_type: str,
-        request_message: _models.SourceControl,
+        request_message: Union[_models.SourceControl, IO],
         **kwargs: Any
     ) -> _models.SourceControl:
         """Updates source control token.
 
         Description for Updates source control token.
 
-        :param source_control_type: Type of source control.
+        :param source_control_type: Type of source control. Required.
         :type source_control_type: str
-        :param request_message: Source control token information.
-        :type request_message: ~azure.mgmt.web.v2022_03_01.models.SourceControl
+        :param request_message: Source control token information. Is either a SourceControl type or a
+         IO type. Required.
+        :type request_message: ~azure.mgmt.web.v2022_09_01.models.SourceControl or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SourceControl, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.SourceControl
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: SourceControl or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.SourceControl
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('update_source_control')
         if api_version == '2016-03-01':
@@ -667,15 +673,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_source_control'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -684,21 +689,25 @@ class WebSiteManagementClientOperationsMixin(object):
     async def validate(
         self,
         resource_group_name: str,
-        validate_request: _models.ValidateRequest,
+        validate_request: Union[_models.ValidateRequest, IO],
         **kwargs: Any
     ) -> _models.ValidateResponse:
         """Validate if a resource can be created.
 
         Description for Validate if a resource can be created.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param validate_request: Request with the resources to validate.
-        :type validate_request: ~azure.mgmt.web.v2022_03_01.models.ValidateRequest
+        :param validate_request: Request with the resources to validate. Is either a ValidateRequest
+         type or a IO type. Required.
+        :type validate_request: ~azure.mgmt.web.v2022_09_01.models.ValidateRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ValidateResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.ValidateResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: ValidateResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.ValidateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('validate')
         if api_version == '2016-03-01':
@@ -717,15 +726,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'validate'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -734,22 +742,26 @@ class WebSiteManagementClientOperationsMixin(object):
     async def validate_container_settings(
         self,
         resource_group_name: str,
-        validate_container_settings_request: _models.ValidateContainerSettingsRequest,
+        validate_container_settings_request: Union[_models.ValidateContainerSettingsRequest, IO],
         **kwargs: Any
-    ) -> Any:
+    ) -> JSON:
         """Validate if the container settings are correct.
 
         Validate if the container settings are correct.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param validate_container_settings_request:
+        :param validate_container_settings_request: Is either a ValidateContainerSettingsRequest type
+         or a IO type. Required.
         :type validate_container_settings_request:
-         ~azure.mgmt.web.v2018_02_01.models.ValidateContainerSettingsRequest
+         ~azure.mgmt.web.v2018_02_01.models.ValidateContainerSettingsRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON or the result of cls(response)
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('validate_container_settings')
         if api_version == '2018-02-01':
@@ -759,6 +771,7 @@ class WebSiteManagementClientOperationsMixin(object):
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -767,21 +780,25 @@ class WebSiteManagementClientOperationsMixin(object):
     async def validate_move(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        move_resource_envelope: _models.CsmMoveResourceEnvelope,
+        move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO],
         **kwargs: Any
     ) -> None:
         """Validate whether a resource can be moved.
 
         Description for Validate whether a resource can be moved.
 
-        :param resource_group_name: Name of the resource group to which the resource belongs.
+        :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :param move_resource_envelope: Object that represents the resource to move.
-        :type move_resource_envelope: ~azure.mgmt.web.v2022_03_01.models.CsmMoveResourceEnvelope
+        :param move_resource_envelope: Object that represents the resource to move. Is either a
+         CsmMoveResourceEnvelope type or a IO type. Required.
+        :type move_resource_envelope: ~azure.mgmt.web.v2022_09_01.models.CsmMoveResourceEnvelope or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('validate_move')
         if api_version == '2016-03-01':
@@ -800,15 +817,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'validate_move'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -816,7 +832,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
     async def verify_hosting_environment_vnet(
         self,
-        parameters: _models.VnetParameters,
+        parameters: Union[_models.VnetParameters, IO],
         **kwargs: Any
     ) -> _models.VnetValidationFailureDetails:
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network
@@ -825,12 +841,15 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for Verifies if this VNET is compatible with an App Service Environment by
         analyzing the Network Security Group rules.
 
-        :param parameters: VNET information.
-        :type parameters: ~azure.mgmt.web.v2022_03_01.models.VnetParameters
+        :param parameters: VNET information. Is either a VnetParameters type or a IO type. Required.
+        :type parameters: ~azure.mgmt.web.v2022_09_01.models.VnetParameters or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VnetValidationFailureDetails, or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2022_03_01.models.VnetValidationFailureDetails
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: VnetValidationFailureDetails or the result of cls(response)
+        :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetValidationFailureDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('verify_hosting_environment_vnet')
         if api_version == '2016-03-01':
@@ -849,15 +868,14 @@ class WebSiteManagementClientOperationsMixin(object):
             from ..v2021_01_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-01-15':
             from ..v2021_01_15.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-03-01':
-            from ..v2021_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-03-01':
-            from ..v2022_03_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-09-01':
+            from ..v2022_09_01.aio.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'verify_hosting_environment_vnet'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))

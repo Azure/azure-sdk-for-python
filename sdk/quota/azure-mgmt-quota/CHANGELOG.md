@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0 (2023-04-20)
+
+### Breaking Changes
+
+  - Client name is changed from `AzureQuotaExtensionAPI` to `QuotaMgmtClient`
+  - First GA
+
 ## 1.1.0b3 (2022-11-09)
 
 ### Other Changes

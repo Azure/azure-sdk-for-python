@@ -7,8 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AccessKeys
+from ._models_py3 import Capability
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterList
+from ._models_py3 import ClusterPropertiesEncryption
+from ._models_py3 import ClusterPropertiesEncryptionCustomerManagedKeyEncryption
+from ._models_py3 import ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
 from ._models_py3 import ClusterUpdate
 from ._models_py3 import Database
 from ._models_py3 import DatabaseList
@@ -18,9 +22,12 @@ from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportClusterParameters
+from ._models_py3 import FlushParameters
 from ._models_py3 import ForceUnlinkParameters
 from ._models_py3 import ImportClusterParameters
 from ._models_py3 import LinkedDatabase
+from ._models_py3 import LocationInfo
+from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import Module
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -35,16 +42,24 @@ from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import RegionSkuDetail
+from ._models_py3 import RegionSkuDetails
 from ._models_py3 import Resource
 from ._models_py3 import Sku
+from ._models_py3 import SkuDetail
+from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
 
 from ._redis_enterprise_management_client_enums import AccessKeyType
 from ._redis_enterprise_management_client_enums import ActionType
 from ._redis_enterprise_management_client_enums import AofFrequency
 from ._redis_enterprise_management_client_enums import ClusteringPolicy
+from ._redis_enterprise_management_client_enums import CmkIdentityType
+from ._redis_enterprise_management_client_enums import CreatedByType
 from ._redis_enterprise_management_client_enums import EvictionPolicy
 from ._redis_enterprise_management_client_enums import LinkState
+from ._redis_enterprise_management_client_enums import ManagedServiceIdentityType
 from ._redis_enterprise_management_client_enums import Origin
 from ._redis_enterprise_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._redis_enterprise_management_client_enums import PrivateEndpointServiceConnectionStatus
@@ -60,8 +75,12 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccessKeys",
+    "Capability",
     "Cluster",
     "ClusterList",
+    "ClusterPropertiesEncryption",
+    "ClusterPropertiesEncryptionCustomerManagedKeyEncryption",
+    "ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity",
     "ClusterUpdate",
     "Database",
     "DatabaseList",
@@ -71,9 +90,12 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "ExportClusterParameters",
+    "FlushParameters",
     "ForceUnlinkParameters",
     "ImportClusterParameters",
     "LinkedDatabase",
+    "LocationInfo",
+    "ManagedServiceIdentity",
     "Module",
     "Operation",
     "OperationDisplay",
@@ -88,15 +110,23 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "RegenerateKeyParameters",
+    "RegionSkuDetail",
+    "RegionSkuDetails",
     "Resource",
     "Sku",
+    "SkuDetail",
+    "SystemData",
     "TrackedResource",
+    "UserAssignedIdentity",
     "AccessKeyType",
     "ActionType",
     "AofFrequency",
     "ClusteringPolicy",
+    "CmkIdentityType",
+    "CreatedByType",
     "EvictionPolicy",
     "LinkState",
+    "ManagedServiceIdentityType",
     "Origin",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",

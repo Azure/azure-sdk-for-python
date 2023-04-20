@@ -21,15 +21,15 @@ try:
     source_script = "Latn"
     input_text_elements = [ InputTextItem(text = "zhè shì gè cè shì。") ]
 
-    response = text_translator.break_sentence(content = input_text_elements, language = source_language, script = source_script)
-    break_sentence = response[0] if response else None
+    response = text_translator.find_sentence_boundaries(content = input_text_elements, language = source_language, script = source_script)
+    sentence_boundaries = response[0] if response else None
 
-    if break_sentence:
-        detected_language = break_sentence.detected_language
+    if sentence_boundaries:
+        detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
         print(f"The detected sentence boundaries:")
-        for boundary in break_sentence.sent_len:
+        for boundary in sentence_boundaries.sent_len:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -45,15 +45,15 @@ You can omit source language of the input text. In this case, API will try to au
 try:
     input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
 
-    response = text_translator.break_sentence(content = input_text_elements)
-    break_sentence = response[0] if response else None
+    response = text_translator.find_sentence_boundaries(content = input_text_elements)
+    sentence_boundaries = response[0] if response else None
 
-    if break_sentence:
-        detected_language = break_sentence.detected_language
+    if sentence_boundaries:
+        detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
         print(f"The detected sentence boundaries:")
-        for boundary in break_sentence.sent_len:
+        for boundary in sentence_boundaries.sent_len:
             print(boundary)
 
 except HttpResponseError as exception:

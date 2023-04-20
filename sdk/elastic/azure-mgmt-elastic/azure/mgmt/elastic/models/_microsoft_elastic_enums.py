@@ -10,16 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ApiVersionParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ApiVersionParameter."""
-
-    TWO_THOUSAND_TWENTY07_01_PREVIEW = "2020-07-01-preview"
-    TWO_THOUSAND_TWENTY07_01 = "2020-07-01"
-    TWO_THOUSAND_TWENTY_ONE09_01_PREVIEW = "2021-09-01-preview"
-    TWO_THOUSAND_TWENTY_ONE10_01_PREVIEW = "2021-10-01-preview"
-    TWO_THOUSAND_TWENTY_TWO05_05_PREVIEW = "2022-05-05-preview"
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 

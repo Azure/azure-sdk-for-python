@@ -34,11 +34,18 @@ def main():
         service_name="apimService1",
         authsid="newauthServer",
         if_match="*",
-        parameters={"properties": {"clientId": "update", "clientSecret": "updated"}},
+        parameters={
+            "properties": {
+                "clientId": "update",
+                "clientSecret": "updated",
+                "useInApiDocumentation": True,
+                "useInTestConsole": False,
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2021-08-01/examples/ApiManagementUpdateAuthorizationServer.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementUpdateAuthorizationServer.json
 if __name__ == "__main__":
     main()
