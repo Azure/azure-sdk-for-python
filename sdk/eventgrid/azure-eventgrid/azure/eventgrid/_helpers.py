@@ -25,6 +25,7 @@ from ._generated.models import (
     CloudEvent as InternalCloudEvent,
 )
 
+
 if TYPE_CHECKING:
     from datetime import datetime
 
