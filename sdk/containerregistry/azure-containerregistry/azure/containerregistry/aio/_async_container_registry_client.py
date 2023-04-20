@@ -889,7 +889,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
         :keyword media_type: The media type of the manifest. If not specified, this value will be set to
-            a default value of "application/vnd.oci.image.manifest.v1+json".
+            a default value of "application/vnd.oci.image.manifest.v1+json". Note: the current known media types are:
+            "application/vnd.oci.image.manifest.v1+json", and "application/vnd.docker.distribution.manifest.v2+json".
         :paramtype media_type: str
         :returns: The digest of the set manifest, calculated by the registry.
         :rtype: str
