@@ -7,7 +7,7 @@ from azure.ai.ml.entities import (
     ValidationResult,
 )
 from azure.ai.ml.dsl._mldesigner import (
-    _InternalAdditionalIncludes,
+    InternalAdditionalIncludes,
     InternalComponent,
     ParallelFor,
 )
@@ -37,9 +37,9 @@ class TestMldesignerImports:
         assert hasattr(InternalComponent, "_to_dict")
         assert hasattr(InternalComponent, "_source_path")
         assert hasattr(InternalComponent, "_additional_includes")
-        assert hasattr(_InternalAdditionalIncludes, "with_includes")
-        assert hasattr(_InternalAdditionalIncludes, "code_path")
-        assert hasattr(_InternalAdditionalIncludes, "includes")
+        assert hasattr(InternalAdditionalIncludes, "with_includes")
+        assert hasattr(InternalAdditionalIncludes, "code_path")
+        assert hasattr(InternalAdditionalIncludes, "includes")
         assert hasattr(ValidationResult, "passed")
         assert hasattr(ValidationResult, "error_messages")
         assert hasattr(ParallelFor, "_to_rest_items")
