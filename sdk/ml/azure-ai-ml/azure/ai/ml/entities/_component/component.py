@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-import tempfile
+import uuid
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Tuple, Union
 
 from marshmallow import INCLUDE
 
@@ -33,10 +33,10 @@ from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets import Code
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
-from ...entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import MutableValidationResult, SchemaValidatableMixin
+from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .code import ComponentIgnoreFile
 
@@ -45,12 +45,11 @@ from .code import ComponentIgnoreFile
 
 
 COMPONENT_PLACEHOLDER = "COMPONENT_PLACEHOLDER"
-COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
 
 
 class Component(
     Asset,
-    RestTranslatableMixin,
+    RemoteValidatableMixin,
     TelemetryMixin,
     YamlTranslatableMixin,
     SchemaValidatableMixin,
@@ -434,6 +433,17 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
+    @classmethod
+    def _get_resource_type(cls) -> str:
+        return "Microsoft.MachineLearningServices/workspaces/components/versions"
+
+    def _get_resource_name_version(self) -> Tuple[str, str]:
+        if not self.version and not self._auto_increment_version:
+            version = str(uuid.uuid4())
+        else:
+            version = self.version
+        return self.name or ANONYMOUS_COMPONENT_NAME, version
+
     def _validate(self, raise_error=False) -> MutableValidationResult:
         origin_name = self.name
         # skip name validation for anonymous component as ANONYMOUS_COMPONENT_NAME will be used in component creation
@@ -571,17 +581,7 @@ class Component(
             # git also need to be resolved into arm id
             yield Code(path=code, is_remote=True)
         elif code is None:
-            # Hack: when code not specified, we generated a file which contains
-            # COMPONENT_PLACEHOLDER as code
-            # This hack was introduced because job does not allow running component without a
-            # code, and we need to make sure when component updated some field(eg: description),
-            # the code remains the same. Benefit of using a constant code for all components
-            # without code is this will generate same code for anonymous components which
-            # enables component reuse
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
-                with open(code, "w") as f:
-                    f.write(COMPONENT_CODE_PLACEHOLDER)
-                yield Code(base_path=self._base_path, path=code)
+            # server-side will handle how to run component without a code.
+            yield None
         else:
             yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile(code))

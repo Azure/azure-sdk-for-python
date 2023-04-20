@@ -40,7 +40,7 @@ from ._helpers import (
     _cloud_event_to_generated,
     _from_cncf_events,
 )
-from ._generated._event_grid_publisher_client import (
+from ._generated import (
     EventGridPublisherClient as EventGridPublisherClientImpl,
 )
 from ._policies import CloudEventDistributedTracingPolicy

@@ -200,8 +200,8 @@ async def analyze_invoice_async():
             unit_price = item.value.get("UnitPrice")
             if unit_price:
                 print(
-                    "......Unit Price: {} has confidence: {}".format(
-                        unit_price.value, unit_price.confidence
+                    "......Unit Price: {}{} has confidence: {}".format(
+                        unit_price.value, unit_price.value.code if unit_price.value.code else "", unit_price.confidence
                     )
                 )
             product_code = item.value.get("ProductCode")

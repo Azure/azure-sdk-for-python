@@ -8,7 +8,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -607,7 +607,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e_short_uri.yml",
@@ -1396,26 +1395,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
-        params_override = [{"name": randstr("job_name")}]
-        pipeline_job: PipelineJob = load_job(
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
-            params_override=params_override,
-        )
-
-        singularity_compute_id = (
-            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
-            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
-        )
-        pipeline_job.settings.default_compute = singularity_compute_id
-        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
-
-        assert pipeline_job._customized_validate().passed is True
-
-        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
-        assert created_pipeline_job.settings.default_compute == singularity_compute_id
-        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
-
     def test_register_output_yaml(
         self,
         client: MLClient,
@@ -1823,6 +1802,28 @@ class TestPipelineJob(AzureRecordedTestCase):
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
 
+    def test_pipeline_job_serverless_compute_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
+
+    def test_pipeline_job_serverless_compute_sweep_in_pipeline_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/sweep_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
+
+    def test_pipeline_job_serverless_compute_automl_in_pipeline_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
+
     @pytest.mark.disable_mock_code_hash
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
         register_pipeline_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
@@ -1835,6 +1836,99 @@ class TestPipelineJob(AzureRecordedTestCase):
         # To register a binding NodeOutput, define name and version in pipeline level is more expected.
         assert pipeline_job.outputs.regression_node_2.name == None
         assert pipeline_job.outputs.regression_node_2.version == None
+
+    def test_pipeline_job_singularity_no_compute_in_yaml(self, client: MLClient, mock_singularity_arm_id: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_no_compute.yml"
+        pipeline_job = load_job(yaml_path)
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["low_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Basic",
+                    "priority": "Low",
+                }
+            },
+        }
+        assert rest_obj.properties.jobs["medium_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Standard",
+                    "priority": "Medium",
+                }
+            },
+        }
+        assert rest_obj.properties.jobs["high_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Premium",
+                    "priority": "High",
+                }
+            },
+        }
+
+    def test_pipeline_job_singularity_short_name(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_short_name.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        default_compute = rest_obj.properties.settings["default_compute"]
+        assert is_singularity_id_for_resource(default_compute)
+        assert default_compute.endswith("SingularityTestVC")
+        node_compute = rest_obj.properties.jobs["hello_world"]["computeId"]
+        assert is_singularity_id_for_resource(node_compute)
+        assert node_compute.endswith("centeuapvc")
+
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_job_singularity_live(self, client: MLClient, tmp_path: Path, singularity_vc):
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        pipeline_yaml_template = """
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: full name & short name
+experiment_name: Singularity in pipeline
+jobs:
+  full_name:
+    command: echo full name
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: {{singularity-full-name}}
+    resources:
+      instance_type: Singularity.ND40rs_v2
+  short_name:
+    command: echo short name
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: {{singularity-short-name}}
+    resources:
+      instance_type: Singularity.ND40rs_v2
+        """
+        pipeline_yaml_content = pipeline_yaml_template.replace("{{singularity-full-name}}", full_name).replace(
+            "{{singularity-short-name}}", short_name
+        )
+        pipeline_yaml_path = tmp_path / "pipeline.yml"
+        pipeline_yaml_path.write_text(pipeline_yaml_content)
+        pipeline_job = load_job(pipeline_yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        assert is_singularity_id_for_resource(rest_obj.properties.jobs["full_name"]["computeId"])
+        assert rest_obj.properties.jobs["full_name"]["computeId"].endswith(singularity_vc.name)
+        assert is_singularity_id_for_resource(rest_obj.properties.jobs["short_name"]["computeId"])
+        assert rest_obj.properties.jobs["short_name"]["computeId"].endswith(singularity_vc.name)
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,25 +24,21 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.servers.begin_update(
         resource_group_name="testrg",
-        server_name="pgtestsvc4",
+        server_name="mysqltestsvc4",
         parameters={
-            "properties": {
-                "administratorLoginPassword": "<administratorLoginPassword>",
-                "minimalTlsVersion": "TLS1_2",
-                "sslEnforcement": "Enabled",
-            }
+            "properties": {"administratorLoginPassword": "<administratorLoginPassword>", "sslEnforcement": "Disabled"}
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerUpdate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/stable/2017-12-01/examples/ServerUpdate.json
 if __name__ == "__main__":
     main()

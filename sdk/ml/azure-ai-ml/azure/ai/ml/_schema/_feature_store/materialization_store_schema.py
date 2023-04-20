@@ -15,9 +15,9 @@ class MaterializationStoreSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_store.materialization_store import _MaterializationStore
+        from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 
-        return _MaterializationStore(
+        return MaterializationStore(
             type=data.pop("type"),
             target=data.pop("target"),
         )

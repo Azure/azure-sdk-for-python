@@ -8,7 +8,7 @@ import time
 import types
 from functools import partial
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Optional, Union, List, Any
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -21,12 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
-from azure.ai.ml._telemetry import (
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
-)
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -37,6 +32,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
@@ -45,8 +41,8 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from .._utils._cache_utils import CachedNodeResolver
 
+from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
 from ..entities._builders import BaseNode
@@ -58,6 +54,7 @@ from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -77,11 +74,13 @@ class ComponentOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
+        preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
+        self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
         self._init_args = kwargs
@@ -99,6 +98,13 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(
             AzureMLResourceType.ENVIRONMENT,
             lambda x: isinstance(x, EnvironmentOperations),
+        )
+
+    @property
+    def _workspace_operations(self) -> WorkspaceOperations:
+        return self._all_operations.get_operation(
+            AzureMLResourceType.WORKSPACE,
+            lambda x: isinstance(x, WorkspaceOperations),
         )
 
     @property
@@ -227,6 +233,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
+        **kwargs,
     ) -> ValidationResult:
         """validate a specified component. if there are inline defined
         entities, e.g. Environment, Code, they won't be created.
@@ -238,13 +245,19 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: All validation errors
         :type: ValidationResult
         """
-        return self._validate(component, raise_on_failure=raise_on_failure)
+        return self._validate(
+            component,
+            raise_on_failure=raise_on_failure,
+            # TODO 2330505: change this to True after remote validation is ready
+            skip_remote_validation=kwargs.pop("skip_remote_validation", True),
+        )
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
-        raise_on_failure: bool = False,
+        raise_on_failure: bool,
+        skip_remote_validation: bool,
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
@@ -253,11 +266,27 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, types.FunctionType):
             component = _refine_component(component)
 
-        # local validation only for now
-        # TODO: use remote call to validate the entire component after MFE API is ready
+        # local validation
         result = component._validate(raise_error=raise_on_failure)
+        # remote validation, note that preflight_operation is not available for registry client
+        if not skip_remote_validation and self._preflight_operation:
+            workspace = self._workspace_operations.get()
+            remote_validation_result = self._preflight_operation.begin_validate(
+                resource_group_name=self._resource_group_name,
+                deployment_name=self._workspace_name,
+                parameters=component._build_rest_object_for_remote_validation(
+                    location=workspace.location,
+                    workspace_name=self._workspace_name,
+                ),
+                **self._init_args,
+            )
+            result.merge_with(remote_validation_result.result(), overwrite=True)
+        # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
-        return result
+        return result.try_raise(
+            error_target=ErrorTarget.COMPONENT,
+            raise_error=raise_on_failure,
+        )
 
     @monitor_with_telemetry_mixin(
         logger,
@@ -314,7 +343,7 @@ class ComponentOperations(_ScopeDependentOperations):
             component._is_anonymous = kwargs.pop("is_anonymous", False)
 
         if not skip_validation:
-            self._validate(component, raise_on_failure=True)
+            self._validate(component, raise_on_failure=True, skip_remote_validation=True)
 
         # Create all dependent resources
         # Only upload dependencies if component is NOT IPP

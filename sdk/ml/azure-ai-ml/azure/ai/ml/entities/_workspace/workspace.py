@@ -20,7 +20,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
-from .feature_store_settings import _FeatureStoreSettings
+from .feature_store_settings import FeatureStoreSettings
 from .networking import ManagedNetwork
 
 
@@ -47,7 +47,6 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         **kwargs,
     ):
-
         """Azure ML workspace.
 
         :param name: Name of the workspace.
@@ -99,7 +98,7 @@ class Workspace(Resource):
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
         self._kind = kwargs.pop("kind", "default")
-        self._feature_store_settings: Optional[_FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -211,7 +210,7 @@ class Workspace(Resource):
             and rest_obj.feature_store_settings
             and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
         ):
-            feature_store_settings = _FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
+            feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
         return Workspace(

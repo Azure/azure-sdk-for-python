@@ -10,8 +10,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Union
 
 import jwt
-from marshmallow.exceptions import ValidationError as SchemaValidationError
-
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
     aml_datastore_path_exists,
@@ -26,17 +24,16 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -56,12 +53,12 @@ from azure.ai.ml.constants._common import (
     GIT_PATH_PREFIX,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     LOCAL_COMPUTE_TARGET,
+    SERVERLESS_COMPUTE,
     SHORT_URI_FORMAT,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
-    SERVERLESS_COMPUTE,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -76,7 +73,7 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -85,9 +82,9 @@ from azure.ai.ml.exceptions import (
     JobParsingError,
     MlException,
     PipelineChildJobError,
+    UserErrorException,
     ValidationErrorType,
     ValidationException,
-    UserErrorException,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
@@ -110,9 +107,12 @@ from ._operation_orchestrator import (
     OperationOrchestrator,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
+    is_singularity_full_name_for_resource,
     is_singularity_id_for_resource,
+    is_singularity_short_name_for_resource,
 )
 from ._run_operations import RunOperations
+from ._virtual_cluster_operations import VirtualClusterOperations
 
 try:
     pass
@@ -174,6 +174,12 @@ class JobOperations(_ScopeDependentOperations):
     def _compute_operations(self) -> ComputeOperations:
         return self._all_operations.get_operation(
             AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)
+        )
+
+    @property
+    def _virtual_cluster_operations(self) -> VirtualClusterOperations:
+        return self._all_operations.get_operation(
+            AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
         )
 
     @property
@@ -352,15 +358,21 @@ class JobOperations(_ScopeDependentOperations):
         return results
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
+        # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
         if str(compute) == ComputeType.ADF:
             return compute
 
         if compute is not None:
-            if is_singularity_id_for_resource(compute):
-                # Singularity compute, skip try to get operation
-                return compute
+            # Singularity
+            if isinstance(compute, str) and is_singularity_id_for_resource(compute):
+                return self._virtual_cluster_operations.get(compute)["id"]
+            if isinstance(compute, str) and is_singularity_full_name_for_resource(compute):
+                return self._orchestrators._get_singularity_arm_id_from_full_name(compute)
+            if isinstance(compute, str) and is_singularity_short_name_for_resource(compute):
+                return self._orchestrators._get_singularity_arm_id_from_short_name(compute)
+            # other compute
             if is_ARM_id_for_resource(compute, resource_type=AzureMLResourceType.COMPUTE):
                 # compute is not a sub-workspace resource
                 compute_name = compute.split("/")[-1]
@@ -418,7 +430,7 @@ class JobOperations(_ScopeDependentOperations):
         create_or_update(), which will impact telemetry statistics &
         bring experimental warning in create_or_update().
         """
-        git_code_validation_result = _ValidationResultBuilder.success()
+        git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationException
@@ -589,6 +601,8 @@ class JobOperations(_ScopeDependentOperations):
                 )
             return self._resolve_azureml_id(Job._from_rest_object(result))
         except Exception as ex:  # pylint: disable=broad-except
+            from marshmallow.exceptions import ValidationError as SchemaValidationError
+
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

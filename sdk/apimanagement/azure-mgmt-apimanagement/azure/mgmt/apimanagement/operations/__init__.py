@@ -12,6 +12,8 @@ from ._api_release_operations import ApiReleaseOperations
 from ._api_operation_operations import ApiOperationOperations
 from ._api_operation_policy_operations import ApiOperationPolicyOperations
 from ._tag_operations import TagOperations
+from ._graph_ql_api_resolver_operations import GraphQLApiResolverOperations
+from ._graph_ql_api_resolver_policy_operations import GraphQLApiResolverPolicyOperations
 from ._api_product_operations import ApiProductOperations
 from ._api_policy_operations import ApiPolicyOperations
 from ._api_schema_operations import ApiSchemaOperations
@@ -21,9 +23,15 @@ from ._api_issue_comment_operations import ApiIssueCommentOperations
 from ._api_issue_attachment_operations import ApiIssueAttachmentOperations
 from ._api_tag_description_operations import ApiTagDescriptionOperations
 from ._operation_operations import OperationOperations
+from ._api_wiki_operations import ApiWikiOperations
+from ._api_wikis_operations import ApiWikisOperations
 from ._api_export_operations import ApiExportOperations
 from ._api_version_set_operations import ApiVersionSetOperations
 from ._authorization_server_operations import AuthorizationServerOperations
+from ._authorization_provider_operations import AuthorizationProviderOperations
+from ._authorization_operations import AuthorizationOperations
+from ._authorization_login_links_operations import AuthorizationLoginLinksOperations
+from ._authorization_access_policy_operations import AuthorizationAccessPolicyOperations
 from ._backend_operations import BackendOperations
 from ._cache_operations import CacheOperations
 from ._certificate_operations import CertificateOperations
@@ -54,6 +62,8 @@ from ._open_id_connect_provider_operations import OpenIdConnectProviderOperation
 from ._outbound_network_dependencies_endpoints_operations import OutboundNetworkDependenciesEndpointsOperations
 from ._policy_operations import PolicyOperations
 from ._policy_description_operations import PolicyDescriptionOperations
+from ._policy_fragment_operations import PolicyFragmentOperations
+from ._portal_config_operations import PortalConfigOperations
 from ._portal_revision_operations import PortalRevisionOperations
 from ._portal_settings_operations import PortalSettingsOperations
 from ._sign_in_settings_operations import SignInSettingsOperations
@@ -65,6 +75,8 @@ from ._product_api_operations import ProductApiOperations
 from ._product_group_operations import ProductGroupOperations
 from ._product_subscriptions_operations import ProductSubscriptionsOperations
 from ._product_policy_operations import ProductPolicyOperations
+from ._product_wiki_operations import ProductWikiOperations
+from ._product_wikis_operations import ProductWikisOperations
 from ._quota_by_counter_keys_operations import QuotaByCounterKeysOperations
 from ._quota_by_period_keys_operations import QuotaByPeriodKeysOperations
 from ._region_operations import RegionOperations
@@ -82,9 +94,10 @@ from ._user_group_operations import UserGroupOperations
 from ._user_subscription_operations import UserSubscriptionOperations
 from ._user_identities_operations import UserIdentitiesOperations
 from ._user_confirmation_password_operations import UserConfirmationPasswordOperations
+from ._documentation_operations import DocumentationOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -94,6 +107,8 @@ __all__ = [
     "ApiOperationOperations",
     "ApiOperationPolicyOperations",
     "TagOperations",
+    "GraphQLApiResolverOperations",
+    "GraphQLApiResolverPolicyOperations",
     "ApiProductOperations",
     "ApiPolicyOperations",
     "ApiSchemaOperations",
@@ -103,9 +118,15 @@ __all__ = [
     "ApiIssueAttachmentOperations",
     "ApiTagDescriptionOperations",
     "OperationOperations",
+    "ApiWikiOperations",
+    "ApiWikisOperations",
     "ApiExportOperations",
     "ApiVersionSetOperations",
     "AuthorizationServerOperations",
+    "AuthorizationProviderOperations",
+    "AuthorizationOperations",
+    "AuthorizationLoginLinksOperations",
+    "AuthorizationAccessPolicyOperations",
     "BackendOperations",
     "CacheOperations",
     "CertificateOperations",
@@ -136,6 +157,8 @@ __all__ = [
     "OutboundNetworkDependenciesEndpointsOperations",
     "PolicyOperations",
     "PolicyDescriptionOperations",
+    "PolicyFragmentOperations",
+    "PortalConfigOperations",
     "PortalRevisionOperations",
     "PortalSettingsOperations",
     "SignInSettingsOperations",
@@ -147,6 +170,8 @@ __all__ = [
     "ProductGroupOperations",
     "ProductSubscriptionsOperations",
     "ProductPolicyOperations",
+    "ProductWikiOperations",
+    "ProductWikisOperations",
     "QuotaByCounterKeysOperations",
     "QuotaByPeriodKeysOperations",
     "RegionOperations",
@@ -164,6 +189,7 @@ __all__ = [
     "UserSubscriptionOperations",
     "UserIdentitiesOperations",
     "UserConfirmationPasswordOperations",
+    "DocumentationOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

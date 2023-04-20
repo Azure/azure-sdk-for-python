@@ -7,6 +7,7 @@ class DistributionType:
     MPI = "mpi"
     TENSORFLOW = "tensorflow"
     PYTORCH = "pytorch"
+    RAY = "ray"
 
 
 class JobType(object):

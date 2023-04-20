@@ -102,6 +102,7 @@ directive:
 ### Change "parameters.ApiVersionParameter.required" to true
 
 so that the generated client/clientcontext constructors take api_version as a parameter.
+
 ```yaml
 directive:
   - from: swagger-document
@@ -110,7 +111,7 @@ directive:
       $.required = true
 ```
 
-# Change NextLink client name to nextLink
+### Change NextLink client name to nextLink
 ``` yaml
 directive:
   from: swagger-document
@@ -119,7 +120,7 @@ directive:
     $["x-ms-client-name"] = "nextLink"
 ```
 
-# Updates to OciManifest
+### Updates to OciManifest
 ``` yaml
 directive:
   from: swagger-document
@@ -135,7 +136,7 @@ directive:
         };
 ```
 
-# Take stream as manifest body
+### Take stream as manifest body
 ``` yaml
 directive:
   from: swagger-document
@@ -147,7 +148,7 @@ directive:
       }
 ```
 
-# Make ArtifactBlobDescriptor a public type
+### Make ArtifactBlobDescriptor a public type
 ``` yaml
 directive:
   from: swagger-document
@@ -156,7 +157,7 @@ directive:
     delete $["x-accessibility"]
 ```
 
-# Make OciAnnotations a public type
+### Make OciAnnotations a public type
 ``` yaml
 directive:
   from: swagger-document
@@ -165,10 +166,45 @@ directive:
     delete $["x-accessibility"]
 ```
 
+### Remove parameter "accept" from "GetManifest"
 ``` yaml
 directive:
   from: swagger-document
   where-operation: ContainerRegistry_GetManifest
   transform: >
     $.parameters = $.parameters.filter(item => item.name !== "accept")
+```
+
+### Rename parameter "Range" to "RangeHeader"
+``` yaml
+directive:
+  from: swagger-document
+  where: $.parameters.Range
+  transform: >
+    $["x-ms-client-name"] = "RangeHeader"
+```
+
+### Remove security definitions
+
+as it is incorrect in swagger
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.
+    transform: >
+      delete $["securityDefinitions"];
+      delete $["security"];
+```
+
+### Remove stream response from `deleteBlob`
+
+as we don't care about the stream that is returned and we don't want to clean it up
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.paths["/v2/{name}/blobs/{digest}"]["delete"]
+    transform: >
+      delete $.responses["202"].schema;
 ```

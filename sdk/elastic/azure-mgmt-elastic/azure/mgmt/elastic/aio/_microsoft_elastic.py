@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import MicrosoftElasticConfiguration
 from .operations import (
@@ -29,6 +29,7 @@ from .operations import (
     MonitoredResourcesOperations,
     MonitorsOperations,
     Operations,
+    OrganizationsOperations,
     TagRulesOperations,
     TrafficFiltersOperations,
     UpgradableVersionsOperations,
@@ -88,6 +89,8 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype detach_traffic_filter: azure.mgmt.elastic.aio.operations.DetachTrafficFilterOperations
     :ivar traffic_filters: TrafficFiltersOperations operations
     :vartype traffic_filters: azure.mgmt.elastic.aio.operations.TrafficFiltersOperations
+    :ivar organizations: OrganizationsOperations operations
+    :vartype organizations: azure.mgmt.elastic.aio.operations.OrganizationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
@@ -95,7 +98,7 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-02-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -110,9 +113,9 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
         **kwargs: Any
     ) -> None:
         self._config = MicrosoftElasticConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -153,6 +156,7 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
             self._client, self._config, self._serialize, self._deserialize
         )
         self.traffic_filters = TrafficFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.organizations = OrganizationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
@@ -183,5 +187,5 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
