@@ -46,11 +46,12 @@ pip install azure-iot-deviceprovisioningservice
 
 
 - [Individual Enrollments]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/deviceprovisioningservices/azure-iot-deviceprovisioningservice/dps_service_sample_individual_enrollments.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/deviceprovisioningservices/azure-iot-deviceprovisioningservice/dps_service_sample_individual_enrollments_async.py)-->):
-    - Create a symmetric key individual enrollment
+    - Create a symmetric key individual enrollment with initial twin properties
     - Create a TPM attestation individual enrollment
     - Create an x509 certificate individual enrollment
     - Get an individual enrollment
     - Update an individual enrollment
+    - Update reprovisioning policy of an enrollment
     - Get an individual enrollment's attestation mechanism
     - Bulk individual enrollment operations
     - Delete an individual enrollment

@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:03 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15175.8 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15175.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:03 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.15175.8 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "f0931a55-6446-4d30-bb31-f6c384bdfd74",
+        "client-request-id": "f440c77b-abe9-4f9c-805e-2f1f8273167c",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
         "x-client-os": "win32",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.21.0",
+        "x-client-ver": "1.22.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
       "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fazure-devices-provisioning.net%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "f0931a55-6446-4d30-bb31-f6c384bdfd74",
+        "client-request-id": "f440c77b-abe9-4f9c-805e-2f1f8273167c",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:03 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15175.8 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15175.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -219,9 +219,9 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "467",
+        "Content-Length": "505",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "registrationId": "sym_enrollment_ebd84717",
@@ -244,12 +244,18 @@
         "optionalDeviceInformation": null,
         "iotHubs": null,
         "iotHubHostName": null,
-        "initialTwin": null
+        "initialTwin": {
+          "properties": {
+            "desired": {
+              "key": "value"
+            }
+          }
+        }
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -263,14 +269,21 @@
             "secondaryKey": "secondaryKey"
           }
         },
-        "etag": "IjVlMDIwZDg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=",
+        "initialTwin": {
+          "properties": {
+            "desired": {
+              "key": "value"
+            }
+          }
+        },
+        "etag": "IjNiMDA0YjM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcwMDAwMCI=",
         "provisioningStatus": null,
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-04-17T22:04:02.3830035Z",
-        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:02.3830035Z",
+        "createdDateTimeUtc": "2023-04-20T20:37:04.8033329Z",
+        "lastUpdatedDateTimeUtc": "2023-04-20T20:37:04.8033329Z",
         "allocationPolicy": "geoLatency"
       }
     },
@@ -283,7 +296,7 @@
         "Connection": "keep-alive",
         "Content-Length": "21",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "query": "SELECT *"
@@ -291,13 +304,13 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:01 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "x-ms-item-type": "Enrollment"
       },
-      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_ebd84717\u0022,\u0022deviceId\u0022:\u0022sym_key_device_ebd84717\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjVlMDIwZDg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-17T22:04:02.3830035Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-17T22:04:02.3830035Z\u0022,\u0022allocationPolicy\u0022:\u0022geoLatency\u0022}]"
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_ebd84717\u0022,\u0022deviceId\u0022:\u0022sym_key_device_ebd84717\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022initialTwin\u0022:{\u0022properties\u0022:{\u0022desired\u0022:{\u0022key\u0022:\u0022value\u0022}}},\u0022etag\u0022:\u0022IjNiMDA0YjM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcwMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-20T20:37:04.8033329Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-20T20:37:04.8033329Z\u0022,\u0022allocationPolicy\u0022:\u0022geoLatency\u0022}]"
     },
     {
       "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/sym_enrollment_ebd84717?api-version=2021-10-01",
@@ -306,13 +319,13 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -326,14 +339,21 @@
         "attestation": {
           "type": "symmetricKey"
         },
-        "etag": "IjVlMDIwZDg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=",
+        "initialTwin": {
+          "properties": {
+            "desired": {
+              "key": "value"
+            }
+          }
+        },
+        "etag": "IjNiMDA0YjM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcwMDAwMCI=",
         "provisioningStatus": null,
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-04-17T22:04:02.3830035Z",
-        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:02.3830035Z",
+        "createdDateTimeUtc": "2023-04-20T20:37:04.8033329Z",
+        "lastUpdatedDateTimeUtc": "2023-04-20T20:37:04.8033329Z",
         "allocationPolicy": "geoLatency"
       }
     },
@@ -345,13 +365,13 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -370,10 +390,10 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "529",
+        "Content-Length": "567",
         "Content-Type": "application/json",
-        "If-Match": "IjVlMDIwZDg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "If-Match": "IjNiMDA0YjM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcwMDAwMCI=",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "registrationId": "sym_enrollment_ebd84717",
@@ -399,12 +419,18 @@
         "optionalDeviceInformation": null,
         "iotHubs": null,
         "iotHubHostName": null,
-        "initialTwin": null
+        "initialTwin": {
+          "properties": {
+            "desired": {
+              "key": "value"
+            }
+          }
+        }
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -418,14 +444,21 @@
             "secondaryKey": "secondaryKey"
           }
         },
-        "etag": "IjVlMDIxNzg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=",
+        "initialTwin": {
+          "properties": {
+            "desired": {
+              "key": "value"
+            }
+          }
+        },
+        "etag": "IjNiMDA0ZDM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcxMDAwMCI=",
         "provisioningStatus": "disabled",
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-04-17T22:04:02.3830035Z",
-        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:02.7394704Z",
+        "createdDateTimeUtc": "2023-04-20T20:37:04.8033329Z",
+        "lastUpdatedDateTimeUtc": "2023-04-20T20:37:05.1196981Z",
         "allocationPolicy": "custom",
         "customAllocationDefinition": {
           "webhookUrl": "https://www.test.test",
@@ -442,7 +475,7 @@
         "Connection": "keep-alive",
         "Content-Length": "468",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "registrationId": "sym_enrollment2_ebd84717",
@@ -470,7 +503,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -483,10 +516,10 @@
             "secondaryKey": "secondaryKey"
           }
         },
-        "etag": "IjVlMDIxYTg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=",
+        "etag": "IjNiMDA0ZjM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcxMDAwMCI=",
         "provisioningStatus": null,
-        "createdDateTimeUtc": "2023-04-17T22:04:02.8015912Z",
-        "lastUpdatedDateTimeUtc": "2023-04-17T22:04:02.8015912Z",
+        "createdDateTimeUtc": "2023-04-20T20:37:05.1702172Z",
+        "lastUpdatedDateTimeUtc": "2023-04-20T20:37:05.1702172Z",
         "allocationPolicy": "custom",
         "customAllocationDefinition": {
           "webhookUrl": "https://www.test.test",
@@ -503,7 +536,7 @@
         "Connection": "keep-alive",
         "Content-Length": "21",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "query": "SELECT *"
@@ -511,13 +544,13 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "x-ms-item-type": "Enrollment"
       },
-      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_ebd84717\u0022,\u0022deviceId\u0022:\u0022sym_key_device_ebd84717\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjVlMDIxNzg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022disabled\u0022,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-17T22:04:02.3830035Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-17T22:04:02.7394704Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}},{\u0022registrationId\u0022:\u0022sym_enrollment2_ebd84717\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjVlMDIxYTg1LTAwMDAtMDgwMC0wMDAwLTY0M2RjMjUyMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022createdDateTimeUtc\u0022:\u00222023-04-17T22:04:02.8015912Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-17T22:04:02.8015912Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}}]"
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_ebd84717\u0022,\u0022deviceId\u0022:\u0022sym_key_device_ebd84717\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022initialTwin\u0022:{\u0022properties\u0022:{\u0022desired\u0022:{\u0022key\u0022:\u0022value\u0022}}},\u0022etag\u0022:\u0022IjNiMDA0ZDM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcxMDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022disabled\u0022,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-04-20T20:37:04.8033329Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-20T20:37:05.1196981Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}},{\u0022registrationId\u0022:\u0022sym_enrollment2_ebd84717\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjNiMDA0ZjM2LTAwMDAtMDgwMC0wMDAwLTY0NDFhMjcxMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022createdDateTimeUtc\u0022:\u00222023-04-20T20:37:05.1702172Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-04-20T20:37:05.1702172Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}}]"
     },
     {
       "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/sym_enrollment_ebd84717?api-version=2021-10-01",
@@ -527,12 +560,12 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
       "ResponseBody": null
@@ -545,12 +578,12 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
       "ResponseBody": null
@@ -564,7 +597,7 @@
         "Connection": "keep-alive",
         "Content-Length": "21",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "query": "SELECT *"
@@ -572,7 +605,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Apr 2023 22:04:02 GMT",
+        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

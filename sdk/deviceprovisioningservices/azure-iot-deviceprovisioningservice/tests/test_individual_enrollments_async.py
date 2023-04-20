@@ -5,6 +5,7 @@ from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
     DEVICE_INFO,
+    INITIAL_TWIN_PROPERTIES,
     REPROVISION_MIGRATE,
     TEST_DICT,
     TEST_ENDORSEMENT_KEY,
@@ -212,6 +213,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             attestation_type=attestation_type,
             primary_key=primary_key,
             secondary_key=secondary_key,
+            initial_twin_properties=INITIAL_TWIN_PROPERTIES
         )
 
         enrollment_id2 = self.create_random_name("sym_enrollment2_")
@@ -224,6 +226,8 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["registrationId"] == enrollment_id
         assert enrollment_response["deviceId"] == device_id
         assert enrollment_response["attestation"]["symmetricKey"]
+        assert enrollment_response["initialTwin"] == INITIAL_TWIN_PROPERTIES
+
         if self.is_live:
             assert (
                 enrollment_response["attestation"]["symmetricKey"]["primaryKey"]

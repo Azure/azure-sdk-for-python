@@ -49,6 +49,8 @@ REPROVISION_RESET = {"migrateDeviceData": False, "updateHubAssignment": True}
 
 REPROVISION_NEVER = {"migrateDeviceData": False, "updateHubAssignment": False}
 
+INITIAL_TWIN_PROPERTIES = {"properties": {"desired": {"key": "value"}}}
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

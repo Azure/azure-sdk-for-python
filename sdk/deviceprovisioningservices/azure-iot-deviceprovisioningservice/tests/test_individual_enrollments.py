@@ -4,6 +4,7 @@ from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
     DEVICE_INFO,
+    INITIAL_TWIN_PROPERTIES,
     REPROVISION_MIGRATE,
     TEST_DICT,
     TEST_ENDORSEMENT_KEY,
@@ -22,7 +23,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
     @ProvisioningServicePreparer()
     @recorded_by_proxy
     def test_enrollment_tpm_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
 
         attestation_type = "tpm"
         enrollment_id = self.create_random_name("ind_enroll_tpm_")
@@ -97,7 +100,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
     @ProvisioningServicePreparer()
     @recorded_by_proxy
     def test_enrollment_x509_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         enrollment_id = self.create_random_name("x509_enrollment_")
         device_id = self.create_random_name("x509_device_")
         attestation_type = "x509"
@@ -192,8 +197,12 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_enrollment_symmetrickey_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+    def test_enrollment_symmetrickey_lifecycle(
+        self, deviceprovisioningservices_endpoint
+    ):
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         attestation_type = "symmetricKey"
         enrollment_id = self.create_random_name("sym_enrollment_")
         primary_key = generate_key()
@@ -209,6 +218,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             attestation_type=attestation_type,
             primary_key=primary_key,
             secondary_key=secondary_key,
+            initial_twin_properties=INITIAL_TWIN_PROPERTIES
         )
 
         enrollment_id2 = self.create_random_name("sym_enrollment2_")
@@ -221,6 +231,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["registrationId"] == enrollment_id
         assert enrollment_response["deviceId"] == device_id
         assert enrollment_response["attestation"]["symmetricKey"]
+        assert enrollment_response["initialTwin"] == INITIAL_TWIN_PROPERTIES
 
         if self.is_live:
             assert (
@@ -317,8 +328,12 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_individual_enrollment_bulk_operations(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+    def test_individual_enrollment_bulk_operations(
+        self, deviceprovisioningservices_endpoint
+    ):
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         attestation_type = "tpm"
         enrollment_id = self.create_random_name("ind_enroll_tpm_")
         device_id = self.create_random_name("device_")

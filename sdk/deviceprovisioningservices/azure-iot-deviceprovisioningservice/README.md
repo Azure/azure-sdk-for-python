@@ -92,21 +92,29 @@ The Device Provisioning Service client library for Python allows you to interact
 The following sections provide several code snippets covering some of the most common DPS service, including:
 
 * [Create an individual device enrollment](#create-an-individual-device-enrollment "Create an individual device enrollment")
-* [Create an intermediate x509 enrollment group](#create-an-intermediate-x509-enrollment-group "Create an intermediate x509 enrollment group")
+* [Create an enrollment with reprovisioning policies](#create-an-enrollment-with-reprovisioning-policies "Create an enrollment with reprovisioning policies")
+* [Create an intermediate x509 certificate enrollment group](#create-an-intermediate-x509-certificate-enrollment-group "Create an intermediate x509 certificate enrollment group")
 * [Create an x509 CA certificate enrollment group](#create-an-x509-ca-certificate-enrollment-group "Create an x509 CA certificate enrollment group")
 * [Check device registration status](#check-device-registration-status "Check device registration status")
 
 ### Create an individual device enrollment
-Create an individual enrollment to provision an individual device using symmetric key attestation.
+Create a symmetric key enrollment to provision an individual device and configure its initial state.
 ```python
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
 # Initialize client
 client = ProvisioningServiceClient.from_connection_string(connection_string="<connection_string>")
 
-# Load certificate contents
+# Construct initial twin with desired properties of {"key": "value"}
+initial_twin = {
+    "properties": {
+        "desired": {
+            "key": "value"
+        }
+    }
+}
 
-# Create a symmetric key individual enrollment
+# Create a symmetric key individual enrollment with initial twin
 client.individual_enrollments.create_or_update(
     id="<enrollment_id>",
     enrollment = {
@@ -114,11 +122,41 @@ client.individual_enrollments.create_or_update(
         "attestation": {
             "type": "symmetricKey",
         },
+        "deviceId": "<device_id>",
+        "initialTwin": initial_twin
     }
 )
 ```
 
-### Create an intermediate x509 enrollment group
+### Create an enrollment with reprovisioning policies
+Create an individual enrollment with a specific reprovisioning policy.
+```python
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+
+# Initialize client
+client = ProvisioningServiceClient.from_connection_string(connection_string="<connection_string>")
+
+# Create a reprovisioning policy to migrate the device's data and reassess hub assignment
+reprovision_policy = {
+    "migrateDeviceData": True,
+    "updateHubAssignment": True
+}
+
+# Create a symmetric key individual enrollment with reprovisioning policy
+client.individual_enrollments.create_or_update(
+    id="<enrollment_id>",
+    enrollment = {
+        "registrationId": "<enrollment_id>"
+        "attestation": {
+            "type": "symmetricKey",
+        },
+        "deviceId": "<device_id>",
+        "reprovision_policy": reprovision_policy
+    }
+)
+```
+
+### Create an intermediate x509 certificate enrollment group
 Create an x509 enrollment group to provision one or more devices using x509 attestation.
 ```python
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient

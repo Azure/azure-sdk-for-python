@@ -49,12 +49,22 @@ class EnrollmentSamples(object):
             self.connection_string
         )
 
+        # Set initial twin properties
+        initial_twin = {
+            "properties": {
+                "desired": {
+                    "property": "value"
+                }
+            }
+        }
+
         # Create an individual enrollment object with "SymmetricKey" attestation mechanism
         enrollment = {
             "registrationId": self.symmetric_enrollment_id,
             "attestation": {
                 "type": "symmetricKey",
             },
+            "initialTwin": initial_twin
         }
 
         await dps_service_client.individual_enrollment.create_or_update(
@@ -177,6 +187,37 @@ class EnrollmentSamples(object):
             if_match=eTag,
         )
 
+    async def update_enrollment_reprovisionining_policy_sample(self):
+        # Instantiate a DPS Service Client using a connection string
+        from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
+
+        dps_service_client = ProvisioningServiceClient.from_connection_string(
+            self.connection_string
+        )
+
+        # Get individual enrollment
+        sym_enrollment = await dps_service_client.individual_enrollment.get(
+            id=self.symmetric_enrollment_id
+        )
+
+        # Parse eTag to ensure update
+        eTag = sym_enrollment["etag"]
+
+        # Create a new reprovisioning policy
+        sym_enrollment['reprovisionPolicy'] = {
+            # update device's hub assignment
+            "updateHubAssignment": True,
+            # don't migrate device data to a new hub
+            "migrateDeviceData": False,
+        }
+
+        # Update enrollment with custom reprovisioning policy
+        await dps_service_client.individual_enrollment.create_or_update(
+            id=self.symmetric_enrollment_id,
+            enrollment=sym_enrollment,
+            if_match=eTag,
+        )
+
     async def bulk_enrollment_operations_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
@@ -246,6 +287,7 @@ async def main():
     await sample.get_enrollment_sample_async()
     await sample.get_enrollment_attestation_sample_async()
     await sample.update_enrollment_sample_async()
+    await sample.update_enrollment_reprovisionining_policy_sample()
     await sample.bulk_enrollment_operations_sample_async()
     await sample.delete_enrollments_sample_async()
 

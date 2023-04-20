@@ -48,12 +48,22 @@ class EnrollmentSamples(object):
             self.connection_string
         )
 
+        # Set initial twin properties
+        initial_twin = {
+            "properties": {
+                "desired": {
+                    "property": "value"
+                }
+            }
+        }
+
         # Create an individual enrollment object with "SymmetricKey" attestation mechanism
         enrollment = {
             "registrationId": self.symmetric_enrollment_id,
             "attestation": {
                 "type": "symmetricKey",
             },
+            "initialTwin": initial_twin
         }
 
         dps_service_client.individual_enrollment.create_or_update(
@@ -174,6 +184,37 @@ class EnrollmentSamples(object):
             if_match=eTag,
         )
 
+    def update_enrollment_reprovisionining_policy_sample(self):
+        # Instantiate a DPS Service Client using a connection string
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+
+        dps_service_client = ProvisioningServiceClient.from_connection_string(
+            self.connection_string
+        )
+
+        # Get individual enrollment
+        sym_enrollment = dps_service_client.individual_enrollment.get(
+            id=self.symmetric_enrollment_id
+        )
+
+        # Parse eTag to ensure update
+        eTag = sym_enrollment["etag"]
+
+        # Create a new reprovisioning policy
+        sym_enrollment['reprovisionPolicy'] = {
+            # update device's hub assignment
+            "updateHubAssignment": True,
+            # don't migrate device data to a new hub
+            "migrateDeviceData": False,
+        }
+
+        # Update enrollment with custom reprovisioning policy
+        dps_service_client.individual_enrollment.create_or_update(
+            id=self.symmetric_enrollment_id,
+            enrollment=sym_enrollment,
+            if_match=eTag,
+        )
+
     def bulk_enrollment_operations_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
@@ -239,5 +280,6 @@ if __name__ == "__main__":
     sample.get_enrollment_sample()
     sample.get_enrollment_attestation_sample()
     sample.update_enrollment_sample()
+    sample.update_enrollment_reprovisionining_policy_sample()
     sample.bulk_enrollment_operations_sample()
     sample.delete_enrollments_sample()
