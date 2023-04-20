@@ -71,7 +71,7 @@ class MonitorDefinition(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestMonitorDefinition) -> "MonitorDefinition":
         from_rest_alert_notification = None
         if obj.alert_notification_setting:
-            if isinstance(obj, AzMonMonitoringAlertNotificationSettings):
+            if isinstance(obj.alert_notification_setting, AzMonMonitoringAlertNotificationSettings):
                 from_rest_alert_notification = AZMONITORING
             else:
                 from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
