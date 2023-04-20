@@ -1,0 +1,285 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/schedules/test_166004536013?api-version=2023-04-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "615",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Schedule data import",
+          "properties": {},
+          "tags": {},
+          "action": {
+            "actionType": "ImportData",
+            "dataImportDefinition": {
+              "properties": {},
+              "tags": {},
+              "isAnonymous": false,
+              "isArchived": false,
+              "dataType": "uri_folder",
+              "dataUri": "azureml://datastores/workspaceblobstore/paths/{name}",
+              "assetName": "my_azuresqldb_asset",
+              "source": {
+                "connection": "azureml:my_azuresqldb_connection",
+                "sourceType": "database",
+                "query": "select * from region"
+              }
+            }
+          },
+          "displayName": "Schedule data import",
+          "trigger": {
+            "timeZone": "Pacific Standard Time",
+            "triggerType": "Cron",
+            "expression": "15 10 * * 1"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "azure-asyncoperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationsStatus/s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM?api-version=2023-04-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Length": "1292",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 20 Apr 2023 16:35:33 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/schedules/test_166004536013?api-version=2023-04-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-7f9220fa17098944c10ae8fa0378640d-aa231bccacd233b5-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT30M",
+        "x-ms-correlation-request-id": "1deec02d-5c27-4ffb-b165-1d04fc6c00b6",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20230420T163534Z:1deec02d-5c27-4ffb-b165-1d04fc6c00b6",
+        "x-request-time": "3.192"
+      },
+      "ResponseBody": {
+        "properties": {
+          "description": "Schedule data import",
+          "tags": {},
+          "properties": {
+            "azureml.materializationAssetName": "my_azuresqldb_asset"
+          },
+          "displayName": "Schedule data import",
+          "isEnabled": true,
+          "trigger": {
+            "endTime": null,
+            "startTime": null,
+            "timeZone": "Pacific Standard Time",
+            "triggerType": "Cron",
+            "expression": "15 10 * * 1"
+          },
+          "action": {
+            "actionType": "ImportData",
+            "dataImportDefinition": {
+              "description": null,
+              "tags": {},
+              "properties": {
+                "azureml.materializationAssetName": "my_azuresqldb_asset"
+              },
+              "isArchived": false,
+              "isAnonymous": false,
+              "autoDeleteSetting": null,
+              "dataUri": "azureml://datastores/workspaceblobstore/paths/{name}/${{name}}",
+              "stage": null,
+              "intellectualProperty": null,
+              "dataType": "mltable",
+              "assetName": "my_azuresqldb_asset",
+              "source": {
+                "connection": "azureml:my_azuresqldb_connection",
+                "sourceType": "database",
+                "query": "select * from region",
+                "tableName": null,
+                "storedProcedure": null,
+                "storedProcedureParams": null
+              }
+            }
+          },
+          "provisioningState": "Creating"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationsStatus/s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 20 Apr 2023 16:35:34 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-6f66951ada2bdd91af15a7a73d5074a5-4fd0dce07f354176-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "121da0c2-45f4-468e-81a3-184adb09f25d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20230420T163534Z:121da0c2-45f4-468e-81a3-184adb09f25d",
+        "x-request-time": "0.163"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM",
+        "name": "s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM",
+        "status": "Creating"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationsStatus/s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 20 Apr 2023 16:35:39 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-cb3ca56c69ce8203daf6335d41a87426-efb7f1ae06ad5667-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "020f80b7-a18f-4d16-9f73-a01d1fdf5fe7",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20230420T163539Z:020f80b7-a18f-4d16-9f73-a01d1fdf5fe7",
+        "x-request-time": "0.146"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM",
+        "name": "s:a4b197d1-5967-42d6-a2be-76f1bd0b075d:ieVFhyuSPyD-nS_OEJwWojVM5tNk8Arz-AHDWM46uyM",
+        "status": "Succeeded",
+        "startTime": "2023-04-20T16:35:33.9740832\u002B00:00",
+        "endTime": "2023-04-20T16:35:38\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/schedules/test_166004536013?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 20 Apr 2023 16:35:39 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-d2b5416f0ebbd01bc2de0d995ed60486-2a6fe5bedbde1c73-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "bfe42b40-6618-4cde-ad3c-0c449aba92ef",
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20230420T163540Z:bfe42b40-6618-4cde-ad3c-0c449aba92ef",
+        "x-request-time": "0.365"
+      },
+      "ResponseBody": {
+        "name": "test_166004536013",
+        "properties": {
+          "description": "Schedule data import",
+          "tags": {},
+          "properties": {
+            "azureml.materializationAssetName": "my_azuresqldb_asset"
+          },
+          "displayName": "Schedule data import",
+          "isEnabled": true,
+          "trigger": {
+            "endTime": null,
+            "startTime": "2023-04-20T09:36:07",
+            "timeZone": "Pacific Standard Time",
+            "triggerType": "Cron",
+            "expression": "15 10 * * 1"
+          },
+          "action": {
+            "actionType": "ImportData",
+            "dataImportDefinition": {
+              "description": null,
+              "tags": {},
+              "properties": {},
+              "isArchived": false,
+              "isAnonymous": false,
+              "autoDeleteSetting": null,
+              "dataUri": "azureml://datastores/workspaceblobstore/paths/{name}",
+              "stage": null,
+              "intellectualProperty": null,
+              "dataType": "mltable",
+              "assetName": "my_azuresqldb_asset",
+              "source": {
+                "connection": "azureml:my_azuresqldb_connection",
+                "sourceType": "database",
+                "query": "select * from region",
+                "tableName": null,
+                "storedProcedure": null,
+                "storedProcedureParams": null
+              }
+            }
+          },
+          "provisioningState": "Succeeded"
+        },
+        "systemData": {
+          "createdAt": "2023-04-20T16:35:38.3727819\u002B00:00",
+          "createdBy": "Renyi Xiong",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-04-20T16:35:38.3727819\u002B00:00",
+          "lastModifiedBy": "Renyi Xiong",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "name": "test_166004536013"
+  }
+}

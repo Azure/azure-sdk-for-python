@@ -33,7 +33,7 @@ from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 module_logger = logging.getLogger(__name__)
 
 
-class Schedule(Resource):
+class Schedule(SchemaValidatableMixin, Resource):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -70,13 +70,43 @@ class Schedule(Resource):
         self._provisioning_state = provisioning_state
         self._type = None
 
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+        """Dump the schedule content into a file in yaml format.
+
+        :param dest: The destination to receive this schedule's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[str, PathLike, IO[AnyStr]]
+        """
+        path = kwargs.pop("path", None)
+        yaml_serialized = self._to_dict()
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
+
+    @classmethod
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.SCHEDULE
+
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
 
         if "create_monitor" in data:
             return MonitorSchedule, None
+        elif "import_data" in data:
+            return ImportDataSchedule, None
         return JobSchedule, None
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
+
+        if obj.properties.action.action_type == "ImportData":
+            return ImportDataSchedule._from_rest_object(obj)
+        return JobSchedule._from_rest_object(obj)
 
     @property
     def create_job(self) -> None:
@@ -116,8 +146,12 @@ class Schedule(Resource):
         """
         return self._type
 
+    def _to_dict(self) -> Dict:
+        """Convert the resource to a dictionary."""
+        return self._dump_for_validation()
 
-class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
+
+class JobSchedule(YamlTranslatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -257,28 +291,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         schedule.create_job = create_job
         return schedule
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the schedule content into a file in yaml format.
-
-        :param dest: The destination to receive this schedule's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
-        :type dest: Union[str, PathLike, IO[AnyStr]]
-        """
-        path = kwargs.pop("path", None)
-        yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
-
     @classmethod
     def _create_schema_for_validation(cls, context):
         return JobScheduleSchema(context=context)
-
-    @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.SCHEDULE
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic."""
@@ -295,21 +310,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         return ["create_job"]
 
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):
-        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
-
-        if "import_data" in data:
-            return ImportDataSchedule, None
-
-        return cls, None
-
-    @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "JobSchedule":
-        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
-
-        if obj.properties.action.action_type == "ImportData":
-            return ImportDataSchedule._from_rest_object(obj)
-
         properties = obj.properties
         action: JobScheduleAction = properties.action
         if action.job_definition is None:
@@ -389,10 +390,6 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
                 trigger=self.trigger._to_rest_object(),
             )
         )
-
-    def _to_dict(self) -> Dict:
-        """Convert the resource to a dictionary."""
-        return self._dump_for_validation()
 
     def __str__(self):
         try:

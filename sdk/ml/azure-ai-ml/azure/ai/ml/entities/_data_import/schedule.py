@@ -12,16 +12,16 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestS
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema._data_import.schedule import ImportDataScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
 from azure.ai.ml.entities._data_import.data_import import DataImport
-from azure.ai.ml.entities._schedule.schedule import JobSchedule
+from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
-class ImportDataSchedule(JobSchedule):
+class ImportDataSchedule(Schedule):
     """ImportDataSchedule object.
 
     :param name: Name of the schedule.
@@ -55,7 +55,6 @@ class ImportDataSchedule(JobSchedule):
         super().__init__(
             name=name,
             trigger=trigger,
-            create_job=None,
             display_name=display_name,
             description=description,
             tags=tags,
@@ -63,6 +62,7 @@ class ImportDataSchedule(JobSchedule):
             **kwargs,
         )
         self.import_data = import_data
+        self._type = ScheduleType.DATA
 
     @classmethod
     def _load(
@@ -86,10 +86,6 @@ class ImportDataSchedule(JobSchedule):
     @classmethod
     def _create_schema_for_validation(cls, context):
         return ImportDataScheduleSchema(context=context)
-
-    @classmethod
-    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
-        return ["import_data"]
 
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "ImportDataSchedule":
@@ -118,9 +114,3 @@ class ImportDataSchedule(JobSchedule):
                 trigger=self.trigger._to_rest_object(),
             )
         )
-
-    def __str__(self):
-        try:
-            return self._to_yaml()
-        except BaseException:  # pylint: disable=broad-except
-            return super(ImportDataSchedule, self).__str__()
