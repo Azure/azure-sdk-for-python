@@ -22,7 +22,7 @@ class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Authorization"] = "SharedAccessKey " + self._credential.key
 
 
-class EventGridNamespaceClient(ServiceClientGenerated):
+class EventGridClient(ServiceClientGenerated):
     """Azure Messaging EventGrid Namespace Client.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -56,6 +56,6 @@ def patch_sdk():
 
 
 __all__: List[str] = [
-    "EventGridNamespaceClient",
+    "EventGridClient",
     "EventGridPublisherClient",
 ]  # Add all objects you want publicly available to users at this package level
