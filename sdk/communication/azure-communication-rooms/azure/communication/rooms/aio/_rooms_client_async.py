@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Any, overload
 import uuid
 
 from azure.core.credentials import AzureKeyCredential
@@ -150,33 +150,85 @@ class RoomsClient(object):
         """
         return await self._rooms_service_client.rooms.delete(room_id=room_id, **kwargs)
 
-    @distributed_trace_async
+    @overload
+    async def update_room(
+        self,
+        communication_room: CommunicationRoom,
+        **kwargs: Any
+    ) -> CommunicationRoom:
+        """Update a valid room's attributes by passing in the updated CommunicationRoom.
+
+        :param communication_room: An instance of CommunicationRoom. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type communication_room: CommunicationRoom
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+    @overload
     async def update_room(
         self,
         *,
         room_id: str,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
-        **kwargs
+        **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed
         in, the corresponding room property will be replaced with the new value.
 
-        :param room_id: Required. Id of room to be updated
+        :keyword room_id: Required. Id of room to be updated
         :type room_id: str
-        :param valid_from: The timestamp from when the room is open for joining. Optional.
+        :keyword valid_from: The timestamp from when the room is open for joining. Optional.
         :type valid_from: ~datetime.datetime
-        :param valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :keyword valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :type valid_until: ~datetime.datetime
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+    @distributed_trace_async
+    async def update_room(
+        self,
+        *args: CommunicationRoom,
+        **kwargs: Any
+    ) -> CommunicationRoom:
+        """Update a valid room's attributes. For any argument that is passed
+        in, the corresponding room property will be replaced with the new value.
+
+        :param communication_room: The updated communication room. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type communication_room: CommunicationRoom
+        :keyword room_id:  Id of room to be updated
+        :type room_id: str
+        :keyword valid_from: The timestamp from when the room is open for joining. Optional.
+        :type valid_from: ~datetime.datetime
+        :keyword valid_until: The timestamp from when the room can no longer be joined. Optional.
         :type valid_until: ~datetime.datetime
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
-        update_room_request = UpdateRoomRequest(
-            valid_from=valid_from,
-            valid_until=valid_until,
-        )
+        communication_room = None
+        if len(args) == 1:
+            communication_room = args[0]
+
+        update_room_request = UpdateRoomRequest()
+        room_id = None
+        if communication_room == None:
+            room_id = kwargs.pop('room_id', None)
+            update_room_request.valid_from = kwargs.pop('valid_from', None)
+            update_room_request.valid_until = kwargs.pop('valid_until', None)
+        else:
+            room_id = communication_room.id
+            update_room_request.valid_from = communication_room.valid_from
+            update_room_request.valid_until = communication_room.valid_until
+
+        if not room_id:
+            raise ValueError("room_id cannot be None.")
+
         update_room_response = await self._rooms_service_client.rooms.update(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
         return update_room_response # pylint: disable=protected-access

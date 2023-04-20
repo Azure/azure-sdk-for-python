@@ -294,6 +294,22 @@ class RoomsClientTest(RoomsTestCase):
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
+    @pytest.mark.live_test_only
+    def test_update_room_communication_room_w_args_overload_async(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # update room attributes
+        create_response.valid_from =  datetime.now() + timedelta(weeks=2)
+        create_response.valid_until =  datetime.now() + timedelta(weeks=3)
+
+        update_response = self.rooms_client.update_room(create_response)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+        self.verify_successful_room_response(
+            response=update_response, valid_from=create_response.valid_from, valid_until=create_response.valid_until, room_id=create_response.id)
+
     def test_add_or_update_participants(self):
         # add john and chris to room
         create_participants = [
