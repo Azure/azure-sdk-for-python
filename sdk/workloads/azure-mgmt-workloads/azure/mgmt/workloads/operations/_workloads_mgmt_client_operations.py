@@ -26,7 +26,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import WorkloadsClientMixinABC, _convert_request, _format_url_section
+from .._vendor import WorkloadsMgmtClientMixinABC, _convert_request, _format_url_section
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -43,9 +43,7 @@ def build_sap_sizing_recommendations_request(location: str, subscription_id: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -76,9 +74,7 @@ def build_sap_supported_sku_request(location: str, subscription_id: str, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -109,9 +105,7 @@ def build_sap_disk_configurations_request(location: str, subscription_id: str, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -142,9 +136,7 @@ def build_sap_availability_zone_details_request(location: str, subscription_id: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -171,7 +163,7 @@ def build_sap_availability_zone_details_request(location: str, subscription_id: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
+class WorkloadsMgmtClientOperationsMixin(WorkloadsMgmtClientMixinABC):
     @overload
     def sap_sizing_recommendations(
         self,
@@ -236,8 +228,8 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
 
         :param location: The name of Azure region. Required.
         :type location: str
-        :param sap_sizing_recommendation: SAP Sizing Recommendation Request body. Is either a model
-         type or a IO type. Default value is None.
+        :param sap_sizing_recommendation: SAP Sizing Recommendation Request body. Is either a
+         SAPSizingRecommendationRequest type or a IO type. Default value is None.
         :type sap_sizing_recommendation: ~azure.mgmt.workloads.models.SAPSizingRecommendationRequest or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -259,7 +251,7 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -371,8 +363,8 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
 
         :param location: The name of Azure region. Required.
         :type location: str
-        :param sap_supported_sku: SAP Supported SKU Request body. Is either a model type or a IO type.
-         Default value is None.
+        :param sap_supported_sku: SAP Supported SKU Request body. Is either a SAPSupportedSkusRequest
+         type or a IO type. Default value is None.
         :type sap_supported_sku: ~azure.mgmt.workloads.models.SAPSupportedSkusRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -393,7 +385,7 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -505,8 +497,8 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
 
         :param location: The name of Azure region. Required.
         :type location: str
-        :param sap_disk_configurations: SAP Disk Configurations Request body. Is either a model type or
-         a IO type. Default value is None.
+        :param sap_disk_configurations: SAP Disk Configurations Request body. Is either a
+         SAPDiskConfigurationsRequest type or a IO type. Default value is None.
         :type sap_disk_configurations: ~azure.mgmt.workloads.models.SAPDiskConfigurationsRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -527,7 +519,7 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -643,7 +635,7 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
         :param location: The name of Azure region. Required.
         :type location: str
         :param sap_availability_zone_details: SAP Availability Zone Details Request body. Is either a
-         model type or a IO type. Default value is None.
+         SAPAvailabilityZoneDetailsRequest type or a IO type. Default value is None.
         :type sap_availability_zone_details:
          ~azure.mgmt.workloads.models.SAPAvailabilityZoneDetailsRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -665,7 +657,7 @@ class WorkloadsClientOperationsMixin(WorkloadsClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))

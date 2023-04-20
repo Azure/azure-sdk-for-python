@@ -164,9 +164,7 @@ class SAPHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SAPHighAvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The high availability Type. AvailabilitySet guarantees 99.95% availability. Availability Zone
-    guarantees 99.99% availability.
-    """
+    """The high availability type (AvailabilitySet or AvailabilityZone)."""
 
     AVAILABILITY_SET = "AvailabilitySet"
     AVAILABILITY_ZONE = "AvailabilityZone"
