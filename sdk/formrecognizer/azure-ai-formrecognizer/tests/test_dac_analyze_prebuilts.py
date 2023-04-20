@@ -278,8 +278,10 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert invoice.fields.get("ShippingAddressRecipient").value ==  "Microsoft Delivery"
         assert invoice.fields.get("SubTotal").value.amount ==  100.0
         assert invoice.fields.get("SubTotal").value.symbol ==  "$"
+        assert invoice.fields.get("SubTotal").value.code ==  "USD"
         assert invoice.fields.get("TotalTax").value.amount ==  10.0
         assert invoice.fields.get("TotalTax").value.symbol ==  "$"
+        assert invoice.fields.get("TotalTax").value.code ==  "USD"
         assert invoice.fields.get("VendorName").value ==  "CONTOSO LTD."
         assert invoice.fields.get("VendorAddress").value, "123 456th St New York, NY ==  10001"
         assert invoice.fields.get("VendorAddressRecipient").value ==  "Contoso Headquarters"
