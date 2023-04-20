@@ -942,7 +942,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             **kwargs
         )
         media_type = response.http_response.headers['Content-Type']
-        manifest_bytes = response.http_response.read()
+        manifest_bytes = await response.http_response.read()
         manifest_json = response.http_response.json()
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
