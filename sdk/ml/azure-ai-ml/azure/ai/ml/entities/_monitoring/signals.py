@@ -436,7 +436,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
             input_assets={
                 input_name: input_value._to_rest_object() for input_name, input_value in self.input_datasets.items()
-            } if self.input_datasets else None,
+            }
+            if self.input_datasets
+            else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
@@ -446,7 +448,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             input_datasets={
                 input_name: MonitorInputData._from_rest_object(input_value)
                 for input_name, input_value in obj.input_assets.items()
-            } if obj.input_assets else None,
+            }
+            if obj.input_assets
+            else None,
             metric_thresholds=[
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
             ],

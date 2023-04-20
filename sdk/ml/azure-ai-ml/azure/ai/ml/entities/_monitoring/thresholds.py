@@ -42,14 +42,14 @@ class DataDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
+        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL],
         metric_name: Literal[
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
             MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
             MonitorMetricName.POPULATION_STABILITY_INDEX,
             MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST,
             MonitorMetricName.PEARSONS_CHI_SQUARED_TEST,
-        ] = None,
+        ],
         threshold: float = None,
     ):
         super().__init__(threshold=threshold)
@@ -58,7 +58,7 @@ class DataDriftMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> DataDriftMetricThresholdBase:
         metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold)
+        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
         return (
             NumericalDataDriftMetricThreshold(
                 metric=metric,
@@ -76,7 +76,7 @@ class DataDriftMetricThreshold(MetricThreshold):
         return cls(
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
-            threshold=obj.threshold.value,
+            threshold=obj.threshold.value if obj.threshold else None,
         )
 
 
@@ -85,14 +85,14 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
+        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL],
         metric_name: Literal[
             MonitorMetricName.JENSEN_SHANNON_DISTANCE,
             MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
             MonitorMetricName.POPULATION_STABILITY_INDEX,
             MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST,
             MonitorMetricName.PEARSONS_CHI_SQUARED_TEST,
-        ] = None,
+        ],
         threshold: float = None,
     ):
         super().__init__(threshold=threshold)
@@ -101,7 +101,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> PredictionDriftMetricThresholdBase:
         metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold)
+        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
         return (
             NumericalPredictionDriftMetricThreshold(
                 metric=metric,
@@ -119,7 +119,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
         return cls(
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
-            threshold=obj.threshold.value,
+            threshold=obj.threshold.value if obj.threshold else None,
         )
 
 
@@ -128,12 +128,12 @@ class DataQualityMetricThreshold(MetricThreshold):
     def __init__(
         self,
         *,
-        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL] = None,
+        applicable_feature_type: Literal[MonitorFeatureType.CATEGORICAL, MonitorFeatureType.NUMERICAL],
         metric_name: Literal[
             MonitorMetricName.NULL_VALUE_RATE,
             MonitorMetricName.DATA_TYPE_ERROR_RATE,
             MonitorMetricName.OUT_OF_BOUND_RATE,
-        ] = None,
+        ],
         threshold: float = None,
     ):
         super().__init__(threshold=threshold)
@@ -142,7 +142,7 @@ class DataQualityMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> DataQualityMetricThresholdBase:
         metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold)
+        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
         return (
             NumericalDataQualityMetricThreshold(
                 metric=metric,
@@ -160,7 +160,7 @@ class DataQualityMetricThreshold(MetricThreshold):
         return cls(
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
-            threshold=obj.threshold.value,
+            threshold=obj.threshold.value if obj.threshold else None,
         )
 
 
@@ -173,12 +173,13 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
     def _to_rest_object(self) -> FeatureAttributionMetricThreshold:
         return FeatureAttributionMetricThreshold(
-            metric=snake_to_camel(self.metric_name), threshold=MonitoringThreshold(value=self.threshold)
+            metric=snake_to_camel(self.metric_name),
+            threshold=MonitoringThreshold(value=self.threshold) if self.threshold else None,
         )
 
     @classmethod
     def _from_rest_object(cls, obj: FeatureAttributionMetricThreshold) -> "FeatureAttributionDriftMetricThreshold":
-        return cls(threshold=obj.threshold.value)
+        return cls(threshold=obj.threshold.value if obj.threshold else None)
 
 
 @experimental
@@ -194,7 +195,7 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             MonitorMetricName.MAE,
             MonitorMetricName.MSE,
             MonitorMetricName.RMSE,
-        ] = None,
+        ],
         threshold: float = None,
     ):
         super().__init__(threshold=threshold)
@@ -210,7 +211,7 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             metric = RegressionModelPerformanceMetric.ROOT_MEAN_SQUARED_ERROR
         else:
             metric = snake_to_camel(self.metric_name)
-        threshold = MonitoringThreshold(value=self.threshold)
+        threshold = MonitoringThreshold(value=self.threshold) if self.threshold is not None else None
         return (
             RegressionModelPerformanceMetricThreshold(
                 metric=metric,
@@ -233,7 +234,7 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
             metric_name = MonitorMetricName.RMSE
         else:
             metric_name = snake_to_camel(obj.metric)
-        return cls(metric_name=metric_name, threshold=obj.threshold.value)
+        return cls(metric_name=metric_name, threshold=obj.threshold.value if obj.threshold else None)
 
 
 @experimental
@@ -250,9 +251,9 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> CustomMetricThreshold:
         return CustomMetricThreshold(
             metric=self.metric_name,
-            threshold=MonitoringThreshold(value=self.threshold),
+            threshold=MonitoringThreshold(value=self.threshold) if self.threshold is not None else None,
         )
 
     @classmethod
     def _from_rest_object(cls, obj: CustomMetricThreshold) -> "CustomMonitoringMetricThreshold":
-        return cls(metric_name=obj.metric, threshold=obj.threshold.value)
+        return cls(metric_name=obj.metric, threshold=obj.threshold.value if obj.threshold else None)
