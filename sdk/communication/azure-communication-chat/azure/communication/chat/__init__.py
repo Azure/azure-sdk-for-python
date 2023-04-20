@@ -8,7 +8,7 @@ from ._generated.models import (
     ChatError,
     ChatRetentionPolicy,
     ThreadCreationDateRetentionPolicy,
-    PolicyType
+    RetentionPolicyKind
 )
 
 from ._models import (
@@ -64,6 +64,6 @@ __all__ = [
     'MicrosoftBotIdentifier',
     'MicrosoftBotProperties',
     'UnknownIdentifier',
-    'PolicyType'
+    'RetentionPolicyKind'
 ]
 __version__ = VERSION
