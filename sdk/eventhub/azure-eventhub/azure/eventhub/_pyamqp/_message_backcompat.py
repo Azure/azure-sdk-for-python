@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
-from typing import Callable, cast
+from typing import Callable, cast, TYPE_CHECKING
 from enum import Enum
 
 from ._encode import encode_payload
@@ -13,6 +13,8 @@ from .utils import get_message_encoded_size
 from .error import AMQPError
 from .message import Header, Properties
 
+if TYPE_CHECKING:
+    from ..amqp._amqp_message import AmqpAnnotatedMessage
 
 def _encode_property(value):
     try:
@@ -47,7 +49,7 @@ PENDING_STATES = (MessageState.WaitingForSendAck, MessageState.WaitingToBeSent)
 
 class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, message, **kwargs):
-        self._message = message
+        self._message: "AmqpAnnotatedMessage" = message
         self.state = MessageState.SendComplete
         self.idle_time = 0
         self.retries = 0
@@ -63,11 +65,13 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         )
         self.application_properties = (
             self._message.application_properties
-            if any(self._message.application_properties)
+            if self._message.application_properties and any(self._message.application_properties)
             else None
         )
         self.annotations = (
-            self._message.annotations if any(self._message.annotations) else None
+            self._message.annotations
+            if self._message.annotations and any(self._message.annotations)
+            else None
         )
         self.header = (
             LegacyMessageHeader(self._message.header) if self._message.header else None
@@ -103,6 +107,8 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
 
     def encode_message(self):
         output = bytearray()
+        # to maintain the same behavior as uamqp, app prop values will not be decoded
+        self.application_properties = self._message.application_properties.copy()
         encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)
 
@@ -241,6 +247,8 @@ class LegacyMessageHeader(object):
         )
 
     def get_header_obj(self):
+        # TODO: uamqp returned object has property: `time_to_live`.
+        # This Header has `ttl`.
         return Header(
             self.durable,
             self.priority,

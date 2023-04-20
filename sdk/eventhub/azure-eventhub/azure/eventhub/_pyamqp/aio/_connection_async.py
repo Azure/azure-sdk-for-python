@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import socket
 from ssl import SSLError
 import asyncio
-from typing import Any, Tuple, Optional, NamedTuple, Union, cast
+from typing import Any, Dict, Tuple, Optional, NamedTuple, Union, cast
 
 from ._transport_async import AsyncTransport
 from ._sasl_async import SASLTransport, SASLWithWebSocket
@@ -28,6 +28,7 @@ from ..constants import (
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
+    READ_TIMEOUT_INTERVAL
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError
@@ -134,7 +135,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._properties = kwargs.pop(
             "properties", None
         )  # type: Optional[Dict[str, str]]
-        self._remote_properties = None  # type: Optional[Dict[str, str]]
+
+        self._remote_properties: Optional[Dict[str, str]] = None
 
         self._allow_pipelined_open = kwargs.pop(
             "allow_pipelined_open", True
@@ -237,7 +239,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = 1  # TODO: What should this default be?
+            timeout = READ_TIMEOUT_INTERVAL
         elif wait is True:
             timeout = None
         else:
