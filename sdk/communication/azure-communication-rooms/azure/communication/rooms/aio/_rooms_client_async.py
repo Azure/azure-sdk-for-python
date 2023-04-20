@@ -217,7 +217,7 @@ class RoomsClient(object):
 
         update_room_request = UpdateRoomRequest()
         room_id = None
-        if communication_room == None:
+        if communication_room is None:
             room_id = kwargs.pop('room_id', None)
             update_room_request.valid_from = kwargs.pop('valid_from', None)
             update_room_request.valid_until = kwargs.pop('valid_until', None)
