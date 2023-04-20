@@ -6,8 +6,9 @@
 # pylint: disable=too-many-lines
 import functools
 import hashlib
+import json
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, Iterator, MutableMapping
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, MutableMapping
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
@@ -29,8 +30,6 @@ from ._helpers import (
     _is_tag,
     _parse_next_link,
     _validate_digest,
-    _serialize_manifest,
-    _deserialize_manifest,
     SUPPORTED_API_VERSIONS,
     OCI_IMAGE_MANIFEST,
     SUPPORTED_MANIFEST_MEDIA_TYPES,
@@ -46,8 +45,8 @@ from ._models import (
 
 JSON = MutableMapping[str, Any]
 
-def _return_response_and_deserialized(pipeline_response, deserialized, _):
-    return pipeline_response, deserialized
+def _return_response(pipeline_response, _, __):
+    return pipeline_response
 
 def _return_response_and_headers(pipeline_response, _, response_headers):
     return pipeline_response, response_headers
@@ -889,7 +888,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         try:
             if isinstance(manifest, MutableMapping):
-                data: IO[bytes] = BytesIO(_serialize_manifest(manifest))
+                data = BytesIO(json.dumps(manifest).encode())
             else:
                 data = manifest
             tag_or_digest = tag
@@ -925,18 +924,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.GetManifestResult
         :raises ValueError: If the requested digest does not match the digest of the received manifest.
         """
-        response, manifest_iterator = cast(
-            Tuple[PipelineResponse, Iterator[bytes]],
-            self._client.container_registry.get_manifest(
-                name=repository,
-                reference=tag_or_digest,
-                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
-                cls=_return_response_and_deserialized,
-                **kwargs
-            )
+        response = self._client.container_registry.get_manifest(
+            name=repository,
+            reference=tag_or_digest,
+            accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
+            cls=_return_response,
+            **kwargs
         )
         media_type = response.http_response.headers['Content-Type']
-        manifest_bytes = b"".join(manifest_iterator)
+        manifest_bytes = response.http_response.read()
+        manifest_json = response.http_response.json()
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
         else:
@@ -944,7 +941,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if not _validate_digest(manifest_bytes, digest):
             raise ValueError("The requested digest does not match the digest of the received manifest.")
 
-        return GetManifestResult(digest=digest, manifest=_deserialize_manifest(manifest_bytes), media_type=media_type)
+        return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 
     @distributed_trace
     def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:

@@ -7,6 +7,7 @@ import os
 import pytest
 import six
 import hashlib
+import json
 from datetime import datetime
 from io import BytesIO
 from azure.containerregistry import (
@@ -17,7 +18,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE, _deserialize_manifest
+from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -462,7 +463,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_oci_manifest_prerequisites(repo, client)
 
             with open(path, "rb") as manifest_stream:
-                manifest_json = _deserialize_manifest(manifest_stream.read())
+                manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
                     client.set_manifest(repo, manifest_json, media_type=DOCKER_MANIFEST)
                 digest = client.set_manifest(repo, manifest_json)
@@ -486,7 +487,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_oci_manifest_prerequisites(repo, client)
             
             with open(path, "rb") as manifest_stream:
-                manifest_json = _deserialize_manifest(manifest_stream.read())
+                manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
                     client.set_manifest(repo, manifest_json, tag=tag, media_type=DOCKER_MANIFEST)
                 digest = client.set_manifest(repo, manifest_json, tag=tag)
@@ -612,7 +613,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_docker_manifest_prerequisites(repo, client)
 
             with open(path, "rb") as manifest_stream:
-                manifest_json = _deserialize_manifest(manifest_stream.read())
+                manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
                     client.set_manifest(repo, manifest_json)
@@ -637,7 +638,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_docker_manifest_prerequisites(repo, client)
 
             with open(path, "rb") as manifest_stream:
-                manifest_json = _deserialize_manifest(manifest_stream.read())
+                manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
                     client.set_manifest(repo, manifest_json, tag=tag)

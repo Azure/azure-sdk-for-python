@@ -127,12 +127,6 @@ def _parse_exp_time(raw_token):
 
     return time.time()
 
-def _serialize_manifest(manifest: JSON) -> bytes:
-    return json.dumps(manifest).encode('utf-8')
-
-def _deserialize_manifest(manifest: bytes) -> JSON:
-    return json.loads(manifest.decode('utf-8'))
-
 def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
     if isinstance(data, bytes):
         value = data
