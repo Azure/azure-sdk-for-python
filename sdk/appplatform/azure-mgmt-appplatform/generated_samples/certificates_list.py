@@ -31,7 +31,7 @@ def main():
 
     response = client.certificates.list(
         resource_group_name="myResourceGroup",
-        service_name="myService",
+        service_name="myservice",
     )
     for item in response:
         print(item)

@@ -47,6 +47,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     DELETING = "Deleting"
+    CANCELED = "Canceled"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -75,14 +76,23 @@ class RunSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     QUEUED = "Queued"
     BUILDING = "Building"
     CUSTOMIZING = "Customizing"
+    OPTIMIZING = "Optimizing"
     VALIDATING = "Validating"
     DISTRIBUTING = "Distributing"
 
 
 class SharedImageStorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage account type to be used to store the shared image. Omit to use the default
-    (Standard_LRS).
+    """Specifies the storage account type to be used to store the Azure Compute Gallery image version
+    in.
     """
 
     STANDARD_LRS = "Standard_LRS"
     STANDARD_ZRS = "Standard_ZRS"
+    PREMIUM_LRS = "Premium_LRS"
+
+
+class VMBootOptimizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enabling this field will improve VM boot time by optimizing the final customized image output."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

@@ -36,14 +36,14 @@ class ImageBuilderClientConfiguration(Configuration):  # pylint: disable=too-man
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription Id forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-02-14". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ImageBuilderClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-02-14"] = kwargs.pop("api_version", "2022-02-14")
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", "2022-07-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

@@ -6,7 +6,7 @@
     },
     "matrix": {
         "Agent": {
-          "ubuntu-18.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
+          "Ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
           "windows-2022": { "OSVmImage": "MMS2022", "Pool": "azsdk-pool-mms-win-2022-general" },
           "macos-11": { "OSVmImage": "macos-11", "Pool": "Azure Pipelines" }
         },
