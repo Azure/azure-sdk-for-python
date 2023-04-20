@@ -14,7 +14,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python container_groups_start.py
+    python container_groups_create_priority.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,32 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.container_groups.begin_start(
+    response = client.container_groups.begin_create_or_update(
         resource_group_name="demo",
         container_group_name="demo1",
+        container_group={
+            "location": "eastus",
+            "properties": {
+                "containers": [
+                    {
+                        "name": "test-container-001",
+                        "properties": {
+                            "command": ["/bin/sh", "-c", "sleep 10"],
+                            "image": "alpine:latest",
+                            "resources": {"requests": {"cpu": 1, "memoryInGB": 1}},
+                        },
+                    }
+                ],
+                "osType": "Linux",
+                "priority": "Spot",
+                "restartPolicy": "Never",
+                "sku": "Standard",
+            },
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2023-05-01/examples/ContainerGroupsStart.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2023-05-01/examples/ContainerGroupsCreatePriority.json
 if __name__ == "__main__":
     main()

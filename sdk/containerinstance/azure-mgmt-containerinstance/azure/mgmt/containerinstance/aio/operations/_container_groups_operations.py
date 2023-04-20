@@ -1096,7 +1096,7 @@ class ContainerGroupsOperations:
     }
 
     @distributed_trace_async
-    async def get_outbound_network_dependencies_endpoints(
+    async def get_outbound_network_dependencies_endpoints(  # pylint: disable=name-too-long
         self, resource_group_name: str, container_group_name: str, **kwargs: Any
     ) -> List[str]:
         """Get all network dependencies for container group.

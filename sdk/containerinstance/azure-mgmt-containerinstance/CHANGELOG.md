@@ -1,5 +1,19 @@
 # Release History
 
+## 10.1.0 (2023-04-20)
+
+### Features Added
+
+  - Model Container has a new parameter security_context
+  - Model ContainerGroup has a new parameter confidential_compute_properties
+  - Model ContainerGroup has a new parameter extensions
+  - Model ContainerGroup has a new parameter priority
+  - Model ContainerGroupProperties has a new parameter confidential_compute_properties
+  - Model ContainerGroupProperties has a new parameter extensions
+  - Model ContainerGroupProperties has a new parameter priority
+  - Model EncryptionProperties has a new parameter identity
+  - Model InitContainerDefinition has a new parameter security_context
+
 ## 10.1.0b2 (2023-04-20)
 
 ### Features Added

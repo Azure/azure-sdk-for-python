@@ -14,7 +14,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python container_group_extensions.py
+    python container_group_create_confidential.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -33,49 +33,34 @@ def main():
         resource_group_name="demo",
         container_group_name="demo1",
         container_group={
-            "location": "eastus2",
+            "location": "westeurope",
             "properties": {
+                "confidentialComputeProperties": {
+                    "ccePolicy": "eyJhbGxvd19hbGwiOiB0cnVlLCAiY29udGFpbmVycyI6IHsibGVuZ3RoIjogMCwgImVsZW1lbnRzIjogbnVsbH19"
+                },
                 "containers": [
                     {
-                        "name": "demo1",
+                        "name": "accdemo",
                         "properties": {
                             "command": [],
                             "environmentVariables": [],
-                            "image": "nginx",
-                            "ports": [{"port": 80}],
+                            "image": "confiimage",
+                            "ports": [{"port": 8000}],
                             "resources": {"requests": {"cpu": 1, "memoryInGB": 1.5}},
+                            "securityContext": {"capabilities": {"add": ["CAP_NET_ADMIN"]}, "privileged": False},
                         },
                     }
-                ],
-                "extensions": [
-                    {
-                        "name": "kube-proxy",
-                        "properties": {
-                            "extensionType": "kube-proxy",
-                            "protectedSettings": {"kubeConfig": "<kubeconfig encoded string>"},
-                            "settings": {"clusterCidr": "10.240.0.0/16", "kubeVersion": "v1.9.10"},
-                            "version": "1.0",
-                        },
-                    },
-                    {
-                        "name": "vk-realtime-metrics",
-                        "properties": {"extensionType": "realtime-metrics", "version": "1.0"},
-                    },
                 ],
                 "imageRegistryCredentials": [],
-                "ipAddress": {"ports": [{"port": 80, "protocol": "TCP"}], "type": "Private"},
+                "ipAddress": {"ports": [{"port": 8000, "protocol": "TCP"}], "type": "Public"},
                 "osType": "Linux",
-                "subnetIds": [
-                    {
-                        "id": "/subscriptions/00000000-0000-0000-0000-00000000/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-rg-vnet/subnets/test-subnet"
-                    }
-                ],
+                "sku": "Confidential",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2023-05-01/examples/ContainerGroupExtensions.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2023-05-01/examples/ContainerGroupCreateConfidential.json
 if __name__ == "__main__":
     main()
