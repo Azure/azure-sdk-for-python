@@ -64,23 +64,6 @@ def test_stress_queue_batch_send_and_receive(args):
     print(f"Total send {result.total_sent}")
     print(f"Total received {result.total_received}")
 
-def test_stress_queue_batch_send_and_receive_u(args):
-    sb_client = ServiceBusClient.from_connection_string(
-        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE)
-    uamqp_sb_client = ServiceBusClient.from_connection_string(
-        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=True)
-    stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
-                                    receivers = [uamqp_sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=5)],
-                                    admin_client = sb_admin_client,
-                                    duration=args.duration,
-                                    send_batch_size=5,
-                                    azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive")
-                                    )
-
-    result = stress_test.run()
-    print(f"Total send {result.total_sent}")
-    print(f"Total received {result.total_received}")
-
 def test_stress_queue_slow_send_and_receive(args):
     sb_client = ServiceBusClient.from_connection_string(
         SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE)
@@ -366,8 +349,6 @@ if __name__ == '__main__':
         test_stress_queue_send_and_pull_receive(args)
     elif args.method == "send_receive_batch":
         test_stress_queue_batch_send_and_receive(args)
-    elif args.method == "uamqp":
-        test_stress_queue_batch_send_and_receive_u(args)
     elif args.method == "send_receive_slow":
         test_stress_queue_slow_send_and_receive(args)
     elif args.method == "receive_delete":

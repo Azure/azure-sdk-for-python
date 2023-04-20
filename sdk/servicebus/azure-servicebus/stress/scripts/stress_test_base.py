@@ -232,10 +232,8 @@ class StressTestRunner:
             raise
 
     def _receive(self, receiver, end_time):
-        # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.DEBUG, print_console=PRINT_CONSOLE)
-        # self._schedule_interval_logger(end_time, "Receiver " + str(self))
-        delivery_ids = []
-        #log receiver
+        self._schedule_interval_logger(end_time, "Receiver " + str(self))
+        # log receiver
         _logger.debug("Receiver: {}".format(receiver))
         try:
             with receiver:
