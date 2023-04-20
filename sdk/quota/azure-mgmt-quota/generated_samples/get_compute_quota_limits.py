@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.quota import AzureQuotaExtensionAPI
+from azure.mgmt.quota import QuotaMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quota_request_failed.py
+    python get_compute_quota_limits.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,17 +24,17 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
 
 
 def main():
-    client = AzureQuotaExtensionAPI(
+    client = QuotaMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.quota_request_status.get(
-        id="2B5C8515-37D8-4B6A-879B-CD641A2CF605",
+    response = client.quota.list(
         scope="subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/getQuotaRequestStatusFailed.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getComputeQuotaLimits.json
 if __name__ == "__main__":
     main()
