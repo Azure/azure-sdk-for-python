@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Added operation group ConfidentialLedgerOperationsMixin
   - Added operation group ManagedCCFOperations
   - Model LedgerProperties has a new parameter running_state
 
