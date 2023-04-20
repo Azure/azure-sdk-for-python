@@ -14,21 +14,21 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
                     log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
     logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     return logger
 
-def get_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
+def get_logger(log_filename, logger_name, level=logging.DEBUG, print_console=False, log_format=None,
                log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
     stress_logger = logging.getLogger(logger_name)
-    stress_logger.setLevel(logging.DEBUG)
+    stress_logger.setLevel(level)
     servicebus_logger = logging.getLogger("azure.servicebus")
-    servicebus_logger.setLevel(logging.DEBUG)
+    servicebus_logger.setLevel(level)
     pyamqp_logger = logging.getLogger("azure.servicebus._pyamqp")
-    pyamqp_logger.setLevel(logging.DEBUG)
+    pyamqp_logger.setLevel(level)
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 
@@ -41,9 +41,9 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
     return stress_logger
 
 
-def get_azure_logger(logger_name, level=logging.INFO):
+def get_azure_logger(logger_name, level=logging.DEBUG):
     logger = logging.getLogger("azure_logger_" + logger_name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
     # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'
     logger.addHandler(AzureLogHandler())
     return logger
