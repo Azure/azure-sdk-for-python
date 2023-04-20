@@ -27,7 +27,6 @@ from .operations import (
     SnapshotPoliciesOperations,
     SnapshotsOperations,
     SubvolumesOperations,
-    VaultsOperations,
     VolumeGroupsOperations,
     VolumeQuotaRulesOperations,
     VolumesOperations,
@@ -66,20 +65,17 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype backup_policies: azure.mgmt.netapp.operations.BackupPoliciesOperations
     :ivar volume_quota_rules: VolumeQuotaRulesOperations operations
     :vartype volume_quota_rules: azure.mgmt.netapp.operations.VolumeQuotaRulesOperations
-    :ivar vaults: VaultsOperations operations
-    :vartype vaults: azure.mgmt.netapp.operations.VaultsOperations
     :ivar volume_groups: VolumeGroupsOperations operations
     :vartype volume_groups: azure.mgmt.netapp.operations.VolumeGroupsOperations
     :ivar subvolumes: SubvolumesOperations operations
     :vartype subvolumes: azure.mgmt.netapp.operations.SubvolumesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-09-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -120,7 +116,6 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         self.volume_quota_rules = VolumeQuotaRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
 
@@ -153,5 +148,5 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
