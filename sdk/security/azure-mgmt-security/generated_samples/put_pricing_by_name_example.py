@@ -14,7 +14,7 @@ from azure.mgmt.security import SecurityCenter
     pip install azure-identity
     pip install azure-mgmt-security
 # USAGE
-    python get_setting_example.py
+    python put_pricing_by_name_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,13 @@ def main():
         subscription_id="20ff7fc3-e762-44dd-bd96-b71116dcdc23",
     )
 
-    response = client.settings.get(
-        setting_name="MCAS",
+    response = client.pricings.update(
+        pricing_name="CloudPosture",
+        pricing={"properties": {"pricingTier": "Standard"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2022-05-01/examples/Settings/GetSetting_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2023-01-01/examples/Pricings/PutPricingByName_example.json
 if __name__ == "__main__":
     main()
