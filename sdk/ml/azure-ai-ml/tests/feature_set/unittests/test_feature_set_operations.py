@@ -39,13 +39,13 @@ def mock_datastore_operation(
 def mock_feature_set_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_02_01_preview: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
     mock_datastore_operation: Mock,
 ) -> FeatureSetOperations:
     yield FeatureSetOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2023_02_01_preview,
+        service_client=mock_aml_services_2023_04_01_preview,
         datastore_operations=mock_datastore_operation,
     )
 
@@ -125,7 +125,10 @@ class TestFeatureSetOperations:
 
     def test_archive_version(self, mock_feature_set_operations: FeatureSetOperations):
         name = "random_name"
-        featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"], is_archived=False))))
+        featureset_version = Mock(
+            FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"], is_archived=False)))
+        )
+        featureset_version.properties.is_archived = False
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.archive(name=name, version=version)
