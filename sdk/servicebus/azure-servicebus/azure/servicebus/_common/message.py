@@ -34,7 +34,7 @@ from .constants import (
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
     MAX_MESSAGE_LENGTH_BYTES,
-    MESSAGE_STATE_NAME
+    MESSAGE_STATE_NAME,
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -667,6 +667,8 @@ class ServiceBusMessageBatch(object):
         self._messages: List[ServiceBusMessage] = []
         self._uamqp_message: Optional[LegacyBatchMessage] = None
 
+        self._tracing_attributes: Dict[str, Union[str, int]] = {}
+
     def __repr__(self) -> str:
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
             self.max_size_in_bytes, self._count
@@ -676,15 +678,11 @@ class ServiceBusMessageBatch(object):
     def __len__(self) -> int:
         return self._count
 
-    def _from_list(self, messages: Iterable[ServiceBusMessage], parent_span: Optional["AbstractSpan"] = None) -> None:
+    def _from_list(self, messages: Iterable[ServiceBusMessage]) -> None:
         for message in messages:
-            self._add(message, parent_span)
+            self._add(message)
 
-    def _add(
-        self,
-        add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
-        parent_span: Optional["AbstractSpan"] = None
-    ) -> None:
+    def _add(self, add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage]) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         outgoing_sb_message = transform_outbound_messages(
             add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
@@ -694,8 +692,8 @@ class ServiceBusMessageBatch(object):
         outgoing_sb_message._message = trace_message(
             outgoing_sb_message._message,
             amqp_transport=self._amqp_transport,
-            parent_span=parent_span
-        )  # parent_span is e.g. if built as part of a send operation.
+            additional_attributes=self._tracing_attributes
+        )
         message_size = self._amqp_transport.get_message_encoded_size(
             outgoing_sb_message._message  # pylint: disable=protected-access
         )

@@ -22,13 +22,20 @@ from .._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     SPAN_NAME_SCHEDULE,
-    MAX_MESSAGE_LENGTH_BYTES
+    MAX_MESSAGE_LENGTH_BYTES,
+    TRACE_NET_PEER_NAME_ATTRIBUTE,
+    TRACE_MESSAGING_DESTINATION_ATTRIBUTE,
+    TraceOperationTypes,
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
     transform_outbound_messages,
     send_trace_context_manager,
     trace_message,
+    is_tracing_enabled,
+    get_span_links_from_batch,
+    get_span_links_from_message,
+    add_span_attributes,
 )
 from ._async_utils import create_authentication
 
@@ -259,19 +266,30 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
-            if isinstance(obj_messages, ServiceBusMessage):
-                request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, self._amqp_transport, obj_messages
-                )
-            else:
-                if len(obj_messages) == 0:
-                    return []  # No-op on empty list.
-                request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, self._amqp_transport, *obj_messages
-                )
+
+        tracing_attributes = {
+            TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+            TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+        }
+        if isinstance(obj_messages, ServiceBusMessage):
+            request_body, trace_links = self._build_schedule_request(
+                schedule_time_utc,
+                self._amqp_transport,
+                tracing_attributes,
+                obj_messages
+            )
+        else:
+            if len(obj_messages) == 0:
+                return []  # No-op on empty list.
+            request_body, trace_links = self._build_schedule_request(
+                schedule_time_utc,
+                self._amqp_transport,
+                tracing_attributes,
+                *obj_messages
+            )
+        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE, links=trace_links) as send_span:
             if send_span:
-                self._add_span_request_attributes(send_span)
+                add_span_attributes(self, send_span, TraceOperationTypes.PUBLISH, message_count=len(trace_links))
             return await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
                 request_body,
@@ -376,34 +394,44 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             pass
 
         obj_message: Union[ServiceBusMessage, ServiceBusMessageBatch]
-        with send_trace_context_manager() as send_span:
-            if isinstance(message, ServiceBusMessageBatch):
-                # If AmqpTransports are not the same, create batch with correct BatchMessage.
-                if self._amqp_transport is not message._amqp_transport: # pylint: disable=protected-access
-                    # pylint: disable=protected-access
-                    batch = await self.create_message_batch()
-                    batch._from_list(message._messages, send_span)  # type: ignore
-                    obj_message = batch
-                else:
-                    obj_message = message
+        if isinstance(message, ServiceBusMessageBatch):
+            # If AmqpTransports are not the same, create batch with correct BatchMessage.
+            if self._amqp_transport is not message._amqp_transport: # pylint: disable=protected-access
+                # pylint: disable=protected-access
+                batch = await self.create_message_batch()
+                batch._from_list(message._messages)  # type: ignore
+                obj_message = batch
             else:
-                obj_message = transform_outbound_messages(  # type: ignore
-                    message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
+                obj_message = message
+        else:
+            obj_message = transform_outbound_messages(  # type: ignore
+                message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
+            )
+            try:
+                batch = await self.create_message_batch()
+                batch._from_list(obj_message)  # type: ignore # pylint: disable=protected-access
+                obj_message = batch
+            except TypeError:  # Message was not a list or generator.
+                # pylint: disable=protected-access
+                obj_message._message = trace_message(
+                    obj_message._message,
+                    amqp_transport=self._amqp_transport,
+                    additional_attributes={
+                        TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+                        TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+                    }
                 )
-                try:
-                    batch = await self.create_message_batch()
-                    batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
-                    obj_message = batch
-                except TypeError:  # Message was not a list or generator.
-                    # pylint: disable=protected-access
-                    obj_message._message = trace_message(
-                        obj_message._message,
-                        amqp_transport=self._amqp_transport,
-                        parent_span=send_span
-                    )
 
+        trace_links = []
+        if is_tracing_enabled():
+            if isinstance(obj_message, ServiceBusMessageBatch):
+                trace_links = get_span_links_from_batch(obj_message)
+            else:
+                trace_links = get_span_links_from_message(obj_message._message)  # pylint: disable=protected-access
+
+        with send_trace_context_manager(links=trace_links) as send_span:
             if send_span:
-                await self._add_span_request_attributes(send_span)
+                add_span_attributes(self, send_span, TraceOperationTypes.PUBLISH, message_count=len(trace_links))
             await self._do_retryable_operation(
                 self._send,
                 message=obj_message,
@@ -442,9 +470,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 "acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
-        return ServiceBusMessageBatch(
+        batch = ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link), amqp_transport=self._amqp_transport
         )
+
+        # Embed tracing data into the batch so they can be added to message spans.
+        batch._tracing_attributes = {  # pylint: disable=protected-access
+            TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+            TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+        }
+        return batch
 
     @property
     def client_identifier(self) -> str:

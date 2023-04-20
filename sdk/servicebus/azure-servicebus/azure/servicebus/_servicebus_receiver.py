@@ -20,6 +20,8 @@ from ._common.utils import (
     create_authentication,
     get_receive_links,
     receive_trace_context_manager,
+    settle_trace_context_manager,
+    get_span_links_from_message
 )
 from ._common.constants import (
     CONSUMER_IDENTIFIER,
@@ -469,16 +471,16 @@ class ServiceBusReceiver(
                 error=message.auto_renew_error,
             )
 
-        self._do_retryable_operation(
-            self._settle_message,
-            timeout=None,
-            message=message,
-            settle_operation=settle_operation,
-            dead_letter_reason=dead_letter_reason,
-            dead_letter_error_description=dead_letter_error_description,
-        )
-
-        message._settled = True
+        with settle_trace_context_manager(self, settle_operation, links=get_span_links_from_message(message)):
+            self._do_retryable_operation(
+                self._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
 
     def _settle_message(
         self,
@@ -656,6 +658,7 @@ class ServiceBusReceiver(
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
+        start_time = time.time_ns()
         messages = self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
@@ -663,7 +666,7 @@ class ServiceBusReceiver(
             operation_requires_timeout=True,
         )
         links = get_receive_links(messages)
-        with receive_trace_context_manager(self, links=links):
+        with receive_trace_context_manager(self, links=links, start_time=start_time):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -732,6 +735,7 @@ class ServiceBusReceiver(
             receiver=self,
             amqp_transport=self._amqp_transport,
         )
+        start_time = time.time_ns()
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
@@ -740,7 +744,7 @@ class ServiceBusReceiver(
         )
         links = get_receive_links(messages)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links
+            self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links, start_time=start_time
         ):
             if (
                 self._auto_lock_renewer
@@ -800,11 +804,12 @@ class ServiceBusReceiver(
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.peek_op, receiver=self, amqp_transport=self._amqp_transport)
+        start_time = time.time_ns()
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(messages)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links):
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
             return messages
 
     def complete_message(self, message: ServiceBusReceivedMessage) -> None:

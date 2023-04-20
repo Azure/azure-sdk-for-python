@@ -9,6 +9,7 @@ import collections
 import datetime
 import functools
 import logging
+import time
 import warnings
 from enum import Enum
 from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
@@ -48,6 +49,8 @@ from .._common.utils import (
     receive_trace_context_manager,
     utc_from_timestamp,
     get_receive_links,
+    settle_trace_context_manager,
+    get_span_links_from_message
 )
 from ._async_utils import create_authentication
 
@@ -450,15 +453,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 error=message.auto_renew_error,
             )
 
-        await self._do_retryable_operation(
-            self._settle_message,
-            timeout=None,
-            message=message,
-            settle_operation=settle_operation,
-            dead_letter_reason=dead_letter_reason,
-            dead_letter_error_description=dead_letter_error_description,
-        )
-        message._settled = True
+        with settle_trace_context_manager(self, settle_operation, links=get_span_links_from_message(message)):
+            await self._do_retryable_operation(
+                self._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
 
     async def _settle_message(  # type: ignore
         self,
@@ -628,6 +632,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
+        start_time = time.time_ns()
         messages = await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
@@ -635,7 +640,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             operation_requires_timeout=True,
         )
         links = get_receive_links(messages)
-        with receive_trace_context_manager(self, links=links):
+        with receive_trace_context_manager(self, links=links, start_time=start_time):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -700,6 +705,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             receiver=self,
             amqp_transport=self._amqp_transport,
         )
+        start_time = time.time_ns()
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
@@ -708,7 +714,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         links = get_receive_links(message)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links
+            self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links, start_time=start_time
         ):
             if (
                 self._auto_lock_renewer
@@ -762,12 +768,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.peek_op, receiver=self, amqp_transport=self._amqp_transport)
+        start_time = time.time_ns()
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(message)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_PEEK, links=links
+            self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time
         ):
             return messages
 

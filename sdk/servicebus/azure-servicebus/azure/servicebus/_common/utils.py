@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+from __future__ import annotations
 import sys
 import datetime
 import logging
@@ -45,13 +45,25 @@ from .constants import (
     USER_AGENT_PREFIX,
     SPAN_NAME_SEND,
     SPAN_NAME_MESSAGE,
+    DIAGNOSTIC_ID_PROPERTY,
     TRACE_PARENT_PROPERTY,
+    TRACE_STATE_PROPERTY,
     TRACE_NAMESPACE,
-    TRACE_NAMESPACE_PROPERTY,
+    TRACE_NAMESPACE_ATTRIBUTE,
+    TRACE_COMPONENT_PROPERTY,
+    TRACE_COMPONENT,
     TRACE_PROPERTY_ENCODING,
     TRACE_ENQUEUED_TIME_PROPERTY,
+    TRACE_MESSAGING_SYSTEM_ATTRIBUTE,
+    TRACE_MESSAGING_SYSTEM,
+    TRACE_NET_PEER_NAME_ATTRIBUTE,
+    TRACE_MESSAGING_OPERATION_ATTRIBUTE,
+    TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE,
+    TRACE_MESSAGING_DESTINATION_ATTRIBUTE,
+    TRACE_MESSAGING_SOURCE_ATTRIBUTE,
     SPAN_ENQUEUED_TIME_PROPERTY,
     SPAN_NAME_RECEIVE,
+    TraceOperationTypes
 )
 from ..amqp import AmqpAnnotatedMessage
 
@@ -70,10 +82,14 @@ if TYPE_CHECKING:
     from .message import (
         ServiceBusReceivedMessage,
         ServiceBusMessage,
+        ServiceBusMessageBatch
     )
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
-    from .receiver_mixins import ReceiverMixin
+    from .._base_handler import BaseHandler
+    from ..aio._base_handler_async import BaseHandler as BaseHandlerAsync
+    from .._servicebus_receiver import ServiceBusReceiver
+    from ..aio._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
     from .._servicebus_session import BaseSession
     from .._transport._base import AmqpTransport
     from ..aio._transport._base_async import AmqpTransportAsync
@@ -275,12 +291,17 @@ def strip_protocol_from_uri(uri: str) -> str:
     return uri
 
 
+def is_tracing_enabled():
+    span_impl_type = settings.tracing_implementation()
+    return span_impl_type is not None
+
+
 @contextmanager
-def send_trace_context_manager(span_name=SPAN_NAME_SEND):
-    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
+def send_trace_context_manager(span_name=SPAN_NAME_SEND, links=None):
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
 
     if span_impl_type is not None:
-        with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
+        with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links) as child:
             yield child
     else:
         yield None
@@ -288,47 +309,92 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
 
 @contextmanager
 def receive_trace_context_manager(
-    receiver: "ReceiverMixin",
+    receiver: Union[ServiceBusReceiver, ServiceBusReceiverAsync],
     span_name: str = SPAN_NAME_RECEIVE,
-    links: Optional[List[Link]] = None
+    links: Optional[List[Link]] = None,
+    start_time: Optional[int] = None
 ) -> Iterator[None]:
     """Tracing"""
-    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is None:
         yield
     else:
-        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
-        receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
+        receive_span = span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links, start_time=start_time)
+        add_span_attributes(  # pylint: disable=protected-access
+            receiver,
+            receive_span,
+            TraceOperationTypes.RECEIVE,
+            message_count=len(links) if links else 0
+        )
 
         with receive_span:
             yield
 
 
+@contextmanager
+def settle_trace_context_manager(
+    receiver: Union[ServiceBusReceiver, ServiceBusReceiverAsync],
+    operation: str,
+    links: Optional[List[Link]] = None
+):
+    span_impl_type = settings.tracing_implementation()
+    if span_impl_type is None:
+        yield
+    else:
+        settle_span = span_impl_type(name=f"ServiceBus.{operation}", kind=SpanKind.CLIENT, links=links)
+        add_span_attributes(receiver, settle_span, TraceOperationTypes.SETTLE)  # pylint: disable=protected-access
+
+        with settle_span:
+            yield
+
+
 def trace_message(
-    message: Union["uamqp_Message", "pyamqp_Message"],
-    amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
-    parent_span: Optional["AbstractSpan"] = None
+    message: Union[uamqp_Message, pyamqp_Message],
+    amqp_transport: Union[AmqpTransport, AmqpTransportAsync],
+    additional_attributes: Optional[Dict[str, Union[str, int]]] = None,
+    parent_span: Optional[AbstractSpan] = None
 ) -> Union["uamqp_Message", "pyamqp_Message"]:
     """Add tracing information to this message.
-    Will open and close a "Azure.Servicebus.message" span, and
-    add the "DiagnosticId" as app properties of the message.
+
+    Will open and close a "ServiceBus.message" span, and add tracing context to the app properties of the message.
     """
     try:
-        span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
+        span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
         if span_impl_type is not None:
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            link = Link({
-                'traceparent': current_span.get_trace_parent()
-            })
-            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
-                message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
-                message = amqp_transport.update_message_app_properties(
-                    message,
-                    TRACE_PARENT_PROPERTY,
-                    message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
-                )
+
+            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
+                headers = message_span.to_header()
+
+                if "traceparent" in headers:
+                    message = amqp_transport.update_message_app_properties(
+                        message,
+                        DIAGNOSTIC_ID_PROPERTY,
+                        headers["traceparent"]
+                    )
+                    message = amqp_transport.update_message_app_properties(
+                        message,
+                        TRACE_PARENT_PROPERTY,
+                        headers["traceparent"]
+                    )
+
+                if "tracestate" in headers:
+                    message = amqp_transport.update_message_app_properties(
+                        message,
+                        TRACE_STATE_PROPERTY,
+                        headers["tracestate"]
+                    )
+
+                message_span.add_attribute(TRACE_NAMESPACE_ATTRIBUTE, TRACE_NAMESPACE)
+                message_span.add_attribute(TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TRACE_MESSAGING_SYSTEM)
+
+                if additional_attributes:
+                    for key, value in additional_attributes.items():
+                        if value is not None:
+                            message_span.add_attribute(key, value)
+
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
 
@@ -336,6 +402,9 @@ def trace_message(
 
 
 def get_receive_links(messages):
+    if not is_tracing_enabled():
+        return []
+
     trace_messages = (
         messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
         else (messages,)
@@ -343,21 +412,86 @@ def get_receive_links(messages):
 
     links = []
     try:
-        for message in trace_messages:  # type: ignore
+        for message in trace_messages:
             if message.application_properties:
-                traceparent = message.application_properties.get(
-                    TRACE_PARENT_PROPERTY, ""
-                ).decode(TRACE_PROPERTY_ENCODING)
+                headers = {}
+
+                traceparent = message.application_properties.get(TRACE_PARENT_PROPERTY, b"")
+                if hasattr(traceparent, "decode"):
+                    traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
-                    links.append(Link({'traceparent': traceparent},
-                        {
-                            SPAN_ENQUEUED_TIME_PROPERTY: message.raw_amqp_message.annotations.get(
-                                TRACE_ENQUEUED_TIME_PROPERTY
-                            )
-                        }))
+                    headers["traceparent"] = cast(str, traceparent)
+
+                tracestate = message.application_properties.get(TRACE_STATE_PROPERTY, b"")
+                if hasattr(tracestate, "decode"):
+                    tracestate = tracestate.decode(TRACE_PROPERTY_ENCODING)
+                if tracestate:
+                    headers["tracestate"] = cast(str, tracestate)
+
+                enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)
+                attributes = {SPAN_ENQUEUED_TIME_PROPERTY: enqueued_time} if enqueued_time else None
+
+                if headers:
+                    links.append(Link(headers, attributes=attributes))
     except AttributeError:
         pass
     return links
+
+
+def get_span_links_from_batch(batch: ServiceBusMessageBatch) -> List[Link]:
+    """Create span links from a batch of messages."""
+    links = []
+    for message in batch._messages:  # pylint: disable=protected-access
+        links.extend(get_span_links_from_message(message._message))  # pylint: disable=protected-access
+    return links
+
+
+def get_span_links_from_message(message: Union[uamqp_Message, pyamqp_Message, ServiceBusMessage]) -> List[Link]:
+    """Create a span link from a message.
+
+    This will extract the traceparent and tracestate from the message application properties and create span links
+    based on these values.
+    """
+    headers = {}
+    try:
+        if message.application_properties:
+            traceparent = message.application_properties.get(TRACE_PARENT_PROPERTY, b"")
+            if hasattr(traceparent, "decode"):
+                traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
+            if traceparent:
+                headers["traceparent"] = cast(str, traceparent)
+
+            tracestate = message.application_properties.get(TRACE_STATE_PROPERTY, b"")
+            if hasattr(tracestate, "decode"):
+                tracestate = tracestate.decode(TRACE_PROPERTY_ENCODING)
+            if tracestate:
+                headers["tracestate"] = cast(str, tracestate)
+    except AttributeError :
+        return []
+    return [Link(headers)] if headers else []
+
+
+def add_span_attributes(
+        handler: Union[BaseHandler, BaseHandlerAsync],
+        span: AbstractSpan,
+        operation_type: TraceOperationTypes,
+        message_count: int = 0
+) -> None:
+    """Add attributes to span based on the operation type."""
+
+    span.add_attribute(TRACE_NAMESPACE_ATTRIBUTE, TRACE_NAMESPACE)
+    span.add_attribute(TRACE_NET_PEER_NAME_ATTRIBUTE, handler.fully_qualified_namespace)
+    span.add_attribute(TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TRACE_MESSAGING_SYSTEM)
+    span.add_attribute(TRACE_MESSAGING_OPERATION_ATTRIBUTE, operation_type)
+
+    if message_count > 1:
+        span.add_attribute(TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE, message_count)
+
+    if operation_type == TraceOperationTypes.PUBLISH:
+        span.add_attribute(TRACE_COMPONENT_PROPERTY, TRACE_COMPONENT)
+        span.add_attribute(TRACE_MESSAGING_DESTINATION_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
+    else:
+        span.add_attribute(TRACE_MESSAGING_SOURCE_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
 
 
 def parse_sas_credential(credential: "AzureSasCredential") -> Tuple:
