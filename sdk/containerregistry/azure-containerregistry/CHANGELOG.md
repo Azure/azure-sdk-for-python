@@ -3,8 +3,11 @@
 ## 1.1.0b4 (Unreleased)
 
 ### Features Added
+- Added an optional kwarg `media_type` in `set_manifest()` to enable uploading image manifests of any type.
 
 ### Breaking Changes
+- Renamed `upload_manifest()` to `set_manifest()`, and changed to consume manifest in `JSON` instead of `OCIManifest` type.
+- Renamed `download_manifest()` to `get_manifest()`, and changed it's return type from `DownloadManifestResult` to `GetManifestResult`.
 
 ### Bugs Fixed
 
@@ -65,7 +68,7 @@
 ### Features Added
 
 - Updated the supported rest api version to be the stable "2021-07-01".
-  - Removed the property `teleport_enabled` in `RepositoryProperties`.
+- Removed the property `teleport_enabled` in `RepositoryProperties`.
 
 ## 1.0.0b6 (2021-09-08)
 
