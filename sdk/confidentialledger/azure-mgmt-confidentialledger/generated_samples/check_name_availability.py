@@ -14,7 +14,7 @@ from azure.mgmt.confidentialledger import ConfidentialLedger
     pip install azure-identity
     pip install azure-mgmt-confidentialledger
 # USAGE
-    python confidential_ledger_get.py
+    python check_name_availability.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,15 @@ from azure.mgmt.confidentialledger import ConfidentialLedger
 def main():
     client = ConfidentialLedger(
         credential=DefaultAzureCredential(),
-        subscription_id="0000000-0000-0000-0000-000000000001",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.ledger.get(
-        resource_group_name="DummyResourceGroupName",
-        ledger_name="DummyLedgerName",
+    response = client.check_name_availability(
+        name_availability_request={"name": "sample-name", "type": "Microsoft.ConfidentialLedger/ledgers"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/confidentialledger/resource-manager/Microsoft.ConfidentialLedger/preview/2023-01-26-preview/examples/ConfidentialLedger_Get.json
+# x-ms-original-file: specification/confidentialledger/resource-manager/Microsoft.ConfidentialLedger/preview/2023-01-26-preview/examples/CheckNameAvailability.json
 if __name__ == "__main__":
     main()
