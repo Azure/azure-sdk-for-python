@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.quota import AzureQuotaExtensionAPI
+from azure.mgmt.quota import QuotaMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = AzureQuotaExtensionAPI(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = QuotaMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
