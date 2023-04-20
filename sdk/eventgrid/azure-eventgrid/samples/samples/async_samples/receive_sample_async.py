@@ -18,7 +18,7 @@ async def run():
     # Receive CloudEvents
     try:
         receive_response = await client.receive(
-            topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, timeout=10
+            topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, max_wait_time=10
         )
         print(receive_response)
     except HttpResponseError:
