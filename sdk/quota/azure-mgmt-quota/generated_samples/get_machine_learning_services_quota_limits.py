@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.quota import AzureQuotaExtensionAPI
+from azure.mgmt.quota import QuotaMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quotas_request_for_machine_learning_services_low_priority_resource.py
+    python get_machine_learning_services_quota_limits.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,24 +24,17 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
 
 
 def main():
-    client = AzureQuotaExtensionAPI(
+    client = QuotaMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.quota.begin_create_or_update(
-        resource_name="TotalLowPriorityCores",
-        scope="subscriptions/D7EC67B3-7657-4966-BFFC-41EFD36BAAB3/providers/Microsoft.MachineLearningServices/locations/eastus",
-        create_quota_request={
-            "properties": {
-                "limit": {"limitObjectType": "LimitValue", "value": 10},
-                "name": {"value": "TotalLowPriorityCores"},
-                "resourceType": "lowPriority",
-            }
-        },
-    ).result()
-    print(response)
+    response = client.quota.list(
+        scope="subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MachineLearningServices/locations/eastus",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/putMachineLearningServicesQuotaRequestLowPriority.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getMachineLearningServicesQuotaLimits.json
 if __name__ == "__main__":
     main()

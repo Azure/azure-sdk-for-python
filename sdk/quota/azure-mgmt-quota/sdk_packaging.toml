@@ -7,4 +7,4 @@ is_stable = false
 is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
-title = "AzureQuotaExtensionAPI"
+title = "QuotaMgmtClient"
