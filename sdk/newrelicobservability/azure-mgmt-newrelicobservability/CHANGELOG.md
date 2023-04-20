@@ -1,8 +1,8 @@
 # Release History
 
-## 1.0.0 (2023-04-20)
+## 1.0.0 (2023-05-20)
 
-### Breaking Changes
+### Other Changes
 
   - First GA
 
