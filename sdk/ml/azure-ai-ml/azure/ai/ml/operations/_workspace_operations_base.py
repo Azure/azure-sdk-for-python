@@ -9,8 +9,8 @@ from typing import Callable, Dict, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -51,7 +51,7 @@ class WorkspaceOperationsBase:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -254,7 +254,9 @@ class WorkspaceOperationsBase:
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller[None]:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         if delete_dependent_resources:
@@ -285,6 +287,7 @@ class WorkspaceOperationsBase:
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
+            force_to_purge=force_to_purge,
             **self._init_kwargs,
         )
         module_logger.info("Delete request initiated for workspace: %s\n", name)
