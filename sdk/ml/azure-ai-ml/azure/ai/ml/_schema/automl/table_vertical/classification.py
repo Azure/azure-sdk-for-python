@@ -33,6 +33,5 @@ class AutoMLClassificationSchema(AutoMLTableVerticalSchema):
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:
-
         data.pop("task_type")
         return data

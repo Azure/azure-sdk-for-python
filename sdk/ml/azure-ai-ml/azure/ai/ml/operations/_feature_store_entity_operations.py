@@ -12,14 +12,12 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, FeaturestoreEntityVersion
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ValidationException
 
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
-    _get_latest_version_from_container,
-    _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
@@ -45,17 +43,12 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         service_client: ServiceClient022023Preview,
         **kwargs: Dict,
     ):
-
         super(_FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featurestore_entity_versions
         self._container_operation = service_client.featurestore_entity_containers
         self._service_client = service_client
         self._init_kwargs = kwargs
-
-        # Maps a label to a function which given an asset name,
-        # returns the asset associated with the label
-        self._managed_label_resolver = {"latest": self._get_latest_version}
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
     def list(
@@ -99,43 +92,19 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> _FeatureStoreEntity:
+    def get(self, name: str, version: str) -> _FeatureStoreEntity:
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.
         :type name: str
         :param version: Version of FeatureStoreEntity asset.
         :type version: str
-        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
-        :type label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully
             identified and retrieved. Details will be provided in the error message.
         :return: FeatureStoreEntity asset object.
         :rtype: ~azure.ai.ml.entities._FeatureStoreEntity
         """
         try:
-            if version and label:
-                msg = "Cannot specify both version and label."
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.FEATURE_STORE_ENTITY,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-
-            if label:
-                return _resolve_label_to_asset(self, name, label)
-
-            if not version:
-                msg = "Must provide either version or label."
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.FEATURE_STORE_ENTITY,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.MISSING_FIELD,
-                )
             feature_store_entity_version_resource = self._get(name, version)
             return _FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
@@ -166,8 +135,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         *,
         name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
+        version: str,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Archive a FeatureStoreEntity asset.
@@ -176,8 +144,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of FeatureStoreEntity asset.
         :type version: str
-        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
-        :type label: str
         :return: None
         """
 
@@ -187,7 +153,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
             is_archived=True,
             name=name,
             version=version,
-            label=label,
         )
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
@@ -195,8 +160,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         *,
         name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
+        version: str,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived FeatureStoreEntity asset.
@@ -205,8 +169,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of FeatureStoreEntity asset.
         :type version: str
-        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
-        :type label: str
         :return: None
         """
 
@@ -216,16 +178,4 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
             is_archived=False,
             name=name,
             version=version,
-            label=label,
         )
-
-    def _get_latest_version(self, name: str) -> _FeatureStoreEntity:
-        """Returns the latest version of the asset with the given name.
-
-        Latest is defined as the most recently created, not the most
-        recently updated.
-        """
-        latest_version = _get_latest_version_from_container(
-            name, self._container_operation, self._resource_group_name, self._workspace_name
-        )
-        return self.get(name, version=latest_version)

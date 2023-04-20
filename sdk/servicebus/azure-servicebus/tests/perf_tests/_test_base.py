@@ -141,7 +141,7 @@ class _SubscriptionReceiveTest(_ReceiveTest, PerfStressTest):
             arguments.uamqp_transport
         )
         self.topic_name=self.get_from_env('AZURE_SERVICEBUS_TOPIC_NAME')
-        self.subscription_name=self.get_from_env('AZURE_SERVICE_BUS_SUBSCRIPTION_NAME')
+        self.subscription_name=self.get_from_env('AZURE_SERVICEBUS_SUBSCRIPTION_NAME')
 
         self.receiver=self.servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
         self.async_receiver=self.async_servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
@@ -194,7 +194,7 @@ class _SubscriptionReceiveBatchTest(_ReceiveTest, BatchPerfTest):
         )
         
         self.topic_name=self.get_from_env('AZURE_SERVICEBUS_TOPIC_NAME')
-        self.subscription_name=self.get_from_env('AZURE_SERVICE_BUS_SUBSCRIPTION_NAME')
+        self.subscription_name=self.get_from_env('AZURE_SERVICEBUS_SUBSCRIPTION_NAME')
 
         self.receiver=self.servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
         self.async_receiver=self.async_servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
@@ -229,6 +229,13 @@ class _SendTest(BatchPerfTest):
         self.service_client.close()
         await self.async_service_client.close()
         await super().close()
+    
+    @staticmethod
+    def add_arguments(parser) -> None:
+        parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
+        parser.add_argument('--batch-size', nargs='?', type=int, help='Size of a single batch message. Defaults to 100 messages', default=100)
+        parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
+        parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
 
 
 class _SendQueueTest(_SendTest):

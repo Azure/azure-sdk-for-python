@@ -72,9 +72,6 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(ValueError):
                     await receiver.receive_messages(max_wait_time=-1)
 
-                with pytest.raises(ValueError):
-                    await receiver._get_streaming_message_iter(max_wait_time=0)
-
                 count = 0
                 async for message in receiver:
                     count += 1

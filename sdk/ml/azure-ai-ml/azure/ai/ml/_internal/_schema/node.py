@@ -53,6 +53,9 @@ class ScopeSchema(InternalBaseNodeSchema):
     scope_param = fields.Str()
     custom_job_name_suffix = fields.Str()
     priority = fields.Int()
+    auto_token = fields.Int()
+    tokens = fields.Int()
+    vcp = fields.Float()
 
 
 class HDInsightSchema(InternalBaseNodeSchema):

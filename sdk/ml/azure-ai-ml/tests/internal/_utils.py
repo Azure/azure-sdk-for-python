@@ -91,6 +91,9 @@ PARAMETERS_TO_TEST = [
             "scope_param": "-tokens 50",  # runsettings.scope.scope_param
             "custom_job_name_suffix": "component_sdk_test",  # runsettings.scope.custom_job_name_suffix
             "priority": 800,  # runsettings.scope.priority
+            "auto_token": 150,  # runsettings.scope.auto_token
+            "tokens": 2,  # runsettings.scope.token
+            "vcp": 0.2,  # runsettings.scope.vcp
         },
         {
             "default_compute": "cpu-cluster",

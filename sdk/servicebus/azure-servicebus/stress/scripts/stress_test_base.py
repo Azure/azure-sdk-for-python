@@ -446,7 +446,8 @@ class StressTestRunnerAsync(StressTestRunner):
                                 )
                         elif self.receive_type == ReceiveType.push:
                             receiver.max_wait_time = self.max_wait_time
-                            async for message in receiver:
+                            batch = receiver
+                            async for message in batch:
                                 if end_time <= datetime.utcnow():
                                     break
                                 await self._receive_handle_message(

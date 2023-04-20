@@ -31,7 +31,6 @@ def main():
 
     response = client.check_dns_name_availability(
         location="westus",
-        domain_name_label="testdns",
     )
     print(response)
 

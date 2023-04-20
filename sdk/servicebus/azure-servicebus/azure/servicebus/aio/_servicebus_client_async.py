@@ -10,10 +10,6 @@ import certifi
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
-try:
-    from ._transport._uamqp_transport_async import UamqpTransportAsync
-except ImportError:
-    pass
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
@@ -82,6 +78,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
 
     .. admonition:: Example:
 
@@ -108,8 +107,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         **kwargs: Any
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
-        if uamqp_transport and UamqpTransportAsync is None:
-            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
+        if uamqp_transport:
+            try:
+                from ._transport._uamqp_transport_async import UamqpTransportAsync
+            except ImportError:
+                raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
@@ -198,6 +200,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:

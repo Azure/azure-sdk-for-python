@@ -47,7 +47,6 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         **kwargs,
     ):
-
         """Azure ML workspace.
 
         :param name: Name of the workspace.

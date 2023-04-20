@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any, cast, Tuple
+from typing import Optional, Any, cast
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -82,8 +82,8 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
 
     async def _acquire_token_silently(
         self, *scopes: str, **kwargs: Any
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
-        return self._client.get_cached_access_token(scopes, **kwargs), None
+    ) -> Optional[AccessToken]:
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if self._authorization_code:

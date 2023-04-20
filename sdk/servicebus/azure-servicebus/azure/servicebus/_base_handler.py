@@ -41,7 +41,12 @@ from ._common.constants import (
 
 if TYPE_CHECKING:
     from .exceptions import ServiceBusError
-    from uamqp import AMQPClient as uamqp_AMQPClientSync
+    try:
+        # pylint:disable=unused-import
+        from uamqp import AMQPClient as uamqp_AMQPClientSync
+    except ImportError:
+        pass
+
     from ._pyamqp.message import Message as pyamqp_Message
     from ._pyamqp.client import AMQPClient as pyamqp_AMQPClientSync
     from azure.core.credentials import TokenCredential

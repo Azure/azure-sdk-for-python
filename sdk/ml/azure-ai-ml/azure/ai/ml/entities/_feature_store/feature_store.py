@@ -57,7 +57,6 @@ class _FeatureStore(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
-
         """FeatureStore.
 
         :param name: Name of the feature store.

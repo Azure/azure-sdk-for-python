@@ -562,7 +562,7 @@ class Serializer:
         main_client_source = "class" + "class".join(split_main_client_source[1:])
 
         client_initialization = strip_version_from_docs(
-            re.search(r"((?s).*?)    @classmethod", main_client_source).group(1)
+            re.search(r"([\s\S]*?)    @classmethod", main_client_source).group(1)
         )
 
         # TODO: switch to current file path

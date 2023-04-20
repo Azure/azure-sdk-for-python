@@ -165,10 +165,20 @@ directive:
     delete $["x-accessibility"]
 ```
 
+# Remove parameter "accept" from "GetManifest"
 ``` yaml
 directive:
   from: swagger-document
   where-operation: ContainerRegistry_GetManifest
   transform: >
     $.parameters = $.parameters.filter(item => item.name !== "accept")
+```
+
+# Rename parameter "Range" to "RangeHeader"
+``` yaml
+directive:
+  from: swagger-document
+  where: $.parameters.Range
+  transform: >
+    $["x-ms-client-name"] = "RangeHeader"
 ```

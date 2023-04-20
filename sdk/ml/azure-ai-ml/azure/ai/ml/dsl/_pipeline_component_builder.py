@@ -351,8 +351,6 @@ class PipelineComponentBuilder:
             # for node name _, treat it as anonymous node with name unset
             if name == "_":
                 continue
-            if name is not None:
-                name = name.lower()
 
             # User defined name must be valid python identifier
             if not is_valid_node_name(name):

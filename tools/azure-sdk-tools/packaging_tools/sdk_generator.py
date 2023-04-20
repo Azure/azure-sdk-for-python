@@ -89,7 +89,7 @@ def main(generate_input, generate_output):
             readme_files = [data["relatedTypeSpecProjectFolder"]]
         else:
             readme_files = data["relatedTypeSpecProjectFolder"]
-        spec_word = "typeSpecProject"
+        spec_word = "typespecProject"
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")

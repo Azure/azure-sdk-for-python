@@ -6,10 +6,11 @@
 
 import pytest
 import functools
+import sys
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalyzeResult, AnalysisFeature
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -20,6 +21,27 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
+    async def test_document_query_fields(self, client, **kwargs):
+        if self.is_live and sys.version_info > (3, 10):
+            pytest.skip("query_fields is run on fewer versions to not incur too much cost.")
+
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+
+        async with client:
+            poller = await client.begin_analyze_document(
+                "prebuilt-document",
+                document,
+                features=[AnalysisFeature.QUERY_FIELDS_PREMIUM],
+                query_fields=["Charges"],
+            )
+
+            result = await poller.result()
+            assert result.documents[0].fields["Charges"].value == "$56,651.49"
 
     @skip_flaky_test
     @FormRecognizerPreparer()

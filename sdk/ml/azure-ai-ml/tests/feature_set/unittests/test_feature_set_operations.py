@@ -95,12 +95,6 @@ class TestFeatureSetOperations:
             name=name_only, version=version, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
         )
 
-    def test_get_no_version(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
-        name = "random_name"
-        with pytest.raises(Exception) as ex:
-            mock_feature_set_operations.get(name=name)
-        assert "At least one required parameter is missing" in str(ex.value)
-
     def test_begin_backfill(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
         mock_feature_set_operations._operation.begin_backfill.return_value = LROPoller
         mock_feature_set_operations.begin_backfill(

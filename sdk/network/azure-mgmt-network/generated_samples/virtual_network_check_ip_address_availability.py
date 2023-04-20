@@ -32,7 +32,6 @@ def main():
     response = client.virtual_networks.check_ip_address_availability(
         resource_group_name="rg1",
         virtual_network_name="test-vnet",
-        ip_address="10.0.1.4",
     )
     print(response)
 

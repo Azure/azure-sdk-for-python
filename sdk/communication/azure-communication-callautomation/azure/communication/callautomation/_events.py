@@ -18,6 +18,8 @@ from ._generated.models import (
     RecognizeCompleted as RecognizeCompletedRest,
     RecognizeCanceled as RecognizeCanceledRest,
     RecognizeFailed as RecognizeFailedRest,
+    RemoveParticipantSucceeded as RemoveParticipantSucceededRest,
+    RemoveParticipantFailed as RemoveParticipantFailedRest,
     CallParticipant
 )
 
@@ -402,3 +404,63 @@ class RecognizeCanceled(RecognizeCanceledRest):
         self.correlation_id = parent.correlation_id
         self.operation_context = parent.operation_context
         self.kind = "RecognizeCanceled"
+
+
+class RemoveParticipantSucceeded(RemoveParticipantSucceededRest):
+    """Event sent when the participant was successfully removed to the call.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: participant that was removed to the call.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifier
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: RemoveParticipantSucceededRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.participant = deserialize_identifier(parent.participant)
+        self.kind = "RemovedParticipantSucceeded"
+
+
+class RemoveParticipantFailed(RemoveParticipantFailedRest):
+    """Event sent when the participant was not removed successfully to the call.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: participant that was removed to the call.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifier
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: RemoveParticipantFailedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.participant = deserialize_identifier(parent.participant)
+        self.kind = "RemovedParticipantFailed"

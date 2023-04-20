@@ -28,11 +28,6 @@ from ._common.constants import (
     ServiceBusSessionFilter,
 )
 
-try:
-    from ._transport._uamqp_transport import UamqpTransport
-except ImportError:
-    UamqpTransport = None   # type: ignore
-
 from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
@@ -90,6 +85,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
 
     .. admonition:: Example:
 
@@ -116,8 +114,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         **kwargs: Any
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
-        if uamqp_transport and UamqpTransport is None:
-            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
+        if uamqp_transport:
+            try:
+                from ._transport._uamqp_transport import UamqpTransport
+            except ImportError:
+                raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
         self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
 
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -231,6 +232,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.servicebus.ServiceBusClient
 
         .. admonition:: Example:

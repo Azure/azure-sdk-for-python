@@ -6,9 +6,6 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
@@ -21,8 +18,10 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -505,7 +504,6 @@ class TestComponent(AzureRecordedTestCase):
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -518,6 +516,7 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(client, component_name, params_override=params_override)
 
         # the code arm id should be the same
+        assert component_resource1.code is None
         assert component_resource1.code == component_resource2.code
         assert component_resource2.description == description
         assert component_resource2.display_name == display_name

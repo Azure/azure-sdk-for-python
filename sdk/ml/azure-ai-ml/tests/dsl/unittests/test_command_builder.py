@@ -841,9 +841,9 @@ class TestCommandFunction:
 
     def test_command_services_nodes(self) -> None:
         services = {
-            "my_jupyterlab": JobService(job_service_type="jupyter_lab", nodes="all"),
+            "my_jupyterlab": JobService(type="jupyter_lab", nodes="all"),
             "my_tensorboard": JobService(
-                job_service_type="tensor_board",
+                type="tensor_board",
                 properties={
                     "logDir": "~/tblog",
                 },
@@ -867,14 +867,14 @@ class TestCommandFunction:
 
     def test_command_services(self) -> None:
         services = {
-            "my_ssh": JobService(job_service_type="ssh"),
+            "my_ssh": JobService(type="ssh"),
             "my_tensorboard": JobService(
-                job_service_type="tensor_board",
+                type="tensor_board",
                 properties={
                     "logDir": "~/tblog",
                 },
             ),
-            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
+            "my_jupyterlab": JobService(type="jupyter_lab"),
         }
         rest_services = {
             "my_ssh": {"job_service_type": "SSH"},

@@ -198,8 +198,9 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -360,8 +361,9 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -523,8 +525,9 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -681,8 +684,9 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -751,8 +755,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -807,8 +812,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -878,8 +884,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1048,8 +1055,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1102,8 +1110,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1274,8 +1283,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1448,8 +1458,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1622,8 +1633,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1796,8 +1808,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1855,8 +1868,9 @@ class CallConnectionOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1993,8 +2007,9 @@ class CallMediaOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2045,8 +2060,9 @@ class CallMediaOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2160,8 +2176,9 @@ class CallMediaOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2340,8 +2357,9 @@ class CallRecordingOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2394,8 +2412,9 @@ class CallRecordingOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2450,8 +2469,9 @@ class CallRecordingOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2502,8 +2522,9 @@ class CallRecordingOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2554,8 +2575,9 @@ class CallRecordingOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

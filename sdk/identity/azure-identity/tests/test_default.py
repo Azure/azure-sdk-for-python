@@ -285,7 +285,7 @@ def test_default_credential_shared_cache_use(mock_credential):
 def test_managed_identity_client_id():
     """the credential should accept a user-assigned managed identity's client ID by kwarg or environment variable"""
 
-    expected_args = {"client_id": "the-client"}
+    expected_args = {"client_id": "the-client", "_exclude_workload_identity_credential": False}
 
     with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
         DefaultAzureCredential(managed_identity_client_id=expected_args["client_id"])

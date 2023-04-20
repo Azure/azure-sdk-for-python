@@ -48,7 +48,9 @@ from ._events import (
     PlayCanceled,
     RecognizeCompleted,
     RecognizeCanceled,
-    RecognizeFailed
+    RecognizeFailed,
+    RemoveParticipantSucceeded,
+    RemoveParticipantFailed,
 )
 from ._generated.models import (
     GetParticipantsResponse,
@@ -106,6 +108,8 @@ __all__ = [
     "RemoveParticipantResponse",
     "Gender",
     "DtmfTone",
-    "CallRejectReason"
+    "CallRejectReason",
+    "RemoveParticipantSucceeded",
+    "RemoveParticipantFailed"
 ]
 __version__ = VERSION

@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+* Adjusted dependency on `isodate` to `<1.0.0,>=0.6.1`.
 
 ## 12.4.2 (2023-02-07)
 

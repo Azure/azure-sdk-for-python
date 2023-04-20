@@ -31,6 +31,7 @@ from .entities._load_functions import (
     load_registry,
     load_workspace,
     load_workspace_connection,
+    load_model_package,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -63,6 +64,7 @@ __all__ = [
     "load_workspace",
     "load_registry",
     "load_workspace_connection",
+    "load_model_package",
 ]
 
 __version__ = VERSION

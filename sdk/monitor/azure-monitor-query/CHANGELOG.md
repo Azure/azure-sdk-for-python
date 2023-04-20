@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add the `query_resource` method to `LogsQueryClient` to allow users to query Azure resources directly without the context of a workspace. ([#29365](https://github.com/Azure/azure-sdk-for-python/pull/29365))
+
 ### Breaking Changes
 
 ### Bugs Fixed

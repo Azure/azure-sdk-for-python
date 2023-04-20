@@ -100,6 +100,7 @@ class StartRecordingOptions(object):
         audio_channel_participant_ordering: Optional[List["CommunicationIdentifier"]] = None,
         recording_storage: Optional[Union[str,
                                                "RecordingStorage"]] = None,
+        external_storage_location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -132,6 +133,9 @@ class StartRecordingOptions(object):
         :keyword recording_storage_type: Recording storage mode. ``External`` enables bring your own
          storage. Known values are: "acs" and "azureBlob".
         :paramtype recording_storage_type: str or
+        :keyword external_storage_location: The location where recording is stored, when
+         RecordingStorageType is set to 'BlobStorage'.
+        :paramtype external_storage_location: str
          ~azure.communication.callautomation.models.RecordingStorageType
         """
         super().__init__(**kwargs)
@@ -142,24 +146,26 @@ class StartRecordingOptions(object):
         self.recording_format_type = recording_format
         self.audio_channel_participant_ordering = audio_channel_participant_ordering
         self.recording_storage_type = recording_storage
+        self.external_storage_location = external_storage_location
 
     def _to_generated(self):
         audio_channel_participant_ordering_list:List[CommunicationIdentifierModel] = None
         if self.audio_channel_participant_ordering is not None:
-            audio_channel_participant_ordering_list=[
+            audio_channel_participant_ordering_list = [
                 serialize_identifier(identifier) for identifier
                 in self.audio_channel_participant_ordering]
 
         return StartCallRecordingRequestRest(
             call_locator=self.call_locator._to_generated(# pylint:disable=protected-access
             ),
-            recording_state_callback_uri=self.recording_state_callback_uri,
-            recording_content_type=self.recording_content_type,
-            recording_channel_type=self.recording_channel_type,
-            recording_format_type=self.recording_format_type,
-            audio_channel_participant_ordering=audio_channel_participant_ordering_list,
-            recording_storage_type=self.recording_storage_type
-            )
+            recording_state_callback_uri = self.recording_state_callback_uri,
+            recording_content_type = self.recording_content_type,
+            recording_channel_type = self.recording_channel_type,
+            recording_format_type = self.recording_format_type,
+            audio_channel_participant_ordering = audio_channel_participant_ordering_list,
+            recording_storage_type = self.recording_storage_type,
+            external_storage_location = self.external_storage_location
+        )
 
 
 class RecordingStateResponse(object):

@@ -260,3 +260,28 @@ class TestLogsClient(AzureRecordedTestCase):
 
         val = native_col_type('datetime', '2020-10-10')
         assert val is not None
+
+    def test_logs_resource_query(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = "requests | summarize count()"
+
+        response = client.query_resource(monitor_info['metrics_resource_id'], query, timespan=None)
+
+        assert response is not None
+        assert response.tables is not None
+        assert len(response.tables[0].rows) == 1
+
+    def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = "requests | summarize count()"
+
+        response = client.query_resource(
+            monitor_info['metrics_resource_id'],
+            query,
+            timespan=None,
+            include_statistics=True,
+            include_visualization=True
+        )
+
+        assert response.visualization is not None
+        assert response.statistics is not None

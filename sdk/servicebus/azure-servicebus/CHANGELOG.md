@@ -1,6 +1,16 @@
 # Release History
 
-## 7.9.0b2 (Unreleased)
+## 7.10.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.10.0b1 (2023-04-13)
 
 ### Features Added
 
@@ -18,7 +28,7 @@
 - Removed uAMQP from required dependencies.
 - Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
 
-## 7.9.0 (Unreleased)
+## 7.9.0 (2023-04-11)
 
 ### Breaking Changes
 
@@ -30,6 +40,7 @@
 
 ### Other Changes
 
+- All pure Python AMQP stack related changes have been removed and will be added back in the next version.
 - Updated minimum `azure-core` version to 1.24.0.
 - Removed `msrest` dependency.
 - Removed `azure-common` dependency.

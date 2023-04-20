@@ -22,7 +22,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
@@ -143,9 +142,9 @@ class ComputeInstance(Compute):
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
     :type enable_node_public_ip: Optional[bool], optional
-    :param setup_scripts: Experimental. Details of customized scripts to execute for setting up the cluster.
+    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
-    :param custom_applications: Experimental. List of custom applications and their endpoints
+    :param custom_applications: List of custom applications and their endpoints
         for the compute instance.
     :type custom_applications: Optional[List[CustomApplications]], optional
     """
@@ -224,7 +223,6 @@ class ComputeInstance(Compute):
         """
         return self._state
 
-    @experimental
     @property
     def os_image_metadata(self) -> ImageMetadata:
         """Metadata about the operating system image for this compute instance.
