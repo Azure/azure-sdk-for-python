@@ -14,7 +14,7 @@ from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
     pip install azure-identity
     pip install azure-mgmt-applicationinsights
 # USAGE
-    python workbooks_managed_list.py
+    python web_test_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,14 @@ from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
 def main():
     client = ApplicationInsightsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="6b643656-33eb-422f-aee8-3ac119r124af",
+        subscription_id="subid",
     )
 
-    response = client.workbooks.list_by_resource_group(
-        resource_group_name="my-resource-group",
-        category="workbook",
-    )
+    response = client.web_tests.list()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/applicationinsights/resource-manager/Microsoft.Insights/stable/2022-04-01/examples/WorkbooksManagedList.json
+# x-ms-original-file: specification/applicationinsights/resource-manager/Microsoft.Insights/stable/2022-06-15/examples/WebTestList.json
 if __name__ == "__main__":
     main()
