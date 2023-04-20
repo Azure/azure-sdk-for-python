@@ -15,7 +15,7 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 
 # Receive CloudEvents
 try:
-    receive_response = client.receive(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, timeout=10)
+    receive_response = client.receive(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, max_wait_time=10)
     print(receive_response)
 except HttpResponseError:
     raise
