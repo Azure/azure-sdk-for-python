@@ -3,13 +3,13 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set
 from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
 from test_account import create_account, delete_account
 from test_pool import delete_pool
-from test_volume import create_volume, delete_volume, create_virtual_network
+from test_volume import create_volume, delete_volume, wait_for_volume
 from setup import *
 import azure.mgmt.netapp.models
 
 TEST_SNAPSHOT_POLICY_1 = 'sdk-py-tests-snapshot-policy-1'
 TEST_SNAPSHOT_POLICY_2 = 'sdk-py-tests-snapshot-policy-2'
-
+LIVE = False
 
 def create_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_name=TEST_ACC_1, location=LOCATION, snapshot_policy_only=False):
     if not snapshot_policy_only:
@@ -25,27 +25,41 @@ def create_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_nam
     )
 
     snapshot_policy = client.snapshot_policies.create(rg, account_name, snapshot_policy_name, snapshot_policy_body)
+    wait_for_snapshot_policy(client, rg, account_name, snapshot_policy_name)
     return snapshot_policy
 
+def wait_for_snapshot_policy(client, rg, account_name, snapshot_policy_name):
+    # a work around for the async nature of certain ARM processes
+    co = 0
+    while co < 60:
+        co += 1
+        snapshot_policy = client.snapshot_policies.get(rg, account_name, snapshot_policy_name)
+        if snapshot_policy.provisioning_state == "Succeeded":
+            break
+        if snapshot_policy.provisioning_state == "Failed":
+            print("\t Wait for snapshotPolicy. SnapshotPolicy is in a failed state.")
+            break
+        if LIVE:
+            time.sleep(3)
 
-def delete_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_name=TEST_ACC_1, live=False):
+def delete_snapshot_policy(client, snapshot_policy_name, rg=TEST_RG, account_name=TEST_ACC_1):
     client.snapshot_policies.begin_delete(rg, account_name, snapshot_policy_name).wait()
-    wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name, live)
+    wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name)
 
 
-def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name, live=False):
+def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name):
     # a workaround for the async nature of certain ARM processes
     co = 0
-    while co < 10:
+    while co < 60:
         co += 1
-        if live:
-            time.sleep(5)
         try:
             client.snapshot_policies.get(rg, account_name, snapshot_policy_name)
         except:
             # not found is an exception case (status code 200 expected)
             # and is actually what we are waiting for
             break
+        if LIVE:
+            time.sleep(3)
 
 
 class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
@@ -53,6 +67,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
         if self.is_live:
+            global LIVE
+            LIVE = True
             from azure.mgmt.network import NetworkManagementClient
             self.network_client = self.create_mgmt_client(NetworkManagementClient)
 
@@ -60,22 +76,24 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_create_delete_snapshot_policy(self):
+        print("Starting test_create_delete_snapshot_policy")
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
         snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, account_name=ACCOUNT1)
         assert len(list(snapshot_policies_list)) == 1
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
         snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(snapshot_policies_list)) == 0
-        if self.is_live:
-            time.sleep(50)
-        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
+
+        delete_account(self.client, TEST_RG, ACCOUNT1)
+        print("Finished with test_create_delete_snapshot_policy")
 
     @recorded_by_proxy
     def test_list_snapshot_policies(self):
+        print("Starting test_list_snapshot_policies")
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
         create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, account_name=ACCOUNT1, snapshot_policy_only=True)
@@ -89,31 +107,31 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
             assert snapshot_policy.name == snapshot_policies[idx]
             idx += 1
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, account_name=ACCOUNT1, live=self.is_live)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, account_name=ACCOUNT1)
 
         snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(snapshot_policies_list)) == 0
-        if self.is_live:
-            time.sleep(50)
 
         delete_account(self.client, TEST_RG, ACCOUNT1)
+        print("Finished with test_list_snapshot_policies")
 
     @recorded_by_proxy
     def test_get_snapshot_policy_by_name(self):
+        print("Starting test_get_snapshot_policy_by_name")
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
         snapshot_policy = self.client.snapshot_policies.get(TEST_RG, ACCOUNT1, TEST_SNAPSHOT_POLICY_1)
         assert snapshot_policy.name == ACCOUNT1 + "/" + TEST_SNAPSHOT_POLICY_1
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
-        if self.is_live:
-            time.sleep(50)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
         delete_account(self.client, TEST_RG, ACCOUNT1)
+        print("Finished with test_get_snapshot_policy_by_name")
 
     @recorded_by_proxy
     def test_update_snapshot_policies(self):
+        print("Starting test_update_snapshot_policies")
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
@@ -126,25 +144,24 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
             enabled=False
         )
         snapshot_policy = self.client.snapshot_policies.begin_update(TEST_RG, ACCOUNT1, TEST_SNAPSHOT_POLICY_1, snapshot_policy_body).result()
+        wait_for_snapshot_policy(self.client, TEST_RG, ACCOUNT1, TEST_SNAPSHOT_POLICY_1)
         assert snapshot_policy.daily_schedule.snapshots_to_keep == 1
         assert snapshot_policy.daily_schedule.hour == 1
         assert snapshot_policy.daily_schedule.minute == 50
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
-        if self.is_live:
-            time.sleep(50)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
         delete_account(self.client, TEST_RG, ACCOUNT1)
+        print("Finished with test_update_snapshot_policies")
 
     @recorded_by_proxy
     def test_assign_snapshot_policy_to_volume(self):
+        print("Starting test_assign_snapshot_policy_to_volume")
         set_bodiless_matcher()
         # create volume and snapshot policy
         ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
         volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
-        VNETNAME = self.get_resource_name(VNET+"-")
-        if self.is_live:
-            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
-        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME)
+        
+        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=PERMA_VNET)
 
         snapshot_policy = create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
         # assign the snapshot policy to the volume
@@ -152,16 +169,14 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         data_protection = VolumePatchPropertiesDataProtection(snapshot=snapshot)
         volume_patch = VolumePatch(data_protection=data_protection)
         volume = self.client.volumes.begin_update(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, volume_patch).result()
+        wait_for_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
 
         assert volume.data_protection.snapshot.snapshot_policy_id == snapshot_policy.id
 
         # cleanup
-        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
-        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
-        if self.is_live:
-            time.sleep(50)
-        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
-        if self.is_live:
-            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
+        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1)
+        delete_account(self.client, TEST_RG, ACCOUNT1)
 
+        print("Finished with test_assign_snapshot_policy_to_volume")
