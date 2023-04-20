@@ -104,30 +104,61 @@ class TestCommandComponentEntity:
     def test_command_component_with_additional_includes(self):
         tests_root_dir = Path(__file__).parent.parent.parent
         samples_dir = tests_root_dir / "test_configs/components/"
+        with tempfile.TemporaryDirectory() as temp_dir:
 
-        component = CommandComponent(
-            name="additional_files",
-            description="A sample to demonstrate component with additional files",
-            version="0.0.1",
-            command="echo Hello World",
-            environment=Environment(image="zzn2/azureml_sdk"),
-            # as sdk will take working directory as root folder, so we need to specify the absolution path
-            additional_includes=[
-                samples_dir / "additional_includes/assets/LICENSE",
-                samples_dir / "additional_includes/library.zip",
-                samples_dir / "additional_includes/library1",
-            ],
-        )
-        assert component._validate().passed, repr(component._validate())
+            def mock_get_artifacts(**kwargs):
+                version = kwargs.get("version")
+                artifact = Path(temp_dir) / version
+                if version in ["version_1", "version_3"]:
+                    version = "version_1"
+                artifact.mkdir(parents=True, exist_ok=True)
+                (artifact / version).mkdir(exist_ok=True)
+                (artifact / version / "file").touch(exist_ok=True)
+                (artifact / f"file_{version}").touch(exist_ok=True)
+                return str(artifact)
 
-        with component._resolve_local_code() as code:
-            code_path: Path = code.path
-            assert code_path.is_dir()
-            assert (code_path / "LICENSE").is_file()
-            assert (code_path / "library.zip").is_file()
-            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
-            assert (code_path / "library1" / "hello.py").is_file()
-            assert (code_path / "library1" / "world.py").is_file()
+            with patch(
+                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
+            ):
+                component = CommandComponent(
+                    name="additional_files",
+                    description="A sample to demonstrate component with additional files",
+                    version="0.0.1",
+                    command="echo Hello World",
+                    environment=Environment(image="zzn2/azureml_sdk"),
+                    # as sdk will take working directory as root folder, so we need to specify the absolution path
+                    additional_includes=[
+                        str(samples_dir / "additional_includes/assets/LICENSE"),
+                        str(samples_dir / "additional_includes/library.zip"),
+                        str(samples_dir / "additional_includes/library1"),
+                    ],
+                )
+                component.additional_includes.append(
+                    {
+                        "type": "artifact",
+                        "organization": "https://msdata.visualstudio.com/",
+                        "project": "Vienna",
+                        "feed": "component-sdk-test-feed",
+                        "name": "test_additional_include",
+                        "version": "version_2",
+                        "scope": "project",
+                    }
+                )
+                assert component._validate().passed, repr(component._validate())
+                with component._resolve_local_code() as code:
+                    code_path: Path = code.path
+                    assert code_path.is_dir()
+                    assert (code_path / "LICENSE").is_file()
+                    assert (code_path / "library.zip").is_file()
+                    assert ZipFile(code_path / "library.zip").namelist() == [
+                        "library/",
+                        "library/hello.py",
+                        "library/world.py",
+                    ]
+                    assert (code_path / "library1" / "hello.py").is_file()
+                    assert (code_path / "library1" / "world.py").is_file()
+                    assert (code_path / "file_version_2").is_file()
+                    assert (code_path / "version_2" / "file").is_file()
 
     def test_command_component_entity_with_io_class(self):
         component = CommandComponent(
