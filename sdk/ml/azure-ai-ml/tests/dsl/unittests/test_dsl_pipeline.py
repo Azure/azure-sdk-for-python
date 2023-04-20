@@ -3197,10 +3197,28 @@ class TestDSLPipeline:
 
         @dsl.pipeline
         def pipeline_func():
-            component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
+            scatter = component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
+            gather = component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
+            # customized telemetry flag on node
+            scatter.properties[
+                "azureml.telemetry.attribution"
+            ] = "AzureML.Telemetry.Features:FederatedLearningScatterJobFlag"
+            gather.properties[
+                "azureml.telemetry.attribution"
+            ] = "AzureML.Telemetry.Features:FederatedLearningGatherJobFlag"
 
         pipeline_job: PipelineJob = pipeline_func()
-        # log customized flag on root pipeline job, service helps save this value for telemetry.
-        pipeline_job.properties["azureml.telemetry.attribution"] = "customized value for telemetry"
+        # customized telemetry flag on root pipeline job
+        pipeline_job.properties[
+            "azureml.telemetry.attribution"
+        ] = "AzureML.Telemetry.Features:FederatedLearningSGJobFlag"
         rest_object = pipeline_job._to_rest_object()
-        assert rest_object.properties.properties == {"azureml.telemetry.attribution": "customized value for telemetry"}
+        assert rest_object.properties.properties == {
+            "azureml.telemetry.attribution": "AzureML.Telemetry.Features:FederatedLearningSGJobFlag"
+        }
+        assert rest_object.properties.jobs["scatter"]["properties"] == {
+            "azureml.telemetry.attribution": "AzureML.Telemetry.Features:FederatedLearningScatterJobFlag"
+        }
+        assert rest_object.properties.jobs["gather"]["properties"] == {
+            "azureml.telemetry.attribution": "AzureML.Telemetry.Features:FederatedLearningGatherJobFlag"
+        }
