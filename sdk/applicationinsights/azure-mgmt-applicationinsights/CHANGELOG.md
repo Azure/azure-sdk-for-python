@@ -1,5 +1,17 @@
 # Release History
 
+## 4.0.0 (2023-04-20)
+
+### Features Added
+
+  - Model WebTestPropertiesValidationRules has a new parameter ignore_http_status_code
+  - Model WorkbookErrorDefinition has a new parameter innererror
+
+### Breaking Changes
+
+  - Model WebTestPropertiesValidationRules no longer has parameter ignore_https_status_code
+  - Model WorkbookErrorDefinition no longer has parameter inner_error
+
 ## 4.0.0b1 (2023-02-14)
 
 ### Features Added
