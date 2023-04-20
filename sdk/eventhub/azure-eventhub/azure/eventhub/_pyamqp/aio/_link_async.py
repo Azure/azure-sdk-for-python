@@ -175,7 +175,6 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities
         self.remote_properties = frame[13]
-
         if self.state == LinkState.DETACHED:
             await self._set_state(LinkState.ATTACH_RCVD)
         elif self.state == LinkState.ATTACH_SENT:

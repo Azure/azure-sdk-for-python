@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
-from typing import Any, Tuple, Optional, NamedTuple, Union, cast
+from typing import Any, Dict, Tuple, Optional, NamedTuple, Union, cast
 
 from ._transport import Transport
 from .sasl import SASLTransport, SASLWithWebSocket
@@ -139,7 +139,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._offered_capabilities = None  # type: Optional[str]
         self._desired_capabilities = kwargs.pop("desired_capabilities", None)  # type: Optional[str]
         self._properties = kwargs.pop("properties", None)  # type: Optional[Dict[str, str]]
-        self._remote_properties = None  # type: Optional[Dict[str, str]]
+        self._remote_properties: Optional[Dict[str, str]] = None
 
         self._allow_pipelined_open = kwargs.pop("allow_pipelined_open", True)  # type: bool
         self._remote_idle_timeout = None  # type: Optional[int]

@@ -56,6 +56,9 @@ from .constants import (
     WEBSOCKET_PORT,
     TransportType,
     AMQP_WS_SUBPROTOCOL,
+    TIMEOUT_INTERVAL,
+    WS_TIMEOUT_INTERVAL,
+    READ_TIMEOUT_INTERVAL,
 )
 from .error import AuthenticationException, ErrorCondition
 
@@ -91,9 +94,6 @@ AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
-TIMEOUT_INTERVAL = 1
-WS_TIMEOUT_INTERVAL = 1
-READ_TIMEOUT_INTERVAL = 0.2
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
