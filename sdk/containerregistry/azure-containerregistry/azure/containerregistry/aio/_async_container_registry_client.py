@@ -935,12 +935,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.GetManifestResult
         :raises ValueError: If the requested digest does not match the digest of the received manifest.
         """
-        response = await self._client.container_registry.get_manifest(
-            name=repository,
-            reference=tag_or_digest,
-            accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
-            cls=_return_response,
-            **kwargs
+        response = cast(
+            PipelineResponse,
+            await self._client.container_registry.get_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
+                cls=_return_response,
+                **kwargs
+            )
         )
         media_type = response.http_response.headers['Content-Type']
         manifest_bytes = await response.http_response.read()
