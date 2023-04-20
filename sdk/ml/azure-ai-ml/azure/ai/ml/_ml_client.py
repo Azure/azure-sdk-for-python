@@ -540,7 +540,7 @@ class MLClient:
         )
 
         self._featurestoreentities = FeatureStoreEntityOperations(
-            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
+            self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
         )
 
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
