@@ -14,7 +14,7 @@ from azure.mgmt.elastic import MicrosoftElastic
     pip install azure-identity
     pip install azure-mgmt-elastic
 # USAGE
-    python external_user_create_or_update.py
+    python associated_filters_for_deployment_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.external_user.create_or_update(
+    response = client.list_associated_traffic_filters.list(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
     )
     print(response)
 
 
-# x-ms-original-file: specification/elastic/resource-manager/Microsoft.Elastic/preview/2022-07-01-preview/examples/ExternalUserInfo.json
+# x-ms-original-file: specification/elastic/resource-manager/Microsoft.Elastic/preview/2023-02-01-preview/examples/AssociatedFiltersForDeployment_list.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.mgmt.elastic import MicrosoftElastic
     pip install azure-identity
     pip install azure-mgmt-elastic
 # USAGE
-    python associate_traffic_filter_associate.py
+    python associate_traffic_filter_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/elastic/resource-manager/Microsoft.Elastic/preview/2022-07-01-preview/examples/AssociateTrafficFilter_Update.json
+# x-ms-original-file: specification/elastic/resource-manager/Microsoft.Elastic/preview/2023-02-01-preview/examples/AssociateTrafficFilter_Update.json
 if __name__ == "__main__":
     main()
