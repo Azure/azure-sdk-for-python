@@ -40,7 +40,8 @@ steps:
           ForRelease: false
 
   - pwsh: |
-     python -m pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+      python -m pip install setuptools==67.6.0
+      python -m pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
     displayName: 'Install Necessary Dependencies'
     condition: succeededOrFailed()
 
