@@ -17,6 +17,7 @@ from azure.ai.ml.entities._job.distribution import (
     MpiDistribution,
     PyTorchDistribution,
     TensorFlowDistribution,
+    RayDistribution,
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
@@ -56,7 +57,7 @@ class CommandComponent(Component, ParameterizedCommand):
     :param environment: Environment that component will run in.
     :type environment: Union[Environment, str]
     :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
+    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
     :param resources: Compute Resource configuration for the component.
     :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param inputs: Inputs of the component.
@@ -85,7 +86,9 @@ class CommandComponent(Component, ParameterizedCommand):
         command: Optional[str] = None,
         code: Optional[str] = None,
         environment: Optional[Union[str, Environment]] = None,
-        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
+        distribution: Optional[
+            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+        ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,

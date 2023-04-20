@@ -33,8 +33,25 @@ def main():
         resource_group_name="rg1",
         cluster_name="cache1",
         parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/your-subscription/resourceGroups/your-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/your-identity": {}
+                },
+            },
             "location": "West US",
-            "properties": {"minimumTlsVersion": "1.2"},
+            "properties": {
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {
+                            "identityType": "userAssignedIdentity",
+                            "userAssignedIdentityResourceId": "/subscriptions/your-subscription/resourceGroups/your-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/your-identity",
+                        },
+                        "keyEncryptionKeyUrl": "https://your-kv.vault.azure.net/keys/your-key/your-key-version",
+                    }
+                },
+                "minimumTlsVersion": "1.2",
+            },
             "sku": {"capacity": 3, "name": "EnterpriseFlash_F300"},
             "tags": {"tag1": "value1"},
             "zones": ["1", "2", "3"],
@@ -43,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/stable/2022-01-01/examples/RedisEnterpriseCreate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseCreate.json
 if __name__ == "__main__":
     main()

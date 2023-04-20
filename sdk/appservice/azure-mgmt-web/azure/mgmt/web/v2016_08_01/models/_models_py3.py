@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,16 +8,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ApiDefinitionInfo(msrest.serialization.Model):
+class ApiDefinitionInfo(_serialization.Model):
     """Information about the formal API definition for the app.
 
     :ivar url: The URL of the API definition.
@@ -24,24 +32,19 @@ class ApiDefinitionInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword url: The URL of the API definition.
         :paramtype url: str
         """
-        super(ApiDefinitionInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
 
 
-class ApplicationLogsConfig(msrest.serialization.Model):
+class ApplicationLogsConfig(_serialization.Model):
     """Application logs configuration.
 
     :ivar file_system: Application logs to file system configuration.
@@ -55,9 +58,9 @@ class ApplicationLogsConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'file_system': {'key': 'fileSystem', 'type': 'FileSystemApplicationLogsConfig'},
-        'azure_table_storage': {'key': 'azureTableStorage', 'type': 'AzureTableStorageApplicationLogsConfig'},
-        'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageApplicationLogsConfig'},
+        "file_system": {"key": "fileSystem", "type": "FileSystemApplicationLogsConfig"},
+        "azure_table_storage": {"key": "azureTableStorage", "type": "AzureTableStorageApplicationLogsConfig"},
+        "azure_blob_storage": {"key": "azureBlobStorage", "type": "AzureBlobStorageApplicationLogsConfig"},
     }
 
     def __init__(
@@ -66,8 +69,8 @@ class ApplicationLogsConfig(msrest.serialization.Model):
         file_system: Optional["_models.FileSystemApplicationLogsConfig"] = None,
         azure_table_storage: Optional["_models.AzureTableStorageApplicationLogsConfig"] = None,
         azure_blob_storage: Optional["_models.AzureBlobStorageApplicationLogsConfig"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword file_system: Application logs to file system configuration.
         :paramtype file_system: ~azure.mgmt.web.v2016_08_01.models.FileSystemApplicationLogsConfig
@@ -78,16 +81,16 @@ class ApplicationLogsConfig(msrest.serialization.Model):
         :paramtype azure_blob_storage:
          ~azure.mgmt.web.v2016_08_01.models.AzureBlobStorageApplicationLogsConfig
         """
-        super(ApplicationLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.file_system = file_system
         self.azure_table_storage = azure_table_storage
         self.azure_blob_storage = azure_blob_storage
 
 
-class AutoHealActions(msrest.serialization.Model):
+class AutoHealActions(_serialization.Model):
     """Actions which to take by the auto-heal module when a rule is triggered.
 
-    :ivar action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent",
+    :ivar action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent", and
      "CustomAction".
     :vartype action_type: str or ~azure.mgmt.web.v2016_08_01.models.AutoHealActionType
     :ivar custom_action: Custom action to be taken.
@@ -98,9 +101,9 @@ class AutoHealActions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'custom_action': {'key': 'customAction', 'type': 'AutoHealCustomAction'},
-        'min_process_execution_time': {'key': 'minProcessExecutionTime', 'type': 'str'},
+        "action_type": {"key": "actionType", "type": "str"},
+        "custom_action": {"key": "customAction", "type": "AutoHealCustomAction"},
+        "min_process_execution_time": {"key": "minProcessExecutionTime", "type": "str"},
     }
 
     def __init__(
@@ -109,11 +112,11 @@ class AutoHealActions(msrest.serialization.Model):
         action_type: Optional[Union[str, "_models.AutoHealActionType"]] = None,
         custom_action: Optional["_models.AutoHealCustomAction"] = None,
         min_process_execution_time: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent",
-         "CustomAction".
+         and "CustomAction".
         :paramtype action_type: str or ~azure.mgmt.web.v2016_08_01.models.AutoHealActionType
         :keyword custom_action: Custom action to be taken.
         :paramtype custom_action: ~azure.mgmt.web.v2016_08_01.models.AutoHealCustomAction
@@ -121,15 +124,15 @@ class AutoHealActions(msrest.serialization.Model):
          before taking the action.
         :paramtype min_process_execution_time: str
         """
-        super(AutoHealActions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_type = action_type
         self.custom_action = custom_action
         self.min_process_execution_time = min_process_execution_time
 
 
-class AutoHealCustomAction(msrest.serialization.Model):
+class AutoHealCustomAction(_serialization.Model):
     """Custom action to be executed
-when an auto heal rule is triggered.
+    when an auto heal rule is triggered.
 
     :ivar exe: Executable to be run.
     :vartype exe: str
@@ -138,29 +141,23 @@ when an auto heal rule is triggered.
     """
 
     _attribute_map = {
-        'exe': {'key': 'exe', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        "exe": {"key": "exe", "type": "str"},
+        "parameters": {"key": "parameters", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        exe: Optional[str] = None,
-        parameters: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, exe: Optional[str] = None, parameters: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword exe: Executable to be run.
         :paramtype exe: str
         :keyword parameters: Parameters for the executable.
         :paramtype parameters: str
         """
-        super(AutoHealCustomAction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exe = exe
         self.parameters = parameters
 
 
-class AutoHealRules(msrest.serialization.Model):
+class AutoHealRules(_serialization.Model):
     """Rules that can be defined for auto-heal.
 
     :ivar triggers: Conditions that describe when to execute the auto-heal actions.
@@ -170,8 +167,8 @@ class AutoHealRules(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'triggers': {'key': 'triggers', 'type': 'AutoHealTriggers'},
-        'actions': {'key': 'actions', 'type': 'AutoHealActions'},
+        "triggers": {"key": "triggers", "type": "AutoHealTriggers"},
+        "actions": {"key": "actions", "type": "AutoHealActions"},
     }
 
     def __init__(
@@ -179,20 +176,20 @@ class AutoHealRules(msrest.serialization.Model):
         *,
         triggers: Optional["_models.AutoHealTriggers"] = None,
         actions: Optional["_models.AutoHealActions"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword triggers: Conditions that describe when to execute the auto-heal actions.
         :paramtype triggers: ~azure.mgmt.web.v2016_08_01.models.AutoHealTriggers
         :keyword actions: Actions to be executed when a rule is triggered.
         :paramtype actions: ~azure.mgmt.web.v2016_08_01.models.AutoHealActions
         """
-        super(AutoHealRules, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.triggers = triggers
         self.actions = actions
 
 
-class AutoHealTriggers(msrest.serialization.Model):
+class AutoHealTriggers(_serialization.Model):
     """Triggers for auto-heal.
 
     :ivar requests: A rule based on total requests.
@@ -206,10 +203,10 @@ class AutoHealTriggers(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'requests': {'key': 'requests', 'type': 'RequestsBasedTrigger'},
-        'private_bytes_in_kb': {'key': 'privateBytesInKB', 'type': 'int'},
-        'status_codes': {'key': 'statusCodes', 'type': '[StatusCodesBasedTrigger]'},
-        'slow_requests': {'key': 'slowRequests', 'type': 'SlowRequestsBasedTrigger'},
+        "requests": {"key": "requests", "type": "RequestsBasedTrigger"},
+        "private_bytes_in_kb": {"key": "privateBytesInKB", "type": "int"},
+        "status_codes": {"key": "statusCodes", "type": "[StatusCodesBasedTrigger]"},
+        "slow_requests": {"key": "slowRequests", "type": "SlowRequestsBasedTrigger"},
     }
 
     def __init__(
@@ -219,8 +216,8 @@ class AutoHealTriggers(msrest.serialization.Model):
         private_bytes_in_kb: Optional[int] = None,
         status_codes: Optional[List["_models.StatusCodesBasedTrigger"]] = None,
         slow_requests: Optional["_models.SlowRequestsBasedTrigger"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword requests: A rule based on total requests.
         :paramtype requests: ~azure.mgmt.web.v2016_08_01.models.RequestsBasedTrigger
@@ -231,17 +228,18 @@ class AutoHealTriggers(msrest.serialization.Model):
         :keyword slow_requests: A rule based on request execution time.
         :paramtype slow_requests: ~azure.mgmt.web.v2016_08_01.models.SlowRequestsBasedTrigger
         """
-        super(AutoHealTriggers, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.requests = requests
         self.private_bytes_in_kb = private_bytes_in_kb
         self.status_codes = status_codes
         self.slow_requests = slow_requests
 
 
-class AzureBlobStorageApplicationLogsConfig(msrest.serialization.Model):
+class AzureBlobStorageApplicationLogsConfig(_serialization.Model):
     """Application logs azure blob storage configuration.
 
-    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", "Error".
+    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
+     "Error".
     :vartype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
     :ivar sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
     :vartype sas_url: str
@@ -252,9 +250,9 @@ class AzureBlobStorageApplicationLogsConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'str'},
-        'sas_url': {'key': 'sasUrl', 'type': 'str'},
-        'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
+        "level": {"key": "level", "type": "str"},
+        "sas_url": {"key": "sasUrl", "type": "str"},
+        "retention_in_days": {"key": "retentionInDays", "type": "int"},
     }
 
     def __init__(
@@ -263,10 +261,10 @@ class AzureBlobStorageApplicationLogsConfig(msrest.serialization.Model):
         level: Optional[Union[str, "_models.LogLevel"]] = None,
         sas_url: Optional[str] = None,
         retention_in_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning",
+        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
          "Error".
         :paramtype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
         :keyword sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
@@ -276,13 +274,13 @@ class AzureBlobStorageApplicationLogsConfig(msrest.serialization.Model):
          0 or lower means no retention.
         :paramtype retention_in_days: int
         """
-        super(AzureBlobStorageApplicationLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.level = level
         self.sas_url = sas_url
         self.retention_in_days = retention_in_days
 
 
-class AzureBlobStorageHttpLogsConfig(msrest.serialization.Model):
+class AzureBlobStorageHttpLogsConfig(_serialization.Model):
     """Http logs to azure blob storage configuration.
 
     :ivar sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
@@ -297,9 +295,9 @@ class AzureBlobStorageHttpLogsConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sas_url': {'key': 'sasUrl', 'type': 'str'},
-        'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "sas_url": {"key": "sasUrl", "type": "str"},
+        "retention_in_days": {"key": "retentionInDays", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
     def __init__(
@@ -308,8 +306,8 @@ class AzureBlobStorageHttpLogsConfig(msrest.serialization.Model):
         sas_url: Optional[str] = None,
         retention_in_days: Optional[int] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
         :paramtype sas_url: str
@@ -321,52 +319,47 @@ class AzureBlobStorageHttpLogsConfig(msrest.serialization.Model):
          configuration is not set.
         :paramtype enabled: bool
         """
-        super(AzureBlobStorageHttpLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sas_url = sas_url
         self.retention_in_days = retention_in_days
         self.enabled = enabled
 
 
-class AzureTableStorageApplicationLogsConfig(msrest.serialization.Model):
+class AzureTableStorageApplicationLogsConfig(_serialization.Model):
     """Application logs to Azure table storage configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", "Error".
+    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
+     "Error".
     :vartype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
-    :ivar sas_url: Required. SAS URL to an Azure table with add/query/delete permissions.
+    :ivar sas_url: SAS URL to an Azure table with add/query/delete permissions. Required.
     :vartype sas_url: str
     """
 
     _validation = {
-        'sas_url': {'required': True},
+        "sas_url": {"required": True},
     }
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'str'},
-        'sas_url': {'key': 'sasUrl', 'type': 'str'},
+        "level": {"key": "level", "type": "str"},
+        "sas_url": {"key": "sasUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sas_url: str,
-        level: Optional[Union[str, "_models.LogLevel"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, sas_url: str, level: Optional[Union[str, "_models.LogLevel"]] = None, **kwargs: Any) -> None:
         """
-        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning",
+        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
          "Error".
         :paramtype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
-        :keyword sas_url: Required. SAS URL to an Azure table with add/query/delete permissions.
+        :keyword sas_url: SAS URL to an Azure table with add/query/delete permissions. Required.
         :paramtype sas_url: str
         """
-        super(AzureTableStorageApplicationLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.level = level
         self.sas_url = sas_url
 
 
-class ProxyOnlyResource(msrest.serialization.Model):
+class ProxyOnlyResource(_serialization.Model):
     """Azure proxy only resource. This resource is not tracked by Azure Resource Manager.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -382,36 +375,31 @@ class ProxyOnlyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(ProxyOnlyResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.kind = kind
         self.type = None
 
 
-class BackupItem(ProxyOnlyResource):
+class BackupItem(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Backup description.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -434,10 +422,10 @@ class BackupItem(ProxyOnlyResource):
     :ivar name_properties_name: Name of this backup.
     :vartype name_properties_name: str
     :ivar status: Backup status. Known values are: "InProgress", "Failed", "Succeeded", "TimedOut",
-     "Created", "Skipped", "PartiallySucceeded", "DeleteInProgress", "DeleteFailed", "Deleted".
+     "Created", "Skipped", "PartiallySucceeded", "DeleteInProgress", "DeleteFailed", and "Deleted".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.BackupItemStatus
     :ivar size_in_bytes: Size of the backup in bytes.
-    :vartype size_in_bytes: long
+    :vartype size_in_bytes: int
     :ivar created: Timestamp of the backup creation.
     :vartype created: ~datetime.datetime
     :ivar log: Details regarding this backup. Might contain an error message.
@@ -454,61 +442,56 @@ class BackupItem(ProxyOnlyResource):
      while communicating with Azure support.
     :vartype correlation_id: str
     :ivar website_size_in_bytes: Size of the original web app which has been backed up.
-    :vartype website_size_in_bytes: long
+    :vartype website_size_in_bytes: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'backup_id': {'readonly': True},
-        'storage_account_url': {'readonly': True},
-        'blob_name': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'status': {'readonly': True},
-        'size_in_bytes': {'readonly': True},
-        'created': {'readonly': True},
-        'log': {'readonly': True},
-        'databases': {'readonly': True},
-        'scheduled': {'readonly': True},
-        'last_restore_time_stamp': {'readonly': True},
-        'finished_time_stamp': {'readonly': True},
-        'correlation_id': {'readonly': True},
-        'website_size_in_bytes': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "backup_id": {"readonly": True},
+        "storage_account_url": {"readonly": True},
+        "blob_name": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "status": {"readonly": True},
+        "size_in_bytes": {"readonly": True},
+        "created": {"readonly": True},
+        "log": {"readonly": True},
+        "databases": {"readonly": True},
+        "scheduled": {"readonly": True},
+        "last_restore_time_stamp": {"readonly": True},
+        "finished_time_stamp": {"readonly": True},
+        "correlation_id": {"readonly": True},
+        "website_size_in_bytes": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'backup_id': {'key': 'properties.id', 'type': 'int'},
-        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
-        'blob_name': {'key': 'properties.blobName', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'log': {'key': 'properties.log', 'type': 'str'},
-        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
-        'scheduled': {'key': 'properties.scheduled', 'type': 'bool'},
-        'last_restore_time_stamp': {'key': 'properties.lastRestoreTimeStamp', 'type': 'iso-8601'},
-        'finished_time_stamp': {'key': 'properties.finishedTimeStamp', 'type': 'iso-8601'},
-        'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},
-        'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "backup_id": {"key": "properties.id", "type": "int"},
+        "storage_account_url": {"key": "properties.storageAccountUrl", "type": "str"},
+        "blob_name": {"key": "properties.blobName", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "size_in_bytes": {"key": "properties.sizeInBytes", "type": "int"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "log": {"key": "properties.log", "type": "str"},
+        "databases": {"key": "properties.databases", "type": "[DatabaseBackupSetting]"},
+        "scheduled": {"key": "properties.scheduled", "type": "bool"},
+        "last_restore_time_stamp": {"key": "properties.lastRestoreTimeStamp", "type": "iso-8601"},
+        "finished_time_stamp": {"key": "properties.finishedTimeStamp", "type": "iso-8601"},
+        "correlation_id": {"key": "properties.correlationId", "type": "str"},
+        "website_size_in_bytes": {"key": "properties.websiteSizeInBytes", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(BackupItem, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.backup_id = None
         self.storage_account_url = None
         self.blob_name = None
@@ -525,40 +508,35 @@ class BackupItem(ProxyOnlyResource):
         self.website_size_in_bytes = None
 
 
-class BackupItemCollection(msrest.serialization.Model):
+class BackupItemCollection(_serialization.Model):
     """Collection of backup items.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.BackupItem]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BackupItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BackupItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.BackupItem"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.BackupItem"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.BackupItem]
         """
-        super(BackupItemCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -588,28 +566,28 @@ class BackupRequest(ProxyOnlyResource):
     :ivar databases: Databases included in the backup.
     :vartype databases: list[~azure.mgmt.web.v2016_08_01.models.DatabaseBackupSetting]
     :ivar type_properties_type: Type of the backup. Known values are: "Default", "Clone",
-     "Relocation", "Snapshot".
+     "Relocation", and "Snapshot".
     :vartype type_properties_type: str or
      ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'backup_request_name': {'key': 'properties.name', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
-        'backup_schedule': {'key': 'properties.backupSchedule', 'type': 'BackupSchedule'},
-        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "backup_request_name": {"key": "properties.name", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "storage_account_url": {"key": "properties.storageAccountUrl", "type": "str"},
+        "backup_schedule": {"key": "properties.backupSchedule", "type": "BackupSchedule"},
+        "databases": {"key": "properties.databases", "type": "[DatabaseBackupSetting]"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
     }
 
     def __init__(
@@ -622,8 +600,8 @@ class BackupRequest(ProxyOnlyResource):
         backup_schedule: Optional["_models.BackupSchedule"] = None,
         databases: Optional[List["_models.DatabaseBackupSetting"]] = None,
         type_properties_type: Optional[Union[str, "_models.BackupRestoreOperationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -639,11 +617,11 @@ class BackupRequest(ProxyOnlyResource):
         :keyword databases: Databases included in the backup.
         :paramtype databases: list[~azure.mgmt.web.v2016_08_01.models.DatabaseBackupSetting]
         :keyword type_properties_type: Type of the backup. Known values are: "Default", "Clone",
-         "Relocation", "Snapshot".
+         "Relocation", and "Snapshot".
         :paramtype type_properties_type: str or
          ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
         """
-        super(BackupRequest, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.backup_request_name = backup_request_name
         self.enabled = enabled
         self.storage_account_url = storage_account_url
@@ -652,24 +630,25 @@ class BackupRequest(ProxyOnlyResource):
         self.type_properties_type = type_properties_type
 
 
-class BackupSchedule(msrest.serialization.Model):
-    """Description of a backup schedule. Describes how often should be the backup performed and what should be the retention policy.
+class BackupSchedule(_serialization.Model):
+    """Description of a backup schedule. Describes how often should be the backup performed and what
+    should be the retention policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar frequency_interval: Required. How often the backup should be executed (e.g. for weekly
-     backup, this should be set to 7 and FrequencyUnit should be set to Day).
+    :ivar frequency_interval: How often the backup should be executed (e.g. for weekly backup, this
+     should be set to 7 and FrequencyUnit should be set to Day).
     :vartype frequency_interval: int
-    :ivar frequency_unit: Required. The unit of time for how often the backup should be executed
-     (e.g. for weekly backup, this should be set to Day and FrequencyInterval should be set to 7).
-     Known values are: "Day", "Hour". Default value: "Day".
+    :ivar frequency_unit: The unit of time for how often the backup should be executed (e.g. for
+     weekly backup, this should be set to Day and FrequencyInterval should be set to 7). Known
+     values are: "Day" and "Hour".
     :vartype frequency_unit: str or ~azure.mgmt.web.v2016_08_01.models.FrequencyUnit
-    :ivar keep_at_least_one_backup: Required. True if the retention policy should always keep at
-     least one backup in the storage account, regardless how old it is; false otherwise.
+    :ivar keep_at_least_one_backup: True if the retention policy should always keep at least one
+     backup in the storage account, regardless how old it is; false otherwise.
     :vartype keep_at_least_one_backup: bool
-    :ivar retention_period_in_days: Required. After how many days backups should be deleted.
+    :ivar retention_period_in_days: After how many days backups should be deleted.
     :vartype retention_period_in_days: int
     :ivar start_time: When the schedule should start working.
     :vartype start_time: ~datetime.datetime
@@ -678,20 +657,20 @@ class BackupSchedule(msrest.serialization.Model):
     """
 
     _validation = {
-        'frequency_interval': {'required': True},
-        'frequency_unit': {'required': True},
-        'keep_at_least_one_backup': {'required': True},
-        'retention_period_in_days': {'required': True},
-        'last_execution_time': {'readonly': True},
+        "frequency_interval": {"required": True},
+        "frequency_unit": {"required": True},
+        "keep_at_least_one_backup": {"required": True},
+        "retention_period_in_days": {"required": True},
+        "last_execution_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'frequency_interval': {'key': 'frequencyInterval', 'type': 'int'},
-        'frequency_unit': {'key': 'frequencyUnit', 'type': 'str'},
-        'keep_at_least_one_backup': {'key': 'keepAtLeastOneBackup', 'type': 'bool'},
-        'retention_period_in_days': {'key': 'retentionPeriodInDays', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
+        "frequency_interval": {"key": "frequencyInterval", "type": "int"},
+        "frequency_unit": {"key": "frequencyUnit", "type": "str"},
+        "keep_at_least_one_backup": {"key": "keepAtLeastOneBackup", "type": "bool"},
+        "retention_period_in_days": {"key": "retentionPeriodInDays", "type": "int"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_execution_time": {"key": "lastExecutionTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -702,25 +681,25 @@ class BackupSchedule(msrest.serialization.Model):
         keep_at_least_one_backup: bool = True,
         retention_period_in_days: int = 30,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword frequency_interval: Required. How often the backup should be executed (e.g. for weekly
-         backup, this should be set to 7 and FrequencyUnit should be set to Day).
+        :keyword frequency_interval: How often the backup should be executed (e.g. for weekly backup,
+         this should be set to 7 and FrequencyUnit should be set to Day).
         :paramtype frequency_interval: int
-        :keyword frequency_unit: Required. The unit of time for how often the backup should be executed
-         (e.g. for weekly backup, this should be set to Day and FrequencyInterval should be set to 7).
-         Known values are: "Day", "Hour". Default value: "Day".
+        :keyword frequency_unit: The unit of time for how often the backup should be executed (e.g. for
+         weekly backup, this should be set to Day and FrequencyInterval should be set to 7). Known
+         values are: "Day" and "Hour".
         :paramtype frequency_unit: str or ~azure.mgmt.web.v2016_08_01.models.FrequencyUnit
-        :keyword keep_at_least_one_backup: Required. True if the retention policy should always keep at
-         least one backup in the storage account, regardless how old it is; false otherwise.
+        :keyword keep_at_least_one_backup: True if the retention policy should always keep at least one
+         backup in the storage account, regardless how old it is; false otherwise.
         :paramtype keep_at_least_one_backup: bool
-        :keyword retention_period_in_days: Required. After how many days backups should be deleted.
+        :keyword retention_period_in_days: After how many days backups should be deleted.
         :paramtype retention_period_in_days: int
         :keyword start_time: When the schedule should start working.
         :paramtype start_time: ~datetime.datetime
         """
-        super(BackupSchedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.frequency_interval = frequency_interval
         self.frequency_unit = frequency_unit
         self.keep_at_least_one_backup = keep_at_least_one_backup
@@ -729,7 +708,7 @@ class BackupSchedule(msrest.serialization.Model):
         self.last_execution_time = None
 
 
-class CloningInfo(msrest.serialization.Model):
+class CloningInfo(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Information needed for cloning operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -747,12 +726,11 @@ class CloningInfo(msrest.serialization.Model):
     :ivar clone_source_control: :code:`<code>true</code>` to clone source control from source app;
      otherwise, :code:`<code>false</code>`.
     :vartype clone_source_control: bool
-    :ivar source_web_app_id: Required. ARM resource ID of the source app. App resource ID is of the
-     form
+    :ivar source_web_app_id: ARM resource ID of the source app. App resource ID is of the form
     /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}
      for production slots and
     /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
-     for other slots.
+     for other slots. Required.
     :vartype source_web_app_id: str
     :ivar hosting_environment: App Service Environment.
     :vartype hosting_environment: str
@@ -776,21 +754,21 @@ class CloningInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'source_web_app_id': {'required': True},
+        "source_web_app_id": {"required": True},
     }
 
     _attribute_map = {
-        'correlation_id': {'key': 'correlationId', 'type': 'str'},
-        'overwrite': {'key': 'overwrite', 'type': 'bool'},
-        'clone_custom_host_names': {'key': 'cloneCustomHostNames', 'type': 'bool'},
-        'clone_source_control': {'key': 'cloneSourceControl', 'type': 'bool'},
-        'source_web_app_id': {'key': 'sourceWebAppId', 'type': 'str'},
-        'hosting_environment': {'key': 'hostingEnvironment', 'type': 'str'},
-        'app_settings_overrides': {'key': 'appSettingsOverrides', 'type': '{str}'},
-        'configure_load_balancing': {'key': 'configureLoadBalancing', 'type': 'bool'},
-        'traffic_manager_profile_id': {'key': 'trafficManagerProfileId', 'type': 'str'},
-        'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
-        'ignore_quotas': {'key': 'ignoreQuotas', 'type': 'bool'},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "overwrite": {"key": "overwrite", "type": "bool"},
+        "clone_custom_host_names": {"key": "cloneCustomHostNames", "type": "bool"},
+        "clone_source_control": {"key": "cloneSourceControl", "type": "bool"},
+        "source_web_app_id": {"key": "sourceWebAppId", "type": "str"},
+        "hosting_environment": {"key": "hostingEnvironment", "type": "str"},
+        "app_settings_overrides": {"key": "appSettingsOverrides", "type": "{str}"},
+        "configure_load_balancing": {"key": "configureLoadBalancing", "type": "bool"},
+        "traffic_manager_profile_id": {"key": "trafficManagerProfileId", "type": "str"},
+        "traffic_manager_profile_name": {"key": "trafficManagerProfileName", "type": "str"},
+        "ignore_quotas": {"key": "ignoreQuotas", "type": "bool"},
     }
 
     def __init__(
@@ -807,8 +785,8 @@ class CloningInfo(msrest.serialization.Model):
         traffic_manager_profile_id: Optional[str] = None,
         traffic_manager_profile_name: Optional[str] = None,
         ignore_quotas: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword correlation_id: Correlation ID of cloning operation. This ID ties multiple cloning
          operations
@@ -823,12 +801,11 @@ class CloningInfo(msrest.serialization.Model):
         :keyword clone_source_control: :code:`<code>true</code>` to clone source control from source
          app; otherwise, :code:`<code>false</code>`.
         :paramtype clone_source_control: bool
-        :keyword source_web_app_id: Required. ARM resource ID of the source app. App resource ID is of
-         the form
+        :keyword source_web_app_id: ARM resource ID of the source app. App resource ID is of the form
         /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}
          for production slots and
         /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
-         for other slots.
+         for other slots. Required.
         :paramtype source_web_app_id: str
         :keyword hosting_environment: App Service Environment.
         :paramtype hosting_environment: str
@@ -850,7 +827,7 @@ class CloningInfo(msrest.serialization.Model):
          :code:`<code>false</code>`.
         :paramtype ignore_quotas: bool
         """
-        super(CloningInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names
@@ -882,17 +859,17 @@ class ConnectionStringDictionary(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{ConnStringValueTypePair}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "{ConnStringValueTypePair}"},
     }
 
     def __init__(
@@ -900,19 +877,19 @@ class ConnectionStringDictionary(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         properties: Optional[Dict[str, "_models.ConnStringValueTypePair"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword properties: Connection strings.
         :paramtype properties: dict[str, ~azure.mgmt.web.v2016_08_01.models.ConnStringValueTypePair]
         """
-        super(ConnectionStringDictionary, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.properties = properties
 
 
-class ConnStringInfo(msrest.serialization.Model):
+class ConnStringInfo(_serialization.Model):
     """Database connection string information.
 
     :ivar name: Name of connection string.
@@ -920,14 +897,14 @@ class ConnStringInfo(msrest.serialization.Model):
     :ivar connection_string: Connection string value.
     :vartype connection_string: str
     :ivar type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
-     "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", "PostgreSQL".
+     "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", and "PostgreSQL".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -936,67 +913,61 @@ class ConnStringInfo(msrest.serialization.Model):
         name: Optional[str] = None,
         connection_string: Optional[str] = None,
         type: Optional[Union[str, "_models.ConnectionStringType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of connection string.
         :paramtype name: str
         :keyword connection_string: Connection string value.
         :paramtype connection_string: str
         :keyword type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
-         "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", "PostgreSQL".
+         "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", and "PostgreSQL".
         :paramtype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
         """
-        super(ConnStringInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.connection_string = connection_string
         self.type = type
 
 
-class ConnStringValueTypePair(msrest.serialization.Model):
+class ConnStringValueTypePair(_serialization.Model):
     """Database connection string value to type pair.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Value of pair.
+    :ivar value: Value of pair. Required.
     :vartype value: str
-    :ivar type: Required. Type of database. Known values are: "MySql", "SQLServer", "SQLAzure",
-     "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
+    :ivar type: Type of database. Required. Known values are: "MySql", "SQLServer", "SQLAzure",
+     "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", and
      "PostgreSQL".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
     """
 
     _validation = {
-        'value': {'required': True},
-        'type': {'required': True},
+        "value": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: str,
-        type: Union[str, "_models.ConnectionStringType"],
-        **kwargs
-    ):
+    def __init__(self, *, value: str, type: Union[str, "_models.ConnectionStringType"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Value of pair.
+        :keyword value: Value of pair. Required.
         :paramtype value: str
-        :keyword type: Required. Type of database. Known values are: "MySql", "SQLServer", "SQLAzure",
-         "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
+        :keyword type: Type of database. Required. Known values are: "MySql", "SQLServer", "SQLAzure",
+         "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", and
          "PostgreSQL".
         :paramtype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
         """
-        super(ConnStringValueTypePair, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.type = type
 
 
-class ContinuousWebJob(ProxyOnlyResource):
+class ContinuousWebJob(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Continuous Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1010,7 +981,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar status: Job status. Known values are: "Initializing", "Starting", "Running",
-     "PendingRestart", "Stopped".
+     "PendingRestart", and "Stopped".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.ContinuousWebJobStatus
     :ivar detailed_status: Detailed status.
     :vartype detailed_status: str
@@ -1024,39 +995,39 @@ class ContinuousWebJob(ProxyOnlyResource):
     :vartype url: str
     :ivar extra_info_url: Extra Info URL.
     :vartype extra_info_url: str
-    :ivar job_type: Job type. Known values are: "Continuous", "Triggered".
+    :ivar job_type: Job type. Known values are: "Continuous" and "Triggered".
     :vartype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
     :ivar error: Error information.
     :vartype error: str
     :ivar using_sdk: Using SDK?.
     :vartype using_sdk: bool
     :ivar settings: Job settings.
-    :vartype settings: dict[str, any]
+    :vartype settings: dict[str, JSON]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'detailed_status': {'key': 'properties.detailedStatus', 'type': 'str'},
-        'log_url': {'key': 'properties.logUrl', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'run_command': {'key': 'properties.runCommand', 'type': 'str'},
-        'url': {'key': 'properties.url', 'type': 'str'},
-        'extra_info_url': {'key': 'properties.extraInfoUrl', 'type': 'str'},
-        'job_type': {'key': 'properties.jobType', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'str'},
-        'using_sdk': {'key': 'properties.usingSdk', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
+        "log_url": {"key": "properties.logUrl", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "run_command": {"key": "properties.runCommand", "type": "str"},
+        "url": {"key": "properties.url", "type": "str"},
+        "extra_info_url": {"key": "properties.extraInfoUrl", "type": "str"},
+        "job_type": {"key": "properties.jobType", "type": "str"},
+        "error": {"key": "properties.error", "type": "str"},
+        "using_sdk": {"key": "properties.usingSdk", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "{object}"},
     }
 
     def __init__(
@@ -1072,14 +1043,14 @@ class ContinuousWebJob(ProxyOnlyResource):
         job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        settings: Optional[Dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword status: Job status. Known values are: "Initializing", "Starting", "Running",
-         "PendingRestart", "Stopped".
+         "PendingRestart", and "Stopped".
         :paramtype status: str or ~azure.mgmt.web.v2016_08_01.models.ContinuousWebJobStatus
         :keyword detailed_status: Detailed status.
         :paramtype detailed_status: str
@@ -1091,16 +1062,16 @@ class ContinuousWebJob(ProxyOnlyResource):
         :paramtype url: str
         :keyword extra_info_url: Extra Info URL.
         :paramtype extra_info_url: str
-        :keyword job_type: Job type. Known values are: "Continuous", "Triggered".
+        :keyword job_type: Job type. Known values are: "Continuous" and "Triggered".
         :paramtype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
         :keyword error: Error information.
         :paramtype error: str
         :keyword using_sdk: Using SDK?.
         :paramtype using_sdk: bool
         :keyword settings: Job settings.
-        :paramtype settings: dict[str, any]
+        :paramtype settings: dict[str, JSON]
         """
-        super(ContinuousWebJob, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.status = status
         self.detailed_status = detailed_status
         self.log_url = log_url
@@ -1114,45 +1085,41 @@ class ContinuousWebJob(ProxyOnlyResource):
         self.settings = settings
 
 
-class ContinuousWebJobCollection(msrest.serialization.Model):
+class ContinuousWebJobCollection(_serialization.Model):
     """Collection of Kudu continuous web job information elements.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.ContinuousWebJob]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ContinuousWebJob]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ContinuousWebJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["_models.ContinuousWebJob"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.ContinuousWebJob"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.ContinuousWebJob]
         :keyword next_link: Link to next page of resources.
         :paramtype next_link: str
         """
-        super(ContinuousWebJobCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CorsSettings(msrest.serialization.Model):
+class CorsSettings(_serialization.Model):
     """Cross-Origin Resource Sharing (CORS) settings for the app.
 
     :ivar allowed_origins: Gets or sets the list of origins that should be allowed to make
@@ -1162,98 +1129,84 @@ class CorsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},
+        "allowed_origins": {"key": "allowedOrigins", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        allowed_origins: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, allowed_origins: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword allowed_origins: Gets or sets the list of origins that should be allowed to make
          cross-origin
          calls (for example: http://example.com:12345). Use "*" to allow all.
         :paramtype allowed_origins: list[str]
         """
-        super(CorsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allowed_origins = allowed_origins
 
 
-class CsmPublishingProfileOptions(msrest.serialization.Model):
+class CsmPublishingProfileOptions(_serialization.Model):
     """Publishing options for requested profile.
 
     :ivar format: Name of the format. Valid values are:
      FileZilla3
      WebDeploy -- default
-     Ftp. Known values are: "FileZilla3", "WebDeploy", "Ftp".
+     Ftp. Known values are: "FileZilla3", "WebDeploy", and "Ftp".
     :vartype format: str or ~azure.mgmt.web.v2016_08_01.models.PublishingProfileFormat
     """
 
     _attribute_map = {
-        'format': {'key': 'format', 'type': 'str'},
+        "format": {"key": "format", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        format: Optional[Union[str, "_models.PublishingProfileFormat"]] = None,
-        **kwargs
-    ):
+        self, *, format: Optional[Union[str, "_models.PublishingProfileFormat"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword format: Name of the format. Valid values are:
          FileZilla3
          WebDeploy -- default
-         Ftp. Known values are: "FileZilla3", "WebDeploy", "Ftp".
+         Ftp. Known values are: "FileZilla3", "WebDeploy", and "Ftp".
         :paramtype format: str or ~azure.mgmt.web.v2016_08_01.models.PublishingProfileFormat
         """
-        super(CsmPublishingProfileOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.format = format
 
 
-class CsmSlotEntity(msrest.serialization.Model):
+class CsmSlotEntity(_serialization.Model):
     """Deployment slot parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_slot: Required. Destination deployment slot during swap operation.
+    :ivar target_slot: Destination deployment slot during swap operation. Required.
     :vartype target_slot: str
-    :ivar preserve_vnet: Required. :code:`<code>true</code>` to preserve Virtual Network to the
-     slot during swap; otherwise, :code:`<code>false</code>`.
+    :ivar preserve_vnet: :code:`<code>true</code>` to preserve Virtual Network to the slot during
+     swap; otherwise, :code:`<code>false</code>`. Required.
     :vartype preserve_vnet: bool
     """
 
     _validation = {
-        'target_slot': {'required': True},
-        'preserve_vnet': {'required': True},
+        "target_slot": {"required": True},
+        "preserve_vnet": {"required": True},
     }
 
     _attribute_map = {
-        'target_slot': {'key': 'targetSlot', 'type': 'str'},
-        'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
+        "target_slot": {"key": "targetSlot", "type": "str"},
+        "preserve_vnet": {"key": "preserveVnet", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_slot: str,
-        preserve_vnet: bool,
-        **kwargs
-    ):
+    def __init__(self, *, target_slot: str, preserve_vnet: bool, **kwargs: Any) -> None:
         """
-        :keyword target_slot: Required. Destination deployment slot during swap operation.
+        :keyword target_slot: Destination deployment slot during swap operation. Required.
         :paramtype target_slot: str
-        :keyword preserve_vnet: Required. :code:`<code>true</code>` to preserve Virtual Network to the
-         slot during swap; otherwise, :code:`<code>false</code>`.
+        :keyword preserve_vnet: :code:`<code>true</code>` to preserve Virtual Network to the slot
+         during swap; otherwise, :code:`<code>false</code>`. Required.
         :paramtype preserve_vnet: bool
         """
-        super(CsmSlotEntity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_slot = target_slot
         self.preserve_vnet = preserve_vnet
 
 
-class CsmUsageQuota(msrest.serialization.Model):
+class CsmUsageQuota(_serialization.Model):
     """Usage of the quota resource.
 
     :ivar unit: Units of measurement for the quota resource.
@@ -1261,19 +1214,19 @@ class CsmUsageQuota(msrest.serialization.Model):
     :ivar next_reset_time: Next reset time for the resource counter.
     :vartype next_reset_time: ~datetime.datetime
     :ivar current_value: The current value of the resource counter.
-    :vartype current_value: long
+    :vartype current_value: int
     :ivar limit: The resource limit.
-    :vartype limit: long
+    :vartype limit: int
     :ivar name: Quota name.
     :vartype name: ~azure.mgmt.web.v2016_08_01.models.LocalizableString
     """
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'next_reset_time': {'key': 'nextResetTime', 'type': 'iso-8601'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'LocalizableString'},
+        "unit": {"key": "unit", "type": "str"},
+        "next_reset_time": {"key": "nextResetTime", "type": "iso-8601"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "LocalizableString"},
     }
 
     def __init__(
@@ -1284,21 +1237,21 @@ class CsmUsageQuota(msrest.serialization.Model):
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
         name: Optional["_models.LocalizableString"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: Units of measurement for the quota resource.
         :paramtype unit: str
         :keyword next_reset_time: Next reset time for the resource counter.
         :paramtype next_reset_time: ~datetime.datetime
         :keyword current_value: The current value of the resource counter.
-        :paramtype current_value: long
+        :paramtype current_value: int
         :keyword limit: The resource limit.
-        :paramtype limit: long
+        :paramtype limit: int
         :keyword name: Quota name.
         :paramtype name: ~azure.mgmt.web.v2016_08_01.models.LocalizableString
         """
-        super(CsmUsageQuota, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.unit = unit
         self.next_reset_time = next_reset_time
         self.current_value = current_value
@@ -1306,45 +1259,40 @@ class CsmUsageQuota(msrest.serialization.Model):
         self.name = name
 
 
-class CsmUsageQuotaCollection(msrest.serialization.Model):
+class CsmUsageQuotaCollection(_serialization.Model):
     """Collection of CSM usage quotas.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.CsmUsageQuota]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CsmUsageQuota]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CsmUsageQuota]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.CsmUsageQuota"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.CsmUsageQuota"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.CsmUsageQuota]
         """
-        super(CsmUsageQuotaCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class CustomHostnameAnalysisResult(ProxyOnlyResource):
+class CustomHostnameAnalysisResult(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Custom domain analysis.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1361,7 +1309,7 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
      otherwise, :code:`<code>false</code>`.
     :vartype is_hostname_already_verified: bool
     :ivar custom_domain_verification_test: DNS verification test result. Known values are:
-     "Passed", "Failed", "Skipped".
+     "Passed", "Failed", and "Skipped".
     :vartype custom_domain_verification_test: str or
      ~azure.mgmt.web.v2016_08_01.models.DnsVerificationTestResult
     :ivar custom_domain_verification_failure_info: Raw failure information if DNS verification
@@ -1390,33 +1338,36 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'is_hostname_already_verified': {'readonly': True},
-        'custom_domain_verification_test': {'readonly': True},
-        'custom_domain_verification_failure_info': {'readonly': True},
-        'has_conflict_on_scale_unit': {'readonly': True},
-        'has_conflict_across_subscription': {'readonly': True},
-        'conflicting_app_resource_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "is_hostname_already_verified": {"readonly": True},
+        "custom_domain_verification_test": {"readonly": True},
+        "custom_domain_verification_failure_info": {"readonly": True},
+        "has_conflict_on_scale_unit": {"readonly": True},
+        "has_conflict_across_subscription": {"readonly": True},
+        "conflicting_app_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'is_hostname_already_verified': {'key': 'properties.isHostnameAlreadyVerified', 'type': 'bool'},
-        'custom_domain_verification_test': {'key': 'properties.customDomainVerificationTest', 'type': 'str'},
-        'custom_domain_verification_failure_info': {'key': 'properties.customDomainVerificationFailureInfo', 'type': 'ErrorEntity'},
-        'has_conflict_on_scale_unit': {'key': 'properties.hasConflictOnScaleUnit', 'type': 'bool'},
-        'has_conflict_across_subscription': {'key': 'properties.hasConflictAcrossSubscription', 'type': 'bool'},
-        'conflicting_app_resource_id': {'key': 'properties.conflictingAppResourceId', 'type': 'str'},
-        'c_name_records': {'key': 'properties.cNameRecords', 'type': '[str]'},
-        'txt_records': {'key': 'properties.txtRecords', 'type': '[str]'},
-        'a_records': {'key': 'properties.aRecords', 'type': '[str]'},
-        'alternate_c_name_records': {'key': 'properties.alternateCNameRecords', 'type': '[str]'},
-        'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "is_hostname_already_verified": {"key": "properties.isHostnameAlreadyVerified", "type": "bool"},
+        "custom_domain_verification_test": {"key": "properties.customDomainVerificationTest", "type": "str"},
+        "custom_domain_verification_failure_info": {
+            "key": "properties.customDomainVerificationFailureInfo",
+            "type": "ErrorEntity",
+        },
+        "has_conflict_on_scale_unit": {"key": "properties.hasConflictOnScaleUnit", "type": "bool"},
+        "has_conflict_across_subscription": {"key": "properties.hasConflictAcrossSubscription", "type": "bool"},
+        "conflicting_app_resource_id": {"key": "properties.conflictingAppResourceId", "type": "str"},
+        "c_name_records": {"key": "properties.cNameRecords", "type": "[str]"},
+        "txt_records": {"key": "properties.txtRecords", "type": "[str]"},
+        "a_records": {"key": "properties.aRecords", "type": "[str]"},
+        "alternate_c_name_records": {"key": "properties.alternateCNameRecords", "type": "[str]"},
+        "alternate_txt_records": {"key": "properties.alternateTxtRecords", "type": "[str]"},
     }
 
     def __init__(
@@ -1428,8 +1379,8 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         a_records: Optional[List[str]] = None,
         alternate_c_name_records: Optional[List[str]] = None,
         alternate_txt_records: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -1445,7 +1396,7 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         :keyword alternate_txt_records: Alternate TXT records controller can see for this hostname.
         :paramtype alternate_txt_records: list[str]
         """
-        super(CustomHostnameAnalysisResult, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None
         self.custom_domain_verification_failure_info = None
@@ -1459,13 +1410,13 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
         self.alternate_txt_records = alternate_txt_records
 
 
-class DatabaseBackupSetting(msrest.serialization.Model):
+class DatabaseBackupSetting(_serialization.Model):
     """Database backup settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar database_type: Required. Database type (e.g. SqlAzure / MySql). Known values are:
-     "SqlAzure", "MySql", "LocalMySql", "PostgreSql".
+    :ivar database_type: Database type (e.g. SqlAzure / MySql). Required. Known values are:
+     "SqlAzure", "MySql", "LocalMySql", and "PostgreSql".
     :vartype database_type: str or ~azure.mgmt.web.v2016_08_01.models.DatabaseType
     :ivar name:
     :vartype name: str
@@ -1480,14 +1431,14 @@ class DatabaseBackupSetting(msrest.serialization.Model):
     """
 
     _validation = {
-        'database_type': {'required': True},
+        "database_type": {"required": True},
     }
 
     _attribute_map = {
-        'database_type': {'key': 'databaseType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'connection_string_name': {'key': 'connectionStringName', 'type': 'str'},
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        "database_type": {"key": "databaseType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "connection_string_name": {"key": "connectionStringName", "type": "str"},
+        "connection_string": {"key": "connectionString", "type": "str"},
     }
 
     def __init__(
@@ -1497,11 +1448,11 @@ class DatabaseBackupSetting(msrest.serialization.Model):
         name: Optional[str] = None,
         connection_string_name: Optional[str] = None,
         connection_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword database_type: Required. Database type (e.g. SqlAzure / MySql). Known values are:
-         "SqlAzure", "MySql", "LocalMySql", "PostgreSql".
+        :keyword database_type: Database type (e.g. SqlAzure / MySql). Required. Known values are:
+         "SqlAzure", "MySql", "LocalMySql", and "PostgreSql".
         :paramtype database_type: str or ~azure.mgmt.web.v2016_08_01.models.DatabaseType
         :keyword name:
         :paramtype name: str
@@ -1514,14 +1465,14 @@ class DatabaseBackupSetting(msrest.serialization.Model):
          new one.
         :paramtype connection_string: str
         """
-        super(DatabaseBackupSetting, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.database_type = database_type
         self.name = name
         self.connection_string_name = connection_string_name
         self.connection_string = connection_string
 
 
-class Deployment(ProxyOnlyResource):
+class Deployment(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """User credentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1558,26 +1509,26 @@ class Deployment(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'int'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'deployer': {'key': 'properties.deployer', 'type': 'str'},
-        'author_email': {'key': 'properties.authorEmail', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'active': {'key': 'properties.active', 'type': 'bool'},
-        'details': {'key': 'properties.details', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
+        "status": {"key": "properties.status", "type": "int"},
+        "message": {"key": "properties.message", "type": "str"},
+        "author": {"key": "properties.author", "type": "str"},
+        "deployer": {"key": "properties.deployer", "type": "str"},
+        "author_email": {"key": "properties.authorEmail", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "active": {"key": "properties.active", "type": "bool"},
+        "details": {"key": "properties.details", "type": "str"},
     }
 
     def __init__(
@@ -1594,8 +1545,8 @@ class Deployment(ProxyOnlyResource):
         end_time: Optional[datetime.datetime] = None,
         active: Optional[bool] = None,
         details: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -1621,7 +1572,7 @@ class Deployment(ProxyOnlyResource):
         :keyword details: Details on deployment.
         :paramtype details: str
         """
-        super(Deployment, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.id_properties_id = id_properties_id
         self.status = status
         self.message = message
@@ -1634,45 +1585,40 @@ class Deployment(ProxyOnlyResource):
         self.details = details
 
 
-class DeploymentCollection(msrest.serialization.Model):
+class DeploymentCollection(_serialization.Model):
     """Collection of app deployments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.Deployment]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Deployment]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Deployment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Deployment"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Deployment"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.Deployment]
         """
-        super(DeploymentCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class EnabledConfig(msrest.serialization.Model):
+class EnabledConfig(_serialization.Model):
     """Enabled configuration.
 
     :ivar enabled: True if configuration is enabled, false if it is disabled and null if
@@ -1681,25 +1627,20 @@ class EnabledConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: True if configuration is enabled, false if it is disabled and null if
          configuration is not set.
         :paramtype enabled: bool
         """
-        super(EnabledConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
 
 
-class ErrorEntity(msrest.serialization.Model):
+class ErrorEntity(_serialization.Model):
     """Body of the error response returned from the API.
 
     :ivar extended_code: Type of error.
@@ -1717,12 +1658,12 @@ class ErrorEntity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'extended_code': {'key': 'extendedCode', 'type': 'str'},
-        'message_template': {'key': 'messageTemplate', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[str]'},
-        'inner_errors': {'key': 'innerErrors', 'type': '[ErrorEntity]'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "extended_code": {"key": "extendedCode", "type": "str"},
+        "message_template": {"key": "messageTemplate", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[str]"},
+        "inner_errors": {"key": "innerErrors", "type": "[ErrorEntity]"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -1734,8 +1675,8 @@ class ErrorEntity(msrest.serialization.Model):
         inner_errors: Optional[List["_models.ErrorEntity"]] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword extended_code: Type of error.
         :paramtype extended_code: str
@@ -1750,7 +1691,7 @@ class ErrorEntity(msrest.serialization.Model):
         :keyword message: Any details of the error.
         :paramtype message: str
         """
-        super(ErrorEntity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.extended_code = extended_code
         self.message_template = message_template
         self.parameters = parameters
@@ -1759,7 +1700,7 @@ class ErrorEntity(msrest.serialization.Model):
         self.message = message
 
 
-class Experiments(msrest.serialization.Model):
+class Experiments(_serialization.Model):
     """Routing rules in production experiments.
 
     :ivar ramp_up_rules: List of ramp-up rules.
@@ -1767,50 +1708,41 @@ class Experiments(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
+        "ramp_up_rules": {"key": "rampUpRules", "type": "[RampUpRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        ramp_up_rules: Optional[List["_models.RampUpRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ramp_up_rules: Optional[List["_models.RampUpRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword ramp_up_rules: List of ramp-up rules.
         :paramtype ramp_up_rules: list[~azure.mgmt.web.v2016_08_01.models.RampUpRule]
         """
-        super(Experiments, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ramp_up_rules = ramp_up_rules
 
 
-class FileSystemApplicationLogsConfig(msrest.serialization.Model):
+class FileSystemApplicationLogsConfig(_serialization.Model):
     """Application logs to file system configuration.
 
-    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", "Error".
+    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
+     "Error".
     :vartype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
     """
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'str'},
+        "level": {"key": "level", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        level: Optional[Union[str, "_models.LogLevel"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, level: Optional[Union[str, "_models.LogLevel"]] = None, **kwargs: Any) -> None:
         """
-        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning",
+        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", and
          "Error".
         :paramtype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
         """
-        super(FileSystemApplicationLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.level = level
 
 
-class FileSystemHttpLogsConfig(msrest.serialization.Model):
+class FileSystemHttpLogsConfig(_serialization.Model):
     """Http logs to file system configuration.
 
     :ivar retention_in_mb: Maximum size in megabytes that http log files can use.
@@ -1827,13 +1759,13 @@ class FileSystemHttpLogsConfig(msrest.serialization.Model):
     """
 
     _validation = {
-        'retention_in_mb': {'maximum': 100, 'minimum': 25},
+        "retention_in_mb": {"maximum": 100, "minimum": 25},
     }
 
     _attribute_map = {
-        'retention_in_mb': {'key': 'retentionInMb', 'type': 'int'},
-        'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "retention_in_mb": {"key": "retentionInMb", "type": "int"},
+        "retention_in_days": {"key": "retentionInDays", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
     def __init__(
@@ -1842,8 +1774,8 @@ class FileSystemHttpLogsConfig(msrest.serialization.Model):
         retention_in_mb: Optional[int] = None,
         retention_in_days: Optional[int] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword retention_in_mb: Maximum size in megabytes that http log files can use.
          When reached old log files will be removed to make space for new ones.
@@ -1857,13 +1789,13 @@ class FileSystemHttpLogsConfig(msrest.serialization.Model):
          configuration is not set.
         :paramtype enabled: bool
         """
-        super(FileSystemHttpLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.retention_in_mb = retention_in_mb
         self.retention_in_days = retention_in_days
         self.enabled = enabled
 
 
-class FunctionEnvelope(ProxyOnlyResource):
+class FunctionEnvelope(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1891,7 +1823,7 @@ class FunctionEnvelope(ProxyOnlyResource):
     :ivar href: Function URI.
     :vartype href: str
     :ivar config: Config information.
-    :vartype config: any
+    :vartype config: JSON
     :ivar files: File list.
     :vartype files: dict[str, str]
     :ivar test_data: Test data used when testing via the Azure Portal.
@@ -1899,28 +1831,28 @@ class FunctionEnvelope(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'function_app_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "function_app_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'function_app_id': {'key': 'properties.functionAppId', 'type': 'str'},
-        'script_root_path_href': {'key': 'properties.scriptRootPathHref', 'type': 'str'},
-        'script_href': {'key': 'properties.scriptHref', 'type': 'str'},
-        'config_href': {'key': 'properties.configHref', 'type': 'str'},
-        'secrets_file_href': {'key': 'properties.secretsFileHref', 'type': 'str'},
-        'href': {'key': 'properties.href', 'type': 'str'},
-        'config': {'key': 'properties.config', 'type': 'object'},
-        'files': {'key': 'properties.files', 'type': '{str}'},
-        'test_data': {'key': 'properties.testData', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "function_app_id": {"key": "properties.functionAppId", "type": "str"},
+        "script_root_path_href": {"key": "properties.scriptRootPathHref", "type": "str"},
+        "script_href": {"key": "properties.scriptHref", "type": "str"},
+        "config_href": {"key": "properties.configHref", "type": "str"},
+        "secrets_file_href": {"key": "properties.secretsFileHref", "type": "str"},
+        "href": {"key": "properties.href", "type": "str"},
+        "config": {"key": "properties.config", "type": "object"},
+        "files": {"key": "properties.files", "type": "{str}"},
+        "test_data": {"key": "properties.testData", "type": "str"},
     }
 
     def __init__(
@@ -1932,11 +1864,11 @@ class FunctionEnvelope(ProxyOnlyResource):
         config_href: Optional[str] = None,
         secrets_file_href: Optional[str] = None,
         href: Optional[str] = None,
-        config: Optional[Any] = None,
+        config: Optional[JSON] = None,
         files: Optional[Dict[str, str]] = None,
         test_data: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -1951,13 +1883,13 @@ class FunctionEnvelope(ProxyOnlyResource):
         :keyword href: Function URI.
         :paramtype href: str
         :keyword config: Config information.
-        :paramtype config: any
+        :paramtype config: JSON
         :keyword files: File list.
         :paramtype files: dict[str, str]
         :keyword test_data: Test data used when testing via the Azure Portal.
         :paramtype test_data: str
         """
-        super(FunctionEnvelope, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.name_properties_name = None
         self.function_app_id = None
         self.script_root_path_href = script_root_path_href
@@ -1970,40 +1902,35 @@ class FunctionEnvelope(ProxyOnlyResource):
         self.test_data = test_data
 
 
-class FunctionEnvelopeCollection(msrest.serialization.Model):
+class FunctionEnvelopeCollection(_serialization.Model):
     """Collection of Kudu function information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.FunctionEnvelope]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FunctionEnvelope]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FunctionEnvelope]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.FunctionEnvelope"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.FunctionEnvelope"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.FunctionEnvelope]
         """
-        super(FunctionEnvelopeCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -2028,28 +1955,23 @@ class FunctionSecrets(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'key': {'key': 'properties.key', 'type': 'str'},
-        'trigger_url': {'key': 'properties.triggerUrl', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "key": {"key": "properties.key", "type": "str"},
+        "trigger_url": {"key": "properties.triggerUrl", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        key: Optional[str] = None,
-        trigger_url: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, kind: Optional[str] = None, key: Optional[str] = None, trigger_url: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -2058,14 +1980,16 @@ class FunctionSecrets(ProxyOnlyResource):
         :keyword trigger_url: Trigger URL.
         :paramtype trigger_url: str
         """
-        super(FunctionSecrets, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.key = key
         self.trigger_url = trigger_url
 
 
-class HandlerMapping(msrest.serialization.Model):
-    """The IIS handler mappings used to define which handler processes HTTP requests with certain extension. 
-For example, it is used to configure php-cgi.exe process to handle all HTTP requests with *.php extension.
+class HandlerMapping(_serialization.Model):
+    """The IIS handler mappings used to define which handler processes HTTP requests with certain
+    extension.
+    For example, it is used to configure php-cgi.exe process to handle all HTTP requests with *.php
+    extension.
 
     :ivar extension: Requests with this extension will be handled using the specified FastCGI
      application.
@@ -2077,9 +2001,9 @@ For example, it is used to configure php-cgi.exe process to handle all HTTP requ
     """
 
     _attribute_map = {
-        'extension': {'key': 'extension', 'type': 'str'},
-        'script_processor': {'key': 'scriptProcessor', 'type': 'str'},
-        'arguments': {'key': 'arguments', 'type': 'str'},
+        "extension": {"key": "extension", "type": "str"},
+        "script_processor": {"key": "scriptProcessor", "type": "str"},
+        "arguments": {"key": "arguments", "type": "str"},
     }
 
     def __init__(
@@ -2088,8 +2012,8 @@ For example, it is used to configure php-cgi.exe process to handle all HTTP requ
         extension: Optional[str] = None,
         script_processor: Optional[str] = None,
         arguments: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword extension: Requests with this extension will be handled using the specified FastCGI
          application.
@@ -2099,13 +2023,13 @@ For example, it is used to configure php-cgi.exe process to handle all HTTP requ
         :keyword arguments: Command-line arguments to be passed to the script processor.
         :paramtype arguments: str
         """
-        super(HandlerMapping, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.extension = extension
         self.script_processor = script_processor
         self.arguments = arguments
 
 
-class HostingEnvironmentProfile(msrest.serialization.Model):
+class HostingEnvironmentProfile(_serialization.Model):
     """Specification for an App Service Environment to use for this resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2119,33 +2043,28 @@ class HostingEnvironmentProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID of the App Service Environment.
         :paramtype id: str
         """
-        super(HostingEnvironmentProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = None
         self.type = None
 
 
-class HostNameBinding(ProxyOnlyResource):
+class HostNameBinding(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """A hostname binding object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2164,14 +2083,16 @@ class HostNameBinding(ProxyOnlyResource):
     :vartype domain_id: str
     :ivar azure_resource_name: Azure resource name.
     :vartype azure_resource_name: str
-    :ivar azure_resource_type: Azure resource type. Known values are: "Website", "TrafficManager".
+    :ivar azure_resource_type: Azure resource type. Known values are: "Website" and
+     "TrafficManager".
     :vartype azure_resource_type: str or ~azure.mgmt.web.v2016_08_01.models.AzureResourceType
-    :ivar custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName", "A".
+    :ivar custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName" and
+     "A".
     :vartype custom_host_name_dns_record_type: str or
      ~azure.mgmt.web.v2016_08_01.models.CustomHostNameDnsRecordType
-    :ivar host_name_type: Hostname type. Known values are: "Verified", "Managed".
+    :ivar host_name_type: Hostname type. Known values are: "Verified" and "Managed".
     :vartype host_name_type: str or ~azure.mgmt.web.v2016_08_01.models.HostNameType
-    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
+    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
     :vartype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
     :ivar thumbprint: SSL certificate thumbprint.
     :vartype thumbprint: str
@@ -2180,26 +2101,26 @@ class HostNameBinding(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'virtual_ip': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "virtual_ip": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'site_name': {'key': 'properties.siteName', 'type': 'str'},
-        'domain_id': {'key': 'properties.domainId', 'type': 'str'},
-        'azure_resource_name': {'key': 'properties.azureResourceName', 'type': 'str'},
-        'azure_resource_type': {'key': 'properties.azureResourceType', 'type': 'str'},
-        'custom_host_name_dns_record_type': {'key': 'properties.customHostNameDnsRecordType', 'type': 'str'},
-        'host_name_type': {'key': 'properties.hostNameType', 'type': 'str'},
-        'ssl_state': {'key': 'properties.sslState', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "site_name": {"key": "properties.siteName", "type": "str"},
+        "domain_id": {"key": "properties.domainId", "type": "str"},
+        "azure_resource_name": {"key": "properties.azureResourceName", "type": "str"},
+        "azure_resource_type": {"key": "properties.azureResourceType", "type": "str"},
+        "custom_host_name_dns_record_type": {"key": "properties.customHostNameDnsRecordType", "type": "str"},
+        "host_name_type": {"key": "properties.hostNameType", "type": "str"},
+        "ssl_state": {"key": "properties.sslState", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "virtual_ip": {"key": "properties.virtualIP", "type": "str"},
     }
 
     def __init__(
@@ -2214,8 +2135,8 @@ class HostNameBinding(ProxyOnlyResource):
         host_name_type: Optional[Union[str, "_models.HostNameType"]] = None,
         ssl_state: Optional[Union[str, "_models.SslState"]] = None,
         thumbprint: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -2225,21 +2146,21 @@ class HostNameBinding(ProxyOnlyResource):
         :paramtype domain_id: str
         :keyword azure_resource_name: Azure resource name.
         :paramtype azure_resource_name: str
-        :keyword azure_resource_type: Azure resource type. Known values are: "Website",
+        :keyword azure_resource_type: Azure resource type. Known values are: "Website" and
          "TrafficManager".
         :paramtype azure_resource_type: str or ~azure.mgmt.web.v2016_08_01.models.AzureResourceType
-        :keyword custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName",
-         "A".
+        :keyword custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName"
+         and "A".
         :paramtype custom_host_name_dns_record_type: str or
          ~azure.mgmt.web.v2016_08_01.models.CustomHostNameDnsRecordType
-        :keyword host_name_type: Hostname type. Known values are: "Verified", "Managed".
+        :keyword host_name_type: Hostname type. Known values are: "Verified" and "Managed".
         :paramtype host_name_type: str or ~azure.mgmt.web.v2016_08_01.models.HostNameType
-        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
+        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
         :paramtype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
         :keyword thumbprint: SSL certificate thumbprint.
         :paramtype thumbprint: str
         """
-        super(HostNameBinding, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.site_name = site_name
         self.domain_id = domain_id
         self.azure_resource_name = azure_resource_name
@@ -2251,50 +2172,45 @@ class HostNameBinding(ProxyOnlyResource):
         self.virtual_ip = None
 
 
-class HostNameBindingCollection(msrest.serialization.Model):
+class HostNameBindingCollection(_serialization.Model):
     """Collection of hostname bindings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.HostNameBinding]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HostNameBinding]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HostNameBinding]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.HostNameBinding"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.HostNameBinding"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.HostNameBinding]
         """
-        super(HostNameBindingCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class HostNameSslState(msrest.serialization.Model):
+class HostNameSslState(_serialization.Model):
     """SSL-enabled hostname.
 
     :ivar name: Hostname.
     :vartype name: str
-    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
+    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
     :vartype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
     :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
     :vartype virtual_ip: str
@@ -2303,17 +2219,17 @@ class HostNameSslState(msrest.serialization.Model):
     :ivar to_update: Set to :code:`<code>true</code>` to update existing hostname.
     :vartype to_update: bool
     :ivar host_type: Indicates whether the hostname is a standard or repository hostname. Known
-     values are: "Standard", "Repository".
+     values are: "Standard" and "Repository".
     :vartype host_type: str or ~azure.mgmt.web.v2016_08_01.models.HostType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'ssl_state': {'key': 'sslState', 'type': 'str'},
-        'virtual_ip': {'key': 'virtualIP', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'to_update': {'key': 'toUpdate', 'type': 'bool'},
-        'host_type': {'key': 'hostType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "ssl_state": {"key": "sslState", "type": "str"},
+        "virtual_ip": {"key": "virtualIP", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "to_update": {"key": "toUpdate", "type": "bool"},
+        "host_type": {"key": "hostType", "type": "str"},
     }
 
     def __init__(
@@ -2325,12 +2241,12 @@ class HostNameSslState(msrest.serialization.Model):
         thumbprint: Optional[str] = None,
         to_update: Optional[bool] = None,
         host_type: Optional[Union[str, "_models.HostType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Hostname.
         :paramtype name: str
-        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
+        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", and "IpBasedEnabled".
         :paramtype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
         :keyword virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
         :paramtype virtual_ip: str
@@ -2339,10 +2255,10 @@ class HostNameSslState(msrest.serialization.Model):
         :keyword to_update: Set to :code:`<code>true</code>` to update existing hostname.
         :paramtype to_update: bool
         :keyword host_type: Indicates whether the hostname is a standard or repository hostname. Known
-         values are: "Standard", "Repository".
+         values are: "Standard" and "Repository".
         :paramtype host_type: str or ~azure.mgmt.web.v2016_08_01.models.HostType
         """
-        super(HostNameSslState, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip
@@ -2351,7 +2267,7 @@ class HostNameSslState(msrest.serialization.Model):
         self.host_type = host_type
 
 
-class HttpLogsConfig(msrest.serialization.Model):
+class HttpLogsConfig(_serialization.Model):
     """Http logs configuration.
 
     :ivar file_system: Http logs to file system configuration.
@@ -2361,8 +2277,8 @@ class HttpLogsConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'file_system': {'key': 'fileSystem', 'type': 'FileSystemHttpLogsConfig'},
-        'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageHttpLogsConfig'},
+        "file_system": {"key": "fileSystem", "type": "FileSystemHttpLogsConfig"},
+        "azure_blob_storage": {"key": "azureBlobStorage", "type": "AzureBlobStorageHttpLogsConfig"},
     }
 
     def __init__(
@@ -2370,8 +2286,8 @@ class HttpLogsConfig(msrest.serialization.Model):
         *,
         file_system: Optional["_models.FileSystemHttpLogsConfig"] = None,
         azure_blob_storage: Optional["_models.AzureBlobStorageHttpLogsConfig"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword file_system: Http logs to file system configuration.
         :paramtype file_system: ~azure.mgmt.web.v2016_08_01.models.FileSystemHttpLogsConfig
@@ -2379,12 +2295,12 @@ class HttpLogsConfig(msrest.serialization.Model):
         :paramtype azure_blob_storage:
          ~azure.mgmt.web.v2016_08_01.models.AzureBlobStorageHttpLogsConfig
         """
-        super(HttpLogsConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.file_system = file_system
         self.azure_blob_storage = azure_blob_storage
 
 
-class HybridConnection(ProxyOnlyResource):
+class HybridConnection(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Hybrid Connection contract. This is used to configure a Hybrid Connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2420,24 +2336,24 @@ class HybridConnection(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
-        'relay_name': {'key': 'properties.relayName', 'type': 'str'},
-        'relay_arm_uri': {'key': 'properties.relayArmUri', 'type': 'str'},
-        'hostname': {'key': 'properties.hostname', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'send_key_name': {'key': 'properties.sendKeyName', 'type': 'str'},
-        'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
-        'service_bus_suffix': {'key': 'properties.serviceBusSuffix', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "service_bus_namespace": {"key": "properties.serviceBusNamespace", "type": "str"},
+        "relay_name": {"key": "properties.relayName", "type": "str"},
+        "relay_arm_uri": {"key": "properties.relayArmUri", "type": "str"},
+        "hostname": {"key": "properties.hostname", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "send_key_name": {"key": "properties.sendKeyName", "type": "str"},
+        "send_key_value": {"key": "properties.sendKeyValue", "type": "str"},
+        "service_bus_suffix": {"key": "properties.serviceBusSuffix", "type": "str"},
     }
 
     def __init__(
@@ -2452,8 +2368,8 @@ class HybridConnection(ProxyOnlyResource):
         send_key_name: Optional[str] = None,
         send_key_value: Optional[str] = None,
         service_bus_suffix: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -2478,7 +2394,7 @@ class HybridConnection(ProxyOnlyResource):
          .servicebus.windows.net.
         :paramtype service_bus_suffix: str
         """
-        super(HybridConnection, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.service_bus_namespace = service_bus_namespace
         self.relay_name = relay_name
         self.relay_arm_uri = relay_arm_uri
@@ -2509,33 +2425,28 @@ class HybridConnectionKey(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'send_key_name': {'readonly': True},
-        'send_key_value': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "send_key_name": {"readonly": True},
+        "send_key_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'send_key_name': {'key': 'properties.sendKeyName', 'type': 'str'},
-        'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "send_key_name": {"key": "properties.sendKeyName", "type": "str"},
+        "send_key_value": {"key": "properties.sendKeyValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(HybridConnectionKey, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.send_key_name = None
         self.send_key_value = None
 
@@ -2558,113 +2469,96 @@ class Identifier(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        id_properties_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, id_properties_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword id_properties_id: String representation of the identity.
         :paramtype id_properties_id: str
         """
-        super(Identifier, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.id_properties_id = id_properties_id
 
 
-class IdentifierCollection(msrest.serialization.Model):
+class IdentifierCollection(_serialization.Model):
     """Collection of identifiers.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.Identifier]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Identifier]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Identifier]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Identifier"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Identifier"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.Identifier]
         """
-        super(IdentifierCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class IpSecurityRestriction(msrest.serialization.Model):
+class IpSecurityRestriction(_serialization.Model):
     """IP security restriction on an app.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar ip_address: Required. IP address the security restriction is valid for.
+    :ivar ip_address: IP address the security restriction is valid for. Required.
     :vartype ip_address: str
     :ivar subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
     :vartype subnet_mask: str
     """
 
     _validation = {
-        'ip_address': {'required': True},
+        "ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "subnet_mask": {"key": "subnetMask", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_address: str,
-        subnet_mask: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_address: str, subnet_mask: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword ip_address: Required. IP address the security restriction is valid for.
+        :keyword ip_address: IP address the security restriction is valid for. Required.
         :paramtype ip_address: str
         :keyword subnet_mask: Subnet mask for the range of IP addresses the restriction is valid for.
         :paramtype subnet_mask: str
         """
-        super(IpSecurityRestriction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip_address = ip_address
         self.subnet_mask = subnet_mask
 
 
-class LocalizableString(msrest.serialization.Model):
+class LocalizableString(_serialization.Model):
     """Localizable string object containing the name and a localized value.
 
     :ivar value: Non-localized name.
@@ -2674,34 +2568,28 @@ class LocalizableString(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Non-localized name.
         :paramtype value: str
         :keyword localized_value: Localized name.
         :paramtype localized_value: str
         """
-        super(LocalizableString, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class ManagedServiceIdentity(msrest.serialization.Model):
+class ManagedServiceIdentity(_serialization.Model):
     """Managed service identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Type of managed service identity. Known values are: "SystemAssigned".
+    :ivar type: Type of managed service identity. "SystemAssigned"
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
@@ -2710,27 +2598,24 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'tenant_id': {'readonly': True},
-        'principal_id': {'readonly': True},
+        "tenant_id": {"readonly": True},
+        "principal_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        **kwargs
-    ):
+        self, *, type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Type of managed service identity. Known values are: "SystemAssigned".
+        :keyword type: Type of managed service identity. "SystemAssigned"
         :paramtype type: str or ~azure.mgmt.web.v2016_08_01.models.ManagedServiceIdentityType
         """
-        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.tenant_id = None
         self.principal_id = None
@@ -2752,23 +2637,23 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     :ivar connection_string: Connection string to the remote MySQL database.
     :vartype connection_string: str
     :ivar migration_type: The type of migration operation to be done. Known values are:
-     "LocalToRemote", "RemoteToLocal".
+     "LocalToRemote" and "RemoteToLocal".
     :vartype migration_type: str or ~azure.mgmt.web.v2016_08_01.models.MySqlMigrationType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
-        'migration_type': {'key': 'properties.migrationType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "connection_string": {"key": "properties.connectionString", "type": "str"},
+        "migration_type": {"key": "properties.migrationType", "type": "str"},
     }
 
     def __init__(
@@ -2777,18 +2662,18 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         kind: Optional[str] = None,
         connection_string: Optional[str] = None,
         migration_type: Optional[Union[str, "_models.MySqlMigrationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword connection_string: Connection string to the remote MySQL database.
         :paramtype connection_string: str
         :keyword migration_type: The type of migration operation to be done. Known values are:
-         "LocalToRemote", "RemoteToLocal".
+         "LocalToRemote" and "RemoteToLocal".
         :paramtype migration_type: str or ~azure.mgmt.web.v2016_08_01.models.MySqlMigrationType
         """
-        super(MigrateMySqlRequest, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.connection_string = connection_string
         self.migration_type = migration_type
 
@@ -2807,7 +2692,7 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar migration_operation_status: Status of the migration task. Known values are: "InProgress",
-     "Failed", "Succeeded", "TimedOut", "Created".
+     "Failed", "Succeeded", "TimedOut", and "Created".
     :vartype migration_operation_status: str or ~azure.mgmt.web.v2016_08_01.models.OperationStatus
     :ivar operation_id: Operation ID for the migration task.
     :vartype operation_id: str
@@ -2816,41 +2701,36 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'migration_operation_status': {'readonly': True},
-        'operation_id': {'readonly': True},
-        'local_my_sql_enabled': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "migration_operation_status": {"readonly": True},
+        "operation_id": {"readonly": True},
+        "local_my_sql_enabled": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'migration_operation_status': {'key': 'properties.migrationOperationStatus', 'type': 'str'},
-        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
-        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "migration_operation_status": {"key": "properties.migrationOperationStatus", "type": "str"},
+        "operation_id": {"key": "properties.operationId", "type": "str"},
+        "local_my_sql_enabled": {"key": "properties.localMySqlEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(MigrateMySqlStatus, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.migration_operation_status = None
         self.operation_id = None
         self.local_my_sql_enabled = None
 
 
-class MSDeploy(ProxyOnlyResource):
+class MSDeploy(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """MSDeploy ARM PUT information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2885,23 +2765,23 @@ class MSDeploy(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'package_uri': {'key': 'properties.packageUri', 'type': 'str'},
-        'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
-        'db_type': {'key': 'properties.dbType', 'type': 'str'},
-        'set_parameters_xml_file_uri': {'key': 'properties.setParametersXmlFileUri', 'type': 'str'},
-        'set_parameters': {'key': 'properties.setParameters', 'type': '{str}'},
-        'skip_app_data': {'key': 'properties.skipAppData', 'type': 'bool'},
-        'app_offline': {'key': 'properties.appOffline', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "package_uri": {"key": "properties.packageUri", "type": "str"},
+        "connection_string": {"key": "properties.connectionString", "type": "str"},
+        "db_type": {"key": "properties.dbType", "type": "str"},
+        "set_parameters_xml_file_uri": {"key": "properties.setParametersXmlFileUri", "type": "str"},
+        "set_parameters": {"key": "properties.setParameters", "type": "{str}"},
+        "skip_app_data": {"key": "properties.skipAppData", "type": "bool"},
+        "app_offline": {"key": "properties.appOffline", "type": "bool"},
     }
 
     def __init__(
@@ -2915,8 +2795,8 @@ class MSDeploy(ProxyOnlyResource):
         set_parameters: Optional[Dict[str, str]] = None,
         skip_app_data: Optional[bool] = None,
         app_offline: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -2941,7 +2821,7 @@ class MSDeploy(ProxyOnlyResource):
          Setting is :code:`<code>false</code>` by default.
         :paramtype app_offline: bool
         """
-        super(MSDeploy, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.package_uri = package_uri
         self.connection_string = connection_string
         self.db_type = db_type
@@ -2969,66 +2849,57 @@ class MSDeployLog(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'entries': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "entries": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'entries': {'key': 'properties.entries', 'type': '[MSDeployLogEntry]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "entries": {"key": "properties.entries", "type": "[MSDeployLogEntry]"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(MSDeployLog, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.entries = None
 
 
-class MSDeployLogEntry(msrest.serialization.Model):
+class MSDeployLogEntry(_serialization.Model):
     """MSDeploy log entry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar time: Timestamp of log entry.
     :vartype time: ~datetime.datetime
-    :ivar type: Log entry type. Known values are: "Message", "Warning", "Error".
+    :ivar type: Log entry type. Known values are: "Message", "Warning", and "Error".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.MSDeployLogEntryType
     :ivar message: Log entry message.
     :vartype message: str
     """
 
     _validation = {
-        'time': {'readonly': True},
-        'type': {'readonly': True},
-        'message': {'readonly': True},
+        "time": {"readonly": True},
+        "type": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "time": {"key": "time", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MSDeployLogEntry, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.time = None
         self.type = None
         self.message = None
@@ -3050,7 +2921,7 @@ class MSDeployStatus(ProxyOnlyResource):
     :ivar deployer: Username of deployer.
     :vartype deployer: str
     :ivar provisioning_state: Provisioning state. Known values are: "accepted", "running",
-     "succeeded", "failed", "canceled".
+     "succeeded", "failed", and "canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.web.v2016_08_01.models.MSDeployProvisioningState
     :ivar start_time: Start time of deploy operation.
@@ -3062,39 +2933,34 @@ class MSDeployStatus(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'deployer': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'complete': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "deployer": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "complete": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'deployer': {'key': 'properties.deployer', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'complete': {'key': 'properties.complete', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "deployer": {"key": "properties.deployer", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "complete": {"key": "properties.complete", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(MSDeployStatus, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.deployer = None
         self.provisioning_state = None
         self.start_time = None
@@ -3102,7 +2968,7 @@ class MSDeployStatus(ProxyOnlyResource):
         self.complete = None
 
 
-class NameValuePair(msrest.serialization.Model):
+class NameValuePair(_serialization.Model):
     """Name value pair.
 
     :ivar name: Pair name.
@@ -3112,24 +2978,18 @@ class NameValuePair(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Pair name.
         :paramtype name: str
         :keyword value: Pair value.
         :paramtype value: str
         """
-        super(NameValuePair, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
@@ -3159,44 +3019,39 @@ class NetworkFeatures(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'virtual_network_name': {'readonly': True},
-        'virtual_network_connection': {'readonly': True},
-        'hybrid_connections': {'readonly': True},
-        'hybrid_connections_v2': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "virtual_network_name": {"readonly": True},
+        "virtual_network_connection": {"readonly": True},
+        "hybrid_connections": {"readonly": True},
+        "hybrid_connections_v2": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'virtual_network_name': {'key': 'properties.virtualNetworkName', 'type': 'str'},
-        'virtual_network_connection': {'key': 'properties.virtualNetworkConnection', 'type': 'VnetInfo'},
-        'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]'},
-        'hybrid_connections_v2': {'key': 'properties.hybridConnectionsV2', 'type': '[HybridConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "virtual_network_name": {"key": "properties.virtualNetworkName", "type": "str"},
+        "virtual_network_connection": {"key": "properties.virtualNetworkConnection", "type": "VnetInfo"},
+        "hybrid_connections": {"key": "properties.hybridConnections", "type": "[RelayServiceConnectionEntity]"},
+        "hybrid_connections_v2": {"key": "properties.hybridConnectionsV2", "type": "[HybridConnection]"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(NetworkFeatures, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.virtual_network_name = None
         self.virtual_network_connection = None
         self.hybrid_connections = None
         self.hybrid_connections_v2 = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """An operation on a resource.
 
     :ivar id: Operation ID.
@@ -3204,7 +3059,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name.
     :vartype name: str
     :ivar status: The current status of the operation. Known values are: "InProgress", "Failed",
-     "Succeeded", "TimedOut", "Created".
+     "Succeeded", "TimedOut", and "Created".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.OperationStatus
     :ivar errors: Any errors associate with the operation.
     :vartype errors: list[~azure.mgmt.web.v2016_08_01.models.ErrorEntity]
@@ -3219,20 +3074,20 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[ErrorEntity]'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
-        'expiration_time': {'key': 'expirationTime', 'type': 'iso-8601'},
-        'geo_master_operation_id': {'key': 'geoMasterOperationId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "errors": {"key": "errors", "type": "[ErrorEntity]"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
+        "expiration_time": {"key": "expirationTime", "type": "iso-8601"},
+        "geo_master_operation_id": {"key": "geoMasterOperationId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         status: Optional[Union[str, "_models.OperationStatus"]] = None,
         errors: Optional[List["_models.ErrorEntity"]] = None,
@@ -3240,15 +3095,15 @@ class Operation(msrest.serialization.Model):
         modified_time: Optional[datetime.datetime] = None,
         expiration_time: Optional[datetime.datetime] = None,
         geo_master_operation_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Operation ID.
         :paramtype id: str
         :keyword name: Operation name.
         :paramtype name: str
         :keyword status: The current status of the operation. Known values are: "InProgress", "Failed",
-         "Succeeded", "TimedOut", "Created".
+         "Succeeded", "TimedOut", and "Created".
         :paramtype status: str or ~azure.mgmt.web.v2016_08_01.models.OperationStatus
         :keyword errors: Any errors associate with the operation.
         :paramtype errors: list[~azure.mgmt.web.v2016_08_01.models.ErrorEntity]
@@ -3261,7 +3116,7 @@ class Operation(msrest.serialization.Model):
         :keyword geo_master_operation_id: Applicable only for stamp operation ids.
         :paramtype geo_master_operation_id: str
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -3272,45 +3127,40 @@ class Operation(msrest.serialization.Model):
         self.geo_master_operation_id = geo_master_operation_id
 
 
-class PerfMonCounterCollection(msrest.serialization.Model):
+class PerfMonCounterCollection(_serialization.Model):
     """Collection of performance monitor counters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.PerfMonResponse]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PerfMonResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PerfMonResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.PerfMonResponse"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.PerfMonResponse"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.PerfMonResponse]
         """
-        super(PerfMonCounterCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class PerfMonResponse(msrest.serialization.Model):
+class PerfMonResponse(_serialization.Model):
     """Performance monitor API response.
 
     :ivar code: The response code.
@@ -3322,9 +3172,9 @@ class PerfMonResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'PerfMonSet'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "data": {"key": "data", "type": "PerfMonSet"},
     }
 
     def __init__(
@@ -3333,8 +3183,8 @@ class PerfMonResponse(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         data: Optional["_models.PerfMonSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The response code.
         :paramtype code: str
@@ -3343,13 +3193,13 @@ class PerfMonResponse(msrest.serialization.Model):
         :keyword data: The performance monitor counters.
         :paramtype data: ~azure.mgmt.web.v2016_08_01.models.PerfMonSet
         """
-        super(PerfMonResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.data = data
 
 
-class PerfMonSample(msrest.serialization.Model):
+class PerfMonSample(_serialization.Model):
     """Performance monitor sample in a set.
 
     :ivar time: Point in time for which counter was measured.
@@ -3363,10 +3213,10 @@ class PerfMonSample(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'instance_name': {'key': 'instanceName', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
-        'core_count': {'key': 'coreCount', 'type': 'int'},
+        "time": {"key": "time", "type": "iso-8601"},
+        "instance_name": {"key": "instanceName", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "core_count": {"key": "coreCount", "type": "int"},
     }
 
     def __init__(
@@ -3376,8 +3226,8 @@ class PerfMonSample(msrest.serialization.Model):
         instance_name: Optional[str] = None,
         value: Optional[float] = None,
         core_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time: Point in time for which counter was measured.
         :paramtype time: ~datetime.datetime
@@ -3388,14 +3238,14 @@ class PerfMonSample(msrest.serialization.Model):
         :keyword core_count: Core Count of worker. Not a data member.
         :paramtype core_count: int
         """
-        super(PerfMonSample, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.time = time
         self.instance_name = instance_name
         self.value = value
         self.core_count = core_count
 
 
-class PerfMonSet(msrest.serialization.Model):
+class PerfMonSet(_serialization.Model):
     """Metric information.
 
     :ivar name: Unique key name of the counter.
@@ -3411,11 +3261,11 @@ class PerfMonSet(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[PerfMonSample]'},
+        "name": {"key": "name", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "values": {"key": "values", "type": "[PerfMonSample]"},
     }
 
     def __init__(
@@ -3426,8 +3276,8 @@ class PerfMonSet(msrest.serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
         values: Optional[List["_models.PerfMonSample"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Unique key name of the counter.
         :paramtype name: str
@@ -3440,7 +3290,7 @@ class PerfMonSet(msrest.serialization.Model):
         :keyword values: Collection of workers that are active during this time.
         :paramtype values: list[~azure.mgmt.web.v2016_08_01.models.PerfMonSample]
         """
-        super(PerfMonSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.start_time = start_time
         self.end_time = end_time
@@ -3448,7 +3298,7 @@ class PerfMonSet(msrest.serialization.Model):
         self.values = values
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Azure resource. This resource is tracked in Azure Resource Manager.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3461,47 +3311,42 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar kind: Kind of resource.
     :vartype kind: str
-    :ivar location: Required. Resource Location.
+    :ivar location: Resource Location. Required.
     :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        self, *, location: str, kind: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword location: Required. Resource Location.
+        :keyword location: Resource Location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.kind = kind
@@ -3510,7 +3355,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class PremierAddOn(Resource):
+class PremierAddOn(Resource):  # pylint: disable=too-many-instance-attributes
     """Premier add-on.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3523,11 +3368,11 @@ class PremierAddOn(Resource):
     :vartype name: str
     :ivar kind: Kind of resource.
     :vartype kind: str
-    :ivar location: Required. Resource Location.
+    :ivar location: Resource Location. Required.
     :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: Premier add on SKU.
     :vartype sku: str
@@ -3548,27 +3393,27 @@ class PremierAddOn(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'str'},
-        'product': {'key': 'properties.product', 'type': 'str'},
-        'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_name': {'key': 'properties.name', 'type': 'str'},
-        'location_properties_location': {'key': 'properties.location', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '{str}'},
-        'marketplace_publisher': {'key': 'properties.marketplacePublisher', 'type': 'str'},
-        'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "product": {"key": "properties.product", "type": "str"},
+        "vendor": {"key": "properties.vendor", "type": "str"},
+        "premier_add_on_name": {"key": "properties.name", "type": "str"},
+        "location_properties_location": {"key": "properties.location", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "{str}"},
+        "marketplace_publisher": {"key": "properties.marketplacePublisher", "type": "str"},
+        "marketplace_offer": {"key": "properties.marketplaceOffer", "type": "str"},
     }
 
     def __init__(
@@ -3585,14 +3430,14 @@ class PremierAddOn(Resource):
         tags_properties_tags: Optional[Dict[str, str]] = None,
         marketplace_publisher: Optional[str] = None,
         marketplace_offer: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword location: Required. Resource Location.
+        :keyword location: Resource Location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: Premier add on SKU.
         :paramtype sku: str
@@ -3611,7 +3456,7 @@ class PremierAddOn(Resource):
         :keyword marketplace_offer: Premier add on Marketplace offer.
         :paramtype marketplace_offer: str
         """
-        super(PremierAddOn, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
+        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.product = product
         self.vendor = vendor
@@ -3622,7 +3467,7 @@ class PremierAddOn(Resource):
         self.marketplace_offer = marketplace_offer
 
 
-class ProcessInfo(ProxyOnlyResource):
+class ProcessInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Process Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3680,23 +3525,23 @@ class ProcessInfo(ProxyOnlyResource):
     :ivar privileged_processor_time: Privileged CPU time.
     :vartype privileged_processor_time: str
     :ivar working_set64: Working set.
-    :vartype working_set64: long
+    :vartype working_set64: int
     :ivar peak_working_set64: Peak working set.
-    :vartype peak_working_set64: long
+    :vartype peak_working_set64: int
     :ivar private_memory_size64: Private memory size.
-    :vartype private_memory_size64: long
+    :vartype private_memory_size64: int
     :ivar virtual_memory_size64: Virtual memory size.
-    :vartype virtual_memory_size64: long
+    :vartype virtual_memory_size64: int
     :ivar peak_virtual_memory_size64: Peak virtual memory usage.
-    :vartype peak_virtual_memory_size64: long
+    :vartype peak_virtual_memory_size64: int
     :ivar paged_system_memory_size64: Paged system memory.
-    :vartype paged_system_memory_size64: long
+    :vartype paged_system_memory_size64: int
     :ivar nonpaged_system_memory_size64: Non-paged system memory.
-    :vartype nonpaged_system_memory_size64: long
+    :vartype nonpaged_system_memory_size64: int
     :ivar paged_memory_size64: Paged memory.
-    :vartype paged_memory_size64: long
+    :vartype paged_memory_size64: int
     :ivar peak_paged_memory_size64: Peak paged memory.
-    :vartype peak_paged_memory_size64: long
+    :vartype peak_paged_memory_size64: int
     :ivar time_stamp: Time stamp.
     :vartype time_stamp: ~datetime.datetime
     :ivar environment_variables: List of environment variables.
@@ -3710,55 +3555,55 @@ class ProcessInfo(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'int'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'href': {'key': 'properties.href', 'type': 'str'},
-        'mini_dump': {'key': 'properties.miniDump', 'type': 'str'},
-        'is_profile_running': {'key': 'properties.isProfileRunning', 'type': 'bool'},
-        'is_iis_profile_running': {'key': 'properties.isIisProfileRunning', 'type': 'bool'},
-        'iis_profile_timeout_in_seconds': {'key': 'properties.iisProfileTimeoutInSeconds', 'type': 'float'},
-        'parent': {'key': 'properties.parent', 'type': 'str'},
-        'children': {'key': 'properties.children', 'type': '[str]'},
-        'threads': {'key': 'properties.threads', 'type': '[ProcessThreadInfo]'},
-        'open_file_handles': {'key': 'properties.openFileHandles', 'type': '[str]'},
-        'modules': {'key': 'properties.modules', 'type': '[ProcessModuleInfo]'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'command_line': {'key': 'properties.commandLine', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'handle_count': {'key': 'properties.handleCount', 'type': 'int'},
-        'module_count': {'key': 'properties.moduleCount', 'type': 'int'},
-        'thread_count': {'key': 'properties.threadCount', 'type': 'int'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'total_processor_time': {'key': 'properties.totalProcessorTime', 'type': 'str'},
-        'user_processor_time': {'key': 'properties.userProcessorTime', 'type': 'str'},
-        'privileged_processor_time': {'key': 'properties.privilegedProcessorTime', 'type': 'str'},
-        'working_set64': {'key': 'properties.workingSet64', 'type': 'long'},
-        'peak_working_set64': {'key': 'properties.peakWorkingSet64', 'type': 'long'},
-        'private_memory_size64': {'key': 'properties.privateMemorySize64', 'type': 'long'},
-        'virtual_memory_size64': {'key': 'properties.virtualMemorySize64', 'type': 'long'},
-        'peak_virtual_memory_size64': {'key': 'properties.peakVirtualMemorySize64', 'type': 'long'},
-        'paged_system_memory_size64': {'key': 'properties.pagedSystemMemorySize64', 'type': 'long'},
-        'nonpaged_system_memory_size64': {'key': 'properties.nonpagedSystemMemorySize64', 'type': 'long'},
-        'paged_memory_size64': {'key': 'properties.pagedMemorySize64', 'type': 'long'},
-        'peak_paged_memory_size64': {'key': 'properties.peakPagedMemorySize64', 'type': 'long'},
-        'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
-        'environment_variables': {'key': 'properties.environmentVariables', 'type': '{str}'},
-        'is_scm_site': {'key': 'properties.isScmSite', 'type': 'bool'},
-        'is_web_job': {'key': 'properties.isWebJob', 'type': 'bool'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "int"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "href": {"key": "properties.href", "type": "str"},
+        "mini_dump": {"key": "properties.miniDump", "type": "str"},
+        "is_profile_running": {"key": "properties.isProfileRunning", "type": "bool"},
+        "is_iis_profile_running": {"key": "properties.isIisProfileRunning", "type": "bool"},
+        "iis_profile_timeout_in_seconds": {"key": "properties.iisProfileTimeoutInSeconds", "type": "float"},
+        "parent": {"key": "properties.parent", "type": "str"},
+        "children": {"key": "properties.children", "type": "[str]"},
+        "threads": {"key": "properties.threads", "type": "[ProcessThreadInfo]"},
+        "open_file_handles": {"key": "properties.openFileHandles", "type": "[str]"},
+        "modules": {"key": "properties.modules", "type": "[ProcessModuleInfo]"},
+        "file_name": {"key": "properties.fileName", "type": "str"},
+        "command_line": {"key": "properties.commandLine", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "handle_count": {"key": "properties.handleCount", "type": "int"},
+        "module_count": {"key": "properties.moduleCount", "type": "int"},
+        "thread_count": {"key": "properties.threadCount", "type": "int"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "total_processor_time": {"key": "properties.totalProcessorTime", "type": "str"},
+        "user_processor_time": {"key": "properties.userProcessorTime", "type": "str"},
+        "privileged_processor_time": {"key": "properties.privilegedProcessorTime", "type": "str"},
+        "working_set64": {"key": "properties.workingSet64", "type": "int"},
+        "peak_working_set64": {"key": "properties.peakWorkingSet64", "type": "int"},
+        "private_memory_size64": {"key": "properties.privateMemorySize64", "type": "int"},
+        "virtual_memory_size64": {"key": "properties.virtualMemorySize64", "type": "int"},
+        "peak_virtual_memory_size64": {"key": "properties.peakVirtualMemorySize64", "type": "int"},
+        "paged_system_memory_size64": {"key": "properties.pagedSystemMemorySize64", "type": "int"},
+        "nonpaged_system_memory_size64": {"key": "properties.nonpagedSystemMemorySize64", "type": "int"},
+        "paged_memory_size64": {"key": "properties.pagedMemorySize64", "type": "int"},
+        "peak_paged_memory_size64": {"key": "properties.peakPagedMemorySize64", "type": "int"},
+        "time_stamp": {"key": "properties.timeStamp", "type": "iso-8601"},
+        "environment_variables": {"key": "properties.environmentVariables", "type": "{str}"},
+        "is_scm_site": {"key": "properties.isScmSite", "type": "bool"},
+        "is_web_job": {"key": "properties.isWebJob", "type": "bool"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         kind: Optional[str] = None,
@@ -3798,8 +3643,8 @@ class ProcessInfo(ProxyOnlyResource):
         is_scm_site: Optional[bool] = None,
         is_web_job: Optional[bool] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -3848,23 +3693,23 @@ class ProcessInfo(ProxyOnlyResource):
         :keyword privileged_processor_time: Privileged CPU time.
         :paramtype privileged_processor_time: str
         :keyword working_set64: Working set.
-        :paramtype working_set64: long
+        :paramtype working_set64: int
         :keyword peak_working_set64: Peak working set.
-        :paramtype peak_working_set64: long
+        :paramtype peak_working_set64: int
         :keyword private_memory_size64: Private memory size.
-        :paramtype private_memory_size64: long
+        :paramtype private_memory_size64: int
         :keyword virtual_memory_size64: Virtual memory size.
-        :paramtype virtual_memory_size64: long
+        :paramtype virtual_memory_size64: int
         :keyword peak_virtual_memory_size64: Peak virtual memory usage.
-        :paramtype peak_virtual_memory_size64: long
+        :paramtype peak_virtual_memory_size64: int
         :keyword paged_system_memory_size64: Paged system memory.
-        :paramtype paged_system_memory_size64: long
+        :paramtype paged_system_memory_size64: int
         :keyword nonpaged_system_memory_size64: Non-paged system memory.
-        :paramtype nonpaged_system_memory_size64: long
+        :paramtype nonpaged_system_memory_size64: int
         :keyword paged_memory_size64: Paged memory.
-        :paramtype paged_memory_size64: long
+        :paramtype paged_memory_size64: int
         :keyword peak_paged_memory_size64: Peak paged memory.
-        :paramtype peak_paged_memory_size64: long
+        :paramtype peak_paged_memory_size64: int
         :keyword time_stamp: Time stamp.
         :paramtype time_stamp: ~datetime.datetime
         :keyword environment_variables: List of environment variables.
@@ -3876,7 +3721,7 @@ class ProcessInfo(ProxyOnlyResource):
         :keyword description: Description of process.
         :paramtype description: str
         """
-        super(ProcessInfo, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.id_properties_id = id_properties_id
         self.name_properties_name = name_properties_name
         self.href = href
@@ -3915,45 +3760,40 @@ class ProcessInfo(ProxyOnlyResource):
         self.description = description
 
 
-class ProcessInfoCollection(msrest.serialization.Model):
+class ProcessInfoCollection(_serialization.Model):
     """Collection of Kudu process information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.ProcessInfo]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProcessInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProcessInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.ProcessInfo"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ProcessInfo"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.ProcessInfo]
         """
-        super(ProcessInfoCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ProcessModuleInfo(ProxyOnlyResource):
+class ProcessModuleInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Process Module Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3991,27 +3831,27 @@ class ProcessModuleInfo(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'base_address': {'key': 'properties.baseAddress', 'type': 'str'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'href': {'key': 'properties.href', 'type': 'str'},
-        'file_path': {'key': 'properties.filePath', 'type': 'str'},
-        'module_memory_size': {'key': 'properties.moduleMemorySize', 'type': 'int'},
-        'file_version': {'key': 'properties.fileVersion', 'type': 'str'},
-        'file_description': {'key': 'properties.fileDescription', 'type': 'str'},
-        'product': {'key': 'properties.product', 'type': 'str'},
-        'product_version': {'key': 'properties.productVersion', 'type': 'str'},
-        'is_debug': {'key': 'properties.isDebug', 'type': 'bool'},
-        'language': {'key': 'properties.language', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "base_address": {"key": "properties.baseAddress", "type": "str"},
+        "file_name": {"key": "properties.fileName", "type": "str"},
+        "href": {"key": "properties.href", "type": "str"},
+        "file_path": {"key": "properties.filePath", "type": "str"},
+        "module_memory_size": {"key": "properties.moduleMemorySize", "type": "int"},
+        "file_version": {"key": "properties.fileVersion", "type": "str"},
+        "file_description": {"key": "properties.fileDescription", "type": "str"},
+        "product": {"key": "properties.product", "type": "str"},
+        "product_version": {"key": "properties.productVersion", "type": "str"},
+        "is_debug": {"key": "properties.isDebug", "type": "bool"},
+        "language": {"key": "properties.language", "type": "str"},
     }
 
     def __init__(
@@ -4029,8 +3869,8 @@ class ProcessModuleInfo(ProxyOnlyResource):
         product_version: Optional[str] = None,
         is_debug: Optional[bool] = None,
         language: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -4057,7 +3897,7 @@ class ProcessModuleInfo(ProxyOnlyResource):
         :keyword language: Module language (locale).
         :paramtype language: str
         """
-        super(ProcessModuleInfo, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.base_address = base_address
         self.file_name = file_name
         self.href = href
@@ -4071,45 +3911,40 @@ class ProcessModuleInfo(ProxyOnlyResource):
         self.language = language
 
 
-class ProcessModuleInfoCollection(msrest.serialization.Model):
+class ProcessModuleInfoCollection(_serialization.Model):
     """Collection of Kudu thread information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.ProcessModuleInfo]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProcessModuleInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProcessModuleInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.ProcessModuleInfo"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ProcessModuleInfo"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.ProcessModuleInfo]
         """
-        super(ProcessModuleInfoCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ProcessThreadInfo(ProxyOnlyResource):
+class ProcessThreadInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Process Thread Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4151,29 +3986,29 @@ class ProcessThreadInfo(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'int'},
-        'href': {'key': 'properties.href', 'type': 'str'},
-        'process': {'key': 'properties.process', 'type': 'str'},
-        'start_address': {'key': 'properties.startAddress', 'type': 'str'},
-        'current_priority': {'key': 'properties.currentPriority', 'type': 'int'},
-        'priority_level': {'key': 'properties.priorityLevel', 'type': 'str'},
-        'base_priority': {'key': 'properties.basePriority', 'type': 'int'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'total_processor_time': {'key': 'properties.totalProcessorTime', 'type': 'str'},
-        'user_processor_time': {'key': 'properties.userProcessorTime', 'type': 'str'},
-        'priviledged_processor_time': {'key': 'properties.priviledgedProcessorTime', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'wait_reason': {'key': 'properties.waitReason', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "int"},
+        "href": {"key": "properties.href", "type": "str"},
+        "process": {"key": "properties.process", "type": "str"},
+        "start_address": {"key": "properties.startAddress", "type": "str"},
+        "current_priority": {"key": "properties.currentPriority", "type": "int"},
+        "priority_level": {"key": "properties.priorityLevel", "type": "str"},
+        "base_priority": {"key": "properties.basePriority", "type": "int"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "total_processor_time": {"key": "properties.totalProcessorTime", "type": "str"},
+        "user_processor_time": {"key": "properties.userProcessorTime", "type": "str"},
+        "priviledged_processor_time": {"key": "properties.priviledgedProcessorTime", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "wait_reason": {"key": "properties.waitReason", "type": "str"},
     }
 
     def __init__(
@@ -4193,8 +4028,8 @@ class ProcessThreadInfo(ProxyOnlyResource):
         priviledged_processor_time: Optional[str] = None,
         state: Optional[str] = None,
         wait_reason: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -4225,7 +4060,7 @@ class ProcessThreadInfo(ProxyOnlyResource):
         :keyword wait_reason: Wait reason.
         :paramtype wait_reason: str
         """
-        super(ProcessThreadInfo, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.id_properties_id = id_properties_id
         self.href = href
         self.process = process
@@ -4241,40 +4076,35 @@ class ProcessThreadInfo(ProxyOnlyResource):
         self.wait_reason = wait_reason
 
 
-class ProcessThreadInfoCollection(msrest.serialization.Model):
+class ProcessThreadInfoCollection(_serialization.Model):
     """Collection of Kudu thread information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.ProcessThreadInfo]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProcessThreadInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProcessThreadInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.ProcessThreadInfo"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ProcessThreadInfo"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.ProcessThreadInfo]
         """
-        super(ProcessThreadInfoCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -4293,9 +4123,9 @@ class PublicCertificate(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar blob: Public Certificate byte array.
-    :vartype blob: bytearray
+    :vartype blob: bytes
     :ivar public_certificate_location: Public Certificate Location. Known values are:
-     "CurrentUserMy", "LocalMachineMy", "Unknown".
+     "CurrentUserMy", "LocalMachineMy", and "Unknown".
     :vartype public_certificate_location: str or
      ~azure.mgmt.web.v2016_08_01.models.PublicCertificateLocation
     :ivar thumbprint: Certificate Thumbprint.
@@ -4303,80 +4133,75 @@ class PublicCertificate(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'thumbprint': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "thumbprint": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'blob': {'key': 'properties.blob', 'type': 'bytearray'},
-        'public_certificate_location': {'key': 'properties.publicCertificateLocation', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "blob": {"key": "properties.blob", "type": "bytearray"},
+        "public_certificate_location": {"key": "properties.publicCertificateLocation", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         kind: Optional[str] = None,
-        blob: Optional[bytearray] = None,
+        blob: Optional[bytes] = None,
         public_certificate_location: Optional[Union[str, "_models.PublicCertificateLocation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword blob: Public Certificate byte array.
-        :paramtype blob: bytearray
+        :paramtype blob: bytes
         :keyword public_certificate_location: Public Certificate Location. Known values are:
-         "CurrentUserMy", "LocalMachineMy", "Unknown".
+         "CurrentUserMy", "LocalMachineMy", and "Unknown".
         :paramtype public_certificate_location: str or
          ~azure.mgmt.web.v2016_08_01.models.PublicCertificateLocation
         """
-        super(PublicCertificate, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.blob = blob
         self.public_certificate_location = public_certificate_location
         self.thumbprint = None
 
 
-class PublicCertificateCollection(msrest.serialization.Model):
+class PublicCertificateCollection(_serialization.Model):
     """Collection of public certificates.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.PublicCertificate]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PublicCertificate]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PublicCertificate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.PublicCertificate"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.PublicCertificate"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.PublicCertificate]
         """
-        super(PublicCertificateCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -4396,8 +4221,8 @@ class PushSettings(ProxyOnlyResource):
     :vartype type: str
     :ivar is_push_enabled: Gets or sets a flag indicating whether the Push endpoint is enabled.
     :vartype is_push_enabled: bool
-    :ivar tag_whitelist_json: Gets or sets a JSON string containing a list of tags that are
-     whitelisted for use by the push registration endpoint.
+    :ivar tag_whitelist_json: Gets or sets a JSON string containing a list of tags that are in the
+     allowed list for use by the push registration endpoint.
     :vartype tag_whitelist_json: str
     :ivar tags_requiring_auth: Gets or sets a JSON string containing a list of tags that require
      user authentication to be used in the push registration endpoint.
@@ -4411,20 +4236,20 @@ class PushSettings(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'is_push_enabled': {'key': 'properties.isPushEnabled', 'type': 'bool'},
-        'tag_whitelist_json': {'key': 'properties.tagWhitelistJson', 'type': 'str'},
-        'tags_requiring_auth': {'key': 'properties.tagsRequiringAuth', 'type': 'str'},
-        'dynamic_tags_json': {'key': 'properties.dynamicTagsJson', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "is_push_enabled": {"key": "properties.isPushEnabled", "type": "bool"},
+        "tag_whitelist_json": {"key": "properties.tagWhitelistJson", "type": "str"},
+        "tags_requiring_auth": {"key": "properties.tagsRequiringAuth", "type": "str"},
+        "dynamic_tags_json": {"key": "properties.dynamicTagsJson", "type": "str"},
     }
 
     def __init__(
@@ -4435,15 +4260,15 @@ class PushSettings(ProxyOnlyResource):
         tag_whitelist_json: Optional[str] = None,
         tags_requiring_auth: Optional[str] = None,
         dynamic_tags_json: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword is_push_enabled: Gets or sets a flag indicating whether the Push endpoint is enabled.
         :paramtype is_push_enabled: bool
-        :keyword tag_whitelist_json: Gets or sets a JSON string containing a list of tags that are
-         whitelisted for use by the push registration endpoint.
+        :keyword tag_whitelist_json: Gets or sets a JSON string containing a list of tags that are in
+         the allowed list for use by the push registration endpoint.
         :paramtype tag_whitelist_json: str
         :keyword tags_requiring_auth: Gets or sets a JSON string containing a list of tags that require
          user authentication to be used in the push registration endpoint.
@@ -4455,15 +4280,16 @@ class PushSettings(ProxyOnlyResource):
          will be evaluated from user claims in the push registration endpoint.
         :paramtype dynamic_tags_json: str
         """
-        super(PushSettings, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.is_push_enabled = is_push_enabled
         self.tag_whitelist_json = tag_whitelist_json
         self.tags_requiring_auth = tags_requiring_auth
         self.dynamic_tags_json = dynamic_tags_json
 
 
-class RampUpRule(msrest.serialization.Model):
-    """Routing rules for ramp up testing. This rule allows to redirect static traffic % to a slot or to gradually change routing % based on performance.
+class RampUpRule(_serialization.Model):
+    """Routing rules for ramp up testing. This rule allows to redirect static traffic % to a slot or
+    to gradually change routing % based on performance.
 
     :ivar action_host_name: Hostname of a slot to which the traffic will be redirected if decided
      to. E.g. myapp-stage.azurewebsites.net.
@@ -4496,14 +4322,14 @@ class RampUpRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_host_name': {'key': 'actionHostName', 'type': 'str'},
-        'reroute_percentage': {'key': 'reroutePercentage', 'type': 'float'},
-        'change_step': {'key': 'changeStep', 'type': 'float'},
-        'change_interval_in_minutes': {'key': 'changeIntervalInMinutes', 'type': 'int'},
-        'min_reroute_percentage': {'key': 'minReroutePercentage', 'type': 'float'},
-        'max_reroute_percentage': {'key': 'maxReroutePercentage', 'type': 'float'},
-        'change_decision_callback_url': {'key': 'changeDecisionCallbackUrl', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "action_host_name": {"key": "actionHostName", "type": "str"},
+        "reroute_percentage": {"key": "reroutePercentage", "type": "float"},
+        "change_step": {"key": "changeStep", "type": "float"},
+        "change_interval_in_minutes": {"key": "changeIntervalInMinutes", "type": "int"},
+        "min_reroute_percentage": {"key": "minReroutePercentage", "type": "float"},
+        "max_reroute_percentage": {"key": "maxReroutePercentage", "type": "float"},
+        "change_decision_callback_url": {"key": "changeDecisionCallbackUrl", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
@@ -4517,8 +4343,8 @@ class RampUpRule(msrest.serialization.Model):
         max_reroute_percentage: Optional[float] = None,
         change_decision_callback_url: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_host_name: Hostname of a slot to which the traffic will be redirected if
          decided to. E.g. myapp-stage.azurewebsites.net.
@@ -4551,7 +4377,7 @@ class RampUpRule(msrest.serialization.Model):
          which will receive the traffic in the experiment.
         :paramtype name: str
         """
-        super(RampUpRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_host_name = action_host_name
         self.reroute_percentage = reroute_percentage
         self.change_step = change_step
@@ -4562,7 +4388,7 @@ class RampUpRule(msrest.serialization.Model):
         self.name = name
 
 
-class RelayServiceConnectionEntity(ProxyOnlyResource):
+class RelayServiceConnectionEntity(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Hybrid Connection for an App Service app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4592,23 +4418,23 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'entity_name': {'key': 'properties.entityName', 'type': 'str'},
-        'entity_connection_string': {'key': 'properties.entityConnectionString', 'type': 'str'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
-        'resource_connection_string': {'key': 'properties.resourceConnectionString', 'type': 'str'},
-        'hostname': {'key': 'properties.hostname', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "entity_name": {"key": "properties.entityName", "type": "str"},
+        "entity_connection_string": {"key": "properties.entityConnectionString", "type": "str"},
+        "resource_type": {"key": "properties.resourceType", "type": "str"},
+        "resource_connection_string": {"key": "properties.resourceConnectionString", "type": "str"},
+        "hostname": {"key": "properties.hostname", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "biztalk_uri": {"key": "properties.biztalkUri", "type": "str"},
     }
 
     def __init__(
@@ -4622,8 +4448,8 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
         hostname: Optional[str] = None,
         port: Optional[int] = None,
         biztalk_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -4642,7 +4468,7 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
         :keyword biztalk_uri:
         :paramtype biztalk_uri: str
         """
-        super(RelayServiceConnectionEntity, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.entity_name = entity_name
         self.entity_connection_string = entity_connection_string
         self.resource_type = resource_type
@@ -4652,7 +4478,7 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
         self.biztalk_uri = biztalk_uri
 
 
-class RequestsBasedTrigger(msrest.serialization.Model):
+class RequestsBasedTrigger(_serialization.Model):
     """Trigger based on total requests.
 
     :ivar count: Request Count.
@@ -4662,29 +4488,23 @@ class RequestsBasedTrigger(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'time_interval': {'key': 'timeInterval', 'type': 'str'},
+        "count": {"key": "count", "type": "int"},
+        "time_interval": {"key": "timeInterval", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: Optional[int] = None,
-        time_interval: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, count: Optional[int] = None, time_interval: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword count: Request Count.
         :paramtype count: int
         :keyword time_interval: Time interval.
         :paramtype time_interval: str
         """
-        super(RequestsBasedTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
         self.time_interval = time_interval
 
 
-class ResourceMetric(msrest.serialization.Model):
+class ResourceMetric(_serialization.Model):
     """Object representing a metric for any resource .
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4710,36 +4530,32 @@ class ResourceMetric(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'unit': {'readonly': True},
-        'time_grain': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'resource_id': {'readonly': True},
-        'id': {'readonly': True},
-        'metric_values': {'readonly': True},
-        'properties': {'readonly': True},
+        "name": {"readonly": True},
+        "unit": {"readonly": True},
+        "time_grain": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "id": {"readonly": True},
+        "metric_values": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'ResourceMetricName'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'metric_values': {'key': 'metricValues', 'type': '[ResourceMetricValue]'},
-        'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
+        "name": {"key": "name", "type": "ResourceMetricName"},
+        "unit": {"key": "unit", "type": "str"},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "metric_values": {"key": "metricValues", "type": "[ResourceMetricValue]"},
+        "properties": {"key": "properties", "type": "[ResourceMetricProperty]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceMetric, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.unit = None
         self.time_grain = None
@@ -4751,7 +4567,7 @@ class ResourceMetric(msrest.serialization.Model):
         self.properties = None
 
 
-class ResourceMetricAvailability(msrest.serialization.Model):
+class ResourceMetricAvailability(_serialization.Model):
     """Metrics availability and retention.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4763,65 +4579,56 @@ class ResourceMetricAvailability(msrest.serialization.Model):
     """
 
     _validation = {
-        'time_grain': {'readonly': True},
-        'retention': {'readonly': True},
+        "time_grain": {"readonly": True},
+        "retention": {"readonly": True},
     }
 
     _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'retention': {'key': 'retention', 'type': 'str'},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "retention": {"key": "retention", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceMetricAvailability, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.time_grain = None
         self.retention = None
 
 
-class ResourceMetricCollection(msrest.serialization.Model):
+class ResourceMetricCollection(_serialization.Model):
     """Collection of metric responses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.ResourceMetric]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceMetric]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceMetric]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.ResourceMetric"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ResourceMetric"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.ResourceMetric]
         """
-        super(ResourceMetricCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ResourceMetricDefinition(ProxyOnlyResource):
+class ResourceMetricDefinition(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Metadata for the metrics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4853,43 +4660,38 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'unit': {'readonly': True},
-        'primary_aggregation_type': {'readonly': True},
-        'metric_availabilities': {'readonly': True},
-        'resource_uri': {'readonly': True},
-        'id_properties_id': {'readonly': True},
-        'properties': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "unit": {"readonly": True},
+        "primary_aggregation_type": {"readonly": True},
+        "metric_availabilities": {"readonly": True},
+        "resource_uri": {"readonly": True},
+        "id_properties_id": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'ResourceMetricName'},
-        'unit': {'key': 'properties.unit', 'type': 'str'},
-        'primary_aggregation_type': {'key': 'properties.primaryAggregationType', 'type': 'str'},
-        'metric_availabilities': {'key': 'properties.metricAvailabilities', 'type': '[ResourceMetricAvailability]'},
-        'resource_uri': {'key': 'properties.resourceUri', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
-        'properties': {'key': 'properties.properties', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "ResourceMetricName"},
+        "unit": {"key": "properties.unit", "type": "str"},
+        "primary_aggregation_type": {"key": "properties.primaryAggregationType", "type": "str"},
+        "metric_availabilities": {"key": "properties.metricAvailabilities", "type": "[ResourceMetricAvailability]"},
+        "resource_uri": {"key": "properties.resourceUri", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
+        "properties": {"key": "properties.properties", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(ResourceMetricDefinition, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.name_properties_name = None
         self.unit = None
         self.primary_aggregation_type = None
@@ -4899,45 +4701,40 @@ class ResourceMetricDefinition(ProxyOnlyResource):
         self.properties = None
 
 
-class ResourceMetricDefinitionCollection(msrest.serialization.Model):
+class ResourceMetricDefinitionCollection(_serialization.Model):
     """Collection of metric definitions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.ResourceMetricDefinition]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceMetricDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceMetricDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.ResourceMetricDefinition"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.ResourceMetricDefinition"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.ResourceMetricDefinition]
         """
-        super(ResourceMetricDefinitionCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ResourceMetricName(msrest.serialization.Model):
+class ResourceMetricName(_serialization.Model):
     """Name of a metric for any resource .
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4949,27 +4746,23 @@ class ResourceMetricName(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceMetricName, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.localized_value = None
 
 
-class ResourceMetricProperty(msrest.serialization.Model):
+class ResourceMetricProperty(_serialization.Model):
     """Resource metric property.
 
     :ivar key: Key for resource metric property.
@@ -4979,29 +4772,23 @@ class ResourceMetricProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key: Key for resource metric property.
         :paramtype key: str
         :keyword value: Value of pair.
         :paramtype value: str
         """
-        super(ResourceMetricProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
 
-class ResourceMetricValue(msrest.serialization.Model):
+class ResourceMetricValue(_serialization.Model):
     """Value of resource metric.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5023,32 +4810,28 @@ class ResourceMetricValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'readonly': True},
-        'average': {'readonly': True},
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'total': {'readonly': True},
-        'count': {'readonly': True},
-        'properties': {'readonly': True},
+        "timestamp": {"readonly": True},
+        "average": {"readonly": True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "total": {"readonly": True},
+        "count": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'str'},
-        'average': {'key': 'average', 'type': 'float'},
-        'minimum': {'key': 'minimum', 'type': 'float'},
-        'maximum': {'key': 'maximum', 'type': 'float'},
-        'total': {'key': 'total', 'type': 'float'},
-        'count': {'key': 'count', 'type': 'float'},
-        'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
+        "timestamp": {"key": "timestamp", "type": "str"},
+        "average": {"key": "average", "type": "float"},
+        "minimum": {"key": "minimum", "type": "float"},
+        "maximum": {"key": "maximum", "type": "float"},
+        "total": {"key": "total", "type": "float"},
+        "count": {"key": "count", "type": "float"},
+        "properties": {"key": "properties", "type": "[ResourceMetricProperty]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceMetricValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.timestamp = None
         self.average = None
         self.minimum = None
@@ -5058,7 +4841,7 @@ class ResourceMetricValue(msrest.serialization.Model):
         self.properties = None
 
 
-class RestoreRequest(ProxyOnlyResource):
+class RestoreRequest(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Description of a restore request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5094,7 +4877,7 @@ class RestoreRequest(ProxyOnlyResource):
     :vartype ignore_databases: bool
     :ivar app_service_plan: Specify app service plan that will own restored site.
     :vartype app_service_plan: str
-    :ivar operation_type: Operation type. Known values are: "Default", "Clone", "Relocation",
+    :ivar operation_type: Operation type. Known values are: "Default", "Clone", "Relocation", and
      "Snapshot".
     :vartype operation_type: str or ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
     :ivar adjust_connection_strings: :code:`<code>true</code>` if SiteConfig.ConnectionStrings
@@ -5106,27 +4889,27 @@ class RestoreRequest(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
-        'blob_name': {'key': 'properties.blobName', 'type': 'str'},
-        'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
-        'site_name': {'key': 'properties.siteName', 'type': 'str'},
-        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
-        'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
-        'ignore_databases': {'key': 'properties.ignoreDatabases', 'type': 'bool'},
-        'app_service_plan': {'key': 'properties.appServicePlan', 'type': 'str'},
-        'operation_type': {'key': 'properties.operationType', 'type': 'str'},
-        'adjust_connection_strings': {'key': 'properties.adjustConnectionStrings', 'type': 'bool'},
-        'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "storage_account_url": {"key": "properties.storageAccountUrl", "type": "str"},
+        "blob_name": {"key": "properties.blobName", "type": "str"},
+        "overwrite": {"key": "properties.overwrite", "type": "bool"},
+        "site_name": {"key": "properties.siteName", "type": "str"},
+        "databases": {"key": "properties.databases", "type": "[DatabaseBackupSetting]"},
+        "ignore_conflicting_host_names": {"key": "properties.ignoreConflictingHostNames", "type": "bool"},
+        "ignore_databases": {"key": "properties.ignoreDatabases", "type": "bool"},
+        "app_service_plan": {"key": "properties.appServicePlan", "type": "str"},
+        "operation_type": {"key": "properties.operationType", "type": "str"},
+        "adjust_connection_strings": {"key": "properties.adjustConnectionStrings", "type": "bool"},
+        "hosting_environment": {"key": "properties.hostingEnvironment", "type": "str"},
     }
 
     def __init__(
@@ -5138,14 +4921,14 @@ class RestoreRequest(ProxyOnlyResource):
         overwrite: Optional[bool] = None,
         site_name: Optional[str] = None,
         databases: Optional[List["_models.DatabaseBackupSetting"]] = None,
-        ignore_conflicting_host_names: Optional[bool] = False,
-        ignore_databases: Optional[bool] = False,
+        ignore_conflicting_host_names: bool = False,
+        ignore_databases: bool = False,
         app_service_plan: Optional[str] = None,
         operation_type: Optional[Union[str, "_models.BackupRestoreOperationType"]] = None,
         adjust_connection_strings: Optional[bool] = None,
         hosting_environment: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -5173,7 +4956,7 @@ class RestoreRequest(ProxyOnlyResource):
         :keyword app_service_plan: Specify app service plan that will own restored site.
         :paramtype app_service_plan: str
         :keyword operation_type: Operation type. Known values are: "Default", "Clone", "Relocation",
-         "Snapshot".
+         and "Snapshot".
         :paramtype operation_type: str or ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
         :keyword adjust_connection_strings: :code:`<code>true</code>` if SiteConfig.ConnectionStrings
          should be set in new app; otherwise, :code:`<code>false</code>`.
@@ -5182,7 +4965,7 @@ class RestoreRequest(ProxyOnlyResource):
          app to an App Service Environment).
         :paramtype hosting_environment: str
         """
-        super(RestoreRequest, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
         self.overwrite = overwrite
@@ -5215,35 +4998,30 @@ class RestoreResponse(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'operation_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "operation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "operation_id": {"key": "properties.operationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(RestoreResponse, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.operation_id = None
 
 
-class Site(Resource):
+class Site(Resource):  # pylint: disable=too-many-instance-attributes
     """A web app, a mobile app backend, or an API app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5256,11 +5034,11 @@ class Site(Resource):
     :vartype name: str
     :ivar kind: Kind of resource.
     :vartype kind: str
-    :ivar location: Required. Resource Location.
+    :ivar location: Resource Location. Required.
     :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Managed service identity.
     :vartype identity: ~azure.mgmt.web.v2016_08_01.models.ManagedServiceIdentity
@@ -5271,7 +5049,7 @@ class Site(Resource):
     :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
-     Known values are: "Normal", "Exceeded".
+     Known values are: "Normal" and "Exceeded".
     :vartype usage_state: str or ~azure.mgmt.web.v2016_08_01.models.UsageState
     :ivar enabled: :code:`<code>true</code>` if the app is enabled; otherwise,
      :code:`<code>false</code>`. Setting this value to false disables the app (takes the app
@@ -5282,7 +5060,7 @@ class Site(Resource):
      the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
     :ivar availability_state: Management information availability state for the app. Known values
-     are: "Normal", "Limited", "DisasterRecoveryMode".
+     are: "Normal", "Limited", and "DisasterRecoveryMode".
     :vartype availability_state: str or ~azure.mgmt.web.v2016_08_01.models.SiteAvailabilityState
     :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
@@ -5357,72 +5135,75 @@ class Site(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
-        'state': {'readonly': True},
-        'host_names': {'readonly': True},
-        'repository_site_name': {'readonly': True},
-        'usage_state': {'readonly': True},
-        'enabled_host_names': {'readonly': True},
-        'availability_state': {'readonly': True},
-        'last_modified_time_utc': {'readonly': True},
-        'traffic_manager_host_names': {'readonly': True},
-        'target_swap_slot': {'readonly': True},
-        'outbound_ip_addresses': {'readonly': True},
-        'possible_outbound_ip_addresses': {'readonly': True},
-        'suspended_till': {'readonly': True},
-        'max_number_of_workers': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'is_default_container': {'readonly': True},
-        'default_host_name': {'readonly': True},
-        'slot_swap_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
+        "state": {"readonly": True},
+        "host_names": {"readonly": True},
+        "repository_site_name": {"readonly": True},
+        "usage_state": {"readonly": True},
+        "enabled_host_names": {"readonly": True},
+        "availability_state": {"readonly": True},
+        "last_modified_time_utc": {"readonly": True},
+        "traffic_manager_host_names": {"readonly": True},
+        "target_swap_slot": {"readonly": True},
+        "outbound_ip_addresses": {"readonly": True},
+        "possible_outbound_ip_addresses": {"readonly": True},
+        "suspended_till": {"readonly": True},
+        "max_number_of_workers": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "is_default_container": {"readonly": True},
+        "default_host_name": {"readonly": True},
+        "slot_swap_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
-        'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
-        'usage_state': {'key': 'properties.usageState', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'enabled_host_names': {'key': 'properties.enabledHostNames', 'type': '[str]'},
-        'availability_state': {'key': 'properties.availabilityState', 'type': 'str'},
-        'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
-        'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
-        'reserved': {'key': 'properties.reserved', 'type': 'bool'},
-        'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
-        'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
-        'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
-        'scm_site_also_stopped': {'key': 'properties.scmSiteAlsoStopped', 'type': 'bool'},
-        'target_swap_slot': {'key': 'properties.targetSwapSlot', 'type': 'str'},
-        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
-        'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
-        'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
-        'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
-        'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
-        'possible_outbound_ip_addresses': {'key': 'properties.possibleOutboundIpAddresses', 'type': 'str'},
-        'container_size': {'key': 'properties.containerSize', 'type': 'int'},
-        'daily_memory_time_quota': {'key': 'properties.dailyMemoryTimeQuota', 'type': 'int'},
-        'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
-        'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
-        'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
-        'snapshot_info': {'key': 'properties.snapshotInfo', 'type': 'SnapshotRecoveryRequest'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
-        'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
-        'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
-        'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "state": {"key": "properties.state", "type": "str"},
+        "host_names": {"key": "properties.hostNames", "type": "[str]"},
+        "repository_site_name": {"key": "properties.repositorySiteName", "type": "str"},
+        "usage_state": {"key": "properties.usageState", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "enabled_host_names": {"key": "properties.enabledHostNames", "type": "[str]"},
+        "availability_state": {"key": "properties.availabilityState", "type": "str"},
+        "host_name_ssl_states": {"key": "properties.hostNameSslStates", "type": "[HostNameSslState]"},
+        "server_farm_id": {"key": "properties.serverFarmId", "type": "str"},
+        "reserved": {"key": "properties.reserved", "type": "bool"},
+        "last_modified_time_utc": {"key": "properties.lastModifiedTimeUtc", "type": "iso-8601"},
+        "site_config": {"key": "properties.siteConfig", "type": "SiteConfig"},
+        "traffic_manager_host_names": {"key": "properties.trafficManagerHostNames", "type": "[str]"},
+        "scm_site_also_stopped": {"key": "properties.scmSiteAlsoStopped", "type": "bool"},
+        "target_swap_slot": {"key": "properties.targetSwapSlot", "type": "str"},
+        "hosting_environment_profile": {
+            "key": "properties.hostingEnvironmentProfile",
+            "type": "HostingEnvironmentProfile",
+        },
+        "client_affinity_enabled": {"key": "properties.clientAffinityEnabled", "type": "bool"},
+        "client_cert_enabled": {"key": "properties.clientCertEnabled", "type": "bool"},
+        "host_names_disabled": {"key": "properties.hostNamesDisabled", "type": "bool"},
+        "outbound_ip_addresses": {"key": "properties.outboundIpAddresses", "type": "str"},
+        "possible_outbound_ip_addresses": {"key": "properties.possibleOutboundIpAddresses", "type": "str"},
+        "container_size": {"key": "properties.containerSize", "type": "int"},
+        "daily_memory_time_quota": {"key": "properties.dailyMemoryTimeQuota", "type": "int"},
+        "suspended_till": {"key": "properties.suspendedTill", "type": "iso-8601"},
+        "max_number_of_workers": {"key": "properties.maxNumberOfWorkers", "type": "int"},
+        "cloning_info": {"key": "properties.cloningInfo", "type": "CloningInfo"},
+        "snapshot_info": {"key": "properties.snapshotInfo", "type": "SnapshotRecoveryRequest"},
+        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
+        "is_default_container": {"key": "properties.isDefaultContainer", "type": "bool"},
+        "default_host_name": {"key": "properties.defaultHostName", "type": "str"},
+        "slot_swap_status": {"key": "properties.slotSwapStatus", "type": "SlotSwapStatus"},
+        "https_only": {"key": "properties.httpsOnly", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -5432,9 +5213,9 @@ class Site(Resource):
         enabled: Optional[bool] = None,
         host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
-        reserved: Optional[bool] = False,
+        reserved: bool = False,
         site_config: Optional["_models.SiteConfig"] = None,
-        scm_site_also_stopped: Optional[bool] = False,
+        scm_site_also_stopped: bool = False,
         hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         client_affinity_enabled: Optional[bool] = None,
         client_cert_enabled: Optional[bool] = None,
@@ -5444,14 +5225,14 @@ class Site(Resource):
         cloning_info: Optional["_models.CloningInfo"] = None,
         snapshot_info: Optional["_models.SnapshotRecoveryRequest"] = None,
         https_only: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword location: Required. Resource Location.
+        :keyword location: Resource Location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: Managed service identity.
         :paramtype identity: ~azure.mgmt.web.v2016_08_01.models.ManagedServiceIdentity
@@ -5503,7 +5284,7 @@ class Site(Resource):
          http requests.
         :paramtype https_only: bool
         """
-        super(Site, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
+        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.identity = identity
         self.state = None
         self.host_names = None
@@ -5539,7 +5320,7 @@ class Site(Resource):
         self.https_only = https_only
 
 
-class SiteAuthSettings(ProxyOnlyResource):
+class SiteAuthSettings(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Configuration settings for the Azure App Service Authentication / Authorization feature.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5561,7 +5342,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      Authorization module.
     :vartype runtime_version: str
     :ivar unauthenticated_client_action: The action to take when an unauthenticated client attempts
-     to access the app. Known values are: "RedirectToLoginPage", "AllowAnonymous".
+     to access the app. Known values are: "RedirectToLoginPage" and "AllowAnonymous".
     :vartype unauthenticated_client_action: str or
      ~azure.mgmt.web.v2016_08_01.models.UnauthenticatedClientAction
     :ivar token_store_enabled: :code:`<code>true</code>` to durably store platform-specific
@@ -5578,7 +5359,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      This setting is only needed if multiple providers are configured and the unauthenticated
      client
      action is set to "RedirectToLoginPage". Known values are: "AzureActiveDirectory", "Facebook",
-     "Google", "MicrosoftAccount", "Twitter".
+     "Google", "MicrosoftAccount", and "Twitter".
     :vartype default_provider: str or
      ~azure.mgmt.web.v2016_08_01.models.BuiltInAuthenticationProvider
     :ivar token_refresh_extension_hours: The number of hours after session token expiration that a
@@ -5671,42 +5452,42 @@ class SiteAuthSettings(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
-        'unauthenticated_client_action': {'key': 'properties.unauthenticatedClientAction', 'type': 'str'},
-        'token_store_enabled': {'key': 'properties.tokenStoreEnabled', 'type': 'bool'},
-        'allowed_external_redirect_urls': {'key': 'properties.allowedExternalRedirectUrls', 'type': '[str]'},
-        'default_provider': {'key': 'properties.defaultProvider', 'type': 'str'},
-        'token_refresh_extension_hours': {'key': 'properties.tokenRefreshExtensionHours', 'type': 'float'},
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
-        'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
-        'issuer': {'key': 'properties.issuer', 'type': 'str'},
-        'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
-        'additional_login_params': {'key': 'properties.additionalLoginParams', 'type': '[str]'},
-        'google_client_id': {'key': 'properties.googleClientId', 'type': 'str'},
-        'google_client_secret': {'key': 'properties.googleClientSecret', 'type': 'str'},
-        'google_o_auth_scopes': {'key': 'properties.googleOAuthScopes', 'type': '[str]'},
-        'facebook_app_id': {'key': 'properties.facebookAppId', 'type': 'str'},
-        'facebook_app_secret': {'key': 'properties.facebookAppSecret', 'type': 'str'},
-        'facebook_o_auth_scopes': {'key': 'properties.facebookOAuthScopes', 'type': '[str]'},
-        'twitter_consumer_key': {'key': 'properties.twitterConsumerKey', 'type': 'str'},
-        'twitter_consumer_secret': {'key': 'properties.twitterConsumerSecret', 'type': 'str'},
-        'microsoft_account_client_id': {'key': 'properties.microsoftAccountClientId', 'type': 'str'},
-        'microsoft_account_client_secret': {'key': 'properties.microsoftAccountClientSecret', 'type': 'str'},
-        'microsoft_account_o_auth_scopes': {'key': 'properties.microsoftAccountOAuthScopes', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "runtime_version": {"key": "properties.runtimeVersion", "type": "str"},
+        "unauthenticated_client_action": {"key": "properties.unauthenticatedClientAction", "type": "str"},
+        "token_store_enabled": {"key": "properties.tokenStoreEnabled", "type": "bool"},
+        "allowed_external_redirect_urls": {"key": "properties.allowedExternalRedirectUrls", "type": "[str]"},
+        "default_provider": {"key": "properties.defaultProvider", "type": "str"},
+        "token_refresh_extension_hours": {"key": "properties.tokenRefreshExtensionHours", "type": "float"},
+        "client_id": {"key": "properties.clientId", "type": "str"},
+        "client_secret": {"key": "properties.clientSecret", "type": "str"},
+        "issuer": {"key": "properties.issuer", "type": "str"},
+        "allowed_audiences": {"key": "properties.allowedAudiences", "type": "[str]"},
+        "additional_login_params": {"key": "properties.additionalLoginParams", "type": "[str]"},
+        "google_client_id": {"key": "properties.googleClientId", "type": "str"},
+        "google_client_secret": {"key": "properties.googleClientSecret", "type": "str"},
+        "google_o_auth_scopes": {"key": "properties.googleOAuthScopes", "type": "[str]"},
+        "facebook_app_id": {"key": "properties.facebookAppId", "type": "str"},
+        "facebook_app_secret": {"key": "properties.facebookAppSecret", "type": "str"},
+        "facebook_o_auth_scopes": {"key": "properties.facebookOAuthScopes", "type": "[str]"},
+        "twitter_consumer_key": {"key": "properties.twitterConsumerKey", "type": "str"},
+        "twitter_consumer_secret": {"key": "properties.twitterConsumerSecret", "type": "str"},
+        "microsoft_account_client_id": {"key": "properties.microsoftAccountClientId", "type": "str"},
+        "microsoft_account_client_secret": {"key": "properties.microsoftAccountClientSecret", "type": "str"},
+        "microsoft_account_o_auth_scopes": {"key": "properties.microsoftAccountOAuthScopes", "type": "[str]"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         kind: Optional[str] = None,
@@ -5733,8 +5514,8 @@ class SiteAuthSettings(ProxyOnlyResource):
         microsoft_account_client_id: Optional[str] = None,
         microsoft_account_client_secret: Optional[str] = None,
         microsoft_account_o_auth_scopes: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -5747,7 +5528,7 @@ class SiteAuthSettings(ProxyOnlyResource):
          Authorization module.
         :paramtype runtime_version: str
         :keyword unauthenticated_client_action: The action to take when an unauthenticated client
-         attempts to access the app. Known values are: "RedirectToLoginPage", "AllowAnonymous".
+         attempts to access the app. Known values are: "RedirectToLoginPage" and "AllowAnonymous".
         :paramtype unauthenticated_client_action: str or
          ~azure.mgmt.web.v2016_08_01.models.UnauthenticatedClientAction
         :keyword token_store_enabled: :code:`<code>true</code>` to durably store platform-specific
@@ -5764,7 +5545,7 @@ class SiteAuthSettings(ProxyOnlyResource):
          This setting is only needed if multiple providers are configured and the unauthenticated
          client
          action is set to "RedirectToLoginPage". Known values are: "AzureActiveDirectory", "Facebook",
-         "Google", "MicrosoftAccount", "Twitter".
+         "Google", "MicrosoftAccount", and "Twitter".
         :paramtype default_provider: str or
          ~azure.mgmt.web.v2016_08_01.models.BuiltInAuthenticationProvider
         :keyword token_refresh_extension_hours: The number of hours after session token expiration that
@@ -5855,7 +5636,7 @@ class SiteAuthSettings(ProxyOnlyResource):
          https://msdn.microsoft.com/en-us/library/dn631845.aspx.
         :paramtype microsoft_account_o_auth_scopes: list[str]
         """
-        super(SiteAuthSettings, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.enabled = enabled
         self.runtime_version = runtime_version
         self.unauthenticated_client_action = unauthenticated_client_action
@@ -5881,10 +5662,11 @@ class SiteAuthSettings(ProxyOnlyResource):
         self.microsoft_account_o_auth_scopes = microsoft_account_o_auth_scopes
 
 
-class SiteCloneability(msrest.serialization.Model):
+class SiteCloneability(_serialization.Model):
     """Represents whether or not an app is cloneable.
 
-    :ivar result: Name of app. Known values are: "Cloneable", "PartiallyCloneable", "NotCloneable".
+    :ivar result: Name of app. Known values are: "Cloneable", "PartiallyCloneable", and
+     "NotCloneable".
     :vartype result: str or ~azure.mgmt.web.v2016_08_01.models.CloneAbilityResult
     :ivar blocking_features: List of features enabled on app that prevent cloning.
     :vartype blocking_features: list[~azure.mgmt.web.v2016_08_01.models.SiteCloneabilityCriterion]
@@ -5899,10 +5681,10 @@ class SiteCloneability(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'result': {'key': 'result', 'type': 'str'},
-        'blocking_features': {'key': 'blockingFeatures', 'type': '[SiteCloneabilityCriterion]'},
-        'unsupported_features': {'key': 'unsupportedFeatures', 'type': '[SiteCloneabilityCriterion]'},
-        'blocking_characteristics': {'key': 'blockingCharacteristics', 'type': '[SiteCloneabilityCriterion]'},
+        "result": {"key": "result", "type": "str"},
+        "blocking_features": {"key": "blockingFeatures", "type": "[SiteCloneabilityCriterion]"},
+        "unsupported_features": {"key": "unsupportedFeatures", "type": "[SiteCloneabilityCriterion]"},
+        "blocking_characteristics": {"key": "blockingCharacteristics", "type": "[SiteCloneabilityCriterion]"},
     }
 
     def __init__(
@@ -5912,10 +5694,10 @@ class SiteCloneability(msrest.serialization.Model):
         blocking_features: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
         unsupported_features: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
         blocking_characteristics: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword result: Name of app. Known values are: "Cloneable", "PartiallyCloneable",
+        :keyword result: Name of app. Known values are: "Cloneable", "PartiallyCloneable", and
          "NotCloneable".
         :paramtype result: str or ~azure.mgmt.web.v2016_08_01.models.CloneAbilityResult
         :keyword blocking_features: List of features enabled on app that prevent cloning.
@@ -5930,14 +5712,14 @@ class SiteCloneability(msrest.serialization.Model):
         :paramtype blocking_characteristics:
          list[~azure.mgmt.web.v2016_08_01.models.SiteCloneabilityCriterion]
         """
-        super(SiteCloneability, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.result = result
         self.blocking_features = blocking_features
         self.unsupported_features = unsupported_features
         self.blocking_characteristics = blocking_characteristics
 
 
-class SiteCloneabilityCriterion(msrest.serialization.Model):
+class SiteCloneabilityCriterion(_serialization.Model):
     """An app cloneability criterion.
 
     :ivar name: Name of criterion.
@@ -5947,29 +5729,23 @@ class SiteCloneabilityCriterion(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of criterion.
         :paramtype name: str
         :keyword description: Description of criterion.
         :paramtype description: str
         """
-        super(SiteCloneabilityCriterion, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
 
 
-class SiteConfig(msrest.serialization.Model):
+class SiteConfig(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Configuration of an App Service app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6020,7 +5796,7 @@ class SiteConfig(msrest.serialization.Model):
     :vartype document_root: str
     :ivar scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
      "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
-     "OneDrive", "VSO".
+     "OneDrive", and "VSO".
     :vartype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
     :ivar use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
      otherwise, :code:`<code>false</code>`.
@@ -6039,12 +5815,13 @@ class SiteConfig(msrest.serialization.Model):
     :vartype java_container_version: str
     :ivar app_command_line: App command line to launch.
     :vartype app_command_line: str
-    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated", "Classic".
+    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated" and
+     "Classic".
     :vartype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
     :ivar virtual_applications: Virtual applications.
     :vartype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
     :ivar load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
-     "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
+     "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", and "RequestHash".
     :vartype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
     :ivar experiments: This is work around for polymorphic types.
     :vartype experiments: ~azure.mgmt.web.v2016_08_01.models.Experiments
@@ -6077,68 +5854,68 @@ class SiteConfig(msrest.serialization.Model):
      http2.0.
     :vartype http20_enabled: bool
     :ivar min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-     requests. Known values are: "1.0", "1.1", "1.2".
+     requests. Known values are: "1.0", "1.1", and "1.2".
     :vartype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
     """
 
     _validation = {
-        'machine_key': {'readonly': True},
+        "machine_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'number_of_workers': {'key': 'numberOfWorkers', 'type': 'int'},
-        'default_documents': {'key': 'defaultDocuments', 'type': '[str]'},
-        'net_framework_version': {'key': 'netFrameworkVersion', 'type': 'str'},
-        'php_version': {'key': 'phpVersion', 'type': 'str'},
-        'python_version': {'key': 'pythonVersion', 'type': 'str'},
-        'node_version': {'key': 'nodeVersion', 'type': 'str'},
-        'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
-        'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
-        'request_tracing_expiration_time': {'key': 'requestTracingExpirationTime', 'type': 'iso-8601'},
-        'remote_debugging_enabled': {'key': 'remoteDebuggingEnabled', 'type': 'bool'},
-        'remote_debugging_version': {'key': 'remoteDebuggingVersion', 'type': 'str'},
-        'http_logging_enabled': {'key': 'httpLoggingEnabled', 'type': 'bool'},
-        'logs_directory_size_limit': {'key': 'logsDirectorySizeLimit', 'type': 'int'},
-        'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
-        'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
-        'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
-        'connection_strings': {'key': 'connectionStrings', 'type': '[ConnStringInfo]'},
-        'machine_key': {'key': 'machineKey', 'type': 'SiteMachineKey'},
-        'handler_mappings': {'key': 'handlerMappings', 'type': '[HandlerMapping]'},
-        'document_root': {'key': 'documentRoot', 'type': 'str'},
-        'scm_type': {'key': 'scmType', 'type': 'str'},
-        'use32_bit_worker_process': {'key': 'use32BitWorkerProcess', 'type': 'bool'},
-        'web_sockets_enabled': {'key': 'webSocketsEnabled', 'type': 'bool'},
-        'always_on': {'key': 'alwaysOn', 'type': 'bool'},
-        'java_version': {'key': 'javaVersion', 'type': 'str'},
-        'java_container': {'key': 'javaContainer', 'type': 'str'},
-        'java_container_version': {'key': 'javaContainerVersion', 'type': 'str'},
-        'app_command_line': {'key': 'appCommandLine', 'type': 'str'},
-        'managed_pipeline_mode': {'key': 'managedPipelineMode', 'type': 'str'},
-        'virtual_applications': {'key': 'virtualApplications', 'type': '[VirtualApplication]'},
-        'load_balancing': {'key': 'loadBalancing', 'type': 'str'},
-        'experiments': {'key': 'experiments', 'type': 'Experiments'},
-        'limits': {'key': 'limits', 'type': 'SiteLimits'},
-        'auto_heal_enabled': {'key': 'autoHealEnabled', 'type': 'bool'},
-        'auto_heal_rules': {'key': 'autoHealRules', 'type': 'AutoHealRules'},
-        'tracing_options': {'key': 'tracingOptions', 'type': 'str'},
-        'vnet_name': {'key': 'vnetName', 'type': 'str'},
-        'cors': {'key': 'cors', 'type': 'CorsSettings'},
-        'push': {'key': 'push', 'type': 'PushSettings'},
-        'api_definition': {'key': 'apiDefinition', 'type': 'ApiDefinitionInfo'},
-        'auto_swap_slot_name': {'key': 'autoSwapSlotName', 'type': 'str'},
-        'local_my_sql_enabled': {'key': 'localMySqlEnabled', 'type': 'bool'},
-        'ip_security_restrictions': {'key': 'ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
-        'http20_enabled': {'key': 'http20Enabled', 'type': 'bool'},
-        'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
+        "number_of_workers": {"key": "numberOfWorkers", "type": "int"},
+        "default_documents": {"key": "defaultDocuments", "type": "[str]"},
+        "net_framework_version": {"key": "netFrameworkVersion", "type": "str"},
+        "php_version": {"key": "phpVersion", "type": "str"},
+        "python_version": {"key": "pythonVersion", "type": "str"},
+        "node_version": {"key": "nodeVersion", "type": "str"},
+        "linux_fx_version": {"key": "linuxFxVersion", "type": "str"},
+        "request_tracing_enabled": {"key": "requestTracingEnabled", "type": "bool"},
+        "request_tracing_expiration_time": {"key": "requestTracingExpirationTime", "type": "iso-8601"},
+        "remote_debugging_enabled": {"key": "remoteDebuggingEnabled", "type": "bool"},
+        "remote_debugging_version": {"key": "remoteDebuggingVersion", "type": "str"},
+        "http_logging_enabled": {"key": "httpLoggingEnabled", "type": "bool"},
+        "logs_directory_size_limit": {"key": "logsDirectorySizeLimit", "type": "int"},
+        "detailed_error_logging_enabled": {"key": "detailedErrorLoggingEnabled", "type": "bool"},
+        "publishing_username": {"key": "publishingUsername", "type": "str"},
+        "app_settings": {"key": "appSettings", "type": "[NameValuePair]"},
+        "connection_strings": {"key": "connectionStrings", "type": "[ConnStringInfo]"},
+        "machine_key": {"key": "machineKey", "type": "SiteMachineKey"},
+        "handler_mappings": {"key": "handlerMappings", "type": "[HandlerMapping]"},
+        "document_root": {"key": "documentRoot", "type": "str"},
+        "scm_type": {"key": "scmType", "type": "str"},
+        "use32_bit_worker_process": {"key": "use32BitWorkerProcess", "type": "bool"},
+        "web_sockets_enabled": {"key": "webSocketsEnabled", "type": "bool"},
+        "always_on": {"key": "alwaysOn", "type": "bool"},
+        "java_version": {"key": "javaVersion", "type": "str"},
+        "java_container": {"key": "javaContainer", "type": "str"},
+        "java_container_version": {"key": "javaContainerVersion", "type": "str"},
+        "app_command_line": {"key": "appCommandLine", "type": "str"},
+        "managed_pipeline_mode": {"key": "managedPipelineMode", "type": "str"},
+        "virtual_applications": {"key": "virtualApplications", "type": "[VirtualApplication]"},
+        "load_balancing": {"key": "loadBalancing", "type": "str"},
+        "experiments": {"key": "experiments", "type": "Experiments"},
+        "limits": {"key": "limits", "type": "SiteLimits"},
+        "auto_heal_enabled": {"key": "autoHealEnabled", "type": "bool"},
+        "auto_heal_rules": {"key": "autoHealRules", "type": "AutoHealRules"},
+        "tracing_options": {"key": "tracingOptions", "type": "str"},
+        "vnet_name": {"key": "vnetName", "type": "str"},
+        "cors": {"key": "cors", "type": "CorsSettings"},
+        "push": {"key": "push", "type": "PushSettings"},
+        "api_definition": {"key": "apiDefinition", "type": "ApiDefinitionInfo"},
+        "auto_swap_slot_name": {"key": "autoSwapSlotName", "type": "str"},
+        "local_my_sql_enabled": {"key": "localMySqlEnabled", "type": "bool"},
+        "ip_security_restrictions": {"key": "ipSecurityRestrictions", "type": "[IpSecurityRestriction]"},
+        "http20_enabled": {"key": "http20Enabled", "type": "bool"},
+        "min_tls_version": {"key": "minTlsVersion", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         number_of_workers: Optional[int] = None,
         default_documents: Optional[List[str]] = None,
-        net_framework_version: Optional[str] = "v4.6",
+        net_framework_version: str = "v4.6",
         php_version: Optional[str] = None,
         python_version: Optional[str] = None,
         node_version: Optional[str] = None,
@@ -6176,12 +5953,12 @@ class SiteConfig(msrest.serialization.Model):
         push: Optional["_models.PushSettings"] = None,
         api_definition: Optional["_models.ApiDefinitionInfo"] = None,
         auto_swap_slot_name: Optional[str] = None,
-        local_my_sql_enabled: Optional[bool] = False,
+        local_my_sql_enabled: bool = False,
         ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
-        http20_enabled: Optional[bool] = True,
+        http20_enabled: bool = True,
         min_tls_version: Optional[Union[str, "_models.SupportedTlsVersions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword number_of_workers: Number of workers.
         :paramtype number_of_workers: int
@@ -6227,7 +6004,7 @@ class SiteConfig(msrest.serialization.Model):
         :paramtype document_root: str
         :keyword scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
          "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
-         "OneDrive", "VSO".
+         "OneDrive", and "VSO".
         :paramtype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
         :keyword use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
          otherwise, :code:`<code>false</code>`.
@@ -6246,13 +6023,13 @@ class SiteConfig(msrest.serialization.Model):
         :paramtype java_container_version: str
         :keyword app_command_line: App command line to launch.
         :paramtype app_command_line: str
-        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated",
+        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated" and
          "Classic".
         :paramtype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
         :keyword virtual_applications: Virtual applications.
         :paramtype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
         :keyword load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
-         "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
+         "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", and "RequestHash".
         :paramtype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
         :keyword experiments: This is work around for polymorphic types.
         :paramtype experiments: ~azure.mgmt.web.v2016_08_01.models.Experiments
@@ -6285,10 +6062,10 @@ class SiteConfig(msrest.serialization.Model):
          http2.0.
         :paramtype http20_enabled: bool
         :keyword min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-         requests. Known values are: "1.0", "1.1", "1.2".
+         requests. Known values are: "1.0", "1.1", and "1.2".
         :paramtype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
         """
-        super(SiteConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version
@@ -6336,7 +6113,7 @@ class SiteConfig(msrest.serialization.Model):
         self.min_tls_version = min_tls_version
 
 
-class SiteConfigResource(ProxyOnlyResource):
+class SiteConfigResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Web app configuration ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6395,7 +6172,7 @@ class SiteConfigResource(ProxyOnlyResource):
     :vartype document_root: str
     :ivar scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
      "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
-     "OneDrive", "VSO".
+     "OneDrive", and "VSO".
     :vartype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
     :ivar use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
      otherwise, :code:`<code>false</code>`.
@@ -6414,12 +6191,13 @@ class SiteConfigResource(ProxyOnlyResource):
     :vartype java_container_version: str
     :ivar app_command_line: App command line to launch.
     :vartype app_command_line: str
-    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated", "Classic".
+    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated" and
+     "Classic".
     :vartype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
     :ivar virtual_applications: Virtual applications.
     :vartype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
     :ivar load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
-     "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
+     "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", and "RequestHash".
     :vartype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
     :ivar experiments: This is work around for polymorphic types.
     :vartype experiments: ~azure.mgmt.web.v2016_08_01.models.Experiments
@@ -6452,76 +6230,76 @@ class SiteConfigResource(ProxyOnlyResource):
      http2.0.
     :vartype http20_enabled: bool
     :ivar min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-     requests. Known values are: "1.0", "1.1", "1.2".
+     requests. Known values are: "1.0", "1.1", and "1.2".
     :vartype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'machine_key': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "machine_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int'},
-        'default_documents': {'key': 'properties.defaultDocuments', 'type': '[str]'},
-        'net_framework_version': {'key': 'properties.netFrameworkVersion', 'type': 'str'},
-        'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
-        'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
-        'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
-        'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
-        'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
-        'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
-        'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
-        'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str'},
-        'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool'},
-        'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
-        'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
-        'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
-        'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
-        'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
-        'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
-        'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
-        'document_root': {'key': 'properties.documentRoot', 'type': 'str'},
-        'scm_type': {'key': 'properties.scmType', 'type': 'str'},
-        'use32_bit_worker_process': {'key': 'properties.use32BitWorkerProcess', 'type': 'bool'},
-        'web_sockets_enabled': {'key': 'properties.webSocketsEnabled', 'type': 'bool'},
-        'always_on': {'key': 'properties.alwaysOn', 'type': 'bool'},
-        'java_version': {'key': 'properties.javaVersion', 'type': 'str'},
-        'java_container': {'key': 'properties.javaContainer', 'type': 'str'},
-        'java_container_version': {'key': 'properties.javaContainerVersion', 'type': 'str'},
-        'app_command_line': {'key': 'properties.appCommandLine', 'type': 'str'},
-        'managed_pipeline_mode': {'key': 'properties.managedPipelineMode', 'type': 'str'},
-        'virtual_applications': {'key': 'properties.virtualApplications', 'type': '[VirtualApplication]'},
-        'load_balancing': {'key': 'properties.loadBalancing', 'type': 'str'},
-        'experiments': {'key': 'properties.experiments', 'type': 'Experiments'},
-        'limits': {'key': 'properties.limits', 'type': 'SiteLimits'},
-        'auto_heal_enabled': {'key': 'properties.autoHealEnabled', 'type': 'bool'},
-        'auto_heal_rules': {'key': 'properties.autoHealRules', 'type': 'AutoHealRules'},
-        'tracing_options': {'key': 'properties.tracingOptions', 'type': 'str'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'cors': {'key': 'properties.cors', 'type': 'CorsSettings'},
-        'push': {'key': 'properties.push', 'type': 'PushSettings'},
-        'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
-        'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
-        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
-        'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
-        'http20_enabled': {'key': 'properties.http20Enabled', 'type': 'bool'},
-        'min_tls_version': {'key': 'properties.minTlsVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "number_of_workers": {"key": "properties.numberOfWorkers", "type": "int"},
+        "default_documents": {"key": "properties.defaultDocuments", "type": "[str]"},
+        "net_framework_version": {"key": "properties.netFrameworkVersion", "type": "str"},
+        "php_version": {"key": "properties.phpVersion", "type": "str"},
+        "python_version": {"key": "properties.pythonVersion", "type": "str"},
+        "node_version": {"key": "properties.nodeVersion", "type": "str"},
+        "linux_fx_version": {"key": "properties.linuxFxVersion", "type": "str"},
+        "request_tracing_enabled": {"key": "properties.requestTracingEnabled", "type": "bool"},
+        "request_tracing_expiration_time": {"key": "properties.requestTracingExpirationTime", "type": "iso-8601"},
+        "remote_debugging_enabled": {"key": "properties.remoteDebuggingEnabled", "type": "bool"},
+        "remote_debugging_version": {"key": "properties.remoteDebuggingVersion", "type": "str"},
+        "http_logging_enabled": {"key": "properties.httpLoggingEnabled", "type": "bool"},
+        "logs_directory_size_limit": {"key": "properties.logsDirectorySizeLimit", "type": "int"},
+        "detailed_error_logging_enabled": {"key": "properties.detailedErrorLoggingEnabled", "type": "bool"},
+        "publishing_username": {"key": "properties.publishingUsername", "type": "str"},
+        "app_settings": {"key": "properties.appSettings", "type": "[NameValuePair]"},
+        "connection_strings": {"key": "properties.connectionStrings", "type": "[ConnStringInfo]"},
+        "machine_key": {"key": "properties.machineKey", "type": "SiteMachineKey"},
+        "handler_mappings": {"key": "properties.handlerMappings", "type": "[HandlerMapping]"},
+        "document_root": {"key": "properties.documentRoot", "type": "str"},
+        "scm_type": {"key": "properties.scmType", "type": "str"},
+        "use32_bit_worker_process": {"key": "properties.use32BitWorkerProcess", "type": "bool"},
+        "web_sockets_enabled": {"key": "properties.webSocketsEnabled", "type": "bool"},
+        "always_on": {"key": "properties.alwaysOn", "type": "bool"},
+        "java_version": {"key": "properties.javaVersion", "type": "str"},
+        "java_container": {"key": "properties.javaContainer", "type": "str"},
+        "java_container_version": {"key": "properties.javaContainerVersion", "type": "str"},
+        "app_command_line": {"key": "properties.appCommandLine", "type": "str"},
+        "managed_pipeline_mode": {"key": "properties.managedPipelineMode", "type": "str"},
+        "virtual_applications": {"key": "properties.virtualApplications", "type": "[VirtualApplication]"},
+        "load_balancing": {"key": "properties.loadBalancing", "type": "str"},
+        "experiments": {"key": "properties.experiments", "type": "Experiments"},
+        "limits": {"key": "properties.limits", "type": "SiteLimits"},
+        "auto_heal_enabled": {"key": "properties.autoHealEnabled", "type": "bool"},
+        "auto_heal_rules": {"key": "properties.autoHealRules", "type": "AutoHealRules"},
+        "tracing_options": {"key": "properties.tracingOptions", "type": "str"},
+        "vnet_name": {"key": "properties.vnetName", "type": "str"},
+        "cors": {"key": "properties.cors", "type": "CorsSettings"},
+        "push": {"key": "properties.push", "type": "PushSettings"},
+        "api_definition": {"key": "properties.apiDefinition", "type": "ApiDefinitionInfo"},
+        "auto_swap_slot_name": {"key": "properties.autoSwapSlotName", "type": "str"},
+        "local_my_sql_enabled": {"key": "properties.localMySqlEnabled", "type": "bool"},
+        "ip_security_restrictions": {"key": "properties.ipSecurityRestrictions", "type": "[IpSecurityRestriction]"},
+        "http20_enabled": {"key": "properties.http20Enabled", "type": "bool"},
+        "min_tls_version": {"key": "properties.minTlsVersion", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         kind: Optional[str] = None,
         number_of_workers: Optional[int] = None,
         default_documents: Optional[List[str]] = None,
-        net_framework_version: Optional[str] = "v4.6",
+        net_framework_version: str = "v4.6",
         php_version: Optional[str] = None,
         python_version: Optional[str] = None,
         node_version: Optional[str] = None,
@@ -6559,12 +6337,12 @@ class SiteConfigResource(ProxyOnlyResource):
         push: Optional["_models.PushSettings"] = None,
         api_definition: Optional["_models.ApiDefinitionInfo"] = None,
         auto_swap_slot_name: Optional[str] = None,
-        local_my_sql_enabled: Optional[bool] = False,
+        local_my_sql_enabled: bool = False,
         ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
-        http20_enabled: Optional[bool] = True,
+        http20_enabled: bool = True,
         min_tls_version: Optional[Union[str, "_models.SupportedTlsVersions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -6612,7 +6390,7 @@ class SiteConfigResource(ProxyOnlyResource):
         :paramtype document_root: str
         :keyword scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
          "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
-         "OneDrive", "VSO".
+         "OneDrive", and "VSO".
         :paramtype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
         :keyword use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
          otherwise, :code:`<code>false</code>`.
@@ -6631,13 +6409,13 @@ class SiteConfigResource(ProxyOnlyResource):
         :paramtype java_container_version: str
         :keyword app_command_line: App command line to launch.
         :paramtype app_command_line: str
-        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated",
+        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated" and
          "Classic".
         :paramtype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
         :keyword virtual_applications: Virtual applications.
         :paramtype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
         :keyword load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
-         "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
+         "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", and "RequestHash".
         :paramtype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
         :keyword experiments: This is work around for polymorphic types.
         :paramtype experiments: ~azure.mgmt.web.v2016_08_01.models.Experiments
@@ -6670,10 +6448,10 @@ class SiteConfigResource(ProxyOnlyResource):
          http2.0.
         :paramtype http20_enabled: bool
         :keyword min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-         requests. Known values are: "1.0", "1.1", "1.2".
+         requests. Known values are: "1.0", "1.1", and "1.2".
         :paramtype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
         """
-        super(SiteConfigResource, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version
@@ -6721,40 +6499,35 @@ class SiteConfigResource(ProxyOnlyResource):
         self.min_tls_version = min_tls_version
 
 
-class SiteConfigResourceCollection(msrest.serialization.Model):
+class SiteConfigResourceCollection(_serialization.Model):
     """Collection of site configurations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.SiteConfigResource]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SiteConfigResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SiteConfigResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SiteConfigResource"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SiteConfigResource"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.SiteConfigResource]
         """
-        super(SiteConfigResourceCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -6779,76 +6552,66 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'time': {'readonly': True},
-        'id_properties_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "time": {"readonly": True},
+        "id_properties_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'iso-8601'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "time": {"key": "properties.time", "type": "iso-8601"},
+        "id_properties_id": {"key": "properties.id", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(SiteConfigurationSnapshotInfo, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.time = None
         self.id_properties_id = None
 
 
-class SiteConfigurationSnapshotInfoCollection(msrest.serialization.Model):
+class SiteConfigurationSnapshotInfoCollection(_serialization.Model):
     """Collection of metadata for the app configuration snapshots that can be restored.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.SiteConfigurationSnapshotInfo]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SiteConfigurationSnapshotInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SiteConfigurationSnapshotInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SiteConfigurationSnapshotInfo"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SiteConfigurationSnapshotInfo"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.SiteConfigurationSnapshotInfo]
         """
-        super(SiteConfigurationSnapshotInfoCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class SiteExtensionInfo(ProxyOnlyResource):
+class SiteExtensionInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Site Extension Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6865,7 +6628,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :vartype id_properties_id: str
     :ivar title: Site extension title.
     :vartype title: str
-    :ivar type_properties_type: Site extension type. Known values are: "Gallery", "WebRoot".
+    :ivar type_properties_type: Site extension type. Known values are: "Gallery" and "WebRoot".
     :vartype type_properties_type: str or ~azure.mgmt.web.v2016_08_01.models.SiteExtensionType
     :ivar summary: Summary description.
     :vartype summary: str
@@ -6905,39 +6668,39 @@ class SiteExtensionInfo(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'summary': {'key': 'properties.summary', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'extension_url': {'key': 'properties.extensionUrl', 'type': 'str'},
-        'project_url': {'key': 'properties.projectUrl', 'type': 'str'},
-        'icon_url': {'key': 'properties.iconUrl', 'type': 'str'},
-        'license_url': {'key': 'properties.licenseUrl', 'type': 'str'},
-        'feed_url': {'key': 'properties.feedUrl', 'type': 'str'},
-        'authors': {'key': 'properties.authors', 'type': '[str]'},
-        'installation_args': {'key': 'properties.installationArgs', 'type': 'str'},
-        'published_date_time': {'key': 'properties.publishedDateTime', 'type': 'iso-8601'},
-        'download_count': {'key': 'properties.downloadCount', 'type': 'int'},
-        'local_is_latest_version': {'key': 'properties.localIsLatestVersion', 'type': 'bool'},
-        'local_path': {'key': 'properties.localPath', 'type': 'str'},
-        'installed_date_time': {'key': 'properties.installedDateTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'comment': {'key': 'properties.comment', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "summary": {"key": "properties.summary", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "extension_url": {"key": "properties.extensionUrl", "type": "str"},
+        "project_url": {"key": "properties.projectUrl", "type": "str"},
+        "icon_url": {"key": "properties.iconUrl", "type": "str"},
+        "license_url": {"key": "properties.licenseUrl", "type": "str"},
+        "feed_url": {"key": "properties.feedUrl", "type": "str"},
+        "authors": {"key": "properties.authors", "type": "[str]"},
+        "installation_args": {"key": "properties.installationArgs", "type": "str"},
+        "published_date_time": {"key": "properties.publishedDateTime", "type": "iso-8601"},
+        "download_count": {"key": "properties.downloadCount", "type": "int"},
+        "local_is_latest_version": {"key": "properties.localIsLatestVersion", "type": "bool"},
+        "local_path": {"key": "properties.localPath", "type": "str"},
+        "installed_date_time": {"key": "properties.installedDateTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "comment": {"key": "properties.comment", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         kind: Optional[str] = None,
@@ -6961,8 +6724,8 @@ class SiteExtensionInfo(ProxyOnlyResource):
         installed_date_time: Optional[datetime.datetime] = None,
         provisioning_state: Optional[str] = None,
         comment: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -6970,7 +6733,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
         :paramtype id_properties_id: str
         :keyword title: Site extension title.
         :paramtype title: str
-        :keyword type_properties_type: Site extension type. Known values are: "Gallery", "WebRoot".
+        :keyword type_properties_type: Site extension type. Known values are: "Gallery" and "WebRoot".
         :paramtype type_properties_type: str or ~azure.mgmt.web.v2016_08_01.models.SiteExtensionType
         :keyword summary: Summary description.
         :paramtype summary: str
@@ -7008,7 +6771,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
         :keyword comment: Site Extension comment.
         :paramtype comment: str
         """
-        super(SiteExtensionInfo, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.id_properties_id = id_properties_id
         self.title = title
         self.type_properties_type = type_properties_type
@@ -7031,40 +6794,35 @@ class SiteExtensionInfo(ProxyOnlyResource):
         self.comment = comment
 
 
-class SiteExtensionInfoCollection(msrest.serialization.Model):
+class SiteExtensionInfoCollection(_serialization.Model):
     """Collection of Kudu site extension information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.SiteExtensionInfo]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SiteExtensionInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SiteExtensionInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SiteExtensionInfo"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SiteExtensionInfo"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.SiteExtensionInfo]
         """
-        super(SiteExtensionInfoCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -7087,49 +6845,44 @@ class SiteInstance(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(SiteInstance, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.name_properties_name = None
 
 
-class SiteLimits(msrest.serialization.Model):
+class SiteLimits(_serialization.Model):
     """Metric limits set on an app.
 
     :ivar max_percentage_cpu: Maximum allowed CPU usage percentage.
     :vartype max_percentage_cpu: float
     :ivar max_memory_in_mb: Maximum allowed memory usage in MB.
-    :vartype max_memory_in_mb: long
+    :vartype max_memory_in_mb: int
     :ivar max_disk_size_in_mb: Maximum allowed disk size usage in MB.
-    :vartype max_disk_size_in_mb: long
+    :vartype max_disk_size_in_mb: int
     """
 
     _attribute_map = {
-        'max_percentage_cpu': {'key': 'maxPercentageCpu', 'type': 'float'},
-        'max_memory_in_mb': {'key': 'maxMemoryInMb', 'type': 'long'},
-        'max_disk_size_in_mb': {'key': 'maxDiskSizeInMb', 'type': 'long'},
+        "max_percentage_cpu": {"key": "maxPercentageCpu", "type": "float"},
+        "max_memory_in_mb": {"key": "maxMemoryInMb", "type": "int"},
+        "max_disk_size_in_mb": {"key": "maxDiskSizeInMb", "type": "int"},
     }
 
     def __init__(
@@ -7138,17 +6891,17 @@ class SiteLimits(msrest.serialization.Model):
         max_percentage_cpu: Optional[float] = None,
         max_memory_in_mb: Optional[int] = None,
         max_disk_size_in_mb: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_percentage_cpu: Maximum allowed CPU usage percentage.
         :paramtype max_percentage_cpu: float
         :keyword max_memory_in_mb: Maximum allowed memory usage in MB.
-        :paramtype max_memory_in_mb: long
+        :paramtype max_memory_in_mb: int
         :keyword max_disk_size_in_mb: Maximum allowed disk size usage in MB.
-        :paramtype max_disk_size_in_mb: long
+        :paramtype max_disk_size_in_mb: int
         """
-        super(SiteLimits, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_percentage_cpu = max_percentage_cpu
         self.max_memory_in_mb = max_memory_in_mb
         self.max_disk_size_in_mb = max_disk_size_in_mb
@@ -7178,20 +6931,20 @@ class SiteLogsConfig(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'application_logs': {'key': 'properties.applicationLogs', 'type': 'ApplicationLogsConfig'},
-        'http_logs': {'key': 'properties.httpLogs', 'type': 'HttpLogsConfig'},
-        'failed_requests_tracing': {'key': 'properties.failedRequestsTracing', 'type': 'EnabledConfig'},
-        'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "application_logs": {"key": "properties.applicationLogs", "type": "ApplicationLogsConfig"},
+        "http_logs": {"key": "properties.httpLogs", "type": "HttpLogsConfig"},
+        "failed_requests_tracing": {"key": "properties.failedRequestsTracing", "type": "EnabledConfig"},
+        "detailed_error_messages": {"key": "properties.detailedErrorMessages", "type": "EnabledConfig"},
     }
 
     def __init__(
@@ -7202,8 +6955,8 @@ class SiteLogsConfig(ProxyOnlyResource):
         http_logs: Optional["_models.HttpLogsConfig"] = None,
         failed_requests_tracing: Optional["_models.EnabledConfig"] = None,
         detailed_error_messages: Optional["_models.EnabledConfig"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -7216,14 +6969,14 @@ class SiteLogsConfig(ProxyOnlyResource):
         :keyword detailed_error_messages: Detailed error messages configuration.
         :paramtype detailed_error_messages: ~azure.mgmt.web.v2016_08_01.models.EnabledConfig
         """
-        super(SiteLogsConfig, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.application_logs = application_logs
         self.http_logs = http_logs
         self.failed_requests_tracing = failed_requests_tracing
         self.detailed_error_messages = detailed_error_messages
 
 
-class SiteMachineKey(msrest.serialization.Model):
+class SiteMachineKey(_serialization.Model):
     """MachineKey of an app.
 
     :ivar validation: MachineKey validation.
@@ -7237,10 +6990,10 @@ class SiteMachineKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'validation': {'key': 'validation', 'type': 'str'},
-        'validation_key': {'key': 'validationKey', 'type': 'str'},
-        'decryption': {'key': 'decryption', 'type': 'str'},
-        'decryption_key': {'key': 'decryptionKey', 'type': 'str'},
+        "validation": {"key": "validation", "type": "str"},
+        "validation_key": {"key": "validationKey", "type": "str"},
+        "decryption": {"key": "decryption", "type": "str"},
+        "decryption_key": {"key": "decryptionKey", "type": "str"},
     }
 
     def __init__(
@@ -7250,8 +7003,8 @@ class SiteMachineKey(msrest.serialization.Model):
         validation_key: Optional[str] = None,
         decryption: Optional[str] = None,
         decryption_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validation: MachineKey validation.
         :paramtype validation: str
@@ -7262,14 +7015,14 @@ class SiteMachineKey(msrest.serialization.Model):
         :keyword decryption_key: Decryption key.
         :paramtype decryption_key: str
         """
-        super(SiteMachineKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.validation = validation
         self.validation_key = validation_key
         self.decryption = decryption
         self.decryption_key = decryption_key
 
 
-class SitePatchResource(ProxyOnlyResource):
+class SitePatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """ARM resource for a site.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7289,7 +7042,7 @@ class SitePatchResource(ProxyOnlyResource):
     :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
-     Known values are: "Normal", "Exceeded".
+     Known values are: "Normal" and "Exceeded".
     :vartype usage_state: str or ~azure.mgmt.web.v2016_08_01.models.UsageState
     :ivar enabled: :code:`<code>true</code>` if the app is enabled; otherwise,
      :code:`<code>false</code>`. Setting this value to false disables the app (takes the app
@@ -7300,7 +7053,7 @@ class SitePatchResource(ProxyOnlyResource):
      the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
     :ivar availability_state: Management information availability state for the app. Known values
-     are: "Normal", "Limited", "DisasterRecoveryMode".
+     are: "Normal", "Limited", and "DisasterRecoveryMode".
     :vartype availability_state: str or ~azure.mgmt.web.v2016_08_01.models.SiteAvailabilityState
     :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
@@ -7375,77 +7128,80 @@ class SitePatchResource(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'state': {'readonly': True},
-        'host_names': {'readonly': True},
-        'repository_site_name': {'readonly': True},
-        'usage_state': {'readonly': True},
-        'enabled_host_names': {'readonly': True},
-        'availability_state': {'readonly': True},
-        'last_modified_time_utc': {'readonly': True},
-        'traffic_manager_host_names': {'readonly': True},
-        'target_swap_slot': {'readonly': True},
-        'outbound_ip_addresses': {'readonly': True},
-        'possible_outbound_ip_addresses': {'readonly': True},
-        'suspended_till': {'readonly': True},
-        'max_number_of_workers': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'is_default_container': {'readonly': True},
-        'default_host_name': {'readonly': True},
-        'slot_swap_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "state": {"readonly": True},
+        "host_names": {"readonly": True},
+        "repository_site_name": {"readonly": True},
+        "usage_state": {"readonly": True},
+        "enabled_host_names": {"readonly": True},
+        "availability_state": {"readonly": True},
+        "last_modified_time_utc": {"readonly": True},
+        "traffic_manager_host_names": {"readonly": True},
+        "target_swap_slot": {"readonly": True},
+        "outbound_ip_addresses": {"readonly": True},
+        "possible_outbound_ip_addresses": {"readonly": True},
+        "suspended_till": {"readonly": True},
+        "max_number_of_workers": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "is_default_container": {"readonly": True},
+        "default_host_name": {"readonly": True},
+        "slot_swap_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
-        'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
-        'usage_state': {'key': 'properties.usageState', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'enabled_host_names': {'key': 'properties.enabledHostNames', 'type': '[str]'},
-        'availability_state': {'key': 'properties.availabilityState', 'type': 'str'},
-        'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
-        'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
-        'reserved': {'key': 'properties.reserved', 'type': 'bool'},
-        'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
-        'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
-        'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
-        'scm_site_also_stopped': {'key': 'properties.scmSiteAlsoStopped', 'type': 'bool'},
-        'target_swap_slot': {'key': 'properties.targetSwapSlot', 'type': 'str'},
-        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
-        'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
-        'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
-        'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
-        'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
-        'possible_outbound_ip_addresses': {'key': 'properties.possibleOutboundIpAddresses', 'type': 'str'},
-        'container_size': {'key': 'properties.containerSize', 'type': 'int'},
-        'daily_memory_time_quota': {'key': 'properties.dailyMemoryTimeQuota', 'type': 'int'},
-        'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
-        'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
-        'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
-        'snapshot_info': {'key': 'properties.snapshotInfo', 'type': 'SnapshotRecoveryRequest'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
-        'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
-        'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
-        'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "host_names": {"key": "properties.hostNames", "type": "[str]"},
+        "repository_site_name": {"key": "properties.repositorySiteName", "type": "str"},
+        "usage_state": {"key": "properties.usageState", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "enabled_host_names": {"key": "properties.enabledHostNames", "type": "[str]"},
+        "availability_state": {"key": "properties.availabilityState", "type": "str"},
+        "host_name_ssl_states": {"key": "properties.hostNameSslStates", "type": "[HostNameSslState]"},
+        "server_farm_id": {"key": "properties.serverFarmId", "type": "str"},
+        "reserved": {"key": "properties.reserved", "type": "bool"},
+        "last_modified_time_utc": {"key": "properties.lastModifiedTimeUtc", "type": "iso-8601"},
+        "site_config": {"key": "properties.siteConfig", "type": "SiteConfig"},
+        "traffic_manager_host_names": {"key": "properties.trafficManagerHostNames", "type": "[str]"},
+        "scm_site_also_stopped": {"key": "properties.scmSiteAlsoStopped", "type": "bool"},
+        "target_swap_slot": {"key": "properties.targetSwapSlot", "type": "str"},
+        "hosting_environment_profile": {
+            "key": "properties.hostingEnvironmentProfile",
+            "type": "HostingEnvironmentProfile",
+        },
+        "client_affinity_enabled": {"key": "properties.clientAffinityEnabled", "type": "bool"},
+        "client_cert_enabled": {"key": "properties.clientCertEnabled", "type": "bool"},
+        "host_names_disabled": {"key": "properties.hostNamesDisabled", "type": "bool"},
+        "outbound_ip_addresses": {"key": "properties.outboundIpAddresses", "type": "str"},
+        "possible_outbound_ip_addresses": {"key": "properties.possibleOutboundIpAddresses", "type": "str"},
+        "container_size": {"key": "properties.containerSize", "type": "int"},
+        "daily_memory_time_quota": {"key": "properties.dailyMemoryTimeQuota", "type": "int"},
+        "suspended_till": {"key": "properties.suspendedTill", "type": "iso-8601"},
+        "max_number_of_workers": {"key": "properties.maxNumberOfWorkers", "type": "int"},
+        "cloning_info": {"key": "properties.cloningInfo", "type": "CloningInfo"},
+        "snapshot_info": {"key": "properties.snapshotInfo", "type": "SnapshotRecoveryRequest"},
+        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
+        "is_default_container": {"key": "properties.isDefaultContainer", "type": "bool"},
+        "default_host_name": {"key": "properties.defaultHostName", "type": "str"},
+        "slot_swap_status": {"key": "properties.slotSwapStatus", "type": "SlotSwapStatus"},
+        "https_only": {"key": "properties.httpsOnly", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         kind: Optional[str] = None,
         enabled: Optional[bool] = None,
         host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
-        reserved: Optional[bool] = False,
+        reserved: bool = False,
         site_config: Optional["_models.SiteConfig"] = None,
-        scm_site_also_stopped: Optional[bool] = False,
+        scm_site_also_stopped: bool = False,
         hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         client_affinity_enabled: Optional[bool] = None,
         client_cert_enabled: Optional[bool] = None,
@@ -7455,8 +7211,8 @@ class SitePatchResource(ProxyOnlyResource):
         cloning_info: Optional["_models.CloningInfo"] = None,
         snapshot_info: Optional["_models.SnapshotRecoveryRequest"] = None,
         https_only: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -7508,7 +7264,7 @@ class SitePatchResource(ProxyOnlyResource):
          http requests.
         :paramtype https_only: bool
         """
-        super(SitePatchResource, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
@@ -7567,20 +7323,20 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'local_log_errors': {'key': 'properties.localLogErrors', 'type': 'str'},
-        'master_log_errors': {'key': 'properties.masterLogErrors', 'type': 'str'},
-        'local_log_errors_max_length': {'key': 'properties.localLogErrorsMaxLength', 'type': 'str'},
-        'master_log_errors_max_length': {'key': 'properties.masterLogErrorsMaxLength', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "local_log_errors": {"key": "properties.localLogErrors", "type": "str"},
+        "master_log_errors": {"key": "properties.masterLogErrors", "type": "str"},
+        "local_log_errors_max_length": {"key": "properties.localLogErrorsMaxLength", "type": "str"},
+        "master_log_errors_max_length": {"key": "properties.masterLogErrorsMaxLength", "type": "str"},
     }
 
     def __init__(
@@ -7591,8 +7347,8 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
         master_log_errors: Optional[str] = None,
         local_log_errors_max_length: Optional[str] = None,
         master_log_errors_max_length: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -7605,7 +7361,7 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
         :keyword master_log_errors_max_length: Master log_errors_max_len setting.
         :paramtype master_log_errors_max_length: str
         """
-        super(SitePhpErrorLogFlag, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.local_log_errors = local_log_errors
         self.master_log_errors = master_log_errors
         self.local_log_errors_max_length = local_log_errors_max_length
@@ -7642,21 +7398,21 @@ class SiteSourceControl(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
-        'branch': {'key': 'properties.branch', 'type': 'str'},
-        'is_manual_integration': {'key': 'properties.isManualIntegration', 'type': 'bool'},
-        'deployment_rollback_enabled': {'key': 'properties.deploymentRollbackEnabled', 'type': 'bool'},
-        'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "repo_url": {"key": "properties.repoUrl", "type": "str"},
+        "branch": {"key": "properties.branch", "type": "str"},
+        "is_manual_integration": {"key": "properties.isManualIntegration", "type": "bool"},
+        "deployment_rollback_enabled": {"key": "properties.deploymentRollbackEnabled", "type": "bool"},
+        "is_mercurial": {"key": "properties.isMercurial", "type": "bool"},
     }
 
     def __init__(
@@ -7668,8 +7424,8 @@ class SiteSourceControl(ProxyOnlyResource):
         is_manual_integration: Optional[bool] = None,
         deployment_rollback_enabled: Optional[bool] = None,
         is_mercurial: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -7688,7 +7444,7 @@ class SiteSourceControl(ProxyOnlyResource):
          :code:`<code>false</code>` for a Git repository.
         :paramtype is_mercurial: bool
         """
-        super(SiteSourceControl, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.repo_url = repo_url
         self.branch = branch
         self.is_manual_integration = is_manual_integration
@@ -7716,18 +7472,18 @@ class SlotConfigNamesResource(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]'},
-        'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "connection_string_names": {"key": "properties.connectionStringNames", "type": "[str]"},
+        "app_setting_names": {"key": "properties.appSettingNames", "type": "[str]"},
     }
 
     def __init__(
@@ -7736,8 +7492,8 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         kind: Optional[str] = None,
         connection_string_names: Optional[List[str]] = None,
         app_setting_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -7746,12 +7502,12 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         :keyword app_setting_names: List of application settings names.
         :paramtype app_setting_names: list[str]
         """
-        super(SlotConfigNamesResource, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names
 
 
-class SlotDifference(ProxyOnlyResource):
+class SlotDifference(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """A setting difference between two deployment slots of an app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7781,43 +7537,38 @@ class SlotDifference(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'type_properties_type': {'readonly': True},
-        'setting_type': {'readonly': True},
-        'diff_rule': {'readonly': True},
-        'setting_name': {'readonly': True},
-        'value_in_current_slot': {'readonly': True},
-        'value_in_target_slot': {'readonly': True},
-        'description': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "type_properties_type": {"readonly": True},
+        "setting_type": {"readonly": True},
+        "diff_rule": {"readonly": True},
+        "setting_name": {"readonly": True},
+        "value_in_current_slot": {"readonly": True},
+        "value_in_target_slot": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'setting_type': {'key': 'properties.settingType', 'type': 'str'},
-        'diff_rule': {'key': 'properties.diffRule', 'type': 'str'},
-        'setting_name': {'key': 'properties.settingName', 'type': 'str'},
-        'value_in_current_slot': {'key': 'properties.valueInCurrentSlot', 'type': 'str'},
-        'value_in_target_slot': {'key': 'properties.valueInTargetSlot', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "setting_type": {"key": "properties.settingType", "type": "str"},
+        "diff_rule": {"key": "properties.diffRule", "type": "str"},
+        "setting_name": {"key": "properties.settingName", "type": "str"},
+        "value_in_current_slot": {"key": "properties.valueInCurrentSlot", "type": "str"},
+        "value_in_target_slot": {"key": "properties.valueInTargetSlot", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(SlotDifference, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.type_properties_type = None
         self.setting_type = None
         self.diff_rule = None
@@ -7827,45 +7578,40 @@ class SlotDifference(ProxyOnlyResource):
         self.description = None
 
 
-class SlotDifferenceCollection(msrest.serialization.Model):
+class SlotDifferenceCollection(_serialization.Model):
     """Collection of slot differences.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.SlotDifference]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SlotDifference]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SlotDifference]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SlotDifference"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SlotDifference"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.SlotDifference]
         """
-        super(SlotDifferenceCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class SlotSwapStatus(msrest.serialization.Model):
+class SlotSwapStatus(_serialization.Model):
     """The status of the last successful slot swap operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7879,30 +7625,26 @@ class SlotSwapStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp_utc': {'readonly': True},
-        'source_slot_name': {'readonly': True},
-        'destination_slot_name': {'readonly': True},
+        "timestamp_utc": {"readonly": True},
+        "source_slot_name": {"readonly": True},
+        "destination_slot_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'timestamp_utc': {'key': 'timestampUtc', 'type': 'iso-8601'},
-        'source_slot_name': {'key': 'sourceSlotName', 'type': 'str'},
-        'destination_slot_name': {'key': 'destinationSlotName', 'type': 'str'},
+        "timestamp_utc": {"key": "timestampUtc", "type": "iso-8601"},
+        "source_slot_name": {"key": "sourceSlotName", "type": "str"},
+        "destination_slot_name": {"key": "destinationSlotName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SlotSwapStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.timestamp_utc = None
         self.source_slot_name = None
         self.destination_slot_name = None
 
 
-class SlowRequestsBasedTrigger(msrest.serialization.Model):
+class SlowRequestsBasedTrigger(_serialization.Model):
     """Trigger based on request execution time.
 
     :ivar time_taken: Time taken.
@@ -7914,9 +7656,9 @@ class SlowRequestsBasedTrigger(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'time_taken': {'key': 'timeTaken', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'time_interval': {'key': 'timeInterval', 'type': 'str'},
+        "time_taken": {"key": "timeTaken", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "time_interval": {"key": "timeInterval", "type": "str"},
     }
 
     def __init__(
@@ -7925,8 +7667,8 @@ class SlowRequestsBasedTrigger(msrest.serialization.Model):
         time_taken: Optional[str] = None,
         count: Optional[int] = None,
         time_interval: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_taken: Time taken.
         :paramtype time_taken: str
@@ -7935,7 +7677,7 @@ class SlowRequestsBasedTrigger(msrest.serialization.Model):
         :keyword time_interval: Time interval.
         :paramtype time_interval: str
         """
-        super(SlowRequestsBasedTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.time_taken = time_taken
         self.count = count
         self.time_interval = time_interval
@@ -7959,68 +7701,58 @@ class Snapshot(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "time": {"key": "properties.time", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(Snapshot, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.time = None
 
 
-class SnapshotCollection(msrest.serialization.Model):
+class SnapshotCollection(_serialization.Model):
     """Collection of snapshots which can be used to revert an app to a previous time.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.Snapshot]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Snapshot]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Snapshot]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Snapshot"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Snapshot"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.Snapshot]
         """
-        super(SnapshotCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -8056,21 +7788,21 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'snapshot_time': {'key': 'properties.snapshotTime', 'type': 'str'},
-        'recovery_target': {'key': 'properties.recoveryTarget', 'type': 'SnapshotRecoveryTarget'},
-        'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
-        'recover_configuration': {'key': 'properties.recoverConfiguration', 'type': 'bool'},
-        'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "snapshot_time": {"key": "properties.snapshotTime", "type": "str"},
+        "recovery_target": {"key": "properties.recoveryTarget", "type": "SnapshotRecoveryTarget"},
+        "overwrite": {"key": "properties.overwrite", "type": "bool"},
+        "recover_configuration": {"key": "properties.recoverConfiguration", "type": "bool"},
+        "ignore_conflicting_host_names": {"key": "properties.ignoreConflictingHostNames", "type": "bool"},
     }
 
     def __init__(
@@ -8082,8 +7814,8 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         overwrite: Optional[bool] = None,
         recover_configuration: Optional[bool] = None,
         ignore_conflicting_host_names: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -8103,7 +7835,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
          This setting is only necessary when RecoverConfiguration is enabled.
         :paramtype ignore_conflicting_host_names: bool
         """
-        super(SnapshotRecoveryRequest, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.snapshot_time = snapshot_time
         self.recovery_target = recovery_target
         self.overwrite = overwrite
@@ -8111,7 +7843,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         self.ignore_conflicting_host_names = ignore_conflicting_host_names
 
 
-class SnapshotRecoveryTarget(msrest.serialization.Model):
+class SnapshotRecoveryTarget(_serialization.Model):
     """Specifies the web app that snapshot contents will be written to.
 
     :ivar location: Geographical location of the target web app, e.g. SouthEastAsia,
@@ -8126,17 +7858,17 @@ class SnapshotRecoveryTarget(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: Optional[str] = None,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Geographical location of the target web app, e.g. SouthEastAsia,
          SouthCentralUS.
@@ -8148,12 +7880,12 @@ class SnapshotRecoveryTarget(msrest.serialization.Model):
          for other slots.
         :paramtype id: str
         """
-        super(SnapshotRecoveryTarget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.id = id
 
 
-class StatusCodesBasedTrigger(msrest.serialization.Model):
+class StatusCodesBasedTrigger(_serialization.Model):
     """Trigger based on status code.
 
     :ivar status: HTTP status code.
@@ -8169,11 +7901,11 @@ class StatusCodesBasedTrigger(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'int'},
-        'sub_status': {'key': 'subStatus', 'type': 'int'},
-        'win32_status': {'key': 'win32Status', 'type': 'int'},
-        'count': {'key': 'count', 'type': 'int'},
-        'time_interval': {'key': 'timeInterval', 'type': 'str'},
+        "status": {"key": "status", "type": "int"},
+        "sub_status": {"key": "subStatus", "type": "int"},
+        "win32_status": {"key": "win32Status", "type": "int"},
+        "count": {"key": "count", "type": "int"},
+        "time_interval": {"key": "timeInterval", "type": "str"},
     }
 
     def __init__(
@@ -8184,8 +7916,8 @@ class StatusCodesBasedTrigger(msrest.serialization.Model):
         win32_status: Optional[int] = None,
         count: Optional[int] = None,
         time_interval: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: HTTP status code.
         :paramtype status: int
@@ -8198,7 +7930,7 @@ class StatusCodesBasedTrigger(msrest.serialization.Model):
         :keyword time_interval: Time interval.
         :paramtype time_interval: str
         """
-        super(StatusCodesBasedTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.sub_status = sub_status
         self.win32_status = win32_status
@@ -8232,20 +7964,20 @@ class StorageMigrationOptions(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'azurefiles_connection_string': {'key': 'properties.azurefilesConnectionString', 'type': 'str'},
-        'azurefiles_share': {'key': 'properties.azurefilesShare', 'type': 'str'},
-        'switch_site_after_migration': {'key': 'properties.switchSiteAfterMigration', 'type': 'bool'},
-        'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "azurefiles_connection_string": {"key": "properties.azurefilesConnectionString", "type": "str"},
+        "azurefiles_share": {"key": "properties.azurefilesShare", "type": "str"},
+        "switch_site_after_migration": {"key": "properties.switchSiteAfterMigration", "type": "bool"},
+        "block_write_access_to_site": {"key": "properties.blockWriteAccessToSite", "type": "bool"},
     }
 
     def __init__(
@@ -8254,10 +7986,10 @@ class StorageMigrationOptions(ProxyOnlyResource):
         kind: Optional[str] = None,
         azurefiles_connection_string: Optional[str] = None,
         azurefiles_share: Optional[str] = None,
-        switch_site_after_migration: Optional[bool] = False,
-        block_write_access_to_site: Optional[bool] = False,
-        **kwargs
-    ):
+        switch_site_after_migration: bool = False,
+        block_write_access_to_site: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -8272,7 +8004,7 @@ class StorageMigrationOptions(ProxyOnlyResource):
          during copy operation; otherwise, :code:`<code>false</code>`.
         :paramtype block_write_access_to_site: bool
         """
-        super(StorageMigrationOptions, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.azurefiles_connection_string = azurefiles_connection_string
         self.azurefiles_share = azurefiles_share
         self.switch_site_after_migration = switch_site_after_migration
@@ -8298,31 +8030,26 @@ class StorageMigrationResponse(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'operation_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "operation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "operation_id": {"key": "properties.operationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(StorageMigrationResponse, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.operation_id = None
 
 
@@ -8344,33 +8071,29 @@ class StringDictionary(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        self, *, kind: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword properties: Settings.
         :paramtype properties: dict[str, str]
         """
-        super(StringDictionary, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.properties = properties
 
 
@@ -8392,17 +8115,17 @@ class TriggeredJobHistory(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'triggered_job_runs': {'key': 'properties.triggeredJobRuns', 'type': '[TriggeredJobRun]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "triggered_job_runs": {"key": "properties.triggeredJobRuns", "type": "[TriggeredJobRun]"},
     }
 
     def __init__(
@@ -8410,57 +8133,52 @@ class TriggeredJobHistory(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         triggered_job_runs: Optional[List["_models.TriggeredJobRun"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword triggered_job_runs: List of triggered web job runs.
         :paramtype triggered_job_runs: list[~azure.mgmt.web.v2016_08_01.models.TriggeredJobRun]
         """
-        super(TriggeredJobHistory, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.triggered_job_runs = triggered_job_runs
 
 
-class TriggeredJobHistoryCollection(msrest.serialization.Model):
+class TriggeredJobHistoryCollection(_serialization.Model):
     """Collection of Kudu continuous web job information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.TriggeredJobHistory]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TriggeredJobHistory]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TriggeredJobHistory]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.TriggeredJobHistory"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.TriggeredJobHistory"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.TriggeredJobHistory]
         """
-        super(TriggeredJobHistoryCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class TriggeredJobRun(ProxyOnlyResource):
+class TriggeredJobRun(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Triggered Web Job Run Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8477,7 +8195,7 @@ class TriggeredJobRun(ProxyOnlyResource):
     :vartype id_properties_id: str
     :ivar name_properties_name: Job name.
     :vartype name_properties_name: str
-    :ivar status: Job status. Known values are: "Success", "Failed", "Error".
+    :ivar status: Job status. Known values are: "Success", "Failed", and "Error".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.TriggeredWebJobStatus
     :ivar start_time: Start time.
     :vartype start_time: ~datetime.datetime
@@ -8498,28 +8216,28 @@ class TriggeredJobRun(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'duration': {'key': 'properties.duration', 'type': 'str'},
-        'output_url': {'key': 'properties.outputUrl', 'type': 'str'},
-        'error_url': {'key': 'properties.errorUrl', 'type': 'str'},
-        'url': {'key': 'properties.url', 'type': 'str'},
-        'job_name': {'key': 'properties.jobName', 'type': 'str'},
-        'trigger': {'key': 'properties.trigger', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "duration": {"key": "properties.duration", "type": "str"},
+        "output_url": {"key": "properties.outputUrl", "type": "str"},
+        "error_url": {"key": "properties.errorUrl", "type": "str"},
+        "url": {"key": "properties.url", "type": "str"},
+        "job_name": {"key": "properties.jobName", "type": "str"},
+        "trigger": {"key": "properties.trigger", "type": "str"},
     }
 
     def __init__(
@@ -8536,14 +8254,14 @@ class TriggeredJobRun(ProxyOnlyResource):
         url: Optional[str] = None,
         job_name: Optional[str] = None,
         trigger: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         :keyword id_properties_id: Job ID.
         :paramtype id_properties_id: str
-        :keyword status: Job status. Known values are: "Success", "Failed", "Error".
+        :keyword status: Job status. Known values are: "Success", "Failed", and "Error".
         :paramtype status: str or ~azure.mgmt.web.v2016_08_01.models.TriggeredWebJobStatus
         :keyword start_time: Start time.
         :paramtype start_time: ~datetime.datetime
@@ -8562,7 +8280,7 @@ class TriggeredJobRun(ProxyOnlyResource):
         :keyword trigger: Job trigger.
         :paramtype trigger: str
         """
-        super(TriggeredJobRun, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.id_properties_id = id_properties_id
         self.name_properties_name = None
         self.status = status
@@ -8576,7 +8294,7 @@ class TriggeredJobRun(ProxyOnlyResource):
         self.trigger = trigger
 
 
-class TriggeredWebJob(ProxyOnlyResource):
+class TriggeredWebJob(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Triggered Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8603,39 +8321,39 @@ class TriggeredWebJob(ProxyOnlyResource):
     :vartype url: str
     :ivar extra_info_url: Extra Info URL.
     :vartype extra_info_url: str
-    :ivar job_type: Job type. Known values are: "Continuous", "Triggered".
+    :ivar job_type: Job type. Known values are: "Continuous" and "Triggered".
     :vartype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
     :ivar error: Error information.
     :vartype error: str
     :ivar using_sdk: Using SDK?.
     :vartype using_sdk: bool
     :ivar settings: Job settings.
-    :vartype settings: dict[str, any]
+    :vartype settings: dict[str, JSON]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'latest_run': {'key': 'properties.latestRun', 'type': 'TriggeredJobRun'},
-        'history_url': {'key': 'properties.historyUrl', 'type': 'str'},
-        'scheduler_logs_url': {'key': 'properties.schedulerLogsUrl', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'run_command': {'key': 'properties.runCommand', 'type': 'str'},
-        'url': {'key': 'properties.url', 'type': 'str'},
-        'extra_info_url': {'key': 'properties.extraInfoUrl', 'type': 'str'},
-        'job_type': {'key': 'properties.jobType', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'str'},
-        'using_sdk': {'key': 'properties.usingSdk', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "latest_run": {"key": "properties.latestRun", "type": "TriggeredJobRun"},
+        "history_url": {"key": "properties.historyUrl", "type": "str"},
+        "scheduler_logs_url": {"key": "properties.schedulerLogsUrl", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "run_command": {"key": "properties.runCommand", "type": "str"},
+        "url": {"key": "properties.url", "type": "str"},
+        "extra_info_url": {"key": "properties.extraInfoUrl", "type": "str"},
+        "job_type": {"key": "properties.jobType", "type": "str"},
+        "error": {"key": "properties.error", "type": "str"},
+        "using_sdk": {"key": "properties.usingSdk", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "{object}"},
     }
 
     def __init__(
@@ -8651,9 +8369,9 @@ class TriggeredWebJob(ProxyOnlyResource):
         job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        settings: Optional[Dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -8669,16 +8387,16 @@ class TriggeredWebJob(ProxyOnlyResource):
         :paramtype url: str
         :keyword extra_info_url: Extra Info URL.
         :paramtype extra_info_url: str
-        :keyword job_type: Job type. Known values are: "Continuous", "Triggered".
+        :keyword job_type: Job type. Known values are: "Continuous" and "Triggered".
         :paramtype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
         :keyword error: Error information.
         :paramtype error: str
         :keyword using_sdk: Using SDK?.
         :paramtype using_sdk: bool
         :keyword settings: Job settings.
-        :paramtype settings: dict[str, any]
+        :paramtype settings: dict[str, JSON]
         """
-        super(TriggeredWebJob, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.latest_run = latest_run
         self.history_url = history_url
         self.scheduler_logs_url = scheduler_logs_url
@@ -8692,40 +8410,35 @@ class TriggeredWebJob(ProxyOnlyResource):
         self.settings = settings
 
 
-class TriggeredWebJobCollection(msrest.serialization.Model):
+class TriggeredWebJobCollection(_serialization.Model):
     """Collection of Kudu continuous web job information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.TriggeredWebJob]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TriggeredWebJob]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TriggeredWebJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.TriggeredWebJob"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.TriggeredWebJob"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.TriggeredWebJob]
         """
-        super(TriggeredWebJobCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -8756,21 +8469,21 @@ class User(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_name': {'key': 'properties.name', 'type': 'str'},
-        'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
-        'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
-        'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
-        'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_name": {"key": "properties.name", "type": "str"},
+        "publishing_user_name": {"key": "properties.publishingUserName", "type": "str"},
+        "publishing_password": {"key": "properties.publishingPassword", "type": "str"},
+        "publishing_password_hash": {"key": "properties.publishingPasswordHash", "type": "str"},
+        "publishing_password_hash_salt": {"key": "properties.publishingPasswordHashSalt", "type": "str"},
     }
 
     def __init__(
@@ -8782,8 +8495,8 @@ class User(ProxyOnlyResource):
         publishing_password: Optional[str] = None,
         publishing_password_hash: Optional[str] = None,
         publishing_password_hash_salt: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -8798,7 +8511,7 @@ class User(ProxyOnlyResource):
         :keyword publishing_password_hash_salt: Password hash salt used for publishing.
         :paramtype publishing_password_hash_salt: str
         """
-        super(User, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password
@@ -8806,7 +8519,7 @@ class User(ProxyOnlyResource):
         self.publishing_password_hash_salt = publishing_password_hash_salt
 
 
-class VirtualApplication(msrest.serialization.Model):
+class VirtualApplication(_serialization.Model):
     """Virtual application in an app.
 
     :ivar virtual_path: Virtual path.
@@ -8821,10 +8534,10 @@ class VirtualApplication(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'virtual_path': {'key': 'virtualPath', 'type': 'str'},
-        'physical_path': {'key': 'physicalPath', 'type': 'str'},
-        'preload_enabled': {'key': 'preloadEnabled', 'type': 'bool'},
-        'virtual_directories': {'key': 'virtualDirectories', 'type': '[VirtualDirectory]'},
+        "virtual_path": {"key": "virtualPath", "type": "str"},
+        "physical_path": {"key": "physicalPath", "type": "str"},
+        "preload_enabled": {"key": "preloadEnabled", "type": "bool"},
+        "virtual_directories": {"key": "virtualDirectories", "type": "[VirtualDirectory]"},
     }
 
     def __init__(
@@ -8834,8 +8547,8 @@ class VirtualApplication(msrest.serialization.Model):
         physical_path: Optional[str] = None,
         preload_enabled: Optional[bool] = None,
         virtual_directories: Optional[List["_models.VirtualDirectory"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_path: Virtual path.
         :paramtype virtual_path: str
@@ -8847,14 +8560,14 @@ class VirtualApplication(msrest.serialization.Model):
         :keyword virtual_directories: Virtual directories for virtual application.
         :paramtype virtual_directories: list[~azure.mgmt.web.v2016_08_01.models.VirtualDirectory]
         """
-        super(VirtualApplication, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.virtual_path = virtual_path
         self.physical_path = physical_path
         self.preload_enabled = preload_enabled
         self.virtual_directories = virtual_directories
 
 
-class VirtualDirectory(msrest.serialization.Model):
+class VirtualDirectory(_serialization.Model):
     """Directory for virtual application.
 
     :ivar virtual_path: Path to virtual application.
@@ -8864,30 +8577,27 @@ class VirtualDirectory(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'virtual_path': {'key': 'virtualPath', 'type': 'str'},
-        'physical_path': {'key': 'physicalPath', 'type': 'str'},
+        "virtual_path": {"key": "virtualPath", "type": "str"},
+        "physical_path": {"key": "physicalPath", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        virtual_path: Optional[str] = None,
-        physical_path: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, virtual_path: Optional[str] = None, physical_path: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_path: Path to virtual application.
         :paramtype virtual_path: str
         :keyword physical_path: Physical path.
         :paramtype physical_path: str
         """
-        super(VirtualDirectory, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.virtual_path = virtual_path
         self.physical_path = physical_path
 
 
 class VnetGateway(ProxyOnlyResource):
-    """The Virtual Network gateway contract. This is used to give the Virtual Network gateway access to the VPN package.
+    """The Virtual Network gateway contract. This is used to give the Virtual Network gateway access
+    to the VPN package.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -8906,18 +8616,18 @@ class VnetGateway(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "vnet_name": {"key": "properties.vnetName", "type": "str"},
+        "vpn_package_uri": {"key": "properties.vpnPackageUri", "type": "str"},
     }
 
     def __init__(
@@ -8926,8 +8636,8 @@ class VnetGateway(ProxyOnlyResource):
         kind: Optional[str] = None,
         vnet_name: Optional[str] = None,
         vpn_package_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -8936,7 +8646,7 @@ class VnetGateway(ProxyOnlyResource):
         :keyword vpn_package_uri: The URI where the VPN package can be downloaded.
         :paramtype vpn_package_uri: str
         """
-        super(VnetGateway, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri
 
@@ -8961,7 +8671,7 @@ class VnetInfo(ProxyOnlyResource):
     :ivar cert_blob: A certificate file (.cer) blob containing the public key of the private key
      used to authenticate a
      Point-To-Site VPN connection.
-    :vartype cert_blob: bytearray
+    :vartype cert_blob: bytes
     :ivar routes: The routes that this Virtual Network connection uses.
     :vartype routes: list[~azure.mgmt.web.v2016_08_01.models.VnetRoute]
     :ivar resync_required: :code:`<code>true</code>` if a resync is required; otherwise,
@@ -8973,25 +8683,25 @@ class VnetInfo(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'cert_thumbprint': {'readonly': True},
-        'routes': {'readonly': True},
-        'resync_required': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "cert_thumbprint": {"readonly": True},
+        "routes": {"readonly": True},
+        "resync_required": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str'},
-        'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
-        'cert_blob': {'key': 'properties.certBlob', 'type': 'bytearray'},
-        'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
-        'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
-        'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "vnet_resource_id": {"key": "properties.vnetResourceId", "type": "str"},
+        "cert_thumbprint": {"key": "properties.certThumbprint", "type": "str"},
+        "cert_blob": {"key": "properties.certBlob", "type": "bytearray"},
+        "routes": {"key": "properties.routes", "type": "[VnetRoute]"},
+        "resync_required": {"key": "properties.resyncRequired", "type": "bool"},
+        "dns_servers": {"key": "properties.dnsServers", "type": "str"},
     }
 
     def __init__(
@@ -8999,10 +8709,10 @@ class VnetInfo(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         vnet_resource_id: Optional[str] = None,
-        cert_blob: Optional[bytearray] = None,
+        cert_blob: Optional[bytes] = None,
         dns_servers: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -9011,12 +8721,12 @@ class VnetInfo(ProxyOnlyResource):
         :keyword cert_blob: A certificate file (.cer) blob containing the public key of the private key
          used to authenticate a
          Point-To-Site VPN connection.
-        :paramtype cert_blob: bytearray
+        :paramtype cert_blob: bytes
         :keyword dns_servers: DNS servers to be used by this Virtual Network. This should be a
          comma-separated list of IP addresses.
         :paramtype dns_servers: str
         """
-        super(VnetInfo, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = None
         self.cert_blob = cert_blob
@@ -9051,27 +8761,27 @@ class VnetRoute(ProxyOnlyResource):
      DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
      INHERITED - Routes inherited from the real Virtual Network routes
      STATIC - Static route set on the app only
-    
+
      These values will be used for syncing an app's routes with those from a Virtual Network. Known
-     values are: "DEFAULT", "INHERITED", "STATIC".
+     values are: "DEFAULT", "INHERITED", and "STATIC".
     :vartype route_type: str or ~azure.mgmt.web.v2016_08_01.models.RouteType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'vnet_route_name': {'key': 'properties.name', 'type': 'str'},
-        'start_address': {'key': 'properties.startAddress', 'type': 'str'},
-        'end_address': {'key': 'properties.endAddress', 'type': 'str'},
-        'route_type': {'key': 'properties.routeType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "vnet_route_name": {"key": "properties.name", "type": "str"},
+        "start_address": {"key": "properties.startAddress", "type": "str"},
+        "end_address": {"key": "properties.endAddress", "type": "str"},
+        "route_type": {"key": "properties.routeType", "type": "str"},
     }
 
     def __init__(
@@ -9082,8 +8792,8 @@ class VnetRoute(ProxyOnlyResource):
         start_address: Optional[str] = None,
         end_address: Optional[str] = None,
         route_type: Optional[Union[str, "_models.RouteType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -9100,95 +8810,85 @@ class VnetRoute(ProxyOnlyResource):
          DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
          INHERITED - Routes inherited from the real Virtual Network routes
          STATIC - Static route set on the app only
-        
+
          These values will be used for syncing an app's routes with those from a Virtual Network. Known
-         values are: "DEFAULT", "INHERITED", "STATIC".
+         values are: "DEFAULT", "INHERITED", and "STATIC".
         :paramtype route_type: str or ~azure.mgmt.web.v2016_08_01.models.RouteType
         """
-        super(VnetRoute, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address
         self.route_type = route_type
 
 
-class WebAppCollection(msrest.serialization.Model):
+class WebAppCollection(_serialization.Model):
     """Collection of App Service apps.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.Site]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Site]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Site]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Site"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Site"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.Site]
         """
-        super(WebAppCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class WebAppInstanceCollection(msrest.serialization.Model):
+class WebAppInstanceCollection(_serialization.Model):
     """Collection of app instances.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.SiteInstance]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SiteInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SiteInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SiteInstance"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SiteInstance"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.SiteInstance]
         """
-        super(WebAppInstanceCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class WebJob(ProxyOnlyResource):
+class WebJob(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9209,36 +8909,36 @@ class WebJob(ProxyOnlyResource):
     :vartype url: str
     :ivar extra_info_url: Extra Info URL.
     :vartype extra_info_url: str
-    :ivar job_type: Job type. Known values are: "Continuous", "Triggered".
+    :ivar job_type: Job type. Known values are: "Continuous" and "Triggered".
     :vartype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
     :ivar error: Error information.
     :vartype error: str
     :ivar using_sdk: Using SDK?.
     :vartype using_sdk: bool
     :ivar settings: Job settings.
-    :vartype settings: dict[str, any]
+    :vartype settings: dict[str, JSON]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "name_properties_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'run_command': {'key': 'properties.runCommand', 'type': 'str'},
-        'url': {'key': 'properties.url', 'type': 'str'},
-        'extra_info_url': {'key': 'properties.extraInfoUrl', 'type': 'str'},
-        'job_type': {'key': 'properties.jobType', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'str'},
-        'using_sdk': {'key': 'properties.usingSdk', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "run_command": {"key": "properties.runCommand", "type": "str"},
+        "url": {"key": "properties.url", "type": "str"},
+        "extra_info_url": {"key": "properties.extraInfoUrl", "type": "str"},
+        "job_type": {"key": "properties.jobType", "type": "str"},
+        "error": {"key": "properties.error", "type": "str"},
+        "using_sdk": {"key": "properties.usingSdk", "type": "bool"},
+        "settings": {"key": "properties.settings", "type": "{object}"},
     }
 
     def __init__(
@@ -9251,9 +8951,9 @@ class WebJob(ProxyOnlyResource):
         job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        settings: Optional[Dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -9263,16 +8963,16 @@ class WebJob(ProxyOnlyResource):
         :paramtype url: str
         :keyword extra_info_url: Extra Info URL.
         :paramtype extra_info_url: str
-        :keyword job_type: Job type. Known values are: "Continuous", "Triggered".
+        :keyword job_type: Job type. Known values are: "Continuous" and "Triggered".
         :paramtype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
         :keyword error: Error information.
         :paramtype error: str
         :keyword using_sdk: Using SDK?.
         :paramtype using_sdk: bool
         :keyword settings: Job settings.
-        :paramtype settings: dict[str, any]
+        :paramtype settings: dict[str, JSON]
         """
-        super(WebJob, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.name_properties_name = None
         self.run_command = run_command
         self.url = url
@@ -9283,39 +8983,34 @@ class WebJob(ProxyOnlyResource):
         self.settings = settings
 
 
-class WebJobCollection(msrest.serialization.Model):
+class WebJobCollection(_serialization.Model):
     """Collection of Kudu web job information elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2016_08_01.models.WebJob]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WebJob]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WebJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.WebJob"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.WebJob"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2016_08_01.models.WebJob]
         """
-        super(WebJobCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
