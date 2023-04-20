@@ -64,7 +64,7 @@ class TestFeatureStoreEntityOperations:
     def test_archive_version(self, mock_feature_store_entity_operations: FeatureStoreEntityOperations):
         name = "random_name"
         featureStoreEntity_version = Mock(
-            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
+            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties(is_archived=False)))
         )
         version = "1"
         mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
