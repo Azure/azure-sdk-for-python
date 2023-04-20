@@ -49,7 +49,9 @@ def build_list_by_cluster_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +84,9 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -119,7 +123,9 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -156,7 +162,9 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +198,9 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +234,9 @@ def build_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +270,9 @@ def build_regenerate_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -289,13 +303,15 @@ def build_regenerate_key_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_method_request(
+def build_import_request(
     resource_group_name: str, cluster_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -332,7 +348,9 @@ def build_export_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -369,7 +387,9 @@ def build_force_unlink_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01"))
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -377,6 +397,45 @@ def build_force_unlink_request(
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/forceUnlink",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_flush_request(
+    resource_group_name: str, cluster_name: str, database_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
+    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/flush",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url(
@@ -438,7 +497,7 @@ class DatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseList] = kwargs.pop("cls", None)
@@ -494,8 +553,9 @@ class DatabasesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -531,7 +591,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -561,8 +621,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -682,7 +743,7 @@ class DatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters supplied to the create or update database operation. Is either a
-         model type or a IO type. Required.
+         Database type or a IO type. Required.
         :type parameters: ~azure.mgmt.redisenterprise.models.Database or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -702,7 +763,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -771,7 +832,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -801,8 +862,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -920,7 +982,7 @@ class DatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters supplied to the create or update database operation. Is either a
-         model type or a IO type. Required.
+         DatabaseUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.redisenterprise.models.DatabaseUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -940,7 +1002,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1017,7 +1079,7 @@ class DatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
@@ -1035,8 +1097,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1071,7 +1134,7 @@ class DatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1089,8 +1152,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1135,7 +1199,7 @@ class DatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1209,7 +1273,7 @@ class DatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.AccessKeys] = kwargs.pop("cls", None)
@@ -1227,8 +1291,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1268,7 +1333,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1298,8 +1363,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1416,8 +1482,8 @@ class DatabasesOperations:
         :type cluster_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Specifies which key to regenerate. Is either a model type or a IO type.
-         Required.
+        :param parameters: Specifies which key to regenerate. Is either a RegenerateKeyParameters type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.redisenterprise.models.RegenerateKeyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1437,7 +1503,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1468,7 +1534,7 @@ class DatabasesOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -1487,7 +1553,7 @@ class DatabasesOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/regenerateKey"
     }
 
-    def _import_method_initial(  # pylint: disable=inconsistent-return-statements
+    def _import_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -1506,7 +1572,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1520,7 +1586,7 @@ class DatabasesOperations:
         else:
             _json = self._serialize.body(parameters, "ImportClusterParameters")
 
-        request = build_import_method_request(
+        request = build_import_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             database_name=database_name,
@@ -1529,15 +1595,16 @@ class DatabasesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._import_method_initial.metadata["url"],
+            template_url=self._import_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1550,7 +1617,7 @@ class DatabasesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _import_method_initial.metadata = {
+    _import_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/import"
     }
 
@@ -1648,8 +1715,8 @@ class DatabasesOperations:
         :type cluster_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Storage information for importing into the cluster. Is either a model type
-         or a IO type. Required.
+        :param parameters: Storage information for importing into the cluster. Is either a
+         ImportClusterParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.redisenterprise.models.ImportClusterParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1669,7 +1736,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1678,7 +1745,7 @@ class DatabasesOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._import_method_initial(  # type: ignore
+            raw_result = self._import_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 database_name=database_name,
@@ -1736,7 +1803,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1766,8 +1833,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1878,8 +1946,8 @@ class DatabasesOperations:
         :type cluster_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Storage information for exporting into the cluster. Is either a model type
-         or a IO type. Required.
+        :param parameters: Storage information for exporting into the cluster. Is either a
+         ExportClusterParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.redisenterprise.models.ExportClusterParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1899,7 +1967,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1966,7 +2034,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1996,8 +2064,9 @@ class DatabasesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2108,8 +2177,8 @@ class DatabasesOperations:
         :type cluster_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Information identifying the database to be unlinked. Is either a model type
-         or a IO type. Required.
+        :param parameters: Information identifying the database to be unlinked. Is either a
+         ForceUnlinkParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.redisenterprise.models.ForceUnlinkParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2129,7 +2198,7 @@ class DatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-01-01"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2175,4 +2244,242 @@ class DatabasesOperations:
 
     begin_force_unlink.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/forceUnlink"
+    }
+
+    def _flush_initial(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        database_name: str,
+        parameters: Union[_models.FlushParameters, IO],
+        **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IO, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "FlushParameters")
+
+        request = build_flush_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self._flush_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _flush_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/flush"
+    }
+
+    @overload
+    def begin_flush(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        database_name: str,
+        parameters: _models.FlushParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Flushes all the keys in this database and also from its linked databases.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the RedisEnterprise cluster. Required.
+        :type cluster_name: str
+        :param database_name: The name of the database. Required.
+        :type database_name: str
+        :param parameters: Information identifying the databases to be flushed. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.FlushParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_flush(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        database_name: str,
+        parameters: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Flushes all the keys in this database and also from its linked databases.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the RedisEnterprise cluster. Required.
+        :type cluster_name: str
+        :param database_name: The name of the database. Required.
+        :type database_name: str
+        :param parameters: Information identifying the databases to be flushed. Required.
+        :type parameters: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_flush(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        database_name: str,
+        parameters: Union[_models.FlushParameters, IO],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Flushes all the keys in this database and also from its linked databases.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the RedisEnterprise cluster. Required.
+        :type cluster_name: str
+        :param database_name: The name of the database. Required.
+        :type database_name: str
+        :param parameters: Information identifying the databases to be flushed. Is either a
+         FlushParameters type or a IO type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.FlushParameters or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._flush_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                database_name=database_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_flush.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/flush"
     }

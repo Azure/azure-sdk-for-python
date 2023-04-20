@@ -32,29 +32,11 @@ def main():
     response = client.accounts.begin_create_or_update(
         resource_group_name="myRG",
         account_name="account1",
-        body={
-            "location": "eastus",
-            "properties": {
-                "activeDirectories": [
-                    {
-                        "aesEncryption": True,
-                        "dns": "10.10.10.3, 10.10.10.4",
-                        "domain": "10.10.10.3",
-                        "ldapOverTLS": False,
-                        "ldapSigning": False,
-                        "organizationalUnit": "OU=Engineering",
-                        "password": "ad_password",
-                        "site": "SiteName",
-                        "smbServerName": "SMBServer",
-                        "username": "ad_user_name",
-                    }
-                ]
-            },
-        },
+        body={"location": "eastus", "properties": {}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-05-01/examples/Accounts_CreateOrUpdate.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Accounts_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

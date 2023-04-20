@@ -20,6 +20,7 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
     - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
     - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
     - [Fixture not found error](#fixture-not-found-error)
+    - [PermissionError during startup](#permissionerror-during-startup)
 
 ## Debugging tip
 
@@ -151,6 +152,20 @@ a test with the `recorded_by_proxy` decorator will permit using named parameters
 As noted in the [Fetch environment variables][env_var_section] section of the [migration guide][migration_guide],
 reading expected variables from an accepted `**kwargs` parameter is recommended instead so that tests will run as
 expected in either case.
+
+## PermissionError during startup
+
+While the test proxy is being invoked during the start of a test run, you may see an error such as
+```
+PermissionError: [Errno 13] Permission denied: '.../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy'
+```
+
+This means that the test proxy tool was successfully installed at the location in the error message, but we don't have
+sufficient permissions to run it with the tool startup script. We can set the correct permissions on the file by using
+`chmod`. Using the tool path that was provided in the `PermissionError` message, run the following command:
+```
+chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
+```
 
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md

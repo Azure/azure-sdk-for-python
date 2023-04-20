@@ -765,7 +765,7 @@
         "xoperex",
         "Zocor"
       ]
-    },    
+    },
     {
       "filename": "sdk/keyvault/**",
       "words": [
@@ -1071,7 +1071,9 @@
         "pycache",
         "ruamel",
         "reprcrash",
-        "etests"
+        "etests",
+        "RMSE",
+        "azmonitoring"
       ]
     },
     {

@@ -1,0 +1,24 @@
+files: sdk/ml/
+repos:
+-   repo: https://github.com/psf/black
+    rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
+    hooks:
+    -   id: black
+        args: [--config=eng/black-pyproject.toml]
+- repo: https://github.com/econchick/interrogate
+  rev: 1.5.0 
+  hooks:
+  - id: interrogate
+    types_or: [python]
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
+    # exclude defined here because exclude in pyproject.toml is not being respected
+- repo: https://github.com/streetsidesoftware/cspell-cli
+  rev: v6.31.0
+  hooks:
+  - id: cspell
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v5.8.0
+  hooks:
+  - id: isort
+    name: isort (python)
+    args: ['--settings-file', 'sdk/ml/azure-ai-ml/pyproject.toml']

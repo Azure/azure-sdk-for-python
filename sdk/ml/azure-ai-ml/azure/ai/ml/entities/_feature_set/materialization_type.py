@@ -8,6 +8,6 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class _MaterializationType(Enum):
+class MaterializationType(Enum):
     RecurrentMaterialization = 1
     BackfillMaterialization = 2

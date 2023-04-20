@@ -47,8 +47,8 @@ def build_get_request(resource_group_name: str, account_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -84,8 +84,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -124,8 +124,8 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -163,8 +163,8 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     # Construct URL
     _url = kwargs.pop(
@@ -195,8 +195,8 @@ def build_failover_priority_change_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
@@ -230,8 +230,8 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -256,8 +256,8 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -290,8 +290,8 @@ def build_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -327,8 +327,8 @@ def build_list_connection_strings_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -364,8 +364,8 @@ def build_offline_region_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -404,8 +404,8 @@ def build_online_region_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -444,8 +444,8 @@ def build_get_read_only_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -481,8 +481,8 @@ def build_list_read_only_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -518,8 +518,8 @@ def build_regenerate_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
@@ -552,8 +552,8 @@ def build_regenerate_key_request(
 def build_check_name_exists_request(account_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     # Construct URL
     _url = kwargs.pop("template_url", "/providers/Microsoft.DocumentDB/databaseAccountNames/{accountName}")
@@ -577,8 +577,8 @@ def build_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -615,8 +615,8 @@ def build_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -654,8 +654,8 @@ def build_list_metric_definitions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-15-preview")
+    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-03-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -729,7 +729,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountGetResults] = kwargs.pop("cls", None)
@@ -746,8 +746,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -785,7 +786,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -814,8 +815,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -944,7 +946,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1009,7 +1011,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1038,8 +1040,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1175,7 +1178,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1236,7 +1239,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1253,8 +1256,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1301,7 +1305,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1361,7 +1365,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1390,8 +1394,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1529,7 +1534,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1587,7 +1592,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountsListResult] = kwargs.pop("cls", None)
@@ -1641,8 +1646,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1674,7 +1680,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountsListResult] = kwargs.pop("cls", None)
@@ -1729,8 +1735,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1773,7 +1780,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountListKeysResult] = kwargs.pop("cls", None)
@@ -1790,8 +1797,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1838,7 +1846,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountListConnectionStringsResult] = kwargs.pop("cls", None)
@@ -1855,8 +1863,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1894,7 +1903,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1923,8 +1932,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2056,7 +2066,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2119,7 +2129,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2148,8 +2158,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2281,7 +2292,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2353,7 +2364,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountListReadOnlyKeysResult] = kwargs.pop("cls", None)
@@ -2370,8 +2381,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2418,7 +2430,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DatabaseAccountListReadOnlyKeysResult] = kwargs.pop("cls", None)
@@ -2435,8 +2447,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2474,7 +2487,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2503,8 +2516,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2634,7 +2648,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2703,7 +2717,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2718,8 +2732,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2757,7 +2772,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.MetricListResult] = kwargs.pop("cls", None)
@@ -2814,8 +2829,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2854,7 +2870,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.UsagesResult] = kwargs.pop("cls", None)
@@ -2911,8 +2927,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2947,7 +2964,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-15-preview"] = kwargs.pop(
+        api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.MetricDefinitionsListResult] = kwargs.pop("cls", None)
@@ -3003,8 +3020,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

@@ -177,15 +177,15 @@ try:
     source_script = "Latn"
     input_text_elements = [ InputTextItem(text = "zhè shì gè cè shì。") ]
 
-    response = text_translator.break_sentence(content = input_text_elements, language = source_language, script = source_script)
-    break_sentence = response[0] if response else None
+    response = text_translator.find_sentence_boundaries(content = input_text_elements, language = source_language, script = source_script)
+    sentence_boundaries = response[0] if response else None
 
-    if break_sentence:
-        detected_language = break_sentence.detected_language
+    if sentence_boundaries:
+        detected_language = sentence_boundaries.detected_language
         if detected_language:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
         print(f"The detected sentence boundaries:")
-        for boundary in break_sentence.sent_len:
+        for boundary in sentence_boundaries.sent_len:
             print(boundary)
 
 except HttpResponseError as exception:
@@ -207,7 +207,7 @@ try:
     target_language = "es"
     input_text_elements = [ InputTextItem(text = "fly") ]
 
-    response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_language)
+    response = text_translator.lookup_dictionary_entries(content = input_text_elements, from_parameter = source_language, to = target_language)
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
@@ -235,7 +235,7 @@ try:
     target_language = "es"
     input_text_elements = [ DictionaryExampleTextItem(text = "fly", translation = "volar") ]
 
-    response = text_translator.dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
+    response = text_translator.lookup_dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:

@@ -13,7 +13,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class BaseEnvironmentId:
+class BaseEnvironment:
     """Base environment type.
 
     All required parameters must be populated in order to send to Azure.
@@ -31,7 +31,7 @@ class BaseEnvironmentId:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestBaseEnvironmentId) -> "RestBaseEnvironmentId":
-        return BaseEnvironmentId(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
+        return BaseEnvironment(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
