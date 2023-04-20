@@ -24,6 +24,7 @@ create_monitor:
   monitoring_signals:
     testSignal:
       type: custom
+      component_id: azureml:fake_component:1
       input_datasets:
         test_data_1:
           input_dataset:

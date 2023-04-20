@@ -8,6 +8,7 @@
                 "signals": {
                     "testSignal": {
                         "signalType": "Custom",
+                        "componentId": "fake_component:1",
                         "mode": "Enabled",
                         "inputAssets": {
                             "test_data_1": {
