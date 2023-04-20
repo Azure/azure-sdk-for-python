@@ -10,7 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class _ComputeRuntime(RestTranslatableMixin):
+class ComputeRuntime(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -26,7 +26,7 @@ class _ComputeRuntime(RestTranslatableMixin):
         return RestComputeRuntimeDto(spark_runtime_version=self.spark_runtime_version)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestComputeRuntimeDto) -> "_ComputeRuntime":
+    def _from_rest_object(cls, obj: RestComputeRuntimeDto) -> "ComputeRuntime":
         if not obj:
             return None
-        return _ComputeRuntime(spark_runtime_version=obj.spark_runtime_version)
+        return ComputeRuntime(spark_runtime_version=obj.spark_runtime_version)

@@ -6,7 +6,7 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageModelDistributionSettingsClassification
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageModelDistributionSettingsClassification
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution

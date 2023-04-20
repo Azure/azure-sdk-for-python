@@ -8,7 +8,6 @@ from ....entities._job.job_resource_configuration import BaseProperty
 
 
 class PascalCaseProperty(BaseProperty):
-
     _KEY_MAPPING = {}
 
     def items(self):
@@ -21,7 +20,6 @@ class PascalCaseProperty(BaseProperty):
 
 
 class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):
-
     _KEY_MAPPING = {
         "container_name": "ContainerName",
         "relative_path": "RelativePath",
@@ -45,7 +43,6 @@ class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):
 
 
 class AISuperComputerScalePolicy(PascalCaseProperty):
-
     _KEY_MAPPING = {
         "auto_scale_instance_type_count_set": "AutoScaleInstanceTypeCountSet",
         "auto_scale_interval_in_sec": "AutoScaleIntervalInSec",

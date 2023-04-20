@@ -3,19 +3,20 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import typing
+import logging
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ScheduleProperties
-from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
@@ -29,8 +30,94 @@ from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
+module_logger = logging.getLogger(__name__)
 
-class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Resource, TelemetryMixin):
+
+class Schedule(Resource):
+    """JobSchedule object.
+
+    :param name: Name of the schedule.
+    :type name: str
+    :param trigger: Trigger of the schedule.
+    :type trigger: Union[CronTrigger, RecurrenceTrigger]
+    :param display_name: Display name of the schedule.
+    :type display_name: str
+    :param description: Description of the schedule, defaults to None
+    :type description: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param properties: The job property dictionary.
+    :type properties: dict[str, str]
+    """
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        trigger: Union[CronTrigger, RecurrenceTrigger],
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        **kwargs,
+    ):
+        is_enabled = kwargs.pop("is_enabled", None)
+        provisioning_state = kwargs.pop("provisioning_state", None)
+        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        self.trigger = trigger
+        self.display_name = display_name
+        self._is_enabled = is_enabled
+        self._provisioning_state = provisioning_state
+        self._type = None
+
+    @classmethod
+    def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
+        from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+
+        if "create_monitor" in data:
+            return MonitorSchedule, None
+        return JobSchedule, None
+
+    @property
+    def create_job(self) -> None:
+        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+
+    @create_job.setter
+    def create_job(self, value) -> None:  # pylint: disable=unused-argument
+        module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+
+    @property
+    def is_enabled(self):
+        """
+        Return the schedule is enabled or not.
+
+        :return: Enabled status.
+        :rtype: bool
+        """
+        return self._is_enabled
+
+    @property
+    def provisioning_state(self):
+        """
+        Return the schedule's provisioning state. Possible values include:
+        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+
+        :return: Provisioning state.
+        :rtype: str
+        """
+        return self._provisioning_state
+
+    @property
+    def type(self) -> str:
+        """Type of the schedule, supported are 'job' and 'monitor'.
+
+        :return: Type of the schedule.
+        :rtype: str
+        """
+        return self._type
+
+
+class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -61,35 +148,34 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-        is_enabled = kwargs.pop("is_enabled", None)
-        provisioning_state = kwargs.pop("provisioning_state", None)
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
-        self.trigger = trigger
-        self.display_name = display_name
-        self.create_job = create_job
-        self._is_enabled = is_enabled
-        self._provisioning_state = provisioning_state
+        super().__init__(
+            name=name,
+            trigger=trigger,
+            display_name=display_name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
+        self._create_job = create_job
+        self._type = ScheduleType.JOB
 
     @property
-    def is_enabled(self):
+    def create_job(self):
         """
-        Return the schedule is enabled or not.
+        Return the schedule's action job definition, or the existing job name.
 
-        :return: Enabled status.
-        :rtype: bool
+        :return: Create job.
+        :rtype: Union[Job, str]
         """
-        return self._is_enabled
+        return self._create_job
 
-    @property
-    def provisioning_state(self):
+    @create_job.setter
+    def create_job(self, value: Union[Job, str]):
         """
-        Return the schedule's provisioning state. Possible values include:
-        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
-
-        :return: Provisioning state.
-        :rtype: str
+        Sets the schedule's action to a job definition or an existing job name.
         """
-        return self._provisioning_state
+        self._create_job = value
 
     @classmethod
     def _load(
@@ -107,7 +193,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         }
         return JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
-            **load_from_dict(ScheduleSchema, data, context, **kwargs),
+            **load_from_dict(JobScheduleSchema, data, context, **kwargs),
         )
 
     @classmethod
@@ -165,7 +251,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         create_job._id = job_id
         schedule = JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
-            **load_from_dict(ScheduleSchema, data, context, **kwargs),
+            **load_from_dict(JobScheduleSchema, data, context, **kwargs),
             **{create_job_key: None},
         )
         schedule.create_job = create_job
@@ -188,7 +274,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
 
     @classmethod
     def _create_schema_for_validation(cls, context):
-        return ScheduleSchema(context=context)
+        return JobScheduleSchema(context=context)
 
     @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
