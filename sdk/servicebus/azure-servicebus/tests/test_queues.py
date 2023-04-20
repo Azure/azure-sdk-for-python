@@ -224,7 +224,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             assert count == 10
 
-    # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -1043,7 +1042,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     with pytest.raises(ValueError):
                         receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -1673,7 +1671,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 else:
                     raise Exception("Failed to receive schdeduled message.")
             
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -2043,7 +2040,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
         assert message.scheduled_enqueue_time_utc is None
 
-    # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
