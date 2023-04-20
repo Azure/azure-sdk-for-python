@@ -5,12 +5,9 @@
 # pylint: disable=unused-argument,no-self-use
 
 import yaml
-from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import NestedField, FileRefField
-from azure.ai.ml._schema.core.resource import ResourceSchema
-from azure.ai.ml._schema.job import CreationContextSchema
-from azure.ai.ml._schema.schedule.trigger import CronTriggerSchema, RecurrenceTriggerSchema
+from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from ..core.fields import UnionField
@@ -33,22 +30,10 @@ class ImportDataFileRefField(FileRefField):
 
 
 @experimental
-class ImportDataScheduleSchema(ResourceSchema):
-    name = fields.Str(attribute="name", required=True)
-    display_name = fields.Str(attribute="display_name")
-    trigger = UnionField(
-        [
-            NestedField(CronTriggerSchema),
-            NestedField(RecurrenceTriggerSchema),
-        ],
-    )
+class ImportDataScheduleSchema(ScheduleSchema):
     import_data = UnionField(
         [
             ImportDataFileRefField,
             NestedField(DataImportSchema),
         ]
     )
-    creation_context = NestedField(CreationContextSchema, dump_only=True)
-    is_enabled = fields.Boolean(dump_only=True)
-    provisioning_state = fields.Str(dump_only=True)
-    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))

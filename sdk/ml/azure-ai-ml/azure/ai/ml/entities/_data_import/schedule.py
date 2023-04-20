@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-import typing
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
