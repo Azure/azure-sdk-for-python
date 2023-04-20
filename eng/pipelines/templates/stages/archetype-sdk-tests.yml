@@ -163,6 +163,7 @@ stages:
 
         steps:
           - pwsh: |
+              python -m pip install setuptools==58.3.0
               python -m pip install -r eng/ci_tools.txt 
             displayName: 'Install Necessary Dependencies'
           - task: PythonScript@0
