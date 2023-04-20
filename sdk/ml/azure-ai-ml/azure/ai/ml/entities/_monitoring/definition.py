@@ -31,7 +31,7 @@ class MonitorDefinition(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        compute: str = None,
+        compute: str,
         monitoring_target: MonitoringTarget = None,
         monitoring_signals: Dict[
             str,
