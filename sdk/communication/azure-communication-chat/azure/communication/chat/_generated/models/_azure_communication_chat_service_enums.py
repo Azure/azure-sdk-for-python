@@ -43,7 +43,7 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
 
 
-class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Retention Policy Type."""
 
     THREAD_CREATION_DATE = "threadCreationDate"

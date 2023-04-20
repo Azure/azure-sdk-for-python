@@ -604,7 +604,7 @@ class ChatRetentionPolicy(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Retention Policy Type. Required. "threadCreationDate"
-    :vartype kind: str or ~azure.communication.chat.models.Kind
+    :vartype kind: str or ~azure.communication.chat.models.PolicyType
     """
 
     _validation = {
@@ -1209,7 +1209,7 @@ class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Retention Policy Type. Required. "threadCreationDate"
-    :vartype kind: str or ~azure.communication.chat.models.Kind
+    :vartype kind: str or ~azure.communication.chat.models.PolicyType
     :ivar delete_thread_after_days: Indicates how many days after the thread creation the thread
      will be deleted. Only 90 is accepted for now. Required.
     :vartype delete_thread_after_days: int
