@@ -102,7 +102,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.application_insights.lower() == static_appinsights.lower()
         assert workspace.tags == param_tags
 
-        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True, force_to_purge=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
         assert isinstance(poller, LROPoller)
