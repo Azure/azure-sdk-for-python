@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import logging
 import sys
@@ -35,6 +35,7 @@ from eventgrid_preparer import (
     EventGridPreparer,
 )
 
+
 class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     def create_eg_publisher_client(self, endpoint):
         credential = self.get_credential(EventGridPublisherClient, is_async=True)
@@ -48,11 +49,8 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
         akc_credential = AzureKeyCredential("bad credential")
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
-                subject="sample", 
-                data={"sample": "eventgridevent"}, 
-                event_type="Sample.EventGrid.Event",
-                data_version="2.0"
-                )
+            subject="sample", data={"sample": "eventgridevent"}, event_type="Sample.EventGrid.Event", data_version="2.0"
+        )
         with pytest.raises(ClientAuthenticationError, match="The request authorization key is not authorized for*"):
             await client.send(eg_event)
 
@@ -61,13 +59,12 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_raise_on_bad_resource(self, variables, eventgrid_topic_key):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
-        client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
+        client = EventGridPublisherClient(
+            "https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential
+        )
         eg_event = EventGridEvent(
-                subject="sample", 
-                data={"sample": "eventgridevent"}, 
-                event_type="Sample.EventGrid.Event",
-                data_version="2.0"
-                )
+            subject="sample", data={"sample": "eventgridevent"}, event_type="Sample.EventGrid.Event", data_version="2.0"
+        )
         with pytest.raises(HttpResponseError):
             await client.send(eg_event)
 
@@ -77,15 +74,10 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     async def test_raise_on_large_payload(self, variables, eventgrid_topic_endpoint):
         client = self.create_eg_publisher_client(eventgrid_topic_endpoint)
 
-        path  = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./large_data.json"))
+        path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./large_data.json"))
         with open(path) as json_file:
             data = json.load(json_file)
-        eg_event = EventGridEvent(
-                subject="sample", 
-                data=data,
-                event_type="Sample.EventGrid.Event",
-                data_version="2.0"
-                )
+        eg_event = EventGridEvent(subject="sample", data=data, event_type="Sample.EventGrid.Event", data_version="2.0")
         with pytest.raises(HttpResponseError) as err:
             await client.send(eg_event)
         assert "The maximum size (1536000) has been exceeded." in err.value.message

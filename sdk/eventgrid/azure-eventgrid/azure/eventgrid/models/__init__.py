@@ -6,21 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import BrokerProperties
 from ._models import FailedLockToken
 from ._models import LockToken
+from ._models import LockTokenInput
 from ._models import LockTokensResponse
-from ._models import ReceiveResponse
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "BrokerProperties",
     "FailedLockToken",
     "LockToken",
+    "LockTokenInput",
     "LockTokensResponse",
-    "ReceiveResponse",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

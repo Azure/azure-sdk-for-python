@@ -15,6 +15,7 @@ ES_NAME = os.environ.get("ES_NAME")
 
 client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 
+
 async def run():
     # Publish a CloudEvent
     try:
@@ -29,5 +30,6 @@ async def run():
         await client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
     except HttpResponseError:
         raise
+
 
 asyncio.run(run())

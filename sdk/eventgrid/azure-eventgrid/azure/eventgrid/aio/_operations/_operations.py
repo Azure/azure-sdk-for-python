@@ -176,7 +176,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         max_events: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.ReceiveResponse:
+    ) -> _models._models.ReceiveResponse:
         """Receive Batch of Cloud Events from the Event Subscription.
 
         :param topic_name: Topic Name. Required.
@@ -205,7 +205,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ReceiveResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ReceiveResponse] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         request = build_event_grid_receive_batch_of_cloud_events_request(
             topic_name=topic_name,
@@ -235,7 +235,9 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ReceiveResponse, response.json())
+            deserialized = _deserialize(
+                _models._models.ReceiveResponse, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -244,7 +246,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace_async
     async def acknowledge_batch_of_cloud_events(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: List[_models.LockToken], **kwargs: Any
+        self, topic_name: str, event_subscription_name: str, lock_tokens: _models.LockTokenInput, **kwargs: Any
     ) -> _models.LockTokensResponse:
         """Acknowledge Cloud Events.
 
@@ -254,7 +256,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type lock_tokens: list[~azure.eventgrid.models.LockToken]
+        :type lock_tokens: ~azure.eventgrid.models.LockTokenInput
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You

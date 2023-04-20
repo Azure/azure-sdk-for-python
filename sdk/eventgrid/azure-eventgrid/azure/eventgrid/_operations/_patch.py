@@ -159,14 +159,17 @@ class EventGridClientOperationsMixin(OperationsMixin):
         return deserialized_response
 
     @distributed_trace
-    def release(self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
+    def release(
+        self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
     ) -> LockTokensResponse:
         self.release_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
 
     @distributed_trace
-    def acknowledge(self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
+    def acknowledge(
+        self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
     ) -> LockTokensResponse:
         self.acknowledge_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
+
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"

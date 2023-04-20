@@ -30,24 +30,6 @@ class BrokerProperties(_model_base.Model):
     lock_token: "_models.LockToken" = rest_field(name="lockToken")
     """The token used to lock the event. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_token: "_models.LockToken",
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class CloudEventEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
@@ -177,6 +159,37 @@ class LockToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class LockTokenInput(_model_base.Model):
+    """Lock token input formatting.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar lock_tokens: LockTokens. Required.
+    :vartype lock_tokens: list[str]
+    """
+
+    lock_tokens: List[str] = rest_field(name="lockTokens")
+    """LockTokens. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class LockTokensResponse(_model_base.Model):
     """Details of the LockTokens information. This is used for both Acknowledge and Release operation
     response.
@@ -225,7 +238,7 @@ class ReceiveDetails(_model_base.Model):
     :vartype event: ~azure.eventgrid.models.CloudEventEvent
     """
 
-    broker_properties: "_models.BrokerProperties" = rest_field(name="brokerProperties")
+    broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
     """The Event Broker details. Required."""
     event: "_models._models.CloudEventEvent" = rest_field()
     """Cloud Event details. Required."""
@@ -242,21 +255,3 @@ class ReceiveResponse(_model_base.Model):
 
     value: List["_models._models.ReceiveDetails"] = rest_field()
     """Array of receive responses, one per cloud event. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models._models.ReceiveDetails"],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)

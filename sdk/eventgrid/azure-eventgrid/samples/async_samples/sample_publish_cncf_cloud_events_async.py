@@ -25,19 +25,18 @@ endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
 
 async def publish():
-    
+
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
-    await client.send([
-        CloudEvent(
-            attributes={
-                "type": "cloudevent",
-                "source": "/cncf/cloud/event/1.0",
-                "subject": "testing-cncf-event"
-            },
-            data=b'This is a cncf cloud event.',
-        )
-    ])
+    await client.send(
+        [
+            CloudEvent(
+                attributes={"type": "cloudevent", "source": "/cncf/cloud/event/1.0", "subject": "testing-cncf-event"},
+                data=b"This is a cncf cloud event.",
+            )
+        ]
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(publish())
