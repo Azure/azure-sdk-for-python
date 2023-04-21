@@ -17,9 +17,7 @@ class OpenTelemetrySchemaVersion(
 
 class OpenTelemetrySchema:
 
-    SUPPORTED_VERSIONS = [
-        OpenTelemetrySchemaVersion.V1_19_0,
-    ]
+    SUPPORTED_VERSIONS = (OpenTelemetrySchemaVersion.V1_19_0,)
 
     # Mappings of attributes potentially reported by Azure SDKs to corresponding ones that follow
     # OpenTelemetry semantic conventions.
