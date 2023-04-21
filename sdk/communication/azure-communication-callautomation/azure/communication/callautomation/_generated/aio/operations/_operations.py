@@ -2462,7 +2462,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request body. Required.
+        :param send_dtmf_request: The send dtmf request. Required.
         :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2482,7 +2482,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request body. Required.
+        :param send_dtmf_request: The send dtmf request. Required.
         :type send_dtmf_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2502,8 +2502,8 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request body. Is either a SendDtmfRequest type or a IO
-         type. Required.
+        :param send_dtmf_request: The send dtmf request. Is either a SendDtmfRequest type or a IO type.
+         Required.
         :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

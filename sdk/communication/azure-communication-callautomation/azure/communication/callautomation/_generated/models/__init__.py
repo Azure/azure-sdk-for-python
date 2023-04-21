@@ -33,6 +33,7 @@ from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
 from ._models import CustomContext
 from ._models import DtmfOptions
+from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
 from ._models import GetParticipantsResponse
@@ -65,6 +66,8 @@ from ._models import ResultInformation
 from ._models import SendDtmfCompleted
 from ._models import SendDtmfFailed
 from ._models import SendDtmfRequest
+from ._models import SpeechOptions
+from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import TextSource
@@ -124,6 +127,7 @@ __all__ = [
     "CreateCallRequest",
     "CustomContext",
     "DtmfOptions",
+    "DtmfResult",
     "ExternalStorage",
     "FileSource",
     "GetParticipantsResponse",
@@ -156,6 +160,8 @@ __all__ = [
     "SendDtmfCompleted",
     "SendDtmfFailed",
     "SendDtmfRequest",
+    "SpeechOptions",
+    "SpeechResult",
     "SsmlSource",
     "StartCallRecordingRequest",
     "TextSource",
