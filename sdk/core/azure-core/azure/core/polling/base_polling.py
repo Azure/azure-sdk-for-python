@@ -27,7 +27,7 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable, Dict, List, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Optional, Any, Tuple, Callable, Dict, List, Generic, TypeVar, cast
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -362,7 +362,7 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
+class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):  # pylint: disable=too-many-instance-attributes
     """A base class that has no opinion on IO, to help mypy be accurate."""
 
     _deserialization_callback: Callable[[Any], PollingReturnType]
@@ -408,7 +408,7 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
         self._client = client
-        self._pipeline_response = self._initial_response = initial_response
+        self._pipeline_response = self._initial_response = initial_response  # pylint: disable=attribute-defined-outside-init
         self._deserialization_callback = deserialization_callback
 
         for operation in self._lro_algorithms:
