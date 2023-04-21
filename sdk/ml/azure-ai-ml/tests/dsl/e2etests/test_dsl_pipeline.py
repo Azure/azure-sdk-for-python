@@ -379,6 +379,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="dsl_pipeline_e2e",
         )
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer", "mock_anon_component_version")
     def test_data_input(self, client: MLClient) -> None:
         parent_dir = str(tests_root_dir / "test_configs/dsl_pipeline/nyc_taxi_data_regression")
 
