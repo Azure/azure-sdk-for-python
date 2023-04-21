@@ -219,7 +219,8 @@ class PredictionDriftSignal(MonitoringSignal):
 
     def _to_rest_object(self) -> RestPredictionDriftMonitoringSignal:
         return RestPredictionDriftMonitoringSignal(
-            model_type="classification",  # hack this to a random value since the service ignores it and it's mislabled as a required property
+            # hack this to a random value since the service ignores it and it's mislabled as a required property
+            model_type="classification",
             target_data=self.target_dataset.dataset._to_rest_object(),
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
@@ -468,9 +469,9 @@ def _from_rest_features(
 ) -> Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]:
     if isinstance(obj, RestTopNFeaturesByAttribution):
         return MonitorFeatureFilter(top_n_feature_importance=obj.top)
-    elif isinstance(obj, RestFeatureSubset):
+    if isinstance(obj, RestFeatureSubset):
         return obj.features
-    elif isinstance(obj, RestAllFeatures):
+    if isinstance(obj, RestAllFeatures):
         return ALL_FEATURES
 
 
