@@ -34,7 +34,7 @@ from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 module_logger = logging.getLogger(__name__)
 
 
-class Schedule(SchemaValidatableMixin, Resource):
+class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -162,7 +162,7 @@ class Schedule(SchemaValidatableMixin, Resource):
         return self._dump_for_validation()
 
 
-class JobSchedule(YamlTranslatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
+class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
 
     :param name: Name of the schedule.
