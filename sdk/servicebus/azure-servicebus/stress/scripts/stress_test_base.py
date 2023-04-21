@@ -162,7 +162,7 @@ class StressTestRunner:
         """Allows user to transform message payload before sending it."""
         return payload
 
-    def _schedule_interval_logger(self, end_time, description="", interval_seconds=5):
+    def _schedule_interval_logger(self, end_time, description="", interval_seconds=300):
         def _do_interval_logging():
             if end_time > datetime.utcnow() and not self._should_stop:
                 self._state.populate_process_stats(self.process_monitor)
@@ -295,7 +295,7 @@ class StressTestRunner:
         with self.process_monitor:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
                 _logger.info("STARTING PROC POOL")
-                if self.senders:
+                if len(self.senders) !=0:
                     senders = [
                         proc_pool.submit(self._send, sender, end_time)
                         for sender in self.senders
@@ -384,10 +384,9 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _send_async(self, sender, end_time):
-        _logger.critical("STARTING SENDER")
         self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
-            _logger.info("STARTING SENDER")
+            _logger.critical("STARTING SENDER")
             async with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     try:
@@ -420,7 +419,7 @@ class StressTestRunnerAsync(StressTestRunner):
             raise
 
     async def _receive_handle_message(self, message, receiver, end_time):
-        # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.INFO, print_console=PRINT_CONSOLE)
+        _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.ERROR)
         self.on_receive(self._state, message, receiver)
         try:
             if self.should_complete_messages:
@@ -437,9 +436,9 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _receive_async(self, receiver, end_time):
-        _logger.critical("STARTING RECEIVER")
         self._schedule_interval_logger(end_time, "Receiver " + str(self))
         try:
+            _logger.critical("STARTING RECEIVER")
             async with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     _logger.info("RECEIVE LOOP")
