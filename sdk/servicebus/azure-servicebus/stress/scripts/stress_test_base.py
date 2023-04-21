@@ -295,7 +295,7 @@ class StressTestRunner:
         with self.process_monitor:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
                 _logger.info("STARTING PROC POOL")
-                if len(self.senders) !=0:
+                if self.senders:
                     senders = [
                         proc_pool.submit(self._send, sender, end_time)
                         for sender in self.senders
