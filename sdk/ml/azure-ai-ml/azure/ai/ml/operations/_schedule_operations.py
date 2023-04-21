@@ -23,6 +23,7 @@ from azure.core.tracing.decorator import distributed_trace
 from .._restclient.v2022_10_01.models import ScheduleListViewType
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
+from ..constants._monitoring import MonitorSignalType
 from . import JobOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
@@ -179,7 +180,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_arm_id_or_upload_dependencies(schedule.create_job)
         elif isinstance(schedule, MonitorSchedule):
             # resolve ARM id for target, compute, and input datasets for each signal
-            pass
+            self._resolve_monitor_schedule_arm_id(schedule)
         # Create schedule
         schedule_data = schedule._to_rest_object()
         poller = self.service_client.begin_create_or_update(
@@ -226,3 +227,32 @@ class ScheduleOperations(_ScopeDependentOperations):
         schedule = self.get(name=name)
         schedule._is_enabled = False
         return self.begin_create_or_update(schedule)
+
+    def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
+        # resolve compute ID
+        schedule.create_monitor.compute = self._orchestrators.get_asset_arm_id(
+            schedule.create_monitor.compute,
+            AzureMLResourceType.COMPUTE,
+            register_asset=False
+        )
+
+        # resolve target ARM ID
+        target = schedule.create_monitor.monitoring_target
+        if target and target.endpoint_deployment_id:
+            pass
+        elif target and target.model_id:
+            target.model_id = self._orchestrators.get_asset_arm_id(
+                target.model_id,
+                AzureMLResourceType.MODEL,
+                register_asset=False,
+            )
+
+        # resolve input paths
+        # collect all schedule inputs:
+        inputs_to_resolve = []
+        for signal in schedule.create_monitor.monitoring_signals.values():
+            if signal.type == MonitorSignalType.CUSTOM:
+                inputs_to_resolve.extend([input.input_dataset for input in signal.input_datasets.values()])
+            else:
+                inputs_to_resolve.extend([signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset])
+        self._job_operations._resolve_job_inputs(inputs_to_resolve, schedule._base_path)
