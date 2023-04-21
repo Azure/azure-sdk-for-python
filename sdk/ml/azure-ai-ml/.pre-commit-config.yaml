@@ -70,5 +70,6 @@ repos:
 
         # Run pylint
         os.execl(sys.executable, sys.executable, "-m", "pylint", *sys.argv[1:])
+      # cspell:disable-next-line
       - "--rcfile=pylintrc"
       - "--output-format=parseable"
