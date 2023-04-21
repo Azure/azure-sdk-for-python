@@ -27,7 +27,7 @@ from process_monitor import ProcessMonitor
 
 LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "output"
 PRINT_CONSOLE = True
-_logger = get_logger(LOGFILE_NAME, "stress_test", logging.DEBUG)
+_logger = get_logger(LOGFILE_NAME, "stress_test", logging.ERROR)
 
 
 class ReceiveType:
@@ -193,7 +193,7 @@ class StressTestRunner:
             return message
 
     def _send(self, sender, end_time):
-        # self._schedule_interval_logger(end_time, "Sender " + str(self))
+        self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
             _logger.debug("Starting send loop")
             # log sender
@@ -247,8 +247,8 @@ class StressTestRunner:
                         elif self.receive_type == ReceiveType.push:
                             receiver.max_wait_time = self.max_wait_time
                             batch = receiver
-                        else:
-                            batch = []
+                        # else:
+                        #     batch = []
 
                         for message in batch:
                             # log reciever
@@ -295,15 +295,20 @@ class StressTestRunner:
         with self.process_monitor:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
                 _logger.info("STARTING PROC POOL")
-                senders = [
-                    proc_pool.submit(self._send, sender, end_time)
-                    for sender in self.senders
-                ]
-                receivers = [
-                    proc_pool.submit(self._receive, receiver, end_time)
-                    for receiver in self.receivers
-                ]
-
+                if self.senders:
+                    senders = [
+                        proc_pool.submit(self._send, sender, end_time)
+                        for sender in self.senders
+                    ]
+                else:
+                    senders = []
+                if self.receivers:
+                    receivers = [
+                        proc_pool.submit(self._receive, receiver, end_time)
+                        for receiver in self.receivers
+                    ]
+                else:
+                    receivers = []
                 result = StressTestResults()
                 for each in concurrent.futures.as_completed(senders + receivers):
                     _logger.info("SOMETHING FINISHED")
@@ -312,26 +317,28 @@ class StressTestRunner:
                     if each in receivers:
                         result.state_by_receiver[each] = each.result()
                 # TODO: do as_completed in one batch to provide a way to short-circuit on failure.
-
-                result.state_by_sender = {
-                    s: f.result()
-                    for s, f in zip(
-                        self.senders, concurrent.futures.as_completed(senders)
+                if self.senders:
+                    result.state_by_sender = {
+                        s: f.result()
+                        for s, f in zip(
+                            self.senders, concurrent.futures.as_completed(senders)
+                        )
+                    }
+                    _logger.info("Got receiver results")
+                    result.total_sent = sum(
+                        [r.total_sent for r in result.state_by_sender.values()]
                     )
-                }
-                result.state_by_receiver = {
-                    r: f.result()
-                    for r, f in zip(
-                        self.receivers, concurrent.futures.as_completed(receivers)
+                if self.receivers:
+                    result.state_by_receiver = {
+                        r: f.result()
+                        for r, f in zip(
+                            self.receivers, concurrent.futures.as_completed(receivers)
+                        )
+                    }
+            
+                    result.total_received = sum(
+                        [r.total_received for r in result.state_by_receiver.values()]
                     )
-                }
-                _logger.info("Got receiver results")
-                result.total_sent = sum(
-                    [r.total_sent for r in result.state_by_sender.values()]
-                )
-                result.total_received = sum(
-                    [r.total_received for r in result.state_by_receiver.values()]
-                )
                 result.time_elapsed = end_time - start_time
                 _logger.critical("Stress test completed.  Results:\n{}".format(result))
                 return result
@@ -377,6 +384,7 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _send_async(self, sender, end_time):
+        _logger.critical("STARTING SENDER")
         self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
             _logger.info("STARTING SENDER")
@@ -429,6 +437,7 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _receive_async(self, receiver, end_time):
+        _logger.critical("STARTING RECEIVER")
         self._schedule_interval_logger(end_time, "Receiver " + str(self))
         try:
             async with receiver:
@@ -473,14 +482,16 @@ class StressTestRunnerAsync(StressTestRunner):
         if isinstance(self.duration, int):
             self.duration = timedelta(seconds=self.duration)
         end_time = start_time + (self._duration_override or self.duration)
-        send_tasks = [
-            asyncio.create_task(self._send_async(sender, end_time))
-            for sender in self.senders
-        ]
-        receive_tasks = [
-            asyncio.create_task(self._receive_async(receiver, end_time))
-            for receiver in self.receivers
-        ]
+        if self.senders:
+            send_tasks = [
+                asyncio.create_task(self._send_async(sender, end_time))
+                for sender in self.senders
+            ]
+        if self.receivers:
+            receive_tasks = [
+                asyncio.create_task(self._receive_async(receiver, end_time))
+                for receiver in self.receivers
+            ]
         with self.process_monitor:
             # await asyncio.gather(*send_tasks, *receive_tasks)
             for task in asyncio.as_completed(send_tasks + receive_tasks):
@@ -489,19 +500,22 @@ class StressTestRunnerAsync(StressTestRunner):
                 except Exception as e:
                     print(e)
             result = StressTestResults()
-            result.state_by_sender = {
-                s: f.result() for s, f in zip(self.senders, send_tasks)
-            }
-            result.state_by_receiver = {
-                r: f.result() for r, f in zip(self.receivers, receive_tasks)
-            }
-            _logger.info("got receiver results")
-            result.total_sent = sum(
+            if self.senders:
+                result.state_by_sender = {
+                    s: f.result() for s, f in zip(self.senders, send_tasks)
+                }
+                result.total_sent = sum(
                 [r.total_sent for r in result.state_by_sender.values()]
-            )
-            result.total_received = sum(
-                [r.total_received for r in result.state_by_receiver.values()]
-            )
+                )
+            if self.receivers:
+                result.state_by_receiver = {
+                    r: f.result() for r, f in zip(self.receivers, receive_tasks)
+                }
+                _logger.info("got receiver results")
+
+                result.total_received = sum(
+                    [r.total_received for r in result.state_by_receiver.values()]
+                )
             result.time_elapsed = end_time - start_time
             _logger.critical("Stress test completed.  Results:\n{}".format(result))
             return result

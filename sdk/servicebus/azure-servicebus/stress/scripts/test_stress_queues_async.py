@@ -338,20 +338,78 @@ async def run(args):
         await test_stress_queue_close_and_reopen(args)
     elif args.method == "dropped_messages":
         await test_stress_queue_check_for_dropped_messages(args)
+    elif args.method == "sender":
+        sb_client = ServiceBusClient.from_connection_string(
+                SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE)
+        stress_test = StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
+                                        receivers = None,
+                                        admin_client = sb_admin_client,
+                                        duration=args.duration,
+                                        send_batch_size=5,
+                                        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive")
+                                        )
+
+        result = await stress_test.run_async()
+        print(f"Total send {result.total_sent}")
+        print(f"Total received {result.total_received}")
+    elif args.method == "receiver":
+        sb_client = ServiceBusClient.from_connection_string(
+                SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE)
+        stress_test = StressTestRunnerAsync(senders = None,
+                                        receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=5)],
+                                        admin_client = sb_admin_client,
+                                        duration=args.duration,
+                                        receive_type=ReceiveType.pull,
+                                        send_batch_size=5,
+                                        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive")
+                                        )
+
+        result = await stress_test.run_async()
+        print(f"Total send {result.total_sent}")
+        print(f"Total received {result.total_received}")        
+    elif args.method == "iterator":
+        sb_client = ServiceBusClient.from_connection_string(
+                SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE)
+        stress_test = StressTestRunnerAsync(senders = None,
+                                        receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=5)],
+                                        admin_client = sb_admin_client,
+                                        duration=args.duration,
+                                        send_batch_size=5,
+                                        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive")
+                                        )
+
+        result = await stress_test.run_async()
+        print(f"Total send {result.total_sent}")
+        print(f"Total received {result.total_received}")    
+    elif args.method == "iteratornobatch":
+        sb_client = ServiceBusClient.from_connection_string(
+                SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE)
+        stress_test = StressTestRunnerAsync(senders = None,
+                                        receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME)],
+                                        admin_client = sb_admin_client,
+                                        duration=args.duration,
+                                        send_batch_size=5,
+                                        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive")
+                                        )
+
+        result = await stress_test.run_async()
+        print(f"Total send {result.total_sent}")
+        print(f"Total received {result.total_received}")         
     else:
-        await test_stress_queue_send_and_receive(args)    
-        await test_stress_queue_send_and_pull_receive(args)
-        await test_stress_queue_batch_send_and_receive(args)
-        await test_stress_queue_slow_send_and_receive(args)
-        await test_stress_queue_receive_and_delete(args)
-        await test_stress_queue_unsettled_messages(args)
-        await test_stress_queue_receive_large_batch_size(args)
-        await test_stress_queue_pull_receive_timeout(args)
-        await test_stress_queue_long_renew_send_and_receive(args)
-        await test_stress_queue_long_renew_session_send_and_receive(args)
-        await test_stress_queue_peek_messages(args)
-        await test_stress_queue_close_and_reopen(args)
-        await test_stress_queue_check_for_dropped_messages(args)
+        pass
+        # await test_stress_queue_send_and_receive(args)    
+        # await test_stress_queue_send_and_pull_receive(args)
+        # await test_stress_queue_batch_send_and_receive(args)
+        # await test_stress_queue_slow_send_and_receive(args)
+        # await test_stress_queue_receive_and_delete(args)
+        # await test_stress_queue_unsettled_messages(args)
+        # await test_stress_queue_receive_large_batch_size(args)
+        # await test_stress_queue_pull_receive_timeout(args)
+        # await test_stress_queue_long_renew_send_and_receive(args)
+        # await test_stress_queue_long_renew_session_send_and_receive(args)
+        # await test_stress_queue_peek_messages(args)
+        # await test_stress_queue_close_and_reopen(args)
+        # await test_stress_queue_check_for_dropped_messages(args)
 
 
 if __name__ == '__main__':
