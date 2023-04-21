@@ -555,6 +555,15 @@ def storage_account_guid_sanitizer(test_proxy):
         group_for_replace="1",
     )
 
+@pytest.fixture
+def snapshot_hash_sanitizer(test_proxy):
+    # masks hash value in URIs
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='hash=([\w\d]+)',
+        group_for_replace="1",
+    )
+
 
 @pytest.fixture
 def mock_anon_component_version(mocker: MockFixture):
