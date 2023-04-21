@@ -552,8 +552,9 @@ class TestCommandComponentEntity:
                 "intellectual_property": {"protection_level": "all"},
             },
         }
-        expected_base_model_input_dict = {
+        expected_training_data_input_dict = {
             "type": "path",
+            "optional": False,
             "intellectual_property": {
                 "protection_level": "none"
             }
@@ -573,7 +574,7 @@ class TestCommandComponentEntity:
         }
         assert rest_component.properties.component_spec["outputs"] == expected_output_dict
 
-        assert rest_component.properties.component_spec["inputs"]["base_model"] == expected_base_model_input_dict
+        assert rest_component.properties.component_spec["inputs"]["training_data"] == expected_training_data_input_dict
 
         # because there's a mismatch between what the service accepts for IPP fields and what it returns
         # (accepts camelCase for IPP, returns snake_case IPP), mock out the service response
@@ -589,4 +590,4 @@ class TestCommandComponentEntity:
         assert from_rest_dict["intellectual_property"]
         assert from_rest_dict["intellectual_property"] == yaml_dict
         assert from_rest_dict["outputs"] == expected_output_dict
-        assert from_rest_dict["inputs"]["base_model"] == expected_base_model_input_dict
+        assert from_rest_dict["inputs"]["training_data"] == expected_training_data_input_dict
