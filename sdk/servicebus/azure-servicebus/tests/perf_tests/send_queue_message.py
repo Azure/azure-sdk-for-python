@@ -21,15 +21,15 @@ class SendQueueMessageTest(_SendQueueTest):
             )
         else:
             self.sender.send_messages(ServiceBusMessage(self.data))
-        
+
         return self.args.batch_size
 
     async def run_batch_async(self) -> int:
         if self.args.batch_size > 1:
-            await self.sender.send_messages(
+            await self.async_sender.send_messages(
                 [ServiceBusMessage(self.data) for _ in range(self.args.batch_size)]
             )
         else:
-            await self.sender.send_messages(ServiceBusMessage(self.data))
-        
+            await self.async_sender.send_messages(ServiceBusMessage(self.data))
+
         return self.args.batch_size
