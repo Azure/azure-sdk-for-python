@@ -1,5 +1,17 @@
 # Release History
 
+## 2.0.0b2 (2023-04-20)
+
+### Features Added
+
+  - Added operation group ManagedCCFOperations
+  - Model LedgerProperties has a new parameter running_state
+
+### Breaking Changes
+
+  - Model LedgerProperties no longer has parameter ledger_storage_account
+  - Parameter location of model ConfidentialLedger is now required
+
 ## 2.0.0b1 (2022-11-25)
 
 ### Features Added

@@ -1,40 +1,39 @@
-This file claims the rules how Python decide next version number for package.
+This file claims the rules how Python calculate next package version number.
 
-The package version contains two part:
-1. the package is preview or stable?
-2. version number
+The package version contains two parts:
 
-# How to judge preview or stable?
-Python SDK is generated with [swagger](https://github.com/Azure/azure-rest-api-specs), so if swagger content is preview, 
-the package is preview; if swagger content is stable, the package is stable.
+1. Package version shall be preview or stable
+2. After 1 decided, how to calculate next package version
 
-(1) For single api package(for example: [datadog](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/datadog)),
- as long as the current tag is preview, the package version should be preview
+# Package version shall be preview or stable
 
-(2) For multi api package(for example: [network](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network)), 
-there will be `DEFAULT_API_VERSION`(for example: [`DEFAULT_API_VERSION` of network](https://github.com/Azure/azure-sdk-for-python/blob/59709af16b7cd29a51d562137bc5bbfdf53f9327/sdk/network/azure-mgmt-network/azure/mgmt/network/_network_management_client.py#L60)). 
+If Python SDK contains preview api-version (like "2020-01-01-preview"), its version is preview; Otherwise, it should be stable.
+
+(1) For single-api package(for example: [confidentialledger](https://github.com/azure-sdk/azure-sdk-for-python/blob/a56c4b44911e173a89cb051aefc588e189e42654/sdk/confidentialledger/azure-mgmt-confidentialledger/azure/mgmt/confidentialledger/_configuration.py#L39)),
+ as long as it contains preview api-version, the package version should be preview
+
+(2) For multi-api package(for example: [network](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network)), 
+there will be `DEFAULT_API_VERSION`(for example: [`DEFAULT_API_VERSION` of network](https://github.com/Azure/azure-sdk-for-python/blob/0b3fb9ef0bee54f23beb7a4913faaaef5be90d9b/sdk/network/azure-mgmt-network/azure/mgmt/network/_network_management_client.py#L57)). 
 As long as it is preview, then the package version is preview.
 
-(note1: If the name of tag contains 'preview' or the tag contains files of 'preview' folder, then the tag is preview tag. 
-For exampe: [preview tag](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/compute/resource-manager#tag-package-2021-06-01-preview))
+(note1: For more info about multi-api package, please refer to [multiapi.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/multiapi.md))
 
-(note2: If the api-version contains 'preview', then it is preview api-version. for example: [preview api-version](https://github.com/Azure/azure-rest-api-specs/blob/69eacf00a36d565d3220d5dd6f4a5293664f1ae9/specification/network/resource-manager/Microsoft.Network/preview/2015-05-01-preview/network.json#L6))
+(note2: preview package version contains `b`, for example: `1.0.0b1`)
 
-(note3: The difference about single api and multi api, please see the detailed file)
+# How to calculate next package version
+1\. If next version is preview and last version is preview: next version is `x.x.xbx+1`
 
-(note4: preview package version contains `b`, for example: `1.0.0b1`)
+2\. If next version is preview and last version is stable:
+ * if there is breaking change, next version is `x+1.x.xb1`
+ * if there is new feature but no breaking change, next version is `x.x+1.xb1`
+ * if there is only bugfix, next version is `x.x.x+1b1`
 
-# How to decide next version number
-1\. If current version is preview version, the new tag is preview tag, then next version is `x.x.xbx+1`
-
-2\. If current version is stable version, the new tag is stable tag, then :
+3\. If next version is stable and last stable version exists:
  * if there is breaking change, next version is `x+1.x.x`
  * if there is new feature but no breaking change, next version is `x.x+1.x`
  * if there is only bugfix, next version is `x.x.x+1`
 
-3\. If current version is stable version, the new tag is preview tag, calculate version number according to `2` 
-and then append `b1` in the result
-
+4\. If next version is stable and last stable version doesn't exist, then next version shall be first GA version `1.0.0`
 
 According to the up rules, we could summarize all the possibilities in the following table:
 
