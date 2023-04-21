@@ -1009,10 +1009,7 @@ class TestComponent(AzureRecordedTestCase):
         )
 
         assert from_rest_component.inputs["base_model"]._intellectual_property
-        assert (
-            from_rest_component.inputs["base_model"]._intellectual_property.protection_level
-            == IPProtectionLevel.ALL
-        )
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
 
         assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
 

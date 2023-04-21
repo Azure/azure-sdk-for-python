@@ -555,9 +555,7 @@ class TestCommandComponentEntity:
         expected_training_data_input_dict = {
             "type": "path",
             "optional": False,
-            "intellectual_property": {
-                "protection_level": "none"
-            }
+            "intellectual_property": {"protection_level": "none"},
         }
 
         # check top-level component
