@@ -486,11 +486,15 @@ class StressTestRunnerAsync(StressTestRunner):
                 asyncio.create_task(self._send_async(sender, end_time))
                 for sender in self.senders
             ]
+        else:
+            send_tasks = []
         if self.receivers:
             receive_tasks = [
                 asyncio.create_task(self._receive_async(receiver, end_time))
                 for receiver in self.receivers
             ]
+        else:
+            receive_tasks = []
         with self.process_monitor:
             # await asyncio.gather(*send_tasks, *receive_tasks)
             for task in asyncio.as_completed(send_tasks + receive_tasks):
