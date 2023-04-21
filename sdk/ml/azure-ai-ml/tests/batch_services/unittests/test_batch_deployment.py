@@ -58,7 +58,7 @@ def mock_local_endpoint_helper() -> Mock:
 def mock_batch_deployment_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
 ) -> BatchDeploymentOperations:
@@ -68,7 +68,7 @@ def mock_batch_deployment_operations(
     yield BatchDeploymentOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_05_2022=mock_aml_services_2022_05_01,
+        service_client_04_2023=mock_aml_services_2023_04_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         **kwargs,
