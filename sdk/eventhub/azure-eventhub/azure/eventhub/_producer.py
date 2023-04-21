@@ -140,7 +140,7 @@ class EventHubProducer(
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
-            keep_alive_interval=self._keep_alive,
+            keep_alive_interval=30,
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(

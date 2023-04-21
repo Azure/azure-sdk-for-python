@@ -161,7 +161,7 @@ class EventHubConsumer(
             timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
-            keep_alive_interval=self._keep_alive,
+            keep_alive_interval=30,
             client_name=self._name,
             properties=create_properties(
                 self._client._config.user_agent,  # pylint:disable=protected-access
