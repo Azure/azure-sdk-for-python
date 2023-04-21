@@ -28,7 +28,7 @@ class OpenTelemetrySchema:
             "x-ms-client-request-id": "az.client_request_id",
             "x-ms-request-id": "az.service_request_id",
             "http.user_agent": "user_agent.original",
-            "messaging_bus.destination": "messaging.destination.name",
+            "message_bus.destination": "messaging.destination.name",
             "peer.address": "net.peer.name",
         }
     }
@@ -40,3 +40,7 @@ class OpenTelemetrySchema:
     @classmethod
     def get_attribute_mappings(cls, version: OpenTelemetrySchemaVersion) -> Dict[str, str]:
         return cls._ATTRIBUTE_MAPPINGS[version]
+
+    @classmethod
+    def get_schema_url(cls, version: OpenTelemetrySchemaVersion) -> str:
+        return f"https://opentelemetry.io/schemas/{version}"
