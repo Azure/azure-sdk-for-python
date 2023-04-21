@@ -93,10 +93,10 @@ class Schedule(Resource):
         )
 
     @property
-    def create_job(self) -> None:
+    def create_job(self) -> None:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
-        return None # pylint: disable=useless-return
+        return None
 
     @create_job.setter
     def create_job(self, value) -> None:  # pylint: disable=unused-argument
