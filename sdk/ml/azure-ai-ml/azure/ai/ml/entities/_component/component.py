@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
+import uuid
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Tuple, Union
 
 from marshmallow import INCLUDE
 
@@ -32,10 +33,10 @@ from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets import Code
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
-from ...entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import MutableValidationResult, SchemaValidatableMixin
+from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .code import ComponentIgnoreFile
 
@@ -44,12 +45,11 @@ from .code import ComponentIgnoreFile
 
 
 COMPONENT_PLACEHOLDER = "COMPONENT_PLACEHOLDER"
-COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
 
 
 class Component(
     Asset,
-    RestTranslatableMixin,
+    RemoteValidatableMixin,
     TelemetryMixin,
     YamlTranslatableMixin,
     SchemaValidatableMixin,
@@ -432,6 +432,17 @@ class Component(
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+
+    @classmethod
+    def _get_resource_type(cls) -> str:
+        return "Microsoft.MachineLearningServices/workspaces/components/versions"
+
+    def _get_resource_name_version(self) -> Tuple[str, str]:
+        if not self.version and not self._auto_increment_version:
+            version = str(uuid.uuid4())
+        else:
+            version = self.version
+        return self.name or ANONYMOUS_COMPONENT_NAME, version
 
     def _validate(self, raise_error=False) -> MutableValidationResult:
         origin_name = self.name
