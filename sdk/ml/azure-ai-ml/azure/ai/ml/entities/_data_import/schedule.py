@@ -61,7 +61,7 @@ class ImportDataSchedule(Schedule):
             **kwargs,
         )
         self.import_data = import_data
-        self._type = ScheduleType.DATA
+        self._type = ScheduleType.DATA_IMPORT
 
     @classmethod
     def _load(

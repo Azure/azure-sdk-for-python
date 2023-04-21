@@ -859,4 +859,4 @@ class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
-    DATA = "data"
+    DATA_IMPORT = "data_import"

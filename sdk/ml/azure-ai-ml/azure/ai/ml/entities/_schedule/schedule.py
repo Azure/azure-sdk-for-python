@@ -96,7 +96,7 @@ class Schedule(SchemaValidatableMixin, Resource):
 
         if "create_monitor" in data:
             return MonitorSchedule, None
-        elif "import_data" in data:
+        if "import_data" in data:
             return ImportDataSchedule, None
         return JobSchedule, None
 
