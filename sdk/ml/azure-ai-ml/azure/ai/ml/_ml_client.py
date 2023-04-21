@@ -75,7 +75,6 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
-from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
@@ -1036,11 +1035,5 @@ def _(entity: BatchDeployment, operations, *args, **kwargs):
 
 @_begin_create_or_update.register(Schedule)
 def _(entity: Schedule, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating schedules")
-    return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
-
-
-@_begin_create_or_update.register(ImportDataSchedule)
-def _(entity: ImportDataSchedule, operations, *args, **kwargs):
     module_logger.debug("Creating or updating schedules")
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
