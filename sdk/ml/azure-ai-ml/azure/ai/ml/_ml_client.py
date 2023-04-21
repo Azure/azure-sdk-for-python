@@ -27,9 +27,6 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient012022Preview,
-)
 from azure.ai.ml._restclient.v2022_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022022Preview,
 )
@@ -41,9 +38,6 @@ from azure.ai.ml._restclient.v2022_10_01 import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient102022Preview,
-)
-from azure.ai.ml._restclient.v2022_12_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient122022Preview,
 )
 from azure.ai.ml._restclient.v2023_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022023Preview,
@@ -254,20 +248,6 @@ class MLClient:
 
         self._operation_container = OperationsContainer()
 
-        self._rp_service_client_2022_01_01_preview = ServiceClient012022Preview(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._rp_service_client = ServiceClient122022Preview(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
-
         # kwargs related to operations alone not all kwargs passed to MLClient are needed by operations
         ops_kwargs = app_insights_handler_kwargs
         if base_url:
@@ -312,20 +292,6 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_04_2023_preview = ServiceClient042023Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_12_2022_preview = ServiceClient122022Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_02_2023_preview = ServiceClient022023Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -351,7 +317,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -370,7 +336,7 @@ class MLClient:
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._rp_service_client,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
         )
@@ -525,7 +491,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -540,7 +506,7 @@ class MLClient:
         )
 
         self._featurestoreentities = FeatureStoreEntityOperations(
-            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
+            self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
         )
 
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
