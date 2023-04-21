@@ -15,6 +15,7 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
+from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -171,10 +172,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         :rtype: Union[LROPoller, ~azure.ai.ml.entities.JobSchedule]
         """
 
-        schedule._validate(raise_error=True)
-        if isinstance(schedule.create_job, Job):
-            # Create all dependent resources for job inside schedule
-            self._job_operations._resolve_arm_id_or_upload_dependencies(schedule.create_job)
+        if isinstance(schedule, JobSchedule):
+            schedule._validate(raise_error=True)
+            if isinstance(schedule.create_job, Job):
+                # Create all dependent resources for job inside schedule
+                self._job_operations._resolve_arm_id_or_upload_dependencies(schedule.create_job)
+        elif isinstance(schedule, MonitorSchedule):
+            # resolve ARM id for target, compute, and input datasets for each signal
+            pass
         # Create schedule
         schedule_data = schedule._to_rest_object()
         poller = self.service_client.begin_create_or_update(
