@@ -40,9 +40,7 @@ class AdditionalIncludesCheckFunc(enum.Enum):
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
-@pytest.mark.usefixtures(
-    "enable_private_preview_schema_features"
-)
+@pytest.mark.usefixtures("enable_private_preview_schema_features")
 class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
