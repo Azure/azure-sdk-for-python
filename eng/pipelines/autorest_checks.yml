@@ -14,7 +14,7 @@ pr:
     - sdk/core/
 
 variables:
-  NodeVersion: '14.x'
+  NodeVersion: '18.x'
   PythonVersion: '3.7'
   auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
   repo_branch: 'autorestv3'
@@ -40,7 +40,7 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          npm install -g pnpm
+          npm install -g pnpm@7.27.1
           git clone $(auto_rest_clone_url)
           cd autorest.python
           git checkout $(repo_branch)

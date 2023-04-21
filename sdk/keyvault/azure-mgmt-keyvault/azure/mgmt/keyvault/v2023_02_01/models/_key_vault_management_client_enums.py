@@ -57,6 +57,7 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PURGE = "purge"
     BACKUP = "backup"
     RESTORE = "restore"
+    IMPORT_ENUM = "import"
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -120,6 +121,7 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNWRAP_KEY = "unwrapKey"
     IMPORT = "import"
     RELEASE = "release"
+    IMPORT_ENUM = "import"
 
 
 class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -155,6 +157,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ROTATE = "rotate"
     GETROTATIONPOLICY = "getrotationpolicy"
     SETROTATIONPOLICY = "setrotationpolicy"
+    IMPORT_ENUM = "import"
 
 
 class KeyRotationPolicyActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

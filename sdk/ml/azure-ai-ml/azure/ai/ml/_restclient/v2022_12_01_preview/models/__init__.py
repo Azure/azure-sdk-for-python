@@ -262,7 +262,8 @@ try:
     from ._models_py3 import MLTableJobOutput
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIdentityAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import ManagedNetworkDto
+    from ._models_py3 import ManagedNetworkProvisionOptions
+    from ._models_py3 import ManagedNetworkProvisionStatus
     from ._models_py3 import ManagedNetworkSettings
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedServiceIdentity
@@ -298,6 +299,8 @@ try:
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import OnlineScaleSettings
     from ._models_py3 import OutboundRule
+    from ._models_py3 import OutboundRuleBasicResource
+    from ._models_py3 import OutboundRuleListResult
     from ._models_py3 import OutputPathAssetReference
     from ._models_py3 import PATAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import PaginatedComputeResourcesList
@@ -317,7 +320,6 @@ try:
     from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateEndpointDestination
     from ._models_py3 import PrivateEndpointOutboundRule
-    from ._models_py3 import PrivateEndpointOutboundRuleDestination
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
@@ -364,7 +366,6 @@ try:
     from ._models_py3 import ServicePrincipalDatastoreSecrets
     from ._models_py3 import ServiceTagDestination
     from ._models_py3 import ServiceTagOutboundRule
-    from ._models_py3 import ServiceTagOutboundRuleDestination
     from ._models_py3 import SetupScripts
     from ._models_py3 import SharedPrivateLinkResource
     from ._models_py3 import Sku
@@ -448,7 +449,6 @@ try:
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
     from ._models_py3 import WorkspaceConnectionUsernamePassword
     from ._models_py3 import WorkspaceListResult
-    from ._models_py3 import WorkspacePropertiesManagedNetwork
     from ._models_py3 import WorkspaceUpdateParameters
 except (SyntaxError, ImportError):
     from ._models import AKS  # type: ignore
@@ -706,7 +706,8 @@ except (SyntaxError, ImportError):
     from ._models import MLTableJobOutput  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
     from ._models import ManagedIdentityAuthTypeWorkspaceConnectionProperties  # type: ignore
-    from ._models import ManagedNetworkDto  # type: ignore
+    from ._models import ManagedNetworkProvisionOptions  # type: ignore
+    from ._models import ManagedNetworkProvisionStatus  # type: ignore
     from ._models import ManagedNetworkSettings  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
@@ -742,6 +743,8 @@ except (SyntaxError, ImportError):
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
     from ._models import OutboundRule  # type: ignore
+    from ._models import OutboundRuleBasicResource  # type: ignore
+    from ._models import OutboundRuleListResult  # type: ignore
     from ._models import OutputPathAssetReference  # type: ignore
     from ._models import PATAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import PaginatedComputeResourcesList  # type: ignore
@@ -761,7 +764,6 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateEndpointDestination  # type: ignore
     from ._models import PrivateEndpointOutboundRule  # type: ignore
-    from ._models import PrivateEndpointOutboundRuleDestination  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
@@ -808,7 +810,6 @@ except (SyntaxError, ImportError):
     from ._models import ServicePrincipalDatastoreSecrets  # type: ignore
     from ._models import ServiceTagDestination  # type: ignore
     from ._models import ServiceTagOutboundRule  # type: ignore
-    from ._models import ServiceTagOutboundRuleDestination  # type: ignore
     from ._models import SetupScripts  # type: ignore
     from ._models import SharedPrivateLinkResource  # type: ignore
     from ._models import Sku  # type: ignore
@@ -892,7 +893,6 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceConnectionSharedAccessSignature  # type: ignore
     from ._models import WorkspaceConnectionUsernamePassword  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
-    from ._models import WorkspacePropertiesManagedNetwork  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
@@ -959,8 +959,7 @@ from ._azure_machine_learning_workspaces_enums import (
     LogVerbosity,
     MLAssistConfigurationType,
     MLFlowAutologgerState,
-    ManagedNetworkDtoIsolationMode,
-    ManagedNetworkSettingsIsolationMode,
+    ManagedNetworkStatus,
     ManagedServiceIdentityType,
     MediaType,
     MlflowAutologger,
@@ -980,8 +979,6 @@ from ._azure_machine_learning_workspaces_enums import (
     OperationTrigger,
     OrderString,
     OsType,
-    OutboundRuleCategory,
-    OutboundRuleType,
     OutputDeliveryMode,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
@@ -998,6 +995,7 @@ from ._azure_machine_learning_workspaces_enums import (
     RegressionPrimaryMetrics,
     RemoteLoginPortPublicAccess,
     RuleCategory,
+    RuleStatus,
     RuleType,
     SamplingAlgorithmType,
     ScaleType,
@@ -1297,7 +1295,8 @@ __all__ = [
     'MLTableJobOutput',
     'ManagedIdentity',
     'ManagedIdentityAuthTypeWorkspaceConnectionProperties',
-    'ManagedNetworkDto',
+    'ManagedNetworkProvisionOptions',
+    'ManagedNetworkProvisionStatus',
     'ManagedNetworkSettings',
     'ManagedOnlineDeployment',
     'ManagedServiceIdentity',
@@ -1333,6 +1332,8 @@ __all__ = [
     'OnlineRequestSettings',
     'OnlineScaleSettings',
     'OutboundRule',
+    'OutboundRuleBasicResource',
+    'OutboundRuleListResult',
     'OutputPathAssetReference',
     'PATAuthTypeWorkspaceConnectionProperties',
     'PaginatedComputeResourcesList',
@@ -1352,7 +1353,6 @@ __all__ = [
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointDestination',
     'PrivateEndpointOutboundRule',
-    'PrivateEndpointOutboundRuleDestination',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
@@ -1399,7 +1399,6 @@ __all__ = [
     'ServicePrincipalDatastoreSecrets',
     'ServiceTagDestination',
     'ServiceTagOutboundRule',
-    'ServiceTagOutboundRuleDestination',
     'SetupScripts',
     'SharedPrivateLinkResource',
     'Sku',
@@ -1483,7 +1482,6 @@ __all__ = [
     'WorkspaceConnectionSharedAccessSignature',
     'WorkspaceConnectionUsernamePassword',
     'WorkspaceListResult',
-    'WorkspacePropertiesManagedNetwork',
     'WorkspaceUpdateParameters',
     'AllocationState',
     'ApplicationSharingPolicy',
@@ -1548,8 +1546,7 @@ __all__ = [
     'LogVerbosity',
     'MLAssistConfigurationType',
     'MLFlowAutologgerState',
-    'ManagedNetworkDtoIsolationMode',
-    'ManagedNetworkSettingsIsolationMode',
+    'ManagedNetworkStatus',
     'ManagedServiceIdentityType',
     'MediaType',
     'MlflowAutologger',
@@ -1569,8 +1566,6 @@ __all__ = [
     'OperationTrigger',
     'OrderString',
     'OsType',
-    'OutboundRuleCategory',
-    'OutboundRuleType',
     'OutputDeliveryMode',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',
@@ -1587,6 +1582,7 @@ __all__ = [
     'RegressionPrimaryMetrics',
     'RemoteLoginPortPublicAccess',
     'RuleCategory',
+    'RuleStatus',
     'RuleType',
     'SamplingAlgorithmType',
     'ScaleType',

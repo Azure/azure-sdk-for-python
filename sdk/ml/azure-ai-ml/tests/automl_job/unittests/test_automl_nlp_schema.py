@@ -6,30 +6,30 @@ from unittest.mock import patch
 import pytest
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ClassificationPrimaryMetrics,
     JobBase,
     LogVerbosity,
     MLTableJobInput,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import NlpFixedParameters as RestNlpFixedParameters
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import NlpFixedParameters as RestNlpFixedParameters
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     NlpParameterSubspace as RestNlpParameterSubspace,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import NlpSweepSettings as RestNlpSweepSettings
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import NlpSweepSettings as RestNlpSweepSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     NlpVerticalFeaturizationSettings as RestNlpFeaturizationSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     NlpVerticalLimitSettings as RestNlpVerticalLimitSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import TextClassification as RestTextClassification
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import TextClassification as RestTextClassification
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import TextNer as RestTextNer
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import TextNer as RestTextNer
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
 from azure.ai.ml.automl import (
@@ -247,7 +247,6 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 def loaded_text_classification_job(
     mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
 ) -> AutoMLJob:
-
     return _load_automl_job_from_path(
         mock_machinelearning_client,
         run_type,

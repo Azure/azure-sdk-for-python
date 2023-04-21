@@ -190,7 +190,6 @@ class TestRegistryEntity:
         assert new_user_storage[0] == "some user storage id"
 
     def test_system_managed_storage_serialization(self):
-
         system_storage = SystemCreatedStorageAccount(
             storage_account_hns=True,
             storage_account_type=StorageAccountType.PREMIUM_LRS,

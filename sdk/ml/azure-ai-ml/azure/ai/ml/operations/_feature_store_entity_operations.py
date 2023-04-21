@@ -20,7 +20,8 @@ from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
@@ -28,8 +29,9 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class _FeatureStoreEntityOperations(_ScopeDependentOperations):
-    """_FeatureStoreEntityOperations.
+@experimental
+class FeatureStoreEntityOperations(_ScopeDependentOperations):
+    """FeatureStoreEntityOperations.
 
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
@@ -43,8 +45,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         service_client: ServiceClient022023Preview,
         **kwargs: Dict,
     ):
-
-        super(_FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
+        super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featurestore_entity_versions
         self._container_operation = service_client.featurestore_entity_containers
@@ -57,7 +58,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         *,
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> ItemPaged[_FeatureStoreEntity]:
+    ) -> ItemPaged[FeatureStoreEntity]:
         """List the FeatureStoreEntity assets of the workspace.
 
         :param name: Name of a specific FeatureStoreEntity asset, optional.
@@ -66,19 +67,19 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
-        :rtype: ~azure.core.paging.ItemPaged[_FeatureStoreEntity]
+        :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
         """
         if name:
             return self._operation.list(
                 workspace_name=self._workspace_name,
                 name=name,
-                cls=lambda objs: [_FeatureStoreEntity._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [FeatureStoreEntity._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [_FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
         )
@@ -93,7 +94,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str) -> _FeatureStoreEntity:
+    def get(self, name: str, version: str) -> FeatureStoreEntity:
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.
@@ -103,24 +104,24 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully
             identified and retrieved. Details will be provided in the error message.
         :return: FeatureStoreEntity asset object.
-        :rtype: ~azure.ai.ml.entities._FeatureStoreEntity
+        :rtype: ~azure.ai.ml.entities.FeatureStoreEntity
         """
         try:
             feature_store_entity_version_resource = self._get(name, version)
-            return _FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
+            return FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, feature_store_entity: _FeatureStoreEntity) -> LROPoller[_FeatureStoreEntity]:
+    def begin_create_or_update(self, feature_store_entity: FeatureStoreEntity) -> LROPoller[FeatureStoreEntity]:
         """Create or update FeatureStoreEntity
 
         :param feature_store_entity: FeatureStoreEntity definition.
-        :type feature_store_entity: _FeatureStoreEntity
+        :type feature_store_entity: FeatureStoreEntity
         :return: An instance of LROPoller that returns a FeatureStoreEntity.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._FeatureStoreEntity]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStoreEntity]
         """
-        feature_store_entity_resource = _FeatureStoreEntity._to_rest_object(feature_store_entity)
+        feature_store_entity_resource = FeatureStoreEntity._to_rest_object(feature_store_entity)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
@@ -128,7 +129,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
             name=feature_store_entity.name,
             version=feature_store_entity.version,
             body=feature_store_entity_resource,
-            cls=lambda response, deserialized, headers: _FeatureStoreEntity._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: FeatureStoreEntity._from_rest_object(deserialized),
         )
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)

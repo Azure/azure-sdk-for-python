@@ -3,3 +3,4 @@
 -e ../../../tools/azure-devtools
 js
 pyodide==0.19.0a1; python_version >= '3.8'
+httpx==0.23.3

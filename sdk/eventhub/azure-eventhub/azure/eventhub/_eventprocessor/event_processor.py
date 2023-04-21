@@ -88,7 +88,7 @@ class EventProcessor(
         )  # type: Union[bool, Dict[str, bool]]
 
         self._load_balancing_interval = kwargs.get(
-            "load_balancing_interval", 10.0
+            "load_balancing_interval", 30.0
         )  # type: float
         self._load_balancing_strategy = (
             kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY

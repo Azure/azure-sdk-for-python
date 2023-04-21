@@ -59,6 +59,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         :return: A dict which contains all arbitrary attributes set by user.
         :rtype: dict
         """
+
         # TODO: check this
         def remove_empty_values(data):
             if not isinstance(data, dict):

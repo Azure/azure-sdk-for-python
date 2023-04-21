@@ -101,7 +101,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             model = await poller.result()
 
             # give an incorrect region
-            target = await client.get_copy_authorization(resource_region="eastus", resource_id=formrecognizer_resource_id)
+            target = await client.get_copy_authorization(resource_region="eastus2", resource_id=formrecognizer_resource_id)
 
             with pytest.raises(HttpResponseError) as e:
                 poller = await client.begin_copy_model(model.model_id, target=target)

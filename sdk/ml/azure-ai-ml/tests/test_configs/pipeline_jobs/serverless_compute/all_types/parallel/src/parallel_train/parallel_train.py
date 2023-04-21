@@ -17,7 +17,6 @@ from sklearn.ensemble import GradientBoostingRegressor
 
 
 def init():
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--drop_cols", type=str)

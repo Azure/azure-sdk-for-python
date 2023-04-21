@@ -6,10 +6,9 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class _MaterializationStore:
+class MaterializationStore:
     def __init__(self, type: str, target: str):  # pylint: disable=redefined-builtin
-
-        """_MaterializationStore.
+        """MaterializationStore.
         :param type: store type.
         :type type: str
         :param target: store target.

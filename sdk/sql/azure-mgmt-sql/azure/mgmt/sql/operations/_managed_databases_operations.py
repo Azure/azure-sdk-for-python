@@ -48,8 +48,8 @@ def build_list_by_instance_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -81,8 +81,8 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -115,8 +115,8 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -151,8 +151,8 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     # Construct URL
     _url = kwargs.pop(
@@ -180,8 +180,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
@@ -217,8 +217,8 @@ def build_cancel_move_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
@@ -251,8 +251,8 @@ def build_complete_move_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
@@ -285,8 +285,8 @@ def build_complete_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
@@ -319,8 +319,8 @@ def build_start_move_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
@@ -353,8 +353,8 @@ def build_list_inaccessible_by_instance_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -418,8 +418,8 @@ class ManagedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.ManagedDatabaseListResult] = kwargs.pop("cls", None)
 
@@ -510,8 +510,8 @@ class ManagedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.ManagedDatabase] = kwargs.pop("cls", None)
 
@@ -569,8 +569,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ManagedDatabase]] = kwargs.pop("cls", None)
@@ -744,8 +744,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ManagedDatabase] = kwargs.pop("cls", None)
@@ -806,8 +806,8 @@ class ManagedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -870,8 +870,8 @@ class ManagedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -932,8 +932,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ManagedDatabase]] = kwargs.pop("cls", None)
@@ -1104,8 +1104,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ManagedDatabase] = kwargs.pop("cls", None)
@@ -1171,8 +1171,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1334,8 +1334,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1399,8 +1399,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1562,8 +1562,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1627,8 +1627,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1792,8 +1792,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1857,8 +1857,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2020,8 +2020,8 @@ class ManagedDatabasesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2085,8 +2085,8 @@ class ManagedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.ManagedDatabaseListResult] = kwargs.pop("cls", None)
 

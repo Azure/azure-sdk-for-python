@@ -737,7 +737,7 @@
               "type": "spark",
               "resources": {
                 "instance_type": "standard_e4s_v3",
-                "runtime_version": "3.1.0"
+                "runtime_version": "3.2.0"
               },
               "identity": {
                 "identity_type": "UserIdentity"
@@ -871,7 +871,7 @@
               "type": "spark",
               "resources": {
                 "instance_type": "standard_e4s_v3",
-                "runtime_version": "3.1.0"
+                "runtime_version": "3.2.0"
               },
               "identity": {
                 "identity_type": "UserIdentity"

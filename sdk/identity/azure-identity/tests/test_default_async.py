@@ -126,7 +126,7 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
 
-    credential = DefaultAzureCredential(exclude_azd_cli_credential=True)
+    credential = DefaultAzureCredential(exclude_developer_cli_credential=True)
     assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
@@ -245,7 +245,7 @@ async def test_default_credential_shared_cache_use():
 def test_managed_identity_client_id():
     """the credential should accept a user-assigned managed identity's client ID by kwarg or environment variable"""
 
-    expected_args = {"client_id": "the client"}
+    expected_args = {"client_id": "the-client", "_exclude_workload_identity_credential": False}
 
     with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
         DefaultAzureCredential(managed_identity_client_id=expected_args["client_id"])

@@ -3,8 +3,8 @@ from common import IssueProcess, Common
 from typing import Any, List
 
 # assignee dict which will be assigned to handle issues
-_JS_OWNER = {'lirenhe', 'kazrael2119', 'azure-sdk', 'qiaozha'}
-_JS_ASSIGNEE = {'MaryGao'}
+_JS_OWNER = {'lirenhe', 'kazrael2119', 'azure-sdk'}
+_JS_ASSIGNEE = {'qiaozha', 'MaryGao'}
 
 
 class IssueProcessJs(IssueProcess):
