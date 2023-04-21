@@ -1,92 +1,223 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://master.api.azureml-test.ms/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions?api-version=2023-04-01\u0026hash=c2935a0ba74439e063240ca04b74a61fb92575481dc2eede0969a9b169ea9292\u0026hashVersion=202208",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions?api-version=2023-04-01\u0026hash=c2935a0ba74439e063240ca04b74a61fb92575481dc2eede0969a9b169ea9292\u0026hashVersion=202208",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Connection": "keep-alive",
+        "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Apr 2023 19:58:45 GMT",
+        "Date": "Fri, 21 Apr 2023 00:23:46 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-8ce8297fdf01f8e68eddc63708c55f63-ac7fc3251b66d92e-00\u0022",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+        "Server-Timing": "traceparent;desc=\u002200-f4f089f85b28af1231649a732f97fa4b-36f1746a09fd587a-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-test-westus2-02",
-        "X-Content-Type-Options": [
-          "nosniff",
-          "nosniff"
-        ],
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "6e9c2a71-b542-4aaf-bbbd-5bdfb4468a0d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
         "x-ms-response-type": "standard",
-        "x-request-time": "0.076"
+        "x-ms-routing-request-id": "WESTUS2:20230421T002347Z:6e9c2a71-b542-4aaf-bbbd-5bdfb4468a0d",
+        "x-request-time": "0.211"
       },
       "ResponseBody": {
-        "value": [
-          {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions/1",
-            "name": "1",
-            "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
-            "properties": {
-              "description": null,
-              "tags": {},
-              "properties": {
-                "hash_sha256": "c2935a0ba74439e063240ca04b74a61fb92575481dc2eede0969a9b169ea9292",
-                "hash_version": "202208"
-              },
-              "isArchived": false,
-              "isAnonymous": false,
-              "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-fce31df0-ddd3-58d3-9b45-2a865d6f4171/starlite-component",
-              "provisioningState": "Succeeded"
-            },
-            "systemData": {
-              "createdAt": "2023-04-11T06:32:53.8159786\u002B00:00",
-              "createdBy": "Diondra Peck",
-              "createdByType": "User",
-              "lastModifiedAt": "2023-04-11T06:32:53.8159786\u002B00:00",
-              "lastModifiedBy": "Diondra Peck",
-              "lastModifiedByType": "User"
-            }
-          }
-        ]
+        "value": []
       }
     },
     {
-      "RequestUri": "https://master.api.azureml-test.ms/mferp/managementfrontend/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions/1?api-version=2023-04-01",
-      "RequestMethod": "GET",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions/1/startPendingUpload?api-version=2023-04-01",
+      "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+        "Content-Length": "47",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
+      },
+      "RequestBody": {
+        "pendingUploadType": "TemporaryBlobReference"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 21 Apr 2023 00:23:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-e6b8965cfc9836e32461cdee4afd7426-ee69ef937c90fe20-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "cf7627e5-ae87-4e54-9248-638c1abc2580",
+        "x-ms-ratelimit-remaining-subscription-writes": "1192",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230421T002347Z:cf7627e5-ae87-4e54-9248-638c1abc2580",
+        "x-request-time": "0.741"
+      },
+      "ResponseBody": {
+        "blobReferenceForConsumption": {
+          "blobUri": "https://sapcy5552emqcc6.blob.core.windows.net:443/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab",
+          "storageAccountArmId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sapcy5552emqcc6",
+          "credential": {
+            "credentialType": "SAS",
+            "sasUri": "https://sapcy5552emqcc6.blob.core.windows.net/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab?skoid=e3f42e2c-d581-4b65-a966-631cfa961328\u0026sktid=72f988bf-86f1-41af-91ab-2d7cd011db47\u0026skt=2023-04-20T18%3A15%3A45Z\u0026ske=2023-04-22T02%3A25%3A45Z\u0026sks=b\u0026skv=2019-07-07\u0026sv=2021-10-04\u0026st=2023-04-21T00%3A13%3A47Z\u0026se=2023-04-21T08%3A23%3A47Z\u0026sr=c\u0026sp=rcwl\u0026sig=000000000000000000000000000000000000"
+          }
+        },
+        "pendingUploadId": "20d27428-9087-4db4-84c8-78da7706c018",
+        "pendingUploadType": "None"
+      }
+    },
+    {
+      "RequestUri": "https://sapcy5552emqcc6.blob.core.windows.net/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab/starlite-component/component_spec.yaml?skoid=e3f42e2c-d581-4b65-a966-631cfa961328\u0026sktid=72f988bf-86f1-41af-91ab-2d7cd011db47\u0026skt=2023-04-20T18%3A15%3A45Z\u0026ske=2023-04-22T02%3A25%3A45Z\u0026sks=b\u0026skv=2019-07-07\u0026sv=2021-10-04\u0026st=2023-04-21T00%3A13%3A47Z\u0026se=2023-04-21T08%3A23%3A47Z\u0026sr=c\u0026sp=rcwl\u0026sig=000000000000000000000000000000000000",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.16.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)",
+        "x-ms-date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-error-code": "BlobNotFound",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://sapcy5552emqcc6.blob.core.windows.net/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab/starlite-component/component_spec.yaml?skoid=e3f42e2c-d581-4b65-a966-631cfa961328\u0026sktid=72f988bf-86f1-41af-91ab-2d7cd011db47\u0026skt=2023-04-20T18%3A15%3A45Z\u0026ske=2023-04-22T02%3A25%3A45Z\u0026sks=b\u0026skv=2019-07-07\u0026sv=2021-10-04\u0026st=2023-04-21T00%3A13%3A47Z\u0026se=2023-04-21T08%3A23%3A47Z\u0026sr=c\u0026sp=rcwl\u0026sig=000000000000000000000000000000000000",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1194",
+        "Content-MD5": "9poX0sLTS8Jcl6jwSy99Hg==",
+        "Content-Type": "application/octet-stream",
+        "If-None-Match": "*",
+        "User-Agent": "azsdk-python-storage-blob/12.16.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": "JHNjaGVtYTogaHR0cHM6Ly9jb21wb25lbnRzZGsuYXp1cmVlZGdlLm5ldC9qc29uc2NoZW1hL1N0YXJsaXRlQ29tcG9uZW50Lmpzb24KbmFtZTogbWljcm9zb2Z0X2NvbV9henVyZW1sX3NhbXBsZXNfc3RhcmxpdGVfX3NlYXJjaF9nb2xkX2dldF9maWxlcwp2ZXJzaW9uOiAwLjAuMQpkaXNwbGF5X25hbWU6IFN0YXJsaXRlIFNlYXJjaEdvbGQgR2V0IEZpbGVzCnR5cGU6IFN0YXJsaXRlQ29tcG9uZW50CmRlc2NyaXB0aW9uOiBBbGxvd3MgdG8gZG93bmxvYWQgZmlsZXMgZnJvbSBTZWFyY2hHb2xkIHRvIGNvc21vcyBhbmQgZ2V0IHRoZWlyIHJldmlzaW9uIGluZm9ybWF0aW9uLiAnRmlsZUxpc3QnIGlucHV0IGlzIGEgZmlsZSB3aXRoIHNvdXJjZSBkZXBvdCBwYXRocywgb25lIHBlciBsaW5lLgp0YWdzOiB7Y2F0ZWdvcnk6IENvbXBvbmVudCBUdXRvcmlhbCwgY29udGFjdDogYW1sZGVzaWduZXJAbWljcm9zb2Z0LmNvbX0KaW5wdXRzOgogIFVwbG9hZFRvQ29zbW9zOgogICAgdHlwZTogZW51bQogICAgZW51bToKICAgIC0gdHJ1ZQogICAgLSBmYWxzZQogICAgZGVmYXVsdDogZmFsc2UKICAgIG9wdGlvbmFsOiBmYWxzZQogIEZpbGVMaXN0OgogICAgdHlwZTogQW55RmlsZQogICAgb3B0aW9uYWw6IGZhbHNlCiAgUnVuSWQ6CiAgICB0eXBlOiBzdHJpbmcKICAgIGRlc2NyaXB0aW9uOiBhIHBhcmFtZXRlciB2YWx1ZQogICAgb3B0aW9uYWw6IHRydWUKICBGaWxlTGlzdEZpbGVOYW1lOgogICAgdHlwZTogc3RyaW5nCiAgICBkZWZhdWx0OiBcXG91dHB1dC50c3YKICAgIG9wdGlvbmFsOiBmYWxzZQpvdXRwdXRzOgogIEZpbGVzOgogICAgdHlwZTogQW55RGlyZWN0b3J5CiAgQ29zbW9zUGF0aDoKICAgIHR5cGU6IEFueUZpbGUKICBSZXN1bHRJbmZvOgogICAgdHlwZTogQW55RmlsZQpjb21tYW5kOiA\u002BLQogIFN0YXJsaXRlLkNsb3VkLlNvdXJjZURlcG90R2V0LmV4ZSAvVXBsb2FkVG9Db3Ntb3M6e2lucHV0cy5VcGxvYWRUb0Nvc21vc30KICAvRmlsZUxpc3Q6e2lucHV0cy5GaWxlTGlzdH17aW5wdXRzLkZpbGVMaXN0RmlsZU5hbWV9CiAgL0ZpbGVzOntvdXRwdXRzLkZpbGVzfSAvQ29zbW9zUGF0aDp7b3V0cHV0cy5Db3Ntb3NQYXRofSAvUmVzdWx0SW5mbzp7b3V0cHV0cy5SZXN1bHRJbmZvfSAiIgpzdGFybGl0ZToKICByZWZfaWQ6IGJkMTQwZjRkLTc3NzUtNDI0Ni1hNzVjLTFjODZkZjk1MzZmYgoK",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Content-MD5": "9poX0sLTS8Jcl6jwSy99Hg==",
+        "Date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "ETag": "\u00220x8DB41FEAD4396B6\u0022",
+        "Last-Modified": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "YYb/102EjyU=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://sapcy5552emqcc6.blob.core.windows.net/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab/starlite-component/component_spec.yaml?comp=metadata\u0026skoid=e3f42e2c-d581-4b65-a966-631cfa961328\u0026sktid=72f988bf-86f1-41af-91ab-2d7cd011db47\u0026skt=2023-04-20T18%3A15%3A45Z\u0026ske=2023-04-22T02%3A25%3A45Z\u0026sks=b\u0026skv=2019-07-07\u0026sv=2021-10-04\u0026st=2023-04-21T00%3A13%3A47Z\u0026se=2023-04-21T08%3A23%3A47Z\u0026sr=c\u0026sp=rcwl\u0026sig=000000000000000000000000000000000000",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.16.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)",
+        "x-ms-date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "x-ms-meta-name": "24be5e70-600a-39b9-df16-43097a549089",
+        "x-ms-meta-upload_status": "completed",
+        "x-ms-meta-version": "1",
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Connection": "keep-alive",
-        "Content-Encoding": "gzip",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Apr 2023 19:58:45 GMT",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-759e53499db964fa6a458ea125e6dc84-55071ca02039359e-00\u0022",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-test-westus2-02",
-        "X-Content-Type-Options": [
-          "nosniff",
-          "nosniff"
+        "Content-Length": "0",
+        "Date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "ETag": "\u00220x8DB41FEAD548433\u0022",
+        "Last-Modified": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
         ],
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions/1?api-version=2023-04-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "259",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
+      },
+      "RequestBody": {
+        "properties": {
+          "properties": {
+            "hash_sha256": "0000000000000",
+            "hash_version": "0000000000000"
+          },
+          "isAnonymous": true,
+          "isArchived": false,
+          "codeUri": "https://sapcy5552emqcc6.blob.core.windows.net:443/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab/starlite-component"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "819",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 21 Apr 2023 00:23:48 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions/1?api-version=2023-04-01",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-c693b0e2417d128e10474efea6abbb72-dca76d39cddf75a5-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "431ba540-41e5-4e62-8ca6-4756c4105a55",
+        "x-ms-ratelimit-remaining-subscription-writes": "1185",
         "x-ms-response-type": "standard",
-        "x-request-time": "0.075"
+        "x-ms-routing-request-id": "WESTUS2:20230421T002349Z:431ba540-41e5-4e62-8ca6-4756c4105a55",
+        "x-request-time": "0.411"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/24be5e70-600a-39b9-df16-43097a549089/versions/1",
@@ -101,21 +232,21 @@
           },
           "isArchived": false,
           "isAnonymous": false,
-          "codeUri": "https://sab6b272nokaeak.blob.core.windows.net:443/061273aa-2-fce31df0-ddd3-58d3-9b45-2a865d6f4171/starlite-component",
+          "codeUri": "https://sapcy5552emqcc6.blob.core.windows.net:443/2eef7b49-b-f6fc123a-6e8f-5c9c-a945-f33e751570ab/starlite-component",
           "provisioningState": "Succeeded"
         },
         "systemData": {
-          "createdAt": "2023-04-11T06:32:53.8159786\u002B00:00",
+          "createdAt": "2023-04-21T00:23:49.3878017\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-11T06:32:53.8159786\u002B00:00",
+          "lastModifiedAt": "2023-04-21T00:23:49.3878017\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_493878169910/versions/0.0.1?api-version=2022-10-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_846216122864/versions/0.0.1?api-version=2022-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -123,7 +254,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1803",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
       },
       "RequestBody": {
         "properties": {
@@ -136,7 +267,7 @@
           "isAnonymous": false,
           "isArchived": false,
           "componentSpec": {
-            "name": "test_493878169910",
+            "name": "test_846216122864",
             "description": "Allows to download files from SearchGold to cosmos and get their revision information. \u0027FileList\u0027 input is a file with source depot paths, one per line.",
             "tags": {
               "category": "Component Tutorial",
@@ -194,25 +325,25 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2713",
+        "Content-Length": "2714",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Apr 2023 19:58:48 GMT",
+        "Date": "Fri, 21 Apr 2023 00:23:51 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_493878169910/versions/0.0.1?api-version=2022-10-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_846216122864/versions/0.0.1?api-version=2022-10-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-c78410ea89386c114e88e6b2e313cda8-e912d4743dcf8603-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-fd371d5db4d5d1004c07c8bdb6d5c686-a3f039b1450f0500-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f5eb9c49-b6b3-4847-8b9b-2f763b6e4f97",
-        "x-ms-ratelimit-remaining-subscription-writes": "1192",
+        "x-ms-correlation-request-id": "322c07e7-a258-419a-9a65-cc6b88d2ba9f",
+        "x-ms-ratelimit-remaining-subscription-writes": "1184",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230411T195848Z:f5eb9c49-b6b3-4847-8b9b-2f763b6e4f97",
-        "x-request-time": "1.550"
+        "x-ms-routing-request-id": "WESTUS2:20230421T002352Z:322c07e7-a258-419a-9a65-cc6b88d2ba9f",
+        "x-request-time": "1.427"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_493878169910/versions/0.0.1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_846216122864/versions/0.0.1",
         "name": "0.0.1",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
@@ -226,7 +357,7 @@
           "isAnonymous": false,
           "componentSpec": {
             "$schema": "https://componentsdk.azureedge.net/jsonschema/StarliteComponent.json",
-            "name": "test_493878169910",
+            "name": "test_846216122864",
             "version": "0.0.1",
             "display_name": "Starlite SearchGold Get Files",
             "is_deterministic": "True",
@@ -280,23 +411,23 @@
           }
         },
         "systemData": {
-          "createdAt": "2023-04-11T19:58:47.999887\u002B00:00",
+          "createdAt": "2023-04-21T00:23:51.4685208\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-11T19:58:48.5042283\u002B00:00",
+          "lastModifiedAt": "2023-04-21T00:23:51.9982326\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_493878169910/versions/0.0.1?api-version=2022-10-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_846216122864/versions/0.0.1?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.11 (Windows-10-10.0.19045-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -304,27 +435,27 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Apr 2023 19:58:48 GMT",
+        "Date": "Fri, 21 Apr 2023 00:23:51 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-b2771436b1b3fa17b8cfab6c71d1b2b6-2a2003a3b0d0af05-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-a5b96559cef56272ba68c9f746832d6d-7f0ffdbc30eaaa44-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2837aed1-9cd4-4414-9e52-3a94e1cfee3e",
-        "x-ms-ratelimit-remaining-subscription-reads": "11992",
+        "x-ms-correlation-request-id": "c4e687bf-0d2d-463c-b267-426e6a4bfa59",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230411T195849Z:2837aed1-9cd4-4414-9e52-3a94e1cfee3e",
-        "x-request-time": "0.259"
+        "x-ms-routing-request-id": "WESTUS2:20230421T002352Z:c4e687bf-0d2d-463c-b267-426e6a4bfa59",
+        "x-request-time": "0.283"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_493878169910/versions/0.0.1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_846216122864/versions/0.0.1",
         "name": "0.0.1",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
@@ -338,7 +469,7 @@
           "isAnonymous": false,
           "componentSpec": {
             "$schema": "https://componentsdk.azureedge.net/jsonschema/StarliteComponent.json",
-            "name": "test_493878169910",
+            "name": "test_846216122864",
             "version": "0.0.1",
             "display_name": "Starlite SearchGold Get Files",
             "is_deterministic": "True",
@@ -392,10 +523,10 @@
           }
         },
         "systemData": {
-          "createdAt": "2023-04-11T19:58:47.999887\u002B00:00",
+          "createdAt": "2023-04-21T00:23:51.4685208\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-04-11T19:58:48.5042283\u002B00:00",
+          "lastModifiedAt": "2023-04-21T00:23:51.9982326\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
@@ -403,6 +534,6 @@
     }
   ],
   "Variables": {
-    "component_name": "test_493878169910"
+    "component_name": "test_846216122864"
   }
 }
