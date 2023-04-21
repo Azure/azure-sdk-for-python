@@ -230,6 +230,11 @@ def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
 
 
 @pytest.fixture
+def mock_aml_services_2023_04_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_04_01_preview")
+
+
+@pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.runhistory")
 
@@ -805,7 +810,6 @@ def enable_private_preview_schema_features():
             enable_internal_components_in_pipeline(force=True)
 
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
-
         _reload_related_classes()
         yield
     _reload_related_classes()

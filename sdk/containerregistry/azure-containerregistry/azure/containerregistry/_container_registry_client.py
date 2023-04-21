@@ -32,7 +32,7 @@ from ._helpers import (
     _validate_digest,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
-    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    DEFAULT_AUDIENCE,
     DEFAULT_CHUNK_SIZE,
 )
 from ._models import (
@@ -59,7 +59,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         credential: Optional[TokenCredential] = None,
         *,
         api_version: Optional[str] = None,
-        audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+        audience: str = DEFAULT_AUDIENCE,
         **kwargs
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
@@ -72,7 +72,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
             "https://management.azure.com", "https://management.chinacloudapi.cn" or
-            "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
+            "https://management.usgovcloudapi.net". The default value is "https://containerregistry.azure.net".
         :paramtype audience: str
         :returns: None
         :rtype: None

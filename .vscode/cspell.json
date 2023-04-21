@@ -1072,7 +1072,9 @@
         "pycache",
         "ruamel",
         "reprcrash",
-        "etests"
+        "etests",
+        "RMSE",
+        "azmonitoring"
       ]
     },
     {

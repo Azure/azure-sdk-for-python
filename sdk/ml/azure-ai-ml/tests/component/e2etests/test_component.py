@@ -779,18 +779,6 @@ class TestComponent(AzureRecordedTestCase):
         component_resource = client.components.create_or_update(component)
         assert component_resource.version == "3"
 
-    def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component: CommandComponent = load_component(source=component_path)
-        component.name = None
-        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = client.components.validate(component)
-        assert validation_result.passed is False
-        assert validation_result.error_messages == {
-            "name": "Missing data for required field.",
-            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
-        }
-
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",

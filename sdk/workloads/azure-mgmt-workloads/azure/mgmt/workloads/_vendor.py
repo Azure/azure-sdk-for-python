@@ -10,7 +10,7 @@ from typing import List, TYPE_CHECKING, cast
 
 from azure.core.pipeline.transport import HttpRequest
 
-from ._configuration import WorkloadsClientConfiguration
+from ._configuration import WorkloadsMgmtClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,10 +39,10 @@ def _format_url_section(template, **kwargs):
             template = "/".join(components)
 
 
-class WorkloadsClientMixinABC(ABC):
+class WorkloadsMgmtClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"
-    _config: WorkloadsClientConfiguration
+    _config: WorkloadsMgmtClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

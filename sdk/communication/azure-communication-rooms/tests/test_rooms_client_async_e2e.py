@@ -12,17 +12,13 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
-    RoomParticipant,
-    RoomJoinPolicy,
-    RoleType
+    ParticipantRole,
+    RoomParticipant
 )
 from testcase_async import RoomsAsyncTestCase
-from _shared.testcase import (
-    ResponseReplacerProcessor
-)
 
 from _shared.utils import get_http_logging_policy
-from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
+from helper import URIIdentityReplacer
 
 class RoomsClientTestAsync(RoomsAsyncTestCase):
     def __init__(self, method_name):
@@ -31,32 +27,28 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
     def setUp(self):
         super(RoomsClientTestAsync, self).setUp()
         if not self.is_playback():
-            self.recording_processors.extend([
-                ResponseReplacerProcessor(keys=[self._resource_name, "8:acs:[A-Za-z0-9-_]+"]),
-                URIIdentityReplacer(),
-                RequestBodyIdentityReplacer()])
+            self.recording_processors.extend([URIIdentityReplacer()])
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
 
+        self.id1 = self.identity_client.create_user().properties["id"]
+        self.id2 = self.identity_client.create_user().properties["id"]
+        self.id3 = self.identity_client.create_user().properties["id"]
+        self.id4 = self.identity_client.create_user().properties["id"]
+
         self.users = {
             "john" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(
-                    self.identity_client.create_user().properties["id"]
-                ),
-                role=RoleType.PRESENTER
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.PRESENTER
             ),
             "fred" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(
-                    self.identity_client.create_user().properties["id"]
-                ),
-                role=RoleType.CONSUMER
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
             ),
             "chris" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(
-                    self.identity_client.create_user().properties["id"]
-                ),
-                role=RoleType.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
             )
         }
         self.rooms_client = RoomsClient.from_connection_string(
@@ -104,7 +96,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, valid_until=valid_until)
 
-    @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
@@ -118,7 +109,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
 
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
-            self.verify_successful_room_response(response=response, participants=participants)
+            self.verify_successful_room_response(response=response)
 
     @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_validUntil_7Months_async(self):
@@ -163,7 +154,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
         participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role=RoleType.ATTENDEE
+                role=ParticipantRole.ATTENDEE
             ),
             self.users["john"]
         ]
@@ -174,19 +165,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
 
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
-
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_create_room_open_room(self):
-        # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until = valid_from + timedelta(weeks=4)
-        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
-
-        response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
-        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
-        # delete created room
-        await self.rooms_client.delete_room(room_id=response.id)
 
     @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
@@ -205,7 +183,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(
-            response=response, valid_from=valid_from, valid_until=valid_until, participants=participants)
+            response=response, valid_from=valid_from, valid_until=valid_until)
 
     @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
@@ -227,7 +205,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
-                response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id, participants=participants)
+                response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
     @RoomsAsyncTestCase.await_prepared_test
     async def test_get_invalid_room_async(self):
@@ -238,8 +216,8 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             with pytest.raises(HttpResponseError) as ex:
-            
-                get_response = await self.rooms_client.get_room(room_id=create_response.id)
+
+                await self.rooms_client.get_room(room_id=create_response.id)
                 # Resource not found
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
@@ -354,83 +332,131 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             self.verify_successful_room_response(
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
-    @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_change_open_room_in_past(self):
-        # room with no attributes
-        create_response = await self.rooms_client.create_room()
-
-        # room attributes
-        valid_from =  datetime.now() - timedelta(days=1)
-        valid_until = valid_from + timedelta(weeks=4)
-        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
-
-        with pytest.raises(HttpResponseError) as ex:
-            await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
-
-        # delete created room
-        await self.rooms_client.delete_room(room_id=create_response.id)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
-
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_change_open_room_in_future(self):
-        # room with no attributes
-        create_response = await self.rooms_client.create_room()
-
-        # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until = valid_from + timedelta(weeks=4)
-        room_join_policy = RoomJoinPolicy.COMMUNICATION_SERVICE_USERS
-
-        response = await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
-        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, room_join_policy=room_join_policy)
-        # delete created room
-        await self.rooms_client.delete_room(room_id=create_response.id)
-
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_add_participant_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            # update room attributes
-            participants = [
-                self.users["john"]
-            ]
-            await self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
-            updated_participants = await self.rooms_client.get_participants(room_id=create_response.id)
-            # delete created room
-            await self.rooms_client.delete_room(room_id=create_response.id)
-            self.assertListEqual(participants, updated_participants.participants)
-
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_participant_async(self):
+    async def test_upsert_participant_async(self):
         # add john and chris to room
         create_participants = [
             self.users["john"],
             self.users["chris"]
         ]
-        self.users["john"].role = RoleType.CONSUMER
-        self.users["chris"].role = RoleType.CONSUMER
-
+        # update join to consumer and add fred to room
+        self.users["john"].role = ParticipantRole.CONSUMER
         update_participants = [
             self.users["john"],
-            self.users["chris"]
+            self.users["fred"]
+        ]
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.CONSUMER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            )
         ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
-            await self.rooms_client.update_participants(room_id=create_response.id, participants=update_participants)
-            update_response = await self.rooms_client.get_participants(room_id=create_response.id)
+            await self.rooms_client.upsert_participants(room_id=create_response.id, participants=update_participants)
+            update_response = self.rooms_client.list_participants(room_id=create_response.id)
+            participants = []
+            async for participant in update_response:
+                participants.append(participant)
+            assert len(participants) == 3
+            self.assertCountEqual(expected_participants, participants)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
-            self.assertListEqual(update_participants, update_response.participants)
 
-    @pytest.mark.live_test_only
+    @RoomsAsyncTestCase.await_prepared_test
+    async def test_upsert_participant_with_null_roles_async(self):
+        create_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2)
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+        async with self.rooms_client:
+            # Check participants with null roles were added in created room
+            create_response = await self.rooms_client.create_room(participants=create_participants)
+            list_participants_response = self.rooms_client.list_participants(room_id=create_response.id)
+            participants = []
+            async for participant in list_participants_response:
+                participants.append(participant)
+            assert len(participants) == 3
+            self.assertCountEqual(expected_participants, participants)
+
+            # Check participants were upserted properly
+            upsert_participants = [
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id1),
+                    role=None
+                ),
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id2),
+                    role=ParticipantRole.CONSUMER
+                ),
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id3)
+                ),
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id4)
+                )]
+
+            expected_participants = [
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id1),
+                    role=ParticipantRole.ATTENDEE
+                ),
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id2),
+                    role=ParticipantRole.CONSUMER
+                ),
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id3),
+                    role=ParticipantRole.ATTENDEE
+                ),
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id4),
+                    role=ParticipantRole.ATTENDEE
+                )
+            ]
+            await self.rooms_client.upsert_participants(room_id=create_response.id, participants=upsert_participants)
+            update_response = self.rooms_client.list_participants(room_id=create_response.id)
+            updated_participants = []
+            async for participant in update_response:
+                updated_participants.append(participant)
+            assert len(updated_participants) == 4
+            self.assertCountEqual(expected_participants, updated_participants)
+
+            # delete created room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+
     @RoomsAsyncTestCase.await_prepared_test
     async def test_remove_participant_async(self):
         # add john and chris to room
@@ -441,18 +467,26 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
         remove_participants = [
             self.users["john"].communication_identifier
         ]
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            )
+        ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
-
             await self.rooms_client.remove_participants(room_id=create_response.id, communication_identifiers=remove_participants)
-            update_response = await self.rooms_client.get_participants(room_id=create_response.id)
+            update_response = self.rooms_client.list_participants(room_id=create_response.id)
+            participants = []
+            async for participant in update_response:
+                participants.append(participant)
+            assert len(participants) == 1
+            self.assertCountEqual(expected_participants, participants)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
-            participants = [self.users["chris"]]
-            self.assertListEqual(participants, update_response.participants)
 
     @RoomsAsyncTestCase.await_prepared_test
-    async def test_add_participants_incorrectMri_async(self):
+    async def test_upsert_participants_incorrectMri_async(self):
         # room with no attributes
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room()
@@ -460,13 +494,13 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             participants = [
                 RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                    role=RoleType.ATTENDEE),
+                    role=ParticipantRole.ATTENDEE),
                 self.users["john"]
             ]
 
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+                await self.rooms_client.upsert_participants(room_id=create_response.id, participants=participants)
 
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
@@ -486,7 +520,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
 
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+                await self.rooms_client.upsert_participants(room_id=create_response.id, participants=participants)
 
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
@@ -518,7 +552,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
 
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, participants=None, room_join_policy=None):
+    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
 
         if room_id is not None:
             self.assertEqual(room_id, response.id)
@@ -526,7 +560,4 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             self.assertEqual(valid_from.replace(tzinfo=None), response.valid_from.replace(tzinfo=None))
         if valid_until is not None:
             self.assertEqual(valid_until.replace(tzinfo=None), response.valid_until.replace(tzinfo=None))
-        if participants is not None:
-            self.assertListEqual(participants, response.participants)
-        if room_join_policy is not None:
-            self.assertEqual(room_join_policy, response.room_join_policy)
+        assert response.created_at is not None
