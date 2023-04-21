@@ -15,7 +15,7 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 21:46:28 GMT",
+        "Date": "Fri, 21 Apr 2023 22:50:01 GMT",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
@@ -23,7 +23,7 @@
         "x-aml-cluster": "vienna-eastus-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-response-type": "standard",
-        "x-request-time": "0.423"
+        "x-request-time": "0.383"
       },
       "ResponseBody": {
         "registryId": "584f9ef8-1989-40a2-9dec-453611954463",
@@ -50,7 +50,7 @@
       }
     },
     {
-      "RequestUri": "https://cert-eastus2euap.experiments.azureml.net/mferp/managementfrontend/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/registries/sdk-test/components/test_586540195849/versions/0.0.1?api-version=2021-10-01-dataplanepreview",
+      "RequestUri": "https://cert-eastus2euap.experiments.azureml.net/mferp/managementfrontend/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/registries/sdk-test/components/test_254003466827/versions/0.0.1?api-version=2021-10-01-dataplanepreview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -73,7 +73,7 @@
           "componentSpec": {
             "command": "echo Hello World \u0026 echo $[[${{inputs.component_in_number}}]] \u0026 echo ${{inputs.component_in_path}} \u0026 echo ${{outputs.component_out_path}} \u003E ${{outputs.component_out_path}}/component_in_number",
             "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-            "name": "test_586540195849",
+            "name": "test_254003466827",
             "description": "This is the basic command component",
             "tags": {
               "tag": "tagvalue",
@@ -110,13 +110,13 @@
         "Connection": "keep-alive",
         "Content-Length": "7791",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 21:46:31 GMT",
+        "Date": "Fri, 21 Apr 2023 22:50:39 GMT",
         "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
-        "x-aml-cluster": "vienna-eastus2euap-02",
+        "x-aml-cluster": "vienna-eastus2euap-01",
         "X-Content-Type-Options": "nosniff",
         "x-ms-response-type": "error",
-        "x-request-time": "0.581"
+        "x-request-time": "1.017"
       },
       "ResponseBody": {
         "error": {
@@ -134,8 +134,8 @@
               "type": "Correlation",
               "info": {
                 "value": {
-                  "operation": "3179f625440866eaeff5055016b32948",
-                  "request": "0529f6ab50b462c0"
+                  "operation": "dd1083fad48d323cbcd8bbb2d5319e95",
+                  "request": "bd5de944b7e9e5f9"
                 }
               }
             },
@@ -154,7 +154,7 @@
             {
               "type": "Time",
               "info": {
-                "value": "2023-04-20T21:46:31.7067539\u002B00:00"
+                "value": "2023-04-21T22:50:39.2973917\u002B00:00"
               }
             },
             {
@@ -162,7 +162,7 @@
               "info": {
                 "value": {
                   "type": "Microsoft.MachineLearning.Common.Core.ServiceInvocationException",
-                  "message": "Service invocation failed!\r\nRequest: POST component.vienna-eastus2euap.svc/component/v2.0/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/registries/sdk-test/components/\r\nStatus Code: 403 Forbidden\r\nError Code: UserError/Auth/Authorization/UnAuthorizedRegistryAccess\r\nReason Phrase: User/tenant/subscription is not allowed to access registry sdk-test\r\nResponse Body: {\n  \u0022error\u0022: {\n    \u0022code\u0022: \u0022UserError\u0022,\n    \u0022severity\u0022: null,\n    \u0022message\u0022: \u0022User/tenant/subscription is not allowed to access registry sdk-test\u0022,\n    \u0022messageFormat\u0022: null,\n    \u0022messageParameters\u0022: null,\n    \u0022referenceCode\u0022: null,\n    \u0022detailsUri\u0022: null,\n    \u0022target\u0022: null,\n    \u0022details\u0022: [],\n    \u0022innerError\u0022: {\n      \u0022code\u0022: \u0022Auth\u0022,\n      \u0022innerError\u0022: {\n        \u0022code\u0022: \u0022Authorization\u0022,\n        \u0022innerError\u0022: {\n          \u0022code\u0022: \u0022UnAuthorizedRegistryAccess\u0022,\n          \u0022innerError\u0022: null\n        }\n      }\n    },\n    \u0022debugInfo\u0022: null,\n    \u0022additionalInfo\u0022: null\n  },\n  \u0022correlation\u0022: {\n    \u0022operation\u0022: \u00223179f625440866eaeff5055016b32948\u0022,\n    \u0022request\u0022: \u00226f6f1431e99c6338\u0022\n  },\n  \u0022environment\u0022: \u0022eastus2euap\u0022,\n  \u0022location\u0022: \u0022eastus2euap\u0022,\n  \u0022time\u0022: \u00222023-04-20T21:46:31.7031932\u002B00:00\u0022,\n  \u0022componentName\u0022: \u0022component\u0022\n}",
+                  "message": "Service invocation failed!\r\nRequest: POST component.vienna-eastus2euap.svc/component/v2.0/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/registries/sdk-test/components/\r\nStatus Code: 403 Forbidden\r\nError Code: UserError/Auth/Authorization/UnAuthorizedRegistryAccess\r\nReason Phrase: User/tenant/subscription is not allowed to access registry sdk-test\r\nResponse Body: {\n  \u0022error\u0022: {\n    \u0022code\u0022: \u0022UserError\u0022,\n    \u0022severity\u0022: null,\n    \u0022message\u0022: \u0022User/tenant/subscription is not allowed to access registry sdk-test\u0022,\n    \u0022messageFormat\u0022: null,\n    \u0022messageParameters\u0022: null,\n    \u0022referenceCode\u0022: null,\n    \u0022detailsUri\u0022: null,\n    \u0022target\u0022: null,\n    \u0022details\u0022: [],\n    \u0022innerError\u0022: {\n      \u0022code\u0022: \u0022Auth\u0022,\n      \u0022innerError\u0022: {\n        \u0022code\u0022: \u0022Authorization\u0022,\n        \u0022innerError\u0022: {\n          \u0022code\u0022: \u0022UnAuthorizedRegistryAccess\u0022,\n          \u0022innerError\u0022: null\n        }\n      }\n    },\n    \u0022debugInfo\u0022: null,\n    \u0022additionalInfo\u0022: null\n  },\n  \u0022correlation\u0022: {\n    \u0022operation\u0022: \u0022dd1083fad48d323cbcd8bbb2d5319e95\u0022,\n    \u0022request\u0022: \u0022bd153220c71de59b\u0022\n  },\n  \u0022environment\u0022: \u0022eastus2euap\u0022,\n  \u0022location\u0022: \u0022eastus2euap\u0022,\n  \u0022time\u0022: \u00222023-04-21T22:50:39.2738574\u002B00:00\u0022,\n  \u0022componentName\u0022: \u0022component\u0022\n}",
                   "stackTrace": "   at Microsoft.MachineLearning.Common.WebApi.Client.ServiceInvoker._MakeRequest(UriBuilder builder, MethodDetails details, CancellationToken cancellationToken, Nullable\u00601 initialStreamPosition, Uri fallbackServiceAddress, Object[] parameters) in /mnt/vss/_work/1/s/src/azureml-api/src/Common/WebApi.Client/ServiceInvoker.cs:line 911\n   at Polly.Retry.AsyncRetryEngine.ImplementationAsync[TResult](Func\u00603 action, Context context, CancellationToken cancellationToken, ExceptionPredicates shouldRetryExceptionPredicates, ResultPredicates\u00601 shouldRetryResultPredicates, Func\u00605 onRetryAsync, Int32 permittedRetryCount, IEnumerable\u00601 sleepDurationsEnumerable, Func\u00604 sleepDurationProvider, Boolean continueOnCapturedContext)\n   at Polly.AsyncPolicy.ExecuteAsync[TResult](Func\u00603 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\n   at Microsoft.MachineLearning.Common.WebApi.Client.ServiceInvoker._Invoke[T](String methodId, Object[] parameters) in /mnt/vss/_work/1/s/src/azureml-api/src/Common/WebApi.Client/ServiceInvoker.cs:line 264\n   at Microsoft.MachineLearning.ManagementFrontEnd.Services.Clients.ComponentServiceClientV2.RegisterRegistryComponent(RegistryContext registry, String name, String versionId, Resource\u00601 componentVersion) in /mnt/vss/_work/1/s/src/azureml-api/src/ManagementFrontEnd/Services/Clients/ComponentServiceClientV2.cs:line 113\n   at Microsoft.MachineLearning.ManagementFrontEnd.Services.Services.ComponentVersionServiceV2.Create(RegistryContext registry, String name, String version, Resource\u00601 versionEntity) in /mnt/vss/_work/1/s/src/azureml-api/src/ManagementFrontEnd/Services/Services/ComponentVersionServiceV2.cs:line 215\n   at Microsoft.MachineLearning.ManagementFrontEnd.Services.Services.ComponentVersionServiceV2.CreateOrUpdate(RegistryContext registry, String name, String version, Resource\u00601 versionEntity) in /mnt/vss/_work/1/s/src/azureml-api/src/ManagementFrontEnd/Services/Services/ComponentVersionServiceV2.cs:line 104\n   at Microsoft.MachineLearning.ManagementFrontEnd.EntryPoints.Api.V20211001Dataplane.Controllers.ResourceVersionControllerBase\u00602.CreateOrUpdate(RegistryContext registryContext, String name, String version, Resource\u00601 request, String apiVersion) in /mnt/vss/_work/1/s/src/azureml-api/src/ManagementFrontEnd/EntryPoints/Api/V20211001Dataplane/Controllers/ResourceVersionControllerBase.cs:line 72\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.\u003CInvokeActionMethodAsync\u003Eg__Logged|12_1(ControllerActionInvoker invoker)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.\u003CInvokeNextActionFilterAsync\u003Eg__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State\u0026 next, Scope\u0026 scope, Object\u0026 state, Boolean\u0026 isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.\u003CInvokeInnerFilterAsync\u003Eg__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.\u003CInvokeNextExceptionFilterAsync\u003Eg__Awaited|26_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)",
                   "innerException": null,
                   "data": {},
@@ -191,12 +191,12 @@
                       "additionalInfo": null
                     },
                     "correlation": {
-                      "operation": "3179f625440866eaeff5055016b32948",
-                      "request": "6f6f1431e99c6338"
+                      "operation": "dd1083fad48d323cbcd8bbb2d5319e95",
+                      "request": "bd153220c71de59b"
                     },
                     "environment": "eastus2euap",
                     "location": "eastus2euap",
-                    "time": "2023-04-20T21:46:31.7031932\u002B00:00",
+                    "time": "2023-04-21T22:50:39.2738574\u002B00:00",
                     "componentName": "component"
                   }
                 }
@@ -223,6 +223,6 @@
     }
   ],
   "Variables": {
-    "component_name": "test_586540195849"
+    "component_name": "test_254003466827"
   }
 }
