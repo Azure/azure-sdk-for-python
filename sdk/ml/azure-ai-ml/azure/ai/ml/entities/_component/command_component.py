@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 from contextlib import contextmanager
 
 from marshmallow import Schema
@@ -68,6 +68,8 @@ class CommandComponent(Component, ParameterizedCommand):
     :type instance_count: int
     :param is_deterministic: Whether the command component is deterministic.
     :type is_deterministic: bool
+    :param additional_includes: A list of shared additional files to be included in the component.
+    :type additional_includes: list
     :param properties: Properties of the component. Contents inside will pass through to backend as a dictionary.
     :type properties: dict
 
@@ -94,6 +96,7 @@ class CommandComponent(Component, ParameterizedCommand):
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
+        additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
         **kwargs,
     ):
@@ -109,7 +112,6 @@ class CommandComponent(Component, ParameterizedCommand):
         # this is to support the case of CommandComponent being the trial of
         # a SweepJob, where environment_variables is stored as part of trial
         environment_variables = kwargs.pop("environment_variables", None)
-        additional_includes = kwargs.pop("additional_includes", None)
         super().__init__(
             name=name,
             version=version,
@@ -143,21 +145,21 @@ class CommandComponent(Component, ParameterizedCommand):
             )
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
-        self._additional_includes_obj = None
+        self.__additional_includes_obj = None
 
     @property
-    def additional_includes_obj(self):
+    def _additional_includes_obj(self):
         if (
-            self._additional_includes_obj is None
+            self.__additional_includes_obj is None
             and self.additional_includes
             and isinstance(self.additional_includes, list)
         ):
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
-            self._additional_includes_obj = AdditionalIncludes(
+            self.__additional_includes_obj = AdditionalIncludes(
                 code_path=self.code, yaml_path=self._source_path, additional_includes=self.additional_includes
             )
-        return self._additional_includes_obj
+        return self.__additional_includes_obj
 
     @property
     def instance_count(self) -> int:
@@ -212,8 +214,8 @@ class CommandComponent(Component, ParameterizedCommand):
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
-        if self.additional_includes_obj and self.additional_includes_obj.with_includes:
-            validation_result.merge_with(self.additional_includes_obj._validate())
+        if self._additional_includes_obj and self._additional_includes_obj.with_includes:
+            validation_result.merge_with(self._additional_includes_obj._validate())
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
@@ -282,14 +284,14 @@ class CommandComponent(Component, ParameterizedCommand):
             yield code
             return
 
-        if self.additional_includes_obj is not None:
-            self.additional_includes_obj.resolve()
+        if self._additional_includes_obj is not None:
+            self._additional_includes_obj.resolve()
 
             # use absolute path in case temp folder & work dir are in different drive
             tmp_code_dir = (
-                self.additional_includes_obj.code.absolute()
-                if self.additional_includes_obj.code
-                else self.additional_includes_obj.yaml_path.absolute()
+                self._additional_includes_obj.code.absolute()
+                if self._additional_includes_obj.code
+                else self._additional_includes_obj.yaml_path.absolute()
             )
             rebased_ignore_file = ComponentIgnoreFile(
                 tmp_code_dir,
@@ -301,7 +303,7 @@ class CommandComponent(Component, ParameterizedCommand):
                 ignore_file=rebased_ignore_file,
             )
 
-            self.additional_includes_obj.cleanup()
+            self._additional_includes_obj.cleanup()
         elif self.code is not None:
             yield code
         else:
