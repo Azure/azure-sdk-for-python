@@ -35,6 +35,7 @@ omit_fields = [
     "mock_component_hash",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
+    "use_python_amlignore_during_upload",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

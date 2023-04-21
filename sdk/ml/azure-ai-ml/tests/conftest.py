@@ -36,6 +36,7 @@ from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Te
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml._utils._asset_utils import IgnoreFile
 from azure.ai.ml._utils.utils import hash_dict
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
@@ -1015,3 +1016,14 @@ def singularity_vc(client: MLClient) -> SingularityVirtualCluster:
         return SingularityVirtualCluster(
             subscription_id=vc["subscriptionId"], resource_group_name=vc["resourceGroup"], name=vc["name"]
         )
+
+
+@pytest.fixture
+def use_python_amlignore_during_upload(mocker: MockFixture) -> None:
+    """Makes _upload_to_datastore default to using an ignore file that ignores
+    non-essential python files (e.g. .pyc)
+    """
+    IGNORE_FILE_DIR = Path(__file__).parent / "test_configs" / "_ignorefiles"
+    py_ignore = IGNORE_FILE_DIR / "Python.amlignore"
+    # Meant to influence azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore when an ignore file isn't provided
+    mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_ignore_file", return_value=IgnoreFile(py_ignore))
