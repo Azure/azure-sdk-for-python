@@ -119,7 +119,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
-        name,
+        name: str,
     ) -> LROPoller[None]:
         """Delete schedule.
 
@@ -139,7 +139,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
-        name,
+        name: str,
     ) -> Schedule:
         """Get a schedule.
 
@@ -160,7 +160,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
-        schedule,
+        schedule: Schedule,
     ) -> LROPoller[Schedule]:
         """Create or update schedule.
 
@@ -192,7 +192,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
-        name,
+        name: str,
     ) -> LROPoller[Schedule]:
         """Enable a schedule.
 
@@ -209,7 +209,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
-        name,
+        name: str,
     ) -> LROPoller[Schedule]:
         """Disable a schedule.
 

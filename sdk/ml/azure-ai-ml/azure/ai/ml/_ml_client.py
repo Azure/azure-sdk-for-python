@@ -73,7 +73,7 @@ from azure.ai.ml.entities import (
     Datastore,
     Environment,
     Job,
-    JobSchedule,
+    Schedule,
     Model,
     OnlineDeployment,
     OnlineEndpoint,
@@ -937,7 +937,7 @@ class MLClient:
         OnlineEndpoint,
         BatchDeployment,
         BatchEndpoint,
-        JobSchedule,
+        Schedule,
     )
 
     def begin_create_or_update(
@@ -951,12 +951,12 @@ class MLClient:
         :type entity: typing.Union[~azure.ai.ml.entities.Workspace
             , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
             , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
-            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
+            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.Schedule]
         :return: The resource after create/update operation.
         :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace
             , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
             , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
-            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]]
+            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.Schedule]]
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -1068,8 +1068,8 @@ def _(entity: BatchDeployment, operations, *args, **kwargs):
     return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
-@_begin_create_or_update.register(JobSchedule)
-def _(entity: JobSchedule, operations, *args, **kwargs):
+@_begin_create_or_update.register(Schedule)
+def _(entity: Schedule, operations, *args, **kwargs):
     module_logger.debug("Creating or updating schedules")
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
 
