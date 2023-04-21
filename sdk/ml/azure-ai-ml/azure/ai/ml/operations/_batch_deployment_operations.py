@@ -7,33 +7,45 @@
 import re
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
+
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._arm_id_utils import (
+    AMLVersionedArmId,
+    parse_prefixed_name_version,
+)
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
+from azure.ai.ml._utils._endpoint_utils import (
+    upload_dependencies,
+    validate_scoring_script,
+)
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
     is_private_preview_enabled,
     modified_operation_client,
 )
-from azure.ai.ml._utils._package_utils import package_deployment
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    AzureMLResourceType,
+    LROConfigurations,
+)
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -52,17 +64,17 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_05_2022: ServiceClient052022,
+        service_client_04_2023: ServiceClient042023,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._batch_deployment = service_client_05_2022.batch_deployments
+        self._batch_deployment = service_client_04_2023.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
-        self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
-        self._component_operations = service_client_05_2022.component_versions
+        self._batch_endpoint_operations = service_client_04_2023.batch_endpoints
+        self._component_operations = service_client_04_2023.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
