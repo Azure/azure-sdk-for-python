@@ -231,9 +231,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
         # resolve compute ID
         schedule.create_monitor.compute = self._orchestrators.get_asset_arm_id(
-            schedule.create_monitor.compute,
-            AzureMLResourceType.COMPUTE,
-            register_asset=False
+            schedule.create_monitor.compute, AzureMLResourceType.COMPUTE, register_asset=False
         )
 
         # resolve target ARM ID
@@ -248,11 +246,13 @@ class ScheduleOperations(_ScopeDependentOperations):
             )
 
         # resolve input paths
-        # collect all schedule inputs:
-        inputs_to_resolve = []
         for signal in schedule.create_monitor.monitoring_signals.values():
             if signal.type == MonitorSignalType.CUSTOM:
-                inputs_to_resolve.extend([input.input_dataset for input in signal.input_datasets.values()])
+                self._job_operations._resolve_job_inputs(
+                    [input.input_dataset for input in signal.input_datasets.values()], schedule._base_path
+                )
             else:
-                inputs_to_resolve.extend([signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset])
-        self._job_operations._resolve_job_inputs(inputs_to_resolve, schedule._base_path)
+                self._job_operations._resolve_job_inputs(
+                    [signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset],
+                    schedule._base_path,
+                )
