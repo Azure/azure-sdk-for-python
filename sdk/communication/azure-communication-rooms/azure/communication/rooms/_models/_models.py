@@ -56,7 +56,7 @@ class RoomParticipant:
         :param mapping: raw JSON to initialize the model. Positional only.
         :type mapping: Mapping[str, Any]
         """
-    
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         if len(args) == 1:
             self.communication_identifier = identifier_from_raw_id(args[0]['rawId'])
@@ -70,6 +70,7 @@ class RoomParticipant:
             else:
                 self.communication_identifier = identifier
             self.role = kwargs.get('role', ParticipantRole.ATTENDEE)
+        self.role=self.role or ParticipantRole.ATTENDEE
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from ._rooms_client import RoomsClient
 from ._models import (
+    CommunicationRoom,
     RoomParticipant,
     ParticipantRole
 )

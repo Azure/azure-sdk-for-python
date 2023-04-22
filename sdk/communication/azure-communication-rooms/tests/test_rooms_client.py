@@ -194,7 +194,7 @@ class TestRoomsClient(unittest.TestCase):
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         try:
-            rooms_client.remove_participants(room_id=self.room_id, participant_identifiers=[user_to_remove])
+            rooms_client.remove_participants(room_id=self.room_id, participants=[user_to_remove])
         except:
             raised = True
             raise

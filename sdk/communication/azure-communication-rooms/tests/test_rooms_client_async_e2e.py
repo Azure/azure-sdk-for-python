@@ -71,31 +71,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
 
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_create_room_only_validFrom_async(self):
-        # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        async with self.rooms_client:
-            response = await self.rooms_client.create_room(valid_from=valid_from)
-            # delete created room
-            await self.rooms_client.delete_room(room_id=response.id)
-
-            # verify room is valid for 180 days
-            valid_until = datetime.utcnow() + timedelta(days=180)
-            self.assertEqual(valid_until.date(), response.valid_until.date())
-
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_create_room_only_validUntil_async(self):
-        # room attributes
-        valid_until =  datetime.now() + timedelta(weeks=3)
-        async with self.rooms_client:
-            response = await self.rooms_client.create_room(valid_until=valid_until)
-            # delete created room
-            await self.rooms_client.delete_room(room_id=response.id)
-            self.verify_successful_room_response(response=response, valid_until=valid_until)
-
     @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
@@ -224,78 +199,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
 
     @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_only_ValidFrom_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            valid_from =  datetime.now() + timedelta(weeks=2)
-
-            with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from)
-
-                # delete created room
-                await self.rooms_client.delete_room(room_id=create_response.id)
-
-                assert str(ex.value.status_code) == "400"
-                assert ex.value.message is not None
-
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_only_ValidUntil_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            # update room attributes
-            valid_until =  datetime.now() + timedelta(weeks=2)
-
-            with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id, valid_until=valid_until)
-
-                # delete created room
-                await self.rooms_client.delete_room(room_id=create_response.id)
-
-                assert str(ex.value.status_code) == "400"
-                assert ex.value.message is not None
-
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_ValidFrom_7Months_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            # update room attributes
-            valid_from =  datetime.now() + timedelta(weeks=29)
-
-            with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from)
-
-                # delete created room
-                await self.rooms_client.delete_room(room_id=create_response.id)
-
-                assert str(ex.value.status_code) == "400"
-                assert ex.value.message is not None
-
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_ValidUntil_7Months_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            # update room attributes
-            valid_until =  datetime.now() + timedelta(weeks=29)
-
-            with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id, valid_until=valid_until)
-
-                # delete created room
-                await self.rooms_client.delete_room(room_id=create_response.id)
-
-                assert str(ex.value.status_code) == "400"
-                assert ex.value.message is not None
-
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_incorrect_timerange_async(self):
+    async def test_update_room_exceed_max_timerange_async(self):
         # room with no attributes
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room()
@@ -330,22 +234,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
-
-    @pytest.mark.live_test_only
-    @RoomsAsyncTestCase.await_prepared_test
-    async def test_update_room_communication_room_w_args_overload_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            created_room = await self.rooms_client.create_room()
-            created_room.valid_from = datetime.now() + timedelta(weeks=2)
-            created_room.valid_until = datetime.now() + timedelta(weeks=3)
-
-            update_response = await self.rooms_client.update_room(created_room)
-
-            # delete created room
-            await self.rooms_client.delete_room(room_id=created_room.id)
-            self.verify_successful_room_response(
-                response=update_response, valid_from=created_room.valid_from, valid_until=created_room.valid_until, room_id=created_room.id)
 
     @RoomsAsyncTestCase.await_prepared_test
     async def test_add_or_update_participant_async(self):
@@ -490,7 +378,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
         ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
-            await self.rooms_client.remove_participants(room_id=create_response.id, participant_identifiers=remove_participants)
+            await self.rooms_client.remove_participants(room_id=create_response.id, participants=remove_participants)
             update_response = self.rooms_client.list_participants(room_id=create_response.id)
             participants = []
             async for participant in update_response:
@@ -545,7 +433,9 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
         # try to update room with random room_id
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
-                await self.rooms_client.update_room(room_id=78469124725336262)
+                valid_from =  datetime.now() + timedelta(days=3)
+                valid_until = valid_from + timedelta(days=4)
+                await self.rooms_client.update_room(room_id=78469124725336262, valid_from=valid_from, valid_until=valid_until)
 
                 #  assert error is Resource not found
                 assert str(ex.value.status_code) == "404"
@@ -561,18 +451,23 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
 
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id)
+                valid_from =  datetime.now() + timedelta(days=3)
+                valid_until = valid_from + timedelta(days=4)
+                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
 
             #  assert error is Resource not found
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
 
     def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
-
         if room_id is not None:
             self.assertEqual(room_id, response.id)
         if valid_from is not None:
-            self.assertEqual(valid_from.replace(tzinfo=None), response.valid_from.replace(tzinfo=None))
+            self.assertEqual(
+                valid_from.replace(tzinfo=None),
+                datetime.strptime(response.valid_from, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None))
         if valid_until is not None:
-            self.assertEqual(valid_until.replace(tzinfo=None), response.valid_until.replace(tzinfo=None))
+            self.assertEqual(
+                valid_until.replace(tzinfo=None),
+                datetime.strptime(response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None))
         assert response.created_at is not None
