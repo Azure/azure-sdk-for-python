@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where `ServiceBusReceivedMessage` was not picklable (Issue #27947).
+
 ### Other Changes
 
 ## 7.10.0b1 (2023-04-13)

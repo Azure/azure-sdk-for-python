@@ -12,6 +12,7 @@ import types
 import pytest
 import time
 import uuid
+import pickle
 from datetime import datetime, timedelta
 
 try:
@@ -1509,9 +1510,20 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
                         assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 2
+                        if not uamqp_transport:
+                            pickled = pickle.loads(pickle.dumps(messages[0]))
+                            assert pickled.message_id == messages[0].message_id
+                            assert pickled.scheduled_enqueue_time_utc == messages[0].scheduled_enqueue_time_utc
+                            assert pickled.scheduled_enqueue_time_utc <= pickled.enqueued_time_utc.replace(microsecond=0)
                     finally:
                         for message in messages:
                             await receiver.complete_message(message)
+
+                    if not uamqp_transport:
+                        pickled_sender = pickle.loads(pickle.dumps(sender))
+                        assert pickled_sender
+                        pickled_receiver = pickle.loads(pickle.dumps(receiver))
+                        assert pickled_receiver
                 else:
                     raise Exception("Failed to receive scheduled message.")
 
@@ -1929,12 +1941,17 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 # then normal message resending
                 await sender.send_messages(message)
                 await sender.send_messages(message)
+                expected_count = 2
+                if not uamqp_transport:
+                    pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
+                    await sender.send_messages(pickled_recvd)
+                    expected_count = 3
                 messages = []
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
                         await receiver.complete_message(message)
-                    assert len(messages) == 2
+                    assert len(messages) == expected_count
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest

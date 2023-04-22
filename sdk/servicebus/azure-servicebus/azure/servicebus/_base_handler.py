@@ -338,6 +338,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_shutdown'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_shutdown'] = threading.Event()
+        self.__dict__.update(state)
+
     def _handle_exception(self, exception: BaseException) -> "ServiceBusError":
         # pylint: disable=protected-access, line-too-long
         error = self._amqp_transport.create_servicebus_exception(_LOGGER, exception)

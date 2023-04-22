@@ -257,6 +257,19 @@ class AsyncTransport(
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['socket_lock'] = None
+        state['sock'] = None
+        state['reader'] = None
+        state['writer'] = None
+        state['sslopts'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['socket_lock'] = asyncio.Lock()
+        self.__dict__.update(state)
+
     async def connect(self):
         try:
             # are we already connected?
@@ -489,6 +502,19 @@ class WebSocketTransportAsync(
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
         self.network_trace_params = kwargs.get('network_trace_params')
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['socket_lock'] = None
+        state['sock'] = None
+        state['sslopts'] = None
+        state['ws'] = None
+        state['session'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['socket_lock'] = asyncio.Lock()
+        self.__dict__.update(state)
 
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)

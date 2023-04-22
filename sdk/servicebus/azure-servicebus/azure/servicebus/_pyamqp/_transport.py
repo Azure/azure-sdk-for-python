@@ -172,6 +172,17 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['socket_lock'] = None
+        state['sock'] = None
+        state['_quick_recv'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['socket_lock'] = Lock()
+        self.__dict__.update(state)
+
     def connect(self):
         try:
             # are we already connected?
@@ -699,6 +710,18 @@ class WebSocketTransport(_AbstractTransport):
         super().__init__(host, port=port, connect_timeout=connect_timeout, **kwargs)
         self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['socket_lock'] = None
+        state['sock'] = None
+        state['ws'] = None
+        state['_quick_recv'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['socket_lock'] = Lock()
+        self.__dict__.update(state)
 
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None

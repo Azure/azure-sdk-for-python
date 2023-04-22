@@ -228,6 +228,17 @@ class ServiceBusReceiver(
             self
         )
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_receive_context'] = None
+        state['_shutdown'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_receive_context'] = threading.Event()
+        state['_shutdown'] = threading.Event()
+        self.__dict__.update(state)
+
     def __iter__(self):
         return self._iter_contextual_wrapper()
 

@@ -9,6 +9,7 @@ import logging
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+import queue
 from typing import TYPE_CHECKING
 
 from .._servicebus_receiver import ServiceBusReceiver
@@ -22,11 +23,6 @@ if TYPE_CHECKING:
 
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable, Optional[Exception]], None]
-
-try:
-    import queue
-except ImportError:
-    import Queue as queue  # type: ignore
 
 _log = logging.getLogger(__name__)
 
@@ -123,6 +119,23 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
     def __exit__(self, *args):
         self.close()
+
+    # TODO: check if we want to make this picklable
+    # since we can't save the exact executor, it might be misleading
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_shutdown'] = None
+        state['_running_dispatcher'] = None
+        state['_renew_tasks'] = None
+        state['_executor'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_shutdown'] = threading.Event()
+        state['_running_dispatcher'] = threading.Event()
+        state['_renew_tasks'] = queue.Queue()
+        state['_executor'] = ThreadPoolExecutor()
+        self.__dict__.update(state)
 
     def _init_workers(self):
         if not self._running_dispatcher.is_set():

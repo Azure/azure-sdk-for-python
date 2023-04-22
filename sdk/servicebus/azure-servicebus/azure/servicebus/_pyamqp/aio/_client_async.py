@@ -183,6 +183,17 @@ class AMQPClientAsync(AMQPClientSync):
         """
         return True
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # remove inherited threading.Lock()
+        state['_mgmt_link_lock'] = None
+        state['_keep_alive_thread'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_keep_alive_thread'] = asyncio.ensure_future(self._keep_alive_async())
+        self.__dict__.update(state)
+
     async def _client_run_async(self, **kwargs):
         """Perform a single Connection iteration."""
         await self._connection.listen(wait=self._socket_timeout, **kwargs)
@@ -482,6 +493,17 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
     :paramtype connection_verify: str
     """
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # remove inherited threading.Lock()
+        state['_mgmt_link_lock'] = None
+        state['_keep_alive_thread'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_keep_alive_thread'] = asyncio.ensure_future(self._keep_alive_async())
+        self.__dict__.update(state)
+
     async def _client_ready_async(self):
         """Determine whether the client is ready to start receiving messages.
         To be ready, the connection must be open and authentication complete,
@@ -722,6 +744,19 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if self._link.get_state().value != 3:  # ATTACHED
             return False
         return True
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # remove inherited threading.Lock()
+        state['_mgmt_link_lock'] = None
+        state['_received_messages'] = None
+        state['_keep_alive_thread'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_received_messages'] = queue.Queue()
+        state['_keep_alive_thread'] = asyncio.ensure_future(self._keep_alive_async())
+        self.__dict__.update(state)
 
     async def _client_run_async(self, **kwargs):
         """MessageReceiver Link is now open - start receiving messages.

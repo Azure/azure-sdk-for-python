@@ -781,7 +781,10 @@ try:
         ) -> "ServiceBusReceivedMessage":
             # pylint: disable=protected-access
             message = message_type(
-                message=received, receive_mode=receiver._receive_mode, receiver=receiver
+                message=received,
+                receive_mode=receiver._receive_mode,
+                receiver=receiver,
+                amqp_transport=receiver._amqp_transport
             )
             message._uamqp_message = received
             receiver._last_received_sequenced_number = message.sequence_number

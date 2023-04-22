@@ -219,6 +219,17 @@ class AMQPClient(
         """Close and destroy Client on exiting a context manager."""
         self.close()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_mgmt_link_lock'] = None
+        state['_keep_alive_thread'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_mgmt_link_lock'] = threading.Lock()
+        state['_keep_alive_thread'] = threading.Thread(target=self._keep_alive)
+        self.__dict__.update(state)
+
     def _keep_alive(self):
         start_time = time.time()
         try:
@@ -795,6 +806,19 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._last_activity_timestamp = time.time()
 
         super(ReceiveClient, self).__init__(hostname, **kwargs)
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_received_messages'] = None
+        state['_mgmt_link_lock'] = None
+        state['_keep_alive_thread'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_received_messages'] = queue.Queue()
+        state['_mgmt_link_lock'] = threading.Lock()
+        state['_keep_alive_thread'] = threading.Thread(target=self._keep_alive)
+        self.__dict__.update(state)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.

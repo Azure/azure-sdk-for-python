@@ -15,6 +15,7 @@ import uuid
 from datetime import datetime, timedelta
 import calendar
 import unittest
+import pickle
 
 try:
     import uamqp
@@ -1735,9 +1736,32 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         assert messages[0].enqueued_time_utc
                         assert messages[0].message.delivery_tag is not None
                         assert len(messages) == 2
+
+                        if not uamqp_transport:
+                            pickled = pickle.loads(pickle.dumps(messages[0]))
+                            assert pickled.message_id == messages[0].message_id
+                            assert pickled.scheduled_enqueue_time_utc == messages[0].scheduled_enqueue_time_utc
+                            assert pickled.scheduled_enqueue_time_utc <= pickled.enqueued_time_utc.replace(microsecond=0)
+                            assert pickled.delivery_count == messages[0].delivery_count
+                            assert pickled.application_properties == messages[0].application_properties
+                            assert pickled.application_properties[b'key'] == messages[0].application_properties[b'key']
+                            assert pickled.subject == messages[0].subject
+                            assert pickled.content_type == messages[0].content_type
+                            assert pickled.correlation_id == messages[0].correlation_id
+                            assert pickled.to == messages[0].to
+                            assert pickled.reply_to == messages[0].reply_to
+                            assert pickled.sequence_number
+                            assert pickled.enqueued_time_utc
+                            assert pickled.message.delivery_tag is not None
                     finally:
                         for message in messages:
                             receiver.complete_message(message)
+
+                    if not uamqp_transport:
+                        pickled_sender = pickle.loads(pickle.dumps(sender))
+                        assert pickled_sender
+                        pickled_receiver = pickle.loads(pickle.dumps(receiver))
+                        assert pickled_receiver
                 else:
                     raise Exception("Failed to receive schdeduled message.")
 
@@ -1858,6 +1882,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
         receiver = MockReceiver()
         auto_lock_renew = AutoLockRenewer()
+        pickled_alr = pickle.loads(pickle.dumps(auto_lock_renew))
+        assert pickled_alr
         with pytest.raises(TypeError):
             auto_lock_renew.register(Exception())  # an arbitrary invalid type.
 
@@ -2263,12 +2289,17 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 # then normal message resending
                 sender.send_messages(message)
                 sender.send_messages(message)
+                expected_count = 2
+                if not uamqp_transport:
+                    pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
+                    sender.send_messages(pickled_recvd)
+                    expected_count = 3
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
                         receiver.complete_message(message)
-                    assert len(messages) == 2
+                    assert len(messages) == expected_count
 
 
     @pytest.mark.liveTest

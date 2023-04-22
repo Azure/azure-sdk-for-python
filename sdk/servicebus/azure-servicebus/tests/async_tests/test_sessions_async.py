@@ -11,6 +11,7 @@ import os
 import pytest
 import time
 import uuid
+import pickle
 from datetime import datetime, timedelta
 
 from azure.servicebus import (
@@ -569,6 +570,8 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 results.append(renewable)
 
             renewer = AutoLockRenewer()
+            if not uamqp_transport:
+                renewer = pickle.loads(pickle.dumps(renewer))
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=20) as receiver:
                 renewer.register(receiver, receiver.session, max_lock_renewal_duration=10)

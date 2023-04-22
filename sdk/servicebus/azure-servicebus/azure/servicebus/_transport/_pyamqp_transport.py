@@ -662,7 +662,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         # pylint: disable=protected-access
         message = message_type(
-            message=received[1], receive_mode=receiver._receive_mode, receiver=receiver, frame=received[0]
+            message=received[1],
+            receive_mode=receiver._receive_mode,
+            receiver=receiver,
+            frame=received[0],
+            amqp_transport=receiver._amqp_transport
         )
         receiver._last_received_sequenced_number = message.sequence_number
         return message
