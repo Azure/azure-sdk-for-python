@@ -21,8 +21,16 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
+from .._utils._arm_id_utils import is_ARM_id_for_parented_resource
+from .._utils.utils import snake_to_camel
 from .._utils._azureml_polling import AzureMLPolling
-from ..constants._common import AzureMLResourceType, LROConfigurations
+from ..constants._common import (
+    ARM_ID_PREFIX,
+    AzureMLResourceType,
+    LROConfigurations,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
+    AZUREML_RESOURCE_PROVIDER,
+)
 from ..constants._monitoring import MonitorSignalType
 from . import JobOperations
 from ._job_ops_helper import stream_logs_until_completion
@@ -237,7 +245,30 @@ class ScheduleOperations(_ScopeDependentOperations):
         # resolve target ARM ID
         target = schedule.create_monitor.monitoring_target
         if target and target.endpoint_deployment_id:
-            pass
+            target.endpoint_deployment_id = (
+                target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
+                if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
+                else target.endpoint_deployment_id
+            )
+
+            # if it is an ARM ID, don't process it
+            if not is_ARM_id_for_parented_resource(
+                target.endpoint_deployment_id,
+                snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
+                AzureMLResourceType.DEPLOYMENT,
+            ):
+                endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
+                target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
+                    self._subscription_id,
+                    self._resource_group_name,
+                    AZUREML_RESOURCE_PROVIDER,
+                    self._workspace_name,
+                    snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
+                    endpoint_name,
+                    AzureMLResourceType.DEPLOYMENT,
+                    deployment_name,
+                )
+
         elif target and target.model_id:
             target.model_id = self._orchestrators.get_asset_arm_id(
                 target.model_id,
