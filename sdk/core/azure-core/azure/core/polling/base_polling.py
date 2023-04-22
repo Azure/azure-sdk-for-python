@@ -35,13 +35,12 @@ from ..pipeline.policies._utils import get_retry_after
 from ..pipeline._tools import is_rest
 from .._enum_meta import CaseInsensitiveEnumMeta
 
-HTTPRequestType = TypeVar("HTTPRequestType")
 
 if TYPE_CHECKING:
     from azure.core import PipelineClient
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies._universal import HTTPResponseType
+    from azure.core.pipeline.policies._universal import HTTPResponseType, HTTPRequestType
 
     PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
@@ -502,7 +501,7 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):  # 
 
 
 class LROBasePolling(
-    _SansIOLROBasePolling[PollingReturnType, "PipelineClient"], PollingMethod[PollingReturnType]
+    _SansIOLROBasePolling[PollingReturnType, "PipelineClient[HTTPRequestType, HTTPResponseType]"], PollingMethod[PollingReturnType]
 ):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
@@ -521,7 +520,7 @@ class LROBasePolling(
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
-    def _transport(self) -> "HttpTransport":
+    def _transport(self) -> "HttpTransport[HTTPRequestType, HTTPResponseType]":
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
     def run(self) -> None:
