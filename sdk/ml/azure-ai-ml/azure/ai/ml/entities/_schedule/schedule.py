@@ -79,9 +79,24 @@ class Schedule(Resource):
             return MonitorSchedule, None
         return JobSchedule, None
 
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
+
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
+            return JobSchedule._from_rest_object(obj)
+        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
+        raise ScheduleException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SCHEDULE,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
+
     @property
-    def create_job(self) -> None:
+    def create_job(self) -> None:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+        # return None here just to be explicit
+        return None
 
     @create_job.setter
     def create_job(self, value) -> None:  # pylint: disable=unused-argument
