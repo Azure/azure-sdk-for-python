@@ -14,6 +14,7 @@ from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
+    IPProtectionLevel,
 )
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
@@ -1001,8 +1002,17 @@ class TestComponent(AzureRecordedTestCase):
         assert from_rest_component._intellectual_property
         assert from_rest_component._intellectual_property == command_component._intellectual_property
 
+        assert from_rest_component.inputs["training_data"]._intellectual_property
+        assert (
+            from_rest_component.inputs["training_data"]._intellectual_property
+            == command_component.inputs["training_data"]._intellectual_property
+        )
+
+        assert from_rest_component.inputs["base_model"]._intellectual_property
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
+
         assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
-        print(type(from_rest_component.outputs["model_output_not_ipp"]._intellectual_property))
+
         assert (
             from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
             == command_component.outputs["model_output_not_ipp"]._intellectual_property
