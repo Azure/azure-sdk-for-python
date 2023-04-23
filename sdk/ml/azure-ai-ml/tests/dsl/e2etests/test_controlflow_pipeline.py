@@ -44,6 +44,7 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
     pass
 
 
+@pytest.mark.usefixtures("mock_anon_component_version")
 class TestIfElse(TestControlFlowPipeline):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
@@ -398,6 +399,7 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
+@pytest.mark.usefixtures("mock_anon_component_version")
 class TestDoWhilePipeline(TestControlFlowPipeline):
     @property
     def _basic_component_func(self):
