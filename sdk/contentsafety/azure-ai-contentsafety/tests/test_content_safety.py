@@ -44,3 +44,13 @@ class TestContentSafetyCase(TestContentSafety):
 
         assert response.violence_result.severity > 0
 
+    @ContentSafetyPreparer()
+    @recorded_by_proxy
+    def test_create_blocklist(self, content_safety_endpoint, content_safety_key):
+        client = self.create_client(content_safety_endpoint, content_safety_key)
+        assert client is not None
+
+        request = TextBlocklist(description="Test blocklist management.")
+        response = client.create_or_update_text_blocklist(blocklist_name="TestBlocklist", resource=request)
+
+        print(response)
