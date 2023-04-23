@@ -11,6 +11,7 @@ from azure.ai.ml._schema.component.data_transfer_component import (
     DataTransferImportComponentSchema,
     DataTransferExportComponentSchema,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
 from azure.ai.ml.constants._component import (
     NodeType,
@@ -130,6 +131,7 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return component_io
 
 
+@experimental
 class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer copy component.
 
@@ -222,6 +224,7 @@ class DataTransferCopyComponent(DataTransferComponent):
         return validation_result
 
 
+@experimental
 class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer import component.
 
@@ -239,7 +242,6 @@ class DataTransferImportComponent(DataTransferComponent):
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
-
         outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
         kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(
@@ -266,6 +268,7 @@ class DataTransferImportComponent(DataTransferComponent):
         )
 
 
+@experimental
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer export component.
 

@@ -4,9 +4,9 @@
 
 import json
 import logging
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -147,15 +147,11 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_dict(cls, dct: dict):
-        """Convert a dict to an Input object."""
-        obj = cls(**dict(dct.items()))
-        return obj
-
-    @classmethod
     def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
+        if isinstance(obj, dict):
+            return cls(**obj)
         return JobResourceConfiguration(
             locations=obj.locations,
             instance_count=obj.instance_count,

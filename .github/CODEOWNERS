@@ -95,13 +95,13 @@
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 
 # PRLabel: %Communication - Identity
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft @mjafferi-msft
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
 # PRLabel: %Communication - NetworkTraversal
 /sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # PRLabel: %Communication - Common
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft @mjafferi-msft
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
 
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @lynshi
@@ -917,7 +917,7 @@
 #/<NotInRepo>/          @ccmshowbackdevs
 
 # ServiceLabel: %Monitor - Exporter %Service Attention
-#/<NotInRepo>/          @@cijothomas @@reyang @@rajkumar-rangaraj @@TimothyMothra @@vishweshbankwar @@ramthi
+#/<NotInRepo>/          @lzchen @jeremydvoss
 
 
 # Management Plane

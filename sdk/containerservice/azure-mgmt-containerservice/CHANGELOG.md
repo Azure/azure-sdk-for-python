@@ -1,5 +1,24 @@
 # Release History
 
+## 22.1.0 (2023-04-19)
+
+### Features Added
+
+  - Added operation ManagedClustersOperations.list_kubernetes_versions
+  - Model ManagedCluster has a new parameter support_plan
+
+## 22.0.0 (2023-03-23)
+
+### Features Added
+
+  - Model ContainerServiceNetworkProfile has a new parameter network_dataplane
+  - Model ManagedCluster has a new parameter service_mesh_profile
+  - Model ManagedClusterIngressProfileWebAppRouting has a new parameter identity
+
+### Breaking Changes
+
+  - Model ContainerServiceNetworkProfile no longer has parameter ebpf_dataplane
+
 ## 21.2.0 (2023-02-20)
 
 ### Features Added

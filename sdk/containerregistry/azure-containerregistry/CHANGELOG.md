@@ -1,10 +1,28 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Changed the default audience to "https://containerregistry.azure.net" which works for all clouds.
+
+## 1.1.0b3 (2023-04-04)
+
+### Features Added
+- Supported uploading and downding large OCI artifact blobs in synchronous and asynchronous `ContainerRegistryClient`.
+- Published model `DownloadManifestResult`, `DownloadBlobStream` and `AsyncDownloadBlobStream`.
+
+### Breaking Changes
+- Suppress the response error with status code `404` in `delete_blob()`.
+- Added to return blob size in bytes in `upload_blob()`.
+- Changed `download_blob()` return type from `DownloadBlobResult` to `DownloadBlobStream` and `AsyncDownloadBlobStream`.
+
+## 1.1.0b2 (2023-03-24)
 
 ### Bugs Fixed
 - Fixed a `TypeError` when call `list_tag()` in an empty repository. ([#28234](https://github.com/Azure/azure-sdk-for-python/issues/28234))
@@ -14,12 +32,13 @@
 - Added default value `"https://management.azure.com"` to kwarg `audience` in `ContainerRegistryClient`. ([#22229](https://github.com/Azure/azure-sdk-for-python/issues/22229))
 - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - Bumped minimum dependency on `azure-core` to `>=1.24.0`
-- Bumped minimum dependency on `msrest` to `>=0.7.1`
+- Dropped `msrest` requirement.
+- Added dependency `isodate` with version range `>=0.6.0`(`isodate` was required by `msrest`).
 
 ## 1.1.0b1 (2022-05-10)
 
 ### Features Added
-- Supported uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`. ([#24004](https://github.com/Azure/azure-sdk-for-python/pull/24004))
+- Supported uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`.
 ### Other Changes
 
 - Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.

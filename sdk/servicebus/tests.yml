@@ -19,6 +19,7 @@ stages:
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public,Canary'
+      SupportedClouds: 'Public,UsGov,China'
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -30,4 +31,4 @@ stages:
           Location: 'usgovarizona'
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
-          Location: 'chinaeast2'
+          Location: 'chinanorth2'

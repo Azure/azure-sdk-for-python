@@ -36,7 +36,7 @@ from ...operations._databases_operations import (
     build_export_request,
     build_failover_request,
     build_get_request,
-    build_import_method_request,
+    build_import_request,
     build_list_by_elastic_pool_request,
     build_list_by_server_request,
     build_list_inaccessible_by_server_request,
@@ -145,8 +145,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -227,8 +228,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -311,8 +313,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -388,8 +391,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -458,8 +462,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -685,8 +690,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -824,8 +830,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1064,8 +1071,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1291,8 +1299,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1388,7 +1397,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"
     }
 
-    async def _import_method_initial(
+    async def _import_initial(
         self,
         resource_group_name: str,
         server_name: str,
@@ -1421,7 +1430,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ImportExistingDatabaseDefinition")
 
-        request = build_import_method_request(
+        request = build_import_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -1430,15 +1439,16 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._import_method_initial.metadata["url"],
+            template_url=self._import_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1456,7 +1466,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _import_method_initial.metadata = {
+    _import_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"
     }
 
@@ -1587,7 +1597,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._import_method_initial(
+            raw_result = await self._import_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -1758,8 +1768,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1807,8 +1818,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1936,8 +1948,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2065,8 +2078,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2220,8 +2234,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2301,8 +2316,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

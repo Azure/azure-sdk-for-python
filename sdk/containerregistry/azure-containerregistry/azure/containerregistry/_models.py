@@ -11,12 +11,12 @@ from typing import List
 from azure.core import CaseInsensitiveEnumMeta
 
 from ._generated.models import (
-    ArtifactTagProperties as GeneratedArtifactTagProperties,
-    ArtifactManifestProperties as GeneratedArtifactManifestProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
+    TagAttributesBase,
     ManifestWriteableProperties,
+    ManifestAttributesBase,
 )
 from ._helpers import _host_only, _is_tag, _strip_alg
 
@@ -95,7 +95,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedArtifactManifestProperties, **kwargs) -> "ArtifactManifestProperties":
+    def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -104,10 +104,10 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             operating_system=generated.operating_system,
             size_in_bytes=generated.size,
             tags=generated.tags,
-            can_delete=generated.can_delete,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            can_list=generated.can_list,
+            can_delete=None if generated.changeable_attributes is None else generated.changeable_attributes.can_delete,
+            can_read=None if generated.changeable_attributes is None else generated.changeable_attributes.can_read,
+            can_write=None if generated.changeable_attributes is None else generated.changeable_attributes.can_write,
+            can_list=None if generated.changeable_attributes is None else generated.changeable_attributes.can_list,
             repository_name=kwargs.get("repository_name", None),
             registry=kwargs.get("registry", None),
         )
@@ -192,10 +192,10 @@ class RepositoryProperties(object):
             name=generated.name,
             manifest_count=generated.manifest_count,
             tag_count=generated.tag_count,
-            can_delete=generated.can_delete,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            can_list=generated.can_list,
+            can_delete=generated.changeable_attributes.can_delete,
+            can_read=generated.changeable_attributes.can_read,
+            can_write=generated.changeable_attributes.can_write,
+            can_list=generated.changeable_attributes.can_list,
         )
 
     def _to_generated(self) -> RepositoryWriteableProperties:
@@ -263,16 +263,16 @@ class ArtifactTagProperties(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedArtifactTagProperties, **kwargs) -> "ArtifactTagProperties":
+    def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            can_delete=generated.can_delete,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            can_list=generated.can_list,
+            can_delete=generated.changeable_attributes.can_delete,
+            can_read=generated.changeable_attributes.can_read,
+            can_write=generated.changeable_attributes.can_write,
+            can_list=generated.changeable_attributes.can_list,
             repository_name=kwargs.get("repository_name", None),
         )
 
@@ -303,19 +303,6 @@ class ArtifactTagProperties(object):
     @property
     def repository_name(self) -> str:
         return self._repository_name
-
-
-class DownloadBlobResult(object):
-    """The result from downloading a blob from the registry.
-
-    :ivar data: The blob content.
-    :vartype data: IO
-    :ivar str digest: The blob's digest, calculated by the registry.
-    """
-
-    def __init__(self, **kwargs):
-        self.data = kwargs.get("data")
-        self.digest = kwargs.get("digest")
 
 
 class DownloadManifestResult(object):

@@ -12,6 +12,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
+    ContainerRegistryClient,
 )
 
 from testcase import ContainerRegistryTestClass
@@ -200,3 +201,21 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             with pytest.raises(ClientAuthenticationError):
                 client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+
+def test_set_api_version():
+    containerregistry_endpoint="https://fake_url.azurecr.io"
+
+    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
+        assert client._client._config.api_version == "2021-07-01"
+
+    with ContainerRegistryClient(
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
+    ) as client:
+        assert client._client._config.api_version == "2019-08-15-preview"
+
+    with pytest.raises(ValueError):
+        with ContainerRegistryClient(
+            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
+        ) as client:
+            pass

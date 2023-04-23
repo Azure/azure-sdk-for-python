@@ -7,9 +7,9 @@
 import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
+from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
-from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalysisFeature, AnalyzeResult, DocumentAnalysisClient
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -20,6 +20,21 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeLayout(FormRecognizerTest):
+
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_layout_incorrect_feature_format(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+
+        with pytest.raises(HttpResponseError):
+            poller = client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+                features=AnalysisFeature.OCR_FONT
+            )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -37,7 +52,11 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = client.begin_analyze_document("prebuilt-layout", document, cls=callback)
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            features=[AnalysisFeature.OCR_FONT],
+            cls=callback)
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
@@ -143,6 +162,34 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert layout.tables[1].column_count == 5
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
+
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_layout_url_annotations(self, client):
+        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.annotations_url_jpg)
+        layout = poller.result()
+        assert len(layout.pages) > 0
+        assert len(layout.pages[0].annotations) > 0
+        assert layout.pages[0].annotations[0].kind == "check"
+        assert layout.pages[0].annotations[0].polygon
+        assert layout.pages[0].annotations[0].confidence > 0.5
+
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_layout_url_barcode(self, client):
+        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif)
+        layout = poller.result()
+        assert len(layout.pages) > 0
+        assert len(layout.pages[0].barcodes) == 2
+        assert layout.pages[0].barcodes[0].kind == "Code39"
+        assert layout.pages[0].barcodes[0].polygon
+        assert layout.pages[0].barcodes[0].confidence > 0.8
 
     @skip_flaky_test
     @FormRecognizerPreparer()

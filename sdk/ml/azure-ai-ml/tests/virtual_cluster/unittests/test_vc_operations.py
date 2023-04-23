@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.operations import VirtualClusterOperations
+from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
 
 @pytest.fixture
@@ -13,7 +13,9 @@ def mock_credential() -> Mock:
 
 @pytest.fixture
 def mock_vc_operation(mock_workspace_scope: OperationScope, mock_credential) -> VirtualClusterOperations:
-    yield VirtualClusterOperations(operation_scope=mock_workspace_scope, credentials=mock_credential)
+    yield VirtualClusterOperations(
+        operation_scope=mock_workspace_scope, credentials=mock_credential, _service_client_kwargs=dict()
+    )
 
 
 @pytest.mark.unittest

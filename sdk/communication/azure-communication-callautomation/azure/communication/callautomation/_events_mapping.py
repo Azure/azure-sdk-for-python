@@ -17,7 +17,9 @@ from ._events import (
     PlayCanceled,
     RecognizeCompleted,
     RecognizeCanceled,
-    RecognizeFailed
+    RecognizeFailed,
+    RemoveParticipantSucceeded,
+    RemoveParticipantFailed
 )
 
 _call_automation_event_mapping = {
@@ -34,7 +36,9 @@ _call_automation_event_mapping = {
     "PlayCanceled": PlayCanceled,
     "RecognizeCompleted": RecognizeCompleted,
     "RecognizeCanceled": RecognizeCanceled,
-    "RecognizeFailed": RecognizeFailed
+    "RecognizeFailed": RecognizeFailed,
+    "RemoveParticipantSucceeded": RemoveParticipantSucceeded,
+    "RemoveParticipantFailed": RemoveParticipantFailed
 }
 
 def get_mapping():

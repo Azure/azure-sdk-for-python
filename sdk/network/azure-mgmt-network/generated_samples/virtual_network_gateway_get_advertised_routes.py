@@ -32,7 +32,6 @@ def main():
     response = client.virtual_network_gateways.begin_get_advertised_routes(
         resource_group_name="rg1",
         virtual_network_gateway_name="vpngw",
-        peer="test",
     ).result()
     print(response)
 

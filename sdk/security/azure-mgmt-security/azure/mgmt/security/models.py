@@ -12,7 +12,6 @@ from .v2019_01_01_preview.models import *
 from .v2019_08_01.models import *
 from .v2020_01_01.models import *
 from .v2020_01_01_preview.models import *
-from .v2020_07_01_preview.models import *
 from .v2021_01_15_preview.models import *
 from .v2021_05_01_preview.models import *
 from .v2021_06_01.models import *
@@ -20,5 +19,7 @@ from .v2021_07_01_preview.models import *
 from .v2021_10_01_preview.models import *
 from .v2022_01_01.models import *
 from .v2022_01_01_preview.models import *
-from .v2022_03_01.models import *
 from .v2022_05_01.models import *
+from .v2022_07_01_preview.models import *
+from .v2022_11_20_preview.models import *
+from .v2023_01_01.models import *

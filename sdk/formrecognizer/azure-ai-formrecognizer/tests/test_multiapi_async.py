@@ -7,6 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -16,11 +17,18 @@ from azure.ai.formrecognizer.aio import (
     DocumentAnalysisClient,
     DocumentModelAdministrationClient
 )
-from azure.ai.formrecognizer import FormRecognizerApiVersion, DocumentAnalysisApiVersion
+from azure.ai.formrecognizer import (
+    FormRecognizerApiVersion,
+    DocumentAnalysisApiVersion,
+    AnalysisFeature,
+    ClassifierDocumentTypeDetails,
+    AzureBlobContentSource
+)
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 
 class TestMultiapi(AsyncFormRecognizerTest):
@@ -175,3 +183,129 @@ class TestMultiapi(AsyncFormRecognizerTest):
 
             assert first_model.model_name is None
             assert first_model.properties is None
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
+    @recorded_by_proxy_async
+    async def test_v2022_08_31_dac_compatibility(self, client, **kwargs):
+
+        with open(self.multipage_table_pdf, "rb") as fd:
+            my_file = fd.read()
+
+        async with client:
+            poller = await client.begin_analyze_document("prebuilt-layout", my_file)
+            layout = await poller.result()
+            assert len(layout.tables) == 3
+            assert layout.tables[0].row_count == 30
+            assert layout.tables[0].column_count == 5
+            assert layout.tables[1].row_count == 6
+            assert layout.tables[1].column_count == 5
+            assert layout.tables[2].row_count == 24
+            assert layout.tables[2].column_count == 5
+
+            # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_analyze_document("prebuilt-layout", my_file, features=[AnalysisFeature.OCR_FONT])
+            assert "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_analyze_document("prebuilt-layout", my_file, query_fields=["Charges"])
+            assert "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later." == str(excinfo.value)
+
+            # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_classify_document("foo", my_file)
+            assert (
+                    "Method 'begin_classify_document()' is only available for API version "
+                    "V2023_02_28_PREVIEW and later"
+                ) == str(excinfo.value)
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_classify_document_from_url("foo", self.form_url_jpg)
+                assert (
+                    "Method 'begin_classify_document_from_url()' is only available for API version "
+                    "V2023_02_28_PREVIEW and later"
+                ) == str(excinfo.value)
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
+    @recorded_by_proxy_async
+    async def test_v2022_08_31_dmac_compatibility(self, client, formrecognizer_storage_container_sas_url, formrecognizer_training_data_classifier, **kwargs):
+        set_bodiless_matcher()
+        async with client:
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            model = await poller.result()
+
+            assert model.model_id
+            assert model.description is None
+            assert model.created_on
+            for name, doc_type in model.doc_types.items():
+                assert name
+                for key, field in doc_type.field_schema.items():
+                    assert key
+                    assert field["type"]
+                    assert doc_type.field_confidence[key] is not None
+
+            # test that the addition of new attributes in v2023-02-28-preview does not break v2022-08-31
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.list_document_classifiers()
+            assert (
+                "Method 'list_document_classifiers()' is only available for API version "
+                "V2023_02_28_PREVIEW and later") == str(excinfo.value)
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.begin_build_document_classifier(
+                            doc_types={
+                                "IRS-1040-A": ClassifierDocumentTypeDetails(
+                                    azure_blob_source=AzureBlobContentSource(
+                                        container_url=formrecognizer_training_data_classifier,
+                                        prefix="IRS-1040-A/train"
+                                    )
+                                ),
+                                "IRS-1040-B": ClassifierDocumentTypeDetails(
+                                    azure_blob_source=AzureBlobContentSource(
+                                        container_url=formrecognizer_training_data_classifier,
+                                        prefix="IRS-1040-B/train"
+                                    )
+                                ),
+                                "IRS-1040-C": ClassifierDocumentTypeDetails(
+                                    azure_blob_source=AzureBlobContentSource(
+                                        container_url=formrecognizer_training_data_classifier,
+                                        prefix="IRS-1040-C/train"
+                                    )
+                                ),
+                                "IRS-1040-D": ClassifierDocumentTypeDetails(
+                                    azure_blob_source=AzureBlobContentSource(
+                                        container_url=formrecognizer_training_data_classifier,
+                                        prefix="IRS-1040-D/train"
+                                    )
+                                ),
+                                "IRS-1040-E": ClassifierDocumentTypeDetails(
+                                    azure_blob_source=AzureBlobContentSource(
+                                        container_url=formrecognizer_training_data_classifier,
+                                        prefix="IRS-1040-E/train"
+                                    )
+                                ),
+                            },
+                            description="IRS document classifier"
+                        )
+            assert (
+                "Method 'begin_build_document_classifier()' is only available for API version "
+                "V2023_02_28_PREVIEW and later") == str(excinfo.value)
+
+            # test that the addition of new methods in v2023-02-28-preview does not break v2022-08-31
+            with pytest.raises(ValueError) as excinfo:
+                await client.get_document_classifier("foo")
+            assert (
+                    "Method 'get_document_classifier()' is only available for API version "
+                    "V2023_02_28_PREVIEW and later"
+                ) == str(excinfo.value)
+
+            with pytest.raises(ValueError) as excinfo:
+                await client.delete_document_classifier("foo")
+                assert (
+                    "Method 'delete_document_classifier()' is only available for API version "
+                    "V2023_02_28_PREVIEW and later"
+                ) == str(excinfo.value)

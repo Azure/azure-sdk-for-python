@@ -53,6 +53,7 @@ _azci_*.log
 .artifacts
 .tmp_whl_dir
 .logs
+.proxy
 
 # tox environment folders
 .tox/
@@ -147,4 +148,4 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 *_python.json
 
 # temporary folder to refresh SDK with cadl
-TempCadlFiles/
+TempTypeSpecFiles/

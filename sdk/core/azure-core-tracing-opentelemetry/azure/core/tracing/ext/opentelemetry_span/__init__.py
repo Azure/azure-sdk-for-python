@@ -3,14 +3,25 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
-from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence
+from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast
 import warnings
 
-from opentelemetry import trace
-from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind, Link as OpenTelemetryLink
-from opentelemetry.context import attach, detach, get_current  # type: ignore[attr-defined]
+from opentelemetry import context, trace
+from opentelemetry.trace import (
+    Span,
+    Tracer,
+    NonRecordingSpan,
+    SpanKind as OpenTelemetrySpanKind,
+    Link as OpenTelemetryLink,
+)  # type: ignore[attr-defined]
 from opentelemetry.propagate import extract, inject  # type: ignore[attr-defined]
 from opentelemetry.trace.propagation import get_current_span as get_span_from_context  # type: ignore[attr-defined]
+
+# TODO: Fix import of this private attribute once the location of the suppress instrumentation key is defined.
+try:
+    from opentelemetry.context import _SUPPRESS_HTTP_INSTRUMENTATION_KEY  # type: ignore[attr-defined]
+except ImportError:
+    _SUPPRESS_HTTP_INSTRUMENTATION_KEY = "suppress_http_instrumentation"
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
 
@@ -32,6 +43,9 @@ Attributes = Optional[Dict[str, AttributeValue]]
 
 __version__ = VERSION
 
+_SUPPRESSED_SPAN_FLAG = "SUPPRESSED_SPAN_FLAG"
+_LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
+
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
     """OpenTelemetry plugin for Azure client libraries.
@@ -47,31 +61,49 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     """
 
     def __init__(self, span: Optional[Span] = None, name: str = "span", **kwargs: Any) -> None:
-        current_tracer = self.get_current_tracer()
+        self._context_tokens = []
+        self._current_ctxt_manager: Optional[ContextManager[Span]] = None
 
         # TODO: Once we have additional supported versions, we should add a way to specify the version.
         self._schema_version = OpenTelemetrySchema.get_latest_version()
         self._attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(self._schema_version)
 
+        if span:
+            self._span_instance = span
+            return
+
         ## kind
-        value = kwargs.pop("kind", None)
-        kind = (
+        span_kind = kwargs.pop("kind", None)
+        otel_kind = (
             OpenTelemetrySpanKind.CLIENT
-            if value == SpanKind.CLIENT
+            if span_kind == SpanKind.CLIENT
             else OpenTelemetrySpanKind.PRODUCER
-            if value == SpanKind.PRODUCER
+            if span_kind == SpanKind.PRODUCER
             else OpenTelemetrySpanKind.SERVER
-            if value == SpanKind.SERVER
+            if span_kind == SpanKind.SERVER
             else OpenTelemetrySpanKind.CONSUMER
-            if value == SpanKind.CONSUMER
+            if span_kind == SpanKind.CONSUMER
             else OpenTelemetrySpanKind.INTERNAL
-            if value == SpanKind.INTERNAL
+            if span_kind == SpanKind.INTERNAL
             else OpenTelemetrySpanKind.INTERNAL
-            if value == SpanKind.UNSPECIFIED
+            if span_kind == SpanKind.UNSPECIFIED
             else None
         )
-        if value and kind is None:
-            raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
+        if span_kind and otel_kind is None:
+            raise ValueError("Kind {} is not supported in OpenTelemetry".format(span_kind))
+
+        if otel_kind == OpenTelemetrySpanKind.INTERNAL and context.get_value(_SUPPRESSED_SPAN_FLAG):
+            # Nested internal calls should be suppressed per the Azure SDK guidelines.
+            self._span_instance = NonRecordingSpan(context=self.get_current_span().get_span_context())
+            return
+
+        if otel_kind == OpenTelemetrySpanKind.CLIENT:
+            # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
+            # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
+            # instrumentation libraries are being used.
+            self._context_tokens.append(context.attach(context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True)))
+
+        current_tracer = self.get_current_tracer()
 
         links = kwargs.pop("links", None)
         if links:
@@ -86,8 +118,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
                 # We will just send the links as is if it's not ~azure.core.tracing.Link without any validation
                 # assuming user knows what they are doing.
                 kwargs.setdefault("links", links)
-        self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)  # type: ignore
-        self._current_ctxt_manager: Optional[ContextManager[Span]] = None
+        self._span_instance = current_tracer.start_span(name=name, kind=otel_kind, **kwargs)  # type: ignore
 
     @property
     def span_instance(self) -> Span:
@@ -98,7 +129,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def span(self, name: str = "span", **kwargs: Any) -> "OpenTelemetrySpan":
         """
-        Create a child span for the current span and append it to the child spans list in the span instance.
+        Create a child span for the current span and return it.
         :param name: Name of the child span
         :type name: str
         :keyword kind: The span kind of this span.
@@ -112,7 +143,10 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     @property
     def kind(self) -> Optional[SpanKind]:
         """Get the span kind of this span."""
-        value = self.span_instance.kind  # type: ignore[attr-defined]
+        try:
+            value = self.span_instance.kind  # type: ignore[attr-defined]
+        except AttributeError:
+            return None
         return (
             SpanKind.CLIENT
             if value == OpenTelemetrySpanKind.CLIENT
@@ -158,6 +192,15 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
     def __enter__(self) -> "OpenTelemetrySpan":
         """Start a span."""
+        if not isinstance(self.span_instance, NonRecordingSpan):
+            if self.kind == SpanKind.INTERNAL:
+                # Suppress INTERNAL spans within this context.
+                self._context_tokens.append(context.attach(context.set_value(_SUPPRESSED_SPAN_FLAG, True)))
+
+            # Since the span is not suppressed, let's keep a reference to it in the context so that children spans
+            # always have access to the last non-suppressed parent span.
+            self._context_tokens.append(context.attach(context.set_value(_LAST_UNSUPPRESSED_SPAN, self)))
+
         self._current_ctxt_manager = trace.use_span(self._span_instance, end_on_exit=True)
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__enter__()  # pylint: disable=no-member
@@ -168,6 +211,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)  # pylint: disable=no-member
             self._current_ctxt_manager = None
+        for token in self._context_tokens:
+            context.detach(token)
+            self._context_tokens.remove(token)
 
     def start(self) -> None:
         # Spans are automatically started at their creation with OpenTelemetry.
@@ -176,6 +222,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def finish(self) -> None:
         """Set the end time for a span."""
         self.span_instance.end()
+        for token in self._context_tokens:
+            context.detach(token)
+            self._context_tokens.remove(token)
 
     def to_header(self) -> Dict[str, str]:  # pylint: disable=no-self-use
         """
@@ -249,7 +298,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         Get the current span from the execution context.
         """
-        return get_span_from_context()
+        span = get_span_from_context()
+        last_unsuppressed_parent = context.get_value(_LAST_UNSUPPRESSED_SPAN)
+        if isinstance(span, NonRecordingSpan) and last_unsuppressed_parent:
+            return cast(OpenTelemetrySpan, last_unsuppressed_parent).span_instance
+        return span
 
     @classmethod
     def get_current_tracer(cls) -> Tracer:
@@ -287,13 +340,13 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :return: The target the pass in instead of the function
         """
         # returns the current Context object
-        context = get_current()
+        current_context = context.get_current()
 
         def call_with_current_context(*args, **kwargs):
             try:
-                token = attach(context)
+                token = context.attach(current_context)
                 return func(*args, **kwargs)
             finally:
-                detach(token)
+                context.detach(token)
 
         return call_with_current_context

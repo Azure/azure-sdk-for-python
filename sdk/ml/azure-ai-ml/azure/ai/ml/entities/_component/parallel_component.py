@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -235,7 +235,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             "resources": (dict, JobResourceConfiguration),
         }
 
-    def _to_rest_object(self) -> ComponentVersionData:
+    def _to_rest_object(self) -> ComponentVersion:
         rest_object = super()._to_rest_object()
         # schema required list while backend accept json string
         if self.partition_keys:
@@ -243,7 +243,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         return rest_object
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # schema required list while backend accept json string
         # update rest obj as it will be
         partition_keys = obj.properties.component_spec.get("partition_keys", None)

@@ -17,7 +17,7 @@ from ._shared.models import CommunicationIdentifier
 from ._communication_identifier_serializer import serialize_phone_identifier, serialize_identifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
-    CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
+    CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest, CustomContext)
 from ._models import (CallInvite, CallConnectionProperties)
 
 
@@ -188,6 +188,7 @@ class CallAutomationClient(object):
         :type azure_cognitive_services_endpoint_url: str
         :return: Instance of CreateCallResult.
         :rtype: CreateCallResult
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not target:
@@ -197,6 +198,9 @@ class CallAutomationClient(object):
 
         media_streaming_config = kwargs.pop(
             "media_streaming_configuration", None)
+        user_custom_context = CustomContext(
+            voip_headers=target.voipHeaders,
+            sip_headers=target.sipHeaders) if target.sipHeaders or target.voipHeaders else None
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(target.target)],
             callback_uri=callback_uri,
@@ -210,6 +214,7 @@ class CallAutomationClient(object):
             ) if media_streaming_config else None,
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
+            custom_context=user_custom_context
         )
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
@@ -254,8 +259,13 @@ class CallAutomationClient(object):
         :param azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service resource
      assigned to this call.
         :type azure_cognitive_services_endpoint_url: str
+        :param sip_headers: Sip Headers for PSTN Call
+        :type sip_headers: Dict[str, str]
+        :param voip_headers: Voip Headers for Voip Call
+        :type voip_headers: Dict[str, str]
         :return: Instance of CreateCallResult.
         :rtype: CreateCallResult
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not targets:
@@ -266,6 +276,10 @@ class CallAutomationClient(object):
         caller_id_number = kwargs.pop("source_caller_id_number", None)
         media_streaming_config = kwargs.pop(
             "media_streaming_configuration", None)
+        sip_headers = kwargs.pop("sip_headers", None)
+        voip_headers = kwargs.pop("voip_headers", None)
+        user_custom_context = CustomContext(
+            voip_headers=voip_headers, sip_headers=sip_headers) if sip_headers or voip_headers else None
 
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)
@@ -281,6 +295,7 @@ class CallAutomationClient(object):
             ) if media_streaming_config else None,
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
+            custom_context=user_custom_context,
         )
 
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
@@ -332,6 +347,7 @@ class CallAutomationClient(object):
         :type repeatability_first_sent: str
         :return: Instance of AnswerCallResult.
         :rtype: AnswerCallResult
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not incoming_call_context:
@@ -383,6 +399,7 @@ class CallAutomationClient(object):
         :type target: CallInvite
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not incoming_call_context:
@@ -390,9 +407,14 @@ class CallAutomationClient(object):
         if not target:
             raise ValueError('target cannot be None.')
 
+        user_custom_context = CustomContext(
+            voip_headers=target.voipHeaders,
+            sip_headers=target.sipHeaders) if target.sipHeaders or target.voipHeaders else None
+
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target.target)
+            target=serialize_identifier(target.target),
+            custom_context=user_custom_context
         )
 
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
@@ -419,6 +441,7 @@ class CallAutomationClient(object):
         :type call_reject_reason: str or CallRejectReason
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not incoming_call_context:

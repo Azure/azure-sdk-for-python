@@ -15,6 +15,7 @@ from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferImportJobSchema,
     DataTransferExportJobSchema,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._component import (
     NodeType,
     ExternalDataType,
@@ -147,6 +148,7 @@ class DataTransfer(BaseNode):
         return built_inputs
 
 
+@experimental
 class DataTransferCopy(DataTransfer):
     """Base class for data transfer copy node.
 
@@ -290,6 +292,7 @@ class DataTransferCopy(DataTransfer):
         )
 
 
+@experimental
 class DataTransferImport(DataTransfer):
     """Base class for data transfer import node.
 
@@ -423,6 +426,7 @@ class DataTransferImport(DataTransfer):
         )
 
 
+@experimental
 class DataTransferExport(DataTransfer):
     """Base class for data transfer export node.
 

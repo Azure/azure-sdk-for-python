@@ -2,18 +2,18 @@ name: e2etest_test_mvnet
 managed_network:
   isolation_mode: allow_only_approved_outbound
   outbound_rules:
-    added-servicetagrule:
-      destination:
-        port_ranges: 80, 8080-8089
-        protocol: TCP
-        service_tag: DataFactory
-      type: service_tag
-    added-perule:
-      destination:
-        service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Storage/storageAccounts/mvnetstorage2
-        spark_enabled: true
-        subresource_target: blob
-      type: private_endpoint
-    added-fqdnrule:
-      destination: 'test.com'
-      type: fqdn
+  - name: added-servicetagrule
+    destination:
+      port_ranges: 80, 8080-8089
+      protocol: TCP
+      service_tag: DataFactory
+    type: service_tag
+  - name: added-perule
+    destination:
+      service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Storage/storageAccounts/mvnetteststorage2
+      spark_enabled: true
+      subresource_target: blob
+    type: private_endpoint
+  - name: added-fqdnrule
+    destination: 'test.com'
+    type: fqdn

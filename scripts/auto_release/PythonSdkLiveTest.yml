@@ -33,6 +33,9 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
+        python scripts/dev_setup.py -p azure-core
+    - template: /eng/common/testproxy/test-proxy-tool.yml
+    - bash: |
         script_path=$(pwd)/scripts/auto_release
         cd ..
         git config --global user.email "PythonSdkPipelines"

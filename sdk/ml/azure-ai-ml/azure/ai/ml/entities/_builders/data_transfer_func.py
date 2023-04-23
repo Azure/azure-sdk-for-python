@@ -5,6 +5,7 @@
 
 from typing import Optional, Dict, Union, Callable, Tuple
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferCopyComponent,
 )
@@ -117,6 +118,7 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
     return component_io_dict, job_io_dict
 
 
+@experimental
 def copy_data(
     *,
     name: Optional[str] = None,
@@ -194,6 +196,7 @@ def copy_data(
     return data_transfer_copy_obj
 
 
+@experimental
 @pipeline_node_decorator
 def import_data(
     *,
@@ -259,6 +262,7 @@ def import_data(
     return data_transfer_import_obj
 
 
+@experimental
 @pipeline_node_decorator
 def export_data(
     *,

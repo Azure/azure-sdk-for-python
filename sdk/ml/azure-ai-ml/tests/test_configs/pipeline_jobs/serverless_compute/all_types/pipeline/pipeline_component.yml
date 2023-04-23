@@ -5,5 +5,3 @@ jobs:
   node:
     type: command
     component: ./component.yml
-    resources:
-      instance_type: Standard_D3_v2

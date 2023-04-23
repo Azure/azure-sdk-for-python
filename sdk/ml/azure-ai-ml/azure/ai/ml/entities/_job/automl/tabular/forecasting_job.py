@@ -6,10 +6,11 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
@@ -351,6 +352,7 @@ class ForecastingJob(AutoMLTabular):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ) -> None:
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,
@@ -362,6 +364,7 @@ class ForecastingJob(AutoMLTabular):
             ensemble_model_download_timeout=ensemble_model_download_timeout,
             allowed_training_algorithms=allowed_training_algorithms,
             blocked_training_algorithms=blocked_training_algorithms,
+            training_mode=training_mode,
         )
 
         # Disable stack ensemble by default, since it is currently not supported for forecasting tasks

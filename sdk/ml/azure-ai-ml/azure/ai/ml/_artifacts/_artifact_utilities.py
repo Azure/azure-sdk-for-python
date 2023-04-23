@@ -317,7 +317,6 @@ def _upload_and_generate_remote_uri(
     datastore_name: str = WORKSPACE_BLOB_STORE,
     show_progress: bool = True,
 ) -> str:
-
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
     artifact_info = _upload_to_datastore(
@@ -362,7 +361,7 @@ T = TypeVar("T", bound=Artifact)
 
 def _check_and_upload_path(
     artifact: T,
-    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations", "_FeatureSetOperations"],
+    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations", "FeatureSetOperations"],
     artifact_type: str,
     datastore_name: Optional[str] = None,
     sas_uri: Optional[str] = None,

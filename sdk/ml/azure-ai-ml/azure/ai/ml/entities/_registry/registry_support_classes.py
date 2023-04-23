@@ -189,7 +189,6 @@ class RegistryRegionDetails:
             and hasattr(storage, "storage_account_type")
             and storage.storage_account_type is not None
         ):
-
             # We DO NOT want to set the arm_resource_id. The backend provides very
             # unhelpful errors if you provide an empty/null/invalid resource ID,
             # and ignores the value otherwise. It's better to avoid setting it in
@@ -248,7 +247,9 @@ class RegistryRegionDetails:
                 ]
             return SystemCreatedStorageAccount(
                 storage_account_hns=first_config.storage_account_hns_enabled,
-                storage_account_type=StorageAccountType(first_config.storage_account_type.lower()),
+                storage_account_type=(StorageAccountType(first_config.storage_account_type.lower()))
+                if first_config.storage_account_type
+                else None,
                 arm_resource_id=resource_id,
                 replication_count=num_configs,
                 replicated_ids=replicated_ids,
