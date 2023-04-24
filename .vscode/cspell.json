@@ -1073,7 +1073,8 @@
         "reprcrash",
         "etests",
         "RMSE",
-        "azmonitoring"
+        "azmonitoring",
+        "smirnov"
       ]
     },
     {

@@ -101,22 +101,6 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
             return ImportDataSchedule, None
         return JobSchedule, None
 
-    @classmethod
-    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
-        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
-
-        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
-            return JobSchedule._from_rest_object(obj)
-        if obj.properties.action.action_type == RestScheduleActionType.IMPORT_DATA:
-            return ImportDataSchedule._from_rest_object(obj)
-        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
-        raise ScheduleException(
-            message=msg,
-            no_personal_data_message=msg,
-            target=ErrorTarget.SCHEDULE,
-            error_category=ErrorCategory.SYSTEM_ERROR,
-        )
-
     @property
     def create_job(self) -> None:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
@@ -160,6 +144,25 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     def _to_dict(self) -> Dict:
         """Convert the resource to a dictionary."""
         return self._dump_for_validation()
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
+        from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+        from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
+
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
+            return JobSchedule._from_rest_object(obj)
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_MONITOR:
+            return MonitorSchedule._from_rest_object(obj)
+        if obj.properties.action.action_type == RestScheduleActionType.IMPORT_DATA:
+            return ImportDataSchedule._from_rest_object(obj)
+        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
+        raise ScheduleException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SCHEDULE,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
 
 class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
@@ -206,7 +209,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         self._type = ScheduleType.JOB
 
     @property
-    def create_job(self):
+    def create_job(self) -> Union[Job, str]:
         """
         Return the schedule's action job definition, or the existing job name.
 
@@ -216,7 +219,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         return self._create_job
 
     @create_job.setter
-    def create_job(self, value: Union[Job, str]):
+    def create_job(self, value: Union[Job, str]) -> None:
         """
         Sets the schedule's action to a job definition or an existing job name.
         """
