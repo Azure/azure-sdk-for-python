@@ -151,5 +151,8 @@
     },
     "online_store_connection_target" : {
         "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
     }
 }
