@@ -4,7 +4,7 @@
 
 from typing import List, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ListWorkspaceKeysResult
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListWorkspaceKeysResult
 
 
 class ContainerRegistryCredential:

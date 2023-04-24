@@ -1,8 +1,10 @@
 # Release History
 
-## 1.13.0b5 (Unreleased)
+## 1.13.0 (Unreleased)
 
 ### Features Added
+
+- Changed parameter from `disable_instance_discovery` to `disable_authority_validation_and_instance_discovery` to make it more explicit.
 
 ### Breaking Changes
 

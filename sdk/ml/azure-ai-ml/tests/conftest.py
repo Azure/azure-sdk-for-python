@@ -230,6 +230,11 @@ def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
 
 
 @pytest.fixture
+def mock_aml_services_2023_04_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_04_01_preview")
+
+
+@pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.runhistory")
 
@@ -790,8 +795,8 @@ def enable_private_preview_schema_features():
     from azure.ai.ml.entities._job.pipeline import pipeline_job as pipeline_job_entity
 
     def _reload_related_classes():
-        reload(component_schema)
         reload(input_output)
+        reload(component_schema)
         reload(command_component_schema)
         reload(pipeline_component_schema)
         reload(pipeline_job_schema)

@@ -1,5 +1,39 @@
 # Release History
 
+## 5.0.0 (2023-04-20)
+
+### Features Added
+
+  - Added operation group APICollectionOffboardingOperations
+  - Added operation group APICollectionOnboardingOperations
+  - Added operation group APICollectionOperations
+  - Added operation group SecurityOperatorsOperations
+  - Model AwsEnvironmentData has a new parameter account_name
+  - Model AwsEnvironmentData has a new parameter regions
+  - Model DefenderCspmAwsOffering has a new parameter data_sensitivity_discovery
+  - Model DefenderCspmAwsOffering has a new parameter databases_dspm
+  - Model DefenderFoDatabasesAwsOffering has a new parameter databases_dspm
+  - Model DefenderFoDatabasesAwsOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration has a new parameter private_link_scope
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration has a new parameter proxy
+  - Model DefenderForServersAwsOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForServersGcpOffering has a new parameter vm_scanners
+  - Model DefenderForServersGcpOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration has a new parameter private_link_scope
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration has a new parameter proxy
+  - Model GcpOrganizationalDataOrganization has a new parameter organization_name
+  - Model GcpProjectDetails has a new parameter project_name
+  - Model Pricing has a new parameter enablement_time
+  - Model Pricing has a new parameter extensions
+
+### Breaking Changes
+
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration no longer has parameter agent_onboarding_service_account_numeric_id
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration no longer has parameter client_id
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration no longer has parameter agent_onboarding_service_account_numeric_id
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration no longer has parameter client_id
+
 ## 4.0.0 (2023-03-20)
 
 ### Features Added
