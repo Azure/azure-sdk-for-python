@@ -21,13 +21,11 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         *,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
-        max_instance_count: Optional[int] = None,
         properties: Optional[Dict[str, Any]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
         self.instance_count = instance_count
         self.instance_type = instance_type
-        self.max_instance_count = max_instance_count
         self.properties = {}
         if properties is not None:
             for key, value in properties.items():
@@ -54,7 +52,6 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         return RestResourceConfiguration(
             instance_count=self.instance_count,
             instance_type=self.instance_type,
-            max_instance_count=self.max_instance_count,
             properties=serialized_properties,
         )
 
@@ -67,7 +64,6 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         return ResourceConfiguration(
             instance_count=rest_obj.instance_count,
             instance_type=rest_obj.instance_type,
-            max_instance_count=rest_obj.max_instance_count if hasattr(rest_obj, "max_instance_count") else None,
             properties=rest_obj.properties,
             deserialize_properties=True,
         )
@@ -75,11 +71,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ResourceConfiguration):
             return NotImplemented
-        return (
-            self.instance_count == other.instance_count
-            and self.instance_type == other.instance_type
-            and self.max_instance_count == other.max_instance_count
-        )
+        return self.instance_count == other.instance_count and self.instance_type == other.instance_type
 
     def __ne__(self, other: object) -> bool:
         if not isinstance(other, ResourceConfiguration):
@@ -92,7 +84,5 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
                 self.instance_count = other.instance_count
             if other.instance_type:
                 self.instance_type = other.instance_type
-            if other.max_instance_count:
-                self.max_instance_count = other.max_instance_count
             if other.properties:
                 self.properties = other.properties
