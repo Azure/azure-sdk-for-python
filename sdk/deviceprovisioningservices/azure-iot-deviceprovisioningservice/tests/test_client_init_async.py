@@ -1,16 +1,19 @@
+import pytest
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
+
 from azure.iot.deviceprovisioningservice import (
-    ProvisioningServiceClient,
     parse_connection_string,
     generate_sas_token,
 )
 from conftest import ProvisioningServicePreparer
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
 class TestIndividualEnrollments(AzureRecordedTestCase):
     def create_provisioning_service_client_default_credentials(self, endpoint):
-        credential = self.get_credential(ProvisioningServiceClient)
+        credential = self.get_credential(ProvisioningServiceClient, is_async=True)
         client = ProvisioningServiceClient(endpoint=endpoint, credential=credential)
         return client
 
@@ -24,22 +27,24 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         client = ProvisioningServiceClient(endpoint=endpoint, credential=credential)
         return client
 
+    @pytest.mark.asyncio
     @ProvisioningServicePreparer()
-    @recorded_by_proxy
-    def test_default_credentials(self, deviceprovisioningservices_endpoint):
+    @recorded_by_proxy_async
+    async def test_default_credentials(self, deviceprovisioningservices_endpoint):
         client = self.create_provisioning_service_client_default_credentials(
             deviceprovisioningservices_endpoint
         )
 
-        enrollments = client.individual_enrollment.query(
+        enrollments = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 
         assert len(enrollments) == 0
 
+    @pytest.mark.asyncio
     @ProvisioningServicePreparer()
-    @recorded_by_proxy
-    def test_named_key(
+    @recorded_by_proxy_async
+    async def test_named_key(
         self, deviceprovisioningservices_endpoint, deviceprovisioningservices_conn_str
     ):
         # get name and key from token
@@ -50,15 +55,16 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             deviceprovisioningservices_endpoint, name, key
         )
 
-        enrollments = client.individual_enrollment.query(
+        enrollments = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 
         assert len(enrollments) == 0
 
+    @pytest.mark.asyncio
     @ProvisioningServicePreparer()
-    @recorded_by_proxy
-    def test_sas_creds(self, deviceprovisioningservices_endpoint, deviceprovisioningservices_conn_str):
+    @recorded_by_proxy_async
+    async def test_sas_creds(self, deviceprovisioningservices_endpoint, deviceprovisioningservices_conn_str):
         cs_parts = parse_connection_string(deviceprovisioningservices_conn_str)
         
         name = cs_parts["SharedAccessKeyName"]
@@ -70,7 +76,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             sas
         )
 
-        enrollments = client.individual_enrollment.query(
+        enrollments = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 

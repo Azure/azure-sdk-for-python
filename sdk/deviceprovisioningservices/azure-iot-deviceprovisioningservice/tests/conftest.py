@@ -4,7 +4,7 @@ import os
 import pytest
 import responses
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
-from azure.iot.deviceprovisioningservice._auth import SharedKeyCredentialPolicy
+from azure.core.credentials import AzureNamedKeyCredential
 from devtools_testutils import (
     add_body_key_sanitizer,
     EnvironmentVariableLoader,
@@ -113,7 +113,7 @@ def sdk_client() -> ProvisioningServiceClient:
         mock_dps_target["policy"],
         mock_dps_target["primarykey"],
     )
-    creds = SharedKeyCredentialPolicy(host_name, policy_name, key)
+    creds = AzureNamedKeyCredential(policy_name, key)
     client = ProvisioningServiceClient(
         endpoint=f"https://{host_name}", credential=creds, authentication_policy=creds
     )

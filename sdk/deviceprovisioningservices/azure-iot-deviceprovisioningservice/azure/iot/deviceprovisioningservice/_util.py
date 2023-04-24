@@ -12,10 +12,9 @@ def validate_key_value_pairs(string: str) -> Dict[str, Any]:
     """
     Function to validate key-value pairs in the format: a=b;c=d
 
-    Args:
-        string (str): semicolon delimited string of key/value pairs.
-
-    Returns (dict, None): a dictionary of key value pairs.
+    :param str string: Semicolon delimited string of key/value pairs.
+    :return: A dictionary of key/value pairs
+    :rtype: Dict[str,str]
     """
     result = {}
     if string:
@@ -45,10 +44,9 @@ def parse_connection_string(connection_string: str) -> Dict[str, str]:
     Function to parse a Device Provisioning Service connection string into
     key/value pairs.
 
-    Args:
-        connection_string (str): Semicolon delimited connection string of key/value pairs.
-
-    Returns (dict, None): a dictionary of the string's key value pairs.
+    :param str connection_string: Semicolon delimited connection string of key/value pairs.
+    :return: A dictionary of key/value pairs
+    :rtype: Dict[str,str]
     """
     validate = ["HostName", "SharedAccessKeyName", "SharedAccessKey"]
     return _parse_connection_string(

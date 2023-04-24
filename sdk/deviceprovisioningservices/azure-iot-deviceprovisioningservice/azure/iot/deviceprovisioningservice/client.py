@@ -6,7 +6,7 @@
 
 from typing import TYPE_CHECKING, Any, Union
 
-from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -26,7 +26,7 @@ from azure.iot.deviceprovisioningservice._generated import (
 )
 from azure.iot.deviceprovisioningservice._generated._version import VERSION
 
-from ._auth import SharedKeyCredentialPolicy
+from ._auth import SasCredentialPolicy, SharedKeyCredentialPolicy
 from ._util import parse_connection_string
 
 if TYPE_CHECKING:
@@ -42,13 +42,17 @@ class ProvisioningServiceClient(
 
     :param str endpoint: The HTTP endpoint of the Device Provisioning Service instance
     :param credential: The credential type used to authenticate with the Device Provisioning Service instance
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
         self,
         endpoint: str,
         credential: Union[
-            "TokenCredential", AzureNamedKeyCredential, SharedKeyCredentialPolicy
+            "TokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"
         ],
         **kwargs,
     ) -> None:
@@ -97,8 +101,8 @@ class ProvisioningServiceClient(
             cs_args["SharedAccessKey"],
         )
         # Create credential from keys
-        credential = SharedKeyCredentialPolicy(
-            host_name, shared_access_key_name, shared_access_key
+        credential = AzureNamedKeyCredential(
+            name=shared_access_key_name, key=shared_access_key
         )
 
         return cls(endpoint=host_name, credential=credential, **kwargs)  # type: ignore
@@ -106,7 +110,7 @@ class ProvisioningServiceClient(
     def _create_pipeline(
         self,
         credential: Union[
-            "TokenCredential", AzureNamedKeyCredential, SharedKeyCredentialPolicy
+            "TokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"
         ],
         base_url: str,
         **kwargs,
@@ -122,8 +126,8 @@ class ProvisioningServiceClient(
             self._credential_policy = BearerTokenCredentialPolicy(  # type: ignore
                 credential, "https://azure-devices-provisioning.net/.default"  # type: ignore
             )
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential  # type: ignore
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = SasCredentialPolicy(credential=credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
             name = credential.named_key.name
             key = credential.named_key.key

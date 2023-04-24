@@ -11,8 +11,9 @@ from hmac import HMAC
 from time import time
 from urllib.parse import quote_plus, urlencode
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
 def generate_sas_token(audience: str, policy: str, key: str, expiry: int = 3600) -> str:
@@ -58,3 +59,19 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request: PipelineRequest) -> None:
         self._add_authorization_header(request=request)
+
+
+class SasCredentialPolicy(SansIOHTTPPolicy):
+    """Adds an authorization header for the provided credential.
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureSasCredential
+    """
+
+    def __init__(
+        self, credential: AzureSasCredential, **kwargs
+    ):  # pylint: disable=unused-argument
+        super(SasCredentialPolicy, self).__init__()
+        self._credential = credential
+
+    def on_request(self, request):
+        request.http_request.headers["Authorization"] = self._credential.signature
