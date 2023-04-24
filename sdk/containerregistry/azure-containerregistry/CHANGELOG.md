@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Changed the default audience to "https://containerregistry.azure.net" which works for all clouds.
 
 ## 1.1.0b3 (2023-04-04)
 

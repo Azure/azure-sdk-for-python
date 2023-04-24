@@ -4,8 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional
 from datetime import timedelta, datetime
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional
+from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -43,20 +44,22 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
+    :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
     :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
-        endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io")
+        endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io/v1")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
+        parsed_endpoint = urlparse(endpoint)
+        audience = kwargs.pop("audience", f"{parsed_endpoint.scheme}://{parsed_endpoint.netloc}")
         self._endpoint = endpoint
         auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
-            endpoint=self._endpoint.rstrip('/') + "/v1",
+            authentication_policy=auth_policy or get_authentication_policy(credential, audience),
+            endpoint=self._endpoint,
             **kwargs
         )
         self._query_op = self._client.query

@@ -7,9 +7,9 @@
 import logging
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SweepJob as RestSweepJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TrialComponent
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob as RestSweepJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TrialComponent
 from azure.ai.ml._schema._sweep.sweep_job import SweepJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType

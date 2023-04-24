@@ -8,7 +8,7 @@ import os
 import pytest
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from azure.containerregistry._helpers import _is_tag
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
@@ -128,7 +128,7 @@ def get_authority(endpoint: str) -> str:
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public cloud auth audience")
-        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+        return "https://management.azure.com"
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China cloud auth audience")
         return "https://management.chinacloudapi.cn"

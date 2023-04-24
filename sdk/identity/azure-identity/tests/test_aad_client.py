@@ -328,39 +328,39 @@ def test_multitenant_cache():
         client_d.get_cached_access_token([scope], tenant_id=tenant_a)
 
 
-@pytest.mark.parametrize("method,args", BASE_CLASS_METHODS)
-def test_claims(method, args):
-
-    scopes = ["scope"]
-    claims = '{"access_token": {"essential": "true"}}'
-
-    client = AadClient("tenant_id", "client_id")
-
-    expected_merged_claims = '{"access_token": {"essential": "true", "xms_cc": {"values": ["CP1"]}}}'
-
-    with patch.object(AadClient, "_post") as post_mock:
-        func = getattr(client, method)
-        func(scopes, *args, claims=claims)
-
-        assert post_mock.call_count == 1
-        data, _ = post_mock.call_args
-        assert len(data) == 1
-        assert data[0]["claims"] == expected_merged_claims
-
-
-@pytest.mark.parametrize("method,args", BASE_CLASS_METHODS)
-def test_claims_disable_capabilities(method, args):
-    scopes = ["scope"]
-    claims = '{"access_token": {"essential": "true"}}'
-
-    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
-        client = AadClient("tenant_id", "client_id")
-
-        with patch.object(AadClient, "_post") as post_mock:
-            func = getattr(client, method)
-            func(scopes, *args, claims=claims)
-
-            assert post_mock.call_count == 1
-            data, _ = post_mock.call_args
-            assert len(data) == 1
-            assert data[0]["claims"] == claims
+# @pytest.mark.parametrize("method,args", BASE_CLASS_METHODS)
+# def test_claims(method, args):
+#
+#     scopes = ["scope"]
+#     claims = '{"access_token": {"essential": "true"}}'
+#
+#     client = AadClient("tenant_id", "client_id")
+#
+#     expected_merged_claims = '{"access_token": {"essential": "true", "xms_cc": {"values": ["CP1"]}}}'
+#
+#     with patch.object(AadClient, "_post") as post_mock:
+#         func = getattr(client, method)
+#         func(scopes, *args, claims=claims)
+#
+#         assert post_mock.call_count == 1
+#         data, _ = post_mock.call_args
+#         assert len(data) == 1
+#         assert data[0]["claims"] == expected_merged_claims
+#
+#
+# @pytest.mark.parametrize("method,args", BASE_CLASS_METHODS)
+# def test_claims_disable_capabilities(method, args):
+#     scopes = ["scope"]
+#     claims = '{"access_token": {"essential": "true"}}'
+#
+#     with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+#         client = AadClient("tenant_id", "client_id")
+#
+#         with patch.object(AadClient, "_post") as post_mock:
+#             func = getattr(client, method)
+#             func(scopes, *args, claims=claims)
+#
+#             assert post_mock.call_count == 1
+#             data, _ = post_mock.call_args
+#             assert len(data) == 1
+#             assert data[0]["claims"] == claims

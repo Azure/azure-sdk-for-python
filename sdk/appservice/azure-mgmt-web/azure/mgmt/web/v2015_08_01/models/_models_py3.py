@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,16 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class AppServiceCertificate(msrest.serialization.Model):
+class AppServiceCertificate(_serialization.Model):
     """Key Vault container for a certificate that is purchased through Azure.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28,79 +29,70 @@ class AppServiceCertificate(msrest.serialization.Model):
     :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
      "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
-     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
+     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
      "Unknown".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
-        'key_vault_secret_name': {'key': 'keyVaultSecretName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "key_vault_id": {"key": "keyVaultId", "type": "str"},
+        "key_vault_secret_name": {"key": "keyVaultSecretName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        key_vault_id: Optional[str] = None,
-        key_vault_secret_name: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, key_vault_id: Optional[str] = None, key_vault_secret_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_id: Key Vault resource Id.
         :paramtype key_vault_id: str
         :keyword key_vault_secret_name: Key Vault secret name.
         :paramtype key_vault_secret_name: str
         """
-        super(AppServiceCertificate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None
 
 
-class AppServiceCertificateCollection(msrest.serialization.Model):
+class AppServiceCertificateCollection(_serialization.Model):
     """Collection of certificate order certificates.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AppServiceCertificateResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AppServiceCertificateResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.AppServiceCertificateResource"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.AppServiceCertificateResource"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource]
         """
-        super(AppServiceCertificateCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Azure resource. This resource is tracked in Azure Resource Manager.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -113,47 +105,42 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar kind: Kind of resource.
     :vartype kind: str
-    :ivar location: Required. Resource Location.
+    :ivar location: Resource Location. Required.
     :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        kind: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        self, *, location: str, kind: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword location: Required. Resource Location.
+        :keyword location: Resource Location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.kind = kind
@@ -162,7 +149,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class AppServiceCertificateOrder(Resource):
+class AppServiceCertificateOrder(Resource):  # pylint: disable=too-many-instance-attributes
     """SSL certificate purchase order.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -175,11 +162,11 @@ class AppServiceCertificateOrder(Resource):
     :vartype name: str
     :ivar kind: Kind of resource.
     :vartype kind: str
-    :ivar location: Required. Resource Location.
+    :ivar location: Resource Location. Required.
     :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar certificates: State of the Key Vault secret.
     :vartype certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
@@ -191,17 +178,18 @@ class AppServiceCertificateOrder(Resource):
     :vartype validity_in_years: int
     :ivar key_size: Certificate key size.
     :vartype key_size: int
-    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl",
-     "StandardDomainValidatedWildCardSsl".
+    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
+     and "StandardDomainValidatedWildCardSsl".
     :vartype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
     :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
      when it expires; otherwise, :code:`<code>false</code>`.
     :vartype auto_renew: bool
     :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
-     "Canceled", "InProgress", "Deleting".
+     "Canceled", "InProgress", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.ProvisioningState
     :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
-     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", "NotSubmitted".
+     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", and
+     "NotSubmitted".
     :vartype status: str or ~azure.mgmt.web.v2015_08_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
@@ -223,60 +211,63 @@ class AppServiceCertificateOrder(Resource):
     :ivar app_service_certificate_not_renewable_reasons: Reasons why App Service Certificate is not
      renewable at the current moment.
     :vartype app_service_certificate_not_renewable_reasons: list[str or
-     ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem]
+     ~azure.mgmt.web.v2015_08_01.models.ResourceNotRenewableReason]
     :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would be auto renewed next.
     :vartype next_auto_renewal_time_stamp: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
-        'domain_verification_token': {'readonly': True},
-        'validity_in_years': {'maximum': 3, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'signed_certificate': {'readonly': True},
-        'intermediate': {'readonly': True},
-        'root': {'readonly': True},
-        'serial_number': {'readonly': True},
-        'last_certificate_issuance_time': {'readonly': True},
-        'expiration_time': {'readonly': True},
-        'is_private_key_external': {'readonly': True},
-        'app_service_certificate_not_renewable_reasons': {'readonly': True},
-        'next_auto_renewal_time_stamp': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
+        "domain_verification_token": {"readonly": True},
+        "validity_in_years": {"maximum": 3, "minimum": 1},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "signed_certificate": {"readonly": True},
+        "intermediate": {"readonly": True},
+        "root": {"readonly": True},
+        "serial_number": {"readonly": True},
+        "last_certificate_issuance_time": {"readonly": True},
+        "expiration_time": {"readonly": True},
+        "is_private_key_external": {"readonly": True},
+        "app_service_certificate_not_renewable_reasons": {"readonly": True},
+        "next_auto_renewal_time_stamp": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'certificates': {'key': 'properties.certificates', 'type': '{AppServiceCertificate}'},
-        'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
-        'domain_verification_token': {'key': 'properties.domainVerificationToken', 'type': 'str'},
-        'validity_in_years': {'key': 'properties.validityInYears', 'type': 'int'},
-        'key_size': {'key': 'properties.keySize', 'type': 'int'},
-        'product_type': {'key': 'properties.productType', 'type': 'str'},
-        'auto_renew': {'key': 'properties.autoRenew', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'signed_certificate': {'key': 'properties.signedCertificate', 'type': 'CertificateDetails'},
-        'csr': {'key': 'properties.csr', 'type': 'str'},
-        'intermediate': {'key': 'properties.intermediate', 'type': 'CertificateDetails'},
-        'root': {'key': 'properties.root', 'type': 'CertificateDetails'},
-        'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
-        'last_certificate_issuance_time': {'key': 'properties.lastCertificateIssuanceTime', 'type': 'iso-8601'},
-        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
-        'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
-        'app_service_certificate_not_renewable_reasons': {'key': 'properties.appServiceCertificateNotRenewableReasons', 'type': '[str]'},
-        'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "certificates": {"key": "properties.certificates", "type": "{AppServiceCertificate}"},
+        "distinguished_name": {"key": "properties.distinguishedName", "type": "str"},
+        "domain_verification_token": {"key": "properties.domainVerificationToken", "type": "str"},
+        "validity_in_years": {"key": "properties.validityInYears", "type": "int"},
+        "key_size": {"key": "properties.keySize", "type": "int"},
+        "product_type": {"key": "properties.productType", "type": "str"},
+        "auto_renew": {"key": "properties.autoRenew", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "signed_certificate": {"key": "properties.signedCertificate", "type": "CertificateDetails"},
+        "csr": {"key": "properties.csr", "type": "str"},
+        "intermediate": {"key": "properties.intermediate", "type": "CertificateDetails"},
+        "root": {"key": "properties.root", "type": "CertificateDetails"},
+        "serial_number": {"key": "properties.serialNumber", "type": "str"},
+        "last_certificate_issuance_time": {"key": "properties.lastCertificateIssuanceTime", "type": "iso-8601"},
+        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
+        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
+        "app_service_certificate_not_renewable_reasons": {
+            "key": "properties.appServiceCertificateNotRenewableReasons",
+            "type": "[str]",
+        },
+        "next_auto_renewal_time_stamp": {"key": "properties.nextAutoRenewalTimeStamp", "type": "iso-8601"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -284,19 +275,19 @@ class AppServiceCertificateOrder(Resource):
         tags: Optional[Dict[str, str]] = None,
         certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
         distinguished_name: Optional[str] = None,
-        validity_in_years: Optional[int] = 1,
-        key_size: Optional[int] = 2048,
+        validity_in_years: int = 1,
+        key_size: int = 2048,
         product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
-        auto_renew: Optional[bool] = True,
+        auto_renew: bool = True,
         csr: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword location: Required. Resource Location.
+        :keyword location: Resource Location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword certificates: State of the Key Vault secret.
         :paramtype certificates: dict[str, ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificate]
@@ -306,8 +297,8 @@ class AppServiceCertificateOrder(Resource):
         :paramtype validity_in_years: int
         :keyword key_size: Certificate key size.
         :paramtype key_size: int
-        :keyword product_type: Certificate product type. Known values are:
-         "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
+        :keyword product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
+         and "StandardDomainValidatedWildCardSsl".
         :paramtype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
         :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
          renewed when it expires; otherwise, :code:`<code>false</code>`.
@@ -315,7 +306,7 @@ class AppServiceCertificateOrder(Resource):
         :keyword csr: Last CSR that was created for this order.
         :paramtype csr: str
         """
-        super(AppServiceCertificateOrder, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
+        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
         self.domain_verification_token = None
@@ -337,45 +328,40 @@ class AppServiceCertificateOrder(Resource):
         self.next_auto_renewal_time_stamp = None
 
 
-class AppServiceCertificateOrderCollection(msrest.serialization.Model):
+class AppServiceCertificateOrderCollection(_serialization.Model):
     """Collection of certificate orders.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AppServiceCertificateOrder]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AppServiceCertificateOrder]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.AppServiceCertificateOrder"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.AppServiceCertificateOrder"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder]
         """
-        super(AppServiceCertificateOrderCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ProxyOnlyResource(msrest.serialization.Model):
+class ProxyOnlyResource(_serialization.Model):
     """Azure proxy only resource. This resource is not tracked by Azure Resource Manager.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -391,36 +377,31 @@ class ProxyOnlyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
         """
-        super(ProxyOnlyResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.kind = kind
         self.type = None
 
 
-class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
+class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """ARM resource for a certificate order that is purchased through Azure.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -443,17 +424,18 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :vartype validity_in_years: int
     :ivar key_size: Certificate key size.
     :vartype key_size: int
-    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl",
-     "StandardDomainValidatedWildCardSsl".
+    :ivar product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
+     and "StandardDomainValidatedWildCardSsl".
     :vartype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
     :ivar auto_renew: :code:`<code>true</code>` if the certificate should be automatically renewed
      when it expires; otherwise, :code:`<code>false</code>`.
     :vartype auto_renew: bool
     :ivar provisioning_state: Status of certificate order. Known values are: "Succeeded", "Failed",
-     "Canceled", "InProgress", "Deleting".
+     "Canceled", "InProgress", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.ProvisioningState
     :ivar status: Current order status. Known values are: "Pendingissuance", "Issued", "Revoked",
-     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", "NotSubmitted".
+     "Canceled", "Denied", "Pendingrevocation", "PendingRekey", "Unused", "Expired", and
+     "NotSubmitted".
     :vartype status: str or ~azure.mgmt.web.v2015_08_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
     :vartype signed_certificate: ~azure.mgmt.web.v2015_08_01.models.CertificateDetails
@@ -475,54 +457,57 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :ivar app_service_certificate_not_renewable_reasons: Reasons why App Service Certificate is not
      renewable at the current moment.
     :vartype app_service_certificate_not_renewable_reasons: list[str or
-     ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem]
+     ~azure.mgmt.web.v2015_08_01.models.ResourceNotRenewableReason]
     :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would be auto renewed next.
     :vartype next_auto_renewal_time_stamp: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'domain_verification_token': {'readonly': True},
-        'validity_in_years': {'maximum': 3, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'signed_certificate': {'readonly': True},
-        'intermediate': {'readonly': True},
-        'root': {'readonly': True},
-        'serial_number': {'readonly': True},
-        'last_certificate_issuance_time': {'readonly': True},
-        'expiration_time': {'readonly': True},
-        'is_private_key_external': {'readonly': True},
-        'app_service_certificate_not_renewable_reasons': {'readonly': True},
-        'next_auto_renewal_time_stamp': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "domain_verification_token": {"readonly": True},
+        "validity_in_years": {"maximum": 3, "minimum": 1},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "signed_certificate": {"readonly": True},
+        "intermediate": {"readonly": True},
+        "root": {"readonly": True},
+        "serial_number": {"readonly": True},
+        "last_certificate_issuance_time": {"readonly": True},
+        "expiration_time": {"readonly": True},
+        "is_private_key_external": {"readonly": True},
+        "app_service_certificate_not_renewable_reasons": {"readonly": True},
+        "next_auto_renewal_time_stamp": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'certificates': {'key': 'properties.certificates', 'type': '{AppServiceCertificate}'},
-        'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
-        'domain_verification_token': {'key': 'properties.domainVerificationToken', 'type': 'str'},
-        'validity_in_years': {'key': 'properties.validityInYears', 'type': 'int'},
-        'key_size': {'key': 'properties.keySize', 'type': 'int'},
-        'product_type': {'key': 'properties.productType', 'type': 'str'},
-        'auto_renew': {'key': 'properties.autoRenew', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'signed_certificate': {'key': 'properties.signedCertificate', 'type': 'CertificateDetails'},
-        'csr': {'key': 'properties.csr', 'type': 'str'},
-        'intermediate': {'key': 'properties.intermediate', 'type': 'CertificateDetails'},
-        'root': {'key': 'properties.root', 'type': 'CertificateDetails'},
-        'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
-        'last_certificate_issuance_time': {'key': 'properties.lastCertificateIssuanceTime', 'type': 'iso-8601'},
-        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
-        'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
-        'app_service_certificate_not_renewable_reasons': {'key': 'properties.appServiceCertificateNotRenewableReasons', 'type': '[str]'},
-        'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "certificates": {"key": "properties.certificates", "type": "{AppServiceCertificate}"},
+        "distinguished_name": {"key": "properties.distinguishedName", "type": "str"},
+        "domain_verification_token": {"key": "properties.domainVerificationToken", "type": "str"},
+        "validity_in_years": {"key": "properties.validityInYears", "type": "int"},
+        "key_size": {"key": "properties.keySize", "type": "int"},
+        "product_type": {"key": "properties.productType", "type": "str"},
+        "auto_renew": {"key": "properties.autoRenew", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "signed_certificate": {"key": "properties.signedCertificate", "type": "CertificateDetails"},
+        "csr": {"key": "properties.csr", "type": "str"},
+        "intermediate": {"key": "properties.intermediate", "type": "CertificateDetails"},
+        "root": {"key": "properties.root", "type": "CertificateDetails"},
+        "serial_number": {"key": "properties.serialNumber", "type": "str"},
+        "last_certificate_issuance_time": {"key": "properties.lastCertificateIssuanceTime", "type": "iso-8601"},
+        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
+        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
+        "app_service_certificate_not_renewable_reasons": {
+            "key": "properties.appServiceCertificateNotRenewableReasons",
+            "type": "[str]",
+        },
+        "next_auto_renewal_time_stamp": {"key": "properties.nextAutoRenewalTimeStamp", "type": "iso-8601"},
     }
 
     def __init__(
@@ -531,13 +516,13 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         kind: Optional[str] = None,
         certificates: Optional[Dict[str, "_models.AppServiceCertificate"]] = None,
         distinguished_name: Optional[str] = None,
-        validity_in_years: Optional[int] = 1,
-        key_size: Optional[int] = 2048,
+        validity_in_years: int = 1,
+        key_size: int = 2048,
         product_type: Optional[Union[str, "_models.CertificateProductType"]] = None,
-        auto_renew: Optional[bool] = True,
+        auto_renew: bool = True,
         csr: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -549,8 +534,8 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         :paramtype validity_in_years: int
         :keyword key_size: Certificate key size.
         :paramtype key_size: int
-        :keyword product_type: Certificate product type. Known values are:
-         "StandardDomainValidatedSsl", "StandardDomainValidatedWildCardSsl".
+        :keyword product_type: Certificate product type. Known values are: "StandardDomainValidatedSsl"
+         and "StandardDomainValidatedWildCardSsl".
         :paramtype product_type: str or ~azure.mgmt.web.v2015_08_01.models.CertificateProductType
         :keyword auto_renew: :code:`<code>true</code>` if the certificate should be automatically
          renewed when it expires; otherwise, :code:`<code>false</code>`.
@@ -558,7 +543,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         :keyword csr: Last CSR that was created for this order.
         :paramtype csr: str
         """
-        super(AppServiceCertificateOrderPatchResource, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
         self.domain_verification_token = None
@@ -600,26 +585,26 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
     :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
      "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
-     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
+     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
      "Unknown".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
-        'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "key_vault_id": {"key": "properties.keyVaultId", "type": "str"},
+        "key_vault_secret_name": {"key": "properties.keyVaultSecretName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -628,8 +613,8 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
         kind: Optional[str] = None,
         key_vault_id: Optional[str] = None,
         key_vault_secret_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -638,7 +623,7 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
         :keyword key_vault_secret_name: Key Vault secret name.
         :paramtype key_vault_secret_name: str
         """
-        super(AppServiceCertificatePatchResource, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None
@@ -657,11 +642,11 @@ class AppServiceCertificateResource(Resource):
     :vartype name: str
     :ivar kind: Kind of resource.
     :vartype kind: str
-    :ivar location: Required. Resource Location.
+    :ivar location: Resource Location. Required.
     :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar key_vault_id: Key Vault resource Id.
     :vartype key_vault_id: str
@@ -670,29 +655,29 @@ class AppServiceCertificateResource(Resource):
     :ivar provisioning_state: Status of the Key Vault secret. Known values are: "Initialized",
      "WaitingOnCertificateOrder", "Succeeded", "CertificateOrderFailed",
      "OperationNotPermittedOnKeyVault", "AzureServiceUnauthorizedToAccessKeyVault",
-     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey",
+     "KeyVaultDoesNotExist", "KeyVaultSecretDoesNotExist", "UnknownError", "ExternalPrivateKey", and
      "Unknown".
     :vartype provisioning_state: str or ~azure.mgmt.web.v2015_08_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
-        'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "key_vault_id": {"key": "properties.keyVaultId", "type": "str"},
+        "key_vault_secret_name": {"key": "properties.keyVaultSecretName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -703,27 +688,27 @@ class AppServiceCertificateResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         key_vault_id: Optional[str] = None,
         key_vault_secret_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword location: Required. Resource Location.
+        :keyword location: Resource Location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword key_vault_id: Key Vault resource Id.
         :paramtype key_vault_id: str
         :keyword key_vault_secret_name: Key Vault secret name.
         :paramtype key_vault_secret_name: str
         """
-        super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
+        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None
 
 
-class CertificateDetails(msrest.serialization.Model):
+class CertificateDetails(_serialization.Model):
     """SSL certificate details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -749,36 +734,32 @@ class CertificateDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'readonly': True},
-        'serial_number': {'readonly': True},
-        'thumbprint': {'readonly': True},
-        'subject': {'readonly': True},
-        'not_before': {'readonly': True},
-        'not_after': {'readonly': True},
-        'signature_algorithm': {'readonly': True},
-        'issuer': {'readonly': True},
-        'raw_data': {'readonly': True},
+        "version": {"readonly": True},
+        "serial_number": {"readonly": True},
+        "thumbprint": {"readonly": True},
+        "subject": {"readonly": True},
+        "not_before": {"readonly": True},
+        "not_after": {"readonly": True},
+        "signature_algorithm": {"readonly": True},
+        "issuer": {"readonly": True},
+        "raw_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'int'},
-        'serial_number': {'key': 'serialNumber', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'not_before': {'key': 'notBefore', 'type': 'iso-8601'},
-        'not_after': {'key': 'notAfter', 'type': 'iso-8601'},
-        'signature_algorithm': {'key': 'signatureAlgorithm', 'type': 'str'},
-        'issuer': {'key': 'issuer', 'type': 'str'},
-        'raw_data': {'key': 'rawData', 'type': 'str'},
+        "version": {"key": "version", "type": "int"},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "not_before": {"key": "notBefore", "type": "iso-8601"},
+        "not_after": {"key": "notAfter", "type": "iso-8601"},
+        "signature_algorithm": {"key": "signatureAlgorithm", "type": "str"},
+        "issuer": {"key": "issuer", "type": "str"},
+        "raw_data": {"key": "rawData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CertificateDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.version = None
         self.serial_number = None
         self.thumbprint = None
@@ -810,18 +791,18 @@ class CertificateEmail(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'email_id': {'key': 'properties.emailId', 'type': 'str'},
-        'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "email_id": {"key": "properties.emailId", "type": "str"},
+        "time_stamp": {"key": "properties.timeStamp", "type": "iso-8601"},
     }
 
     def __init__(
@@ -830,8 +811,8 @@ class CertificateEmail(ProxyOnlyResource):
         kind: Optional[str] = None,
         email_id: Optional[str] = None,
         time_stamp: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -840,7 +821,7 @@ class CertificateEmail(ProxyOnlyResource):
         :keyword time_stamp: Time stamp.
         :paramtype time_stamp: ~datetime.datetime
         """
-        super(CertificateEmail, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.email_id = email_id
         self.time_stamp = time_stamp
 
@@ -862,7 +843,7 @@ class CertificateOrderAction(ProxyOnlyResource):
      "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
      "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
      "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
-     "FraudDocumentationRequired", "Unknown".
+     "FraudDocumentationRequired", and "Unknown".
     :vartype type_properties_type: str or
      ~azure.mgmt.web.v2015_08_01.models.CertificateOrderActionType
     :ivar created_at: Time at which the certificate action was performed.
@@ -870,18 +851,18 @@ class CertificateOrderAction(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -890,8 +871,8 @@ class CertificateOrderAction(ProxyOnlyResource):
         kind: Optional[str] = None,
         type_properties_type: Optional[Union[str, "_models.CertificateOrderActionType"]] = None,
         created_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -899,56 +880,51 @@ class CertificateOrderAction(ProxyOnlyResource):
          "CertificateOrderCanceled", "CertificateOrderCreated", "CertificateRevoked",
          "DomainValidationComplete", "FraudDetected", "OrgNameChange", "OrgValidationComplete",
          "SanDrop", "FraudCleared", "CertificateExpired", "CertificateExpirationWarning",
-         "FraudDocumentationRequired", "Unknown".
+         "FraudDocumentationRequired", and "Unknown".
         :paramtype type_properties_type: str or
          ~azure.mgmt.web.v2015_08_01.models.CertificateOrderActionType
         :keyword created_at: Time at which the certificate action was performed.
         :paramtype created_at: ~datetime.datetime
         """
-        super(CertificateOrderAction, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.type_properties_type = type_properties_type
         self.created_at = created_at
 
 
-class CsmOperationCollection(msrest.serialization.Model):
+class CsmOperationCollection(_serialization.Model):
     """Collection of Azure resource manager operation metadata.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. Collection of resources.
+    :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_08_01.models.CsmOperationDescription]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CsmOperationDescription]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CsmOperationDescription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.CsmOperationDescription"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.CsmOperationDescription"], **kwargs: Any) -> None:
         """
-        :keyword value: Required. Collection of resources.
+        :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.web.v2015_08_01.models.CsmOperationDescription]
         """
-        super(CsmOperationCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class CsmOperationDescription(msrest.serialization.Model):
+class CsmOperationDescription(_serialization.Model):
     """Description of an operation available for Microsoft.Web resource provider.
 
     :ivar name:
@@ -962,10 +938,10 @@ class CsmOperationDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'CsmOperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CsmOperationDescriptionProperties'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "CsmOperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "CsmOperationDescriptionProperties"},
     }
 
     def __init__(
@@ -975,8 +951,8 @@ class CsmOperationDescription(msrest.serialization.Model):
         display: Optional["_models.CsmOperationDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional["_models.CsmOperationDescriptionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -987,14 +963,14 @@ class CsmOperationDescription(msrest.serialization.Model):
         :keyword properties: Properties available for a Microsoft.Web resource provider operation.
         :paramtype properties: ~azure.mgmt.web.v2015_08_01.models.CsmOperationDescriptionProperties
         """
-        super(CsmOperationDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
         self.properties = properties
 
 
-class CsmOperationDescriptionProperties(msrest.serialization.Model):
+class CsmOperationDescriptionProperties(_serialization.Model):
     """Properties available for a Microsoft.Web resource provider operation.
 
     :ivar service_specification: Resource metrics service provided by Microsoft.Insights resource
@@ -1003,25 +979,22 @@ class CsmOperationDescriptionProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
     def __init__(
-        self,
-        *,
-        service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_specification: Resource metrics service provided by Microsoft.Insights
          resource provider.
         :paramtype service_specification: ~azure.mgmt.web.v2015_08_01.models.ServiceSpecification
         """
-        super(CsmOperationDescriptionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class CsmOperationDisplay(msrest.serialization.Model):
+class CsmOperationDisplay(_serialization.Model):
     """Meta data about operation used for display in portal.
 
     :ivar provider:
@@ -1035,10 +1008,10 @@ class CsmOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -1048,8 +1021,8 @@ class CsmOperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider:
         :paramtype provider: str
@@ -1060,16 +1033,16 @@ class CsmOperationDisplay(msrest.serialization.Model):
         :keyword description:
         :paramtype description: str
         """
-        super(CsmOperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class Dimension(msrest.serialization.Model):
-    """Dimension of a resource metric. For e.g. instance specific HTTP requests for a web app, 
-where instance name is dimension of the metric HTTP request.
+class Dimension(_serialization.Model):
+    """Dimension of a resource metric. For e.g. instance specific HTTP requests for a web app,
+    where instance name is dimension of the metric HTTP request.
 
     :ivar name:
     :vartype name: str
@@ -1082,10 +1055,10 @@ where instance name is dimension of the metric HTTP request.
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
     def __init__(
@@ -1095,8 +1068,8 @@ where instance name is dimension of the metric HTTP request.
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
         to_be_exported_for_shoebox: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -1107,14 +1080,14 @@ where instance name is dimension of the metric HTTP request.
         :keyword to_be_exported_for_shoebox:
         :paramtype to_be_exported_for_shoebox: bool
         """
-        super(Dimension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class MetricAvailability(msrest.serialization.Model):
+class MetricAvailability(_serialization.Model):
     """Retention policy of a resource metric.
 
     :ivar time_grain:
@@ -1124,29 +1097,23 @@ class MetricAvailability(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        time_grain: Optional[str] = None,
-        blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword time_grain:
         :paramtype time_grain: str
         :keyword blob_duration:
         :paramtype blob_duration: str
         """
-        super(MetricAvailability, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.time_grain = time_grain
         self.blob_duration = blob_duration
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Definition of a single resource metric.
 
     :ivar name:
@@ -1182,21 +1149,21 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'supports_instance_level_aggregation': {'key': 'supportsInstanceLevelAggregation', 'type': 'bool'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'is_internal': {'key': 'isInternal', 'type': 'bool'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
-        'category': {'key': 'category', 'type': 'str'},
-        'availabilities': {'key': 'availabilities', 'type': '[MetricAvailability]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "supports_instance_level_aggregation": {"key": "supportsInstanceLevelAggregation", "type": "bool"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "bool"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "metric_filter_pattern": {"key": "metricFilterPattern", "type": "str"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "is_internal": {"key": "isInternal", "type": "bool"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
+        "category": {"key": "category", "type": "str"},
+        "availabilities": {"key": "availabilities", "type": "[MetricAvailability]"},
     }
 
     def __init__(
@@ -1217,8 +1184,8 @@ class MetricSpecification(msrest.serialization.Model):
         dimensions: Optional[List["_models.Dimension"]] = None,
         category: Optional[str] = None,
         availabilities: Optional[List["_models.MetricAvailability"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -1251,7 +1218,7 @@ class MetricSpecification(msrest.serialization.Model):
         :keyword availabilities:
         :paramtype availabilities: list[~azure.mgmt.web.v2015_08_01.models.MetricAvailability]
         """
-        super(MetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -1269,7 +1236,7 @@ class MetricSpecification(msrest.serialization.Model):
         self.availabilities = availabilities
 
 
-class NameIdentifier(msrest.serialization.Model):
+class NameIdentifier(_serialization.Model):
     """Identifies an object.
 
     :ivar name: Name of the object.
@@ -1277,20 +1244,15 @@ class NameIdentifier(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the object.
         :paramtype name: str
         """
-        super(NameIdentifier, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
@@ -1320,20 +1282,20 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'key_size': {'key': 'properties.keySize', 'type': 'int'},
-        'delay_existing_revoke_in_hours': {'key': 'properties.delayExistingRevokeInHours', 'type': 'int'},
-        'csr': {'key': 'properties.csr', 'type': 'str'},
-        'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "key_size": {"key": "properties.keySize", "type": "int"},
+        "delay_existing_revoke_in_hours": {"key": "properties.delayExistingRevokeInHours", "type": "int"},
+        "csr": {"key": "properties.csr", "type": "str"},
+        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
     }
 
     def __init__(
@@ -1344,8 +1306,8 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
         delay_existing_revoke_in_hours: Optional[int] = None,
         csr: Optional[str] = None,
         is_private_key_external: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -1360,7 +1322,7 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
          external private key and vice versa).
         :paramtype is_private_key_external: bool
         """
-        super(ReissueCertificateOrderRequest, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.key_size = key_size
         self.delay_existing_revoke_in_hours = delay_existing_revoke_in_hours
         self.csr = csr
@@ -1390,19 +1352,19 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'key_size': {'key': 'properties.keySize', 'type': 'int'},
-        'csr': {'key': 'properties.csr', 'type': 'str'},
-        'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "key_size": {"key": "properties.keySize", "type": "int"},
+        "csr": {"key": "properties.csr", "type": "str"},
+        "is_private_key_external": {"key": "properties.isPrivateKeyExternal", "type": "bool"},
     }
 
     def __init__(
@@ -1412,8 +1374,8 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
         key_size: Optional[int] = None,
         csr: Optional[str] = None,
         is_private_key_external: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
@@ -1425,13 +1387,13 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
          external private key and vice versa).
         :paramtype is_private_key_external: bool
         """
-        super(RenewCertificateOrderRequest, self).__init__(kind=kind, **kwargs)
+        super().__init__(kind=kind, **kwargs)
         self.key_size = key_size
         self.csr = csr
         self.is_private_key_external = is_private_key_external
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """Resource metrics service provided by Microsoft.Insights resource provider.
 
     :ivar metric_specifications:
@@ -1439,55 +1401,47 @@ class ServiceSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
     def __init__(
-        self,
-        *,
-        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
-        **kwargs
-    ):
+        self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications:
         :paramtype metric_specifications: list[~azure.mgmt.web.v2015_08_01.models.MetricSpecification]
         """
-        super(ServiceSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
 
-class SiteSeal(msrest.serialization.Model):
+class SiteSeal(_serialization.Model):
     """Site seal.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar html: Required. HTML snippet.
+    :ivar html: HTML snippet. Required.
     :vartype html: str
     """
 
     _validation = {
-        'html': {'required': True},
+        "html": {"required": True},
     }
 
     _attribute_map = {
-        'html': {'key': 'html', 'type': 'str'},
+        "html": {"key": "html", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        html: str,
-        **kwargs
-    ):
+    def __init__(self, *, html: str, **kwargs: Any) -> None:
         """
-        :keyword html: Required. HTML snippet.
+        :keyword html: HTML snippet. Required.
         :paramtype html: str
         """
-        super(SiteSeal, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.html = html
 
 
-class SiteSealRequest(msrest.serialization.Model):
+class SiteSealRequest(_serialization.Model):
     """Site seal request.
 
     :ivar light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
@@ -1498,17 +1452,11 @@ class SiteSealRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'light_theme': {'key': 'lightTheme', 'type': 'bool'},
-        'locale': {'key': 'locale', 'type': 'str'},
+        "light_theme": {"key": "lightTheme", "type": "bool"},
+        "locale": {"key": "locale", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        light_theme: Optional[bool] = None,
-        locale: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, light_theme: Optional[bool] = None, locale: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword light_theme: If :code:`<code>true</code>` use the light color theme for site seal;
          otherwise, use the default color theme.
@@ -1516,6 +1464,6 @@ class SiteSealRequest(msrest.serialization.Model):
         :keyword locale: Locale of site seal.
         :paramtype locale: str
         """
-        super(SiteSealRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.light_theme = light_theme
         self.locale = locale

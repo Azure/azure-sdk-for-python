@@ -6,7 +6,7 @@
 import os
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Environment
