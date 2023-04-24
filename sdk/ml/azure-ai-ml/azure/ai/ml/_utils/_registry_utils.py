@@ -104,7 +104,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
             registry_name=registry,
             body=body,
         )
-        sas_uri = res.blob_reference_for_consumption.credential["sasUri"]
+        sas_uri = res.blob_reference_for_consumption.credential.sas_uri
     except HttpResponseError as e:
         # "Asset already exists" exception is thrown from service with error code 409, that we need to ignore
         if e.status_code == 409:

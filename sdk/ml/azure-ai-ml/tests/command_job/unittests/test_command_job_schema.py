@@ -41,6 +41,8 @@ class TestCommandJob:
             "./tests/test_configs/command_job/dist_job_1.yml",
             "./tests/test_configs/command_job/dist_job_2.yml",
             "./tests/test_configs/command_job/dist_job_3.yml",
+            "./tests/test_configs/command_job/dist_job_ray_1.yml",
+            "./tests/test_configs/command_job/dist_job_ray_2.yml",
         ]
         context = {BASE_PATH_CONTEXT_KEY: Path(paths[0]).parent}
         schema = CommandJobSchema(context=context)

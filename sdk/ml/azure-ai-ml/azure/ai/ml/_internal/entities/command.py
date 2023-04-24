@@ -6,7 +6,7 @@ from typing import Dict, List, Union
 
 from marshmallow import INCLUDE, Schema
 
-from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, RayDistribution
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration
@@ -136,14 +136,14 @@ class Distributed(Command):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
         """The distribution config of component, e.g. distribution={'type': 'mpi'}."""
         return self._distribution
 
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
     ):
         if isinstance(value, dict):
             dist_schema = DistributionField(unknown=INCLUDE)

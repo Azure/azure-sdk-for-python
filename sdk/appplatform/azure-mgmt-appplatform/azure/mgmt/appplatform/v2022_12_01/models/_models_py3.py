@@ -565,7 +565,7 @@ class AppResourceProperties(_serialization.Model):  # pylint: disable=too-many-i
     :ivar url: URL of the App.
     :vartype url: str
     :ivar addon_configs: Collection of addons.
-    :vartype addon_configs: dict[str, dict[str, JSON]]
+    :vartype addon_configs: dict[str, JSON]
     :ivar provisioning_state: Provisioning state of the App. Known values are: "Succeeded",
      "Failed", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
@@ -601,7 +601,7 @@ class AppResourceProperties(_serialization.Model):  # pylint: disable=too-many-i
     _attribute_map = {
         "public": {"key": "public", "type": "bool"},
         "url": {"key": "url", "type": "str"},
-        "addon_configs": {"key": "addonConfigs", "type": "{{object}}"},
+        "addon_configs": {"key": "addonConfigs", "type": "{object}"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "fqdn": {"key": "fqdn", "type": "str"},
         "https_only": {"key": "httpsOnly", "type": "bool"},
@@ -618,7 +618,7 @@ class AppResourceProperties(_serialization.Model):  # pylint: disable=too-many-i
         self,
         *,
         public: Optional[bool] = None,
-        addon_configs: Optional[Dict[str, Dict[str, JSON]]] = None,
+        addon_configs: Optional[Dict[str, JSON]] = None,
         https_only: bool = False,
         temporary_disk: Optional["_models.TemporaryDisk"] = None,
         persistent_disk: Optional["_models.PersistentDisk"] = None,
@@ -633,7 +633,7 @@ class AppResourceProperties(_serialization.Model):  # pylint: disable=too-many-i
         :keyword public: Indicates whether the App exposes public endpoint.
         :paramtype public: bool
         :keyword addon_configs: Collection of addons.
-        :paramtype addon_configs: dict[str, dict[str, JSON]]
+        :paramtype addon_configs: dict[str, JSON]
         :keyword https_only: Indicate if only https is allowed.
         :paramtype https_only: bool
         :keyword temporary_disk: Temporary disk settings.
@@ -952,7 +952,7 @@ class BindingResourceProperties(_serialization.Model):
     :ivar key: The key of the bound resource.
     :vartype key: str
     :ivar binding_parameters: Binding parameters of the Binding resource.
-    :vartype binding_parameters: dict[str, JSON]
+    :vartype binding_parameters: dict[str, str]
     :ivar generated_properties: The generated Spring Boot property file for this binding. The
      secret will be deducted.
     :vartype generated_properties: str
@@ -975,7 +975,7 @@ class BindingResourceProperties(_serialization.Model):
         "resource_type": {"key": "resourceType", "type": "str"},
         "resource_id": {"key": "resourceId", "type": "str"},
         "key": {"key": "key", "type": "str"},
-        "binding_parameters": {"key": "bindingParameters", "type": "{object}"},
+        "binding_parameters": {"key": "bindingParameters", "type": "{str}"},
         "generated_properties": {"key": "generatedProperties", "type": "str"},
         "created_at": {"key": "createdAt", "type": "str"},
         "updated_at": {"key": "updatedAt", "type": "str"},
@@ -986,7 +986,7 @@ class BindingResourceProperties(_serialization.Model):
         *,
         resource_id: Optional[str] = None,
         key: Optional[str] = None,
-        binding_parameters: Optional[Dict[str, JSON]] = None,
+        binding_parameters: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -995,7 +995,7 @@ class BindingResourceProperties(_serialization.Model):
         :keyword key: The key of the bound resource.
         :paramtype key: str
         :keyword binding_parameters: Binding parameters of the Binding resource.
-        :paramtype binding_parameters: dict[str, JSON]
+        :paramtype binding_parameters: dict[str, str]
         """
         super().__init__(**kwargs)
         self.resource_name = None
@@ -3619,7 +3619,7 @@ class DeploymentSettings(_serialization.Model):
     :ivar environment_variables: Collection of environment variables.
     :vartype environment_variables: dict[str, str]
     :ivar addon_configs: Collection of addons.
-    :vartype addon_configs: dict[str, dict[str, JSON]]
+    :vartype addon_configs: dict[str, JSON]
     :ivar liveness_probe: Periodic probe of App Instance liveness. App Instance will be restarted
      if the probe fails. More info:
      https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes.
@@ -3652,7 +3652,7 @@ class DeploymentSettings(_serialization.Model):
     _attribute_map = {
         "resource_requests": {"key": "resourceRequests", "type": "ResourceRequests"},
         "environment_variables": {"key": "environmentVariables", "type": "{str}"},
-        "addon_configs": {"key": "addonConfigs", "type": "{{object}}"},
+        "addon_configs": {"key": "addonConfigs", "type": "{object}"},
         "liveness_probe": {"key": "livenessProbe", "type": "Probe"},
         "readiness_probe": {"key": "readinessProbe", "type": "Probe"},
         "startup_probe": {"key": "startupProbe", "type": "Probe"},
@@ -3665,7 +3665,7 @@ class DeploymentSettings(_serialization.Model):
         *,
         resource_requests: Optional["_models.ResourceRequests"] = None,
         environment_variables: Optional[Dict[str, str]] = None,
-        addon_configs: Optional[Dict[str, Dict[str, JSON]]] = None,
+        addon_configs: Optional[Dict[str, JSON]] = None,
         liveness_probe: Optional["_models.Probe"] = None,
         readiness_probe: Optional["_models.Probe"] = None,
         startup_probe: Optional["_models.Probe"] = None,
@@ -3681,7 +3681,7 @@ class DeploymentSettings(_serialization.Model):
         :keyword environment_variables: Collection of environment variables.
         :paramtype environment_variables: dict[str, str]
         :keyword addon_configs: Collection of addons.
-        :paramtype addon_configs: dict[str, dict[str, JSON]]
+        :paramtype addon_configs: dict[str, JSON]
         :keyword liveness_probe: Periodic probe of App Instance liveness. App Instance will be
          restarted if the probe fails. More info:
          https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes.
