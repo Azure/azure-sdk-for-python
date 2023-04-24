@@ -61,10 +61,10 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
-        service_client_04_2023_preview = kwargs.pop("service_service_client_02_2023_preview")
-        self._component_batch_deployment_operations = service_client_04_2023_preview.batch_deployments
+        service_client_02_2023_preview = kwargs.pop("service_client_02_2023_preview")
+        self._component_batch_deployment_operations = service_client_02_2023_preview.batch_deployments
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
-        self._component_operations = service_client_04_2023_preview.component_versions
+        self._component_operations = service_client_02_2023_preview.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
