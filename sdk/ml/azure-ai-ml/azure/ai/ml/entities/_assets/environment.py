@@ -23,7 +23,6 @@ from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
 from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
-from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -324,6 +323,7 @@ class Environment(Asset):
             and self.inference_config == other.inference_config
             and self._is_anonymous == other._is_anonymous
             and self.os_type == other.os_type
+            and self._intellectual_property == other._intellectual_property
         )
 
     def __ne__(self, other) -> bool:
