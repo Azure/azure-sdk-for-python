@@ -139,7 +139,11 @@ class TestComponentValidate:
         component: CommandComponent = load_component(component_path)
         component.name = None
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = mock_machinelearning_client.components.validate(component)
+        validation_result = mock_machinelearning_client.components.validate(
+            component,
+            # skip remote validation for unit test as it requires a valid workspace to fetch the location
+            skip_remote_validation=True,
+        )
         assert validation_result.passed is False
         assert validation_result._to_dict() == {
             "errors": [

@@ -114,7 +114,7 @@ from ._registry.registry_support_classes import (
     SystemCreatedStorageAccount,
 )
 from ._resource import Resource
-from ._schedule.schedule import JobSchedule
+from ._schedule.schedule import Schedule, JobSchedule
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
@@ -146,7 +146,7 @@ from ._assets._artifacts._package.inferencing_server import (
     Route,
 )
 from ._assets._artifacts._package.model_configuration import ModelConfiguration
-from ._assets._artifacts._package.base_environment_source import BaseEnvironmentId
+from ._assets._artifacts._package.base_environment_source import BaseEnvironment
 from ._assets._artifacts._package.model_package import (
     ModelPackage,
     PackageInputPathId,
@@ -155,22 +155,22 @@ from ._assets._artifacts._package.model_package import (
 )
 
 
-from ._assets._artifacts.feature_set import _FeatureSet
-from ._workspace.compute_runtime import _ComputeRuntime
-from ._workspace.feature_store_settings import _FeatureStoreSettings
-from ._feature_store_entity.feature_store_entity import _FeatureStoreEntity
-from ._feature_store_entity.data_column import _DataColumn
-from ._feature_store_entity.data_column_type import _DataColumnType
-from ._feature_set.feature import _Feature
-from ._feature_set.feature_set_specification import _FeatureSetSpecification
-from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
-from ._feature_set.materialization_settings import _MaterializationSettings
-from ._feature_set.materialization_type import _MaterializationType
-from ._feature_set.feature_set_backfill_response import _FeatureSetBackfillResponse
-from ._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
-from ._feature_store.feature_store import _FeatureStore
-from ._feature_store.materialization_store import _MaterializationStore
-from ._notification.notification import _Notification
+from ._assets._artifacts.feature_set import FeatureSet
+from ._workspace.compute_runtime import ComputeRuntime
+from ._workspace.feature_store_settings import FeatureStoreSettings
+from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from ._feature_store_entity.data_column import DataColumn
+from ._feature_store_entity.data_column_type import DataColumnType
+from ._feature_set.feature import Feature
+from ._feature_set.feature_set_specification import FeatureSetSpecification
+from ._feature_set.materialization_compute_resource import MaterializationComputeResource
+from ._feature_set.materialization_settings import MaterializationSettings
+from ._feature_set.materialization_type import MaterializationType
+from ._feature_set.feature_set_backfill_response import FeatureSetBackfillResponse
+from ._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
+from ._feature_store.feature_store import FeatureStore
+from ._feature_store.materialization_store import MaterializationStore
+from ._notification.notification import Notification
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -284,6 +284,7 @@ __all__ = [
     "RecurrenceTrigger",
     "RecurrencePattern",
     "JobSchedule",
+    "Schedule",
     "ComputePowerAction",
     "ComputeSchedules",
     "ComputeStartStopSchedule",
@@ -308,22 +309,22 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
-    "_Feature",
-    "_FeatureSet",
-    "_ComputeRuntime",
-    "_FeatureStoreSettings",
-    "_FeatureStoreEntity",
-    "_DataColumn",
-    "_DataColumnType",
-    "_FeatureSetSpecification",
-    "_MaterializationComputeResource",
-    "_MaterializationSettings",
-    "_MaterializationType",
-    "_FeatureStore",
-    "_MaterializationStore",
-    "_Notification",
-    "_FeatureSetBackfillResponse",
-    "_FeatureSetMaterializationResponse",
+    "Feature",
+    "FeatureSet",
+    "ComputeRuntime",
+    "FeatureStoreSettings",
+    "FeatureStoreEntity",
+    "DataColumn",
+    "DataColumnType",
+    "FeatureSetSpecification",
+    "MaterializationComputeResource",
+    "MaterializationSettings",
+    "MaterializationType",
+    "FeatureStore",
+    "MaterializationStore",
+    "Notification",
+    "FeatureSetBackfillResponse",
+    "FeatureSetMaterializationResponse",
     # builders
     "Command",
     "Parallel",
@@ -350,7 +351,7 @@ __all__ = [
     "TritonInferencingServer",
     "CustomInferencingServer",
     "ModelConfiguration",
-    "BaseEnvironmentId",
+    "BaseEnvironment",
     "PackageInputPathId",
     "PackageInputPathUrl",
     "PackageInputPathVersion",

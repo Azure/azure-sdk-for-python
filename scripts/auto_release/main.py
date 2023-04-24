@@ -11,7 +11,6 @@ from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
 from azure.storage.blob import BlobServiceClient, ContainerClient
-from util import add_certificate
 
 _LOG = logging.getLogger()
 
@@ -111,10 +110,6 @@ def set_test_env_var():
         list_in[i] = list_in[i].replace('ENV_SUBSCRIPTION_ID', os.environ['SUBSCRIPTION_ID'])
     with open(str(Path('tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py')), 'w') as file_out:
         file_out.writelines(list_in)
-
-
-def start_test_proxy():
-    print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
 
 
 class CodegenTestPR:
@@ -435,8 +430,6 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
-        add_certificate()
-        start_test_proxy()
 
     @return_origin_path
     def run_test_proc(self):

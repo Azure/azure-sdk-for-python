@@ -10,6 +10,7 @@ from azure.ai.ml import (
     MpiDistribution,
     Output,
     PyTorchDistribution,
+    RayDistribution,
     TensorFlowDistribution,
     UserIdentityConfiguration,
     command,
@@ -595,6 +596,30 @@ class TestCommandFunction:
         rest_dist = node1._to_rest_object()["distribution"]
         assert rest_dist == {"distribution_type": "Mpi", "process_count_per_instance": 1}
 
+        node1.distribution = {
+            "type": "ray",
+            "port": 1234,
+            "include_dashboard": True,
+            "dashboard_port": 4321,
+            "head_node_additional_args": "--disable-usage-stats",
+            "worker_node_additional_args": "--disable-usage-stats",
+        }
+        assert isinstance(node1.distribution, RayDistribution)
+        rest_dist = node1._to_rest_object()["distribution"]
+        assert rest_dist == {
+            "distribution_type": "Ray",
+            "port": 1234,
+            "include_dashboard": True,
+            "dashboard_port": 4321,
+            "head_node_additional_args": "--disable-usage-stats",
+            "worker_node_additional_args": "--disable-usage-stats",
+        }
+
+        node1.distribution = {"type": "ray", "address": "10.0.0.1:1234"}
+        assert isinstance(node1.distribution, RayDistribution)
+        rest_dist = node1._to_rest_object()["distribution"]
+        assert rest_dist == {"distribution_type": "Ray", "address": "10.0.0.1:1234"}
+
         # invalid
         with pytest.raises(ValidationError):
             node1.distribution = {"type": "unknown", "parameter_server_count": 1}
@@ -744,7 +769,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -761,7 +786,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -778,7 +803,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -794,7 +819,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -815,7 +840,7 @@ class TestCommandFunction:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
