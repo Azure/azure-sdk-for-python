@@ -71,6 +71,24 @@ def fake_datastore_key() -> str:
     return str(b64_key, "ascii")
 
 
+def _query_param_regex(name, *, only_value=True) -> str:
+    """Builds a regex that matches against a query parameter of the form
+         (?|&)name=value
+
+    :param: name - The name of the query parameter to match against
+    :param: only_value (Optional) - Whether the regex match should just
+            match the value of the query param (instead of the name and value)
+    """
+    # Character that marks the end of a query string value
+    QUERY_STRING_DELIMETER = "&#"
+    value_regex = rf'[^{QUERY_STRING_DELIMETER}"\s]*'
+    name_regex = rf"(?<=[?&]){name}="
+    if only_value:
+        name_regex = rf"(?<={name_regex})"
+
+    return rf'{name_regex}{value_regex}(?=[{QUERY_STRING_DELIMETER}"\s]|$)'
+
+
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
@@ -106,11 +124,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
     # masks signature in SAS uri
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='sig=([^/\\s"]{46,52})',
-        group_for_replace="1",
-    )
+    add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
 
 
 def pytest_addoption(parser):
