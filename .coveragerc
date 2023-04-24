@@ -5,7 +5,7 @@ include =
 omit =
 	*/test*
 	env*
-	*_serialization.py
+	*/_serialization.py
 
 [paths]
 source =

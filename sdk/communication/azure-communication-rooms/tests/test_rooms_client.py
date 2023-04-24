@@ -10,9 +10,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
+    ParticipantRole,
     RoomParticipant,
-    RoomJoinPolicy,
-    RoleType
+    RemoveParticipantsResult,
+    UpsertParticipantsResult
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
 from unittest_helpers import mock_response
@@ -24,18 +25,14 @@ class TestRoomsClient(unittest.TestCase):
     valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
     valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
     raw_id = "8:acs:abcd"
-    room_join_policy = RoomJoinPolicy.INVITE_ONLY
     room_participant = RoomParticipant(
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
         ),
-        role=RoleType.PRESENTER
+        role=ParticipantRole.PRESENTER
     )
     json_participant = {
-        "communicationIdentifier": {
-            "rawId": raw_id,
-            "communicationUser": {"id": raw_id}
-        },
+        "rawId": raw_id,
         "role": "Presenter"
     }
 
@@ -45,11 +42,9 @@ class TestRoomsClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=201, json_payload={
                 "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "createdAt": "2022-08-28T01:38:19.0359921+00:00",
                 "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "roomJoinPolicy": self.room_join_policy,
-                "participants": [self.json_participant]
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f")
             })
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         response = None
@@ -57,18 +52,15 @@ class TestRoomsClient(unittest.TestCase):
             response = rooms_client.create_room(
                 valid_from=self.valid_from,
                 valid_until=self.valid_until,
-                room_join_policy=self.room_join_policy,
                 participants=[self.room_participant])
         except:
             raised = True
             raise
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
-        self.assertEqual(self.room_join_policy, response.room_join_policy)
-        self.assertListEqual([self.room_participant], response.participants)
 
     def test_update_room(self):
         raised = False
@@ -76,11 +68,9 @@ class TestRoomsClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
                 "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "createdAt": "2022-08-28T01:38:19.0359921+00:00",
                 "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "roomJoinPolicy": self.room_join_policy,
-                "participants": []
             })
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
@@ -89,18 +79,16 @@ class TestRoomsClient(unittest.TestCase):
             response = rooms_client.update_room(
                 room_id=self.room_id,
                 valid_from=self.valid_from,
-                valid_until=self.valid_until,
-                room_join_policy=self.room_join_policy)
+                valid_until=self.valid_until
+            )
         except:
             raised = True
             raise
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
-        self.assertEqual(self.room_join_policy, response.room_join_policy)
-        self.assertListEqual(response.participants, [])
 
     def test_delete_room_raises_error(self):
         def mock_send(*_, **__):
@@ -115,11 +103,9 @@ class TestRoomsClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
                 "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "createdAt": "2022-08-28T01:38:19.0359921+00:00",
                 "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "roomJoinPolicy": self.room_join_policy,
-                "participants": []
+                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f")
             })
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
@@ -131,12 +117,10 @@ class TestRoomsClient(unittest.TestCase):
             raised = True
             raise
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
-        self.assertEqual(self.room_join_policy, response.room_join_policy)
-        self.assertListEqual(response.participants, [])
 
     def test_get_room_raises_error(self):
         def mock_send(*_, **__):
@@ -145,46 +129,40 @@ class TestRoomsClient(unittest.TestCase):
 
         self.assertRaises(HttpResponseError, rooms_client.get_room, room_id=self.room_id)
 
-    def test_add_participants(self):
+    def test_list_rooms(self):
         raised = False
-        additional_id = "8:acs:abcde"
-        additional_participant_json = {
-            "communicationIdentifier": {
-                "rawId": additional_id
-            },
-            "role": ""
-        }
-        additional_participant = RoomParticipant(
-            communication_identifier=UnknownIdentifier(additional_id),
-            role=''
-        )
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "participants": [self.json_participant, additional_participant_json]
+                "value": [{
+                    "id": self.room_id,
+                    "createdAt": "2022-08-28T01:38:19.0359921+00:00",
+                    "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                    "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f")
+                }]
             })
+
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
-        response = None
+        rooms = None
         try:
-            response = rooms_client.add_participants(room_id=self.room_id, participants=[additional_participant])
+            rooms = rooms_client.list_rooms()
         except:
             raised = True
             raise
+        items = []
+        for page in rooms.by_page():
+            for room in page:
+                items.append(room)
+        assert len(items) > 0
+        self.assertFalse(raised, 'Expected is no exception raised')
+        self.assertEqual(self.room_id, items[0].id)
+        self.assertEqual(self.valid_from, items[0].valid_from)
+        self.assertEqual(self.valid_until, items[0].valid_until)
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(None, response)
-
-    def test_update_participants(self):
+    def test_upsert_participants(self):
         raised = False
-        updated_participant_json = {
-            "communicationIdentifier": {
-                "rawId": self.raw_id,
-                "communicationUser": {"id": self.raw_id}
-            },
-            "role": ""
-        }
         updated_participant = RoomParticipant(
             communication_identifier=CommunicationUserIdentifier(
                 id=self.raw_id
@@ -193,21 +171,19 @@ class TestRoomsClient(unittest.TestCase):
         )
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "participants": [updated_participant_json]
-            })
+            return mock_response(status_code=200, json_payload={})
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         response = None
 
         try:
-            response = rooms_client.update_participants(room_id=self.room_id, participants=[updated_participant])
+            response = rooms_client.upsert_participants(room_id=self.room_id, participants=[updated_participant])
         except:
             raised = True
             raise
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(None, response)
+        self.assertFalse(raised, 'Expected is no exception raised')
+        assert isinstance(response, UpsertParticipantsResult)
 
     def test_remove_participants(self):
         raised = False
@@ -227,38 +203,32 @@ class TestRoomsClient(unittest.TestCase):
             raised = True
             raise
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(None, response)
+        self.assertFalse(raised, 'Expected is no exception raised')
+        assert isinstance(response, RemoveParticipantsResult)
 
-    def test_get_participants(self):
+    def test_list_participants(self):
         raised = False
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "participants": [self.json_participant]
+                "value": [self.json_participant]
             })
 
         rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
-        response = None
+        participants = None
         try:
-            response = rooms_client.get_participants(room_id=self.room_id)
+            participants = rooms_client.list_participants(room_id=self.room_id)
         except:
             raised = True
             raise
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [self.room_participant])
-
-    def test_invalid_datetime_raises_valueError(self):
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=None)
-
-        # verify value error on create room call
-        self.assertRaises(ValueError, rooms_client.create_room, valid_from="dummy", valid_until=self.valid_until)
-        self.assertRaises(ValueError, rooms_client.create_room, valid_from=self.valid_from, valid_until="dummy")
-        self.assertRaises(ValueError, rooms_client.create_room, valid_from="dummy", valid_until="dummy")
-
-        # verify ValueError on update_room calls
-        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from="dummy", valid_until=self.valid_until)
-        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from=self.valid_from, valid_until="dummy")
-        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from="dummy", valid_until="dummy")
+        items = []
+        for page in participants.by_page():
+            for participant in page:
+                items.append(participant)
+        assert len(items) > 0
+        self.assertEqual(self.room_participant.communication_identifier, items[0].communication_identifier)
+        self.assertEqual(self.room_participant.communication_identifier.raw_id, items[0].communication_identifier.raw_id)
+        self.assertEqual(self.room_participant.role, items[0].role)
+        self.assertFalse(raised, 'Expected is no exception raised')

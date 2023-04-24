@@ -6,10 +6,12 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
+
+from dsl._util import get_predecessors
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -773,7 +775,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -799,7 +801,7 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -1340,7 +1342,7 @@ class TestPipelineJobEntity:
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -1366,7 +1368,7 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
             },
@@ -1431,7 +1433,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "kmeans_cluster",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -2092,3 +2094,11 @@ class TestPipelineJobEntity:
         # similar to sweep job, automl job job_tier value is also lowercase.
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
+
+    def test_get_predecessors_for_pipeline_job(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+        # get_predecessors is not supported for YAML job
+        assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
+        assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
+        assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []
