@@ -301,7 +301,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The request of text analysis. Required.
@@ -322,7 +322,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The request of text analysis. Required.
@@ -343,7 +343,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The request of text analysis. Required.
@@ -364,7 +364,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The request of text analysis. Is one of the following types: AnalyzeTextOptions,
@@ -439,7 +439,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The analysis request of the image. Required.
@@ -460,7 +460,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The analysis request of the image. Required.
@@ -481,7 +481,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The analysis request of the image. Required.
@@ -502,7 +502,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently we support four categories: Hate,
+        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
         SelfHarm, Sexual, Violence.
 
         :param body: The analysis request of the image. Is one of the following types:
@@ -577,8 +577,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Returns text blocklist details.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -644,8 +644,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.ai.contentsafety.models.TextBlocklist
@@ -667,8 +667,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -690,8 +690,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -713,8 +713,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Is one of the following types: TextBlocklist, JSON, IO
          Required.
@@ -797,8 +797,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Deletes a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -941,8 +941,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Add blockItems to a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: ~azure.ai.contentsafety.models.AddBlockItemsOptions
@@ -964,8 +964,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Add blockItems to a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: JSON
@@ -987,8 +987,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Add blockItems to a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: IO
@@ -1010,8 +1010,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Add blockItems to a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Is one of the following types: AddBlockItemsOptions, JSON, IO Required.
         :type body: ~azure.ai.contentsafety.models.AddBlockItemsOptions or JSON or IO
@@ -1092,8 +1092,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Remove blockItems from a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: ~azure.ai.contentsafety.models.RemoveBlockItemsOptions
@@ -1115,8 +1115,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Remove blockItems from a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: JSON
@@ -1138,8 +1138,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Remove blockItems from a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: IO
@@ -1161,8 +1161,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Remove blockItems from a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param body: Is one of the following types: RemoveBlockItemsOptions, JSON, IO Required.
         :type body: ~azure.ai.contentsafety.models.RemoveBlockItemsOptions or JSON or IO
@@ -1229,8 +1229,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Get blockItem By blockItemId from a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :param block_item_id: Block Item Id. It will be uuid. Required.
         :type block_item_id: str
@@ -1294,8 +1294,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Get all blockItems in a text blocklist.
 
-        :param blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-         .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+         a-z  -  .  _  ~. Required.
         :type blocklist_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int

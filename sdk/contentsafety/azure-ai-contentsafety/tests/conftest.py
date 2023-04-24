@@ -7,6 +7,7 @@ import os
 def start_proxy(test_proxy):
     return
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     content_safety_endpoint = os.environ.get("CONTENT_SAFETY_KEY", "00000000000000000000000000000000")
@@ -14,4 +15,6 @@ def add_sanitizers(test_proxy):
         "CONTENT_SAFETY_ENDPOINT", "https://fake_cs_resource.cognitiveservices.azure.com/"
     )
     add_general_regex_sanitizer(regex=content_safety_key, value="00000000000000000000000000000000")
-    add_general_regex_sanitizer(regex=content_safety_endpoint, value="https://fake_cs_resource.cognitiveservices.azure.com/")
+    add_general_regex_sanitizer(
+        regex=content_safety_endpoint, value="https://fake_cs_resource.cognitiveservices.azure.com/"
+    )

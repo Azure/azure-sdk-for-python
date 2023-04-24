@@ -31,6 +31,7 @@ class AnalyzeText(object):
         print(response.hate_result)
         print(response.self_harm_result)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     sample = AnalyzeText()
     sample.analyze_text()

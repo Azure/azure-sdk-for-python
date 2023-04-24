@@ -3,6 +3,7 @@ from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.contentsafety.models import *
 
+
 class AnalyzeImage(object):
     def analyze_image(self):
         CONTENT_SAFETY_KEY = os.environ["CONTENT_SAFETY_KEY"]
@@ -13,7 +14,7 @@ class AnalyzeImage(object):
         client = ContentSafetyClient(CONTENT_SAFETY_ENDPOINT, AzureKeyCredential(CONTENT_SAFETY_KEY))
 
         # Build request
-        with open(IMAGE_DATA_PATH, 'rb') as file:
+        with open(IMAGE_DATA_PATH, "rb") as file:
             request = AnalyzeImageOptions(image=ImageData(content=file.read()))
 
         # Analyze image
@@ -26,6 +27,7 @@ class AnalyzeImage(object):
 
         print(response)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     sample = AnalyzeImage()
     sample.analyze_image()

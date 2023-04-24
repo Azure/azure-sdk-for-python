@@ -51,18 +51,18 @@ class AddBlockItemsOptions(_model_base.Model):
 class AddBlockItemsResult(_model_base.Model):
     """The response of adding blockItems to text blocklist.
 
-    :ivar block_items: Array of blockItems added.
-    :vartype block_items: list[~azure.ai.contentsafety.models.TextBlockItem]
+    :ivar value: Array of blockItems added.
+    :vartype value: list[~azure.ai.contentsafety.models.TextBlockItem]
     """
 
-    block_items: Optional[List["_models.TextBlockItem"]] = rest_field(name="blockItems")
+    value: Optional[List["_models.TextBlockItem"]] = rest_field()
     """Array of blockItems added."""
 
     @overload
     def __init__(
         self,
         *,
-        block_items: Optional[List["_models.TextBlockItem"]] = None,
+        value: Optional[List["_models.TextBlockItem"]] = None,
     ):
         ...
 
@@ -84,7 +84,7 @@ class AnalyzeImageOptions(_model_base.Model):
 
     :ivar image: The image needs to be analyzed. Required.
     :vartype image: ~azure.ai.contentsafety.models.ImageData
-    :ivar categories: The categories will be analyzed, if not assigned, a default set of
+    :ivar categories: The categories will be analyzed. If not assigned, a default set of the
      categories' analysis results will be returned.
     :vartype categories: list[str or ~azure.ai.contentsafety.models.ImageCategory]
     """
@@ -92,8 +92,8 @@ class AnalyzeImageOptions(_model_base.Model):
     image: "_models.ImageData" = rest_field()
     """The image needs to be analyzed. Required."""
     categories: Optional[List[Union[str, "_models.ImageCategory"]]] = rest_field()
-    """The categories will be analyzed, if not assigned, a default set of categories' analysis results
-     will be returned."""
+    """The categories will be analyzed. If not assigned, a default set of the categories' analysis
+     results will be returned."""
 
     @overload
     def __init__(
@@ -164,10 +164,10 @@ class AnalyzeTextOptions(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar text: The text needs to be scanned. We support at most 1000 characters(unicode code
+    :ivar text: The text needs to be scanned. We support at most 1000 characters (unicode code
      points) in text of one request. Required.
     :vartype text: str
-    :ivar categories: The categories will be analyzed, if not assigned, a default set of
+    :ivar categories: The categories will be analyzed. If not assigned, a default set of the
      categories' analysis results will be returned.
     :vartype categories: list[str or ~azure.ai.contentsafety.models.TextCategory]
     :ivar blocklist_names: The names of blocklists.
@@ -179,11 +179,11 @@ class AnalyzeTextOptions(_model_base.Model):
     """
 
     text: str = rest_field()
-    """The text needs to be scanned. We support at most 1000 characters(unicode code points) in text
+    """The text needs to be scanned. We support at most 1000 characters (unicode code points) in text
      of one request. Required."""
     categories: Optional[List[Union[str, "_models.TextCategory"]]] = rest_field()
-    """The categories will be analyzed, if not assigned, a default set of categories' analysis results
-     will be returned."""
+    """The categories will be analyzed. If not assigned, a default set of the categories' analysis
+     results will be returned."""
     blocklist_names: Optional[List[str]] = rest_field(name="blocklistNames")
     """The names of blocklists."""
     break_by_blocklists: Optional[bool] = rest_field(name="breakByBlocklists")
@@ -306,9 +306,9 @@ class ImageAnalyzeSeverityResult(_model_base.Model):
 
 
 class ImageData(_model_base.Model):
-    """The content or blob url of image, could be base64 encoding bytes or blob url, if both given,
-    the request will be refused. The maximum size of image is 2048 pixels * 2048 pixels, no larger
-    than 4MB at the same time. The minimum size of image is 50 pixels * 50 pixels.
+    """The content or blob url of image, could be base64 encoding bytes or blob url. If both are
+    given, the request will be refused. The maximum size of image is 2048 pixels * 2048 pixels, no
+    larger than 4MB at the same time. The minimum size of image is 50 pixels * 50 pixels.
 
     :ivar content: Base64 encoding of image.
     :vartype content: bytes
@@ -380,8 +380,8 @@ class TextAnalyzeSeverityResult(_model_base.Model):
     :ivar category: The text category. Required. Known values are: "Hate", "SelfHarm", "Sexual",
      and "Violence".
     :vartype category: str or ~azure.ai.contentsafety.models.TextCategory
-    :ivar severity: The higher the severity of input content, the larger this value, currently its
-     value could be: 0,2,4,6. Required.
+    :ivar severity: The higher the severity of input content, the larger this value is. The values
+     could be: 0,2,4,6. Required.
     :vartype severity: int
     """
 
@@ -389,7 +389,7 @@ class TextAnalyzeSeverityResult(_model_base.Model):
     """The text category. Required. Known values are: \"Hate\", \"SelfHarm\", \"Sexual\", and
      \"Violence\"."""
     severity: int = rest_field()
-    """The higher the severity of input content, the larger this value, currently its value could be:
+    """The higher the severity of input content, the larger this value is. The values could be:
      0,2,4,6. Required."""
 
     @overload
@@ -497,15 +497,16 @@ class TextBlocklist(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar blocklist_name: Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -
-     .  _  ~. Required.
+    :ivar blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
+     a-z  -  .  _  ~. Required.
     :vartype blocklist_name: str
     :ivar description: Text blocklist description.
     :vartype description: str
     """
 
     blocklist_name: str = rest_field(name="blocklistName", readonly=True)
-    """Text blocklist Name. Only support following characters: 0-9  A-Z  a-z  -  .  _  ~. Required."""
+    """Text blocklist name. Only supports the following characters: 0-9  A-Z  a-z  -  .  _  ~.
+     Required."""
     description: Optional[str] = rest_field()
     """Text blocklist description."""
 

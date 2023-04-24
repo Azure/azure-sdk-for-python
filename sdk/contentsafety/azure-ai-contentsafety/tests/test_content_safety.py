@@ -9,19 +9,19 @@ from test_data import *
 
 ContentSafetyPreparer = functools.partial(
     PowerShellPreparer,
-    'content_safety',
+    "content_safety",
     content_safety_endpoint="https://fake_cs_resource.cognitiveservices.azure.com/",
-    content_safety_key="00000000000000000000000000000000"
+    content_safety_key="00000000000000000000000000000000",
 )
 
-class TestContentSafety(AzureRecordedTestCase):
 
+class TestContentSafety(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
         return client
 
-class TestContentSafetyCase(TestContentSafety):
 
+class TestContentSafetyCase(TestContentSafety):
     @ContentSafetyPreparer()
     @recorded_by_proxy
     def test_analyze_text(self, content_safety_endpoint, content_safety_key):
