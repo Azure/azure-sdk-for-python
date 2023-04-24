@@ -108,11 +108,12 @@ def get_updated_config(config_path: str, package_root: str) -> Dict[str, Dict[st
         api_version = os.path.relpath(version_path, start=api_directory)
         full_namespace = namespace + f".{api_version}"
 
-        if config[package_name]:
-            ns = config[package_name]["namespaces"]
-            if ns:
-                if full_namespace not in ns:
-                    ns.append(full_namespace)
+        if package_name in config:
+            if "namespaces" in config[package_name]:
+                ns = config[package_name]["namespaces"]
+                if ns:
+                    if full_namespace not in ns:
+                        ns.append(full_namespace)
 
     return config
 
