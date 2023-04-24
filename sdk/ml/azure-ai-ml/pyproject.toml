@@ -12,3 +12,4 @@ exclude = ["setup.py", "tests", "azure/ai/ml/_restclient"]
 
 [tool.isort]
 profile = "black"
+line_length = 120
