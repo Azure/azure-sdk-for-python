@@ -38,7 +38,6 @@ from azure.ai.ml.entities import (
     JobResourceConfiguration,
     PipelineJob,
     QueueSettings,
-    SparkJobEntry,
     SparkResourceConfiguration,
 )
 from azure.ai.ml.entities._builders import Command, DataTransferCopy, Spark
@@ -54,7 +53,7 @@ from azure.ai.ml.exceptions import (
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
 
-from .._util import _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, get_predecessors
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
@@ -572,6 +571,38 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException, match="Invalid node name found"):
             pipeline_with_invalid_user_defined_nodes_3()
 
+    def test_pipeline_variable_name_uppercase(self):
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(
+            source=component_yaml,
+        )
+
+        @dsl.pipeline(name="pipeline_with_uppercase_node_names")
+        def pipeline_with_user_defined_nodes_1():
+            for i in range(2):
+                node1 = component_func(component_in_path=Input(path="fake_input"))
+                # change node name to lower when setting it to avoid upper case in nxt_input's binding
+                node1.name = f"Dummy_{i}"
+                nxt_input = Input(
+                    path=node1.outputs.component_out_path,
+                    mode=InputOutputModes.DIRECT,
+                )
+                node2 = component_func(component_in_path=nxt_input)
+                node2.name = f"Another_{i}"
+
+        pipeline_job = pipeline_with_user_defined_nodes_1()
+        rest_pipeline_job = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job["properties"]["jobs"]["another_0"]["inputs"]["component_in_path"] == {
+            "job_input_type": "literal",
+            "mode": "Direct",
+            "value": "${{parent.jobs.dummy_0.outputs.component_out_path}}",
+        }
+        assert rest_pipeline_job["properties"]["jobs"]["another_1"]["inputs"]["component_in_path"] == {
+            "job_input_type": "literal",
+            "mode": "Direct",
+            "value": "${{parent.jobs.dummy_1.outputs.component_out_path}}",
+        }
+
     def test_connect_components_in_pipeline(self):
         hello_world_component_yaml = "./tests/test_configs/components/helloworld_component_with_input_and_output.yml"
         hello_world_component_func = load_component(source=hello_world_component_yaml)
@@ -733,8 +764,9 @@ class TestDSLPipeline:
             hello_world_component_2.resources.instance_count = 2
 
             # configure component outputs
-            hello_world_component_1.outputs.component_out_path.mode = "Upload"
-            hello_world_component_2.outputs.component_out_path.mode = "Upload"
+            # Note: this configures output type too
+            hello_world_component_1.outputs.component_out_path = Output(mode="Upload")
+            hello_world_component_2.outputs.component_out_path = Output(mode="Upload")
 
             merge_component_outputs = merge_outputs_component_func(
                 component_in_number=job_in_other_number,
@@ -2235,9 +2267,9 @@ class TestDSLPipeline:
         @dsl.pipeline(description="submit a pipeline with spark job")
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column = add_greeting_column_func(file_input=iris_data)
-            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
             count_by_row = count_by_row_func(file_input=iris_data)
-            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
             count_by_row.identity = {"type": "managed"}
 
             return {"output": count_by_row.outputs.output}
@@ -2287,7 +2319,7 @@ class TestDSLPipeline:
             "jobs": {
                 "add_greeting_column": {
                     "type": "spark",
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
                     "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
                     "py_files": ["utils.zip"],
                     "files": ["my_files.txt"],
@@ -2323,7 +2355,7 @@ class TestDSLPipeline:
                     "jars": ["scalaproj.jar"],
                     "name": "count_by_row",
                     "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
             },
@@ -2859,7 +2891,8 @@ class TestDSLPipeline:
 
     def test_pipeline_output_settings_copy(self):
         component_yaml = components_dir / "helloworld_component.yml"
-        component_func1 = load_component(source=component_yaml)
+        params_override = [{"outputs": {"component_out_path": {"type": "uri_file"}}}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
 
         @dsl.pipeline()
         def my_pipeline():
@@ -2877,15 +2910,36 @@ class TestDSLPipeline:
         assert pipeline_job1.component.outputs["component_out_path"].path == "path1"
         assert pipeline_job2.outputs.component_out_path.path == "path1"
         assert pipeline_job2.component.outputs["component_out_path"].path == "path1"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()
+        # type will be preserved & path will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "uri": "new_path",
+        }
+
+        pipeline_dict = pipeline_job2._to_rest_object().as_dict()
+        # type will be preserved & path will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "uri": "path1",
+        }
 
         # newly create pipeline job instance won't be affected
         pipeline_job3 = my_pipeline()
         assert pipeline_job3.outputs.component_out_path.path == "path1"
         assert pipeline_job3.component.outputs["component_out_path"].path == "path1"
 
+        pipeline_dict = pipeline_job3._to_rest_object().as_dict()
+        # type will be preserved & path will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "uri": "path1",
+        }
+
     def test_node_path_promotion(self):
         component_yaml = components_dir / "helloworld_component.yml"
-        component_func1 = load_component(source=component_yaml)
+        params_override = [{"outputs": {"component_out_path": {"type": "uri_file"}}}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
 
         @dsl.pipeline()
         def my_pipeline():
@@ -2898,6 +2952,12 @@ class TestDSLPipeline:
 
         pipeline_job1 = my_pipeline()
         assert pipeline_job1.outputs.component_out_path.path == "path"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()
+        # type will be preserved & path will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_folder",
+            "uri": "path",
+        }
 
         @dsl.pipeline()
         def outer_pipeline():
@@ -2909,6 +2969,12 @@ class TestDSLPipeline:
 
         pipeline_job2 = outer_pipeline()
         assert pipeline_job2.outputs.component_out_path.path == "new_path"
+        pipeline_dict = pipeline_job2._to_rest_object().as_dict()
+        # type will be preserved & path will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_folder",
+            "uri": "new_path",
+        }
 
     def test_node_output_type_promotion(self):
         component_yaml = components_dir / "helloworld_component.yml"
@@ -2926,6 +2992,29 @@ class TestDSLPipeline:
         assert pipeline_job1.outputs.component_out_path.type == "uri_file"
         pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
         assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "uri_file"
+
+        # when node level has output setting except type, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path.mode = "mount"
+            assert node1.outputs.component_out_path.type == "uri_file"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.type == "uri_file"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        # pipeline level should have correct type & copied mode
+        assert pipeline_dict["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "mode": "ReadWriteMount",
+        }
+        # node level will have a binding
+        assert pipeline_dict["jobs"]["node1"]["outputs"]["component_out_path"] == {
+            "mode": "ReadWriteMount",
+            "type": "literal",
+            "value": "${{parent.outputs.component_out_path}}",
+        }
 
         # when node level has setting, node should respect the setting
         @dsl.pipeline()
@@ -2972,6 +3061,12 @@ class TestDSLPipeline:
         # assert pipeline_job1.outputs.component_out_path.mode == "mount"
         pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
         assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "ReadWriteMount"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()
+        # type will be preserved & mode will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "mode": "ReadWriteMount",
+        }
 
         # when node level has setting, node should respect the setting
         @dsl.pipeline()
@@ -2986,6 +3081,12 @@ class TestDSLPipeline:
         # assert pipeline_job1.outputs.component_out_path.mode == "upload"
         pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
         assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Upload"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()
+        # type will be preserved & mode will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "mode": "Upload",
+        }
 
         # when pipeline level has setting, node should respect the setting
         @dsl.pipeline()
@@ -3001,6 +3102,35 @@ class TestDSLPipeline:
         assert pipeline_job1.outputs.component_out_path.mode == "direct"
         pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
         assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Direct"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()
+        # type will be preserved & mode will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "mode": "Direct",
+        }
+
+        # when component has default mode & type, configuring it should keep them
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.path = "path"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()
+        # type will be preserved
+        # mode will be dropped and leave it to service side resolve
+        # path will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["component_out_path"] == {
+            "job_output_type": "uri_file",
+            "uri": "path",
+        }
+        assert pipeline_dict["properties"]["jobs"]["node1"]["outputs"]["component_out_path"] == {
+            "type": "literal",
+            "value": "${{parent.outputs.component_out_path}}",
+        }
 
     def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
         # Refresh logger for pytest to capture log, otherwise the result is empty.
@@ -3193,3 +3323,163 @@ class TestDSLPipeline:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_get_predecessors(self):
+        component_yaml = components_dir / "2in2out.yaml"
+        component_func = load_component(source=component_yaml)
+
+        # case1.1: predecessor from same node
+        @dsl.pipeline()
+        def pipeline1():
+            node1 = component_func()
+            node1.name = "node1"
+            assert get_predecessors(node1) == []
+            node2 = component_func(input1=node1.outputs.output1, input2=node1.outputs.output2)
+            assert ["node1"] == [n.name for n in get_predecessors(node2)]
+            return node1.outputs
+
+        pipeline1()
+
+        # case1.2: predecessor from different node
+        @dsl.pipeline()
+        def pipeline2():
+            node1 = component_func()
+            node1.name = "node1"
+            assert get_predecessors(node1) == []
+
+            node2 = component_func()
+            node2.name = "node2"
+            assert get_predecessors(node2) == []
+
+            node2 = component_func(input1=node1.outputs.output1, input2=node2.outputs.output2)
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node2)]
+            return node2.outputs
+
+        pipeline2()
+
+        # case 2.1: predecessor from same sub pipeline
+        @dsl.pipeline()
+        def pipeline3():
+            sub1 = pipeline1()
+            node3 = component_func(input1=sub1.outputs.output1, input2=sub1.outputs.output2)
+            assert ["node1"] == [n.name for n in get_predecessors(node3)]
+
+        pipeline3()
+
+        # case 2.2: predecessor from different sub pipeline
+        @dsl.pipeline()
+        def pipeline4():
+            sub1 = pipeline1()
+            sub2 = pipeline2()
+            node3 = component_func(input1=sub1.outputs.output1, input2=sub2.outputs.output2)
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node3)]
+
+        pipeline4()
+
+        # case 3.1: predecessor from different outer node
+        @dsl.pipeline()
+        def sub_pipeline_1(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert ["outer1", "outer2"] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline5():
+            outer1 = component_func()
+            outer1.name = "outer1"
+            outer2 = component_func()
+            outer2.name = "outer2"
+            sub_pipeline_1(input1=outer1.outputs.output1, input2=outer2.outputs.output2)
+
+        pipeline5()
+
+        # case 3.2: predecessor from same outer node
+        @dsl.pipeline()
+        def sub_pipeline_2(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert ["outer1"] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline6():
+            outer1 = component_func()
+            outer1.name = "outer1"
+            sub_pipeline_2(input1=outer1.outputs.output1, input2=outer1.outputs.output2)
+
+        pipeline6()
+
+        # case 3.3: predecessor from outer literal value
+        @dsl.pipeline()
+        def sub_pipeline_3(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert [] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline7():
+            sub_pipeline_3(input1=Input(), input2=Input())
+
+        pipeline7()
+
+        # case 3.4: predecessor from outer subgraph
+        @dsl.pipeline()
+        def sub_pipeline_4(input1: Input, input2: Input):
+            node1 = component_func(input1=input1, input2=input2)
+            assert ["node1", "node2"] == [n.name for n in get_predecessors(node1)]
+
+        @dsl.pipeline()
+        def pipeline8():
+            sub1 = pipeline1()
+            sub2 = pipeline2()
+            sub_pipeline_4(input1=sub1.outputs.output1, input2=sub2.outputs.output2)
+
+        pipeline8()
+
+    def test_pipeline_singularity_strong_type(self, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        instance_type = "Singularity.ND40rs_v2"
+
+        @dsl.pipeline
+        def pipeline_func():
+            # basic job_tier + Low priority
+            basic_low_node = component_func()
+            basic_low_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
+            # standard job_tier + Medium priority
+            standard_medium_node = component_func()
+            standard_medium_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
+            # premium job_tier + High priority
+            premium_high_node = component_func()
+            premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+            # properties
+            node_with_properties = component_func()
+            properties = {"Singularity": {"imageVersion": "", "interactive": False}}
+            node_with_properties.resources = JobResourceConfiguration(
+                instance_count=2, instance_type=instance_type, properties=properties
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+
+        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        # basic job_tier + Low priority
+        basic_low_node_dict = pipeline_job_dict["properties"]["jobs"]["basic_low_node"]
+        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
+        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # standard job_tier + Medium priority
+        standard_medium_node_dict = pipeline_job_dict["properties"]["jobs"]["standard_medium_node"]
+        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
+        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # premium job_tier + High priority
+        premium_high_node_dict = pipeline_job_dict["properties"]["jobs"]["premium_high_node"]
+        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
+        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # properties
+        node_with_properties_dict = pipeline_job_dict["properties"]["jobs"]["node_with_properties"]
+        assert node_with_properties_dict["resources"] == {
+            "instance_count": 2,
+            "instance_type": instance_type,
+            # the mapping Singularity => AISuperComputer is expected
+            "properties": {"AISuperComputer": {"imageVersion": "", "interactive": False}},
+        }

@@ -1,5 +1,11 @@
 # Release History
 
+## 10.2.1 (2023-04-03)
+
+### Bugs Fixed
+
+  - Seal enum which has single value as constant by default to avoid breaking change
+
 ## 10.2.0 (2023-03-13)
 
 ### Features Added

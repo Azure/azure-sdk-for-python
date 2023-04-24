@@ -453,7 +453,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 last_udpated_on = properties.last_udpated_on
             last_updated_on = properties.last_updated_on
             assert last_udpated_on == last_updated_on
-
+    
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_upload_blob(self, containerregistry_endpoint):
@@ -462,13 +462,18 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            with open(path, "rb") as stream:
-                digest, size = await client.upload_blob(repo, stream)
-            assert digest == f"sha256:{blob}"
-            
+            # Act
+            with open(path, "rb") as data:
+                digest, blob_size = await client.upload_blob(repo, data)
+
+            # Assert
+            blob_content = b""
+            stream = await client.download_blob(repo, digest)
+            async for chunk in stream:
+                blob_content += chunk
+            assert len(blob_content) == blob_size
+
             await client.delete_blob(repo, digest)
-            
-            # Cleanup
             await client.delete_repository(repo)
 
     @pytest.mark.live_test_only
@@ -477,11 +482,20 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            # Test blob upload in equal size chunks
+            # Test blob upload and download in equal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
             data = b'\x00' * int(blob_size)
             digest, size = await client.upload_blob(repo, BytesIO(data))
             assert size == blob_size
+
+            stream = await client.download_blob(repo, digest)
+            size = 0
+            with open("text1.txt", "wb") as file:
+                async for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+
+            await client.delete_blob(repo, digest)
 
             # Test blob upload and download in unequal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
@@ -489,9 +503,18 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             digest, size = await client.upload_blob(repo, BytesIO(data))
             assert size == blob_size
 
+            stream = await client.download_blob(repo, digest)
+            size = 0
+            async with open("text2.txt", "wb") as file:
+                async for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+
+            await client.delete_blob(repo, digest)
+
             # Cleanup
             await client.delete_repository(repo)
-    
+
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
@@ -506,32 +529,27 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_set_audience(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = get_audience(authority)
 
+        async with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
+            async for repo in client.list_repository_names():
+                pass
+
+        valid_audience = get_audience(authority)
         async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
-            assert client._client._config.api_version == "2021-07-01"
             async for repo in client.list_repository_names():
                 pass
-        
-        async with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
-                async for repo in client.list_repository_names():
-                    pass
 
-                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
-                invalid_client = ContainerRegistryClient(
-                    endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
-                )
-                with pytest.raises(ClientAuthenticationError):
-                    async for repo in invalid_client.list_repository_names():
-                        pass
-            else:
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            async with ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            ) as client:
                 with pytest.raises(ClientAuthenticationError):
                     async for repo in client.list_repository_names():
                         pass
-    
+
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tags_in_empty_repo(self, containerregistry_endpoint):

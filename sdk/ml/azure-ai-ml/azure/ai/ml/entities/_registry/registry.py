@@ -150,7 +150,7 @@ class Registry(Resource):
 
         # Convert from api name region_details to user-shown name "replication locations"
         replication_locations = []
-        if real_registry.region_details:
+        if real_registry and real_registry.region_details:
             replication_locations = [
                 RegistryRegionDetails._from_rest_object(details)
                 for details in real_registry.region_details  # pylint: disable=protected-access

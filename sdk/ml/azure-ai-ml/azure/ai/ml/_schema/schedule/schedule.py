@@ -28,6 +28,13 @@ class ScheduleSchema(ResourceSchema):
             NestedField(RecurrenceTriggerSchema),
         ],
     )
+    creation_context = NestedField(CreationContextSchema, dump_only=True)
+    is_enabled = fields.Boolean(dump_only=True)
+    provisioning_state = fields.Str(dump_only=True)
+    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
+
+
+class JobScheduleSchema(ScheduleSchema):
     create_job = UnionField(
         [
             ArmStr(azureml_type=AzureMLResourceType.JOB),
@@ -37,7 +44,3 @@ class ScheduleSchema(ResourceSchema):
             NestedField(SparkCreateJobSchema),
         ]
     )
-    creation_context = NestedField(CreationContextSchema, dump_only=True)
-    is_enabled = fields.Boolean(dump_only=True)
-    provisioning_state = fields.Str(dump_only=True)
-    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))

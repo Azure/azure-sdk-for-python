@@ -109,7 +109,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.scatter_gather_graph = self.scatter_gather()
 
         # set SG node flag for telemetry
-        self.scatter_gather_graph.properties["azureml.telemetry.attribute"] = "scatter-gather"
+        self.scatter_gather_graph.properties["azureml.telemetry.attribution"] = "FederatedLearningSGJobFlag"
+        self.scatter_gather_graph._to_rest_object()
 
         # set output to final aggregation step's output
         self._outputs = self.scatter_gather_graph.outputs
@@ -178,7 +179,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # Set mode of aggregated mltable inputs as eval mount to allow files referenced within the table
             # to be accessible by the component
             for name, agg_input in executed_aggregation_component.inputs.items():
-                if name in self.silo_to_aggregation_argument_map.keys() and agg_input.type == "mltable":
+                if name in self.silo_to_aggregation_argument_map.values() and agg_input.type == "mltable":
                     agg_input.mode = "eval_download"
 
             # Anchor both the internal merge components and the user-supplied aggregation step
@@ -772,6 +773,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             executed_merge_component = merge_comp(**merge_component_inputs)
             for input_obj in executed_merge_component.inputs.values():
                 input_obj.mode = "direct"
+            for output_obj in executed_merge_component.outputs.values():
+                output_obj.type = "mltable"
             merge_comp_mapping.update({silo_output_argument_name: executed_merge_component})
 
         return merge_comp_mapping

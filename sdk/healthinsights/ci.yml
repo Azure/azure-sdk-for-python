@@ -32,6 +32,8 @@ extends:
     Artifacts:
     - name: azure-healthinsights-cancerprofiling
       safeName: azurehealthinsightscancerprofiling
+      skipVerifyChangeLog: true
 
     - name: azure-healthinsights-clinicalmatching
       safeName: azurehealthinsightsclinicalmatching
+      skipVerifyChangeLog: true

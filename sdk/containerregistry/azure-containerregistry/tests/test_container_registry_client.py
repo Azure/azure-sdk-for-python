@@ -556,16 +556,18 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
 
         with self.create_registry_client(containerregistry_endpoint) as client:
-            with open(path, "rb") as stream:
-                digest, size = client.upload_blob(repo, stream)
+            # Act
+            with open(path, "rb") as data:
+                digest, blob_size = client.upload_blob(repo, data)
 
-            res = client.download_blob(repo, digest)
-            assert len(res.data.read()) == size
-            assert res.digest == digest
+            # Assert
+            blob_content = b""
+            stream = client.download_blob(repo, digest)
+            for chunk in stream:
+                blob_content += chunk
+            assert len(blob_content) == blob_size
 
             client.delete_blob(repo, digest)
-            
-            # Cleanup
             client.delete_repository(repo)
 
     @pytest.mark.live_test_only
@@ -574,16 +576,32 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # Test blob upload in equal size chunks
+            # Test blob upload and download in equal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
             data = b'\x00' * int(blob_size)
             digest, size = client.upload_blob(repo, BytesIO(data))
             assert size == blob_size
 
+            stream = client.download_blob(repo, digest)
+            size = 0
+            with open("text1.txt", "wb") as file:
+                for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+
+            client.delete_blob(repo, digest)
+
             # Test blob upload and download in unequal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
             data = b'\x00' * int(blob_size)
             digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            stream = client.download_blob(repo, digest)
+            size = 0
+            with open("text2.txt", "wb") as file:
+                for chunk in stream:
+                    size += file.write(chunk)
             assert size == blob_size
 
             client.delete_blob(repo, digest)
@@ -605,31 +623,27 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_set_audience(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = get_audience(authority)
+        
+        with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
+            for repo in client.list_repository_names():
+                pass
 
+        valid_audience = get_audience(authority)
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
             for repo in client.list_repository_names():
                 pass
-        
-        with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
-                for repo in client.list_repository_names():
-                    pass
-                
-                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
-                invalid_client = ContainerRegistryClient(
-                    endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
-                )
-                with pytest.raises(ClientAuthenticationError):           
-                    for repo in invalid_client.list_repository_names():
-                        pass
-            else:
+
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            with ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            ) as client:
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
-    
+
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
