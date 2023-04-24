@@ -3,7 +3,6 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_batch_deployment
@@ -11,6 +10,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.operations import BatchDeploymentOperations, WorkspaceOperations
+from azure.core.polling import LROPoller
 
 
 @pytest.fixture()

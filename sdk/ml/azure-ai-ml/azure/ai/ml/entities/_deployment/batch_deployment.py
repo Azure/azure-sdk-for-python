@@ -9,11 +9,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchDeployment as BatchDeploymentData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchDeploymentProperties as RestBatchDeployment
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchOutputAction
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdAssetReference
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
+from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled, snake_to_pascal
