@@ -29,7 +29,12 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations, OperationsContainer
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+    OperationsContainer,
+)
 from azure.ai.ml.entities._assets._artifacts.code import Code
 
 from azure.ai.ml.constants._common import ARM_ID_PREFIX

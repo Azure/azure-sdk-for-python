@@ -110,7 +110,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         from azure.ai.ml.entities._assets import Environment
 
         if isinstance(data, Environment):
-            if data._intellectual_property:
+            if data._intellectual_property:  # pylint: disable=protected-access
                 ipp_field = data._intellectual_property  # pylint: disable=protected-access
                 if ipp_field:
                     setattr(data, "intellectual_property", ipp_field)

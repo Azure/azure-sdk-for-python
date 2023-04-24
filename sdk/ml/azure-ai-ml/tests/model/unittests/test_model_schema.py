@@ -53,7 +53,7 @@ class TestModelSchema:
                     "protectionLevel": "All",
                 },
             },
-            "systemData": {}
+            "systemData": {},
         }
 
         from_rest_ipp_model = Model._from_rest_object(ModelVersionData.deserialize(rest_ipp_model))

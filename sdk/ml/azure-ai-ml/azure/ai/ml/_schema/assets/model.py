@@ -45,7 +45,7 @@ class ModelSchema(PathAwareSchema):
 
     @pre_dump
     def validate(self, data, **kwargs):
-        if data._intellectual_property:
+        if data._intellectual_property:  # pylint: disable=protected-access
             ipp_field = data._intellectual_property  # pylint: disable=protected-access
             if ipp_field:
                 setattr(data, "intellectual_property", ipp_field)

@@ -22,9 +22,7 @@ class TestEnvironmentEntity:
             version="16",
             image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
         )
-        same_environment = Environment(
-            name=environment.name, version=environment.version, image=environment.image
-        )
+        same_environment = Environment(name=environment.name, version=environment.version, image=environment.image)
         diff_environment = Environment(
             name=environment.name,
             version=environment.version,
@@ -50,9 +48,7 @@ class TestEnvironmentEntity:
         )
         rest_object = env._to_rest_object()
         # Set id to match the one that would be returned by the service, otherwise _from_rest_object will fail
-        rest_object.id = (
-            f"azureml://registries/test/environments/{env.name}/versions/{env.version}"
-        )
+        rest_object.id = f"azureml://registries/test/environments/{env.name}/versions/{env.version}"
         env_from_rest_object = Environment._from_rest_object(rest_object)
         # Exclude id from comparisons below
         env_from_rest_object._id = None
@@ -63,12 +59,8 @@ class TestEnvironmentEntity:
 
     def test_conda_file_deserialize_and_serialize(self) -> None:
         # Tests that conda file is deserialized same way if using load_environment() or Environment()
-        conda_file_path = (
-            "tests/test_configs/environment/environment_files/environment.yml"
-        )
-        env_config_path = (
-            "tests/test_configs/environment/environment_conda_name_version.yml"
-        )
+        conda_file_path = "tests/test_configs/environment/environment_files/environment.yml"
+        env_config_path = "tests/test_configs/environment/environment_conda_name_version.yml"
 
         conda_file_data = load_yaml(conda_file_path)
         env = Environment(conda_file=conda_file_path)
@@ -77,14 +69,10 @@ class TestEnvironmentEntity:
             assert env.conda_file == conda_file_data
             assert env_loaded.conda_file == conda_file_data
 
-        verify_entity_load_and_dump(
-            load_environment, simple_environment_validation, env_config_path
-        )
+        verify_entity_load_and_dump(load_environment, simple_environment_validation, env_config_path)
 
     def test_build_context_eq_neq(self) -> None:
-        build_context = BuildContext(
-            dockerfile_path="dockerfile_path", path="context_uri"
-        )
+        build_context = BuildContext(dockerfile_path="dockerfile_path", path="context_uri")
 
         same_build_context = BuildContext(
             path=build_context.path,
@@ -101,19 +89,11 @@ class TestEnvironmentEntity:
 
     def test_anonymous_environment_loaded_from_yaml(self):
         tests_root_dir = Path(__file__).parent.parent.parent
-        components_dir = (
-            tests_root_dir / "test_configs/components/helloworld_components_with_env"
-        )
+        components_dir = tests_root_dir / "test_configs/components/helloworld_components_with_env"
 
-        env_0 = load_component(
-            source=components_dir / "helloworld_component_env_inline.yml"
-        ).environment
-        env_1 = load_component(
-            source=components_dir / "helloworld_component_env_path_0.yml"
-        ).environment
-        env_2 = load_component(
-            source=components_dir / "helloworld_component_env_path_1.yml"
-        ).environment
+        env_0 = load_component(source=components_dir / "helloworld_component_env_inline.yml").environment
+        env_1 = load_component(source=components_dir / "helloworld_component_env_path_0.yml").environment
+        env_2 = load_component(source=components_dir / "helloworld_component_env_path_1.yml").environment
 
         assert env_0.name == env_1.name == env_2.name == ANONYMOUS_ENV_NAME
         assert env_0.version == env_1.version == env_2.version
@@ -135,23 +115,17 @@ class TestEnvironmentEntity:
         inference_conf_obj = json.loads(inference_conf)
 
         env_no_inference_config = Environment(
-            conda_file=tests_root_dir
-            / "test_configs/deployments/model-1/environment/conda.yml",
+            conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
             image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1",
         )
 
         env_with_inference_config = Environment(
-            conda_file=tests_root_dir
-            / "test_configs/deployments/model-1/environment/conda.yml",
+            conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
             image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1",
             inference_config=inference_conf_obj,
         )
 
-        assert (
-            env_no_inference_config.name
-            == env_no_inference_config.name
-            == ANONYMOUS_ENV_NAME
-        )
+        assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version
         assert env_no_inference_config.version == "00b3749100a718714b17f57de1ae61fa"
         assert env_with_inference_config.version == "935315c7d8de8e0972f0460960727a17"
