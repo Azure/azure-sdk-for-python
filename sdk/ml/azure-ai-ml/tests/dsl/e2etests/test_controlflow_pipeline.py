@@ -1,14 +1,14 @@
 from pathlib import Path
 
 import pytest
-from azure.ai.ml.dsl._group_decorator import group
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
-from azure.ai.ml import Input, MLClient, load_component, Output
+from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._parallel_for import parallel_for
 
 from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
