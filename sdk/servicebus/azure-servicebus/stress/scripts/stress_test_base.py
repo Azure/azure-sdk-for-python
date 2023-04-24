@@ -419,7 +419,7 @@ class StressTestRunnerAsync(StressTestRunner):
             raise
 
     async def _receive_handle_message(self, message, receiver, end_time):
-        _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.ERROR)
+        # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.ERROR)
         self.on_receive(self._state, message, receiver)
         try:
             if self.should_complete_messages:
@@ -441,7 +441,6 @@ class StressTestRunnerAsync(StressTestRunner):
             _logger.critical("STARTING RECEIVER")
             async with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
-                    _logger.info("RECEIVE LOOP")
                     try:
                         if self.receive_type == ReceiveType.pull:
                             batch = await receiver.receive_messages(
