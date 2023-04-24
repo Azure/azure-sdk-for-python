@@ -12,8 +12,8 @@ from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023,
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
 )
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -64,17 +64,17 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_04_2023: ServiceClient042023,
+        service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._batch_deployment = service_client_04_2023.batch_deployments
+        self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
-        self._batch_endpoint_operations = service_client_04_2023.batch_endpoints
-        self._component_operations = service_client_04_2023.component_versions
+        self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
+        self._component_operations = service_client_05_2022.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs

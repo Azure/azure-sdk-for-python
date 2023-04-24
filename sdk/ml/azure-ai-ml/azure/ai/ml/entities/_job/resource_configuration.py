@@ -67,7 +67,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         return ResourceConfiguration(
             instance_count=rest_obj.instance_count,
             instance_type=rest_obj.instance_type,
-            max_instance_count=rest_obj.max_instance_count,
+            max_instance_count=rest_obj.max_instance_count if hasattr(rest_obj, "max_instance_count") else None,
             properties=rest_obj.properties,
             deserialize_properties=True,
         )
