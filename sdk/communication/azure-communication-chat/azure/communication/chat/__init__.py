@@ -6,8 +6,6 @@ from ._generated.models import (
     ChatThreadItem,
     ChatMessageType,
     ChatError,
-    ChatRetentionPolicy,
-    ThreadCreationDateRetentionPolicy,
     RetentionPolicyKind
 )
 
@@ -17,7 +15,9 @@ from ._models import (
     ChatThreadProperties,
     ChatMessageReadReceipt,
     ChatMessageContent,
-    CreateChatThreadResult
+    CreateChatThreadResult,
+    ChatRetentionPolicy,
+    ThreadCreationDateRetentionPolicy,
 )
 
 from ._shared.user_credential import CommunicationTokenCredential

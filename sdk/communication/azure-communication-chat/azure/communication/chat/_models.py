@@ -288,3 +288,63 @@ class CreateChatThreadResult(object):
         # type: (...) -> None
         self.chat_thread = kwargs['chat_thread']
         self.errors = kwargs.get('errors', None)
+
+class ChatRetentionPolicy(object):
+    """Data retention policy for auto deletion. It's not updatable after creation.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ThreadCreationDateRetentionPolicy
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Retention Policy Type. Required. "threadCreationDate"
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"threadCreationDate": "ThreadCreationDateRetentionPolicy"}}
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ):
+        # type: (...) -> None
+        self.kind: Optional[str] = None
+
+class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
+    """Thread retention policy based on thread creation date.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Retention Policy Type. Required. "threadCreationDate"
+    :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
+    :ivar delete_thread_after_days: Indicates how many days after the thread creation the thread
+     will be deleted. Only 90 is accepted for now. Required.
+    :vartype delete_thread_after_days: int
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "delete_thread_after_days": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "delete_thread_after_days": {"key": "deleteThreadAfterDays", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        delete_thread_after_days: int,
+         **kwargs # type: Any
+        ):
+       # type: (...) -> None
+        self.kind: str = "threadCreationDate"
+        self.delete_thread_after_days = delete_thread_after_days
