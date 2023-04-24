@@ -41,8 +41,8 @@ class AzureDeveloperCliCredential(AsyncContextManager):
     To use this credential, the developer needs to authenticate locally in Azure Developer CLI using one of the
     commands below:
 
-      * Run "azd login" in Azure Developer CLI to authenticate interactively as a user.
-      * Run "azd login --client-id 'client_id' --client-secret 'client_secret' --tenant-id 'tenant_id'"
+      * Run "azd auth login" in Azure Developer CLI to authenticate interactively as a user.
+      * Run "azd auth login --client-id 'client_id' --client-secret 'client_secret' --tenant-id 'tenant_id'"
         to authenticate as a service principal.
 
     You may need to repeat this process after a certain time period, depending on the refresh token validity in your
@@ -164,7 +164,7 @@ async def _run_command(command: str, timeout: int) -> str:
     if proc.returncode == 127 or stderr.startswith("'azd' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "not logged in, run `azd login` to login" in stderr:
+    if "not logged in, run `azd auth login` to login" in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
