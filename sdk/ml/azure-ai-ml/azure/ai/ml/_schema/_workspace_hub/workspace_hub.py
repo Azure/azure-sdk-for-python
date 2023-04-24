@@ -15,7 +15,7 @@ from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
 from azure.ai.ml._schema import ExperimentalField
 
 
-class HubSchema(PathAwareSchema):
+class WorkspaceHubSchema(PathAwareSchema):
     name = fields.Str(required=True)
     location = fields.Str()
     id = fields.Str(dump_only=True)

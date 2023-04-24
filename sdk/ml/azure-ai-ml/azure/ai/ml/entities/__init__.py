@@ -154,7 +154,7 @@ from ._assets._artifacts._package.model_package import (
     PackageInputPathVersion,
 )
 
-from ._hub.hub import WorkspaceHub
+from ._workspace_hub.workspace_hub import WorkspaceHub
 
 from ._assets._artifacts.feature_set import FeatureSet
 from ._workspace.compute_runtime import ComputeRuntime

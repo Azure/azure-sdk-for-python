@@ -231,8 +231,8 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
-    HUB_WORKSPACE = "hub"
-    """Hub workspace resource type."""
+    WORKSPACE_HUB = "workspace_hub"
+    """WorkspaceHub resource type."""
 
     NAMED_TYPES = {
         JOB,

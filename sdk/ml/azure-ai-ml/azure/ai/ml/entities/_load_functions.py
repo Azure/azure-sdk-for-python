@@ -25,7 +25,7 @@ from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
-from azure.ai.ml.entities._hub.hub import WorkspaceHub
+from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.ai.ml.entities._job.job import Job

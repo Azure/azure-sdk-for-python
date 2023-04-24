@@ -37,7 +37,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._hub._constants import LEAN_KIND
+from azure.ai.ml.entities._workspace_hub._constants import LEAN_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod

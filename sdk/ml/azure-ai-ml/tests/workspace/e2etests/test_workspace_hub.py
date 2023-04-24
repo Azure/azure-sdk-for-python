@@ -9,7 +9,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace_hub
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml.entities._hub.hub import WorkspaceHub
+from azure.ai.ml.entities import WorkspaceHub
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 
@@ -36,7 +36,7 @@ class TestWorkspace(AzureRecordedTestCase):
         ]
 
         def workspace_validation(hubs):
-            workspace_poller = client.hubs.begin_create(workspace_hub=hubs)
+            workspace_poller = client.workspace_hubs.begin_create(workspace_hub=hubs)
             assert isinstance(workspace_poller, LROPoller)
             workspace_hub = workspace_poller.result()
             assert isinstance(workspace_hub, WorkspaceHub)
@@ -53,16 +53,16 @@ class TestWorkspace(AzureRecordedTestCase):
             params_override=params_override,
         )[0]
 
-        hub_list = client.hubs.list()
+        hub_list = client.workspace_hubs.list()
         assert isinstance(hub_list, ItemPaged)
-        workspace_hub = client.hubs.get(hub_name)
+        workspace_hub = client.workspace_hubs.get(hub_name)
         assert isinstance(workspace_hub, WorkspaceHub)
         assert workspace_hub.name == hub_name
 
         param_display_name = "Test display name"
         param_description = "Test description"
         param_tags = {"k1": "v1", "k2": "v2"}
-        workspace_poller = client.hubs.begin_update(
+        workspace_poller = client.workspace_hubs.begin_update(
             workspace_hub,
             display_name=param_display_name,
             description=param_description,
@@ -80,7 +80,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace_hub.storage_accounts.count != 0
         assert workspace_hub.key_vaults.count != 0
 
-        poller = client.hubs.begin_delete(hub_name, delete_dependent_resources=True)
+        poller = client.workspace_hubs.begin_delete(hub_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
         assert isinstance(poller, LROPoller)

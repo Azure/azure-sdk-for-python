@@ -16,17 +16,17 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._hub.hub import WorkspaceHub
+from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 
 from azure.ai.ml.constants._common import Scope
-from azure.ai.ml.entities._hub._constants import HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import HUB_KIND
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class HubOperations(WorkspaceOperationsBase):
+class WorkspaceHubOperations(WorkspaceOperationsBase):
     """_HubOperations.
 
     You should not instantiate this class directly. Instead, you should

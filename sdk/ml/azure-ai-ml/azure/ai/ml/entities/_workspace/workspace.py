@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkSet
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
-from azure.ai.ml.entities._hub._constants import LEAN_KIND, HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import LEAN_KIND, HUB_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict

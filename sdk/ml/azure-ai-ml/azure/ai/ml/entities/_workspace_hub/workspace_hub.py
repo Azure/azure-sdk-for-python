@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
 
-from azure.ai.ml._schema._hub.hub import HubSchema
+from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
@@ -144,9 +144,9 @@ class WorkspaceHub(Workspace):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        loaded_schema = load_from_dict(HubSchema, data, context, **kwargs)
+        loaded_schema = load_from_dict(WorkspaceHubSchema, data, context, **kwargs)
         return WorkspaceHub(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return HubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceHubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

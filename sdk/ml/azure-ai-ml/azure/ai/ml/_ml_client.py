@@ -97,7 +97,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    HubOperations,
+    WorkspaceHubOperations,
 )
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -544,14 +544,14 @@ class MLClient:
             self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
         )
 
-        self._hubs = HubOperations(
+        self._workspace_hubs = WorkspaceHubOperations(
             self._operation_scope,
             self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.HUB_WORKSPACE, self._hubs)
+        self._operation_container.add(AzureMLResourceType.HUB_WORKSPACE, self._workspace_hubs)
 
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
@@ -702,12 +702,12 @@ class MLClient:
 
     @property
     @experimental
-    def hubs(self) -> HubOperations:
+    def workspace_hubs(self) -> WorkspaceHubOperations:
         """A collection of hubs related operations.
         :return: Hub Operations
         :rtype: HubOperations
         """
-        return self._hubs
+        return self._workspace_hubs
 
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
