@@ -6,7 +6,9 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ResourceConfiguration as RestResourceConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ResourceConfiguration as RestResourceConfiguration,
+)
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
@@ -73,7 +75,11 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ResourceConfiguration):
             return NotImplemented
-        return self.instance_count == other.instance_count and self.instance_type == other.instance_type
+        return (
+            self.instance_count == other.instance_count
+            and self.instance_type == other.instance_type
+            and self.max_instance_count == other.max_instance_count
+        )
 
     def __ne__(self, other: object) -> bool:
         if not isinstance(other, ResourceConfiguration):
