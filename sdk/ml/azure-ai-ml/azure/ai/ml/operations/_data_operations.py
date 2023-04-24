@@ -8,10 +8,9 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Iterable
 from contextlib import contextmanager
-from azure.ai.ml._utils._registry_utils import get_registry_client
-
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
+from azure.ai.ml._utils._registry_utils import get_registry_client
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
