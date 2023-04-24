@@ -47,7 +47,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class FeatureSetOperations(_ScopeDependentOperations):
     """FeatureSetOperations.
 
