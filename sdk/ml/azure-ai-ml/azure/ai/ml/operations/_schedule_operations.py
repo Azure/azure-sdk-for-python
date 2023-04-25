@@ -279,10 +279,10 @@ class ScheduleOperations(_ScopeDependentOperations):
         # resolve input paths and preprocessing component ids
         for signal in schedule.create_monitor.monitoring_signals.values():
             if signal.type == MonitorSignalType.CUSTOM:
-                for input in signal.input_datasets.values():
-                    self._job_operations._resolve_job_input(input.input_dataset, schedule._base_path)
-                    input.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=input.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                for input_value in signal.input_datasets.values():
+                    self._job_operations._resolve_job_input(input_value.input_dataset, schedule._base_path)
+                    input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=input_value.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
                     )
             else:
                 self._job_operations._resolve_job_inputs(
