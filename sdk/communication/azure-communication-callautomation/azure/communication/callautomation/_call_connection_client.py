@@ -4,10 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional
+from urllib.parse import urlparse
 
-from ._call_media_client import CallMediaClient
+from azure.core.credentials import TokenCredential
 
+from ._generated import AzureCommunicationCallAutomationService
+from ._api_versions import DEFAULT_VERSION
+from ._version import SDK_MONIKER
 from ._models import (
     CallConnectionProperties,
     CallParticipant,
@@ -17,7 +21,7 @@ from ._models import (
 )
 
 from ._shared.models import CommunicationIdentifier
-
+from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._communication_identifier_serializer import (
     serialize_phone_identifier,
     serialize_identifier
@@ -32,30 +36,71 @@ from ._generated.models import (
     RemoveParticipantRequest
 )
 
-if TYPE_CHECKING:
-    from ._generated.operations import CallConnectionOperations, CallMediaOperations
 
-
-class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
+class CallConnectionClient:
     """A client to interact with media of ongoing call.
 
+    :param str endpoint:
+     The endpoint of the Azure Communication resource.
+    :param ~azure.core.credentials.TokenCredential credential:
+     The credentials with which to authenticate.
     :param str call_connection_id:
-     Call Connection Id of ongoing call.
-    :param ~azure.communication.callautomation._generated.operations.CallConnectionOperations call_connection_client:
-     The REST version of call connection client.
-    :param ~azure.communication.callautomation._generated.operations.CallMediaOperations call_media_operations:
-     The REST version of media client.
-    """
-    def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self,
-        call_connection_id: str,
-        call_connection_client,  # type: CallConnectionOperations
-        call_media_operations,  # type: CallMediaOperations
-    ) -> None:
+     Call Connection ID of ongoing call.
 
-        self.call_connection_id = call_connection_id
-        self._call_connection_client = call_connection_client
-        self._call_media_operations = call_media_operations
+    :keyword api_version: Azure Communication Call Automation API version.
+     Default value is "2023-01-15-preview".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
+
+    def __init__(
+            self,
+            endpoint: str,
+            credential: TokenCredential,
+            call_connection_id: str,
+            *,
+            api_version: Optional[str] = None,
+            **kwargs
+    ) -> None:
+        if not credential:
+            raise ValueError("credential can not be None")
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Host URL must be a string")
+
+        parsed_url = urlparse(endpoint.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError(f"Invalid URL: {format(endpoint)}")
+        self._call_connection_id = call_connection_id
+        self._client = AzureCommunicationCallAutomationService(
+            endpoint,
+            api_version=api_version or DEFAULT_VERSION,
+            authentication_policy=get_authentication_policy(
+                endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs)
+
+    @classmethod
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        call_connection_id: str,
+        **kwargs
+    ) -> 'CallConnectionClient':
+        """Create CallConnection from a Connection String.
+
+        :param str conn_str:
+         A connection string to an Azure Communication Service resource.
+        :param str call_connection_id:
+         Call Connection Id of ongoing call.
+
+        :return: Instance of CallAutomationClient.
+        :rtype: CallAutomationClient
+        """
+        endpoint, access_key = parse_connection_str(conn_str)
+        return cls(endpoint, access_key, call_connection_id, **kwargs)
 
     def get_call_media(
         self,

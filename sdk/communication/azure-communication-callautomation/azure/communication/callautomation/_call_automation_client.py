@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List  # pylint: disable=unused-import
+from typing import Any, List, Optional
 from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential
 
@@ -12,7 +12,7 @@ from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._call_connection_client import CallConnectionClient
 from ._call_recording_client import CallRecordingClient
-from ._generated._client import AzureCommunicationCallAutomationService
+from ._generated import AzureCommunicationCallAutomationService
 from ._shared.models import CommunicationIdentifier
 from ._communication_identifier_serializer import serialize_phone_identifier, serialize_identifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
@@ -69,11 +69,12 @@ class CallAutomationClient(object):
             self,
             endpoint: str,
             credential: TokenCredential,
+            *,
+            api_version: Optional[str] = None,
             **kwargs
     ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
-
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -84,22 +85,13 @@ class CallAutomationClient(object):
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
 
-        self._endpoint = endpoint
-        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._credential = credential
-
         self._client = AzureCommunicationCallAutomationService(
-            self._endpoint,
-            api_version=self._api_version,
+            endpoint,
+            api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(
                 endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
-
-        self._call_connection_client = self._client.call_connection
-        self._call_media = self._client.call_media
-        self._call_recording_client = self._client.call_recording
-        self.source_identity = kwargs.pop("source_identity", None)
 
     @classmethod
     def from_connection_string(
@@ -116,7 +108,6 @@ class CallAutomationClient(object):
         :rtype: CallAutomationClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
-
         return cls(endpoint, access_key, **kwargs)
 
     def get_call_connection(
