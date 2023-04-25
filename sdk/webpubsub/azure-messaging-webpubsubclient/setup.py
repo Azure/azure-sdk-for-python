@@ -55,7 +55,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            "azure.webpubsub",
+            "azure.messaging",
         ]
     ),
     include_package_data=True,
