@@ -857,6 +857,10 @@ class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "none"
 
 
+class AzureDevopsArtifactsType:
+    ARTIFACT = "artifact"
+
+
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
