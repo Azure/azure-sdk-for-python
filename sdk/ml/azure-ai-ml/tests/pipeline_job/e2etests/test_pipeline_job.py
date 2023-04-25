@@ -723,6 +723,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_sample_job_dump(self, client: MLClient, randstr: Callable[[str], str]):
         job = client.jobs.create_or_update(
             load_job(
