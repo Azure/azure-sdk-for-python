@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import List, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import List, TYPE_CHECKING, Union  # pylint: disable=unused-import
 
 from ._api_versions import DEFAULT_VERSION
 
@@ -232,7 +232,7 @@ class CallMediaClient(object):
     def send_dtmf(
         self,
         target: CommunicationIdentifier,
-        tones: List[Tone],
+        tones: List[Union[str, Tone]],
         operation_context: str = None,
         **kwargs
     ) -> None:
