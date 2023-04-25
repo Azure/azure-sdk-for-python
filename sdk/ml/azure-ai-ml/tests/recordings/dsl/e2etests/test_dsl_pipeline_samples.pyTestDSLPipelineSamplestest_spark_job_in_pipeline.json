@@ -1018,8 +1018,8 @@
           },
           "outputs": {
             "output": {
-              "mode": "Direct",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Direct"
             }
           },
           "settings": {

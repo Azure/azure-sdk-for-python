@@ -937,8 +937,8 @@
           },
           "outputs": {
             "pipeline_job_out_path": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_file"
+              "jobOutputType": "uri_file",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

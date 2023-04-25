@@ -459,7 +459,7 @@
             "pipeline_sample_input_data": {
               "jobInputType": "uri_file",
               "mode": "Download",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/sample.csv",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/sample.csv"
             },
             "pipeline_sample_input_string": {
               "jobInputType": "literal",
@@ -492,8 +492,8 @@
           },
           "outputs": {
             "pipeline_sample_output_data": {
-              "mode": "Upload",
-              "jobOutputType": "uri_file"
+              "jobOutputType": "uri_file",
+              "mode": "Upload"
             }
           },
           "settings": {

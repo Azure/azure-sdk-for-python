@@ -487,8 +487,8 @@
               },
               "outputs": {
                 "trained_model_output": {
-                  "mode": "Upload",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "Upload"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -592,8 +592,8 @@
               },
               "outputs": {
                 "trained_model_output": {
-                  "mode": "Upload",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "Upload"
                 }
               },
               "_source": "YAML.COMPONENT",

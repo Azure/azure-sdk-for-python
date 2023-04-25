@@ -1518,8 +1518,8 @@
                 },
                 "outputs": {
                   "score_output": {
-                    "mode": "Upload",
-                    "job_output_type": "uri_folder"
+                    "job_output_type": "uri_folder",
+                    "mode": "Upload"
                   }
                 },
                 "_source": "YAML.COMPONENT",
@@ -1817,8 +1817,8 @@
                   "value": "${{parent.inputs.training_learning_rate1}}"
                 },
                 "training_input": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1"
                 }
               },
               "_source": "DSL",
@@ -1837,8 +1837,8 @@
                   "value": "${{parent.inputs.training_learning_rate2}}"
                 },
                 "training_input": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1"
                 }
               },
               "_source": "DSL",
@@ -1978,8 +1978,8 @@
                   "value": "${{parent.inputs.training_learning_rate1}}"
                 },
                 "training_input": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1"
                 }
               },
               "_source": "DSL",

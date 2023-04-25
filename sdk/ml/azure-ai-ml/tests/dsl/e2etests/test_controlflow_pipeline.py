@@ -985,13 +985,11 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"]["parallel_node"] == {
             "body": "${{parent.jobs.parallel_body}}",
-            "items": '[{"component_in_path": {"uri": '
-            '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
-            '"job_input_type": "uri_file"}, '
+            "items": '[{"component_in_path": {"job_input_type": "uri_file", "uri": '
+            '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv"}, '
             '"component_in_number": 1}, {"component_in_path": '
-            '{"uri": '
-            '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
-            '"job_input_type": "uri_file"}, '
+            '{"job_input_type": "uri_file", "uri": '
+            '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv"}, '
             '"component_in_number": 2}]',
             "type": "parallel_for",
             "_source": "DSL",

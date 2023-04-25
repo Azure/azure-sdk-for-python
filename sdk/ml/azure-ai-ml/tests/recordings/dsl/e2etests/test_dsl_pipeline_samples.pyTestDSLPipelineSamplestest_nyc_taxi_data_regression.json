@@ -2116,34 +2116,34 @@
           },
           "outputs": {
             "pipeline_job_prepped_data": {
+              "jobOutputType": "uri_folder",
               "mode": "ReadWriteMount",
-              "uri": "/prepped_data",
-              "jobOutputType": "uri_folder"
+              "uri": "/prepped_data"
             },
             "pipeline_job_transformed_data": {
+              "jobOutputType": "uri_folder",
               "mode": "ReadWriteMount",
-              "uri": "/transformed_data",
-              "jobOutputType": "uri_folder"
+              "uri": "/transformed_data"
             },
             "pipeline_job_trained_model": {
+              "jobOutputType": "uri_folder",
               "mode": "ReadWriteMount",
-              "uri": "/trained-model",
-              "jobOutputType": "uri_folder"
+              "uri": "/trained-model"
             },
             "pipeline_job_test_data": {
+              "jobOutputType": "uri_folder",
               "mode": "ReadWriteMount",
-              "uri": "/test_data",
-              "jobOutputType": "uri_folder"
+              "uri": "/test_data"
             },
             "pipeline_job_predictions": {
+              "jobOutputType": "uri_folder",
               "mode": "ReadWriteMount",
-              "uri": "/predictions",
-              "jobOutputType": "uri_folder"
+              "uri": "/predictions"
             },
             "pipeline_job_score_report": {
+              "jobOutputType": "uri_folder",
               "mode": "ReadWriteMount",
-              "uri": "/report",
-              "jobOutputType": "uri_folder"
+              "uri": "/report"
             }
           },
           "settings": {

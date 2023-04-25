@@ -635,9 +635,9 @@
                   "value": "${{parent.inputs.pipeline_sample_input_string}}"
                 },
                 "sample_input_data": {
+                  "job_input_type": "mltable",
                   "mode": "EvalMount",
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/sampledata1235/versions/2",
-                  "job_input_type": "mltable"
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/sampledata1235/versions/2"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -758,9 +758,9 @@
                   "value": "${{parent.inputs.pipeline_sample_input_string}}"
                 },
                 "sample_input_data": {
+                  "job_input_type": "mltable",
                   "mode": "EvalMount",
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/sampledata1235/versions/2",
-                  "job_input_type": "mltable"
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/sampledata1235/versions/2"
                 }
               },
               "_source": "YAML.COMPONENT",

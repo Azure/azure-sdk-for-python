@@ -373,8 +373,8 @@
               "name": "blob_azuresql",
               "inputs": {
                 "source": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet"
                 }
               },
               "_source": "BUILTIN",
@@ -524,8 +524,8 @@
               "name": "blob_azuresql",
               "inputs": {
                 "source": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet"
                 }
               },
               "_source": "BUILTIN",

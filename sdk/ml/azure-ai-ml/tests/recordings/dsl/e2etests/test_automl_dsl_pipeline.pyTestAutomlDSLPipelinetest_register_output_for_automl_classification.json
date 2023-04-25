@@ -424,9 +424,9 @@
           },
           "outputs": {
             "classification_2_output": {
+              "jobOutputType": "mlflow_model",
               "assetName": "classification_output_name",
-              "assetVersion": "2",
-              "jobOutputType": "mlflow_model"
+              "assetVersion": "2"
             }
           },
           "settings": {
