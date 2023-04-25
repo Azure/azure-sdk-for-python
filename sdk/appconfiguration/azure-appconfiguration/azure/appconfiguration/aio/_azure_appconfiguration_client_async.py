@@ -582,7 +582,7 @@ class AzureAppConfigurationClient:
         :keyword int retention_period: The amount of time, in seconds, that a snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
-            in range 0 to 7776000(90 days). When set to 0, the snapshot will be deleted when archiving it.
+            in range 3600(1 hour) to 7776000(90 days).
         :keyword dict[str, str] tags: The tags of the snapshot.
         :return: A poller for create snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
