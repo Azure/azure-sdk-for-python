@@ -963,8 +963,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
             await client.delete_configuration_setting(new.key)
 
-    # The snapshot feature is only supported in the dogfood version now.
-    @pytest.mark.ignore
+    @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_create_snapshot(self, appconfiguration_connection_string):
@@ -984,8 +983,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         
         await self.tear_down()
 
-    # The snapshot feature is only supported in the dogfood version now.
-    @pytest.mark.ignore
+    @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_update_snapshot_status(self, appconfiguration_connection_string):
@@ -1004,8 +1002,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         
         await self.tear_down()
     
-    # The snapshot feature is only supported in the dogfood version now.
-    @pytest.mark.ignore
+    @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_snapshots(self, appconfiguration_connection_string):
@@ -1030,8 +1027,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         
         await self.tear_down()
     
-    # The snapshot feature is only supported in the dogfood version now.
-    @pytest.mark.ignore
+    @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
