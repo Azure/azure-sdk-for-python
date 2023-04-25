@@ -62,3 +62,13 @@ class SnapshotStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READY = "ready"
     ARCHIVED = "archived"
     FAILED = "failed"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the operation."""
+
+    NOT_STARTED = "NotStarted"
+    RUNNING = "Running"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"

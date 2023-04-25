@@ -102,6 +102,91 @@ class Error(_serialization.Model):
         self.status = status
 
 
+class ErrorDetail(_serialization.Model):
+    """The details of an error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: One of a server-defined set of error codes. Required.
+    :vartype code: str
+    :ivar message: A human-readable representation of the error. Required.
+    :vartype message: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.appconfiguration.models.ErrorDetail]
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
+    :vartype innererror: ~azure.appconfiguration.models.InnerError
+    """
+
+    _validation = {
+        "code": {"required": True},
+        "message": {"required": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        details: Optional[List["_models.ErrorDetail"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: One of a server-defined set of error codes. Required.
+        :paramtype code: str
+        :keyword message: A human-readable representation of the error. Required.
+        :paramtype message: str
+        :keyword details: An array of details about specific errors that led to this reported error.
+        :paramtype details: list[~azure.appconfiguration.models.ErrorDetail]
+        :keyword innererror: An object containing more specific information than the current object
+         about the error.
+        :paramtype innererror: ~azure.appconfiguration.models.InnerError
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.details = details
+        self.innererror = innererror
+
+
+class InnerError(_serialization.Model):
+    """An object containing specific information about an error.
+
+    :ivar code: One of a server-defined set of error codes.
+    :vartype code: str
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
+    :vartype innererror: ~azure.appconfiguration.models.InnerError
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+    }
+
+    def __init__(
+        self, *, code: Optional[str] = None, innererror: Optional["_models.InnerError"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: One of a server-defined set of error codes.
+        :paramtype code: str
+        :keyword innererror: An object containing more specific information than the current object
+         about the error.
+        :paramtype innererror: ~azure.appconfiguration.models.InnerError
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.innererror = innererror
+
+
 class Key(_serialization.Model):
     """Key.
 
@@ -306,6 +391,56 @@ class LabelListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class OperationDetails(_serialization.Model):
+    """Details of a long running operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique id of the operation. Required.
+    :vartype id: str
+    :ivar status: The current status of the operation. Required. Known values are: "NotStarted",
+     "Running", "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.appconfiguration.models.State
+    :ivar error: An error, available when the status is ``Failed``\ , describing why the operation
+     failed.
+    :vartype error: ~azure.appconfiguration.models.ErrorDetail
+    """
+
+    _validation = {
+        "id": {"required": True},
+        "status": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        status: Union[str, "_models.State"],
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The unique id of the operation. Required.
+        :paramtype id: str
+        :keyword status: The current status of the operation. Required. Known values are: "NotStarted",
+         "Running", "Succeeded", "Failed", and "Canceled".
+        :paramtype status: str or ~azure.appconfiguration.models.State
+        :keyword error: An error, available when the status is ``Failed``\ , describing why the
+         operation failed.
+        :paramtype error: ~azure.appconfiguration.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.status = status
+        self.error = error
+
+
 class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Snapshot.
 
@@ -350,7 +485,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
         "filters": {"required": True, "max_items": 3, "min_items": 1},
         "created": {"readonly": True},
         "expires": {"readonly": True},
-        "retention_period": {"maximum": 7776000, "minimum": 0},
+        "retention_period": {"maximum": 7776000, "minimum": 3600},
         "size": {"readonly": True},
         "items_count": {"readonly": True},
         "etag": {"readonly": True},

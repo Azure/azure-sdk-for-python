@@ -6,16 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any, Optional
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 VERSION = "unknown"
 
@@ -38,7 +32,7 @@ class AzureAppConfigurationConfiguration(Configuration):  # pylint: disable=too-
 
     def __init__(self, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any) -> None:
         super(AzureAppConfigurationConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop("api_version", "2022-11-01-preview")
+        api_version: str = kwargs.pop("api_version", "2022-11-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

@@ -8,12 +8,15 @@
 
 from ._models_py3 import ConfigurationSettingFilter
 from ._models_py3 import Error
+from ._models_py3 import ErrorDetail
+from ._models_py3 import InnerError
 from ._models_py3 import Key
 from ._models_py3 import KeyListResult
 from ._models_py3 import KeyValue
 from ._models_py3 import KeyValueListResult
 from ._models_py3 import Label
 from ._models_py3 import LabelListResult
+from ._models_py3 import OperationDetails
 from ._models_py3 import Snapshot
 from ._models_py3 import SnapshotListResult
 from ._models_py3 import SnapshotUpdateParameters
@@ -23,6 +26,7 @@ from ._azure_app_configuration_enums import KeyValueFields
 from ._azure_app_configuration_enums import LabelFields
 from ._azure_app_configuration_enums import SnapshotFields
 from ._azure_app_configuration_enums import SnapshotStatus
+from ._azure_app_configuration_enums import State
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -30,12 +34,15 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ConfigurationSettingFilter",
     "Error",
+    "ErrorDetail",
+    "InnerError",
     "Key",
     "KeyListResult",
     "KeyValue",
     "KeyValueListResult",
     "Label",
     "LabelListResult",
+    "OperationDetails",
     "Snapshot",
     "SnapshotListResult",
     "SnapshotUpdateParameters",
@@ -44,6 +51,7 @@ __all__ = [
     "LabelFields",
     "SnapshotFields",
     "SnapshotStatus",
+    "State",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
