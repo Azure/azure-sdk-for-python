@@ -8,7 +8,7 @@ import pytest
 import time
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT, on_group_message, SafeThread
-from azure.webpubsub.client.models import WebPubSubProtocolType, DisconnectedError
+from azure.messaging.webpubsubclient.models import WebPubSubProtocolType, DisconnectedError
 
 
 @pytest.mark.live_test_only

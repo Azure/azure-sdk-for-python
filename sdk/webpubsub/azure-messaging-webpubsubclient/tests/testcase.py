@@ -8,8 +8,8 @@ from typing import List
 import functools
 import threading
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
-from azure.webpubsub.client import WebPubSubClient, WebPubSubClientCredential
-from azure.webpubsub.client.models import OnGroupDataMessageArgs
+from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
+from azure.messaging.webpubsubclient.models import OnGroupDataMessageArgs
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
 

@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 import pytest
 import json
-from azure.webpubsub.client.models._models import (
+from azure.messaging.webpubsubclient.models._models import (
     JoinGroupMessage,
     LeaveGroupMessage,
     SendToGroupMessage,

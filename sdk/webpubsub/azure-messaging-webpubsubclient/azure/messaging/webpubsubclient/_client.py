@@ -91,7 +91,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :param credential: The url to connect or credential to use when connecting. Required.
     :type credential: str or WebPubSubClientCredential
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
-    :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
+    :keyword azure.messaging.webpubsubclient.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
      reconnect. Default is 3.
     :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try

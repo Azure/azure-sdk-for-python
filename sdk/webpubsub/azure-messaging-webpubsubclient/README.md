@@ -28,10 +28,10 @@ _This library is hosted on [pypi][pypi]._
 - An [Azure subscription][azure_sub].
 - A [Web PubSub resource][create_instance]
 
-### 1. Install the `azure-webpubsub-client` package
+### 1. Install the `azure-messaging-webpubsubclient` package
 
 ```bash
-pip install azure-webpubsub-client
+pip install azure-messaging-webpubsubclient
 ```
 
 ### 2. Connect with your Web PubSub resource
@@ -43,7 +43,7 @@ A client uses a Client Access URL to connect and authenticate with the service, 
 As shown in the diagram above, the client has the permissions to send messages to and join a specific group named "_group1_". 
 
 ```python
-from azure.webpubsub.client import WebPubSubClient
+from azure.messaging.webpubsubclient import WebPubSubClient
 
 client = WebPubSubClient("<<client-access-url>>")
 with client:
@@ -146,13 +146,13 @@ except SendMessageError as e:
 You can change the subprotocol to be used by the client. By default, the client uses `json.reliable.webpubsub.azure.v1`. You can choose to use `json.reliable.webpubsub.azure.v1` or `json.webpubsub.azure.v1`.
 
 ```python
-from azure.webpubsub.client.models import WebPubSubProtocolType
+from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 # Change to use json.webpubsub.azure.v1
 const client = new WebPubSubClient("<client-access-url>", protocol_type=WebPubSubProtocolType.JSON);
 ```
 
 ```python
-from azure.webpubsub.client.models import WebPubSubProtocolType
+from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 # Change to use json.reliable.webpubsub.azure.v1
 const client = new WebPubSubClient("<client-access-url>", protocol_type=WebPubSubProtocolType.JSON_RELIABLE);
 ```

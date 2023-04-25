@@ -1,5 +1,5 @@
 [packaging]
-package_name = "azure-webpubsub-client"
+package_name = "azure-messaging-webpubsubclient"
 package_pprint_name = "Azure Web PubSub Client"
 package_doc_id = ""
 is_stable = false

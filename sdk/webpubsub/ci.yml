@@ -34,5 +34,5 @@ extends:
       safeName: azuremgmtwebpubsub
     - name: azure-messaging-webpubsubservice
       safeName: azuremessagingwebpubsubservice
-    - name: azure-webpubsub-client
-      safeName: azurewebpubsubclient
+    - name: azure-messaging-webpubsubclient
+      safeName: azuremessagingwebpubsubclient

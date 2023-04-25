@@ -9,7 +9,7 @@ import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, on_group_message, TEST_RESULT
-from azure.webpubsub.client.models import OnGroupDataMessageArgs, StartNotStoppedClientError
+from azure.messaging.webpubsubclient.models import OnGroupDataMessageArgs, StartNotStoppedClientError
 
 
 @pytest.mark.live_test_only
