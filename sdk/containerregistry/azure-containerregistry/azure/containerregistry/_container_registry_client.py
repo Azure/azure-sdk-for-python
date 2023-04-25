@@ -891,7 +891,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if isinstance(manifest, MutableMapping):
                 data = BytesIO(json.dumps(manifest).encode())
             else:
-                data = manifest
+                data = manifest # type: ignore
             tag_or_digest = tag
             if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
@@ -939,8 +939,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         manifest_bytes = response.http_response.read()
         manifest_json = response.http_response.json()
         if tag_or_digest.startswith("sha256:"):
-            digest = tag_or_digest
-            if not _validate_digest(manifest_bytes, digest):
+            if not _validate_digest(manifest_bytes, tag_or_digest):
                 raise ValueError("The requested digest does not match the digest of the received manifest.")
         else:
             digest = response.http_response.headers['Docker-Content-Digest']
