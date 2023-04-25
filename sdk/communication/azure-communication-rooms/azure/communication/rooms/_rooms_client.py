@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import List, Optional, Union, overload, Any
+from typing import List, Optional, Union, Any
 import uuid
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.paging import ItemPaged
@@ -115,7 +115,9 @@ class RoomsClient(object):
             "validUntil": valid_until
         }
         if participants:
-            create_room_request["participants"] = {p.communication_identifier.raw_id: {"role": p.role} for p in participants}
+            create_room_request["participants"] ={
+                p.communication_identifier.raw_id: {"role": p.role} for p in participants
+            }
 
         repeatability_request_id = uuid.uuid1()
         repeatability_first_sent = datetime.utcnow()

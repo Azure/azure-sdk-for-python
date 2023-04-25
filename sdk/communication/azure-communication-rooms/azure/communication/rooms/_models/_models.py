@@ -118,7 +118,9 @@ class CommunicationRoom:
             self.valid_from = args[0]['validFrom']
             self.valid_until = args[0]['validUntil']
         elif args:
-            raise TypeError(f"CommunicationRoom.__init__() takes 2 positional arguments but {len(args) + 1} were given.")
+            raise TypeError(
+                f"CommunicationRoom.__init__() takes 2 positional arguments but {len(args) + 1} were given."
+            )
         else:
             self.id = None
             self.created_at = None
