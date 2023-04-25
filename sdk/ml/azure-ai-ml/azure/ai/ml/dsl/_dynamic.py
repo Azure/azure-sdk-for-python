@@ -95,8 +95,7 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
 
 
 def _update_dct_if_not_exist(dst, src):
-    """Update the dst dict with the source dict if the key is not in the dst
-    dict."""
+    """Update the dst dict with the source dict if the key is not in the dst dict."""
     for k, v in src.items():
         if k not in dst:
             dst[k] = v

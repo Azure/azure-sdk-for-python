@@ -1,7 +1,7 @@
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -9,7 +9,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_snapshot_hash")
+@pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experiences_test
 class TestBatchEndpoint(AzureRecordedTestCase):
     def test_batch_endpoint_create(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
@@ -39,7 +39,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-    @pytest.mark.skip(reason="TODO (2256262): NoSuchModelRegistered issue")
     @pytest.mark.usefixtures("light_gbm_model")
     def test_mlflow_batch_endpoint_create_and_update(
         self, client: MLClient, rand_batch_name: Callable[[], str]
@@ -68,14 +67,9 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
-        set_bodiless_matcher()
-
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -148,9 +142,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_batch_invoke_outputs(
         self,
         client: MLClient,
@@ -158,8 +149,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         rand_batch_deployment_name: Callable[[], str],
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)

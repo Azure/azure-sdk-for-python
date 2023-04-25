@@ -36,14 +36,14 @@ SUPPORTED_STORAGE_TYPES = [
 
 
 class AzureMLDatastorePathUri:
-    """Parser for an azureml:// datastore path URI, e.g.:
-    azureml://datastores/mydatastore/paths/images/dogs'.
+    """Parser for an azureml:// datastore path URI, e.g.: azureml://datastores/mydatastore/paths/images/dogs'.
 
     :param uri: The AzureML datastore path URI.
     :type uri: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore
         path URI is incorrectly formatted.
-    '"""
+    '
+    """
 
     def __init__(self, uri: str):
         if uri.startswith(FILE_PREFIX):
@@ -115,7 +115,6 @@ class AzureMLDatastorePathUri:
         )
 
     def get_uri_type(self) -> str:
-
         if self.uri[0:20] == "azureml://datastores":
             return "Datastore"
         if self.uri[0:14] == "azureml://jobs":
@@ -139,8 +138,7 @@ def get_storage_client(
     account_url: Optional[str] = None,
     container_name: Optional[str] = None,
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
-    """Return a storage client class instance based on the storage account
-    type."""
+    """Return a storage client class instance based on the storage account type."""
     if storage_type not in SUPPORTED_STORAGE_TYPES:
         msg = (
             f"Datastore type {storage_type} is not supported. Supported storage"

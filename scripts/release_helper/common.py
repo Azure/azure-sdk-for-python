@@ -64,6 +64,18 @@ class IssueProcess:
         self.target_date = ''
         self.date_from_target = 0
         self.is_open = True
+        self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
+
+    @property
+    def created_date_format(self) -> str:
+        return str(date.fromtimestamp(self.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
+
+    @property
+    def target_date_format(self) -> str:
+        try:
+            return str(datetime.strptime(self.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        except:
+            return str(self.target_date)
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
@@ -325,33 +337,28 @@ class Common:
 
     def output(self):
         with open(self.file_out_name, 'w') as file_out:
-            file_out.write('| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
-            file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
-            for item in self.result:
+            file_out.write('| id | issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
+            file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+            for idx, item in enumerate(self.result):
                 try:
                     if item.is_open:
-                        item_status = Common.output_md(item)
+                        item_status = Common.output_md(idx + 1, item)
                         file_out.write(item_status)
                 except Exception as e:
                     self.log_error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
 
     @staticmethod
-    def output_md(item: IssueProcess):
-        create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
-        try:
-            target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
-        except:
-            target_date = str(item.target_date)
-
-        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
+    def output_md(idx: int, item: IssueProcess):
+        return '| {} | [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
+            idx,
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
             item.issue_package.issue.user.login,
             item.package_name,
             item.assignee,
             ' '.join(item.bot_advice),
-            create_date,
-            target_date,
+            item.created_date_format,
+            item.target_date_format,
             item.print_date_from_target_date()
         )
 
@@ -371,6 +378,5 @@ class Common:
         self.output()
 
 
-def common_process(issues: List[IssuePackage]):
-    instance = Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)
-    instance.run()
+def common_process(issues: List[IssuePackage]) -> Common:
+    return Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)

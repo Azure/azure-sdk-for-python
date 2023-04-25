@@ -3,13 +3,13 @@
 # ---------------------------------------------------------
 from abc import ABC
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_02_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -37,6 +37,7 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
     :vartype type: str
     """
@@ -46,16 +47,19 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         *,
         rule=None,
         seed=None,
+        logbase=None,
     ) -> None:
         super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
         self.seed = seed
+        self.logbase = logbase
 
     def _to_rest_object(self) -> RestRandomSamplingAlgorithm:
         return RestRandomSamplingAlgorithm(
             rule=self.rule,
             seed=self.seed,
+            logbase=self.logbase,
         )
 
     @classmethod
@@ -63,11 +67,13 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         return cls(
             rule=obj.rule,
             seed=obj.seed,
+            logbase=obj.logbase,
         )
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
     """Grid Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "grid" for this class.
     :vartype type: str
     """
@@ -88,6 +94,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """Bayesian Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "bayesian" for this class.
     :vartype type: str
     """

@@ -434,8 +434,8 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug session definition. Is either a model type or a IO type.
-         Required.
+        :param request: Data flow debug session definition. Is either a
+         CreateDataFlowDebugSessionRequest type or a IO type. Required.
         :type request: ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -664,8 +664,8 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug session definition with debug content. Is either a model type
-         or a IO type. Required.
+        :param request: Data flow debug session definition with debug content. Is either a
+         DataFlowDebugPackage type or a IO type. Required.
         :type request: ~azure.mgmt.datafactory.models.DataFlowDebugPackage or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -804,8 +804,8 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug session definition for deletion. Is either a model type or a IO
-         type. Required.
+        :param request: Data flow debug session definition for deletion. Is either a
+         DeleteDataFlowDebugSessionRequest type or a IO type. Required.
         :type request: ~azure.mgmt.datafactory.models.DeleteDataFlowDebugSessionRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1032,8 +1032,8 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug command definition. Is either a model type or a IO type.
-         Required.
+        :param request: Data flow debug command definition. Is either a DataFlowDebugCommandRequest
+         type or a IO type. Required.
         :type request: ~azure.mgmt.datafactory.models.DataFlowDebugCommandRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

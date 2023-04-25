@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -44,10 +44,10 @@ class Action(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AlertingAction(Action):
@@ -89,8 +89,8 @@ class AlertingAction(Action):
         trigger: "_models.TriggerCondition",
         azns_action: Optional["_models.AzNsActionGroup"] = None,
         throttling_in_min: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword severity: Severity of the alert. Required. Known values are: "0", "1", "2", "3", and
          "4".
@@ -104,7 +104,7 @@ class AlertingAction(Action):
         :paramtype trigger: ~$(python-base-namespace).v2018_04_16.models.TriggerCondition
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"  # type: str
+        self.odata_type: str = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
         self.severity = severity
         self.azns_action = azns_action
         self.throttling_in_min = throttling_in_min
@@ -135,8 +135,8 @@ class AzNsActionGroup(_serialization.Model):
         action_group: Optional[List[str]] = None,
         email_subject: Optional[str] = None,
         custom_webhook_payload: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_group: Azure Action Group reference.
         :paramtype action_group: list[str]
@@ -172,7 +172,9 @@ class Criteria(_serialization.Model):
         "dimensions": {"key": "dimensions", "type": "[Dimension]"},
     }
 
-    def __init__(self, *, metric_name: str, dimensions: Optional[List["_models.Dimension"]] = None, **kwargs):
+    def __init__(
+        self, *, metric_name: str, dimensions: Optional[List["_models.Dimension"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name: Name of the metric. Required.
         :paramtype metric_name: str
@@ -209,7 +211,9 @@ class Dimension(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, operator: Union[str, "_models.Operator"], values: List[str], **kwargs):
+    def __init__(
+        self, *, name: str, operator: Union[str, "_models.Operator"], values: List[str], **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
@@ -235,7 +239,7 @@ class ErrorContract(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~$(python-base-namespace).v2018_04_16.models.ErrorResponse
@@ -258,7 +262,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -302,8 +306,8 @@ class LogMetricTrigger(_serialization.Model):
         threshold: Optional[float] = None,
         metric_trigger_type: Union[str, "_models.MetricTriggerType"] = "Consecutive",
         metric_column: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
          'Equal'. Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan",
@@ -374,7 +378,7 @@ class Resource(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -495,8 +499,8 @@ class LogSearchRuleResource(Resource):  # pylint: disable=too-many-instance-attr
         auto_mitigate: bool = False,
         enabled: Optional[Union[str, "_models.Enabled"]] = None,
         schedule: Optional["_models.Schedule"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -545,7 +549,7 @@ class LogSearchRuleResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[LogSearchRuleResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.LogSearchRuleResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.LogSearchRuleResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The values for the Log Search Rule resources.
         :paramtype value: list[~$(python-base-namespace).v2018_04_16.models.LogSearchRuleResource]
@@ -574,8 +578,8 @@ class LogSearchRuleResourcePatch(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         enabled: Optional[Union[str, "_models.Enabled"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -610,13 +614,13 @@ class LogToMetricAction(Action):
         "criteria": {"key": "criteria", "type": "[Criteria]"},
     }
 
-    def __init__(self, *, criteria: List["_models.Criteria"], **kwargs):
+    def __init__(self, *, criteria: List["_models.Criteria"], **kwargs: Any) -> None:
         """
         :keyword criteria: Criteria of Metric. Required.
         :paramtype criteria: list[~$(python-base-namespace).v2018_04_16.models.Criteria]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction"  # type: str
+        self.odata_type: str = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction"
         self.criteria = criteria
 
 
@@ -643,7 +647,7 @@ class Schedule(_serialization.Model):
         "time_window_in_minutes": {"key": "timeWindowInMinutes", "type": "int"},
     }
 
-    def __init__(self, *, frequency_in_minutes: int, time_window_in_minutes: int, **kwargs):
+    def __init__(self, *, frequency_in_minutes: int, time_window_in_minutes: int, **kwargs: Any) -> None:
         """
         :keyword frequency_in_minutes: frequency (in minutes) at which rule condition should be
          evaluated. Required.
@@ -690,8 +694,8 @@ class Source(_serialization.Model):
         query: Optional[str] = None,
         authorized_resources: Optional[List[str]] = None,
         query_type: Optional[Union[str, "_models.QueryType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query: Log search query. Required for action type - AlertingAction.
         :paramtype query: str
@@ -741,8 +745,8 @@ class TriggerCondition(_serialization.Model):
         threshold_operator: Union[str, "_models.ConditionalOperator"] = "GreaterThanOrEqual",
         threshold: float,
         metric_trigger: Optional["_models.LogMetricTrigger"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword threshold_operator: Evaluation operation for rule - 'GreaterThan' or 'LessThan. Known
          values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan", and "Equal".

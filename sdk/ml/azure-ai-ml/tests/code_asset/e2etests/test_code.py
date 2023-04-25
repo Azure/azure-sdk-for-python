@@ -19,7 +19,7 @@ def code_asset_path(tmp_path: Path) -> str:
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_snapshot_hash")
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
 @pytest.mark.core_sdk_test
 class TestCode(AzureRecordedTestCase):
     def test_create_and_get(self, client: MLClient, code_asset_path: str, randstr: Callable[[], str]) -> None:

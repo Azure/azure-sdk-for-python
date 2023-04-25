@@ -176,7 +176,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :paramtype iv: bytes or None
         :keyword additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
-        :paramtype additional_authenticated_data iv: bytes or None
+        :paramtype additional_authenticated_data: bytes or None
 
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
 

@@ -76,8 +76,6 @@ class TestRunOps(LoadtestingTest):
             },
         )
 
-        assert run_poller.get_initial_response() is not None
-
         result = run_poller.result(10800)
         assert result is not None
 
@@ -165,7 +163,6 @@ class TestRunOps(LoadtestingTest):
                 "displayName": "My New Load Test Run from PyTest",
             }
         )
-        assert run_poller.get_initial_response() is not None
 
         result = run_client.stop_test_run("my-new-test-run-from-pytest")
         assert result is not None
@@ -194,9 +191,9 @@ class TestRunOps(LoadtestingTest):
 
         metrics = run_client.list_metrics(
             test_run_id=loadtesting_test_run_id,
-            metricname=metric_definitions["value"][0]["name"],
+            metric_name=metric_definitions["value"][0]["name"],
             metric_namespace=metric_namespaces["value"][0]["name"],
-            timespan=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"]
+            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"]
         )
         assert metrics is not None
 

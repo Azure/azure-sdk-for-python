@@ -4,5 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._client import LoadTestAdministrationClient, LoadTestRunClient
+from ._version import VERSION
 
+__version__ = VERSION
 __all__ = ["LoadTestAdministrationClient", "LoadTestRunClient"]

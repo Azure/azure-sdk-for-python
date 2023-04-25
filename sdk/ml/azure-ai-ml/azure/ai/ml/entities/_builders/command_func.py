@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import os
-from typing import Callable, Dict, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
@@ -17,7 +17,12 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+    RayDistribution,
+)
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -118,12 +123,15 @@ def command(
     experiment_name: Optional[str] = None,
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
-    distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+    distribution: Optional[
+        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+    ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,
     outputs: Optional[Dict] = None,
     instance_count: Optional[int] = None,
     instance_type: Optional[str] = None,
+    locations: Optional[List[str]] = None,
     docker_args: Optional[str] = None,
     shm_size: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -133,10 +141,12 @@ def command(
     services: Optional[
         Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
     ] = None,
+    job_tier: Optional[str] = None,
+    priority: Optional[str] = None,
     **kwargs,
 ) -> Command:
-    """Create a Command object which can be used inside dsl.pipeline as a
-    function and can also be created as a standalone command job.
+    """Create a Command object which can be used inside dsl.pipeline as a function and can also be created as a
+    standalone command job.
 
     :param name: Name of the command job or component created
     :type name: str
@@ -159,7 +169,11 @@ def command(
     :type environment_variables: dict
     :param distribution: the distribution mode to use for this command
     :type distribution:
-        Union[Dict, azure.ai.ml.MpiDistribution, azure.ai.ml.TensorFlowDistribution, azure.ai.ml.PyTorchDistribution]
+        Union[Dict,
+              azure.ai.ml.MpiDistribution,
+              azure.ai.ml.TensorFlowDistribution,
+              azure.ai.ml.PyTorchDistribution,
+              azure.ai.ml.RayDistribution]
     :param compute: the name of the compute where the command job is executed(
         will not be used if the command is used as a component/function)
     :type compute: str
@@ -171,6 +185,8 @@ def command(
     :vartype instance_count: int
     :param instance_type: Optional type of VM used as supported by the compute target.
     :vartype instance_type: str
+    :param locations: Optional list of locations where the job can run.
+    :vartype locations: List[str]
     :param docker_args: Extra arguments to pass to the Docker run command. This would override any
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
@@ -196,6 +212,10 @@ def command(
     :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
         Please see https://aka.ms/azuremlexperimental for more information.
     :type services: Dict[str, JobService]
+    :param job_tier: **Experimental** determines the job tier.
+    :type job_tier: str
+    :param priority: **Experimental** controls the priority on the compute.
+    :type priority: str
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}
@@ -242,12 +262,25 @@ def command(
         **kwargs,
     )
 
-    if instance_count is not None or instance_type is not None or docker_args is not None or shm_size is not None:
+    if (
+        locations is not None
+        or instance_count is not None
+        or instance_type is not None
+        or docker_args is not None
+        or shm_size is not None
+    ):
         command_obj.set_resources(
-            instance_count=instance_count, instance_type=instance_type, docker_args=docker_args, shm_size=shm_size
+            locations=locations,
+            instance_count=instance_count,
+            instance_type=instance_type,
+            docker_args=docker_args,
+            shm_size=shm_size,
         )
 
     if timeout is not None:
         command_obj.set_limits(timeout=timeout)
+
+    if job_tier is not None or priority is not None:
+        command_obj.set_queue_settings(job_tier=job_tier, priority=priority)
 
     return command_obj

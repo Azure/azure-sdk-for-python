@@ -7,12 +7,10 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-import requests
-from opentelemetry.sdk.trace.export import SpanExportResult
-
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
+    _get_auth_policy,
     BaseExporter,
     ExportResult,
 )
@@ -31,6 +29,9 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
     TrackResponse,
 )
+
+
+TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -641,6 +642,32 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmission_empty(self):
         status = self._base._transmit([])
         self.assertEqual(status, ExportResult.SUCCESS)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_auth_policy")
+    def test_exporter_credential(self, mock_add_credential_policy):
+        TEST_CREDENTIAL = "TEST_CREDENTIAL"
+        base = BaseExporter(credential=TEST_CREDENTIAL, authentication_policy=TEST_AUTH_POLICY)
+        self.assertEqual(base._credential, TEST_CREDENTIAL)
+        mock_add_credential_policy.assert_called_once_with(TEST_CREDENTIAL, TEST_AUTH_POLICY)
+
+    def test_get_auth_policy(self):
+        class TestCredential():
+            def get_token():
+                return "TEST_TOKEN"
+        credential = TestCredential()
+        result = _get_auth_policy(credential, TEST_AUTH_POLICY)
+        self.assertEqual(result._credential, credential)
+        
+
+    def test_get_auth_policy_no_credential(self):
+        self.assertEqual(_get_auth_policy(credential=None, default_auth_policy=TEST_AUTH_POLICY), TEST_AUTH_POLICY)
+        
+
+    def test_get_auth_policy_invalid_credential(self):
+        class InvalidTestCredential():
+            def invalid_get_token():
+                return "TEST_TOKEN"
+        self.assertRaises(ValueError, _get_auth_policy, credential=InvalidTestCredential(), default_auth_policy=TEST_AUTH_POLICY)
 
 
 class MockResponse:

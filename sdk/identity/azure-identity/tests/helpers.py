@@ -199,3 +199,9 @@ def urlsafeb64_decode(s):
 
     padding_needed = 4 - len(s) % 4
     return base64.urlsafe_b64decode(s + b"=" * padding_needed)
+
+
+def get_token_payload_contents(token: str):
+    _, payload, _ = token.split(".")
+    decoded_payload = urlsafeb64_decode(payload).decode()
+    return json.loads(decoded_payload)

@@ -285,8 +285,8 @@ class ConnectedEnvironmentsStoragesOperations:
         :type connected_environment_name: str
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
-        :param storage_envelope: Configuration details of storage. Is either a model type or a IO type.
-         Required.
+        :param storage_envelope: Configuration details of storage. Is either a
+         ConnectedEnvironmentStorage type or a IO type. Required.
         :type storage_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentStorage or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

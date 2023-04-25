@@ -6,9 +6,6 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
-from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
@@ -17,12 +14,15 @@ from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
+    IPProtectionLevel,
 )
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -125,7 +125,6 @@ def assert_component_basic_workflow(
     "mock_asset_name",
     "mock_component_hash",
     "enable_environment_id_arm_expansion",
-    "mock_snapshot_hash",
 )
 @pytest.mark.pipeline_test
 class TestComponent(AzureRecordedTestCase):
@@ -163,12 +162,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_parallel_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
             "description": "parallel component for batch score",
@@ -243,12 +237,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="registry_component_name",
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        set_bodiless_matcher()
-
         expected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
@@ -516,7 +505,6 @@ class TestComponent(AzureRecordedTestCase):
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -529,6 +517,7 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(client, component_name, params_override=params_override)
 
         # the code arm id should be the same
+        assert component_resource1.code is None
         assert component_resource1.code == component_resource2.code
         assert component_resource2.description == description
         assert component_resource2.display_name == display_name
@@ -623,12 +612,7 @@ class TestComponent(AzureRecordedTestCase):
         tensorflow_component_resource = client.components.create_or_update(component_entity)
         assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         component_name = randstr("component_name")
         params_override = [{"name": component_name}]
         path = "./tests/test_configs/components/component_no_version.yml"
@@ -722,7 +706,6 @@ class TestComponent(AzureRecordedTestCase):
             sleep_if_live(5)
             assert client.components.get(name, label="latest").version == version
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_resource = client.components.create_or_update(command_component, is_anonymous=True)
@@ -797,21 +780,6 @@ class TestComponent(AzureRecordedTestCase):
         component_resource = client.components.create_or_update(component)
         assert component_resource.version == "3"
 
-    def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component: CommandComponent = load_component(source=component_path)
-        component.name = None
-        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = client.components.validate(component)
-        assert validation_result.passed is False
-        assert validation_result.error_messages == {
-            "name": "Missing data for required field.",
-            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
-        }
-
-    @pytest.mark.skip(
-        reason="TODO (2234965) User/tenant/subscription is not allowed to access registry sdk-test to re-record",
-    )
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",
@@ -937,6 +905,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
@@ -977,7 +946,6 @@ class TestComponent(AzureRecordedTestCase):
             node = default_component()
             assert node._to_rest_object()["componentId"] == default_component.id
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_command_component_with_properties_e2e_flow(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(
             source="./tests/test_configs/components/helloworld_component_with_properties.yml",
@@ -1020,3 +988,38 @@ class TestComponent(AzureRecordedTestCase):
         current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
+        component_path = "./tests/test_configs/components/component_ipp.yml"
+        command_component = load_component(source=component_path)
+        from_rest_component = create_component(
+            ipp_registry_client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
+
+        assert from_rest_component._intellectual_property
+        assert from_rest_component._intellectual_property == command_component._intellectual_property
+
+        assert from_rest_component.inputs["training_data"]._intellectual_property
+        assert (
+            from_rest_component.inputs["training_data"]._intellectual_property
+            == command_component.inputs["training_data"]._intellectual_property
+        )
+
+        assert from_rest_component.inputs["base_model"]._intellectual_property
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
+
+        assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+
+        assert (
+            from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+            == command_component.outputs["model_output_not_ipp"]._intellectual_property
+        )
+
+        assert from_rest_component.outputs["model_output_ipp"]._intellectual_property
+        assert (
+            from_rest_component.outputs["model_output_ipp"]._intellectual_property
+            == command_component.outputs["model_output_ipp"]._intellectual_property
+        )

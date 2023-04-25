@@ -16,12 +16,10 @@ _PYTHON_ASSIGNEE = {'Wzb123456789'}
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
-_7_DAY_ATTENTION = '7days attention'
 _MultiAPI = 'MultiAPI'
-_ON_TIME = 'on time'
-_HOLD_ON = 'HoldOn'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime"]
 
 
 class IssueProcessPython(IssueProcess):
@@ -114,40 +112,22 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
-    def on_time_policy(self):
-        if _ON_TIME in self.issue_package.labels_name:
-            self.bot_advice.append('On time')
-
-    def hold_on_policy(self):
-        if _HOLD_ON in self.issue_package.labels_name:
-            self.bot_advice.append('Hold on')
-
-    def remind_policy(self):
-        if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
-            self.comment(
-                f'hi @{self.owner}, the issue is closed since there is no reply for a long time. '
-                'Please reopen it if necessary or create new one.')
-            self.issue_package.issue.edit(state='close')
-        elif self.delay_time >= 7 and _7_DAY_ATTENTION not in self.issue_package.labels_name and self.date_from_target < 7:
-            self.comment(
-                f'hi @{self.owner}, this release-request has been delayed more than 7 days,'
-                ' please deal with it ASAP. We will close the issue if there is still no response after 7 days!')
-            self.add_label(_7_DAY_ATTENTION)
+    def hint_policy(self):
+        for item in _HINTS:
+            if item in self.issue_package.labels_name:
+                self.bot_advice.append(item)
 
     def auto_bot_advice(self):
         super().auto_bot_advice()
         self.multi_api_policy()
         self.attention_policy()
-        self.on_time_policy()
-        self.hold_on_policy()
-        self.remind_policy()
-
+        self.hint_policy()
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
             return
         last_version, last_time = get_last_released_date(self.package_name)
-        if last_time and last_time > self.created_time:
+        if last_version and last_time > self.created_time:
             comment = f'Hi @{self.owner}, pypi link: https://pypi.org/project/{self.package_name}/{last_version}/'
             self.issue_package.issue.create_comment(body=comment)
             self.issue_package.issue.edit(state='closed')
@@ -203,6 +183,5 @@ class Python(Common):
         self.output()
 
 
-def python_process(issues: List[Any]):
-    instance = Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)
-    instance.run()
+def python_process(issues: List[Any]) -> Python:
+    return Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)

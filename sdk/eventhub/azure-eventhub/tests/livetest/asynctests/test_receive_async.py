@@ -138,7 +138,7 @@ async def test_receive_owner_level_async(connstr_senders, uamqp_transport):
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
             senders[0].send(ed)
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
     await task1
     await task2
     assert isinstance(on_error.error, EventHubError)

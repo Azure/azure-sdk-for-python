@@ -1,0 +1,7 @@
+name: test_ws_conn_azure_synapse_analytics
+type: azure_synapse_analytics
+target: dummy
+credentials:
+  type: username_password
+  username: dummy
+  password: dummy

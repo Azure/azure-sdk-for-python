@@ -9,11 +9,10 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 class OversizeDataConfig:
-    """Oversize Data Config deployment entity
+    """Oversize Data Config deployment entity.
 
     :param path: Blob path for Model Data Collector file.
     :type path: str
-
     """
 
     # pylint: disable=unused-argument,no-self-use

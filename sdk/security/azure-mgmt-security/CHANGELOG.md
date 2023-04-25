@@ -1,5 +1,94 @@
 # Release History
 
+## 5.0.0 (2023-04-20)
+
+### Features Added
+
+  - Added operation group APICollectionOffboardingOperations
+  - Added operation group APICollectionOnboardingOperations
+  - Added operation group APICollectionOperations
+  - Added operation group SecurityOperatorsOperations
+  - Model AwsEnvironmentData has a new parameter account_name
+  - Model AwsEnvironmentData has a new parameter regions
+  - Model DefenderCspmAwsOffering has a new parameter data_sensitivity_discovery
+  - Model DefenderCspmAwsOffering has a new parameter databases_dspm
+  - Model DefenderFoDatabasesAwsOffering has a new parameter databases_dspm
+  - Model DefenderFoDatabasesAwsOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration has a new parameter private_link_scope
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration has a new parameter proxy
+  - Model DefenderForServersAwsOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForServersGcpOffering has a new parameter vm_scanners
+  - Model DefenderForServersGcpOfferingArcAutoProvisioning has a new parameter configuration
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration has a new parameter private_link_scope
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration has a new parameter proxy
+  - Model GcpOrganizationalDataOrganization has a new parameter organization_name
+  - Model GcpProjectDetails has a new parameter project_name
+  - Model Pricing has a new parameter enablement_time
+  - Model Pricing has a new parameter extensions
+
+### Breaking Changes
+
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration no longer has parameter agent_onboarding_service_account_numeric_id
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioningConfiguration no longer has parameter client_id
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration no longer has parameter agent_onboarding_service_account_numeric_id
+  - Model DefenderForServersGcpOfferingArcAutoProvisioningConfiguration no longer has parameter client_id
+
+## 4.0.0 (2023-03-20)
+
+### Features Added
+
+  - Added operation GovernanceRulesOperations.begin_execute
+  - Added operation GovernanceRulesOperations.list
+  - Added operation GovernanceRulesOperations.operation_results
+  - Added operation group HealthReportOperations
+  - Added operation group HealthReportsOperations
+  - Model GovernanceRule has a new parameter excluded_scopes
+  - Model GovernanceRule has a new parameter include_member_scopes
+  - Model GovernanceRule has a new parameter metadata
+  - Model GovernanceRule has a new parameter tenant_id
+  - Model ResourceDetails has a new parameter connector_id
+  - Model ResourceDetails has a new parameter id
+  - Model ScanProperties has a new parameter last_scan_time
+
+### Breaking Changes
+
+  - Operation GovernanceRulesOperations.create_or_update has a new required parameter scope
+  - Operation GovernanceRulesOperations.get has a new required parameter scope
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_security_connector
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_subscription
+  - Removed operation group GovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRulesExecuteStatusOperations
+  - Removed operation group SecurityConnectorGovernanceRulesOperations
+  - Removed operation group SubscriptionGovernanceRulesExecuteStatusOperations
+  - Renamed operation GovernanceRulesOperations.delete to GovernanceRulesOperations.begin_delete
+
+## 4.0.0b2 (2023-03-06)
+
+### Features Added
+
+  - Added operation GovernanceRulesOperations.begin_execute
+  - Added operation GovernanceRulesOperations.list
+  - Added operation GovernanceRulesOperations.operation_results
+  - Model GovernanceRule has a new parameter excluded_scopes
+  - Model GovernanceRule has a new parameter include_member_scopes
+  - Model GovernanceRule has a new parameter metadata
+  - Model GovernanceRule has a new parameter tenant_id
+
+### Breaking Changes
+
+  - Operation GovernanceRulesOperations.create_or_update has a new required parameter scope
+  - Operation GovernanceRulesOperations.get has a new required parameter scope
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_security_connector
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_subscription
+  - Removed operation group GovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRulesExecuteStatusOperations
+  - Removed operation group SecurityConnectorGovernanceRulesOperations
+  - Removed operation group SubscriptionGovernanceRulesExecuteStatusOperations
+  - Renamed operation GovernanceRulesOperations.delete to GovernanceRulesOperations.begin_delete
+
 ## 4.0.0b1 (2023-02-16)
 
 ### Features Added

@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -38,8 +39,12 @@ class ActionGroupList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of action groups.
         :paramtype value: list[~$(python-base-namespace).v2018_03_01.models.ActionGroupResource]
@@ -66,7 +71,7 @@ class ActionGroupPatchBody(_serialization.Model):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -113,7 +118,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -223,8 +228,8 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
         voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
         logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
         azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -323,8 +328,8 @@ class AutomationRunbookReceiver(_serialization.Model):
         is_global_runbook: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword automation_account_id: The Azure automation account Id which holds this runbook and
          authenticate to Azure resource. Required.
@@ -371,7 +376,7 @@ class AzureAppPushReceiver(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -415,8 +420,8 @@ class AzureFunctionReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs
-    ):
+        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the azure function receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -501,8 +506,8 @@ class MultiMetricCriteria(_serialization.Model):
         metric_namespace: Optional[str] = None,
         dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -525,7 +530,7 @@ class MultiMetricCriteria(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.criterion_type = None  # type: Optional[str]
+        self.criterion_type: Optional[str] = None
         self.name = name
         self.metric_name = metric_name
         self.metric_namespace = metric_namespace
@@ -616,8 +621,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
         dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
         ignore_data_before: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -664,7 +669,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
             skip_metric_validation=skip_metric_validation,
             **kwargs
         )
-        self.criterion_type = "DynamicThresholdCriterion"  # type: str
+        self.criterion_type: str = "DynamicThresholdCriterion"
         self.operator = operator
         self.alert_sensitivity = alert_sensitivity
         self.failing_periods = failing_periods
@@ -672,7 +677,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
 
 
 class DynamicThresholdFailingPeriods(_serialization.Model):
-    """The minimum number of violations required within the selected lookback time window required to raise an alert.
+    """The minimum number of violations required within the selected lookback time window required to
+    raise an alert.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -695,7 +701,9 @@ class DynamicThresholdFailingPeriods(_serialization.Model):
         "min_failing_periods_to_alert": {"key": "minFailingPeriodsToAlert", "type": "float"},
     }
 
-    def __init__(self, *, number_of_evaluation_periods: float, min_failing_periods_to_alert: float, **kwargs):
+    def __init__(
+        self, *, number_of_evaluation_periods: float, min_failing_periods_to_alert: float, **kwargs: Any
+    ) -> None:
         """
         :keyword number_of_evaluation_periods: The number of aggregated lookback points. The lookback
          time window is calculated based on the aggregation granularity (windowSize) and the selected
@@ -739,7 +747,7 @@ class EmailReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the email receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -770,7 +778,7 @@ class EnableRequest(_serialization.Model):
         "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(self, *, receiver_name: str, **kwargs):
+    def __init__(self, *, receiver_name: str, **kwargs: Any) -> None:
         """
         :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
@@ -793,7 +801,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -844,8 +852,8 @@ class ItsmReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
-    ):
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -897,7 +905,7 @@ class LogicAppReceiver(_serialization.Model):
         "callback_url": {"key": "callbackUrl", "type": "str"},
     }
 
-    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs):
+    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the logic app receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -929,8 +937,12 @@ class MetricAlertAction(_serialization.Model):
     }
 
     def __init__(
-        self, *, action_group_id: Optional[str] = None, web_hook_properties: Optional[Dict[str, str]] = None, **kwargs
-    ):
+        self,
+        *,
+        action_group_id: Optional[str] = None,
+        web_hook_properties: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_group_id: the id of the action group to use.
         :paramtype action_group_id: str
@@ -979,7 +991,7 @@ class MetricAlertCriteria(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -987,7 +999,7 @@ class MetricAlertCriteria(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
@@ -1022,8 +1034,8 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         all_of: Optional[List["_models.MultiMetricCriteria"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1032,7 +1044,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
         :paramtype all_of: list[~$(python-base-namespace).v2018_03_01.models.MultiMetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
         self.all_of = all_of
 
 
@@ -1142,8 +1154,8 @@ class MetricAlertResource(Resource):  # pylint: disable=too-many-instance-attrib
         target_resource_region: Optional[str] = None,
         auto_mitigate: Optional[bool] = None,
         actions: Optional[List["_models.MetricAlertAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1208,7 +1220,7 @@ class MetricAlertResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[MetricAlertResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MetricAlertResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MetricAlertResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
         :paramtype value: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertResource]
@@ -1296,8 +1308,8 @@ class MetricAlertResourcePatch(_serialization.Model):  # pylint: disable=too-man
         criteria: Optional["_models.MetricAlertCriteria"] = None,
         auto_mitigate: Optional[bool] = None,
         actions: Optional[List["_models.MetricAlertAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1380,8 +1392,8 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         all_of: Optional[List["_models.MetricCriteria"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1390,7 +1402,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
         :paramtype all_of: list[~$(python-base-namespace).v2018_03_01.models.MetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         self.all_of = all_of
 
 
@@ -1421,8 +1433,8 @@ class MetricAlertStatus(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         properties: Optional["_models.MetricAlertStatusProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The status name.
         :paramtype name: str
@@ -1451,7 +1463,7 @@ class MetricAlertStatusCollection(_serialization.Model):
         "value": {"key": "value", "type": "[MetricAlertStatus]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MetricAlertStatus"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MetricAlertStatus"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
         :paramtype value: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertStatus]
@@ -1483,8 +1495,8 @@ class MetricAlertStatusProperties(_serialization.Model):
         dimensions: Optional[Dict[str, str]] = None,
         status: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dimensions: An object describing the type of the dimensions.
         :paramtype dimensions: dict[str, str]
@@ -1566,8 +1578,8 @@ class MetricCriteria(MultiMetricCriteria):
         metric_namespace: Optional[str] = None,
         dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1603,7 +1615,7 @@ class MetricCriteria(MultiMetricCriteria):
             skip_metric_validation=skip_metric_validation,
             **kwargs
         )
-        self.criterion_type = "StaticThresholdCriterion"  # type: str
+        self.criterion_type: str = "StaticThresholdCriterion"
         self.operator = operator
         self.threshold = threshold
 
@@ -1633,7 +1645,7 @@ class MetricDimension(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, operator: str, values: List[str], **kwargs):
+    def __init__(self, *, name: str, operator: str, values: List[str], **kwargs: Any) -> None:
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
@@ -1682,7 +1694,7 @@ class SmsReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1725,7 +1737,7 @@ class VoiceReceiver(_serialization.Model):
         "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the voice receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1763,7 +1775,7 @@ class WebhookReceiver(_serialization.Model):
         "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
-    def __init__(self, *, name: str, service_uri: str, **kwargs):
+    def __init__(self, *, name: str, service_uri: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the webhook receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -1819,8 +1831,8 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         component_id: str,
         failed_location_count: float,
         additional_properties: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1833,7 +1845,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         :paramtype failed_location_count: float
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
         self.web_test_id = web_test_id
         self.component_id = component_id
         self.failed_location_count = failed_location_count

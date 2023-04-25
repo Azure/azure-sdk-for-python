@@ -90,11 +90,13 @@ IGNORED_SAMPLES = {
         "sample_publish_events_to_a_topic_using_sas_credential_async.py"
     ],
     "azure-eventhub": [
+        "client_identity_authentication.py",    # TODO: remove after fixing issue #29177
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
         "connection_to_custom_endpoint_address_async.py",
         "iot_hub_connection_string_receive_async.py",
         "proxy_async.py",
+        "send_stream.py",    # TODO: remove after fixing issue #29177
     ],
     "azure-eventhub-checkpointstoretable": ["receive_events_using_checkpoint_store.py"],
     "azure-servicebus": [

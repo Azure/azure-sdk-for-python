@@ -40,10 +40,26 @@ def storage_account_secret(account_keys: Tuple[str, str]) -> str:
     return account_keys[0]
 
 
-directory = "test_dir"
-file_path = "test_dir/sub_dir/test.txt"
+file_path = Path("sub_dir/test.txt")
 TEST_ARTIFACT_FILE = "artifact_file.txt"
 TEST_ARTIFACT_DIR = "artifact_testing_dir"
+
+
+@pytest.fixture(scope="session")
+def upload_dir(tmp_path_factory):
+    """Fixture that sets up a directory with a file that is uploaded by
+    other tests
+
+    Returns:
+        Path: Path to the base of the directory
+    """
+    base = tmp_path_factory.mktemp("test_dir")
+    actual_file_path = base / file_path
+    actual_file_path.parent.mkdir(parents=True, exist_ok=True)
+    with actual_file_path.open("w") as f:
+        f.write("content")
+
+    return base
 
 
 @pytest.fixture
@@ -77,26 +93,20 @@ def artifact_path_dir(tmpdir_factory, variable_recorder) -> str:  # type: ignore
     return str(file_name.dirpath())
 
 
-# create test paths
-try:
-    sub_directory = "sub_dir"
-    dir_path = os.path.join(directory, sub_directory)
-    os.makedirs(dir_path, exist_ok=True)
-    with open(file_path, "w") as stream:
-        stream.write("content")
-except FileExistsError:
-    pass
-
-
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="test are flaky in playback")
 @pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(
-        self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        dir_asset_id: str,
+        file_asset_id: str,
+        upload_dir: Path,
     ) -> None:
-        blob_storage_client = get_storage_client(
+        blob_storage_client: BlobStorageClient = get_storage_client(
             credential=storage_account_secret,
             container_name=container_name,
             storage_account=storage_account_name,
@@ -104,21 +114,26 @@ class TestUpload(AzureRecordedTestCase):
         )
         assert isinstance(blob_storage_client, BlobStorageClient)
         _ = blob_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version="version"
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version="version"
         )
         _ = blob_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
 
         _ = blob_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version="version"
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version="version"
         )
         _ = blob_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
 
     def test_upload_file_gen2(
-        self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        dir_asset_id: str,
+        file_asset_id: str,
+        upload_dir: Path,
     ) -> None:
         adlsgen2_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -128,15 +143,20 @@ class TestUpload(AzureRecordedTestCase):
         )
         assert isinstance(adlsgen2_storage_client, Gen2StorageClient)
         _ = adlsgen2_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version="version"
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version="version"
         )
         _ = adlsgen2_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
 
     @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
     def test_upload_file_fileshare(
-        self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        dir_asset_id: str,
+        file_asset_id: str,
+        upload_dir: Path,
     ) -> None:
         file_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -147,18 +167,18 @@ class TestUpload(AzureRecordedTestCase):
         assert isinstance(file_storage_client, FileStorageClient)
 
         file_asset_id1 = file_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version="version"
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version="version"
         )
         file_asset_id2 = file_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version="version"
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version="version"
         )
         assert file_asset_id1 == file_asset_id2
 
         dir_asset_id1 = file_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
         dir_asset_id2 = file_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
         assert dir_asset_id1 == dir_asset_id2
 
@@ -236,7 +256,6 @@ class TestUpload(AzureRecordedTestCase):
         uuid_name: str,
         variable_recorder,
     ) -> None:
-
         # creating nested directory with files here (using a fixture causes issues and directory is limited to this test)
         top_level = tempfile.TemporaryDirectory()
         nested_level = tempfile.TemporaryDirectory(dir=top_level.name)
@@ -350,6 +369,7 @@ class TestUpload(AzureRecordedTestCase):
         dir_asset_id: str,
         file_asset_id: str,
         blob_account_url: str,
+        upload_dir: Path,
     ) -> None:
         blob_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -369,7 +389,7 @@ class TestUpload(AzureRecordedTestCase):
 
         # upload artifact w/o version
         uploaded_file_info = blob_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version=None
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version=None
         )
         # update artifact blob metadata with new version
         _update_metadata(
@@ -385,7 +405,7 @@ class TestUpload(AzureRecordedTestCase):
 
         # upload artifact w/o version
         uploaded_dir_info = blob_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version=None
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version=None
         )
         # update artifact blob metadata with new version
         _update_metadata(
@@ -406,6 +426,7 @@ class TestUpload(AzureRecordedTestCase):
         dir_asset_id: str,
         file_asset_id: str,
         gen2_account_url: str,
+        upload_dir: Path,
     ) -> None:
         gen2_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -425,7 +446,7 @@ class TestUpload(AzureRecordedTestCase):
 
         # upload artifact w/o version
         uploaded_file_info = gen2_storage_client.upload(
-            file_path, show_progress=False, asset_hash=file_asset_id, name="name", version=None
+            str(upload_dir / file_path), show_progress=False, asset_hash=file_asset_id, name="name", version=None
         )
         # update artifact blob metadata with new version
         _update_metadata(
@@ -441,7 +462,7 @@ class TestUpload(AzureRecordedTestCase):
 
         # upload artifact w/o version
         uploaded_dir_info = gen2_storage_client.upload(
-            directory, show_progress=False, asset_hash=dir_asset_id, name="name", version=None
+            str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version=None
         )
         # update artifact blob metadata with new version
         _update_metadata(

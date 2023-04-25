@@ -59,7 +59,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
         self.files = files
         self.archives = archives
         self.conf = conf
-        self._environment = environment
+        self.environment = environment
         self.args = args
 
     @property

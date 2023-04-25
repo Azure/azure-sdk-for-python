@@ -4,8 +4,8 @@ with the servicebus SDK and exporting to Azure monitor backend.
 
 This example traces calls for receiving messages from the servicebus queue.
 
-The telemetry will be collected automatically and sent to Application
-Insights via the AzureMonitorTraceExporter
+An alternative path to export using the OpenTelemetry exporter for Azure Monitor
+is also mentioned in the sample. Please take a look at the commented code.
 """
 
 import os
@@ -15,6 +15,16 @@ from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
 settings.tracing_implementation = OpenTelemetrySpan
+
+# In the below example, we use a simple console exporter, uncomment these lines to use
+# the OpenTelemetry exporter for Azure Monitor.
+# Example of a trace exporter for Azure Monitor, but you can use anything OpenTelemetry supports.
+
+# from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+# exporter = AzureMonitorTraceExporter(
+#     connection_string="the connection string used for your Application Insights resource"
+# )
+
 
 # Regular open telemetry usage from here, see https://github.com/open-telemetry/opentelemetry-python
 # for details

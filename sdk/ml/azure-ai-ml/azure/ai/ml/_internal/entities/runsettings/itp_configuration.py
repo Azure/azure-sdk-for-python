@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import List, Optional
 
-from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
+from ....entities._job.job_resource_configuration import BaseProperty
 
 
 class ITPResourceConfiguration(BaseProperty):

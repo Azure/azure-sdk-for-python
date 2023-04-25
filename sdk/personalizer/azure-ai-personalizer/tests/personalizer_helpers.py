@@ -10,7 +10,7 @@ import time
 
 PersonalizerPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'personalizer',
+    "personalizer",
     personalizer_endpoint_single_slot="https://REDACTED.cognitiveservices.azure.com",
     personalizer_api_key_single_slot="REDACTED",
     personalizer_endpoint_multi_slot="https://REDACTED.cognitiveservices.azure.com",
@@ -47,10 +47,9 @@ def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live):
 
     multi_slot_policy = {
         "name": "enable multi slot",
-        "arguments": policy["arguments"].replace("--cb_explore_adf", "--ccb_explore_adf")
+        "arguments": policy["arguments"].replace("--cb_explore_adf", "--ccb_explore_adf"),
     }
 
     client.update_policy(multi_slot_policy)
     if is_live:
         time.sleep(30)
-

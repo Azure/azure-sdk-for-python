@@ -107,9 +107,9 @@ class CertificateOperationError(object):
     @classmethod
     def _from_error_bundle(cls, error_bundle: models.Error) -> "CertificateOperationError":
         return cls(
-            code=error_bundle.code,
-            message=error_bundle.message,
-            inner_error=cls._from_error_bundle(error_bundle.inner_error)
+            code=error_bundle.code,  # type: ignore
+            message=error_bundle.message,  # type: ignore
+            inner_error=cls._from_error_bundle(error_bundle.inner_error)  # type: ignore
         )
 
     @property
@@ -1105,6 +1105,7 @@ class CertificateIssuer(object):
         provider: "Optional[str]",
         attributes: "Optional[models.IssuerAttributes]" = None,
         account_id: "Optional[str]" = None,
+        # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Typedef, not string.")]
         password: "Optional[str]" = None,
         organization_id: "Optional[str]" = None,
         admin_contacts: "Optional[List[AdministratorContact]]" = None,

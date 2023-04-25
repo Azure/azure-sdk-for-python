@@ -80,14 +80,12 @@ def mock_code_assets_operations(
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_10_01: Mock,
     mock_datastore_operations: DatastoreOperations,
-    mock_machinelearning_client: Mock,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
-        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -193,7 +191,6 @@ class TestBatchEndpointOperations:
         mocker: MockFixture,
         randint: Callable[[], int],
     ) -> None:
-
         data_name = "data_name"
         data_version = randint()
         endpoint_name = "myBatchEndpoint"
@@ -232,7 +229,6 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations: BatchEndpointOperations,
         mocker: MockFixture,
     ) -> None:
-
         input_path = "https://foo/bar/train.csv"
         endpoint_name = "myBatchEndpoint"
         deployment_name = "myDeployment"

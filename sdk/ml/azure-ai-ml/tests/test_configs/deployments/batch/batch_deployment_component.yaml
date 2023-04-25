@@ -2,7 +2,7 @@ $schema: http://azureml/sdk-2-0/BatchDeployment.json
 name: deployment
 description: A sample deployment with pre and post processing done before and after inference.
 endpoint_name: testing-batch-component
-compute: azureml:batch-cluster
+compute: azureml:cpu-cluster
 type: component
 job_definition:
     type: pipeline

@@ -38,10 +38,7 @@ class LogsIngestionClient(GeneratedClient):
         )
 
 
-__all__ = [
-    "LogsIngestionClient",
-    "LogsUploadError"
-]
+__all__ = ["LogsIngestionClient", "LogsUploadError"]
 
 
 def patch_sdk():

@@ -28,7 +28,9 @@ get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter)
 handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
-logger.setLevel(logging.NOTSET)
+logger.setLevel(logging.DEBUG)
 
 # Custom properties
 logger.debug("DEBUG: Debug with properties", extra={"debug": "true"})
+
+input()

@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from azure.appconfiguration.provider import (
-    load_provider,
+    load,
     AzureAppConfigurationKeyVaultOptions,
     SettingSelector
 )
@@ -19,8 +19,8 @@ credential = get_credential(authority)
 
 # Connection to Azure App Configuration using AAD and Resolving Key Vault References
 key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=credential)
-selects = {SettingSelector("*", "prod")}
+selects = {SettingSelector(key_filter="*", label_filter="prod")}
 
-config = load_provider(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+config = load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
 print(config["secret"])

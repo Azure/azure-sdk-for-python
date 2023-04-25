@@ -6,10 +6,6 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
-from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -24,17 +20,25 @@ from azure.ai.ml import (
     dsl,
     load_component,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_singularity_id_for_resource
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_COMPONENT_NAME,
+    AssetTypes,
+    InputOutputModes,
+    SINGULARITY_ID_FORMAT,
+)
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
+from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
+from devtools_testutils import AzureRecordedTestCase, is_live
+from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -59,14 +63,94 @@ common_omit_fields = [
 ]
 
 
+def check_name_and_version(output, output_name, output_version):
+    assert output.name == output_name
+    assert output.version == output_version
+
+
+def build_pipeline_with_parallel_run_function(data, literal_input=None):
+    # command job with dict distribution
+    environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+    inputs = {
+        "job_data_path": Input(
+            type=AssetTypes.MLTABLE,
+            path="./tests/test_configs/dataset/mnist-data",
+            mode=InputOutputModes.EVAL_MOUNT,
+        ),
+        "job_data_path_optional": Input(
+            type=AssetTypes.MLTABLE,
+            mode=InputOutputModes.EVAL_MOUNT,
+            optional=True,
+        ),
+    }
+    input_data = "${{inputs.job_data_path}}"
+    outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
+    expected_resources = {"instance_count": 2}
+
+    task = RunFunction(
+        code="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
+        entry_script="score.py",
+        program_arguments="--job_output_path ${{outputs.job_output_path}}",
+        environment=environment,
+    )
+    logging_level = "DEBUG"
+    max_concurrency_per_instance = 1
+    error_threshold = 1
+    mini_batch_error_threshold = 1
+    mini_batch_size = "5"
+
+    # Parallel from parallel_run_function()
+    parallel_function = parallel_run_function(
+        display_name="my-evaluate-job",
+        inputs=inputs,
+        outputs=outputs,
+        mini_batch_size=mini_batch_size,
+        task=task,
+        logging_level=logging_level,
+        max_concurrency_per_instance=max_concurrency_per_instance,
+        error_threshold=error_threshold,
+        mini_batch_error_threshold=mini_batch_error_threshold,
+        resources=expected_resources,
+        input_data=input_data,
+    )
+    if literal_input is None:
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path):
+            node1 = parallel_function(job_data_path=job_data_path)
+            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
+            node1.task = None
+            return {
+                "pipeline_output": node1.outputs.job_output_path,
+            }
+
+        return parallel_in_pipeline(data)
+    else:
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path, literal_input):
+            node1 = parallel_function(job_data_path=job_data_path)
+            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
+            node1.task = None
+            node1.resources.instance_count = literal_input
+            node1.max_concurrency_per_instance = literal_input
+            node1.error_threshold = literal_input
+            node1.mini_batch_error_threshold = literal_input
+            return {
+                "pipeline_output": node1.outputs.job_output_path,
+            }
+
+        return parallel_in_pipeline(data, literal_input)
+
+
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "enable_private_preview_schema_features",
     "mock_code_hash",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "recorded_test",
-    "mock_snapshot_hash",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -294,10 +378,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="dsl_pipeline_e2e",
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_data_input(self, client: MLClient) -> None:
         parent_dir = str(tests_root_dir / "test_configs/dsl_pipeline/nyc_taxi_data_regression")
 
@@ -588,10 +668,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
@@ -603,7 +679,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         def sample_pipeline(job_in_file, sample_rate):
             node1 = spark_with_optional_inputs_component_func(input1=job_in_file, sample_rate=sample_rate)
-            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
+            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
             return {"pipeline_output": node1.outputs.output1}
 
         pipeline = sample_pipeline(
@@ -654,11 +730,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 }
             },
-            "outputs": {"pipeline_output": {"mode": "Direct", "job_output_type": "uri_folder"}},
+            "outputs": {"pipeline_output": {"mode": "Direct", "job_output_type": "uri_file"}},
             "settings": {},
         }
         assert expected_job == actual_job
@@ -1537,10 +1613,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1575,12 +1647,45 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    def test_parallel_components_with_file_input(self, client: MLClient) -> None:
-        set_bodiless_matcher()
+    def test_parallel_components_with_tabular_input_bind_to_literal_input(self, client: MLClient) -> None:
+        components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
+        batch_inference = load_component(source=str(components_dir / "tabular_input_e2e.yml"))
+
+        # Construct pipeline
+        @dsl.pipeline(default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path, score_model, literal_input):
+            batch_inference_node = batch_inference(job_data_path=job_data_path, score_model=score_model)
+            batch_inference_node.mini_batch_size = 5
+            batch_inference_node.max_concurrency_per_instance = literal_input
+            batch_inference_node.error_threshold = literal_input
+            batch_inference_node.mini_batch_error_threshold = literal_input
+
+        pipeline = parallel_in_pipeline(
+            job_data_path=Input(
+                type=AssetTypes.MLTABLE,
+                path="./tests/test_configs/dataset/neural-iris-mltable",
+                mode=InputOutputModes.DIRECT,
+            ),
+            score_model=Input(
+                path="./tests/test_configs/model", type=AssetTypes.URI_FOLDER, mode=InputOutputModes.DOWNLOAD
+            ),
+            literal_input=2,
+        )
+        # submit pipeline job
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
+
+        # check required fields in job dict
+        job_dict = pipeline_job._to_dict()
+        expected_keys = ["status", "properties", "creation_context"]
+        for k in expected_keys:
+            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
+
+        # original job did not change
+        assert_job_input_output_types(pipeline_job)
+        assert pipeline_job.settings.default_compute == "cpu-cluster"
+
+    def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
         batch_inference = load_component(source=str(components_dir / "score.yml"))
@@ -1610,72 +1715,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_parallel_run_function(self, client: MLClient):
-        # command job with dict distribution
-        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
-        inputs = {
-            "job_data_path": Input(
-                type=AssetTypes.MLTABLE,
-                path="./tests/test_configs/dataset/mnist-data",
-                mode=InputOutputModes.EVAL_MOUNT,
-            ),
-            "job_data_path_optional": Input(
-                type=AssetTypes.MLTABLE,
-                mode=InputOutputModes.EVAL_MOUNT,
-                optional=True,
-            ),
-        }
-        input_data = "${{inputs.job_data_path}}"
-        outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
-        expected_resources = {"instance_count": 2}
-
-        task = RunFunction(
-            code="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
-            entry_script="score.py",
-            program_arguments="--job_output_path ${{outputs.job_output_path}}",
-            environment=environment,
-        )
-        logging_level = "DEBUG"
-        max_concurrency_per_instance = 1
-        error_threshold = 1
-        mini_batch_error_threshold = 1
-        mini_batch_size = "5"
-
-        # Parallel from parallel_run_function()
-        parallel_function = parallel_run_function(
-            display_name="my-evaluate-job",
-            inputs=inputs,
-            outputs=outputs,
-            mini_batch_size=mini_batch_size,
-            task=task,
-            logging_level=logging_level,
-            max_concurrency_per_instance=max_concurrency_per_instance,
-            error_threshold=error_threshold,
-            mini_batch_error_threshold=mini_batch_error_threshold,
-            resources=expected_resources,
-            input_data=input_data,
-        )
-
         data = Input(
             type=AssetTypes.MLTABLE,
             path="./tests/test_configs/dataset/mnist-data",
             mode=InputOutputModes.EVAL_MOUNT,
         )
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
-        def parallel_in_pipeline(job_data_path):
-            node1 = parallel_function(job_data_path=job_data_path)
-            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
-            node1.task = None
-            return {
-                "pipeline_output": node1.outputs.job_output_path,
-            }
-
-        pipeline = parallel_in_pipeline(data)
+        pipeline = build_pipeline_with_parallel_run_function(data)
 
         pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
 
@@ -1728,12 +1774,66 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
-        set_bodiless_matcher()
+    def test_parallel_run_function_run_settings_bind_to_literal_input(self, client: MLClient):
+        data = Input(
+            type=AssetTypes.MLTABLE,
+            path="./tests/test_configs/dataset/mnist-data",
+            mode=InputOutputModes.EVAL_MOUNT,
+        )
+        pipeline = build_pipeline_with_parallel_run_function(data, 2)
 
+        pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
+
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        expected_job = {
+            "tags": {},
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "inputs": {
+                "job_data_path": {"job_input_type": "mltable", "mode": "EvalMount"},
+                "literal_input": {"job_input_type": "literal", "value": "2"},
+            },
+            "jobs": {
+                "node1": {
+                    "input_data": "${{inputs.job_data_path}}",
+                    "display_name": "my-evaluate-job",
+                    "inputs": {
+                        "job_data_path": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.job_data_path}}",
+                        }
+                    },
+                    "name": "node1",
+                    "mini_batch_size": 5,
+                    "logging_level": "DEBUG",
+                    "max_concurrency_per_instance": "${{parent.inputs.literal_input}}",
+                    "error_threshold": "${{parent.inputs.literal_input}}",
+                    "mini_batch_error_threshold": "${{parent.inputs.literal_input}}",
+                    "outputs": {"job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
+                    "resources": {"instance_count": "${{parent.inputs.literal_input}}"},
+                    "type": "parallel",
+                },
+            },
+            "outputs": {
+                "pipeline_output": {
+                    "mode": "ReadWriteMount",
+                    "job_output_type": "uri_folder",
+                }
+            },
+            "settings": {"default_compute": "cpu-cluster"},
+        }
+        assert expected_job == actual_job
+        # check required fields in job dict
+        job_dict = pipeline_job._to_dict()
+        expected_keys = ["status", "properties", "creation_context"]
+        for k in expected_keys:
+            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
+
+        # original job did not change
+        assert_job_input_output_types(pipeline_job)
+        assert pipeline_job.settings.default_compute == "cpu-cluster"
+
+    def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
         environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(
@@ -1843,14 +1943,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
-
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
@@ -1973,10 +2068,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.jobs.get(child.name)
             client.jobs.get(child.name)._repr_html_()
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_dsl_pipeline_without_setting_binding_node(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_without_setting_binding_node,
@@ -2239,10 +2330,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
@@ -2252,9 +2339,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         @dsl.pipeline()
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column_node = add_greeting_column(file_input=iris_data)
-            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
+            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
             count_by_row_node = count_by_row(file_input=iris_data)
-            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
+            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
             return {"output": count_by_row_node.outputs.output}
 
         pipeline = spark_pipeline_from_yaml(
@@ -2334,7 +2421,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
     def test_registered_pipeline_with_group(self, client: MLClient):
-
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
         hello_world_component_func = load_component(hello_world_component_yaml)
         from azure.ai.ml.dsl._group_decorator import group
@@ -2488,9 +2574,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert "Studio" in default_services
         assert "Tracking" in default_services
         assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
-        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Studio"]["type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
-        assert default_services["Tracking"]["job_service_type"] == "Tracking"
+        assert default_services["Tracking"]["type"] == "Tracking"
 
     def test_group_outputs_description_overwrite(self, client):
         # test group outputs description overwrite
@@ -2573,10 +2659,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
+    @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2692,8 +2775,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_output.name == "b_output"
         assert pipeline_output.version == "2"
         node_output = pipeline_job.jobs["node"].outputs.component_out_path
-        assert node_output.name == "a_output"
-        assert node_output.version == "1"
+        assert node_output.name == None
+        assert node_output.version == None
 
     def test_dsl_pipeline_with_data_transfer_copy_2urifolder(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -2784,7 +2867,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = outer_pipeline()
         pipeline_job_dict = pipeline_job._to_dict()
         assert pipeline_job_dict["outputs"] == {
-            "component_out_path": {"path": "azureml://datastores/workspaceblobstore/paths/outputs/1"}
+            "component_out_path": {
+                "path": "azureml://datastores/workspaceblobstore/paths/outputs/1",
+                "type": "uri_folder",
+            }
         }
         pipeline_component = pipeline_job.jobs["node1"].component
         pipeline_component_dict = pipeline_component._to_dict()
@@ -2808,7 +2894,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             }
         }
 
-    @pytest.mark.skip(reason="TODO (2256981): Pipeline step fails with ServiceError")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk_succeed(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -2833,6 +2918,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node_2.outputs.component_out_path.name = "n2_output"
             node_2.outputs.component_out_path.version = "v1"
 
+            # register NodeOutput without version, in this case the run result can be reused
+            node_3 = component(component_in_path=component_input)
+            node_3.outputs.component_out_path.name = "n3_output"
+
             # register NodeOutput of subgraph
             sub_node = sub_pipeline()
             sub_node.outputs.sub_pipeine_a_output.name = "sub_pipeline"
@@ -2844,18 +2933,334 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.pipeine_a_output.name = "p1_output"
         pipeline.outputs.pipeine_a_output.version = "v1"
         pipeline.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline)
-        client.jobs.stream(pipeline_job.name)
+        pipeline_job = assert_job_cancel(pipeline, client)
 
-        def check_name_version_and_register_succeed(output, output_name, output_version):
-            assert output.name == output_name
-            assert output.version == output_version
-            assert client.data.get(name=output_name, version=output_version)
+        check_name_and_version(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
+        check_name_and_version(pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1")
+        assert pipeline_job.jobs["node_3"].outputs.component_out_path.name == "n3_output"
+        check_name_and_version(pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1")
 
-        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
-        check_name_version_and_register_succeed(
-            pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1"
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_for_pipeline_component(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node_1 = component(component_in_path=component_input)  # test use Output to initialize subgraph.jobs.output
+            node_1.outputs.component_out_path = Output(name="sub_pipeline_1_output", version="v1")
+
+            node_2 = component(component_in_path=component_input)  # test we can pass NodeOutput in PipelineComponent
+            node_2.outputs.component_out_path.name = "sub_pipeline_2_output"
+            node_2.outputs.component_out_path.version = "v2"
+
+            return {
+                "sub_node_1": node_1.outputs.component_out_path,
+            }
+
+        @dsl.pipeline()
+        def register_both_output():
+            subgraph = sub_pipeline()
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        check_name_and_version(pipeline_job.jobs["subgraph"].outputs["sub_node_1"], "sub_pipeline_1_output", "v1")
+
+        subgraph_id = pipeline_job.jobs["subgraph"].component
+        subgraph_id = subgraph_id.split(":")
+        subgraph = client.components.get(name=subgraph_id[0], version=subgraph_id[1])
+        # TODO: enable this check in playback mode after pipeline_component.jobs is opened in all subscriptions
+        if is_live():
+            check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
+
+    @pytest.mark.disable_mock_code_hash
+    # without this mark, the code would be passed with different id even when we upload the same component,
+    # add this mark to reuse node and further reuse pipeline
+    def test_register_with_output_format(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path = Output(name="sub_pipeline_o_output", version="v1")
+            return {"sub_pipeine_a_output": node.outputs.component_out_path}
+
+        @dsl.pipeline()
+        def register_both_output():
+            # register NodeOutput which is binding to PipelineOutput
+            node = component(component_in_path=component_input)  # binding and re-define name and version
+            node.outputs.component_out_path = Output(name="n1_o_output", version="1")
+
+            node_2 = component(component_in_path=component_input)  # binding
+            node_2.outputs.component_out_path = Output(name="n2_o_output", version="2")
+
+            node_3 = component(component_in_path=component_input)  # isn't binding
+            node_3.outputs.component_out_path = Output(name="n3_o_output", version="4")
+
+            sub_node = sub_pipeline()  # test set Output for PipelineComponent
+            sub_node.outputs.sub_pipeine_a_output = Output(name="subgraph_o_output", version="1")
+            return {
+                "pipeine_a_output": node.outputs.component_out_path,
+                "pipeine_b_output": node_2.outputs.component_out_path,
+            }
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline.outputs.pipeine_a_output.name = "np_output"
+        pipeline.outputs.pipeine_a_output.version = "1"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        check_name_and_version(pipeline_job.outputs.pipeine_a_output, "np_output", "1")
+        check_name_and_version(pipeline_job.outputs.pipeine_b_output, "n2_o_output", "2")
+        check_name_and_version(pipeline_job.jobs["node_3"].outputs["component_out_path"], "n3_o_output", "4")
+        check_name_and_version(pipeline_job.jobs["sub_node"].outputs["sub_pipeine_a_output"], "subgraph_o_output", "1")
+
+    def test_pipeline_input_binding_limits_timeout(self, client: MLClient):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(timeout) -> PipelineJob:
+            # case 1: if timeout is PipelineInput, get binding from response
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
+            # case 2: if timeout is not PipelineInput, response timeout will be parsed to int
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
+        assert pipeline_job.jobs["node_1"].limits.timeout == 1
+
+    def test_pipeline_component_primitive_type_consumption(self, client: MLClient):
+        baisc_component_func = load_component(
+            "./tests/test_configs/dsl_pipeline/primitive_type_components/basic_component.yml"
         )
-        check_name_version_and_register_succeed(
-            pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1"
+        boolean_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/boolean.yml")
+        integer_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/integer.yml")
+        number_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/number.yml")
+        string_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/string.yml")
+
+        @dsl.pipeline
+        def pipeline_component_func(bool_param: bool, int_param: int, float_param: float, str_param: str):
+            baisc_component_func(
+                bool_param=bool_param,
+                int_param=int_param,
+                float_param=float_param,
+                str_param=str_param,
+            )
+
+        @dsl.pipeline
+        def pipeline_func():
+            # components return primitive type outputs
+            bool_node = boolean_func()
+            int_node = integer_func()
+            float_node = number_func()
+            str_node = string_func()
+            # pipeline component consume above primitive type outputs
+            pipeline_node = pipeline_component_func(  # noqa: F841
+                bool_param=bool_node.outputs.output,
+                int_param=int_node.outputs.output,
+                float_param=float_node.outputs.output,
+                str_param=str_node.outputs.output,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
+
+    def test_pipeline_variable_name_uppercase(self, client: MLClient):
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(
+            source=component_yaml,
         )
+
+        @dsl.pipeline(name="pipeline_with_uppercase_node_names")
+        def pipeline_with_user_defined_nodes_1():
+            for i in range(2):
+                node1 = component_func(component_in_path=job_input)
+                # change node name to lower when setting it to avoid upper case in nxt_input's binding
+                node1.name = f"Dummy_{i}"
+                nxt_input = Input(
+                    path=node1.outputs.component_out_path,
+                    mode=InputOutputModes.DIRECT,
+                )
+                node2 = component_func(component_in_path=nxt_input)
+                node2.name = f"Another_{i}"
+
+        pipeline_job = pipeline_with_user_defined_nodes_1()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline_job, client)
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert actual_job["jobs"] == {
+            "another_0": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "mode": "Direct",
+                        "value": "${{parent.jobs.dummy_0.outputs.component_out_path}}",
+                    }
+                },
+                "name": "another_0",
+                "type": "command",
+            },
+            "another_1": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "mode": "Direct",
+                        "value": "${{parent.jobs.dummy_1.outputs.component_out_path}}",
+                    }
+                },
+                "name": "another_1",
+                "type": "command",
+            },
+            "dummy_0": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "uri_file",
+                        "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    }
+                },
+                "name": "dummy_0",
+                "type": "command",
+            },
+            "dummy_1": {
+                "inputs": {
+                    "component_in_path": {
+                        "job_input_type": "uri_file",
+                        "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    }
+                },
+                "name": "dummy_1",
+                "type": "command",
+            },
+        }
+
+    def test_pipeline_singularity_strong_type_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        instance_type = "Singularity.ND40rs_v2"
+
+        @dsl.pipeline
+        def pipeline_func():
+            # basic job_tier + Low priority
+            basic_low_node = component_func()
+            basic_low_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
+            # standard job_tier + Medium priority
+            standard_medium_node = component_func()
+            standard_medium_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
+            # premium job_tier + High priority
+            premium_high_node = component_func()
+            premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+            # properties
+            node_with_properties = component_func()
+            properties = {"Singularity": {"imageVersion": "", "interactive": False}}
+            node_with_properties.resources = JobResourceConfiguration(
+                instance_count=2, instance_type=instance_type, properties=properties
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+        # this pipeline job is expected to fail as Singularity is mocked, focus on REST object assertion
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        # basic job_tier + Low priority
+        basic_low_node_dict = rest_obj.properties.jobs["basic_low_node"]
+        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
+        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # standard job_tier + Medium priority
+        standard_medium_node_dict = rest_obj.properties.jobs["standard_medium_node"]
+        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
+        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # premium job_tier + High priority
+        premium_high_node_dict = rest_obj.properties.jobs["premium_high_node"]
+        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
+        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # properties
+        node_with_properties_dict = rest_obj.properties.jobs["node_with_properties"]
+        assert node_with_properties_dict["resources"] == {
+            "instance_count": 2,
+            "instance_type": instance_type,
+            # the mapping Singularity => AISuperComputer is expected
+            "properties": {"AISuperComputer": {"imageVersion": "", "interactive": False}},
+        }
+
+    def test_pipeline_singularity_property_bag_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # property bag is supported, with lower priority than strong type
+        vc_config = {
+            "instance_type": "Singularity.ND40rs_v2",
+            "instance_count": 2,
+            "properties": {
+                "AISuperComputer": {
+                    "interactive": False,
+                    "imageVersion": "pytorch",
+                    "slaTier": "Premium",
+                    "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                }
+            },
+        }
+
+        @dsl.pipeline
+        def pipeline_func():
+            node = component_func()
+            node.resources = vc_config
+            node.compute = mock_singularity_arm_id
+
+        pipeline_job = pipeline_func()
+        # as Singularity is mocked and expected to fail validation, skip it for submission;
+        # then manually cancel it as other tests.
+        created_pipeline_job = client.create_or_update(pipeline_job, skip_validation=True)
+        client.jobs.begin_cancel(created_pipeline_job.name).result()
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["computeId"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["node"]["resources"] == vc_config
+
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_singularity_live(self, client: MLClient, singularity_vc):
+        # full name and short name are syntax sugar, SDK will resolve it to Singularity ARM id before request,
+        # this needs client to get & search available VCs - that's why we place this test in end-to-end test -
+        # and compute values in returned REST object should all be ARM id.
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # generate Singularity ARM id, full name and short name from VC
+        arm_id = SINGULARITY_ID_FORMAT.format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        @dsl.pipeline
+        def pipeline_func():
+            node_with_id = component_func()
+            node_with_id.compute = arm_id
+            node_with_full_name = component_func()
+            node_with_full_name.compute = full_name
+            node_with_short_name = component_func()
+            node_with_short_name.compute = short_name
+
+        pipeline_job = pipeline_func()
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        for node_name in ["node_with_id", "node_with_full_name", "node_with_short_name"]:
+            node_compute = rest_obj.properties.jobs[node_name]["computeId"]
+            assert is_singularity_id_for_resource(node_compute)
+            assert node_compute.endswith(singularity_vc.name)

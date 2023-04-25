@@ -33,17 +33,17 @@ class AgeResolution(GeneratedAgeResolution, DictMixin):
     """
 
     resolution_kind: Literal["AgeResolution"] = "AgeResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The Age Unit of measurement. Required. Known values are: "Unspecified", "Year",
-     "Month", "Week", and "Day". Described in ~azure.ai.textanalytics.AgeUnit."""
+    """The Age Unit of measurement. Required. Known values are "Unspecified", "Year",
+     "Month", "Week", and "Day". Described in :class:`~azure.ai.textanalytics.AgeUnit`."""
 
     def __init__(
         self,
@@ -60,19 +60,19 @@ class AreaResolution(GeneratedAreaResolution, DictMixin):
     """
 
     resolution_kind: Literal["AreaResolution"] = "AreaResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The area Unit of measurement. Required. Known values are: "Unspecified",
+    """The area Unit of measurement. Required. Known values are "Unspecified",
      "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
      "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
-     and "Acre". Described in ~azure.ai.textanalytics.AreaUnit."""
+     and "Acre". Described in :class:`~azure.ai.textanalytics.AreaUnit`."""
 
     def __init__(
         self,
@@ -89,12 +89,12 @@ class CurrencyResolution(GeneratedCurrencyResolution, DictMixin):
     """
 
     resolution_kind: Literal["CurrencyResolution"] = "CurrencyResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
@@ -121,37 +121,37 @@ class DateTimeResolution(GeneratedDateTimeResolution, DictMixin):
     """
 
     resolution_kind: Literal["DateTimeResolution"] = "DateTimeResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     timex: str
     """An extended ISO 8601 date/time representation as described in
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
      Required."""
-    datetime_subkind: str
-    """The DateTime SubKind. Required. Known values are: "Time", "Date",
-     "DateTime", "Duration", and "Set". Described in ~azure.ai.textanalytics.DateTimeSubKind."""
+    date_time_sub_kind: str
+    """The DateTime SubKind. Required. Known values are "Time", "Date",
+     "DateTime", "Duration", and "Set". Described in :class:`~azure.ai.textanalytics.DateTimeSubKind`."""
     value: str
     """The actual time that the extracted text denote. Required."""
     modifier: Optional[str]
-    """An optional modifier of a date/time instance. Known values are: "AfterApprox",
+    """An optional modifier of a date/time instance. Known values are "AfterApprox",
      "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
-     "More". Described in ~azure.ai.textanalytics.TemporalModifier."""
+     "More". Described in :class:`~azure.ai.textanalytics.TemporalModifier`."""
 
     def __init__(
         self,
         *,
         timex: str,
-        datetime_subkind: str,
+        date_time_sub_kind: str,
         value: str,
         modifier: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(timex=timex, datetime_subkind=datetime_subkind, value=value, modifier=modifier, **kwargs)
+        super().__init__(timex=timex, date_time_sub_kind=date_time_sub_kind, value=value, modifier=modifier, **kwargs)
 
 
 class InformationResolution(GeneratedInformationResolution, DictMixin):
@@ -159,19 +159,19 @@ class InformationResolution(GeneratedInformationResolution, DictMixin):
     """
 
     resolution_kind: Literal["InformationResolution"] = "InformationResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The information (data) Unit of measurement. Required. Known values are:
+    """The information (data) Unit of measurement. Required. Known values are
      "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
      "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", and "Petabyte".
-     Described in ~azure.ai.textanalytics.InformationUnit."""
+     Described in :class:`~azure.ai.textanalytics.InformationUnit`."""
 
     def __init__(
         self,
@@ -188,19 +188,19 @@ class LengthResolution(GeneratedLengthResolution, DictMixin):
     """
 
     resolution_kind: Literal["LengthResolution"] = "LengthResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The length Unit of measurement. Required. Known values are: "Unspecified",
+    """The length Unit of measurement. Required. Known values are "Unspecified",
      "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
      "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", and "Pt".
-     Described in ~azure.ai.textanalytics.LengthUnit."""
+     Described in :class:`~azure.ai.textanalytics.LengthUnit`."""
 
     def __init__(
         self,
@@ -217,18 +217,18 @@ class NumberResolution(GeneratedNumberResolution, DictMixin):
     """
 
     resolution_kind: Literal["NumberResolution"] = "NumberResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     number_kind: str
-    """The type of the extracted number entity. Required. Known values are:
+    """The type of the extracted number entity. Required. Known values are
      "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
-     Described in ~azure.ai.textanalytics.NumberKind."""
+     Described in :class:`~azure.ai.textanalytics.NumberKind`."""
 
     def __init__(
         self,
@@ -245,16 +245,16 @@ class NumericRangeResolution(GeneratedNumericRangeResolution, DictMixin):
     """
 
     resolution_kind: Literal["NumericRangeResolution"] = "NumericRangeResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     range_kind: str
     """The kind of range that the resolution object represents. Required. Known
-     values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
-     "Temperature", and "Currency". Described in ~azure.ai.textanalytics.RangeKind."""
+     values are "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+     "Temperature", and "Currency". Described in :class:`~azure.ai.textanalytics.RangeKind`."""
     minimum: float
     """The beginning value of the interval. Required."""
     maximum: float
@@ -276,18 +276,18 @@ class OrdinalResolution(GeneratedOrdinalResolution, DictMixin):
     """
 
     resolution_kind: Literal["OrdinalResolution"] = "OrdinalResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     offset: str
     """The offset with respect to the reference (e.g., offset = -1 in "show me the
      second to last". Required."""
     relative_to: str
     """The reference point that the ordinal number denotes. Required. Known values
-     are: "Current", "End", and "Start". Described in ~azure.ai.textanalytics.RelativeTo."""
+     are "Current", "End", and "Start". Described in :class:`~azure.ai.textanalytics.RelativeTo`."""
     value: str
     """A simple arithmetic expression that the ordinal denotes. Required."""
 
@@ -307,20 +307,20 @@ class SpeedResolution(GeneratedSpeedResolution, DictMixin):
     """
 
     resolution_kind: Literal["SpeedResolution"] = "SpeedResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The speed Unit of measurement. Required. Known values are: "Unspecified",
+    """The speed Unit of measurement. Required. Known values are "Unspecified",
      "MeterPerSecond", "KilometerPerHour", "KilometerPerMinute", "KilometerPerSecond",
      "MilePerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardPerMinute", "YardPerSecond",
      "MeterPerMillisecond", "CentimeterPerMillisecond", and "KilometerPerMillisecond".
-     Described in ~azure.ai.textanalytics.SpeedUnit."""
+     Described in :class:`~azure.ai.textanalytics.SpeedUnit`."""
 
     def __init__(
         self,
@@ -337,17 +337,17 @@ class TemperatureResolution(GeneratedTemperatureResolution, DictMixin):
     """
 
     resolution_kind: Literal["TemperatureResolution"] = "TemperatureResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The temperature Unit of measurement. Required. Known values are: "Unspecified",
-     "Fahrenheit", "Kelvin", "Rankine", and "Celsius". Described in ~azure.ai.textanalytics.TemperatureUnit."""
+    """The temperature Unit of measurement. Required. Known values are "Unspecified",
+     "Fahrenheit", "Kelvin", "Rankine", and "Celsius". Described in :class:`~azure.ai.textanalytics.TemperatureUnit`."""
 
     def __init__(
         self,
@@ -364,12 +364,12 @@ class TemporalSpanResolution(GeneratedTemporalSpanResolution, DictMixin):
     """
 
     resolution_kind: Literal["TemporalSpanResolution"] = "TemporalSpanResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     begin: Optional[str]
     """An extended ISO 8601 date/time representation as described in
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml)."""
@@ -380,10 +380,10 @@ class TemporalSpanResolution(GeneratedTemporalSpanResolution, DictMixin):
     """An optional duration value formatted based on the ISO 8601
      (https://en.wikipedia.org/wiki/ISO_8601#Durations)."""
     modifier: Optional[str]
-    """An optional modifier of a date/time instance. Known values are: "AfterApprox",
+    """An optional modifier of a date/time instance. Known values are "AfterApprox",
      "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
-     "More". Described in ~azure.ai.textanalytics.TemporalModifier."""
+     "More". Described in :class:`~azure.ai.textanalytics.TemporalModifier`."""
     timex: Optional[str]
     """An optional triplet containing the beginning, the end, and the duration all stated
      as ISO 8601 formatted strings."""
@@ -406,20 +406,20 @@ class VolumeResolution(GeneratedVolumeResolution, DictMixin):
     """
 
     resolution_kind: Literal["VolumeResolution"] = "VolumeResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The Volume Unit of measurement. Required. Known values are: "Unspecified",
+    """The Volume Unit of measurement. Required. Known values are "Unspecified",
      "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
      "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
      "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
-     "Minim", "Cord", "Peck", "Bushel", and "Hogshead". Described in ~azure.ai.textanalytics.VolumeUnit."""
+     "Minim", "Cord", "Peck", "Bushel", and "Hogshead". Described in :class:`~azure.ai.textanalytics.VolumeUnit`."""
 
     def __init__(
         self,
@@ -436,19 +436,19 @@ class WeightResolution(GeneratedWeightResolution, DictMixin):
     """
 
     resolution_kind: Literal["WeightResolution"] = "WeightResolution"
-    """The entity resolution object kind. Required. Known values are:
+    """The entity resolution object kind. Required. Known values are
      "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
+     Described in :class:`~azure.ai.textanalytics.ResolutionKind`."""
     value: float
     """The numeric value that the extracted text denotes. Required."""
     unit: str
-    """The weight Unit of measurement. Required. Known values are: "Unspecified",
+    """The weight Unit of measurement. Required. Known values are "Unspecified",
      "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
      "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", and "Dram".
-     Described in ~azure.ai.textanalytics.WeightUnit."""
+     Described in :class:`~azure.ai.textanalytics.WeightUnit`."""
 
     def __init__(
         self,

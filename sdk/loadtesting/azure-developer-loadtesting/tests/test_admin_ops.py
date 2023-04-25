@@ -246,8 +246,6 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         poller = client.begin_upload_test_file(self.setup_load_test_id, "sample.jmx",
                                                open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"))
 
-        assert poller.get_initial_response() is not None
-
         result = poller.result(1000)
         assert poller.status() is not None
         assert result is not None

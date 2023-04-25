@@ -21,7 +21,6 @@ from ci_tools.variables import in_ci
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-lint_plugin_path = os.path.join(root_dir, "scripts/pylint_custom_plugin")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

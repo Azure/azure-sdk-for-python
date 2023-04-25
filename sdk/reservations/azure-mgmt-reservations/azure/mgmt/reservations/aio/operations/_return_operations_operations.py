@@ -60,7 +60,7 @@ class ReturnOperations:
 
     async def _post_initial(
         self, reservation_order_id: str, body: Union[_models.RefundRequest, IO], **kwargs: Any
-    ) -> _models.RefundResponse:
+    ) -> Union[_models.ReservationOrderResponse, _models.RefundResponse]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -74,7 +74,7 @@ class ReturnOperations:
 
         api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RefundResponse] = kwargs.pop("cls", None)
+        cls: ClsType[Union[_models.ReservationOrderResponse, _models.RefundResponse]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -103,20 +103,24 @@ class ReturnOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("ReservationOrderResponse", pipeline_response)
 
-        deserialized = self._deserialize("RefundResponse", pipeline_response)
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("RefundResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     _post_initial.metadata = {"url": "/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/return"}
 
@@ -128,7 +132,7 @@ class ReturnOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RefundResponse]:
+    ) -> AsyncLROPoller[_models.ReservationOrderResponse]:
         """Return a reservation.
 
         Return a reservation and get refund information.
@@ -148,16 +152,18 @@ class ReturnOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either RefundResponse or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.RefundResponse]
+        :return: An instance of AsyncLROPoller that returns either ReservationOrderResponse or An
+         instance of AsyncLROPoller that returns either RefundResponse or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.ReservationOrderResponse] or
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.RefundResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_post(
         self, reservation_order_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.RefundResponse]:
+    ) -> AsyncLROPoller[_models.ReservationOrderResponse]:
         """Return a reservation.
 
         Return a reservation and get refund information.
@@ -177,24 +183,26 @@ class ReturnOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either RefundResponse or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.RefundResponse]
+        :return: An instance of AsyncLROPoller that returns either ReservationOrderResponse or An
+         instance of AsyncLROPoller that returns either RefundResponse or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.ReservationOrderResponse] or
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.RefundResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_post(
         self, reservation_order_id: str, body: Union[_models.RefundRequest, IO], **kwargs: Any
-    ) -> AsyncLROPoller[_models.RefundResponse]:
+    ) -> AsyncLROPoller[_models.ReservationOrderResponse]:
         """Return a reservation.
 
         Return a reservation and get refund information.
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for returning reservation. Is either a model type or a IO type.
-         Required.
+        :param body: Information needed for returning reservation. Is either a RefundRequest type or a
+         IO type. Required.
         :type body: ~azure.mgmt.reservations.models.RefundRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -207,9 +215,11 @@ class ReturnOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either RefundResponse or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.RefundResponse]
+        :return: An instance of AsyncLROPoller that returns either ReservationOrderResponse or An
+         instance of AsyncLROPoller that returns either RefundResponse or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.ReservationOrderResponse] or
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.reservations.models.RefundResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -217,7 +227,7 @@ class ReturnOperations:
 
         api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RefundResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ReservationOrderResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -235,13 +245,9 @@ class ReturnOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = self._deserialize("RefundResponse", pipeline_response)
+            deserialized = self._deserialize("ReservationOrderResponse", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:

@@ -75,8 +75,7 @@ class Deployment(Resource, RestTranslatableMixin):
         scoring_script: Optional[Union[str, PathLike]] = None,
         **kwargs,
     ):
-        """
-        Endpoint Deployment base class.
+        """Endpoint Deployment base class.
 
         Constructor of Endpoint Deployment base class.
 

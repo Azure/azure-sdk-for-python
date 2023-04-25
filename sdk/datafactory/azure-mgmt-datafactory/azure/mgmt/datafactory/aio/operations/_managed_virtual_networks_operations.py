@@ -243,8 +243,8 @@ class ManagedVirtualNetworksOperations:
         :type factory_name: str
         :param managed_virtual_network_name: Managed virtual network name. Required.
         :type managed_virtual_network_name: str
-        :param managed_virtual_network: Managed Virtual Network resource definition. Is either a model
-         type or a IO type. Required.
+        :param managed_virtual_network: Managed Virtual Network resource definition. Is either a
+         ManagedVirtualNetworkResource type or a IO type. Required.
         :type managed_virtual_network: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource or
          IO
         :param if_match: ETag of the managed Virtual Network entity. Should only be specified for

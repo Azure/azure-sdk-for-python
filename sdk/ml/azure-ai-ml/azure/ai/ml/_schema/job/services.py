@@ -31,11 +31,10 @@ class JobServiceBaseSchema(PathAwareSchema):
 
 
 class JobServiceSchema(JobServiceBaseSchema):
-    """This is to support tansformation of job services passed as dict type and
-    internal job services like Custom, Tracking, Studio set by the system.
-    """
+    """This is to support tansformation of job services passed as dict type and internal job services like Custom,
+    Tracking, Studio set by the system."""
 
-    job_service_type = UnionField(
+    type = UnionField(
         [
             StringTransformedEnum(
                 allowed_values=JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC,
@@ -47,12 +46,12 @@ class JobServiceSchema(JobServiceBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        data.pop("job_service_type", None)
+        data.pop("type", None)
         return JobService(**data)
 
 
 class TensorBoardJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = StringTransformedEnum(
+    type = StringTransformedEnum(
         allowed_values=JobServiceTypeNames.EntityNames.TENSOR_BOARD,
         pass_original=True,
     )
@@ -60,12 +59,12 @@ class TensorBoardJobServiceSchema(JobServiceBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        data.pop("job_service_type", None)
+        data.pop("type", None)
         return TensorBoardJobService(**data)
 
 
 class SshJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = StringTransformedEnum(
+    type = StringTransformedEnum(
         allowed_values=JobServiceTypeNames.EntityNames.SSH,
         pass_original=True,
     )
@@ -73,29 +72,29 @@ class SshJobServiceSchema(JobServiceBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        data.pop("job_service_type", None)
+        data.pop("type", None)
         return SshJobService(**data)
 
 
 class VsCodeJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = StringTransformedEnum(
+    type = StringTransformedEnum(
         allowed_values=JobServiceTypeNames.EntityNames.VS_CODE,
         pass_original=True,
     )
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        data.pop("job_service_type", None)
+        data.pop("type", None)
         return VsCodeJobService(**data)
 
 
 class JupyterLabJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = StringTransformedEnum(
+    type = StringTransformedEnum(
         allowed_values=JobServiceTypeNames.EntityNames.JUPYTER_LAB,
         pass_original=True,
     )
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        data.pop("job_service_type", None)
+        data.pop("type", None)
         return JupyterLabJobService(**data)

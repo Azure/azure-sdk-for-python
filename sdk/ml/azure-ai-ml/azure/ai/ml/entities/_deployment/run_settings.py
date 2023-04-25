@@ -11,7 +11,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 @experimental
 class RunSettings:
-    """Run Settings entity
+    """Run Settings entity.
 
     :param name: Run settings name
     :type name: str

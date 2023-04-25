@@ -546,7 +546,7 @@ class ContainerAppsSourceControlsOperations:
         :param source_control_name: Name of the Container App SourceControl. Required.
         :type source_control_name: str
         :param source_control_envelope: Properties used to create a Container App SourceControl. Is
-         either a model type or a IO type. Required.
+         either a SourceControl type or a IO type. Required.
         :type source_control_envelope: ~azure.mgmt.appcontainers.models.SourceControl or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

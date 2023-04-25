@@ -1,14 +1,15 @@
 # Release History
 
-## 1.0.0b13 (Unreleased)
+## 1.0.0b13 (2023-04-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+- Upgrading to OpenTelemetry SDK/API 1.17
+    ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
+- Updating sdkVersion prefix according to new spec. Using agents folder for marker.
+    ([#29730](https://github.com/Azure/azure-sdk-for-python/pull/29730))
 
 ## 1.0.0b12 (2023-02-06)
 
@@ -16,6 +17,8 @@
 
 - Add sdkVersion prefix during App Service attach
     ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+- Correcting sdkVersion prefix
+    ([#29227](https://github.com/Azure/azure-sdk-for-python/pull/29227))
 
 ### Bugs Fixed
 

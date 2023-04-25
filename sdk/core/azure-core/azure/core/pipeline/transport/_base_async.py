@@ -72,6 +72,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
         """
+        raise NotImplementedError("stream_download is not implemented.")
 
     def parts(self) -> AsyncIterator:
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
@@ -85,7 +86,9 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
 
-class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
+class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
+    _HttpClientTransportResponse, AsyncHttpResponse
+):
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.

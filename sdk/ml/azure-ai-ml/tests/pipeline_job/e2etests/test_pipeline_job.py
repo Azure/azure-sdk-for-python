@@ -4,11 +4,11 @@ from typing import Any, Callable, Dict
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher, set_custom_default_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -47,9 +47,8 @@ def assert_job_input_output_types(job: PipelineJob):
     "enable_pipeline_private_preview_features",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "enable_environment_id_arm_expansion",
-    "mock_snapshot_hash",
-    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -57,23 +56,12 @@ def assert_job_input_output_types(job: PipelineJob):
 class TestPipelineJob(AzureRecordedTestCase):
     # Please set ML_TENANT_ID in your environment variables when recording this test.
     # It will to help sanitize RequestBody.Studio.endpoint for job creation request.
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2259399): RequestBody.Studio.endpoint is not sanitized in playback even with ML_TENANT_ID set",
-    )
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create(
         self,
         client: MLClient,
         hello_world_component_no_paths: Component,
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
-            ignored_query_parameters="api-version",
-        )
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths_e2e.yml",
@@ -89,11 +77,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
-    @pytest.mark.skipif(reason="TODO (2235055) registry test is failing with location error")
     @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registries(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
@@ -107,10 +92,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert str(job.jobs["a"].component).startswith("azureml://registries/")
         assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -124,12 +105,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_spark_job(
         self, client: MLClient, randstr: Callable[[], str], pipeline_job_path: str
     ) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         # todo: run failed
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -157,8 +132,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         pipeline_job_path: str,
     ) -> None:
-        set_bodiless_matcher()
-
         base_dir = "./tests/test_configs/pipeline_jobs/invalid/"
         pipeline_job: PipelineJob = load_job(
             source=os.path.join(base_dir, pipeline_job_path),
@@ -171,13 +144,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         ):
             client.jobs.create_or_update(pipeline_job)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_pipeline_job_with_inline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
@@ -196,16 +163,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         self.assert_component_is_anonymous(client, created_component_id)
         assert rest_job_sources == job_sources
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_inline_component_file_create(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         # Create the component used in the job
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -216,17 +176,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_world_component_inline_file"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_pipeline_job__with_inline_component_file_in_component_folder(
         self,
         client: MLClient,
         hello_world_component_no_paths: Component,
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/dsl_pipeline/basic_component_with_component_in_folder/pipeline.yml",
@@ -236,19 +191,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_python_world_job"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_component_arm_id_create(
         self,
         client: MLClient,
         hello_world_component: Component,
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         # Generate pipeline with component defined by arm id
         pipeline_spec_path = Path("./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_comps.yml")
         pipeline_dict = load_yaml(pipeline_spec_path)
@@ -269,19 +217,12 @@ class TestPipelineJob(AzureRecordedTestCase):
             == f"{hello_world_component.name}:{hello_world_component.version}"
         )
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create_with_resolve_reuse(
         self,
         client: MLClient,
         hello_world_component_no_paths: Component,
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         # Generate pipeline with component defined by arm id
         pipeline_spec_path = Path("./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_resolve_reuse.yml")
 
@@ -304,17 +245,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # name & version in a local component yml will be ignored if it's a sub-job of a pipeline job
         _ = client.jobs.create_or_update(pipeline_job)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_output(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml",
@@ -338,19 +269,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         hello_world_component_2_outputs = created_job.jobs["hello_world_component_2"].outputs
         assert hello_world_component_2_outputs.component_out_path_1.mode == InputOutputModes.RW_MOUNT
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_path_inputs(
         self,
         client: MLClient,
         helloworld_component_with_paths: Component,
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         # Create a data asset to put in the PipelineJob inputs
         data_override = [{"name": randstr("data_override_name")}]
         data = load_data(
@@ -377,13 +301,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component = client.components.get(arm_id.asset_name, arm_id.asset_version)
         assert created_component._is_anonymous
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_default_datastore_compute(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_e2e.yml",
@@ -435,8 +353,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_name,
         pipeline_samples_e2e_registered_train_components,  # Test depends on this being in the workspace
     ) -> None:
-        set_bodiless_matcher()
-
         params = [
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e.yml",
@@ -599,9 +515,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -613,8 +526,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
-        set_bodiless_matcher()
-
         base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -630,12 +541,59 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 1
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    @pytest.mark.parametrize(
+        "pipeline_job_path",
+        [
+            "file_component_literal_input_e2e.yml",
+        ],
     )
-    def test_pipeline_job_with_multiple_parallel_job(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+    def test_pipeline_job_with_parallel_component_job_bind_to_literal_input(
+        self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
+    ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source=base_file_name + pipeline_job_path,
+            params_override=params_override,
+        )
+        created_job = client.jobs.create_or_update(pipeline_job)
 
+        for job in created_job.jobs.values():
+            # The parallel job must be translated to component job in the pipeline job.
+            assert isinstance(job, Parallel)
+
+        # assert on the number of converted jobs to make sure we didn't drop the parallel job
+        assert len(created_job.jobs.items()) == 1
+
+    @pytest.mark.skip(
+        reason="The task for fixing this is tracked by "
+        "https://msdata.visualstudio.com/Vienna/_workitems/edit/2298433"
+    )
+    @pytest.mark.parametrize(
+        "pipeline_job_path",
+        [
+            "file_literal_input_e2e.yml",
+        ],
+    )
+    def test_pipeline_job_with_inline_parallel_job_bind_to_literal_input(
+        self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
+    ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source=base_file_name + pipeline_job_path,
+            params_override=params_override,
+        )
+        created_job = client.jobs.create_or_update(pipeline_job)
+
+        for job in created_job.jobs.values():
+            # The parallel job must be translated to component job in the pipeline job.
+            assert isinstance(job, Parallel)
+
+        # assert on the number of converted jobs to make sure we didn't drop the parallel job
+        assert len(created_job.jobs.items()) == 1
+
+    def test_pipeline_job_with_multiple_parallel_job(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/pipeline.yml",
@@ -646,14 +604,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e_short_uri.yml",
@@ -669,8 +622,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert len(created_job.jobs.items()) == 2
 
     def test_pipeline_job_without_component_snapshot(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_without_component_snapshot.yml",
@@ -680,16 +631,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_world_component_inline"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create_with_distribution_component(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_distribution_component.yml",
@@ -724,8 +668,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         hello_world_component: Component,
         randstr: Callable[[str], str],
     ) -> None:
-        set_bodiless_matcher()
-
         # create a pipeline job
         params_override = [{"name": randstr("job_name_1")}]
         pipeline_job = load_job(
@@ -748,8 +690,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             assert inline_component1 == inline_component2
 
     def test_pipeline_job_dependency_label_resolution(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         component_name = randstr("component_name")
         component_versions = ["foo", "bar", "baz", "foobar"]
 
@@ -783,8 +723,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
     def test_sample_job_dump(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
@@ -798,12 +736,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # original job did not change
         assert_job_input_output_types(job)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_pipeline_job_with_sweep_node(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline: PipelineJob = client.jobs.create_or_update(pipeline)
@@ -851,9 +784,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             loaded_value = pydash.get(created_pipeline_dict, dot_key, None)
             assert loaded_value == expected_value, f"{dot_key} isn't as expected: {loaded_value} != {expected_value}"
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.parametrize(
         "policy_yaml_dict",
         [
@@ -885,8 +815,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_sweep_node_early_termination_policy(
         self, client: MLClient, randstr: Callable[[str], str], policy_yaml_dict: Dict[str, Any]
     ):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node.yml"
         pipeline: PipelineJob = load_job(
             source=test_path,
@@ -899,7 +827,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     @pytest.mark.parametrize(
         "test_case_i, test_case_name",
         DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
@@ -911,12 +838,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_i: int,
         test_case_name: str,
     ):
-        set_bodiless_matcher()
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5",
-            ignored_query_parameters="api-version",
-        )
-
         pipeline_job_path, expected_error = DATABINDING_EXPRESSION_TEST_CASES[test_case_i]
 
         pipeline: PipelineJob = load_job(source=pipeline_job_path, params_override=[{"name": randstr("name")}])
@@ -954,8 +875,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_classification(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_classification.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -981,8 +900,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_forecasting(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_forecasting.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1009,8 +926,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_text_classification(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1037,8 +952,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_automl_text_classification_multilabel(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification_multilabel.yml"
         )
@@ -1066,8 +979,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_text_ner(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_ner.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1092,8 +1003,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_automl_image_multiclass_classification(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1146,8 +1055,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_automl_image_multilabel_classification(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1197,8 +1104,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_image_object_detection(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1251,8 +1156,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_automl_image_instance_segmentation(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml"
         )
@@ -1305,8 +1208,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_without_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_without_setting_binding_node.yml",
@@ -1327,8 +1228,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert train_job.inputs.training_data.mode is None
 
     def test_pipeline_with_only_setting_pipeline_level(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_pipeline_level.yml",
@@ -1349,8 +1248,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert train_job.inputs.training_data.mode is None
 
     def test_pipeline_with_only_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_binding_node.yml",
@@ -1373,8 +1270,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_setting_binding_node_and_pipeline_level(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_setting_binding_node_and_pipeline_level.yml",
@@ -1417,8 +1312,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert train_job.inputs.training_data.mode is InputOutputModes.RO_MOUNT
 
     def test_pipeline_with_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
@@ -1438,8 +1331,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_component_job(self, client: MLClient):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
         job: PipelineJob = load_job(source=test_path)
         rest_job = assert_job_cancel(job, client)
@@ -1456,10 +1347,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.JOB"}
 
-    @pytest.mark.disable_mock_anon_component_version
     def test_remote_pipeline_component_job(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("component_name")}]
         test_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
         component = load_component(source=test_path, params_override=params_override)
@@ -1484,11 +1372,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
-    @pytest.mark.skipif(reason="TODO (2235055) registry test is failing with location error")
     @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registry_model_as_input(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/job_with_registry_model_as_input/pipeline.yml",
@@ -1498,8 +1383,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert job.name == params_override[0]["name"]
 
     def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("job_name")}]
         pipeline_job = load_job(
             "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_default_component.yml",
@@ -1512,39 +1395,11 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
-        params_override = [{"name": randstr("job_name")}]
-        pipeline_job: PipelineJob = load_job(
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
-            params_override=params_override,
-        )
-
-        singularity_compute_id = (
-            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
-            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
-        )
-        pipeline_job.settings.default_compute = singularity_compute_id
-        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
-
-        assert pipeline_job._customized_validate().passed is True
-
-        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
-        assert created_pipeline_job.settings.default_compute == singularity_compute_id
-        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
-
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
     ):
-        set_bodiless_matcher()
-
         # only register pipeline output
         register_pipeline_output_path = (
             "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
@@ -1627,8 +1482,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.version == "1"
 
     def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1647,8 +1500,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1667,8 +1518,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_data_transfer_copy_2urifolder(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1692,8 +1541,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1717,8 +1564,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_mixtype_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1741,8 +1586,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_data_transfer_import_filesystem(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_file_system_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1803,8 +1646,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_data_transfer_import_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_sql_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1829,8 +1670,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_import_snowflake_database(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1858,8 +1697,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_data_transfer_export_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1903,14 +1740,11 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml_succeed(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
     ):
-        set_bodiless_matcher()
-
         register_pipeline_path = (
             "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline_register_output.yml"
         )
@@ -1945,19 +1779,50 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
     @pytest.mark.parametrize(
-        "yaml_path",
+        "test_path",
         [
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/pipeline/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/automl/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/parallel/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/spark/pipeline.yml",
+            "command/pipeline_serverless_compute.yml",
+            "command/node_serverless_compute.yml",
+            "command/node_serverless_compute_no_default.yml",
+            "sweep/pipeline_serverless_compute.yml",
+            "sweep/node_serverless_compute.yml",
+            "sweep/node_serverless_compute_no_default.yml",
+            "pipeline/pipeline_serverless_compute.yml",
+            "pipeline/node_serverless_compute.yml",
+            "automl/pipeline_with_instance_type.yml",
+            "automl/pipeline_without_instance_type.yml",
+            "automl/pipeline_with_instance_type_no_default.yml",
+            "parallel/pipeline_serverless_compute.yml",
+            "spark/pipeline_serverless_compute.yml",
+            "spark/node_serverless_compute_no_default.yml",
         ],
     )
-    def test_serverless_compute_in_pipeline(self, client: MLClient, yaml_path: str) -> None:
+    def test_serverless_compute_in_pipeline(self, client: MLClient, test_path: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/" + test_path
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
+
+    def test_pipeline_job_serverless_compute_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
+
+    def test_pipeline_job_serverless_compute_sweep_in_pipeline_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/sweep_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
+
+    def test_pipeline_job_serverless_compute_automl_in_pipeline_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
 
     @pytest.mark.disable_mock_code_hash
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
@@ -1972,6 +1837,99 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.outputs.regression_node_2.name == None
         assert pipeline_job.outputs.regression_node_2.version == None
 
+    def test_pipeline_job_singularity_no_compute_in_yaml(self, client: MLClient, mock_singularity_arm_id: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_no_compute.yml"
+        pipeline_job = load_job(yaml_path)
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["low_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Basic",
+                    "priority": "Low",
+                }
+            },
+        }
+        assert rest_obj.properties.jobs["medium_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Standard",
+                    "priority": "Medium",
+                }
+            },
+        }
+        assert rest_obj.properties.jobs["high_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Premium",
+                    "priority": "High",
+                }
+            },
+        }
+
+    def test_pipeline_job_singularity_short_name(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_short_name.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        default_compute = rest_obj.properties.settings["default_compute"]
+        assert is_singularity_id_for_resource(default_compute)
+        assert default_compute.endswith("SingularityTestVC")
+        node_compute = rest_obj.properties.jobs["hello_world"]["computeId"]
+        assert is_singularity_id_for_resource(node_compute)
+        assert node_compute.endswith("centeuapvc")
+
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_job_singularity_live(self, client: MLClient, tmp_path: Path, singularity_vc):
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        pipeline_yaml_template = """
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: full name & short name
+experiment_name: Singularity in pipeline
+jobs:
+  full_name:
+    command: echo full name
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: {{singularity-full-name}}
+    resources:
+      instance_type: Singularity.ND40rs_v2
+  short_name:
+    command: echo short name
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: {{singularity-short-name}}
+    resources:
+      instance_type: Singularity.ND40rs_v2
+        """
+        pipeline_yaml_content = pipeline_yaml_template.replace("{{singularity-full-name}}", full_name).replace(
+            "{{singularity-short-name}}", short_name
+        )
+        pipeline_yaml_path = tmp_path / "pipeline.yml"
+        pipeline_yaml_path.write_text(pipeline_yaml_content)
+        pipeline_job = load_job(pipeline_yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        assert is_singularity_id_for_resource(rest_obj.properties.jobs["full_name"]["computeId"])
+        assert rest_obj.properties.jobs["full_name"]["computeId"].endswith(singularity_vc.name)
+        assert is_singularity_id_for_resource(rest_obj.properties.jobs["short_name"]["computeId"])
+        assert rest_obj.properties.jobs["short_name"]["computeId"].endswith(singularity_vc.name)
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
@@ -1982,8 +1940,6 @@ class TestPipelineJobLongRunning:
     """Long-running tests that require pipeline job completed."""
 
     def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
             params_override=[{"name": randstr("name")}],
@@ -2001,8 +1957,6 @@ class TestPipelineJobLongRunning:
         assert retrieved_child_run.name == child_job.name
 
     def test_pipeline_job_download(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
-        set_bodiless_matcher()
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
@@ -2019,8 +1973,6 @@ class TestPipelineJobLongRunning:
     def test_pipeline_job_child_run_download(
         self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
-        set_bodiless_matcher()
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
@@ -2053,8 +2005,6 @@ class TestPipelineJobLongRunning:
         randstr: Callable[[str], str],
         tmp_path: Path,
     ) -> None:
-        set_bodiless_matcher()
-
         pipeline_spec_path = "./tests/test_configs/pipeline_jobs/reuse_child_job_download/pipeline.yml"
 
         # ensure previous job exists for reuse

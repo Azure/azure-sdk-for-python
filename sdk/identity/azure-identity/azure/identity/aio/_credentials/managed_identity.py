@@ -36,6 +36,7 @@ class ManagedIdentityCredential(AsyncContextManager):
 
     def __init__(self, **kwargs: Any) -> None:
         self._credential = None  # type: Optional[AsyncTokenCredential]
+        exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
@@ -70,7 +71,8 @@ class ManagedIdentityCredential(AsyncContextManager):
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS) \
+                and not exclude_workload_identity:
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 

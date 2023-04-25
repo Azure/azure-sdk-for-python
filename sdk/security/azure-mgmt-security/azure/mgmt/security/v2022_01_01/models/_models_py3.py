@@ -115,8 +115,9 @@ class Alert(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype alert_uri: str
     :ivar time_generated_utc: The UTC time the alert was generated in ISO8601 format.
     :vartype time_generated_utc: ~datetime.datetime
-    :ivar product_name: The name of the product which published this alert (Azure Security Center,
-     Azure ATP, Microsoft Defender ATP, O365 ATP, MCAS, and so on).
+    :ivar product_name: The name of the product which published this alert (Microsoft Sentinel,
+     Microsoft Defender for Identity, Microsoft Defender for Endpoint, Microsoft Defender for
+     Office, Microsoft Defender for Cloud Apps, and so on).
     :vartype product_name: str
     :ivar processing_end_time_utc: The UTC processing end time of the alert in ISO8601 format.
     :vartype processing_end_time_utc: ~datetime.datetime

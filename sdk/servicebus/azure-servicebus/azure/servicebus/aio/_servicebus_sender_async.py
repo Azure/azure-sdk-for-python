@@ -257,7 +257,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     schedule_time_utc, send_span, *obj_messages
                 )
             if send_span:
-                await self._add_span_request_attributes(send_span)
+                self._add_span_request_attributes(send_span)
             return await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
                 request_body,
@@ -375,7 +375,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 return  # Short circuit noop if an empty list or batch is provided.
 
             if send_span:
-                await self._add_span_request_attributes(send_span)
+                self._add_span_request_attributes(send_span)
 
             await self._do_retryable_operation(
                 self._send,

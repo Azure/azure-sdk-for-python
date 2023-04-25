@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -31,8 +31,12 @@ class ActionGroupList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of action groups.
         :paramtype value: list[~$(python-base-namespace).v2017_04_01.models.ActionGroupResource]
@@ -59,7 +63,7 @@ class ActionGroupPatchBody(_serialization.Model):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -106,7 +110,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -201,8 +205,8 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
         itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
         azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
         automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -265,7 +269,9 @@ class ActivityLogAlertActionGroup(_serialization.Model):
         "webhook_properties": {"key": "webhookProperties", "type": "{str}"},
     }
 
-    def __init__(self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword action_group_id: The resourceId of the action group. This cannot be null or empty.
          Required.
@@ -291,7 +297,9 @@ class ActivityLogAlertActionList(_serialization.Model):
         "action_groups": {"key": "actionGroups", "type": "[ActivityLogAlertActionGroup]"},
     }
 
-    def __init__(self, *, action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None, **kwargs):
+    def __init__(
+        self, *, action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword action_groups: The list of activity log alerts.
         :paramtype action_groups:
@@ -319,7 +327,7 @@ class ActivityLogAlertAllOfCondition(_serialization.Model):
         "all_of": {"key": "allOf", "type": "[ActivityLogAlertLeafCondition]"},
     }
 
-    def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs):
+    def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs: Any) -> None:
         """
         :keyword all_of: The list of activity log alert conditions. Required.
         :paramtype all_of:
@@ -354,7 +362,7 @@ class ActivityLogAlertLeafCondition(_serialization.Model):
         "equals": {"key": "equals", "type": "str"},
     }
 
-    def __init__(self, *, field: str, equals: str, **kwargs):
+    def __init__(self, *, field: str, equals: str, **kwargs: Any) -> None:
         """
         :keyword field: The name of the field that this condition will examine. The possible values for
          this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
@@ -389,8 +397,8 @@ class ActivityLogAlertList(_serialization.Model):
         *,
         value: Optional[List["_models.ActivityLogAlertResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of activity log alerts.
         :paramtype value: list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertResource]
@@ -417,7 +425,7 @@ class ActivityLogAlertPatchBody(_serialization.Model):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -492,8 +500,8 @@ class ActivityLogAlertResource(Resource):
         condition: Optional["_models.ActivityLogAlertAllOfCondition"] = None,
         actions: Optional["_models.ActivityLogAlertActionList"] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -567,8 +575,8 @@ class AutomationRunbookReceiver(_serialization.Model):
         is_global_runbook: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword automation_account_id: The Azure automation account Id which holds this runbook and
          authenticate to Azure resource. Required.
@@ -615,7 +623,7 @@ class AzureAppPushReceiver(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -657,7 +665,7 @@ class EmailReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the email receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -688,7 +696,7 @@ class EnableRequest(_serialization.Model):
         "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(self, *, receiver_name: str, **kwargs):
+    def __init__(self, *, receiver_name: str, **kwargs: Any) -> None:
         """
         :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
@@ -711,7 +719,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -762,8 +770,8 @@ class ItsmReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
-    ):
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -822,7 +830,7 @@ class SmsReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -861,7 +869,7 @@ class WebhookReceiver(_serialization.Model):
         "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
-    def __init__(self, *, name: str, service_uri: str, **kwargs):
+    def __init__(self, *, name: str, service_uri: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the webhook receiver. Names must be unique across all receivers
          within an action group. Required.

@@ -34,11 +34,12 @@ Use the Azure.Search.Documents client library to:
 * Create and manage analyzers for advanced text analysis or multi-lingual content.
 * Optimize results through scoring profiles to factor in business logic or freshness.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents) |
-[Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
-[API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html) |
-[Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search) |
-[Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents)
+| [Package (PyPI)](https://pypi.org/project/azure-search-documents/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-search-documents/)
+| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html)
+| [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
 ## _Disclaimer_
 
@@ -93,6 +94,7 @@ to get started exploring APIs, but it should be managed carefully.*
 We can use the api-key to create a new `SearchClient`.
 
 <!-- SNIPPET:sample_authentication.create_search_client_with_key -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -103,6 +105,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 
 search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -197,6 +200,7 @@ defined using convenient `SimpleField`, `SearchableField`, or `ComplexField`
 models. Indexes can also define suggesters, lexical analyzers, and more.
 
 <!-- SNIPPET:sample_index_crud_operations.create_index -->
+
 ```python
 name = "hotels"
 fields = [
@@ -218,6 +222,7 @@ index = SearchIndex(
 
 result = client.create_index(index)
 ```
+
 <!-- END SNIPPET -->
 
 ### Adding documents to your index
@@ -228,6 +233,7 @@ an index in a single batched request.  There are
 to be aware of.
 
 <!-- SNIPPET:sample_crud_operations.upload_document -->
+
 ```python
 DOCUMENT = {
     'Category': 'Hotel',
@@ -241,6 +247,7 @@ result = search_client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
+
 <!-- END SNIPPET -->
 
 ### Authenticate in a National Cloud
@@ -272,6 +279,7 @@ key. You could get the key from a query, for example, and want to show more
 information about it or navigate your customer to that document.
 
 <!-- SNIPPET:sample_get_document.get_document -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -285,6 +293,7 @@ print("        Name: {}".format(result["HotelName"]))
 print("      Rating: {}".format(result["Rating"]))
 print("    Category: {}".format(result["Category"]))
 ```
+
 <!-- END SNIPPET -->
 
 ### Async APIs
@@ -296,6 +305,7 @@ See
 for more information.
 
 <!-- SNIPPET:sample_simple_query_async.simple_query_async -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
@@ -309,6 +319,7 @@ async with search_client:
     async for result in results:
         print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
 ```
+
 <!-- END SNIPPET -->
 
 ## Troubleshooting

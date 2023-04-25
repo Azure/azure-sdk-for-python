@@ -21,10 +21,9 @@ from azure.ai.ml.exceptions import UserErrorException
 
 
 class ParallelFor(LoopNode, NodeIOMixin):
-    """Parallel for loop node in the pipeline job.
-    By specifying the loop body and aggregated items, a job-level parallel for loop can be implemented.
-    It will be initialized when calling dsl.parallel_for or when loading the pipeline yml containing parallel_for node.
-    Please do not manually initialize this class.
+    """Parallel for loop node in the pipeline job. By specifying the loop body and aggregated items, a job-level
+    parallel for loop can be implemented. It will be initialized when calling dsl.parallel_for or when loading the
+    pipeline yml containing parallel_for node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the parallel for loop body.
     :type body: Pipeline

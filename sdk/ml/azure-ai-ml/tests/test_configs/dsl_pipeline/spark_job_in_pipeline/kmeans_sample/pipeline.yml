@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+description: 'submit a pipeline with spark job'
+
+inputs:
+  iris_data:
+    type: uri_file
+    path: ./dataset/sample_kmeans_data.txt
+    mode: direct
+
+outputs:
+  output:
+    type: uri_folder
+    mode: direct
+
+jobs:
+  kmeans_cluster:
+    type: spark
+    component: azureml:test_953565331193:2
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
+    outputs:
+      output: ${{parent.outputs.output}}
+
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.2.0

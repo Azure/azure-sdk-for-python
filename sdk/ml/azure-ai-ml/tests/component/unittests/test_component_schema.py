@@ -7,14 +7,14 @@ from unittest import mock
 import pydash
 import pytest
 import yaml
-
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
+from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
 from azure.ai.ml.entities._component.component_factory import component_factory
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -119,7 +119,7 @@ class TestCommandComponent:
             "id",
         )
         assert component_dict == expected_dict
-        assert component_entity.code
+        assert component_entity.code is None
         assert component_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     def test_serialize_deserialize_environment_no_version(self, mock_machinelearning_client: MLClient):
@@ -199,9 +199,7 @@ class TestCommandComponent:
     def test_serialize_deserialize_default_code(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
-        # make sure default code has generated with name and version as content
-        assert component_entity.code
-        assert component_entity.code == COMPONENT_CODE_PLACEHOLDER
+        assert component_entity.code is None
 
     def test_serialize_deserialize_input_output_path(self, mock_machinelearning_client: MLClient):
         expected_value_dict = {
@@ -316,6 +314,7 @@ class TestCommandComponent:
             context={
                 "source_path": test_path,
             },
+            _source=ComponentSource.YAML_COMPONENT,
         )
         assert recreated_component._to_dict() == component_entity._to_dict()
 

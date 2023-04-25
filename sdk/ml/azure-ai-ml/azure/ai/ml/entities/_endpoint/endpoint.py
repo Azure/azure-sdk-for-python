@@ -48,8 +48,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ):
-        """
-        Endpoint base class.
+        """Endpoint base class.
 
         Constructor for Endpoint base class.
 

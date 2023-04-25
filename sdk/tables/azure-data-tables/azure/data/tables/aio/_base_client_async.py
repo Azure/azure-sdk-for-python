@@ -15,7 +15,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     ProxyPolicy,
-    AzureSasCredentialPolicy,
     RequestIdPolicy,
     CustomHookPolicy,
     NetworkTraceLoggingPolicy,
@@ -25,11 +24,9 @@ from azure.core.pipeline.transport import (
     HttpRequest,
 )
 
-from ._authentication_async import AsyncBearerTokenChallengePolicy
+from ._authentication_async import _configure_credential
 from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
-from .._authentication import SharedKeyCredentialPolicy
-from .._constants import STORAGE_OAUTH_SCOPE
 from .._error import (
     RequestTooLargeError,
     TableTransactionError,
@@ -86,29 +83,14 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         """
         await self._client.close()
 
-    def _configure_credential(
-        self, credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]]
-    ) -> None:
-        if hasattr(credential, "get_token"):
-            self._credential_policy = AsyncBearerTokenChallengePolicy(
-                credential, STORAGE_OAUTH_SCOPE # type: ignore
-            )
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential  # type: ignore
-        elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential) # type: ignore
-        elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential) # type: ignore
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
-
     def _configure_policies(self, **kwargs):
+        credential_policy = _configure_credential(self.credential)
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
             ProxyPolicy(**kwargs),
-            self._credential_policy,
+            credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(**kwargs),

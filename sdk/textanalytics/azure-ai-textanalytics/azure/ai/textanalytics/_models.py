@@ -58,7 +58,6 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LANGUAGE_DETECTION = "LanguageDetection"
     EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
     ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
-    DYNAMIC_CLASSIFICATION = "DynamicClassification"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -398,7 +397,7 @@ class RecognizeEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -449,7 +448,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -508,7 +507,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         FHIR compatible object for consumption in other Healthcare tools. For additional
         information see https://www.hl7.org/fhir/overview.html."""
     detected_language: Optional[str] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the detected language for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1061,7 +1060,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1107,7 +1106,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1161,7 +1160,7 @@ class AnalyzeSentimentResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1255,7 +1254,6 @@ class DocumentError(DictMixin):
             + ClassifyDocumentResult().keys()
             + ExtractSummaryResult().keys()
             + AbstractiveSummaryResult().keys()
-            + DynamicClassificationResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -1441,7 +1439,12 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     If not set, uses "en" for English as default.
+     For automatic language detection, use "auto" (Only supported by long-running
+     operation APIs with API version 2022-10-01-preview or newer). If
+     not set, uses "en" for English as default.
+
+    .. versionadded:: 2022-10-01-preview
+        The 'auto' option for language.
     """
 
     id: str  # pylint: disable=redefined-builtin
@@ -1451,7 +1454,9 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     language: Optional[str] = None
     """This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     If not set, uses "en" for English as default."""
+     For automatic language detection, use "auto" (Only supported by long-running
+     operation APIs with API version 2022-10-01-preview or newer). If
+     not set, uses "en" for English as default."""
 
     def __init__(
         self,
@@ -2329,7 +2334,7 @@ class RecognizeCustomEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2458,7 +2463,7 @@ class ClassifyDocumentResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2792,7 +2797,7 @@ class ExtractSummaryResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2899,7 +2904,7 @@ class AbstractiveSummaryResult(DictMixin):
     """Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     statistics: Optional[TextDocumentStatistics] = None
     """If `show_stats=True` was specified in the request this
@@ -2987,10 +2992,10 @@ class SummaryContext(DictMixin):
     """
 
     offset: int
-    """Start position for the context. Use of different 'stringIndexType' values can
+    """Start position for the context. Use of different 'string_index_type' values can
      affect the offset returned. Required."""
     length: int
-    """The length of the context. Use of different 'stringIndexType' values can affect
+    """The length of the context. Use of different 'string_index_type' values can affect
      the length returned. Required."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -3090,62 +3095,4 @@ class AbstractiveSummaryAction(DictMixin):
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.sentence_count,
             )
-        )
-
-
-class DynamicClassificationResult(DictMixin):
-    """DynamicClassificationResult is a result object which contains
-    the classifications for a particular document.
-
-    .. versionadded:: 2022-10-01-preview
-        The *DynamicClassificationResult* model.
-    """
-
-    id: str  # pylint: disable=redefined-builtin
-    """Unique, non-empty document identifier."""
-    classifications: List[ClassificationCategory]
-    """Recognized classification results in the document."""
-    warnings: List[TextAnalyticsWarning]
-    """Warnings encountered while processing document."""
-    statistics: Optional[TextDocumentStatistics] = None
-    """If `show_stats=True` was specified in the request this
-        field will contain information about the document payload."""
-    is_error: Literal[False] = False
-    """Boolean check for error item when iterating over list of
-        results. Always False for an instance of a DynamicClassificationResult."""
-    kind: Literal["DynamicClassification"] = "DynamicClassification"
-    """The text analysis kind - "DynamicClassification"."""
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get('id', None)
-        self.classifications = kwargs.get('classifications', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
-        self.is_error: Literal[False] = False
-        self.kind: Literal["DynamicClassification"] = "DynamicClassification"
-
-    def __repr__(self) -> str:
-        return (
-            f"DynamicClassificationResult(id={self.id}, classifications={repr(self.classifications)}, "
-            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
-            f"is_error={self.is_error}, kind={self.kind})"[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, result):
-        return cls(
-            id=result.id,
-            classifications=[
-                ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
-                for c in result.classifications
-            ],
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
         )

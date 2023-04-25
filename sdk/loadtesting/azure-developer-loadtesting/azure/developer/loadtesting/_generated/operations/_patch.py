@@ -11,8 +11,9 @@ import time
 from functools import partial
 from typing import List, IO, Optional, Any, Union, overload, Generic, TypeVar
 
-from azure.core.polling import PollingMethod, LROPoller
+from azure.core.polling import PollingMethod
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
 
 from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
 from ._operations import TestRunOperations as TestRunOperationsGenerated
@@ -26,7 +27,7 @@ PollingReturnType = TypeVar("PollingReturnType")
 logger = logging.getLogger(__name__)
 
 
-class LoadTestingPollingMethod(PollingMethod, Generic[PollingReturnType]):
+class LoadTestingPollingMethod(PollingMethod):
     """Base class for custom sync polling methods."""
 
     def _update_status(self) -> None:
@@ -90,34 +91,6 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class LoadTestingLROPoller(LROPoller, Generic[PollingReturnType]):
-    """LoadTesting Poller for long-running operations.
-
-    :param client: A pipeline service client
-    :type client: ~azure.core.PipelineClient
-    :param initial_response: The initial call response
-    :type initial_response: ~azure.core.pipeline.PipelineResponse
-    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
-                                     If a subclass of Model is given, this passes "deserialize" as callback.
-    :type deserialization_callback: callable or msrest.serialization.Model
-    :param polling_method: The polling strategy to adopt
-    :type polling_method: ~azure.core.polling.PollingMethod
-    """
-
-    def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, Any, Callable, PollingMethod[PollingReturnType]) -> None
-        self._initial_response = initial_response
-        super(LoadTestingLROPoller, self).__init__(client, initial_response, deserialization_callback, polling_method)
-
-    def get_initial_response(self) -> JSON:
-        """Return the result of the initial operation.
-
-        :return: The result of the initial operation.
-        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
-        """
-        return self._initial_response
-
-
 class AdministrationOperations(AdministrationOperationsGenerated):
     """
     for performing the operations on the Administration Subclient
@@ -129,7 +102,7 @@ class AdministrationOperations(AdministrationOperationsGenerated):
     @distributed_trace
     def begin_upload_test_file(
         self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
-    ) -> LoadTestingLROPoller[JSON]:
+    ) -> LROPoller[JSON]:
         """Upload file to the test
 
         :param test_id: Unique id for the test
@@ -156,9 +129,7 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
         create_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
-        return LoadTestingLROPoller(
-            command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
-        )
+        return LROPoller(command, upload_test_file_operation, lambda *_: None, create_validation_status_polling)
 
 
 class TestRunOperations(TestRunOperationsGenerated):
@@ -169,74 +140,10 @@ class TestRunOperations(TestRunOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(TestRunOperations, self).__init__(*args, **kwargs)
 
-    @overload
-    async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        old_test_run_id: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> LoadTestingLROPoller[JSON]:
-        """Create and start a new test run with the given name.
-
-        Create and start a new test run with the given name.
-
-        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
-         numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: Load test run model. Required.
-        :type body: IO
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run in the request
-         body. Default value is None.
-        :paramtype old_test_run_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: IO,
-        *,
-        old_test_run_id: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> LoadTestingLROPoller[JSON]:
-        """Create and start a new test run with the given name.
-
-        Create and start a new test run with the given name.
-
-        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
-         numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: Load test run model. Required.
-        :type body: IO
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run in the request
-         body. Default value is None.
-        :paramtype old_test_run_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     def begin_test_run(
         self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
-    ) -> LoadTestingLROPoller[JSON]:
+    ) -> LROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -263,19 +170,17 @@ class TestRunOperations(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = super().begin_test_run(
+        create_or_update_test_run_operation = super()._test_run_initial(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
 
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LoadTestingLROPoller(
-            command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling
-        )
+        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
 
 
-__all__: List[str] = ["AdministrationOperations", "TestRunOperations", "LoadTestingLROPoller"]
+__all__: List[str] = ["AdministrationOperations", "TestRunOperations"]
 
 
 # Add all objects you want publicly available to users at this package level

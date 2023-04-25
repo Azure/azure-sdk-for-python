@@ -4,7 +4,12 @@ Azure Schema Registry is a schema repository service hosted by Azure Event Hubs,
 and management. The registry is leveraged by serializers to reduce payload size while describing payload structure with
 schema identifiers rather than full schemas.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_samples] | [Changelog][change_log]
+[Source code][source_code]
+| [Package (PyPi)][pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-schemaregistry/)
+| [API reference documentation][api_reference]
+| [Samples][sr_samples]
+| [Changelog][change_log]
 
 ## _Disclaimer_
 

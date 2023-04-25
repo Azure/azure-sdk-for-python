@@ -10,18 +10,23 @@ from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._assets.environment import BuildContext
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import EnvironmentVersionData as RestEnvironment
 
 
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
 class TestEnvironmentEntity:
     def test_eq_neq(self) -> None:
-        environment = Environment(name="name", version="16", image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04")
+        environment = Environment(
+            name="name",
+            version="16",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
+        )
         same_environment = Environment(name=environment.name, version=environment.version, image=environment.image)
         diff_environment = Environment(
             name=environment.name,
             version=environment.version,
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.05",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.05",
         )
 
         assert environment.image == same_environment.image
@@ -33,7 +38,7 @@ class TestEnvironmentEntity:
         env = Environment(
             name="name",
             version="16",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
             properties={"key": "value"},
         )
         diff_env = Environment(
@@ -111,16 +116,55 @@ class TestEnvironmentEntity:
 
         env_no_inference_config = Environment(
             conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1",
         )
 
         env_with_inference_config = Environment(
             conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1",
             inference_config=inference_conf_obj,
         )
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version
-        assert env_no_inference_config.version == "71fccbc128a554b5c3e23330ded8963b"
-        assert env_with_inference_config.version == "f223fcd33d34c386cf763b856300f3ce"
+        assert env_no_inference_config.version == "00b3749100a718714b17f57de1ae61fa"
+        assert env_with_inference_config.version == "935315c7d8de8e0972f0460960727a17"
+
+    def test_ipp_environment(self) -> None:
+        # test through deserializing REST instead of using real IP assets
+        ipp_environment = {
+            "id": "azureml://registries/fake_ipp_registry/environments/fake_ipp_environment/versions/20230417.3",
+            "name": "20230417.3",
+            "type": "environments",
+            "properties": {
+                "description": None,
+                "tags": {},
+                "properties": {},
+                "isArchived": False,
+                "isAnonymous": False,
+                "environmentType": "UserCreated",
+                "image": "fake_image",
+                "condaFile": "",
+                "osType": "Linux",
+                "stage": "Development",
+                "intellectualProperty": {
+                    "publisher": "Contoso",
+                    "protectionLevel": "All",
+                },
+            },
+            "systemData": {
+                "createdAt": "2023-04-17T11:57:18.4720796+00:00",
+                "lastModifiedAt": "2023-04-17T11:57:18.4720796+00:00",
+            },
+        }
+
+        from_rest_environment = Environment._from_rest_object(RestEnvironment.deserialize(ipp_environment))
+
+        assert from_rest_environment._intellectual_property
+        assert from_rest_environment._intellectual_property.protection_level == "All"
+        assert from_rest_environment._intellectual_property.publisher == "Contoso"
+
+        ipp_environment_dict = from_rest_environment._to_dict()
+        assert ipp_environment_dict["intellectual_property"]
+        assert ipp_environment_dict["intellectual_property"]["protection_level"] == "all"
+        assert ipp_environment_dict["intellectual_property"]["publisher"] == "Contoso"

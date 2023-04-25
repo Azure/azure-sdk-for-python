@@ -29,7 +29,12 @@ extends:
   parameters:
     ServiceDirectory: ml
     ValidateFormatting: true
+    TestTimeoutInMinutes: 75
     TestProxy: true
+    # This is a short term solution to create API review for python azure-ml package only when running pipeline manually
+    # Long term solution should be to have different versions on main branch and release branch for python package so APIView can have different revisions for each version.
+    # Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/29196
+    GenerateApiReviewForManualOnly: true
     Artifacts:
     - name: azure-ai-ml
       safeName: azureaiml

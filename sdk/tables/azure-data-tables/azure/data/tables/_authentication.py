@@ -7,11 +7,12 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse  # type: ignore
+from typing import Optional, Union, overload, cast
 
-from azure.core.credentials import TokenCredential
+from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureSasCredentialPolicy
 
 try:
     from azure.core.pipeline.transport import AsyncHttpTransport
@@ -25,6 +26,7 @@ except ImportError:
 
 from ._common_conversion import _sign_string
 from ._error import _wrap_exception
+from ._constants import STORAGE_OAUTH_SCOPE
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -216,3 +218,55 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         else:
             self.authorize_request(request, scope)
         return True
+
+
+@overload
+def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
+    ...
+
+@overload
+def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
+    ...
+
+@overload
+def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
+    ...
+
+@overload
+def _configure_credential(credential: TokenCredential) -> BearerTokenChallengePolicy:
+    ...
+
+@overload
+def _configure_credential(credential: None) -> None:
+    ...
+
+def _configure_credential(
+    credential: Optional[
+        Union[
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            TokenCredential,
+            SharedKeyCredentialPolicy
+        ]
+    ]
+) -> Optional[
+    Union[
+        BearerTokenChallengePolicy,
+        AzureSasCredentialPolicy,
+        SharedKeyCredentialPolicy
+    ]
+]:
+    if hasattr(credential, "get_token"):
+        credential = cast(TokenCredential, credential)
+        return BearerTokenChallengePolicy(
+            credential, STORAGE_OAUTH_SCOPE
+        )
+    if isinstance(credential, SharedKeyCredentialPolicy):
+        return credential
+    if isinstance(credential, AzureSasCredential):
+        return AzureSasCredentialPolicy(credential)
+    if isinstance(credential, AzureNamedKeyCredential):
+        return SharedKeyCredentialPolicy(credential)
+    if credential is not None:
+        raise TypeError("Unsupported credential: {}".format(credential))
+    return None

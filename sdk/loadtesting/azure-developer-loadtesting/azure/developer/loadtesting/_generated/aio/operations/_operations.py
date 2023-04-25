@@ -22,6 +22,8 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -40,7 +42,6 @@ from ...operations._operations import (
     build_administration_get_test_request,
     build_administration_list_test_files_request,
     build_administration_list_tests_request,
-    build_test_run_begin_test_run_request,
     build_test_run_create_or_update_app_components_request,
     build_test_run_create_or_update_server_metrics_config_request,
     build_test_run_delete_test_run_request,
@@ -54,6 +55,7 @@ from ...operations._operations import (
     build_test_run_list_metrics_request,
     build_test_run_list_test_runs_request,
     build_test_run_stop_test_run_request,
+    build_test_run_test_run_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -2652,6 +2654,73 @@ class TestRunOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    async def _test_run_initial(
+        self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_test_run_test_run_request(
+            test_run_id=test_run_id,
+            old_test_run_id=old_test_run_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+
+        return cast(JSON, deserialized)  # type: ignore
+
     @overload
     async def begin_test_run(
         self,
@@ -2661,7 +2730,7 @@ class TestRunOperations:
         old_test_run_id: Optional[str] = None,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> JSON:
+    ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -2679,8 +2748,15 @@ class TestRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3184,7 +3260,7 @@ class TestRunOperations:
         old_test_run_id: Optional[str] = None,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> JSON:
+    ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -3202,8 +3278,15 @@ class TestRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3457,7 +3540,7 @@ class TestRunOperations:
     @distributed_trace_async
     async def begin_test_run(
         self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
-    ) -> JSON:
+    ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -3475,8 +3558,15 @@ class TestRunOperations:
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3970,69 +4060,58 @@ class TestRunOperations:
                       been run.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._test_run_initial(
+                test_run_id=test_run_id,
+                body=body,
+                old_test_run_id=old_test_run_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
 
-        content_type = content_type or "application/merge-patch+json"
-        _json = None
-        _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
-        else:
-            _json = body
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
-        request = build_test_run_begin_test_run_request(
-            test_run_id=test_run_id,
-            old_test_run_id=old_test_run_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if response.status_code == 201:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
-
-        return cast(JSON, deserialized)  # type: ignore
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
@@ -5312,9 +5391,9 @@ class TestRunOperations:
         test_run_id: str,
         body: Optional[JSON] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         content_type: str = "application/json",
@@ -5329,13 +5408,13 @@ class TestRunOperations:
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: JSON
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
@@ -5388,9 +5467,9 @@ class TestRunOperations:
         test_run_id: str,
         body: Optional[IO] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         content_type: str = "application/json",
@@ -5405,13 +5484,13 @@ class TestRunOperations:
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: IO
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
@@ -5451,9 +5530,9 @@ class TestRunOperations:
         test_run_id: str,
         body: Optional[Union[JSON, IO]] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         **kwargs: Any
@@ -5468,13 +5547,13 @@ class TestRunOperations:
         :param body: Metric dimension filter. Is either a JSON type or a IO type. Default value is
          None.
         :type body: JSON or IO
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
@@ -5549,9 +5628,9 @@ class TestRunOperations:
 
                 request = build_test_run_list_metrics_request(
                     test_run_id=test_run_id,
-                    metricname=metricname,
+                    metric_name=metric_name,
                     metric_namespace=metric_namespace,
-                    timespan=timespan,
+                    time_interval=time_interval,
                     aggregation=aggregation,
                     interval=interval,
                     content_type=content_type,
@@ -5619,9 +5698,9 @@ class TestRunOperations:
         test_run_id: str,
         name: str,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         interval: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable[str]:
@@ -5634,13 +5713,13 @@ class TestRunOperations:
         :type test_run_id: str
         :param name: Dimension name. Required.
         :type name: str
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
         :paramtype interval: str
@@ -5673,9 +5752,9 @@ class TestRunOperations:
                 request = build_test_run_list_metric_dimension_values_request(
                     test_run_id=test_run_id,
                     name=name,
-                    metricname=metricname,
+                    metric_name=metric_name,
                     metric_namespace=metric_namespace,
-                    timespan=timespan,
+                    time_interval=time_interval,
                     interval=interval,
                     api_version=self._config.api_version,
                     headers=_headers,

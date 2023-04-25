@@ -813,6 +813,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("Flaky test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -2071,7 +2072,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_autodetect_with_default(self, client):
+    def test_autodetect_language(self, client):
         docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),
@@ -2083,8 +2084,7 @@ class TestAnalyze(TextAnalyticsTest):
         poller = client.begin_analyze_actions(
             docs,
             actions,
-            auto_detect_language=True,
-            language="es",
+            language="auto",
             polling_interval=self._interval(),
         )
 

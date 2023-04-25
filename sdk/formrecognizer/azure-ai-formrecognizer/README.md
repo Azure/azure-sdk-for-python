@@ -7,12 +7,15 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 - Read - Read page information and detected languages from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
+- Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src]
+| [Package (PyPI)][python-fr-pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-formrecognizer/)
+| [API reference documentation][python-fr-ref-docs]
+| [Product documentation][python-fr-product-docs]
+| [Samples][python-fr-samples]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -27,16 +30,17 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer
+pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2022-08-31` version of the service.
+> Note: This version of the client library defaults to the `2023-02-28-preview` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
+|3.3.0bX - Latest beta release | 2.0, 2.1, 2022-08-31, 2023-02-28-preview (default)
+|3.2.X - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -47,6 +51,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |API version|Supported clients
 |-|-
+|2023-02-28-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
@@ -148,6 +153,7 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
 <!-- SNIPPET:sample_authentication.create_da_client_with_aad -->
+
 ```python
 """DefaultAzureCredential will use the values from these environment
 variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
@@ -160,6 +166,7 @@ credential = DefaultAzureCredential()
 
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -167,7 +174,9 @@ document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 ### DocumentAnalysisClient
 
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
+Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models]. 
+The `DocumentAnalysisClient` also provides operations for classifying documents through the `begin_classify_document` and `begin_classify_document_from_url` APIs. 
+Custom classification models can classify each page in an input file to identify the document(s) within and can also identify multiple documents or multiple instances of a single document within an input file.
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
@@ -181,6 +190,7 @@ More information about analyzing documents, including supported features, locale
 - Managing models created in your account.
 - Listing operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
+- Build and manage a custom classification model to classify the documents you process within your application.
 
 Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 
@@ -207,12 +217,12 @@ The following section provides several code snippets covering some of the most c
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
+* [Classify Documents][classify_sample]
 
 ### Extract Layout
 
 Extract text, selection marks, text styles, and table structures, along with their bounding region coordinates, from documents.
 
-<!-- SNIPPET:sample_analyze_layout.extract_layout -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -251,7 +261,7 @@ for page in result.pages:
                 line_idx,
                 len(words),
                 line.content,
-                format_polygon(line.polygon),
+                line.polygon,
             )
         )
 
@@ -266,7 +276,7 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_polygon(selection_mark.polygon),
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -282,7 +292,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_polygon(region.polygon),
+                region.polygon,
             )
         )
     for cell in table.cells:
@@ -297,20 +307,18 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding polygon '{}'".format(
                     region.page_number,
-                    format_polygon(region.polygon),
+                    region.polygon,
                 )
             )
 
 print("----------------------------------------")
 ```
-<!-- END SNIPPET -->
 
 ### Using the General Document Model
 
 Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
-<!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -338,14 +346,14 @@ for kv_pair in result.key_value_pairs:
         print(
                 "Key '{}' found within '{}' bounding regions".format(
                     kv_pair.key.content,
-                    format_bounding_region(kv_pair.key.bounding_regions),
+                    kv_pair.key.bounding_regions,
                 )
             )
     if kv_pair.value:
         print(
                 "Value '{}' found within '{}' bounding regions\n".format(
                     kv_pair.value.content,
-                    format_bounding_region(kv_pair.value.bounding_regions),
+                    kv_pair.value.bounding_regions,
                 )
             )
 
@@ -364,7 +372,7 @@ for page in result.pages:
                 line_idx,
                 len(words),
                 line.content,
-                format_polygon(line.polygon),
+                line.polygon,
             )
         )
 
@@ -379,7 +387,7 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_polygon(selection_mark.polygon),
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -395,7 +403,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_polygon(region.polygon),
+                region.polygon,
             )
         )
     for cell in table.cells:
@@ -410,12 +418,11 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding polygon '{}'\n".format(
                     region.page_number,
-                    format_polygon(region.polygon),
+                    region.polygon,
                 )
             )
 print("----------------------------------------")
 ```
-<!-- END SNIPPET -->
 
 - Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
@@ -426,6 +433,7 @@ Extract fields from select document types such as receipts, invoices, business c
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 <!-- SNIPPET:sample_analyze_receipts.analyze_receipts -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -509,6 +517,7 @@ for idx, receipt in enumerate(receipts.documents):
         print("Total: {} has confidence: {}".format(total.value, total.confidence))
     print("--------------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields. See other supported prebuilt models [here][fr-models].
@@ -521,6 +530,7 @@ Provide a container SAS URL to your Azure Storage Blob container where you're st
 More details on setting up a container and required file structure can be found in the [service documentation][fr-build-training-set].
 
 <!-- SNIPPET:sample_build_model.build_model -->
+
 ```python
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 from azure.core.credentials import AzureKeyCredential
@@ -546,6 +556,7 @@ for name, doc_type in model.doc_types.items():
             field_name, field["type"], doc_type.field_confidence[field_name]
         ))
 ```
+
 <!-- END SNIPPET -->
 
 ### Analyze Documents Using a Custom Model
@@ -554,6 +565,7 @@ Analyze document fields, tables, selection marks, and more. These models are tra
 For best results, you should only analyze documents of the same document type that the custom model was built with.
 
 <!-- SNIPPET:sample_analyze_custom_documents.analyze_custom_documents -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -613,6 +625,7 @@ for i, table in enumerate(result.tables):
         )
 print("-----------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 Alternatively, a document URL can also be used to analyze documents using the `begin_analyze_document_from_url` method.
@@ -752,6 +765,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
+[classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

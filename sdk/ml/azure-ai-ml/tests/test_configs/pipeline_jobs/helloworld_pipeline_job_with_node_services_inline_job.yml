@@ -14,12 +14,12 @@ jobs:
     environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     services:
       "my_ssh":
-        job_service_type: "ssh"
+        type: "ssh"
         ssh_public_keys: "xyz123"
       "my_tensorboard":
-        job_service_type: "tensor_board"
+        type: "tensor_board"
         log_dir: "~/tblog" # where you want to store the tensor_board output
       "my_jupyterlab":
-        job_service_type: "jupyter_lab"
+        type: "jupyter_lab"
       "my_vscode":
-        job_service_type: "vs_code"
+        type: "vs_code"

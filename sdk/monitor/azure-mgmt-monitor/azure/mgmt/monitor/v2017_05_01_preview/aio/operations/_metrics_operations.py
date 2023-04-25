@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -28,6 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._metrics_operations import build_list_request
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -117,8 +122,10 @@ class MetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Response]
+        api_version: Literal["2017-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2017-05-01-preview")
+        )
+        cls: ClsType[_models.Response] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_uri=resource_uri,
@@ -136,10 +143,11 @@ class MetricsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -156,4 +164,4 @@ class MetricsOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/metrics"}  # type: ignore
+    list.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/metrics"}

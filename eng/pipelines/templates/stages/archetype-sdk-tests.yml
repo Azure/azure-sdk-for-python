@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
+  - name: TestResourceDirectories
+    type: object
+    default:
   - name: PreSteps
     type: object
     default: []
@@ -105,6 +108,7 @@ stages:
             JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
             AdditionalParameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
               PreSteps:
                 - ${{ parameters.PlatformPreSteps }}
                 - ${{ parameters.PreSteps }}
@@ -159,6 +163,7 @@ stages:
 
         steps:
           - pwsh: |
+              python -m pip install setuptools==58.3.0
               python -m pip install -r eng/ci_tools.txt 
             displayName: 'Install Necessary Dependencies'
           - task: PythonScript@0
@@ -174,3 +179,28 @@ stages:
                 --disablecov
                 --filter-type="Omit_management"
             env: ${{ parameters.EnvVars }}
+
+          - task: PythonScript@0
+            displayName: 'Run MyPy Next'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              arguments: >-
+                "azure*" 
+                --mark_arg="${{ parameters.TestMarkArgument }}" 
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv="next-mypy"
+                --disablecov
+            env: ${{ parameters.EnvVars }}
+
+          - task: PythonScript@0
+            displayName: 'Run Pyright Next'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              arguments: >-
+                "azure*"
+                --mark_arg="${{ parameters.TestMarkArgument }}"
+                --service="${{ parameters.ServiceDirectory }}"
+                --toxenv="next-pyright"
+                --disablecov

@@ -24,8 +24,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class DevContainerResolver:
-    """DevContainerResolver class represents the collection of properties of a
-    devcontainer.json.
+    """DevContainerResolver class represents the collection of properties of a devcontainer.json.
 
     Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference
     """
@@ -168,8 +167,7 @@ def _reformat_labels(labels: dict) -> list:
 
 
 def _get_devcontainer_file_path(directory_path: str) -> str:
-    """Returns the path of the devcontainer in relation to provided
-    directory path.
+    """Returns the path of the devcontainer in relation to provided directory path.
 
     :param directory_path: absolute path of local directory to write devcontainer.json.
     :type directory_path: str

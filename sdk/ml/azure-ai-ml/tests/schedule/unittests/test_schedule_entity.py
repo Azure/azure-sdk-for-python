@@ -167,7 +167,7 @@ class TestScheduleEntity:
             "spark.executor.memory": "2g",
             "spark.executor.instances": "2",
         }
-        assert "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04" in rest_schedule_job_dict["environment_id"]
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" in rest_schedule_job_dict["environment_id"]
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(

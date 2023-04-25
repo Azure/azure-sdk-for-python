@@ -62,8 +62,7 @@ def pipeline(
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ):
-    """Build a pipeline which contains all component nodes defined in this
-    function.
+    """Build a pipeline which contains all component nodes defined in this function.
 
     .. note::
 
@@ -72,23 +71,24 @@ def pipeline(
     .. code-block:: python
 
                 # Define a pipeline with decorator
-                @pipeline(name='sample_pipeline', description='pipeline description')
+                @pipeline(name="sample_pipeline", description="pipeline description")
                 def sample_pipeline_func(pipeline_input, pipeline_str_param):
-                        # component1 and component2 will be added into the current pipeline
-                        component1 = component1_func(input1=pipeline_input, param1='literal')
-                        component2 = component2_func(input1=dataset, param1=pipeline_str_param)
-                        # A decorated pipeline function needs to return outputs.
-                        # In this case, the pipeline has two outputs: component1's output1 and component2's output1,
-                        # and let's rename them to 'pipeline_output1' and 'pipeline_output2'
-                        return {
-                            'pipeline_output1': component1.outputs.output1,
-                            'pipeline_output2': component2.outputs.output1
-                        }
+                    # component1 and component2 will be added into the current pipeline
+                    component1 = component1_func(input1=pipeline_input, param1="literal")
+                    component2 = component2_func(input1=dataset, param1=pipeline_str_param)
+                    # A decorated pipeline function needs to return outputs.
+                    # In this case, the pipeline has two outputs: component1's output1 and component2's output1,
+                    # and let's rename them to 'pipeline_output1' and 'pipeline_output2'
+                    return {
+                        "pipeline_output1": component1.outputs.output1,
+                        "pipeline_output2": component2.outputs.output1,
+                    }
+
 
                 # E.g.: This call returns a pipeline job with nodes=[component1, component2],
                 pipeline_job = sample_pipeline_func(
-                    pipeline_input=Input(type='uri_folder', path='./local-data'),
-                    pipeline_str_param='literal'
+                    pipeline_input=Input(type="uri_folder", path="./local-data"),
+                    pipeline_str_param="literal",
                 )
                 ml_client.jobs.create_or_update(pipeline_job, experiment_name="pipeline_samples")
 

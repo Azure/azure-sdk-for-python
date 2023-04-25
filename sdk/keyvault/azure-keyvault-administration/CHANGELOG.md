@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0b2 (Unreleased)
+## 4.3.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,32 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.3.0 (2023-03-16)
+
+### Features Added
+- Added support for service API version `7.4`
+- Clients each have a `send_request` method that can be used to send custom requests using the
+  client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
+- (From 4.3.0b1) Added sync and async `KeyVaultSettingsClient`s for getting and updating Managed HSM settings
+- The `KeyVaultSetting` class has a `getboolean` method that will return the setting's `value` as a `bool`, if possible,
+  and raise a `ValueError` otherwise
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.2.0. Only code written against a beta version such as 4.3.0b1 may be affected.
+- `KeyVaultSettingsClient.update_setting` now accepts a single `setting` argument (a `KeyVaultSetting` instance)
+  instead of a `name` and `value`
+- The `KeyVaultSetting` model's `type` parameter and attribute have been renamed to `setting_type`
+- The `SettingType` enum has been renamed to `KeyVaultSettingType`
+
+### Other Changes
+- Key Vault API version `7.4` is now the default
+- (From 4.3.0b1) Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- (From 4.3.0b1) Updated minimum `azure-core` version to 1.24.0
+- (From 4.3.0b1) Dropped `msrest` requirement
+- (From 4.3.0b1) Dropped `six` requirement
+- (From 4.3.0b1) Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- (From 4.3.0b1) Added requirement for `typing-extensions>=4.0.1`
 
 ## 4.3.0b1 (2022-11-15)
 

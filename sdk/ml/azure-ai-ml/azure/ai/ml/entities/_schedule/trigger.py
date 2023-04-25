@@ -7,11 +7,11 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CronTrigger as RestCronTrigger
-from azure.ai.ml._restclient.v2022_12_01_preview.models import RecurrenceSchedule as RestRecurrencePattern
-from azure.ai.ml._restclient.v2022_12_01_preview.models import RecurrenceTrigger as RestRecurrenceTrigger
-from azure.ai.ml._restclient.v2022_12_01_preview.models import TriggerBase as RestTriggerBase
-from azure.ai.ml._restclient.v2022_12_01_preview.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CronTrigger as RestCronTrigger
+from azure.ai.ml._restclient.v2023_04_01_preview.models import RecurrenceSchedule as RestRecurrencePattern
+from azure.ai.ml._restclient.v2023_04_01_preview.models import RecurrenceTrigger as RestRecurrenceTrigger
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TriggerBase as RestTriggerBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TriggerType as RestTriggerType
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -57,7 +57,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
 
 
 class RecurrencePattern(RestTranslatableMixin):
-    """Recurrence pattern
+    """Recurrence pattern.
 
     :param hours: List of hours for recurrence schedule pattern.
     :type hours: Union[int, List[int]]
@@ -115,7 +115,7 @@ class RecurrencePattern(RestTranslatableMixin):
 
 
 class CronTrigger(TriggerBase):
-    """Cron Trigger
+    """Cron Trigger.
 
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
@@ -184,7 +184,7 @@ class CronTrigger(TriggerBase):
 
 
 class RecurrenceTrigger(TriggerBase):
-    """Recurrence trigger
+    """Recurrence trigger.
 
     :param start_time: Specifies start time of schedule in ISO 8601 format.
     :type start_time: Union[str, datetime]

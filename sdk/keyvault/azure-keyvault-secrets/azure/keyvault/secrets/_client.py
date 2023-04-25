@@ -89,7 +89,7 @@ class SecretClient(KeyVaultClientBase):
 
         :keyword bool enabled: Whether the secret is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: Dict[str, str]
+        :paramtype tags: Dict[str, str] or None
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
@@ -146,7 +146,7 @@ class SecretClient(KeyVaultClientBase):
 
         :keyword bool enabled: Whether the secret is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: Dict[str, str]
+        :paramtype tags: Dict[str, str] or None
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC

@@ -60,12 +60,12 @@ setup(
             # For example, for storage, this would mean adding 'azure.storage'
             # in addition to the default 'azure' that is seen here.
             "azure",
-            "azure.ai"
+            "azure.ai",
         ]
     ),
     include_package_data=True,
     package_data={
-        'pytyped': ['py.typed'],
+        "pytyped": ["py.typed"],
     },
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",

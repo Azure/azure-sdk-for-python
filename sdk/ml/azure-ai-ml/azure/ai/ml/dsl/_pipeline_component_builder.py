@@ -138,8 +138,7 @@ class PipelineComponentBuilder:
 
     @property
     def name(self):
-        """Name of pipeline builder, it's name will be same as the pipeline
-        definition it builds."""
+        """Name of pipeline builder, it's name will be same as the pipeline definition it builds."""
         return self._name
 
     def add_node(self, node: Union[BaseNode, AutoMLJob]):
@@ -153,8 +152,8 @@ class PipelineComponentBuilder:
     def build(
         self, *, user_provided_kwargs=None, non_pipeline_inputs_dict=None, non_pipeline_inputs=None
     ) -> PipelineComponent:
-        """
-        Build a pipeline component from current pipeline builder.
+        """Build a pipeline component from current pipeline builder.
+
         :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
         :param non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
         :param non_pipeline_inputs: List of non-pipeline input name. None if not exist.
@@ -227,9 +226,8 @@ class PipelineComponentBuilder:
         return inputs
 
     def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]):
-        """Validate if dsl.pipeline returns valid outputs and set output
-        binding. Create PipelineOutput as pipeline's output definition based on
-        node outputs from return.
+        """Validate if dsl.pipeline returns valid outputs and set output binding. Create PipelineOutput as pipeline's
+        output definition based on node outputs from return.
 
         :param outputs: Outputs of pipeline
         :type outputs: Mapping[str, azure.ai.ml.Output]
@@ -280,6 +278,8 @@ class PipelineComponentBuilder:
                 meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
+                # store original node output to be able to trace back to inner node from a pipeline output builder.
+                binding_output=value,
             )
             # copy node level output setting to pipeline output
             copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
@@ -303,8 +303,7 @@ class PipelineComponentBuilder:
         return group_defaults
 
     def _update_nodes_variable_names(self, func_variables: dict):
-        """Update nodes list to ordered dict with variable name key and
-        component object value.
+        """Update nodes list to ordered dict with variable name key and component object value.
 
         Variable naming priority:
              1. Specified by using xxx.name.
@@ -351,8 +350,9 @@ class PipelineComponentBuilder:
             if instance_id not in valid_component_ids:
                 continue
             name = getattr(v, "name", None) or k
-            if name is not None:
-                name = name.lower()
+            # for node name _, treat it as anonymous node with name unset
+            if name == "_":
+                continue
 
             # User defined name must be valid python identifier
             if not is_valid_node_name(name):

@@ -278,19 +278,17 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
-
+        indexing_policy = kwargs.pop('indexing_policy', None)
+        default_ttl = kwargs.pop('default_ttl', None)
+        unique_key_policy = kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        offer_throughput = kwargs.pop('offer_throughput', None)
         try:
             container_proxy = self.get_container_client(id)
             await container_proxy.read(**kwargs)
             return container_proxy
         except CosmosResourceNotFoundError:
-            indexing_policy = kwargs.pop('indexing_policy', None)
-            default_ttl = kwargs.pop('default_ttl', None)
-            unique_key_policy = kwargs.pop('unique_key_policy', None)
-            conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
-            analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
-            offer_throughput = kwargs.pop('offer_throughput', None)
-            response_hook = kwargs.pop('response_hook', None)
             return await self.create_container(
                 id=id,
                 partition_key=partition_key,
@@ -299,8 +297,7 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl,
-                response_hook=response_hook
+                analytical_storage_ttl=analytical_storage_ttl
             )
 
     def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:

@@ -61,6 +61,9 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: GenerateApiReviewForManualOnly
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -132,6 +135,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - job: Compliance
     pool:
@@ -178,7 +182,7 @@ jobs:
             GenerateVMJobs: true
       PreGenerationSteps:
         - pwsh: |
-            pip install "./tools/azure-sdk-tools[build]"
+            python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:

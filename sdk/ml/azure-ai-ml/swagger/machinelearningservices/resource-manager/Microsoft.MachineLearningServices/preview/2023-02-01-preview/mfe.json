@@ -3315,7 +3315,10 @@
             "$ref": "./examples/Workspace/BatchEndpoint/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -3531,7 +3534,10 @@
             "$ref": "./examples/Workspace/BatchEndpoint/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments": {
@@ -3683,7 +3689,10 @@
             "$ref": "./examples/Workspace/BatchDeployment/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -3922,7 +3931,10 @@
             "$ref": "./examples/Workspace/BatchDeployment/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/listkeys": {
@@ -6573,7 +6585,10 @@
             "$ref": "./examples/Workspace/FeaturesetContainer/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -6704,7 +6719,10 @@
             "$ref": "./examples/Workspace/FeaturesetContainer/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions": {
@@ -6876,7 +6894,10 @@
             "$ref": "./examples/Workspace/FeaturesetVersion/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -7021,7 +7042,10 @@
             "$ref": "./examples/Workspace/FeaturesetVersion/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/backfill": {
@@ -7495,7 +7519,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityContainer/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -7626,7 +7653,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityContainer/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featurestoreEntities/{name}/versions": {
@@ -7798,7 +7828,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityVersion/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -7943,7 +7976,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityVersion/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/jobs": {
@@ -8134,7 +8170,10 @@
             "$ref": "./examples/Job/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -8595,7 +8634,10 @@
             "$ref": "./examples/LabelingJob/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/exportLabels": {
@@ -9653,7 +9695,10 @@
             "$ref": "./examples/Workspace/OnlineEndpoint/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -9868,7 +9913,10 @@
             "$ref": "./examples/Workspace/OnlineEndpoint/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/deployments": {
@@ -10020,7 +10068,10 @@
             "$ref": "./examples/Workspace/OnlineDeployment/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -10268,7 +10319,10 @@
             "$ref": "./examples/OnlineDeployment/KubernetesOnlineDeployment/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/deployments/{deploymentName}/getLogs": {
@@ -10751,7 +10805,10 @@
             "$ref": "./examples/Schedule/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -10882,7 +10939,10 @@
             "$ref": "./examples/Schedule/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     }
   },
@@ -11138,24 +11198,6 @@
       "x-ms-discriminator-value": "Auto",
       "additionalProperties": false
     },
-    "AutologgerSettings": {
-      "description": "Settings for Autologger.",
-      "required": [
-        "mlflowAutologger"
-      ],
-      "type": "object",
-      "properties": {
-        "mlflowAutologger": {
-          "description": "[Required] Indicates whether mlflow autologger is enabled.",
-          "$ref": "#/definitions/MLFlowAutologgerState",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "additionalProperties": false
-    },
     "AutoMLJob": {
       "description": "AutoMLJob class.\r\nUse this class for executing AutoML tasks like Classification/Regression etc.\r\nSee TaskType enum for all the tasks supported.",
       "required": [
@@ -11324,6 +11366,24 @@
         }
       ],
       "x-ms-discriminator-value": "Auto",
+      "additionalProperties": false
+    },
+    "AutologgerSettings": {
+      "description": "Settings for Autologger.",
+      "required": [
+        "mlflowAutologger"
+      ],
+      "type": "object",
+      "properties": {
+        "mlflowAutologger": {
+          "description": "[Required] Indicates whether mlflow autologger is enabled.",
+          "$ref": "#/definitions/MLFlowAutologgerState",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
       "additionalProperties": false
     },
     "AzureBlobDatastore": {
@@ -12930,18 +12990,6 @@
       },
       "additionalProperties": false
     },
-    "ComputeResource": {
-      "description": "Dto object representing compute resource",
-      "type": "object",
-      "properties": {
-        "instanceType": {
-          "description": "Specifies the instance type",
-          "type": "string",
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
     "ContainerResourceRequirements": {
       "description": "Resource requirements for each container instance within an online deployment.",
       "type": "object",
@@ -13336,6 +13384,103 @@
       "x-ms-discriminator-value": "DataPath",
       "additionalProperties": false
     },
+    "DataType": {
+      "description": "Enum to determine the type of data.",
+      "enum": [
+        "uri_file",
+        "uri_folder",
+        "mltable"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "uri_file"
+          },
+          {
+            "value": "uri_folder"
+          },
+          {
+            "value": "mltable"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "DataVersionBase": {
+      "description": "Data version base definition",
+      "required": [
+        "dataType",
+        "dataUri"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetBase"
+        }
+      ],
+      "properties": {
+        "dataType": {
+          "description": "[Required] Specifies the type of data.",
+          "$ref": "#/definitions/DataType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "dataUri": {
+          "description": "[Required] Uri of the data. Example: https://go.microsoft.com/fwlink/?linkid=2202330",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "dataType",
+      "x-ms-client-name": "DataVersionBaseProperties"
+    },
+    "DataVersionBaseResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/DataVersionBase"
+        }
+      },
+      "x-ms-client-name": "DataVersionBase",
+      "additionalProperties": false
+    },
+    "DataVersionBaseResourceArmPaginatedResult": {
+      "description": "A paginated list of DataVersionBase entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of DataVersionBase objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type DataVersionBase.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataVersionBaseResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "DatasetExportSummary": {
       "type": "object",
       "allOf": [
@@ -13486,103 +13631,6 @@
             "value": "Hdfs"
           }
         ]
-      },
-      "additionalProperties": false
-    },
-    "DataType": {
-      "description": "Enum to determine the type of data.",
-      "enum": [
-        "uri_file",
-        "uri_folder",
-        "mltable"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "DataType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "uri_file"
-          },
-          {
-            "value": "uri_folder"
-          },
-          {
-            "value": "mltable"
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "DataVersionBase": {
-      "description": "Data version base definition",
-      "required": [
-        "dataType",
-        "dataUri"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/AssetBase"
-        }
-      ],
-      "properties": {
-        "dataType": {
-          "description": "[Required] Specifies the type of data.",
-          "$ref": "#/definitions/DataType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "dataUri": {
-          "description": "[Required] Uri of the data. Example: https://go.microsoft.com/fwlink/?linkid=2202330",
-          "pattern": "[a-zA-Z0-9_]",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "discriminator": "dataType",
-      "x-ms-client-name": "DataVersionBaseProperties"
-    },
-    "DataVersionBaseResource": {
-      "description": "Azure Resource Manager resource envelope.",
-      "required": [
-        "properties"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
-        }
-      ],
-      "properties": {
-        "properties": {
-          "description": "[Required] Additional attributes of the entity.",
-          "$ref": "#/definitions/DataVersionBase"
-        }
-      },
-      "x-ms-client-name": "DataVersionBase",
-      "additionalProperties": false
-    },
-    "DataVersionBaseResourceArmPaginatedResult": {
-      "description": "A paginated list of DataVersionBase entities.",
-      "type": "object",
-      "properties": {
-        "nextLink": {
-          "description": "The link to the next page of DataVersionBase objects. If null, there are no additional pages.",
-          "type": "string"
-        },
-        "value": {
-          "description": "An array of objects of type DataVersionBase.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataVersionBaseResource"
-          }
-        }
       },
       "additionalProperties": false
     },
@@ -14419,7 +14467,8 @@
         "Float",
         "Double",
         "Binary",
-        "Datetime"
+        "Datetime",
+        "Boolean"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -14446,6 +14495,9 @@
           },
           {
             "value": "Datetime"
+          },
+          {
+            "value": "Boolean"
           }
         ]
       },
@@ -14471,6 +14523,25 @@
             "description": "System auto-generates feature lags."
           }
         ]
+      },
+      "additionalProperties": false
+    },
+    "FeatureWindow": {
+      "description": "Specifies the feature window",
+      "type": "object",
+      "properties": {
+        "featureWindowEnd": {
+          "format": "date-time",
+          "description": "Specifies the feature window end time",
+          "type": "string",
+          "x-nullable": true
+        },
+        "featureWindowStart": {
+          "format": "date-time",
+          "description": "Specifies the feature window start time",
+          "type": "string",
+          "x-nullable": true
+        }
       },
       "additionalProperties": false
     },
@@ -14685,7 +14756,7 @@
         },
         "resource": {
           "description": "Specifies the compute resource settings",
-          "$ref": "#/definitions/ComputeResource"
+          "$ref": "#/definitions/MaterializationComputeResource"
         },
         "sparkConfiguration": {
           "description": "Specifies the spark compute settings",
@@ -14900,25 +14971,6 @@
             "value": "BackfillMaterialization"
           }
         ]
-      },
-      "additionalProperties": false
-    },
-    "FeatureWindow": {
-      "description": "Specifies the feature window",
-      "type": "object",
-      "properties": {
-        "featureWindowEnd": {
-          "format": "date-time",
-          "description": "Specifies the feature window end time",
-          "type": "string",
-          "x-nullable": true
-        },
-        "featureWindowStart": {
-          "format": "date-time",
-          "description": "Specifies the feature window start time",
-          "type": "string",
-          "x-nullable": true
-        }
       },
       "additionalProperties": false
     },
@@ -15584,7 +15636,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettings": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nAll distributions can be specified as distribution_name(min, max) or choice(val1, val2, ..., valn)\r\nwhere distribution name can be: uniform, quniform, loguniform, etc\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n```\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n```</example>\r\nAll distributions can be specified as distribution_name(min, max) or choice(val1, val2, ..., valn)\r\nwhere distribution name can be: uniform, quniform, loguniform, etc\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "properties": {
         "amsGradient": {
@@ -15759,7 +15811,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettingsClassification": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n```\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n```</example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -15795,7 +15847,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettingsObjectDetection": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n```\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n```</example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -17695,154 +17747,6 @@
       },
       "additionalProperties": false
     },
-    "ManagedIdentity": {
-      "description": "Managed identity configuration.",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/IdentityConfiguration"
-        }
-      ],
-      "properties": {
-        "clientId": {
-          "format": "uuid",
-          "description": "Specifies a user-assigned identity by client ID. For system-assigned, do not set this field.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "objectId": {
-          "format": "uuid",
-          "description": "Specifies a user-assigned identity by object ID. For system-assigned, do not set this field.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "resourceId": {
-          "description": "Specifies a user-assigned identity by ARM resource ID. For system-assigned, do not set this field.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "x-ms-discriminator-value": "Managed",
-      "additionalProperties": false
-    },
-    "ManagedOnlineDeployment": {
-      "description": "Properties specific to a ManagedOnlineDeployment.",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/OnlineDeployment"
-        }
-      ],
-      "x-ms-discriminator-value": "Managed",
-      "additionalProperties": false
-    },
-    "MaterializationSettings": {
-      "type": "object",
-      "properties": {
-        "notification": {
-          "description": "Specifies the notification details",
-          "$ref": "#/definitions/NotificationSetting",
-          "x-nullable": true
-        },
-        "resource": {
-          "description": "Specifies the compute resource settings",
-          "$ref": "#/definitions/ComputeResource",
-          "x-nullable": true
-        },
-        "schedule": {
-          "description": "Specifies the schedule details",
-          "$ref": "#/definitions/RecurrenceTrigger",
-          "x-nullable": true
-        },
-        "sparkConfiguration": {
-          "description": "Specifies the spark compute settings",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "x-nullable": true
-        },
-        "storeType": {
-          "description": "Specifies the stores to which materialization should happen",
-          "default": "None",
-          "$ref": "#/definitions/MaterializationStoreType"
-        }
-      },
-      "additionalProperties": false
-    },
-    "MaterializationStoreType": {
-      "enum": [
-        "None",
-        "Online",
-        "Offline",
-        "OnlineAndOffline"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MaterializationStoreType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "None"
-          },
-          {
-            "value": "Online"
-          },
-          {
-            "value": "Offline"
-          },
-          {
-            "value": "OnlineAndOffline"
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MedianStoppingPolicy": {
-      "description": "Defines an early termination policy based on running averages of the primary metric of all runs",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/EarlyTerminationPolicy"
-        }
-      ],
-      "x-ms-discriminator-value": "MedianStopping",
-      "additionalProperties": false
-    },
-    "MediaType": {
-      "description": "Media type of data asset.",
-      "enum": [
-        "Image",
-        "Text"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MediaType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "Image"
-          },
-          {
-            "value": "Text"
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
     "MLAssistConfiguration": {
       "description": "Labeling MLAssist configuration definition",
       "required": [
@@ -18026,6 +17930,166 @@
         }
       ],
       "x-ms-discriminator-value": "mltable",
+      "additionalProperties": false
+    },
+    "ManagedIdentity": {
+      "description": "Managed identity configuration.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/IdentityConfiguration"
+        }
+      ],
+      "properties": {
+        "clientId": {
+          "format": "uuid",
+          "description": "Specifies a user-assigned identity by client ID. For system-assigned, do not set this field.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "objectId": {
+          "format": "uuid",
+          "description": "Specifies a user-assigned identity by object ID. For system-assigned, do not set this field.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "resourceId": {
+          "description": "Specifies a user-assigned identity by ARM resource ID. For system-assigned, do not set this field.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Managed",
+      "additionalProperties": false
+    },
+    "ManagedOnlineDeployment": {
+      "description": "Properties specific to a ManagedOnlineDeployment.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OnlineDeployment"
+        }
+      ],
+      "x-ms-discriminator-value": "Managed",
+      "additionalProperties": false
+    },
+    "MaterializationComputeResource": {
+      "description": "Dto object representing compute resource",
+      "type": "object",
+      "properties": {
+        "instanceType": {
+          "description": "Specifies the instance type",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MaterializationSettings": {
+      "type": "object",
+      "properties": {
+        "notification": {
+          "description": "Specifies the notification details",
+          "$ref": "#/definitions/NotificationSetting",
+          "x-nullable": true
+        },
+        "resource": {
+          "description": "Specifies the compute resource settings",
+          "$ref": "#/definitions/MaterializationComputeResource",
+          "x-nullable": true
+        },
+        "schedule": {
+          "description": "Specifies the schedule details",
+          "$ref": "#/definitions/RecurrenceTrigger",
+          "x-nullable": true
+        },
+        "sparkConfiguration": {
+          "description": "Specifies the spark compute settings",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "storeType": {
+          "description": "Specifies the stores to which materialization should happen",
+          "default": "None",
+          "$ref": "#/definitions/MaterializationStoreType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MaterializationStoreType": {
+      "enum": [
+        "None",
+        "Online",
+        "Offline",
+        "OnlineAndOffline"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MaterializationStoreType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "None"
+          },
+          {
+            "value": "Online"
+          },
+          {
+            "value": "Offline"
+          },
+          {
+            "value": "OnlineAndOffline"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MediaType": {
+      "description": "Media type of data asset.",
+      "enum": [
+        "Image",
+        "Text"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MediaType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Image"
+          },
+          {
+            "value": "Text"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MedianStoppingPolicy": {
+      "description": "Defines an early termination policy based on running averages of the primary metric of all runs",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EarlyTerminationPolicy"
+        }
+      ],
+      "x-ms-discriminator-value": "MedianStopping",
       "additionalProperties": false
     },
     "ModelConfiguration": {
@@ -22502,17 +22566,6 @@
       "x-ms-discriminator-value": "uri_folder",
       "additionalProperties": false
     },
-    "UserIdentity": {
-      "description": "User identity configuration.",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/IdentityConfiguration"
-        }
-      ],
-      "x-ms-discriminator-value": "UserIdentity",
-      "additionalProperties": false
-    },
     "UseStl": {
       "description": "Configure STL Decomposition of the time-series target column.",
       "enum": [
@@ -22537,6 +22590,17 @@
           }
         ]
       },
+      "additionalProperties": false
+    },
+    "UserIdentity": {
+      "description": "User identity configuration.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/IdentityConfiguration"
+        }
+      ],
+      "x-ms-discriminator-value": "UserIdentity",
       "additionalProperties": false
     },
     "ValidationMetricType": {

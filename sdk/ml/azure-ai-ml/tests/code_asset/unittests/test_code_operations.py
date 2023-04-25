@@ -29,14 +29,12 @@ def mock_code_operation(
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operation: Mock,
-    mock_machinelearning_client: Mock,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operation,
-        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -60,10 +58,10 @@ class TestCodeOperations:
         version: 3"""
         )
         with patch(
-            "azure.ai.ml._artifacts._artifact_utilities._upload_snapshot_to_datastore",
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
             return_value=ArtifactStorageInfo(code_name, "3", "path", "datastore_id", "containerName"),
-        ), patch("azure.ai.ml.operations._code_operations.Code._from_rest_object", return_value=None,), patch(
-            "azure.ai.ml.operations._code_operations._get_existing_snapshot_by_hash",
+        ), patch(
+            "azure.ai.ml.operations._code_operations.Code._from_rest_object",
             return_value=None,
         ):
 

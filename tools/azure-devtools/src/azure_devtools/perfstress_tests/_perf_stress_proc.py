@@ -17,7 +17,7 @@ from ._perf_stress_base import _PerfTestABC, _PerfTestBase
 
 def run_process(index, args, module, test_name, num_tests, test_stages, results, status):
     """The child process main function.
-    
+
     Here we load the test class from the correct module and start it.
     """
     test_module = importlib.import_module(module)
@@ -28,7 +28,7 @@ def run_process(index, args, module, test_name, num_tests, test_stages, results,
 
 def _synchronize(stages, ignore_error=False):
     """Synchronize all processes by waiting on the barrier.
-    
+
     Optionally we can also ignore a broken barrier during the cleanup stages
     so that if some processes have failed, the others can still complete cleanup.
     """
@@ -60,14 +60,14 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
         _synchronize(test_stages["Post Setup"])
         await asyncio.gather(*[test.post_setup() for test in tests])
 
-        if args.warmup and not args.profile:
+        if args.warmup:
             # Waiting till all processes are ready to start "Warmup"
             _synchronize(test_stages["Warmup"])
-            await _run_tests(args.warmup, args, tests, results, status)
+            await _run_tests(args.warmup, args, tests, results, status, with_profiler=False)
 
         # Waiting till all processes are ready to start "Tests"
         _synchronize(test_stages["Tests"])
-        await _run_tests(args.duration, args, tests, results, status)
+        await _run_tests(args.duration, args, tests, results, status, with_profiler=args.profile)
 
         # Waiting till all processes have finished tests, ready to start "Pre Cleanup"
         _synchronize(test_stages["Pre Cleanup"])
@@ -107,7 +107,7 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
                 print(f"Failed to close tests: {e}")
 
 
-async def _run_tests(duration: int, args, tests, results, status) -> None:
+async def _run_tests(duration: int, args, tests, results, status, *, with_profiler: bool = False) -> None:
     """Run the listed tests either in parallel asynchronously or in a thread pool."""
     # Kick of a status monitoring thread.
     stop_status = threading.Event()
@@ -120,12 +120,12 @@ async def _run_tests(duration: int, args, tests, results, status) -> None:
     try:
         if args.sync:
             with ThreadPoolExecutor(max_workers=args.parallel) as ex:
-                tasks = [ex.submit(test.run_all_sync, duration) for test in tests]
+                tasks = [ex.submit(test.run_all_sync, duration, run_profiler=with_profiler) for test in tests]
                 wait(tasks, return_when=ALL_COMPLETED)
         else:
-            tasks = [asyncio.create_task(test.run_all_async(duration)) for test in tests]
+            tasks = [asyncio.create_task(test.run_all_async(duration, run_profiler=with_profiler)) for test in tests]
             await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
-        
+
         # If any of the parallel test runs raised an exception, let it be propagated, after all tasks have
         # completed.
         # TODO: This will only raise the first Exception encountered. Once we migrate the perf pipelines
@@ -144,7 +144,7 @@ async def _run_tests(duration: int, args, tests, results, status) -> None:
 
 def _report_status(status: multiprocessing.JoinableQueue, tests: List[_PerfTestABC], stop: threading.Event):
     """Report ongoing status of running tests.
-    
+
     This is achieved by adding status to a joinable queue then waiting for that queue to be cleared
     by the parent processes. This should implicitly synchronize the status reporting across all child
     processes and the parent will dictate the frequency by which status is gathered.

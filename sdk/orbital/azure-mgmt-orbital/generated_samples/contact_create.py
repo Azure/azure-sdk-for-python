@@ -39,14 +39,14 @@ def main():
                     "id": "/subscriptions/c1be1141-a7c9-4aac-9608-3c2e2f1152c3/resourceGroups/contoso-Rgp/providers/Microsoft.Orbital/contactProfiles/CONTOSO-CP"
                 },
                 "groundStationName": "EASTUS2_0",
-                "reservationEndTime": "2022-03-02T11:10:45Z",
-                "reservationStartTime": "2022-03-02T10:58:30Z",
+                "reservationEndTime": "2023-02-22T11:10:45Z",
+                "reservationStartTime": "2023-02-22T10:58:30Z",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/orbital/resource-manager/Microsoft.Orbital/stable/2022-03-01/examples/ContactCreate.json
+# x-ms-original-file: specification/orbital/resource-manager/Microsoft.Orbital/stable/2022-11-01/examples/ContactCreate.json
 if __name__ == "__main__":
     main()

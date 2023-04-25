@@ -9,8 +9,8 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
@@ -47,6 +47,7 @@ from .job_io_mixin import JobIOMixin
 from .job_limits import CommandJobLimits
 from .job_resource_configuration import JobResourceConfiguration
 from .parameterized_command import ParameterizedCommand
+from .queue_settings import QueueSettings
 
 module_logger = logging.getLogger(__name__)
 
@@ -85,7 +86,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type distribution: Union[
         azure.ai.ml.PyTorchDistribution,
         azure.ai.ml.MpiDistribution,
-        azure.ai.ml.TensorFlowDistribution]
+        azure.ai.ml.TensorFlowDistribution,
+        azure.ai.ml.RayDistribution]
     :param environment: Environment that training job will run in.
     :type environment: Union[azure.ai.ml.entities.Environment, str]
     :param identity: Identity that training job will use while running on compute.
@@ -173,6 +175,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
+            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
         )
         result = JobBase(properties=properties)
         result.name = self.name
@@ -212,6 +215,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
+            queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
         )
         # Handle special case of local job
         if (
@@ -275,18 +279,10 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             services=self.services,
             properties=self.properties,
             identity=self.identity,
+            queue_settings=self.queue_settings,
         )
 
     def _validate(self) -> None:
-        if self.compute is None:
-            msg = "compute is required"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
         if self.command is None:
             msg = "command is required"
             raise ValidationException(

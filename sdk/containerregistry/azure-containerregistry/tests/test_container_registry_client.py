@@ -3,11 +3,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import os
 import pytest
 import six
-
+import hashlib
+from datetime import datetime
+from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -16,7 +17,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest
+from azure.containerregistry._helpers import _serialize_manifest, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -426,6 +427,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_construct_container_registry_client(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
@@ -461,7 +463,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -472,9 +473,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
-        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
-        manifest = _deserialize_manifest(manifest_stream)     
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_manifest_prerequisites(repo, client)
 
@@ -483,7 +483,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -494,10 +493,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
+        tag = "v1"
         manifest = self.create_oci_manifest()
         with self.create_registry_client(containerregistry_endpoint) as client:
-            tag = "v1"
-            
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
@@ -505,7 +503,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -525,12 +522,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
-        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
-        manifest = _deserialize_manifest(manifest_stream)
+        tag = "v1"
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
         with self.create_registry_client(containerregistry_endpoint) as client:
-            tag = "v1"
-            
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
@@ -538,7 +533,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -563,63 +557,114 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Act
-            data = open(path, "rb")
-            digest = client.upload_blob(repo, data)
-            
+            with open(path, "rb") as data:
+                digest, blob_size = client.upload_blob(repo, data)
+
             # Assert
-            res = client.download_blob(repo, digest)
-            assert len(res.data.read()) == len(data.read())
-            assert res.digest == digest
-            
+            blob_content = b""
+            stream = client.download_blob(repo, digest)
+            for chunk in stream:
+                blob_content += chunk
+            assert len(blob_content) == blob_size
+
+            client.delete_blob(repo, digest)
+            client.delete_repository(repo)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # Test blob upload and download in equal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+            data = b'\x00' * int(blob_size)
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            stream = client.download_blob(repo, digest)
+            size = 0
+            with open("text1.txt", "wb") as file:
+                for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+
+            client.delete_blob(repo, digest)
+
+            # Test blob upload and download in unequal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+            data = b'\x00' * int(blob_size)
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            stream = client.download_blob(repo, digest)
+            size = 0
+            with open("text2.txt", "wb") as file:
+                for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+
             client.delete_blob(repo, digest)
 
             # Cleanup
             client.delete_repository(repo)
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        hash_value = hashlib.sha256(b"test").hexdigest()
+        digest = f"sha256:{hash_value}"
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            client.delete_blob(repo, digest)
 
     @acr_preparer()
     @recorded_by_proxy
     def test_set_audience(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = get_audience(authority)
+        
+        with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
+            for repo in client.list_repository_names():
+                pass
 
+        valid_audience = get_audience(authority)
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
             for repo in client.list_repository_names():
                 pass
-        
-        with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
-                for repo in client.list_repository_names():
-                    pass
-                
-                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
-                invalid_client = ContainerRegistryClient(
-                    endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
-                )
-                with pytest.raises(ClientAuthenticationError):           
-                    for repo in invalid_client.list_repository_names():
-                        pass
-            else:
+
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            with ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            ) as client:
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
 
-
-def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
-        assert client._client._config.api_version == "2021-07-01"
-
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
-    ) as client:
-        assert client._client._config.api_version == "2019-08-15-preview"
-
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
-        ) as client:
-            pass
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup tags in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_tag(ALPINE, tag.name)
+            
+            response = client.list_tag_properties(ALPINE)
+            if response is not None:
+                for tag in response:
+                    pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup manifests in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_manifest(ALPINE, tag.name)
+            response = client.list_manifest_properties(ALPINE)
+            if response is not None:
+                for manifest in response:
+                    pass

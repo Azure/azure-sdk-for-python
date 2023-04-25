@@ -12,6 +12,7 @@ from typing import Dict, Optional, Union, overload
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -233,6 +234,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self.max = max
         self.enum = enum
         self.datastore = datastore
+        intellectual_property = kwargs.pop("intellectual_property", None)
+        if intellectual_property:
+            self._intellectual_property = (
+                intellectual_property
+                if isinstance(intellectual_property, IntellectualProperty)
+                else IntellectualProperty(**intellectual_property)
+            )
         # normalize properties like ["default", "min", "max", "optional"]
         self._normalize_self_properties()
 
@@ -353,8 +361,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _validate_or_throw(self, value):
         """Validate input parameter value, throw exception if not as expected.
 
-        It will throw exception if validate failed, otherwise do
-        nothing.
+        It will throw exception if validate failed, otherwise do nothing.
         """
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."

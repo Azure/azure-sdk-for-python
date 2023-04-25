@@ -421,8 +421,8 @@ class ManagedEnvironmentsStoragesOperations:
         :type environment_name: str
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
-        :param storage_envelope: Configuration details of storage. Is either a model type or a IO type.
-         Required.
+        :param storage_envelope: Configuration details of storage. Is either a
+         ManagedEnvironmentStorage type or a IO type. Required.
         :type storage_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -24,3 +24,5 @@ command: >-
   ls {inputs.input_dir}
 environment:
   name: AzureML-Designer
+  version: 46
+  os: Windows
