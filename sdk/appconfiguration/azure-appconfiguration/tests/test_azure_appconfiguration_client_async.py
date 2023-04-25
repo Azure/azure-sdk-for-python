@@ -963,6 +963,90 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
             await client.delete_configuration_setting(new.key)
 
+    # The snapshot feature is only supported in the dogfood version now.
+    @pytest.mark.ignore
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_create_snapshot(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+        snapshot_name = self.get_resource_name("snapshot")
+        filters = [{"key": KEY, "label": LABEL}]
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        created_snapshot = await response.result()
+        assert created_snapshot.name == snapshot_name
+        assert created_snapshot.status == "ready"
+        assert len(created_snapshot.filters) == 1
+        assert created_snapshot.filters[0].key == KEY
+        assert created_snapshot.filters[0].label == LABEL
+        
+        received_snapshot = await self.client.get_snapshot(name=snapshot_name)
+        self._assert_snapshots(received_snapshot, created_snapshot)
+        
+        await self.tear_down()
+
+    # The snapshot feature is only supported in the dogfood version now.
+    @pytest.mark.ignore
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_update_snapshot_status(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+        snapshot_name = self.get_resource_name("snapshot")
+        filters = [{"key": KEY, "label": LABEL}]
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        created_snapshot = await response.result()
+        assert created_snapshot.status == "ready"
+        
+        archived_snapshot = await self.client.archive_snapshot(name=snapshot_name)
+        assert archived_snapshot.status == "archived"
+        
+        recovered_snapshot = await self.client.recover_snapshot(name=snapshot_name)
+        assert recovered_snapshot.status == "ready"
+        
+        await self.tear_down()
+    
+    # The snapshot feature is only supported in the dogfood version now.
+    @pytest.mark.ignore
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_snapshots(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+        
+        result = await self.convert_to_list(self.client.list_snapshots())
+        initial_snapshots = len(result)
+        
+        snapshot_name1 = self.get_resource_name("snapshot1")
+        snapshot_name2 = self.get_resource_name("snapshot2")
+        filters1 = [{"key": KEY, "label": None}]
+        response1 = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
+        created_snapshot1 = await response1.result()
+        assert created_snapshot1.status == "ready"
+        filters2 = [{"key": KEY, "label": LABEL}]
+        response2 = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
+        created_snapshot2 = await response2.result()
+        assert created_snapshot2.status == "ready"
+        
+        result = await self.convert_to_list(self.client.list_snapshots())
+        assert len(result) == initial_snapshots + 2
+        
+        await self.tear_down()
+    
+    # The snapshot feature is only supported in the dogfood version now.
+    @pytest.mark.ignore
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+        snapshot_name = self.get_resource_name("snapshot")
+        filters = [{"key": KEY, "label": LABEL}]
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        created_snapshot = await response.result()
+        assert created_snapshot.status == "ready"
+        
+        items = await self.convert_to_list(self.client.list_snapshot_configuration_settings(snapshot_name))
+        assert len(items) == 1
+        
+        await self.tear_down()
+
 
 class TestAppConfigurationClientUnitTest:
     @pytest.mark.asyncio
