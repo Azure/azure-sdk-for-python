@@ -482,7 +482,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         else:
             _client_op_path = self._client.miscellaneous.get_resource_info
         response = await _client_op_path(**kwargs)
-        return ResourceDetails._from_generated(response.custom_document_models)
+        return ResourceDetails._from_generated(response)
 
     @distributed_trace_async
     async def get_document_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:

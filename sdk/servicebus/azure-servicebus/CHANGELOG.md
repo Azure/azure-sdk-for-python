@@ -1,6 +1,16 @@
 # Release History
 
-## 7.9.0 (Unreleased)
+## 7.9.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.9.0 (2023-04-11)
 
 ### Breaking Changes
 
@@ -12,9 +22,16 @@
 
 ### Other Changes
 
+- All pure Python AMQP stack related changes have been removed and will be added back in the next version.
 - Updated minimum `azure-core` version to 1.24.0.
 - Removed `msrest` dependency.
 - Removed `azure-common` dependency.
+
+## 7.9.0b1 (2023-03-09)
+
+### Features Added
+
+- Iterator receiving from Service Bus entities has been added back in.
 
 ## 7.8.3 (2023-03-09)
 
@@ -33,6 +50,19 @@
 - Updated uAMQP dependency to 1.6.3.
   - Added support for Python 3.11.
 
+## 7.9.0a1 (2022-10-11)
+
+Version 7.9.0a1 is our first efforts to build an Azure Service Bus client library based on a pure Python implemented AMQP stack.
+
+### Breaking Changes
+
+- The following features have been temporarily pulled out which will be added back in future previews as we work towards a stable release:
+  - Iterator receiving from Service Bus entities.
+
+### Other Changes
+
+- uAMQP dependency is removed.
+
 ## 7.8.1 (2022-10-11)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
@@ -40,7 +70,6 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 ### Bugs Fixed
 
 - Fixed bug on async `ServiceBusClient` where `custom_endpoint_address` and `connection_verify` kwargs were not being passed through correctly. (Issue #26015)
-
 
 ## 7.8.0 (2022-07-06)
 

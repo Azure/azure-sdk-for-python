@@ -117,7 +117,8 @@ class TestComponentFunc:
         assert component2._build_inputs() == {
             "component_in_number": 10,
             "component_in_path": Input(
-                path="${{parent.jobs.microsoftsamplesCommandComponentBasic.outputs.component_out_path}}",
+                # component's name changed to lower case when setting it
+                path="${{parent.jobs.microsoftsamplescommandcomponentbasic.outputs.component_out_path}}",
                 type="uri_folder",
                 mode=None,
             ),
