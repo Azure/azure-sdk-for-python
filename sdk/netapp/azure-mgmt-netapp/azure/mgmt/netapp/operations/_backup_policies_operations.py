@@ -47,7 +47,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -56,11 +56,13 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -80,7 +82,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -89,11 +91,13 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
 
@@ -114,7 +118,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -124,11 +128,13 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
 
@@ -151,7 +157,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -161,11 +167,13 @@ def build_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
 
@@ -187,18 +195,20 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
 
@@ -235,7 +245,8 @@ class BackupPoliciesOperations:
 
         List backup policies for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -247,7 +258,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupPoliciesList] = kwargs.pop("cls", None)
@@ -328,7 +339,8 @@ class BackupPoliciesOperations:
 
         Get a particular backup Policy.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -350,7 +362,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupPolicy] = kwargs.pop("cls", None)
@@ -408,7 +420,7 @@ class BackupPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -479,7 +491,8 @@ class BackupPoliciesOperations:
 
         Create a backup policy for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -519,7 +532,8 @@ class BackupPoliciesOperations:
 
         Create a backup policy for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -557,14 +571,15 @@ class BackupPoliciesOperations:
 
         Create a backup policy for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation. Is either a model type
-         or a IO type. Required.
+        :param body: Backup policy object supplied in the body of the operation. Is either a
+         BackupPolicy type or a IO type. Required.
         :type body: ~azure.mgmt.netapp.models.BackupPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -585,7 +600,7 @@ class BackupPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -654,7 +669,7 @@ class BackupPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -724,7 +739,8 @@ class BackupPoliciesOperations:
 
         Patch a backup policy for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -764,7 +780,8 @@ class BackupPoliciesOperations:
 
         Patch a backup policy for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -802,14 +819,15 @@ class BackupPoliciesOperations:
 
         Patch a backup policy for Netapp Account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation. Is either a model type
-         or a IO type. Required.
+        :param body: Backup policy object supplied in the body of the operation. Is either a
+         BackupPolicyPatch type or a IO type. Required.
         :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -830,7 +848,7 @@ class BackupPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -894,7 +912,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -937,7 +955,8 @@ class BackupPoliciesOperations:
 
         Delete backup policy.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -958,7 +977,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)

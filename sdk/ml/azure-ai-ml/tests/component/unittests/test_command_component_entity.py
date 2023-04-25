@@ -1,8 +1,11 @@
 import os
 import sys
 from io import StringIO
+import enum
 from pathlib import Path
+import tempfile
 from unittest.mock import patch
+from zipfile import ZipFile
 
 import pydash
 import pytest
@@ -15,6 +18,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import Component, CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
@@ -23,9 +27,20 @@ from azure.ai.ml.sweep import Choice
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
 
+class AdditionalIncludesCheckFunc(enum.Enum):
+    """Enum for additional includes check function"""
+
+    SKIP = 0
+    SELF_IS_FILE = 1
+    PARENT_EXISTS = 2
+    NOT_EXISTS = 3
+    NO_PARENT = 4
+
+
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
+@pytest.mark.usefixtures("enable_private_preview_schema_features")
 class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
@@ -86,6 +101,65 @@ class TestCommandComponentEntity:
         yaml_component_dict = pydash.omit(yaml_component_dict, *omits)
 
         assert component_dict == yaml_component_dict
+
+    def test_command_component_with_additional_includes(self):
+        tests_root_dir = Path(__file__).parent.parent.parent
+        samples_dir = tests_root_dir / "test_configs/components/"
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            def mock_get_artifacts(**kwargs):
+                version = kwargs.get("version")
+                artifact = Path(temp_dir) / version
+                if version in ["version_1", "version_3"]:
+                    version = "version_1"
+                artifact.mkdir(parents=True, exist_ok=True)
+                (artifact / version).mkdir(exist_ok=True)
+                (artifact / version / "file").touch(exist_ok=True)
+                (artifact / f"file_{version}").touch(exist_ok=True)
+                return str(artifact)
+
+            with patch(
+                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
+            ):
+                component = CommandComponent(
+                    name="additional_files",
+                    description="A sample to demonstrate component with additional files",
+                    version="0.0.1",
+                    command="echo Hello World",
+                    environment=Environment(image="zzn2/azureml_sdk"),
+                    # as sdk will take working directory as root folder, so we need to specify the absolution path
+                    additional_includes=[
+                        str(samples_dir / "additional_includes/assets/LICENSE"),
+                        str(samples_dir / "additional_includes/library.zip"),
+                        str(samples_dir / "additional_includes/library1"),
+                    ],
+                )
+                component.additional_includes.append(
+                    {
+                        "type": "artifact",
+                        "organization": "https://msdata.visualstudio.com/",
+                        "project": "Vienna",
+                        "feed": "component-sdk-test-feed",
+                        "name": "test_additional_include",
+                        "version": "version_2",
+                        "scope": "project",
+                    }
+                )
+                assert component._validate().passed, repr(component._validate())
+                with component._resolve_local_code() as code:
+                    code_path: Path = code.path
+                    assert code_path.is_dir()
+                    assert (code_path / "LICENSE").is_file()
+                    assert (code_path / "library.zip").is_file()
+                    assert ZipFile(code_path / "library.zip").namelist() == [
+                        "library/",
+                        "library/hello.py",
+                        "library/world.py",
+                    ]
+                    assert (code_path / "library1" / "hello.py").is_file()
+                    assert (code_path / "library1" / "world.py").is_file()
+                    assert (code_path / "file_version_2").is_file()
+                    assert (code_path / "version_2" / "file").is_file()
 
     def test_command_component_entity_with_io_class(self):
         component = CommandComponent(
@@ -552,6 +626,11 @@ class TestCommandComponentEntity:
                 "intellectual_property": {"protection_level": "all"},
             },
         }
+        expected_training_data_input_dict = {
+            "type": "path",
+            "optional": False,
+            "intellectual_property": {"protection_level": "none"},
+        }
 
         # check top-level component
         assert command_component._intellectual_property
@@ -567,6 +646,8 @@ class TestCommandComponentEntity:
         }
         assert rest_component.properties.component_spec["outputs"] == expected_output_dict
 
+        assert rest_component.properties.component_spec["inputs"]["training_data"] == expected_training_data_input_dict
+
         # because there's a mismatch between what the service accepts for IPP fields and what it returns
         # (accepts camelCase for IPP, returns snake_case IPP), mock out the service response
 
@@ -581,3 +662,279 @@ class TestCommandComponentEntity:
         assert from_rest_dict["intellectual_property"]
         assert from_rest_dict["intellectual_property"] == yaml_dict
         assert from_rest_dict["outputs"] == expected_output_dict
+        assert from_rest_dict["inputs"]["training_data"] == expected_training_data_input_dict
+
+    def test_additional_includes(self) -> None:
+        yaml_path = (
+            "./tests/test_configs/components/component_with_additional_includes/helloworld_additional_includes.yml"
+        )
+        component = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code() as code:
+            code_path: Path = code.path
+            assert code_path.is_dir()
+            assert (code_path / "LICENSE").is_file()
+            assert (code_path / "library.zip").is_file()
+            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
+            assert (code_path / "library1" / "hello.py").is_file()
+            assert (code_path / "library1" / "world.py").is_file()
+
+    @pytest.mark.parametrize(
+        "test_files",
+        [
+            pytest.param(
+                [
+                    (
+                        "component_with_additional_includes/.amlignore",
+                        "test_ignore/*\nlibrary1/ignore.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    (
+                        "component_with_additional_includes/test_ignore/a.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
+                    ),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # will be saved to library1/test_ignore, should be kept
+                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                ],
+                id="amlignore",
+            ),
+            pytest.param(
+                [
+                    ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    (
+                        "component_with_additional_includes/test_code/.amlignore",
+                        "hello.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    (
+                        "component_with_additional_includes/test_code/hello.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                    ),
+                    # shall we keep the empty folder?
+                    (
+                        "component_with_additional_includes/test_code/a/hello.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
+                    ),
+                ],
+                id="amlignore_subfolder",
+            ),
+            pytest.param(
+                [
+                    (
+                        "additional_includes/library1/.amlignore",
+                        "test_ignore\nignore.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # will be saved to library1/test_ignore, should be kept
+                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                ],
+                id="amlignore_in_additional_includes_folder",
+            ),
+            pytest.param(
+                [
+                    (
+                        "additional_includes/library1/test_ignore/.amlignore",
+                        "ignore.py",
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    # will be saved to library1/ignore.py, should be ignored
+                    (
+                        "additional_includes/library1/test_ignore/ignore.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                    ),
+                ],
+                id="amlignore_in_additional_includes_subfolder",
+            ),
+            pytest.param(
+                [
+                    (
+                        "component_with_additional_includes/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
+                    ),
+                    (
+                        "component_with_additional_includes/test/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
+                    ),
+                    ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    (
+                        "additional_includes/library1/test/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
+                    ),
+                ],
+                id="pycache",
+            ),
+        ],
+    )
+    def test_additional_includes_with_ignore_file(self, test_files) -> None:
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/components/",
+            relative_dirs_to_copy=["component_with_additional_includes", "additional_includes"],
+            extra_files_to_create={file: content for file, content, _ in test_files},
+        ) as test_configs_dir:
+            yaml_path = (
+                Path(test_configs_dir)
+                / "component_with_additional_includes"
+                / "code_and_additional_includes"
+                / "component_spec.yml"
+            )
+
+            component = load_component(source=yaml_path)
+
+            # resolve and check snapshot directory
+            with component._resolve_local_code() as code:
+                for file, content, check_func in test_files:
+                    # original file is based on test_configs_dir, need to remove the leading
+                    # "component_with_additional_includes" or "additional_includes" to get the relative path
+                    resolved_file_path = Path(os.path.join(code.path, *Path(file).parts[1:]))
+                    if check_func == AdditionalIncludesCheckFunc.NO_PARENT:
+                        assert not resolved_file_path.parent.exists(), f"{file} should not have parent"
+                    elif check_func == AdditionalIncludesCheckFunc.SELF_IS_FILE:
+                        assert resolved_file_path.is_file(), f"{file} is not a file"
+                        if content is not None:
+                            assert resolved_file_path.read_text() == content, f"{file} content is not expected"
+                    elif check_func == AdditionalIncludesCheckFunc.PARENT_EXISTS:
+                        assert resolved_file_path.parent.is_dir(), f"{file} should have parent"
+                    elif check_func == AdditionalIncludesCheckFunc.NOT_EXISTS:
+                        assert not resolved_file_path.exists(), f"{file} should not exist"
+                    elif check_func == AdditionalIncludesCheckFunc.SKIP:
+                        pass
+                    else:
+                        raise ValueError(f"Unknown check func: {check_func}")
+
+    def test_additional_includes_merge_folder(self) -> None:
+        yaml_path = (
+            "./tests/test_configs/components/component_with_additional_includes/additional_includes_merge_folder.yml"
+        )
+        component = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code() as code:
+            code_path = code.path
+            # first folder
+            assert (code_path / "library1" / "__init__.py").is_file()
+            assert (code_path / "library1" / "hello.py").is_file()
+            # second folder content
+            assert (code_path / "library1" / "utils").is_dir()
+            assert (code_path / "library1" / "utils" / "__init__.py").is_file()
+            assert (code_path / "library1" / "utils" / "salute.py").is_file()
+
+    @pytest.mark.parametrize(
+        "yaml_path,has_additional_includes",
+        [
+            # ("code_only/component_spec.yml", False),
+            ("code_and_additional_includes/component_spec.yml", True),
+        ],
+    )
+    def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
+        yaml_path = os.path.join("./tests/test_configs/components/component_with_additional_includes/", yaml_path)
+        component = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        # resolve
+        with component._resolve_local_code() as code:
+            code_path = code.path
+            assert code_path.is_dir()
+            if has_additional_includes:
+                # additional includes is specified, code will be tmp folder and need to check each item
+                # manually list here to avoid temp folder like __pycache__ breaking test.
+                for path in [
+                    "additional_includes_merge_folder.yml",
+                    "code_and_additional_includes",
+                    "code_only",
+                    "helloworld_additional_includes.yml",
+                    "helloworld_invalid_additional_includes_existing_file.yml",
+                    "helloworld_invalid_additional_includes_root_directory.yml",
+                    "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                ]:
+                    assert (code_path / path).is_file() if ".yml" in path else (code_path / path).is_dir()
+                assert (code_path / "LICENSE").is_file()
+            else:
+                # additional includes not specified, code should be specified path (default yaml folder)
+                yaml_dict = load_yaml(yaml_path)
+                specified_code_path = Path(yaml_path).parent / yaml_dict.get("code", "./")
+                assert code_path.resolve() == specified_code_path.resolve()
+
+    def test_artifacts_in_additional_includes(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            def mock_get_artifacts(**kwargs):
+                version = kwargs.get("version")
+                artifact = Path(temp_dir) / version
+                if version in ["version_1", "version_3"]:
+                    version = "version_1"
+                artifact.mkdir(parents=True, exist_ok=True)
+                (artifact / version).mkdir(exist_ok=True)
+                (artifact / version / "file").touch(exist_ok=True)
+                (artifact / f"file_{version}").touch(exist_ok=True)
+                return str(artifact)
+
+            with patch(
+                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
+            ):
+                yaml_path = "./tests/test_configs/components/component_with_additional_includes/with_artifacts.yml"
+                component = load_component(source=yaml_path)
+                assert component._validate().passed, repr(component._validate())
+                with component._resolve_local_code() as code:
+                    code_path = code.path
+                    assert code_path.is_dir()
+                    for path in [
+                        "version_1/",
+                        "version_1/file",
+                        "version_2/",
+                        "version_2/file",
+                        "file_version_1",
+                        "file_version_2",
+                        "DockerFile",
+                    ]:
+                        assert (code_path / path).exists()
+
+                yaml_path = (
+                    "./tests/test_configs/components/component_with_additional_includes/"
+                    "artifacts_additional_includes_with_conflict.yml"
+                )
+                component = load_component(source=yaml_path)
+                validation_result = component._validate()
+                assert validation_result.passed is False
+                assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+                assert (
+                    "test_additional_include:version_1 in component-sdk-test-feed"
+                    in validation_result.error_messages["*"]
+                )
+                assert (
+                    "test_additional_include:version_3 in component-sdk-test-feed"
+                    in validation_result.error_messages["*"]
+                )
+
+    @pytest.mark.parametrize(
+        "yaml_path,expected_error_msg_prefix",
+        [
+            (
+                "helloworld_invalid_additional_includes_root_directory.yml",
+                "Root directory is not supported for additional includes",
+            ),
+            (
+                "helloworld_invalid_additional_includes_existing_file.yml",
+                "A file already exists for additional include",
+            ),
+            (
+                "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
+            ),
+        ],
+    )
+    def test_invalid_additional_includes(self, yaml_path: str, expected_error_msg_prefix: str) -> None:
+        component = load_component(
+            os.path.join("./tests/test_configs/components/component_with_additional_includes", yaml_path)
+        )
+        validation_result = component._validate()
+        assert validation_result.passed is False
+        assert validation_result.error_messages["*"].startswith(expected_error_msg_prefix)

@@ -32,7 +32,7 @@ jobs:
 
     resources:
       instance_type: standard_e4s_v3
-      runtime_version: 3.1.0
+      runtime_version: 3.2.0
 
   count_word:
     type: spark
@@ -42,4 +42,4 @@ jobs:
 
     resources:
       instance_type: standard_e4s_v3
-      runtime_version: 3.1.0
+      runtime_version: 3.2.0

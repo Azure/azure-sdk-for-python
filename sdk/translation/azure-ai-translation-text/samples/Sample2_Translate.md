@@ -144,7 +144,7 @@ You can select whether the translated text is plain text or HTML text. Any HTML 
 
 ```Python
 try:
-    text_type = TextTypes.HTML
+    text_type = TextType.HTML
     target_languages = ["cs"]
     input_text_elements = [ InputTextItem(text = "<html><body>This <b>is</b> a test.</body></html>") ]
 
@@ -169,7 +169,7 @@ It's sometimes useful to exclude specific content from translation. You can use 
 
 ```Python
 try:
-    text_type = TextTypes.HTML
+    text_type = TextType.HTML
     source_language = "en"
     target_languages = ["cs"]
     input_text_elements = [ InputTextItem(text = "<div class=\"notranslate\">This will not be translated.</div><div>This will be translated. </div>") ]
@@ -218,8 +218,8 @@ If you want to avoid getting profanity in the translation, regardless of the pre
 
 ```Python
 try:
-    profanity_action = ProfanityActions.MARKED
-    profanity_maker = ProfanityMarkers.ASTERISK
+    profanity_action = ProfanityAction.MARKED
+    profanity_maker = ProfanityMarker.ASTERISK
     target_languages = ["cs"]
     input_text_elements = [ InputTextItem(text = "This is ***.") ]
 

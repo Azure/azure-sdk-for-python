@@ -73,7 +73,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param name: Resource name to verify. Required.
         :type name: str
@@ -100,7 +100,7 @@ class NetAppResourceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -151,7 +151,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param name: File path to verify. Required.
         :type name: str
@@ -174,7 +174,7 @@ class NetAppResourceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -230,7 +230,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param name: Name of the resource to verify. Required.
         :type name: str
@@ -257,7 +257,7 @@ class NetAppResourceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -306,7 +306,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionInfo or the result of cls(response)
@@ -324,7 +324,7 @@ class NetAppResourceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.RegionInfo] = kwargs.pop("cls", None)

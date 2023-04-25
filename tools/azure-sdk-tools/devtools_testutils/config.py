@@ -5,5 +5,9 @@
 # --------------------------------------------------------------------------
 import os
 
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
+
 PROXY_URL = os.getenv("PROXY_URL", "https://localhost:5001").rstrip("/")
 TEST_SETTING_FILENAME = "testsettings_local.cfg"
