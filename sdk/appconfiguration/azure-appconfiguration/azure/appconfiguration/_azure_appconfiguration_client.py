@@ -740,7 +740,12 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshots(
-        self, *, name: Optional[str] = None, fields: Optional[List[str]] = None, status: Optional[List[str]] = None, **kwargs
+        self,
+        *,
+        name: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        status: Optional[List[str]] = None,
+        **kwargs
     ) -> ItemPaged[Snapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name and status.
