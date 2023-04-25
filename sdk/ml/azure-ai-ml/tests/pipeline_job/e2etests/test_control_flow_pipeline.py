@@ -267,11 +267,10 @@ class TestParallelFor(TestConditionalNodeInPipeline):
         source = "./tests/test_configs/pipeline_jobs/control_flow/parallel_for/assets_items.yaml"
         expected_node = {
             "body": "${{parent.jobs.parallel_body}}",
-            "items": '[{"component_in_path": {"uri": '
-            '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
-            '"job_input_type": "uri_file"}}, {"component_in_path": {"uri": '
-            '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
-            '"job_input_type": "uri_file"}}]',
+            "items": '[{"component_in_path": {"job_input_type": "uri_file", '
+            '"uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"}}, {"component_in_path": '
+            '{"job_input_type": "uri_file", '
+            '"uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"}}]',
             "outputs": {"component_out_path": {"type": "literal", "value": "${{parent.outputs.component_out_path}}"}},
             "type": "parallel_for",
             "_source": "YAML.JOB",
@@ -293,11 +292,10 @@ class TestParallelFor(TestConditionalNodeInPipeline):
         source = "./tests/test_configs/pipeline_jobs/control_flow/parallel_for/path_on_ds_items.yaml"
         expected_node = {
             "body": "${{parent.jobs.parallel_body}}",
-            "items": '[{"component_in_path": {"uri": '
-            '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/1", '
-            '"job_input_type": "uri_folder"}}, {"component_in_path": {"uri": '
-            '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/2", '
-            '"job_input_type": "uri_folder"}}]',
+            "items": '[{"component_in_path": {"job_input_type": "uri_folder", "uri": '
+            '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/1"'
+            '}}, {"component_in_path": {"job_input_type": "uri_folder", "uri": '
+            '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/2"}}]',
             "outputs": {"component_out_path": {"type": "literal", "value": "${{parent.outputs.component_out_path}}"}},
             "type": "parallel_for",
             "_source": "YAML.JOB",
