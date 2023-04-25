@@ -551,6 +551,15 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
 
 
 @pytest.fixture
+def snapshot_hash_sanitizer(test_proxy):
+    # masks hash value in URIs
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex=_query_param_regex("hash"),
+    )
+
+
+@pytest.fixture
 def mock_anon_component_version(mocker: MockFixture):
 
     fake_uuid = "000000000000000000000"
