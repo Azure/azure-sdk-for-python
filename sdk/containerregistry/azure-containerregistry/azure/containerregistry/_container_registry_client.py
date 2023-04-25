@@ -888,10 +888,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             or the digest in the response does not match the digest of the set manifest.
         """
         try:
+            data: IO[bytes]
             if isinstance(manifest, MutableMapping):
                 data = BytesIO(json.dumps(manifest).encode())
             else:
-                data = manifest # type: ignore
+                data = manifest
             tag_or_digest = tag
             if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
