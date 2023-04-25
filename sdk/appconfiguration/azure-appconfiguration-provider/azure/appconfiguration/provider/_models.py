@@ -13,12 +13,14 @@ if TYPE_CHECKING:
 
 class AzureAppConfigurationKeyVaultOptions:
     def __init__(
-            self,
-            *,
-            credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
-            client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
-            secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
-        ):
+        self,
+        *,
+        credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
+        client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
+        secret_resolver: Optional[
+            Union[Callable[[str], str], Callable[[str], Awaitable[str]]]
+        ] = None
+    ):
         """
         Options for connecting to Key Vault.
 
@@ -53,3 +55,39 @@ class SettingSelector:
     def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
         self.key_filter = key_filter
         self.label_filter = label_filter
+
+
+class RefreshRegistrations:
+    def __init__(
+        self, key_filter: str, label_filter: Optional[str], refresh_all: Optional[bool]
+    ):
+        self.key_filter = key_filter
+        self.label_filter = label_filter
+        self.refresh_all = refresh_all
+        self.etag = None
+
+
+class AzureAppConfigurationRefreshOptions:
+    def __init__(self):
+        self._refresh_interval = 30
+        self._refresh_registrations = []
+
+    def register(
+        self,
+        *,
+        key_filter: str,
+        label_filter: Optional[str] = EMPTY_LABEL,
+        refresh_all: Optional[bool] = False
+    ):
+        self._refresh_registrations.append(
+            RefreshRegistrations(key_filter, label_filter, refresh_all)
+        )
+
+    def get_refresh_interval(self):
+        return self._refresh_interval
+
+    def get_refresh_registrations(self):
+        return self._refresh_registrations
+
+    def set_callback(self, callback):
+        self._callback = callback

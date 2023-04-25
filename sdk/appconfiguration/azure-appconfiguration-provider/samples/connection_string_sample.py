@@ -6,27 +6,24 @@
 
 from azure.appconfiguration.provider import (
     load,
-    SettingSelector
+    SettingSelector,
+    AzureAppConfigurationRefreshOptions,
 )
 import os
 
 connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
 
+refresh_options = AzureAppConfigurationRefreshOptions()
+refresh_options.register(key_filter="message", refresh_all=True)
+
 # Connecting to Azure App Configuration using connection string
-config = load(connection_string=connection_string)
+config = load(connection_string=connection_string, refresh_options=refresh_options)
 
 print(config["message"])
 print(config["my_json"]["key"])
 
-# Connecting to Azure App Configuration using connection string and trimmed key prefixes
-trimmed = {"test."}
-config = load(connection_string=connection_string, trim_prefixes=trimmed)
+breakpoint()
+
+config.refresh()
 
 print(config["message"])
-
-# Connection to Azure App Configuration using SettingSelector
-selects = {SettingSelector(key_filter="message*")}
-config = load(connection_string=connection_string, selects=selects)
-
-print("message found: " + str("message" in config))
-print("test.message found: " + str("test.message" in config))
