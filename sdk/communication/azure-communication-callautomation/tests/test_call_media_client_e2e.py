@@ -63,7 +63,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             call_connection_list.append(answer_call_result.call_connection)
 
             # check events to caller side
-            self.wait_for_messages(unique_id, timedelta(seconds=3))
+            self.wait_for_messages(unique_id, timedelta(seconds=8))
             caller_connected_event = self.check_for_event(event_type=CallConnected, call_connection_id=caller_connection_id)
             caller_participant_updated_event = self.check_for_event(event_type=ParticipantsUpdated, call_connection_id=caller_connection_id)
             if caller_connected_event is None:
@@ -73,7 +73,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             
 
             # check events to receiver side
-            self.wait_for_messages(unique_id, timedelta(seconds=3))
+            self.wait_for_messages(unique_id, timedelta(seconds=8))
             receiver_connected_event = self.check_for_event(event_type=CallConnected, call_connection_id=caller_connection_id)
             receiver_participant_updated_event = self.check_for_event(event_type=ParticipantsUpdated, call_connection_id=caller_connection_id)
             if receiver_connected_event is None:
@@ -97,7 +97,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             
             # hang up the call
             answer_call_result.call_connection.hang_up(is_for_everyone=True)
-            self.wait_for_messages(unique_id, timedelta(seconds=10))
+            self.wait_for_messages(unique_id, timedelta(seconds=8))
 
             # check if call terminated
             receiver_call_disconnected_event = self.check_for_event(event_type=CallDisconnected, call_connection_id=caller_connection_id)

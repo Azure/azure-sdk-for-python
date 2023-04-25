@@ -31,7 +31,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             raise ValueError("Identifier cannot be None")
         return self._format_string(''.join(filter(str.isalnum, identifier)))
     
-    def _message_handler(self, message: Any) -> None:
+    def _message_handler(self, message: Any) -> bool:
         body = message.body
         body_bytes = b''.join(body)
         body_str = body_bytes.decode('utf-8')
@@ -47,6 +47,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             to_id = mapper["to"]["rawId"]
             unique_id = self._parse_ids_from_identifier(from_id) + self._parse_ids_from_identifier(to_id)
             self.incoming_call_context_store[unique_id] = incoming_call_context
+            return True
         else:
             event = CallAutomationEventParser.parse(body_str)
 
@@ -59,6 +60,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
                 self.event_store[call_connection_id] = {}
 
             self.event_store[call_connection_id][type(event)] = event
+            return False
     
     def service_bus_with_new_call(self, caller, receiver) -> str:
         """Create new ServiceBus client.
@@ -101,8 +103,11 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         while datetime.now() < time_out_time:
             received_messages = service_bus_receiver.receive_messages(max_wait_time=5)
             for msg in received_messages:
-                self._message_handler(msg)
+                print(msg)
+                is_incoming_call_event = self._message_handler(msg)
                 service_bus_receiver.complete_message(msg)
+                if is_incoming_call_event:
+                    return
             if not received_messages:
                 time.sleep(1)
 

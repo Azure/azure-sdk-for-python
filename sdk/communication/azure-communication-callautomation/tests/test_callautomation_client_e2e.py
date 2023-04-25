@@ -40,7 +40,7 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
             create_call_result = call_automation_client_caller.create_call(target=call_invite, callback_uri=(self.dispatcher_callback + "?q={}".format(unique_id)))
             if create_call_result is None or create_call_result.call_connection_properties is None:
                 raise ValueError("Invalid create_call_result")
-
+            
             caller_connection_id = create_call_result.call_connection_properties.call_connection_id
             if caller_connection_id is None:
                 raise ValueError("Caller connection ID is None")
@@ -62,7 +62,7 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
             call_connection_list.append(answer_call_result.call_connection)
 
             # check events to caller side
-            self.wait_for_messages(unique_id, timedelta(seconds=3))
+            self.wait_for_messages(unique_id, timedelta(seconds=8))
             caller_connected_event = self.check_for_event(event_type=CallConnected, call_connection_id=caller_connection_id)
             caller_participant_updated_event = self.check_for_event(event_type=ParticipantsUpdated, call_connection_id=caller_connection_id)
             if caller_connected_event is None:
@@ -72,7 +72,7 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
             
 
             # check events to receiver side
-            self.wait_for_messages(unique_id, timedelta(seconds=3))
+            self.wait_for_messages(unique_id, timedelta(seconds=8))
             receiver_connected_event = self.check_for_event(event_type=CallConnected, call_connection_id=caller_connection_id)
             receiver_participant_updated_event = self.check_for_event(event_type=ParticipantsUpdated, call_connection_id=caller_connection_id)
             if receiver_connected_event is None:
