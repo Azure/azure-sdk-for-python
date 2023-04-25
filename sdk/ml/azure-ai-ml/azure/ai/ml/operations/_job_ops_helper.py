@@ -203,7 +203,7 @@ def stream_logs_until_completion(
             "Microsoft.MachineLearningServices/workspaces/{fs_name}&flight=featurestoresprpr"
         )
         studio_endpoint = url_format.format(
-            fs_name=job_resource.properties.properties["FeatureStoreJobType"],
+            fs_name=job_resource.properties.properties["FeatureStoreName"],
             fs_sub_id=run_operations._subscription_id,
             fs_rg_name=run_operations._resource_group_name,
             fset_name=job_resource.properties.properties["FeatureSetName"],
