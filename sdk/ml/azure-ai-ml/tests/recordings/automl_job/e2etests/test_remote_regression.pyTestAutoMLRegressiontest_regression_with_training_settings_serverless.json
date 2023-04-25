@@ -208,8 +208,8 @@
             "targetColumnName": "ERP",
             "taskType": "Regression",
             "trainingData": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train"
             },
             "primaryMetric": "R2Score",
             "trainingSettings": {

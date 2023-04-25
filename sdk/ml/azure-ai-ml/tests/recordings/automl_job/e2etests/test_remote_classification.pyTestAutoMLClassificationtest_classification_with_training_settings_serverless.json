@@ -367,15 +367,15 @@
               "trialTimeout": "PT10M"
             },
             "validationData": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/valid",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/valid"
             },
             "logVerbosity": "Info",
             "targetColumnName": "y",
             "taskType": "Classification",
             "trainingData": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train"
             },
             "primaryMetric": "Accuracy",
             "trainingSettings": {

@@ -39,8 +39,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
-                  "job_output_type": "mltable"
+                  "job_output_type": "mltable",
+                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/"
                 }
               },
               "_source": "BUILTIN",
@@ -57,8 +57,8 @@
               "name": "snowflake_blob_node_input",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
-                  "job_output_type": "mltable"
+                  "job_output_type": "mltable",
+                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/"
                 }
               },
               "_source": "BUILTIN",
@@ -147,8 +147,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
-                  "job_output_type": "mltable"
+                  "job_output_type": "mltable",
+                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/"
                 }
               },
               "_source": "BUILTIN",
@@ -165,8 +165,8 @@
               "name": "snowflake_blob_node_input",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
-                  "job_output_type": "mltable"
+                  "job_output_type": "mltable",
+                  "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/"
                 }
               },
               "_source": "BUILTIN",

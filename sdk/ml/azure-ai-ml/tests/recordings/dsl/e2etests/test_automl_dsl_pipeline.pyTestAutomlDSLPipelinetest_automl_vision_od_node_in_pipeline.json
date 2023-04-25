@@ -353,12 +353,12 @@
           "jobType": "Pipeline",
           "inputs": {
             "image_object_detection_train_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train"
             },
             "image_object_detection_valid_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/valid",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/valid"
             }
           },
           "jobs": {

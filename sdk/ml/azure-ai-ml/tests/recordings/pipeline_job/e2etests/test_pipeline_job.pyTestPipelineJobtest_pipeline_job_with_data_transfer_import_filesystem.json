@@ -42,8 +42,8 @@
               "name": "s3_blob",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//"
                 }
               },
               "_source": "BUILTIN",
@@ -60,8 +60,8 @@
               "name": "s3_blob_input",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//"
                 }
               },
               "_source": "BUILTIN",

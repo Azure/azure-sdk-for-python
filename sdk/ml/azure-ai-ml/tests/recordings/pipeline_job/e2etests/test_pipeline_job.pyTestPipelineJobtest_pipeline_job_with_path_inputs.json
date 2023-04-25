@@ -807,14 +807,14 @@
               "value": "15"
             },
             "job_in_path": {
+              "jobInputType": "uri_folder",
               "mode": "ReadOnlyMount",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "job_in_path_other": {
+              "jobInputType": "uri_folder",
               "mode": "Download",
-              "uri": "azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "uri": "azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             }
           },
           "jobs": {

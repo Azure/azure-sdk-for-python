@@ -1488,8 +1488,8 @@
                 },
                 "outputs": {
                   "score_output": {
-                    "mode": "Upload",
-                    "job_output_type": "uri_folder"
+                    "job_output_type": "uri_folder",
+                    "mode": "Upload"
                   }
                 },
                 "_source": "YAML.COMPONENT",
@@ -2096,12 +2096,12 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_training_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_test_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_training_learning_rate1": {
               "jobInputType": "literal",
@@ -2199,12 +2199,12 @@
           },
           "outputs": {
             "pipeline_job_best_model": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             },
             "pipeline_job_best_result": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {

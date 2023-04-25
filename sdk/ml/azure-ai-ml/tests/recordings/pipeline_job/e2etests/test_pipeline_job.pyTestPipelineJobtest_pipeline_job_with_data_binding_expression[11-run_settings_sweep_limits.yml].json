@@ -650,12 +650,12 @@
               "value": "hello"
             },
             "job_in_folder": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "job_in_file": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/sample1.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/sample1.csv"
             },
             "target_compute": {
               "jobInputType": "literal",

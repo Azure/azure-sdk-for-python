@@ -535,9 +535,9 @@
               "value": "a_random_string"
             },
             "job_data_path": {
+              "jobInputType": "mltable",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable"
             },
             "score_model": {
               "jobInputType": "literal",
@@ -574,8 +574,8 @@
           },
           "outputs": {
             "job_out_path_1": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {
@@ -1037,9 +1037,9 @@
               "value": "a_random_string"
             },
             "job_data_path": {
+              "jobInputType": "mltable",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable"
             },
             "score_model": {
               "jobInputType": "literal",
@@ -1076,8 +1076,8 @@
           },
           "outputs": {
             "job_out_path_1": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

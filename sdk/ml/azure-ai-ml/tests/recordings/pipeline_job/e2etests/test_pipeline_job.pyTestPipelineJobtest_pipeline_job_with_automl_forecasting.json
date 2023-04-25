@@ -274,8 +274,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "forecasting_train_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/train"
             }
           },
           "jobs": {

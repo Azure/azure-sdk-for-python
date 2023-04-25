@@ -485,8 +485,8 @@
           },
           "outputs": {
             "job_out_path_1": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

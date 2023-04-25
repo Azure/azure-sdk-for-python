@@ -880,14 +880,14 @@
           "jobType": "Pipeline",
           "inputs": {
             "job_data_path": {
+              "jobInputType": "mltable",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/neural-iris-mltable",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/neural-iris-mltable"
             },
             "score_model": {
+              "jobInputType": "uri_folder",
               "mode": "Download",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/model/",
-              "jobInputType": "uri_folder"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/model/"
             }
           },
           "jobs": {
@@ -933,8 +933,8 @@
           },
           "outputs": {
             "job_out_file": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_file"
+              "jobOutputType": "uri_file",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

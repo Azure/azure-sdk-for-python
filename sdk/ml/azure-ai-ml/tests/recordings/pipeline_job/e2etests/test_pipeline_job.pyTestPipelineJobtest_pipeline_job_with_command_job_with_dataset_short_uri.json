@@ -642,8 +642,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "job_data_path": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
             }
           },
           "jobs": {
@@ -653,9 +653,9 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "test1": {
+                  "job_input_type": "uri_file",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-                  "job_input_type": "uri_file"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
                 },
                 "literal_input": {
                   "job_input_type": "literal",
@@ -677,9 +677,9 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "input_from_previous_node": {
+                  "job_input_type": "uri_file",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-                  "job_input_type": "uri_file"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
                 }
               },
               "properties": {
@@ -694,8 +694,8 @@
           },
           "outputs": {
             "job_out_path_1": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {
@@ -784,9 +784,9 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "test1": {
+                  "job_input_type": "uri_file",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-                  "job_input_type": "uri_file"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
                 },
                 "literal_input": {
                   "job_input_type": "literal",
@@ -808,9 +808,9 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "input_from_previous_node": {
+                  "job_input_type": "uri_file",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-                  "job_input_type": "uri_file"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
                 }
               },
               "properties": {

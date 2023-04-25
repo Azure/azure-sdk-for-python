@@ -639,12 +639,12 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_training_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_test_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_training_max_epocs": {
               "jobInputType": "literal",
@@ -709,12 +709,12 @@
           },
           "outputs": {
             "pipeline_job_trained_model": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             },
             "pipeline_job_scored_data": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {

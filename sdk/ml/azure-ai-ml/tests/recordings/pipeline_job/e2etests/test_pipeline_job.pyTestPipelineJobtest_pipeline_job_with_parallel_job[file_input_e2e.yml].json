@@ -710,9 +710,9 @@
           "jobType": "Pipeline",
           "inputs": {
             "job_data_path": {
+              "jobInputType": "mltable",
               "mode": "EvalMount",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/mnist-data",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/mnist-data"
             }
           },
           "jobs": {
@@ -761,8 +761,8 @@
           },
           "outputs": {
             "job_out_path": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

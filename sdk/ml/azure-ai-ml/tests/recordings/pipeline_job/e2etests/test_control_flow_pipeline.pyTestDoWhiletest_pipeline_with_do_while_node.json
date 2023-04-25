@@ -1168,8 +1168,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "component_in_path": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/do_while/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/do_while/"
             },
             "component_in_number": {
               "jobInputType": "literal",
@@ -1289,8 +1289,8 @@
           },
           "outputs": {
             "output_in_path": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {

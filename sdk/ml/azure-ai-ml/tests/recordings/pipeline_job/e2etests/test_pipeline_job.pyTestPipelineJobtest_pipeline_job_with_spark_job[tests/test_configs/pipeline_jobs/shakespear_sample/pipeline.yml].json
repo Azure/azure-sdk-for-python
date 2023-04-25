@@ -918,9 +918,9 @@
           "jobType": "Pipeline",
           "inputs": {
             "input1": {
+              "jobInputType": "uri_file",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/shakespeare.txt",
-              "jobInputType": "uri_file"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/shakespeare.txt"
             },
             "sample_rate": {
               "jobInputType": "literal",
@@ -1006,8 +1006,8 @@
           },
           "outputs": {
             "output1": {
-              "mode": "Direct",
-              "jobOutputType": "uri_file"
+              "jobOutputType": "uri_file",
+              "mode": "Direct"
             }
           },
           "settings": {

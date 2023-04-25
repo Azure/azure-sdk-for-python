@@ -1121,12 +1121,12 @@
           "jobType": "Pipeline",
           "inputs": {
             "text_ner_training_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/training-mltable-folder",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/training-mltable-folder"
             },
             "text_ner_validation_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/validation-mltable-folder",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/validation-mltable-folder"
             }
           },
           "jobs": {

@@ -29,8 +29,8 @@
           },
           "inputs": {
             "uri": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
             }
           },
           "limits": {

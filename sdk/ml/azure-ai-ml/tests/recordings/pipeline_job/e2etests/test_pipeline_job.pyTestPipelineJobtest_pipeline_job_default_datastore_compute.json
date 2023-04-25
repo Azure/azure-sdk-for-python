@@ -928,8 +928,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "outputs": {
                 "output_path": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -940,8 +940,8 @@
               "type": "command",
               "outputs": {
                 "output_path": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1056,8 +1056,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "outputs": {
                 "output_path": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1068,8 +1068,8 @@
               "type": "command",
               "outputs": {
                 "output_path": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",

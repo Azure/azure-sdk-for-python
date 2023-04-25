@@ -636,16 +636,16 @@
           "jobType": "Pipeline",
           "inputs": {
             "input1": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "input2": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/sample1.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/sample1.csv"
             },
             "input3": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable"
             }
           },
           "jobs": {

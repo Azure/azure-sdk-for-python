@@ -1009,9 +1009,9 @@
               "type": "sweep",
               "inputs": {
                 "data_folder": {
+                  "job_input_type": "mltable",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data",
-                  "job_input_type": "mltable"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data"
                 }
               },
               "_source": "YAML.JOB",
@@ -1230,9 +1230,9 @@
               "type": "sweep",
               "inputs": {
                 "data_folder": {
+                  "job_input_type": "mltable",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data",
-                  "job_input_type": "mltable"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data"
                 }
               },
               "_source": "YAML.JOB",
