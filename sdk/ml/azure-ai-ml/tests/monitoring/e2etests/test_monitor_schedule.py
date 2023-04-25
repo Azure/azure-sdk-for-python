@@ -13,7 +13,7 @@ from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.core_sdk_test
-class TestCommandJob(AzureRecordedTestCase):
+class TestMonitorSchedule(AzureRecordedTestCase):
     def test_data_drift_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
     ):
@@ -52,5 +52,3 @@ class TestCommandJob(AzureRecordedTestCase):
         )
         assert data_drift_signal.baseline_dataset
         assert is_ARM_id_for_resource(data_drift_signal.baseline_dataset.input_dataset.path, AzureMLResourceType.DATA)
-
-        client.schedules.begin_delete(schedule_name)
