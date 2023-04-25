@@ -37,7 +37,6 @@ from azure.ai.ml.entities._feature_store._constants import (
 )
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._utils._experimental import experimental
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
