@@ -402,6 +402,12 @@
   ],
   "overrides": [
     {
+      "filename": "doc/sphinx/generate_doc.py",
+      "words": [
+        "undoc"
+      ]
+    },
+    {
       "filename": "doc/dev/test_proxy_migration_guide.md",
       "words": [
         "pytestmarkparametrize"
