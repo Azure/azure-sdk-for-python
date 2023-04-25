@@ -88,7 +88,7 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes
+            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, api_version="1.0"
         )
 
     @classmethod

@@ -93,6 +93,7 @@ class AzureAppConfigurationClient:
             authentication_policy=credential_policy,
             user_agent_policy=user_agent_policy,
             per_call_policies=self._sync_token_policy,
+            api_version="1.0",
             **kwargs
         )
 
