@@ -1614,6 +1614,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1648,6 +1649,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_parallel_components_with_tabular_input_bind_to_literal_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1686,6 +1688,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
@@ -1716,6 +1719,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_parallel_run_function(self, client: MLClient):
         data = Input(
             type=AssetTypes.MLTABLE,
@@ -1775,6 +1779,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_parallel_run_function_run_settings_bind_to_literal_input(self, client: MLClient):
         data = Input(
             type=AssetTypes.MLTABLE,
@@ -2331,6 +2336,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
