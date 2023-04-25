@@ -49,8 +49,10 @@ class MLClientSamples(object):
         credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD)
 
         # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-        # you must pass in the cloud name in kwargs. Default cloud is AzureCloud
+        # you must pass in the cloud name in kwargs. 
+        # Default cloud is "AzureCloud" (sovereign clouds include "AzureUSGovernment" and "AzureChinaCloud")
         kwargs = {"cloud": "AzureCloud"}
+        
         # get a handle to the subscription
         ml_client = MLClient(credential, subscription_id, resource_group, **kwargs)
         # [END create_ml_client_default_credential]
