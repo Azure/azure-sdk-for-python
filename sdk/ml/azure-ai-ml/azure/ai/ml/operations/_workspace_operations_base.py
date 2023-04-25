@@ -463,6 +463,8 @@ class WorkspaceOperationsBase:
         else:
             managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
+        if workspace.enable_data_isolation:
+            _set_val(param["enable_data_isolation"], "true")
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

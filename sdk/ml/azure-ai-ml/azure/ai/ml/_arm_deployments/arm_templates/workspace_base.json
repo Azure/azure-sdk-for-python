@@ -703,7 +703,8 @@
                     },
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                }
+                },
+                "enableDataIsolation": "[parameters('enable_data_isolation')]"
             }
         },
         {
@@ -759,8 +760,7 @@
                                 },
                                 "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                                 "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                            },
-                            "enableDataIsolation": "[parameters('enable_data_isolation')]"
+                            }
 						},
                         "resources": [
                             {
