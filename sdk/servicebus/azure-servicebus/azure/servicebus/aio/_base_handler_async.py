@@ -185,7 +185,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     async def _handle_exception(self, exception):
         # pylint: disable=protected-access
-        error = self._amqp_transport.create_servicebus_exception(_LOGGER, exception)
+        error = self._amqp_transport.create_servicebus_exception(
+            _LOGGER, exception, custom_endpoint_address=self._config.custom_endpoint_address
+        )
 
         try:
             # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,

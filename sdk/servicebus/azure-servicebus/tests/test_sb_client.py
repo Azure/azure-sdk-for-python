@@ -34,7 +34,8 @@ from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceiv
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    ServiceBusConnectionError
 )
 from devtools_testutils import AzureMgmtRecordedTestCase
 from servicebus_preparer import (
@@ -687,7 +688,13 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
                     sender.send_messages(ServiceBusMessage("foo"))
 
         fake_addr = "fakeaddress.com:1111"
-        client = ServiceBusClient(hostname, credential, custom_endpoint_address=fake_addr, uamqp_transport=uamqp_transport)
+        client = ServiceBusClient(
+            hostname,
+            credential,
+            custom_endpoint_address=fake_addr,
+            retry_total=0,
+            uamqp_transport=uamqp_transport
+        )
         with client:
             with pytest.raises(ServiceBusConnectionError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -698,7 +705,8 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
             credential,
             custom_endpoint_address=fake_addr,
             connection_verify="cacert.pem",
-            uamqp_transport=uamqp_transport
+            retry_total=0,
+            uamqp_transport=uamqp_transport,
         )
         with client:
             with pytest.raises(ServiceBusError):

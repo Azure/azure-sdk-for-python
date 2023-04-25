@@ -860,7 +860,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         condition: Optional["ErrorCondition"],
         description: str,
         exception: Optional["AMQPException"] = None,
-        status_code: Optional[str] = None
+        status_code: Optional[str] = None,
+        *,
+        custom_endpoint_address: Optional[str] = None
     ) -> "ServiceBusError":
         # handling AMQP Errors that have the condition field or the mgmt handler
         logger.info(
@@ -872,7 +874,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         error_cls: Type["ServiceBusError"]
         if isinstance(exception, AuthenticationException):
             logger.info("AMQP Connection authentication error occurred: (%r).", exception)
-            error_cls = ServiceBusAuthenticationError
+            if custom_endpoint_address:
+                # for uamqp parity, invalid custom endpoint address raises ServiceBusConnectionError
+                error_cls = ServiceBusConnectionError
+            else:
+                error_cls = ServiceBusAuthenticationError
         # elif isinstance(exception, MessageException):
         #     logger.info("AMQP Message error occurred: (%r).", exception)
         #     if isinstance(exception, MessageAlreadySettled):
@@ -928,14 +934,18 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def create_servicebus_exception(
-        logger: "Logger", exception: Exception
+        logger: "Logger", exception: Exception, *, custom_endpoint_address: Optional[str] = None
     ) -> "ServiceBusError":
         if isinstance(exception, AMQPException):
             # handling AMQP Errors that have the condition field
             condition = exception.condition
             description = exception.description
             exception = PyamqpTransport._handle_amqp_exception_with_condition(
-                logger, condition, description, exception=exception
+                logger,
+                condition,
+                description,
+                exception=exception,
+                custom_endpoint_address=custom_endpoint_address
             )
         elif not isinstance(exception, ServiceBusError):
             logger.exception(

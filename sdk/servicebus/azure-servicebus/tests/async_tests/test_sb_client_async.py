@@ -24,7 +24,8 @@ from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredenti
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    ServiceBusConnectionError
 )
 from devtools_testutils import AzureMgmtRecordedTestCase
 from servicebus_preparer import (
@@ -662,3 +663,28 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("foo"))
 
+        fake_addr = "fakeaddress.com:1111"
+        client = ServiceBusClient(
+            hostname,
+            credential,
+            custom_endpoint_address=fake_addr,
+            retry_total=0,
+            uamqp_transport=uamqp_transport
+        )
+        async with client:
+            with pytest.raises(ServiceBusConnectionError):
+                async with client.get_queue_sender(servicebus_queue.name) as sender:
+                    await sender.send_messages(ServiceBusMessage("foo"))
+
+        client = ServiceBusClient(
+            hostname,
+            credential,
+            custom_endpoint_address=fake_addr,
+            connection_verify="cacert.pem",
+            retry_total=0,
+            uamqp_transport=uamqp_transport,
+        )
+        async with client:
+            with pytest.raises(ServiceBusError):
+                async with client.get_queue_sender(servicebus_queue.name) as sender:
+                    await sender.send_messages(ServiceBusMessage("foo"))
