@@ -164,7 +164,7 @@ class AzureAppConfigurationClient:
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -448,7 +448,7 @@ class AzureAppConfigurationClient:
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -596,8 +596,8 @@ class AzureAppConfigurationClient:
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
         """
         kv_list = []
-        for filter in filters:
-            kv_list.append(ConfigurationSettingFilter(key=filter["key"], label=filter["label"]))
+        for kv_filter in filters:
+            kv_list.append(ConfigurationSettingFilter(key=kv_filter["key"], label=kv_filter["label"]))
         snapshot = Snapshot(
             filters=kv_list, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
@@ -718,7 +718,7 @@ class AzureAppConfigurationClient:
 
         :param name: The name of the configuration setting snapshot to retrieve.
         :type name: str
-        :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields.
+        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :return: The Snapshot returned from the service.
         :rtype: :class:`~azure.appconfiguration.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -740,14 +740,14 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshots(
-        self, *, name: Optional[str] = None, fields: Optional[List[str]] = None, status: Optional[str] = None, **kwargs
+        self, *, name: Optional[str] = None, fields: Optional[List[str]] = None, status: Optional[List[str]] = None, **kwargs
     ) -> ItemPaged[Snapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name and status.
 
         :keyword str name: Filter results based on snapshot name.
-        :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields.
-        :keyword str status: Filter results based on snapshot keys.
+        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
+        :keyword list[str] status: Filter results based on snapshot keys.
         :return: An iterator of :class:`~azure.appconfiguration.Snapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.Snapshot]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -773,7 +773,7 @@ class AzureAppConfigurationClient:
 
         :param str name: The snapshot name.
         :keyword datetime accept_datetime: Filter out ConfigurationSetting created after this datetime
-        :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
