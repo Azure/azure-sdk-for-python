@@ -37,8 +37,8 @@
           },
           "outputs": {
             "output": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/output_dir/",
-              "jobOutputType": "mltable"
+              "jobOutputType": "mltable",
+              "uri": "azureml://datastores/workspaceblobstore/paths/output_dir/"
             }
           }
         }

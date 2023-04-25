@@ -36,8 +36,8 @@
           },
           "outputs": {
             "output": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/output_dir/",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/output_dir/"
             }
           }
         }
