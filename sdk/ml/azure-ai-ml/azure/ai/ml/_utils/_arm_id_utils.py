@@ -22,6 +22,7 @@ from azure.ai.ml.constants._common import (
     SINGULARITY_FULL_NAME_REGEX_FORMAT,
     SINGULARITY_ID_REGEX_FORMAT,
     SINGULARITY_SHORT_NAME_REGEX_FORMAT,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -326,6 +327,20 @@ def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_r
     if isinstance(name, str) and re.match(resource_regex, name, re.IGNORECASE):
         return True
     return False
+
+
+def is_ARM_id_for_parented_resource(name: str, parent_resource_type: str, child_resource_type: str) -> bool:
+    resource_regex = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
+        ".*",
+        ".*",
+        AZUREML_RESOURCE_PROVIDER,
+        ".*",
+        parent_resource_type,
+        ".*",
+        child_resource_type,
+        "*",
+    )
+    return re.match(resource_regex, name, re.IGNORECASE) is not None
 
 
 def is_registry_id_for_resource(name: Any) -> bool:
