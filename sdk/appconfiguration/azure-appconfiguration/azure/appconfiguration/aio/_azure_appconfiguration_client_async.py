@@ -620,6 +620,7 @@ class AzureAppConfigurationClient:
         **kwargs
     ) -> Snapshot:
         """Archive a configuration setting snapshot. It will update the status of a snapshot from "ready" to "archived".
+        The retention period will start to count, the snapshot will expire when the entire retention period elapses.
 
         :param name: The name of the configuration setting snapshot to archive.
         :type name: str
