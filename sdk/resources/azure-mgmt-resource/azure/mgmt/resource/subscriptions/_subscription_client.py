@@ -43,6 +43,8 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
     :param base_url: Service URL
@@ -51,12 +53,11 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2021-01-01'
+    DEFAULT_API_VERSION = '2022-12-01'
     _PROFILE_TAG = "azure.mgmt.resource.subscriptions.SubscriptionClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'operations': '2019-11-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -64,12 +65,13 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     def __init__(
         self,
         credential: "TokenCredential",
+        subscription_id: str,
         api_version: Optional[str]=None,
         base_url: str = "https://management.azure.com",
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
-        self._config = SubscriptionClientConfiguration(credential, **kwargs)
+        self._config = SubscriptionClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(SubscriptionClient, self).__init__(
             api_version=api_version,
@@ -89,6 +91,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.resource.subscriptions.v2019_06_01.models>`
            * 2019-11-01: :mod:`v2019_11_01.models<azure.mgmt.resource.subscriptions.v2019_11_01.models>`
            * 2021-01-01: :mod:`v2021_01_01.models<azure.mgmt.resource.subscriptions.v2021_01_01.models>`
+           * 2022-12-01: :mod:`v2022_12_01.models<azure.mgmt.resource.subscriptions.v2022_12_01.models>`
         """
         if api_version == '2016-06-01':
             from .v2016_06_01 import models
@@ -105,6 +108,9 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
         elif api_version == '2021-01-01':
             from .v2021_01_01 import models
             return models
+        elif api_version == '2022-12-01':
+            from .v2022_12_01 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -115,6 +121,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
            * 2018-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2018_06_01.operations.Operations>`
            * 2019-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2019_06_01.operations.Operations>`
            * 2019-11-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2019_11_01.operations.Operations>`
+           * 2022-12-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2022_12_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2016-06-01':
@@ -125,6 +132,8 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
             from .v2019_06_01.operations import Operations as OperationClass
         elif api_version == '2019-11-01':
             from .v2019_11_01.operations import Operations as OperationClass
+        elif api_version == '2022-12-01':
+            from .v2022_12_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -139,6 +148,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
            * 2019-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2019_06_01.operations.SubscriptionsOperations>`
            * 2019-11-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2019_11_01.operations.SubscriptionsOperations>`
            * 2021-01-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2021_01_01.operations.SubscriptionsOperations>`
+           * 2022-12-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2022_12_01.operations.SubscriptionsOperations>`
         """
         api_version = self._get_api_version('subscriptions')
         if api_version == '2016-06-01':
@@ -151,6 +161,8 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
             from .v2019_11_01.operations import SubscriptionsOperations as OperationClass
         elif api_version == '2021-01-01':
             from .v2021_01_01.operations import SubscriptionsOperations as OperationClass
+        elif api_version == '2022-12-01':
+            from .v2022_12_01.operations import SubscriptionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscriptions'".format(api_version))
         self._config.api_version = api_version
@@ -165,6 +177,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
            * 2019-06-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2019_06_01.operations.TenantsOperations>`
            * 2019-11-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2019_11_01.operations.TenantsOperations>`
            * 2021-01-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2021_01_01.operations.TenantsOperations>`
+           * 2022-12-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2022_12_01.operations.TenantsOperations>`
         """
         api_version = self._get_api_version('tenants')
         if api_version == '2016-06-01':
@@ -177,6 +190,8 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
             from .v2019_11_01.operations import TenantsOperations as OperationClass
         elif api_version == '2021-01-01':
             from .v2021_01_01.operations import TenantsOperations as OperationClass
+        elif api_version == '2022-12-01':
+            from .v2022_12_01.operations import TenantsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'tenants'".format(api_version))
         self._config.api_version = api_version

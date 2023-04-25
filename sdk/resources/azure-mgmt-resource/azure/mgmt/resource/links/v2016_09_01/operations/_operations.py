@@ -45,7 +45,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -63,7 +63,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
 def build_resource_links_delete_request(link_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     # Construct URL
     _url = kwargs.pop("template_url", "/{linkId}")
     path_format_arguments = {
@@ -78,11 +78,13 @@ def build_resource_links_delete_request(link_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_resource_links_create_or_update_request(link_id: str, **kwargs: Any) -> HttpRequest:
+def build_resource_links_create_or_update_request(  # pylint: disable=name-too-long
+    link_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -109,7 +111,7 @@ def build_resource_links_get_request(link_id: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,13 +131,13 @@ def build_resource_links_get_request(link_id: str, **kwargs: Any) -> HttpRequest
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_resource_links_list_at_subscription_request(
+def build_resource_links_list_at_subscription_request(  # pylint: disable=name-too-long
     subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,13 +159,13 @@ def build_resource_links_list_at_subscription_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_resource_links_list_at_source_scope_request(
+def build_resource_links_list_at_source_scope_request(  # pylint: disable=name-too-long
     scope: str, *, filter: Literal["atScope()"] = "atScope()", **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,7 +218,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -329,7 +331,7 @@ class ResourceLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resource_links_delete_request(
@@ -438,7 +440,7 @@ class ResourceLinksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ResourceLink] = kwargs.pop("cls", None)
 
@@ -511,7 +513,7 @@ class ResourceLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ResourceLink] = kwargs.pop("cls", None)
 
         request = build_resource_links_get_request(
@@ -561,7 +563,7 @@ class ResourceLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ResourceLinkResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -653,7 +655,7 @@ class ResourceLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ResourceLinkResult] = kwargs.pop("cls", None)
 
         error_map = {
