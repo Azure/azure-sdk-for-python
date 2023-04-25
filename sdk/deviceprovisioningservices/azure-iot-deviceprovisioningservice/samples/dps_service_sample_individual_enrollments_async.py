@@ -187,7 +187,7 @@ class EnrollmentSamples(object):
             if_match=eTag,
         )
 
-    async def update_enrollment_reprovisionining_policy_sample(self):
+    async def update_enrollment_reprovisioning_policy_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 
@@ -287,7 +287,7 @@ async def main():
     await sample.get_enrollment_sample_async()
     await sample.get_enrollment_attestation_sample_async()
     await sample.update_enrollment_sample_async()
-    await sample.update_enrollment_reprovisionining_policy_sample()
+    await sample.update_enrollment_reprovisioning_policy_sample()
     await sample.bulk_enrollment_operations_sample_async()
     await sample.delete_enrollments_sample_async()
 

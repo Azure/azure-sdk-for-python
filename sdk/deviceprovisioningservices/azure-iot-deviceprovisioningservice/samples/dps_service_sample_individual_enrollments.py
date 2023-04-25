@@ -184,7 +184,7 @@ class EnrollmentSamples(object):
             if_match=eTag,
         )
 
-    def update_enrollment_reprovisionining_policy_sample(self):
+    def update_enrollment_reprovisioning_policy_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
@@ -280,6 +280,6 @@ if __name__ == "__main__":
     sample.get_enrollment_sample()
     sample.get_enrollment_attestation_sample()
     sample.update_enrollment_sample()
-    sample.update_enrollment_reprovisionining_policy_sample()
+    sample.update_enrollment_reprovisioning_policy_sample()
     sample.bulk_enrollment_operations_sample()
     sample.delete_enrollments_sample()
