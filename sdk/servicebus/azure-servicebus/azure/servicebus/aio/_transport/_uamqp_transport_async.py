@@ -18,10 +18,7 @@ try:
     from ..._transport._uamqp_transport import UamqpTransport
     from ._base_async import AmqpTransportAsync
     from .._async_utils import get_running_loop
-    from ..._common.utils import (
-        get_receive_links,
-        receive_trace_context_manager
-    )
+    from ..._common.tracing import get_receive_links, receive_trace_context_manager
     from ..._common.constants import ServiceBusReceiveMode
 
     if TYPE_CHECKING:

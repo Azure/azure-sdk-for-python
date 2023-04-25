@@ -16,12 +16,14 @@ from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, ca
 from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
-from ._common.utils import (
-    create_authentication,
+from ._common.utils import create_authentication
+from ._common.tracing import (
     get_receive_links,
     receive_trace_context_manager,
     settle_trace_context_manager,
-    get_span_links_from_message
+    get_span_link_from_message,
+    SPAN_NAME_RECEIVE_DEFERRED,
+    SPAN_NAME_PEEK,
 )
 from ._common.constants import (
     CONSUMER_IDENTIFIER,
@@ -36,8 +38,6 @@ from ._common.constants import (
     MGMT_REQUEST_RECEIVER_SETTLE_MODE,
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
     MGMT_REQUEST_MAX_MESSAGE_COUNT,
-    SPAN_NAME_RECEIVE_DEFERRED,
-    SPAN_NAME_PEEK,
     MESSAGE_COMPLETE,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
@@ -470,8 +470,9 @@ class ServiceBusReceiver(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )
-
-        with settle_trace_context_manager(self, settle_operation, links=get_span_links_from_message(message)):
+        link = get_span_link_from_message(message)
+        trace_links = [link] if link else []
+        with settle_trace_context_manager(self, settle_operation, links=trace_links):
             self._do_retryable_operation(
                 self._settle_message,
                 timeout=None,

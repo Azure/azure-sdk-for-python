@@ -41,16 +41,16 @@ from .._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    SPAN_NAME_RECEIVE_DEFERRED,
-    SPAN_NAME_PEEK,
 )
 from .._common import mgmt_handlers
-from .._common.utils import (
+from .._common.utils import utc_from_timestamp
+from .._common.tracing import (
     receive_trace_context_manager,
-    utc_from_timestamp,
-    get_receive_links,
     settle_trace_context_manager,
-    get_span_links_from_message
+    get_receive_links,
+    get_span_link_from_message,
+    SPAN_NAME_RECEIVE_DEFERRED,
+    SPAN_NAME_PEEK,
 )
 from ._async_utils import create_authentication
 
@@ -452,8 +452,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )
-
-        with settle_trace_context_manager(self, settle_operation, links=get_span_links_from_message(message)):
+        link = get_span_link_from_message(message)
+        trace_links = [link] if link else []
+        with settle_trace_context_manager(self, settle_operation, links=trace_links):
             await self._do_retryable_operation(
                 self._settle_message,
                 timeout=None,

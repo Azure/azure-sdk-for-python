@@ -34,7 +34,7 @@ from .constants import (
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
     MAX_MESSAGE_LENGTH_BYTES,
-    MESSAGE_STATE_NAME,
+    MESSAGE_STATE_NAME
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -46,9 +46,9 @@ from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
     utc_now,
-    trace_message,
     transform_outbound_messages,
 )
+from .tracing import trace_message
 
 if TYPE_CHECKING:
     try:
@@ -60,7 +60,6 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from .._pyamqp.performatives import TransferFrame
-    from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )
@@ -659,6 +658,7 @@ class ServiceBusMessageBatch(object):
         **kwargs: Any
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
+        self._tracing_attributes: Dict[str, Union[str, int]] = kwargs.pop("tracing_attributes", {})
 
         self._max_size_in_bytes = max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
         self._message = self._amqp_transport.build_batch_message([])
@@ -666,8 +666,6 @@ class ServiceBusMessageBatch(object):
         self._count = 0
         self._messages: List[ServiceBusMessage] = []
         self._uamqp_message: Optional[LegacyBatchMessage] = None
-
-        self._tracing_attributes: Dict[str, Union[str, int]] = {}
 
     def __repr__(self) -> str:
         batch_repr = "max_size_in_bytes={}, message_count={}".format(

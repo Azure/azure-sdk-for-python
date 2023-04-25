@@ -10,6 +10,15 @@
 
 ### Other Changes
 
+ - Updated tracing:
+   - A span will now be created upon calls to the service that settle messages.
+   - Additional attributes added to spans:
+     - `messaging.system` - messaging system (i.e., `servicebus`)
+     - `messaging.operation` - type of operation (i.e., `publish`, `receive`, or `settle`)
+     - `messaging.batch.message_count` - number of messages sent or received (if more than one)
+     - `messaging.source.name` added to receive spans in place of `message_bus.destination`
+   - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
+
 ## 7.10.0b1 (2023-04-13)
 
 ### Features Added

@@ -137,44 +137,6 @@ DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER = (
     "ServiceBusDlqSupplementaryAuthorization"
 )
 
-# Distributed Tracing Constants
-
-TRACE_COMPONENT_PROPERTY = "component"
-TRACE_COMPONENT = "servicebus"
-
-TRACE_NAMESPACE_ATTRIBUTE = "az.namespace"
-TRACE_NAMESPACE = "Microsoft.ServiceBus"
-
-SPAN_NAME_RECEIVE = "ServiceBus.receive"
-SPAN_NAME_RECEIVE_DEFERRED = "ServiceBus.receive_deferred"
-SPAN_NAME_PEEK = "ServiceBus.peek"
-SPAN_NAME_SEND = "ServiceBus.send"
-SPAN_NAME_SCHEDULE = "ServiceBus.schedule"
-SPAN_NAME_MESSAGE = "ServiceBus.message"
-
-SPAN_ENQUEUED_TIME_PROPERTY = "enqueuedTime"
-
-TRACE_ENQUEUED_TIME_PROPERTY = b"x-opt-enqueued-time"
-TRACE_PARENT_PROPERTY = b"traceparent"
-TRACE_STATE_PROPERTY = b"tracestate"
-TRACE_PROPERTY_ENCODING = "ascii"
-
-TRACE_MESSAGING_SYSTEM_ATTRIBUTE = "messaging.system"
-TRACE_MESSAGING_SYSTEM = "servicebus"
-
-TRACE_NET_PEER_NAME_ATTRIBUTE = "net.peer.name"
-TRACE_MESSAGING_DESTINATION_ATTRIBUTE = "messaging.destination.name"
-TRACE_MESSAGING_SOURCE_ATTRIBUTE = "messaging.source.name"
-TRACE_MESSAGING_OPERATION_ATTRIBUTE = "messaging.operation"
-TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE = "messaging.batch.message_count"
-
-DIAGNOSTIC_ID_PROPERTY = b"Diagnostic-Id"
-
-class TraceOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    PUBLISH = "publish"
-    RECEIVE = "receive"
-    SETTLE = "settle"
-
 MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024  # Backcompat with uAMQP
 MESSAGE_PROPERTY_MAX_LENGTH = 128
 # .NET TimeSpan.MaxValue: 10675199.02:48:05.4775807

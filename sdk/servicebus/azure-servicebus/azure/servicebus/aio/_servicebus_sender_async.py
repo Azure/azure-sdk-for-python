@@ -21,21 +21,18 @@ from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
-    SPAN_NAME_SCHEDULE,
     MAX_MESSAGE_LENGTH_BYTES,
-    TRACE_NET_PEER_NAME_ATTRIBUTE,
-    TRACE_MESSAGING_DESTINATION_ATTRIBUTE,
-    TraceOperationTypes,
 )
 from .._common import mgmt_handlers
-from .._common.utils import (
-    transform_outbound_messages,
+from .._common.utils import transform_outbound_messages
+from .._common.tracing import (
     send_trace_context_manager,
     trace_message,
     is_tracing_enabled,
     get_span_links_from_batch,
-    get_span_links_from_message,
-    add_span_attributes,
+    get_span_link_from_message,
+    SPAN_NAME_SCHEDULE,
+    TraceAttributes,
 )
 from ._async_utils import create_authentication
 
@@ -268,8 +265,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
 
         tracing_attributes = {
-            TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
-            TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+            TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+            TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
         }
         if isinstance(obj_messages, ServiceBusMessage):
             request_body, trace_links = self._build_schedule_request(
@@ -287,9 +284,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 tracing_attributes,
                 *obj_messages
             )
-        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE, links=trace_links) as send_span:
-            if send_span:
-                add_span_attributes(self, send_span, TraceOperationTypes.PUBLISH, message_count=len(trace_links))
+        with send_trace_context_manager(self, span_name=SPAN_NAME_SCHEDULE, links=trace_links):
             return await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
                 request_body,
@@ -417,8 +412,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     obj_message._message,
                     amqp_transport=self._amqp_transport,
                     additional_attributes={
-                        TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
-                        TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+                        TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+                        TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
                     }
                 )
 
@@ -427,11 +422,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(obj_message, ServiceBusMessageBatch):
                 trace_links = get_span_links_from_batch(obj_message)
             else:
-                trace_links = get_span_links_from_message(obj_message._message)  # pylint: disable=protected-access
+                link = get_span_link_from_message(obj_message._message)  # pylint: disable=protected-access
+                if link:
+                    trace_links.append(link)
 
-        with send_trace_context_manager(links=trace_links) as send_span:
-            if send_span:
-                add_span_attributes(self, send_span, TraceOperationTypes.PUBLISH, message_count=len(trace_links))
+        with send_trace_context_manager(self, links=trace_links):
             await self._do_retryable_operation(
                 self._send,
                 message=obj_message,
@@ -470,16 +465,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 "acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
-        batch = ServiceBusMessageBatch(
-            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link), amqp_transport=self._amqp_transport
+        return ServiceBusMessageBatch(
+            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
+            amqp_transport=self._amqp_transport,
+            tracing_attributes = {
+                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
+                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
+            }
         )
-
-        # Embed tracing data into the batch so they can be added to message spans.
-        batch._tracing_attributes = {  # pylint: disable=protected-access
-            TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
-            TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self.entity_name,
-        }
-        return batch
 
     @property
     def client_identifier(self) -> str:
