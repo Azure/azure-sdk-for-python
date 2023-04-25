@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-messaging-webpubsubclient"
-PACKAGE_PPRINT_NAME = "Azure Web PubSub Client"
+PACKAGE_PPRINT_NAME = "Azure Web PubSub"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
