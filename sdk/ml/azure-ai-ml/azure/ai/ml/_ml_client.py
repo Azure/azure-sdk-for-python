@@ -127,7 +127,7 @@ class MLClient:
     :type show_progress: typing.Optional[bool]
     :param enable_telemetry: Whether to enable telemetry. Will be overridden to False if not in a Jupyter Notebook.
     :type enable_telemetry: typing.Optional[bool]
-    :keyword cloud: The cloud name to use, defaults to AzureCloud.
+    :keyword cloud: The cloud name to use, defaults to AzureCloud (sovereign clouds are AzureUSGovernment or AzureChinaCloud).
     :paramtype cloud: str
 
     .. admonition:: Example:
@@ -537,7 +537,7 @@ class MLClient:
         :param file_name: Allows overriding the config file name to search for when path is a directory path.
             (Default value = None)
         :type file_name: str
-        :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
+        :keyword str cloud: The cloud name to use. Defaults to AzureCloud (sovereign clouds are AzureUSGovernment or AzureChinaCloud).
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
             Details will be provided in the error message.
         :returns: The workspace object for an existing Azure ML Workspace.
