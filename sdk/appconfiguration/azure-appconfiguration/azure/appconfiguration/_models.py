@@ -5,7 +5,7 @@
 import json
 from typing import Any, Dict, List, Optional, Union
 from ._generated._serialization import Model
-from ._generated.models import KeyValue, KeyValueFilter, Snapshot
+from ._generated.models import KeyValue
 
 
 PolymorphicConfigurationSetting = Union[

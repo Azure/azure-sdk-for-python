@@ -15,8 +15,8 @@ from ._models import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    Snapshot,
 )
+from ._generated.models import Snapshot, ConfigurationSettingFilter
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 
@@ -24,6 +24,7 @@ __version__ = VERSION
 __all__ = [
     "AzureAppConfigurationClient",
     "ConfigurationSetting",
+    "ConfigurationSettingFilter",
     "ResourceReadOnlyError",
     "FeatureFlagConfigurationSetting",
     "SecretReferenceConfigurationSetting",

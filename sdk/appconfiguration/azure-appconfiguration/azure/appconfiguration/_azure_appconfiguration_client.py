@@ -16,9 +16,11 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     BearerTokenCredentialPolicy,
     ContentDecodePolicy,
+    RequestIdPolicy,
 )
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -32,7 +34,7 @@ from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._generated import AzureAppConfiguration
 from ._generated._configuration import AzureAppConfigurationConfiguration
-from ._generated.models import Snapshot, SnapshotStatus, SnapshotUpdateParameters
+from ._generated.models import Snapshot, SnapshotStatus, SnapshotUpdateParameters, ConfigurationSettingFilter
 from ._models import ConfigurationSetting
 from ._utils import (
     get_endpoint_from_connection_string,
@@ -140,6 +142,7 @@ class AzureAppConfigurationClient:
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
                 ContentDecodePolicy(**kwargs),
+                RequestIdPolicy(**kwargs),
             ]
 
         if not transport:
@@ -149,15 +152,10 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_configuration_settings(
-        self,
-        key_filter: Optional[str] = None,
-        label_filter: Optional[str] = None,
-        *,
-        snapshot_name: Optional[str] = None,
-        **kwargs
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
-        label and accept_datetime
+        key, label and accept_datetime.
 
         :param key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
@@ -165,8 +163,6 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword str snapshot_name: A filter used get key-values for a snapshot. Not valid when used with 'key'
-            and 'label' filters. Default value is None.
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
@@ -201,7 +197,6 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                snapshot=snapshot_name,
                 cls=lambda objs: [
                     ConfigurationSetting._from_generated(x) for x in objs
                 ],
@@ -444,7 +439,7 @@ class AzureAppConfigurationClient:
         self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """
-        Find the ConfigurationSetting revision history.
+        Find the ConfigurationSetting revision history, optionally filtered by key, label and accept_datetime.
 
         :param key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
@@ -568,7 +563,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def create_snapshot(
+    def begin_create_snapshot(
         self,
         name: str,
         filters: List[Dict[str, str]],
@@ -577,7 +572,7 @@ class AzureAppConfigurationClient:
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
-    ) -> Snapshot:
+    ) -> LROPoller[Snapshot]:
         """Create a snapshot of the configuration settings.
 
         :param name: The name of the snapshot to create.
@@ -595,23 +590,30 @@ class AzureAppConfigurationClient:
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
             in range 0 to 7776000(90 days). When set to 0, the snapshot will be deleted when archiving it.
         :keyword dict[str, str] tags: The tags of the snapshot.
-        :return: The Snapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
+        :return: A poller for create snapshot operation. Call `result()` on this object to wait for the
+            operation to complete and get the created snapshot.
+        :rtype: :class:`~azure.core.polling.LROPoller[~azure.appconfiguration.Snapshot]`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
         """
+        kv_list = []
+        for filter in filters:
+            kv_list.append(ConfigurationSettingFilter(key=filter["key"], label=filter["label"]))
         snapshot = Snapshot(
-            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=kv_list, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
         try:
-            return self._impl.create_snapshot(
+            return self._impl.begin_create_snapshot(
                 name=name,
-                entity=snapshot._to_generated(),
+                entity=snapshot,
                 error_map=error_map,
                 **kwargs
             )
         except HttpResponseError as error:
-            raise error
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def archive_snapshot(
@@ -630,7 +632,7 @@ class AzureAppConfigurationClient:
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
         :return: The Snapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
+        :rtype: :class:`~azure.appconfiguration.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError` :class`ResourceNotModifiedError` :class`ResourceExistsError`
         """
@@ -653,7 +655,10 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except HttpResponseError as error:
-            raise error
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def recover_snapshot(
@@ -672,7 +677,7 @@ class AzureAppConfigurationClient:
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
         :return: The Snapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
+        :rtype: :class:`~azure.appconfiguration.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError` :class`ResourceNotModifiedError` :class`ResourceExistsError`
         """
@@ -695,7 +700,10 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except HttpResponseError as error:
-            raise error
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def get_snapshot(
@@ -711,9 +719,10 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :return: The Snapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
-        :raises: :class:`HttpResponseError`
+        :rtype: :class:`~azure.appconfiguration.Snapshot`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
         """
+        error_map = {401: ClientAuthenticationError}
         try:
             return self._impl.get_snapshot(
                 name=name,
@@ -723,7 +732,10 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except HttpResponseError as error:
-            raise error
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def list_snapshots(
@@ -735,10 +747,11 @@ class AzureAppConfigurationClient:
         :keyword str name: Filter results based on snapshot name.
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :keyword str status: Filter results based on snapshot keys.
-        :return: An iterator of :class:`~azure.appconfiguration.models.Snapshot`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Snapshot]
-        :raises: :class:`HttpResponseError`
+        :return: An iterator of :class:`~azure.appconfiguration.Snapshot`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.Snapshot]
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
         """
+        error_map = {401: ClientAuthenticationError}
         try:
             return self._impl.get_snapshots(  # type: ignore
                 name=name,
@@ -747,7 +760,43 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except HttpResponseError as error:
-            raise error
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
+
+    @distributed_trace
+    def list_snapshot_configuration_settings(self, name: str, **kwargs) -> ItemPaged[ConfigurationSetting]:
+        """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
+        accept_datetime.
+
+        :param str name: The snapshot name.
+        :keyword datetime accept_datetime: Filter out ConfigurationSetting created after this datetime
+        :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
+        :return: An iterator of :class:`ConfigurationSetting`
+        :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
+        """
+        select = kwargs.pop("fields", None)
+        if select:
+            select = ["locked" if x == "read_only" else x for x in select]
+        error_map = {401: ClientAuthenticationError}
+
+        try:
+            return self._impl.get_key_values(  # type: ignore
+                select=select,
+                snapshot=name,
+                cls=lambda objs: [
+                    ConfigurationSetting._from_generated(x) for x in objs
+                ],
+                error_map=error_map,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            e = error_map[error.status_code]
+            raise e(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     def update_sync_token(self, token: str) -> None:
         """Add a sync token to the internal list of tokens.
