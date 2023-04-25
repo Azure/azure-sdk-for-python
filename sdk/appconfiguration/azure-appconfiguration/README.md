@@ -333,4 +333,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/TROUBLESHOOTING.md
+[troubleshooting_guide]: https://aka.ms/azsdk/python/appconfiguration/troubleshoot
