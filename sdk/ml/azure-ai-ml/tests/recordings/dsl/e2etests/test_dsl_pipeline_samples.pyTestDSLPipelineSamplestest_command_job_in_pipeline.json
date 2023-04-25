@@ -1759,12 +1759,12 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_training_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_test_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_training_max_epocs": {
               "jobInputType": "literal",
@@ -1786,8 +1786,8 @@
               "display_name": "my-train-job",
               "inputs": {
                 "training_data": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 },
                 "max_epocs": {
                   "job_input_type": "literal",
@@ -1830,8 +1830,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "scoring_result": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "BUILDER",
@@ -1923,8 +1923,8 @@
               "display_name": "my-train-job",
               "inputs": {
                 "training_data": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 },
                 "max_epocs": {
                   "job_input_type": "literal",
@@ -1967,8 +1967,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "scoring_result": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "BUILDER",

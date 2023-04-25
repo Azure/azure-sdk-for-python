@@ -496,8 +496,8 @@
               "value": "16"
             },
             "job_in_path": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             }
           },
           "jobs": {
@@ -576,8 +576,8 @@
           },
           "outputs": {
             "pipeline_job_out": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "mlflow_model"
+              "jobOutputType": "mlflow_model",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

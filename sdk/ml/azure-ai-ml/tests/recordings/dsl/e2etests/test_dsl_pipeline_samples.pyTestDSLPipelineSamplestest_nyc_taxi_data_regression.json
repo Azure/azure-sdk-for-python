@@ -2006,8 +2006,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             }
           },
           "jobs": {

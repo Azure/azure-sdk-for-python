@@ -868,8 +868,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -884,8 +884,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -900,8 +900,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -916,8 +916,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1013,8 +1013,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1029,8 +1029,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1045,8 +1045,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1061,8 +1061,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1437,8 +1437,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1453,8 +1453,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1469,8 +1469,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1485,8 +1485,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1582,8 +1582,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1598,8 +1598,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1614,8 +1614,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1630,8 +1630,8 @@
                   "value": "1"
                 },
                 "component_in_path": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "_source": "YAML.COMPONENT",

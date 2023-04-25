@@ -1273,8 +1273,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1304,8 +1304,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "file_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1340,8 +1340,8 @@
               "name": "parallel_node",
               "inputs": {
                 "job_data_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1434,9 +1434,9 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "data_folder": {
+                  "job_input_type": "mltable",
                   "mode": "ReadOnlyMount",
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/",
-                  "job_input_type": "mltable"
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/"
                 }
               },
               "outputs": {
@@ -1538,8 +1538,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1569,8 +1569,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "file_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1605,8 +1605,8 @@
               "name": "parallel_node",
               "inputs": {
                 "job_data_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1848,8 +1848,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -1864,9 +1864,9 @@
           },
           "outputs": {
             "pipeine_a_output": {
+              "jobOutputType": "uri_folder",
               "assetName": "a_output",
-              "assetVersion": "1",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "1"
             }
           },
           "settings": {
@@ -1954,8 +1954,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -2108,8 +2108,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -2124,9 +2124,9 @@
           },
           "outputs": {
             "pipeine_a_output": {
+              "jobOutputType": "uri_folder",
               "assetName": "b_output",
-              "assetVersion": "2",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "2"
             }
           },
           "settings": {
@@ -2214,8 +2214,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {

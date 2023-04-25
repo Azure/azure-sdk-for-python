@@ -1133,8 +1133,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_sample_input_data": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             }
           },
           "jobs": {
@@ -1195,16 +1195,16 @@
           },
           "outputs": {
             "pipeline_sample_output_data_A": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             },
             "pipeline_sample_output_data_B": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             },
             "pipeline_sample_output_data_C": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {
@@ -1360,8 +1360,8 @@
               "uri": null,
               "assetName": null,
               "assetVersion": null,
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             },
             "pipeline_sample_output_data_C": {
               "description": null,

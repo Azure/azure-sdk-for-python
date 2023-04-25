@@ -917,9 +917,9 @@
           "jobType": "Pipeline",
           "inputs": {
             "iris_data": {
+              "jobInputType": "uri_file",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris.csv",
-              "jobInputType": "uri_file"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris.csv"
             }
           },
           "jobs": {

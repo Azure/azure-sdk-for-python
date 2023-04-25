@@ -1744,8 +1744,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_training_input": {
+              "jobInputType": "uri_folder",
               "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
             },
             "pipeline_job_training_max_epocs": {
               "jobInputType": "literal",
@@ -1802,8 +1802,8 @@
                   "value": "${{parent.jobs.train_job.outputs.model_output}}"
                 },
                 "test_data": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "outputs": {
@@ -1837,8 +1837,8 @@
           },
           "outputs": {
             "pipeline_job_trained_model": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             },
             "pipeline_job_evaluation_report": {
               "jobOutputType": "uri_folder"
@@ -1961,8 +1961,8 @@
                   "value": "${{parent.jobs.train_job.outputs.model_output}}"
                 },
                 "test_data": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "job_input_type": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "outputs": {

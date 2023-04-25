@@ -175,8 +175,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "required_input": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             },
             "required_param": {
               "jobInputType": "literal",
@@ -376,8 +376,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "required_input": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             },
             "required_param": {
               "jobInputType": "literal",

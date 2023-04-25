@@ -593,8 +593,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_sample_input_data": {
-              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/sampledata1235/versions/2",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/sampledata1235/versions/2"
             },
             "pipeline_sample_input_string": {
               "jobInputType": "literal",
@@ -646,8 +646,8 @@
           },
           "outputs": {
             "pipeline_sample_output_data": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {

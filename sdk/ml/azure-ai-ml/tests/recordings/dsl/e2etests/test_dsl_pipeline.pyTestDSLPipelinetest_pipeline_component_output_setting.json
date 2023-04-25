@@ -172,8 +172,8 @@
                     "value": "1"
                   },
                   "component_in_path": {
-                    "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                    "job_input_type": "uri_file"
+                    "job_input_type": "uri_file",
+                    "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                   }
                 },
                 "outputs": {
@@ -279,8 +279,8 @@
           },
           "outputs": {
             "component_out_path": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/outputs/1",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/outputs/1"
             }
           },
           "settings": {

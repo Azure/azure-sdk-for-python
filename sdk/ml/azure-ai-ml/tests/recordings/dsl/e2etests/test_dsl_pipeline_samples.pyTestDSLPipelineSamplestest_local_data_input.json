@@ -622,8 +622,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_sample_input_data": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_sample_input_string": {
               "jobInputType": "literal",
@@ -657,8 +657,8 @@
           },
           "outputs": {
             "pipeline_sample_output_data": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {

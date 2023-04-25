@@ -547,8 +547,8 @@
               "value": "10"
             },
             "job_in_path": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             }
           },
           "jobs": {

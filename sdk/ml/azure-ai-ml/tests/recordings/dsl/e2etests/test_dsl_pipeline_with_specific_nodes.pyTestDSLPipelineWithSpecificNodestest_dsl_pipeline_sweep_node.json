@@ -465,8 +465,8 @@
               "value": "100"
             },
             "raw_data": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             }
           },
           "jobs": {

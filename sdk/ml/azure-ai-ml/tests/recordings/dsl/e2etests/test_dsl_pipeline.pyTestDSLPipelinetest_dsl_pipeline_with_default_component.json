@@ -343,8 +343,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "REMOTE.WORKSPACE.COMPONENT",
@@ -437,8 +437,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "REMOTE.WORKSPACE.COMPONENT",
@@ -550,8 +550,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "REMOTE.WORKSPACE.COMPONENT",

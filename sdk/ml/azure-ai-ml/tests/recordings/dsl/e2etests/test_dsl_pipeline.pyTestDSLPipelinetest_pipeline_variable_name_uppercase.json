@@ -162,8 +162,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -187,8 +187,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -294,8 +294,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -319,8 +319,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "_source": "YAML.COMPONENT",

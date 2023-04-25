@@ -887,14 +887,14 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_data_path": {
+              "jobInputType": "mltable",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris-mltable"
             },
             "pipeline_score_model": {
+              "jobInputType": "uri_folder",
               "mode": "Download",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/model/",
-              "jobInputType": "uri_folder"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/model/"
             }
           },
           "jobs": {

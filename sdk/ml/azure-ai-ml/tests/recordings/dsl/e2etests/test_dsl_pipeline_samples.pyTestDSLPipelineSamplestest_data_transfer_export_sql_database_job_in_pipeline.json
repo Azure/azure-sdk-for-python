@@ -362,8 +362,8 @@
               "value": "azureml:my_export_azuresqldb_connection"
             },
             "cosmos_folder": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet"
             }
           },
           "jobs": {

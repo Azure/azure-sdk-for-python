@@ -2105,14 +2105,14 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_data_path": {
+              "jobInputType": "mltable",
               "mode": "ReadOnlyMount",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/dataset",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/dataset"
             },
             "pipeline_score_model": {
+              "jobInputType": "uri_folder",
               "mode": "Download",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/model/",
-              "jobInputType": "uri_folder"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/model/"
             }
           },
           "jobs": {
@@ -2254,8 +2254,8 @@
           },
           "outputs": {
             "pipeline_job_out_file": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             },
             "pipeline_job_out_tabular": {
               "jobOutputType": "uri_file"

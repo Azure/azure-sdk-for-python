@@ -1490,12 +1490,12 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_training_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_test_input": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "pipeline_job_training_max_epocs": {
               "jobInputType": "literal",
@@ -1584,16 +1584,16 @@
           },
           "outputs": {
             "pipeline_job_trained_model": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             },
             "pipeline_job_scored_data": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             },
             "pipeline_job_evaluation_report": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {
@@ -1781,24 +1781,24 @@
               "uri": null,
               "assetName": null,
               "assetVersion": null,
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             },
             "pipeline_job_scored_data": {
               "description": null,
               "uri": null,
               "assetName": null,
               "assetVersion": null,
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             },
             "pipeline_job_evaluation_report": {
               "description": null,
               "uri": null,
               "assetName": null,
               "assetVersion": null,
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "sourceJobId": null

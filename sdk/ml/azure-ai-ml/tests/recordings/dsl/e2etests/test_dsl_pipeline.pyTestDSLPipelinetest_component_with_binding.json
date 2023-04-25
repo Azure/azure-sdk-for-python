@@ -386,8 +386,8 @@
               "value": "16"
             },
             "job_in_path": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             }
           },
           "jobs": {
@@ -406,8 +406,8 @@
               },
               "outputs": {
                 "component_out_path": {
-                  "mode": "Upload",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "Upload"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -428,8 +428,8 @@
               },
               "outputs": {
                 "component_out_path": {
-                  "mode": "Upload",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "Upload"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -569,8 +569,8 @@
               },
               "outputs": {
                 "component_out_path": {
-                  "mode": "Upload",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "Upload"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -591,8 +591,8 @@
               },
               "outputs": {
                 "component_out_path": {
-                  "mode": "Upload",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "Upload"
                 }
               },
               "_source": "YAML.COMPONENT",

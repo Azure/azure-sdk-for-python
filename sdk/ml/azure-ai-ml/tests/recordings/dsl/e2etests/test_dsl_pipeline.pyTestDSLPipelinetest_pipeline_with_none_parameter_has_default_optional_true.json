@@ -175,8 +175,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "required_input": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             },
             "required_param": {
               "jobInputType": "literal",
@@ -376,8 +376,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "required_input": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             },
             "required_param": {
               "jobInputType": "literal",
@@ -591,8 +591,8 @@
                   "value": "${{parent.inputs.required_param}}"
                 },
                 "required_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 },
                 "required_param_with_default": {
                   "job_input_type": "literal",
@@ -700,8 +700,8 @@
                   "value": "${{parent.inputs.required_param}}"
                 },
                 "required_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 },
                 "required_param_with_default": {
                   "job_input_type": "literal",

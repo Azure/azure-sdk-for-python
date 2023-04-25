@@ -659,8 +659,8 @@
               "jobOutputType": "uri_folder"
             },
             "pipeline_job_prepped_data": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {

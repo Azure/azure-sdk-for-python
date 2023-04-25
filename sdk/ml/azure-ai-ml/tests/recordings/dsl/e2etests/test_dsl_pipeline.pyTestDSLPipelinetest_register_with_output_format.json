@@ -168,8 +168,8 @@
                 "type": "command",
                 "inputs": {
                   "component_in_path": {
-                    "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                    "job_input_type": "uri_file"
+                    "job_input_type": "uri_file",
+                    "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                   }
                 },
                 "outputs": {
@@ -265,8 +265,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -283,8 +283,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -301,8 +301,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -331,14 +331,14 @@
           },
           "outputs": {
             "pipeine_a_output": {
+              "jobOutputType": "uri_folder",
               "assetName": "np_output",
-              "assetVersion": "1",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "1"
             },
             "pipeine_b_output": {
+              "jobOutputType": "uri_folder",
               "assetName": "n2_o_output",
-              "assetVersion": "2",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "2"
             }
           },
           "settings": {
@@ -425,8 +425,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -443,8 +443,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {
@@ -461,8 +461,8 @@
               "type": "command",
               "inputs": {
                 "component_in_path": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 }
               },
               "outputs": {

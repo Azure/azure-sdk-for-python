@@ -409,9 +409,9 @@
           "jobType": "Pipeline",
           "inputs": {
             "training_input": {
+              "jobInputType": "uri_folder",
               "mode": "Download",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-              "jobInputType": "uri_folder"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             },
             "training_max_epochs": {
               "jobInputType": "literal",
@@ -466,8 +466,8 @@
           },
           "outputs": {
             "trained_model": {
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "settings": {
@@ -614,8 +614,8 @@
               "uri": null,
               "assetName": null,
               "assetVersion": null,
-              "mode": "ReadWriteMount",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "ReadWriteMount"
             }
           },
           "sourceJobId": null

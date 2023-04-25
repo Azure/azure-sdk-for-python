@@ -456,8 +456,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_sample_input_data": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             },
             "pipeline_sample_input_string": {
               "jobInputType": "literal",
@@ -491,8 +491,8 @@
           },
           "outputs": {
             "pipeline_sample_output_data": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {

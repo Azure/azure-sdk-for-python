@@ -317,8 +317,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "r_required_input": {
-              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
             },
             "r_group.sub.required_param": {
               "jobInputType": "literal",

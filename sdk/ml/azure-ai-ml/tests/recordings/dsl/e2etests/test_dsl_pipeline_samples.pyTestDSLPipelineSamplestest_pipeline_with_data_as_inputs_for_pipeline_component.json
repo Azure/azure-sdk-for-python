@@ -1791,8 +1791,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "test_input": {
-              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/pipeline_component_training/versions/0.0.1"
             },
             "training_learning_rate1": {
               "jobInputType": "literal",

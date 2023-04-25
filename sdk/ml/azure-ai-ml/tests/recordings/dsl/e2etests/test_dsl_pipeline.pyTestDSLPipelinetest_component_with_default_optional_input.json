@@ -181,8 +181,8 @@
               "type": "command",
               "inputs": {
                 "required_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 },
                 "required_param": {
                   "job_input_type": "literal",
@@ -197,8 +197,8 @@
               "type": "command",
               "inputs": {
                 "required_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 },
                 "required_param": {
                   "job_input_type": "literal",
@@ -294,8 +294,8 @@
               "type": "command",
               "inputs": {
                 "required_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 },
                 "required_param": {
                   "job_input_type": "literal",
@@ -310,8 +310,8 @@
               "type": "command",
               "inputs": {
                 "required_input": {
-                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
                 },
                 "required_param": {
                   "job_input_type": "literal",
