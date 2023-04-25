@@ -51,6 +51,9 @@ After configuring your environment for the [DefaultAzureCredential][default_cred
 <!-- SNIPPET:hello_world.create_a_key_client -->
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = KeyClient(vault_url=VAULT_URL, credential=credential)
