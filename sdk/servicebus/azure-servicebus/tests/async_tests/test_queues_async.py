@@ -1338,8 +1338,16 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_async_queue_message_receive_and_delete(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.Amqp
+        else:
+            transport_type = TransportType.Amqp
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            servicebus_namespace_connection_string,
+            transport_type=transport_type,
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("Receive and delete test")

@@ -410,7 +410,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_client_azure_named_key_credential(self,
+    def test_client_azure_sas_credential(self,
                                    uamqp_transport,
                                    *,
                                    servicebus_queue=None,
