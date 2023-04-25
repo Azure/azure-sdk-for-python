@@ -1485,14 +1485,14 @@
                   "value": "${{parent.inputs.job_in_number}}"
                 },
                 "component_in_path": {
-                  "uri": "https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv"
                 }
               },
               "outputs": {
                 "component_out_path_1": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1631,15 +1631,15 @@
                   "value": "${{parent.inputs.job_in_number}}"
                 },
                 "component_in_path": {
+                  "job_input_type": "uri_folder",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "job_input_type": "uri_folder"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "outputs": {
                 "component_out_path_1": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -1655,14 +1655,14 @@
                   "value": "${{parent.inputs.job_in_number}}"
                 },
                 "component_in_path": {
-                  "uri": "https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv",
-                  "job_input_type": "uri_file"
+                  "job_input_type": "uri_file",
+                  "uri": "https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv"
                 }
               },
               "outputs": {
                 "component_out_path_1": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_folder"
+                  "job_output_type": "uri_folder",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",

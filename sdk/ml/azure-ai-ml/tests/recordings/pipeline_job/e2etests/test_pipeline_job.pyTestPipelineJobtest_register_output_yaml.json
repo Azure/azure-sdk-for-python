@@ -172,9 +172,9 @@
           },
           "outputs": {
             "component_out_path": {
+              "jobOutputType": "mltable",
               "assetName": "pipeline_output",
-              "assetVersion": "1",
-              "jobOutputType": "mltable"
+              "assetVersion": "1"
             }
           },
           "settings": {
@@ -685,9 +685,9 @@
           },
           "outputs": {
             "pipeline_out_path": {
+              "jobOutputType": "uri_folder",
               "assetName": "pipeline_output",
-              "assetVersion": "2",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "2"
             }
           },
           "settings": {
@@ -810,9 +810,9 @@
           },
           "outputs": {
             "pipeline_out_path": {
+              "jobOutputType": "uri_folder",
               "assetName": "pipeline_output",
-              "assetVersion": "2",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "2"
             }
           },
           "settings": {
@@ -1072,9 +1072,9 @@
           },
           "outputs": {
             "pipeline_out_path": {
+              "jobOutputType": "uri_folder",
               "assetName": "pipeline_output",
-              "assetVersion": "2",
-              "jobOutputType": "uri_folder"
+              "assetVersion": "2"
             }
           },
           "settings": {
@@ -2205,9 +2205,9 @@
           "jobType": "Pipeline",
           "inputs": {
             "iris_data": {
+              "jobInputType": "uri_file",
               "mode": "Direct",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris.csv",
-              "jobInputType": "uri_file"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/iris.csv"
             }
           },
           "jobs": {
@@ -2296,8 +2296,8 @@
           },
           "outputs": {
             "output": {
-              "mode": "Direct",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Direct"
             }
           },
           "settings": {
@@ -4589,9 +4589,9 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_job_data_path": {
+              "jobInputType": "mltable",
               "mode": "EvalMount",
-              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/mnist-data",
-              "jobInputType": "mltable"
+              "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/mnist-data"
             }
           },
           "jobs": {
@@ -4678,8 +4678,8 @@
           },
           "outputs": {
             "pipeline_job_out_path": {
-              "mode": "Upload",
-              "jobOutputType": "uri_folder"
+              "jobOutputType": "uri_folder",
+              "mode": "Upload"
             }
           },
           "settings": {
