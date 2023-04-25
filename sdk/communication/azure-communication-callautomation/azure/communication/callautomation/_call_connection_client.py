@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional, cast, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
@@ -36,6 +36,9 @@ from ._generated.models import (
     RemoveParticipantRequest
 )
 
+if TYPE_CHECKING:
+    from ._call_automation_client import CallAutomationClient
+
 
 class CallConnectionClient:
     """A client to interact with media of ongoing call.
@@ -62,25 +65,28 @@ class CallConnectionClient:
             api_version: Optional[str] = None,
             **kwargs
     ) -> None:
-        if not credential:
-            raise ValueError("credential can not be None")
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
-
-        parsed_url = urlparse(endpoint.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {format(endpoint)}")
+        if '_callautomation_client' in kwargs:
+            self._client = cast(AzureCommunicationCallAutomationService, kwargs.pop('_call_automation_client'))
+        else:
+            if not credential:
+                raise ValueError("credential can not be None")
+            try:
+                if not endpoint.lower().startswith('http'):
+                    endpoint = "https://" + endpoint
+            except AttributeError:
+                raise ValueError("Host URL must be a string")
+            parsed_url = urlparse(endpoint.rstrip('/'))
+            if not parsed_url.netloc:
+                raise ValueError(f"Invalid URL: {format(endpoint)}")
+            self._client = AzureCommunicationCallAutomationService(
+                endpoint,
+                api_version=api_version or DEFAULT_VERSION,
+                authentication_policy=get_authentication_policy(
+                    endpoint, credential),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs)
         self._call_connection_id = call_connection_id
-        self._client = AzureCommunicationCallAutomationService(
-            endpoint,
-            api_version=api_version or DEFAULT_VERSION,
-            authentication_policy=get_authentication_policy(
-                endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
+
 
     @classmethod
     def from_connection_string(
@@ -102,21 +108,14 @@ class CallConnectionClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, access_key, call_connection_id, **kwargs)
 
-    def get_call_media(
-        self,
-        **kwargs  # type: Any
-    ) -> CallMediaClient:
-        """
-        Initializes an instance of the CallMediaClient.
-
-        :return: CallMediaClient
-        :type: CallMediaClient
-        """
-        return CallMediaClient(
-            self.call_connection_id,
-            self._call_media_operations,
-            **kwargs
-        )
+    @classmethod
+    def _from_callautomation_client(
+        cls,
+        callautomation_client: 'CallAutomationClient',
+        call_connection_id: str
+    ) -> 'CallConnectionClient':
+        """Internal constructor for sharing the pipeline with CallAutomationClient."""
+        return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
     def get_call_properties(self, **kwargs) -> CallConnectionProperties:
         """Get call connection.
@@ -317,3 +316,107 @@ class CallConnectionClient:
                                                                remove_participant_request,
                                                                repeatability_first_sent=repeatability_first_sent,
                                                                repeatability_request_id=repeatability_request_id)
+
+    def play_media_to_all(
+        self,
+        play_source: PlaySource,
+        **kwargs
+    ) -> None:
+        """
+        Play to all participants.
+
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.PlaySource
+
+        :return: None
+        :type: None
+        """
+        if not play_source:
+            raise ValueError('play_source cannot be None.')
+
+        self.play(play_source=play_source, play_to=[], **kwargs)
+
+    def play_media(
+        self,
+        play_source: PlaySource,
+        play_to: List[CommunicationIdentifier],
+        **kwargs
+    ) -> None:
+        """
+        Play.
+
+        :param play_source: Required. A PlaySource representing the source to play.
+        :type play_source: PlaySource
+        :param play_to: Required. The targets to play to.
+        :type play_to: list[~azure.communication.callautomation.models.CommunicationIdentifier]
+
+        :return: None
+        :type: None
+        """
+
+        if not play_source:
+            raise ValueError('play_source cannot be None.')
+
+        play_request = PlayRequest(
+            play_source_info=self._create_play_source_internal(play_source),
+            play_to=[serialize_identifier(identifier)
+                     for identifier in play_to],
+            play_options=PlayOptions(loop=kwargs.get('loop', False))
+        )
+        self._call_media_operations.play(self.call_connection_id, play_request)
+
+    def start_recognizing_media(
+        self,
+        recognize_options: CallMediaRecognizeOptions
+    ) -> None:
+        """
+        Recognize tones.
+
+        :param recognize_options:  Different attributes for recognize.
+        :type recognize_options: ~azure.communication.callautomation.CallMediaRecognizeOptions
+
+        :return: None
+        :rtype: None
+        """
+
+        if not recognize_options:
+            raise ValueError('recognize_options cannot be None.')
+
+        options = RecognizeOptions(
+            target_participant=serialize_identifier(
+                recognize_options.target_participant),
+            interrupt_prompt=recognize_options.interrupt_prompt,
+            initial_silence_timeout_in_seconds=recognize_options.initial_silence_timeout
+        )
+
+        if isinstance(recognize_options, CallMediaRecognizeDtmfOptions):
+            options.dtmf_options = DtmfOptions(
+                inter_tone_timeout_in_seconds=recognize_options.inter_tone_timeout,
+                max_tones_to_collect=recognize_options.max_tones_to_collect,
+                stop_tones=recognize_options.stop_dtmf_tones
+            )
+
+        play_source = recognize_options.play_prompt
+
+        recognize_request = RecognizeRequest(
+            recognize_input_type=recognize_options.input_type,
+            play_prompt=self._create_play_source_internal(play_source),
+            interrupt_call_media_operation=recognize_options.interrupt_call_media_operation,
+            operation_context=recognize_options.operation_context,
+            recognize_options=options
+        )
+
+        self._call_media_operations.recognize(
+            self.call_connection_id, recognize_request)
+
+    def cancel_all_media_operations(
+        self
+    ) -> None:
+        """
+        Cancels all the queued media operations.
+
+        :return: None
+        :type: None
+        """
+        self._call_media_operations.cancel_all_media_operations(
+            self.call_connection_id)

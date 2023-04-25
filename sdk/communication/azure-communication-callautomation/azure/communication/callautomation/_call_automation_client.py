@@ -113,7 +113,6 @@ class CallAutomationClient(object):
     def get_call_connection(
         self,
         call_connection_id: str,
-        **kwargs
     ) -> CallConnectionClient:
         """Get CallConnectionClient object.
         Only use when you already know CallConnectionId for an ongoing call.
@@ -126,27 +125,9 @@ class CallAutomationClient(object):
         """
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
-
-        return CallConnectionClient(
-            call_connection_id,
-            self._call_connection_client,
-            self._call_media,
-            **kwargs
-        )
-
-    def get_call_recording(
-        self,
-        **kwargs
-    ) -> CallRecordingClient:
-        """Get CallRecordingClient object.
-        For any recording related action, use this to perform actions.
-
-        :return: Instance of CallRecordingClient.
-        :rtype: ~azure.communication.callautomation.CallRecordingClient
-        """
-        return CallRecordingClient(
-            self._call_recording_client,
-            **kwargs
+        return CallConnectionClient._from_callautomation_client(
+            self._client,
+            call_connection_id
         )
 
     def create_call(
@@ -451,3 +432,148 @@ class CallAutomationClient(object):
             repeatability_first_sent=repeatability_first_sent,
             repeatability_request_id=repeatability_request_id,
             **kwargs)
+
+    def start_recording(
+        self,
+        start_recording_options: StartRecordingOptions,
+        **kwargs
+    ) -> RecordingStateResponse:
+        """Start recording the call.
+
+        :param start_recording_options: Required.
+        :type content: StartRecordingOptions
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecordingStateResponse
+        :rtype: ~azure.communication.callautomation.models.RecordingStateResponse #todo-itk create
+         this model, test kwargs
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        repeatability_request_id = kwargs.pop("repeatability_request_id", None)
+        repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
+
+        recording_state_response = self._call_recording_client.start_recording(
+        start_call_recording = start_recording_options._to_generated(# pylint:disable=protected-access
+            ),
+        repeatability_first_sent = repeatability_first_sent,
+        repeatability_request_id = repeatability_request_id,
+        **kwargs)
+
+        return RecordingStateResponse._from_generated(# pylint:disable=protected-access
+            recording_state_response)
+
+    def stop_recording(
+        self,
+        recording_id: str,
+        **kwargs
+    ) -> None:
+        """Stop recording the call.
+
+        :param recording_id: The recording id. Required.
+        :type recording_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
+
+    def pause_recording(
+        self,
+        recording_id: str,
+        **kwargs
+    ) -> None:
+        """Pause recording the call.
+
+        :param recording_id: The recording id. Required.
+        :type recording_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
+
+    def resume_recording(
+        self,
+        recording_id: str,
+        **kwargs
+    ) -> None:
+        """Resume recording the call.
+
+        :param recording_id: The recording id. Required.
+        :type recording_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
+
+    def get_recording_properties(
+        self,
+        recording_id: str,
+        **kwargs
+    ) -> RecordingStateResponse:
+        """Get call recording properties.
+
+        :param recording_id: The recording id. Required.
+        :type recording_id: str
+        :return: RecordingStateResponse
+        :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        recording_state_response = self._call_recording_client.get_recording_properties(
+            recording_id = recording_id, **kwargs)
+        return RecordingStateResponse._from_generated(# pylint:disable=protected-access
+            recording_state_response)
+
+    def download_recording(
+        self,
+        source_location: str,
+        *,
+        offset: int = None,
+        length: int = None,
+        **kwargs
+    ) -> Streamable[bytes]:
+        """Download a stream of the call recording.
+
+        :param source_location: The source location. Required.
+        :type source_location: str
+        :param offset: Offset byte. Not required.
+        :type offset: int
+        :param length: how many bytes. Not required.
+        :type length: int
+        :return: HttpResponse (octet-stream)
+        :rtype: HttpResponse (octet-stream)
+        """
+        stream = self._downloader.download_streaming(
+            source_location = source_location,
+            offset = offset,
+            length = length,
+            **kwargs
+        )
+        return stream
+
+    def delete_recording(
+        self,
+        recording_location: str,
+        **kwargs
+    ) -> None:
+        """Delete a call recording.
+
+        :param recording_location: The recording location. Required.
+        :type recording_location: str
+        """
+        self._downloader.delete_recording(recording_location = recording_location, **kwargs)
