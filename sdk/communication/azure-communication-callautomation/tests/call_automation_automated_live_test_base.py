@@ -113,7 +113,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
 
     def check_for_event(self, event_type: Type, call_connection_id: str) -> Optional[Any]:
         """Check for events.
-        Checks the event_store for any events that have been recieved from the Service Bus queue with the specified event_type and call_connection_id.
+        Checks the event_store for any events that have been received from the Service Bus queue with the specified event_type and call_connection_id.
 
         :param event_type: Type of event to check for in the event store.
         :type event_type: Type
