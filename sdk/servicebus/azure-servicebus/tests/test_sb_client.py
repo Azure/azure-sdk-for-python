@@ -10,6 +10,13 @@ import os
 import pytest
 import time
 from datetime import datetime, timedelta
+import hmac
+import hashlib
+import base64
+try:
+    from urllib.parse import quote as url_parse_quote
+except ImportError:
+    from urllib import pathname2url as url_parse_quote
 
 try:
     from azure.servicebus._transport._uamqp_transport import UamqpTransport
@@ -18,7 +25,7 @@ except ImportError:
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 
 from azure.common import AzureHttpError, AzureConflictHttpError
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, AccessToken
 from azure.core.pipeline.policies import RetryMode
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus import ServiceBusClient, ServiceBusSender, ServiceBusReceiver
@@ -361,6 +368,45 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         #    with client.get_queue_sender(servicebus_queue.name) as sender:
         #        sender.send_messages(ServiceBusMessage("foo"))
 
+        def generate_sas_token(uri, sas_name, sas_value, token_ttl):
+            """Performs the signing and encoding needed to generate a sas token from a sas key."""
+            sas = sas_value.encode('utf-8')
+            expiry = str(int(time.time() + token_ttl))
+            string_to_sign = (uri + '\n' + expiry).encode('utf-8')
+            signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
+            signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
+            return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
+
+        class CustomizedSASCredential(object):
+            def __init__(self, token, expiry):
+                """
+                :param str token: The token string
+                :param float expiry: The epoch timestamp
+                """
+                self.token = token
+                self.expiry = expiry
+                self.token_type = b"servicebus.windows.net:sastoken"
+
+            def get_token(self, *scopes, **kwargs):
+                """
+                This method is automatically called when token is about to expire.
+                """
+                return AccessToken(self.token, self.expiry)
+
+        token_ttl = 5  # seconds
+        sas_token = generate_sas_token(
+            auth_uri, servicebus_namespace_key_name, servicebus_namespace_primary_key, token_ttl
+        )
+        credential=CustomizedSASCredential(sas_token, time.time() + token_ttl)
+
+        with ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport) as client:
+            sender = client.get_queue_sender(queue_name=servicebus_queue.name)
+            time.sleep(5)
+            with pytest.raises(ServiceBusAuthenticationError):
+                with sender:
+                    message = ServiceBusMessage("Single Message")
+                    sender.send_messages(message)
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer()
@@ -622,7 +668,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_connection_verify_exception(self,
+    def test_custom_endpoint_connection_verify_exception(self,
                                    uamqp_transport,
                                    *,
                                    servicebus_queue=None,
@@ -635,6 +681,25 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
         client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem", uamqp_transport=uamqp_transport)
+        with client:
+            with pytest.raises(ServiceBusError):
+                with client.get_queue_sender(servicebus_queue.name) as sender:
+                    sender.send_messages(ServiceBusMessage("foo"))
+
+        fake_addr = "fakeaddress.com:1111"
+        client = ServiceBusClient(hostname, credential, custom_endpoint_address=fake_addr, uamqp_transport=uamqp_transport)
+        with client:
+            with pytest.raises(ServiceBusConnectionError):
+                with client.get_queue_sender(servicebus_queue.name) as sender:
+                    sender.send_messages(ServiceBusMessage("foo"))
+
+        client = ServiceBusClient(
+            hostname,
+            credential,
+            custom_endpoint_address=fake_addr,
+            connection_verify="cacert.pem",
+            uamqp_transport=uamqp_transport
+        )
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
