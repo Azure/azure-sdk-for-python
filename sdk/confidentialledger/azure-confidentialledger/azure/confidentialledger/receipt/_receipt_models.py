@@ -157,16 +157,6 @@ class Receipt:
         if not isinstance(other, Receipt):
             return NotImplemented
 
-        # print(self.cert == other.cert)
-        # print( self.nodeId == other.nodeId)
-        # print( self.serviceEndorsements == other.serviceEndorsements)
-        # print( self.signature == other.signature)
-        # print(self.leafComponents == other.leafComponents)
-
-        # for elem_self, elem_other in zip(self.proof, other.proof):
-        #     print(elem_self.left, elem_self.right)
-        #     print(elem_other.left, elem_other.right)
-
         return (
             self.cert == other.cert
             and self.nodeId == other.nodeId
