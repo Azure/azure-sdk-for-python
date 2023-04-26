@@ -213,7 +213,6 @@ class TestSchedule(AzureRecordedTestCase):
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
         assert schedule_job_dict == rest_schedule_job_dict
 
-    @pytest.mark.disable_snapshot_hash_sanitizer
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
     )

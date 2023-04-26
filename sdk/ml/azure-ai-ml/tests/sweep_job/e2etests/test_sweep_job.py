@@ -26,7 +26,6 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 )
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
-    @pytest.mark.disable_snapshot_hash_sanitizer
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
@@ -46,7 +45,6 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
-    @pytest.mark.disable_snapshot_hash_sanitizer
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
@@ -69,7 +67,6 @@ class TestSweepJob(AzureRecordedTestCase):
         assert "iris_csv" in sweep_job_resource_2.inputs
         assert "some_number" in sweep_job_resource_2.inputs
 
-    @pytest.mark.disable_snapshot_hash_sanitizer
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure the Minimal required properties does not fail on submisison"""
@@ -87,7 +84,6 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
-    @pytest.mark.disable_snapshot_hash_sanitizer
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure sweep job runs to completion"""
