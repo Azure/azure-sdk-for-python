@@ -405,6 +405,10 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
     def _basic_component_func(self):
         return load_component("./tests/test_configs/dsl_pipeline/do_while/basic_component/component.yml")
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_do_while_pipeline(self, client: MLClient):
         @pipeline

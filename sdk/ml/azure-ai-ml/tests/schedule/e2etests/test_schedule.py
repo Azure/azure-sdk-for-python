@@ -2,7 +2,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
@@ -213,6 +213,10 @@ class TestSchedule(AzureRecordedTestCase):
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
         assert schedule_job_dict == rest_schedule_job_dict
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
     )
