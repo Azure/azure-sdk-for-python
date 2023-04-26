@@ -51,6 +51,11 @@ from ._events import (
     RecognizeFailed,
     RemoveParticipantSucceeded,
     RemoveParticipantFailed,
+    ContinuousDtmfRecognitionToneReceived,
+    ContinuousDtmfRecognitionToneFailed,
+    ContinuousDtmfRecognitionStopped,
+    SendDtmfCompleted,
+    SendDtmfFailed,
 )
 from ._generated.models import (
     GetParticipantsResponse,
@@ -110,6 +115,11 @@ __all__ = [
     "DtmfTone",
     "CallRejectReason",
     "RemoveParticipantSucceeded",
-    "RemoveParticipantFailed"
+    "RemoveParticipantFailed",
+    "ContinuousDtmfRecognitionToneReceived",
+    "ContinuousDtmfRecognitionToneFailed",
+    "ContinuousDtmfRecognitionStopped",
+    "SendDtmfCompleted",
+    "SendDtmfFailed"
 ]
 __version__ = VERSION
