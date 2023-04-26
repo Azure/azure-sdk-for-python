@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleActionType as RestScheduleActionType
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -78,9 +79,24 @@ class Schedule(Resource):
             return MonitorSchedule, None
         return JobSchedule, None
 
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
+
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
+            return JobSchedule._from_rest_object(obj)
+        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
+        raise ScheduleException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SCHEDULE,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
+
     @property
-    def create_job(self) -> None:
+    def create_job(self) -> None:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
+        # return None here just to be explicit
+        return None
 
     @create_job.setter
     def create_job(self, value) -> None:  # pylint: disable=unused-argument
@@ -115,6 +131,22 @@ class Schedule(Resource):
         :rtype: str
         """
         return self._type
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestSchedule) -> "Schedule":
+        from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
+            return JobSchedule._from_rest_object(obj)
+        if obj.properties.action.action_type == RestScheduleActionType.CREATE_MONITOR:
+            return MonitorSchedule._from_rest_object(obj)
+        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
+        raise ScheduleException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.SCHEDULE,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
 
 class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
@@ -161,7 +193,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         self._type = ScheduleType.JOB
 
     @property
-    def create_job(self):
+    def create_job(self) -> Union[Job, str]:
         """
         Return the schedule's action job definition, or the existing job name.
 
@@ -171,7 +203,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         return self._create_job
 
     @create_job.setter
-    def create_job(self, value: Union[Job, str]):
+    def create_job(self, value: Union[Job, str]) -> None:
         """
         Sets the schedule's action to a job definition or an existing job name.
         """

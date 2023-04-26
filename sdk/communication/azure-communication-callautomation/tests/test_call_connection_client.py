@@ -36,7 +36,6 @@ class TestCallConnectionClient(unittest.TestCase):
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
         call_connection = call_automation_client.get_call_connection(self.call_connection_id)
-        response = None
         try:
             call_connection.hang_up(False)
         except:
@@ -54,7 +53,6 @@ class TestCallConnectionClient(unittest.TestCase):
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
         call_connection = call_automation_client.get_call_connection(self.call_connection_id)
-        response = None
         try:
             call_connection.hang_up(True)
         except:
@@ -76,7 +74,6 @@ class TestCallConnectionClient(unittest.TestCase):
         response = None
         user = CommunicationUserIdentifier(self.communication_user_id)
         call_invite = CallInvite(target=user)
-
         try:
             response = call_connection.transfer_call_to_participant(call_invite)
         except:
@@ -97,8 +94,6 @@ class TestCallConnectionClient(unittest.TestCase):
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
         call_connection = call_automation_client.get_call_connection(self.call_connection_id)
-        response = None
-
         try:
             response = call_connection.list_participants()
         except:
@@ -117,8 +112,6 @@ class TestCallConnectionClient(unittest.TestCase):
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
         call_connection = call_automation_client.get_call_connection(self.call_connection_id)
-        response = None
-
         try:
             response = call_connection.get_participant(self.communication_user_id)
         except:
@@ -141,8 +134,6 @@ class TestCallConnectionClient(unittest.TestCase):
         call_connection = call_automation_client.get_call_connection(self.call_connection_id)
         user = CommunicationUserIdentifier(self.communication_user_id)
         call_invite = CallInvite(target=user)
-        response = None
-
         try:
             response = call_connection.add_participant(call_invite)
         except:
@@ -164,8 +155,6 @@ class TestCallConnectionClient(unittest.TestCase):
                                                       transport=Mock(send=mock_send))
         call_connection = call_automation_client.get_call_connection(self.call_connection_id)
         user = CommunicationUserIdentifier(self.communication_user_id)
-        response = None
-
         try:
             response = call_connection.remove_participant(user)
         except:

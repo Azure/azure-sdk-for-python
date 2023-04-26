@@ -21,7 +21,7 @@ from unittest.mock import Mock
 class TestCallAutomationClient(unittest.TestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     server_callI_id = "12345"
-    callback_uri = "https://contoso.com/event"
+    callback_url = "https://contoso.com/event"
     communication_user_id = "8:acs:123"
     communication_user_source_id = "8:acs:456"
     incoming_call_context = "env2REDACTEDINCOMINGCALLCONTEXT"
@@ -33,7 +33,7 @@ class TestCallAutomationClient(unittest.TestCase):
             return mock_response(status_code=201, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_uri,
+                "callbackUri": self.callback_url,
                 "targets": [
                     {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}],
                 "sourceIdentity": {"rawId": self.communication_user_source_id,
@@ -47,17 +47,16 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
-        response = None
         try:
-            response = call_automation_client.create_call(call_invite, self.callback_uri)
+            call_connection_properties = call_automation_client.create_call(call_invite, self.callback_url)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        self.assertEqual(self.call_connection_id, response.call_connection_properties.call_connection_id)
-        self.assertEqual(self.server_callI_id, response.call_connection_properties.server_call_id)
-        self.assertEqual(self.callback_uri, response.call_connection_properties.callback_uri)
+        self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
+        self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
+        self.assertEqual(self.callback_url, call_connection_properties.callback_url)
 
     def test_create_group_call(self):
         raised = False
@@ -66,7 +65,7 @@ class TestCallAutomationClient(unittest.TestCase):
             return mock_response(status_code=201, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_uri,
+                "callbackUri": self.callback_url,
                 "targets": [{"rawId": self.communication_user_id,
                              "communicationUser": {"id": self.communication_user_id}}],
                 "sourceIdentity": {"rawId": self.communication_user_source_id,
@@ -77,17 +76,16 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
-        response = None
         try:
-            response = call_automation_client.create_group_call([user], self.callback_uri)
+            call_connection_properties = call_automation_client.create_group_call([user], self.callback_url)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        self.assertEqual(self.call_connection_id, response.call_connection_properties.call_connection_id)
-        self.assertEqual(self.server_callI_id, response.call_connection_properties.server_call_id)
-        self.assertEqual(self.callback_uri, response.call_connection_properties.callback_uri)
+        self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
+        self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
+        self.assertEqual(self.callback_url, call_connection_properties.callback_url)
 
     def test_answer_call(self):
         raised = False
@@ -96,7 +94,7 @@ class TestCallAutomationClient(unittest.TestCase):
             return mock_response(status_code=200, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_uri,
+                "callbackUri": self.callback_url,
                 "targets": [{"rawId": self.communication_user_id,
                              "communicationUser": {"id": self.communication_user_id}}],
                 "sourceIdentity": {"rawId": self.communication_user_source_id,
@@ -107,17 +105,16 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
-        response = None
         try:
-            response = call_automation_client.answer_call(self.incoming_call_context, self.callback_uri)
+            call_connection_properties = call_automation_client.answer_call(self.incoming_call_context, self.callback_url)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        self.assertEqual(self.call_connection_id, response.call_connection_properties.call_connection_id)
-        self.assertEqual(self.server_callI_id, response.call_connection_properties.server_call_id)
-        self.assertEqual(self.callback_uri, response.call_connection_properties.callback_uri)
+        self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
+        self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
+        self.assertEqual(self.callback_url, call_connection_properties.callback_url)
 
     def test_redirect_call(self):
         raised = False
@@ -131,7 +128,6 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
-        response = None
         try:
             call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
         except:
@@ -148,7 +144,6 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
                                                       transport=Mock(send=mock_send))
-        response = None
         try:
             call_automation_client.reject_call(self.incoming_call_context)
         except:

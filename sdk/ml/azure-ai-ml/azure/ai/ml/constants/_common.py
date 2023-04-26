@@ -26,6 +26,7 @@ ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
+NAMED_RESOURCE_ID_FORMAT_WITH_PARENT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
 LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
@@ -854,6 +855,10 @@ class InferenceServerType:
 class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "all"
     NONE = "none"
+
+
+class AzureDevopsArtifactsType:
+    ARTIFACT = "artifact"
 
 
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

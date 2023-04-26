@@ -19,6 +19,9 @@ class JobResourceConfigurationSchema(ResourceConfigurationSchema):
             )
         }
     )
+    max_instance_count = fields.Int(
+        metadata={"description": "The maximum number of instances to make available to this job."}
+    )
     docker_args = fields.Str(metadata={"description": "arguments to pass to the Docker run command."})
 
     @post_load

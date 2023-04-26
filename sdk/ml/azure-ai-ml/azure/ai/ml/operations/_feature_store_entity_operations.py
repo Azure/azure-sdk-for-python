@@ -9,8 +9,8 @@ from typing import Dict, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, FeaturestoreEntityVersion
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, FeaturestoreEntityVersion
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.exceptions import ValidationException
 
@@ -42,7 +42,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient022023Preview,
+        service_client: ServiceClient042023Preview,
         **kwargs: Dict,
     ):
         super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)

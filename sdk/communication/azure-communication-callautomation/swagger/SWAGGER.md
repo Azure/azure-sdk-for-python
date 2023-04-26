@@ -17,7 +17,7 @@ autorest SWAGGER.md
 
 ```yaml
 tag: package-2023-01-15-preview
-require: https://raw.githubusercontent.com/williamzhao87/azure-rest-api-specs/0d0cd5af40aa17af76ce0307ac5512351c38e3bc/specification/communication/data-plane/CallAutomation/readme.md
+require: https://github.com/williamzhao87/azure-rest-api-specs/blob/33883b827facd6567cbe03e3853634d59633b970/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
@@ -31,4 +31,25 @@ v3: true
 no-async: false
 add-credential: false
 title: Azure Communication Call Automation Service
+```
+
+### Rename response to result
+```yaml
+directive:
+- from: swagger-document
+  where: $.definitions.GetParticipantsResponse
+  transform: >
+    $["x-ms-client-name"] = "GetParticipantsResult";
+- from: swagger-document
+  where: $.definitions.TransferCallResponse
+  transform: >
+    $["x-ms-client-name"] = "TransferCallResult";
+- from: swagger-document
+  where: $.definitions.AddParticipantResponse
+  transform: >
+    $["x-ms-client-name"] = "AddParticipantResult";
+- from: swagger-document
+  where: $.definitions.RemoveParticipantResponse
+  transform: >
+    $["x-ms-client-name"] = "RemoveParticipantResult";
 ```
