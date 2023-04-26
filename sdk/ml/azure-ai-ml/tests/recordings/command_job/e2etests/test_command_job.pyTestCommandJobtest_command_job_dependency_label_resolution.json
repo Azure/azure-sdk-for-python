@@ -1022,8 +1022,8 @@
           "environmentVariables": {},
           "inputs": {
             "testdata": {
-              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/test_389664440427/versions/foo",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/test_389664440427/versions/foo"
             }
           },
           "outputs": {}

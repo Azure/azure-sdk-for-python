@@ -263,8 +263,8 @@
               "value": "999"
             },
             "iris_csv": {
-              "uri": "wasbs://datasets@azuremlexamples.blob.core.windows.net/iris.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "wasbs://datasets@azuremlexamples.blob.core.windows.net/iris.csv"
             }
           },
           "limits": {

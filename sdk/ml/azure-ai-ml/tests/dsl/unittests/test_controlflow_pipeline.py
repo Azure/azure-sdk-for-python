@@ -651,22 +651,21 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                 {
                     "silo1": {"uri_file_input": Input(path="path/on/datastore")},
                 },
-                '{"silo1": {"uri_file_input": {"uri": "path/on/datastore", "job_input_type": "uri_folder"}}}',
+                '{"silo1": {"uri_file_input": {"job_input_type": "uri_folder", "uri": "path/on/datastore"}}}',
             ),
             (
                 # asset input with name + version
                 {
                     "silo1": {"name_version": Input(path="test-data:1")},
                 },
-                '{"silo1": {"name_version": {"uri": "test-data:1", "job_input_type": "uri_folder"}}}',
+                '{"silo1": {"name_version": {"job_input_type": "uri_folder", "uri": "test-data:1"}}}',
             ),
             (
                 # asset input with uri
                 {
                     "silo1": {"uri": Input(path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")},
                 },
-                '{"silo1": {"uri": {"uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
-                '"job_input_type": "uri_folder"}}}',
+                '{"silo1": {"uri": {"job_input_type": "uri_folder", "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"}}}',
             ),
             (
                 # asset input binding
