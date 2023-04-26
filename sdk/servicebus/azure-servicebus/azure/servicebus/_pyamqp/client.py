@@ -219,13 +219,13 @@ class AMQPClient(
         """Close and destroy Client on exiting a context manager."""
         self.close()
 
-    def __getstate__(self):
+    def __getstate__(self): # pylint: disable=client-method-name-no-double-underscore
         state = self.__dict__.copy()
         state['_mgmt_link_lock'] = None
         state['_keep_alive_thread'] = None
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state):  # pylint: disable=client-method-name-no-double-underscore
         state['_mgmt_link_lock'] = threading.Lock()
         state['_keep_alive_thread'] = threading.Thread(target=self._keep_alive)
         self.__dict__.update(state)
@@ -807,14 +807,14 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
-    def __getstate__(self):
+    def __getstate__(self): # pylint: disable=client-method-name-no-double-underscore
         state = self.__dict__.copy()
         state['_received_messages'] = None
         state['_mgmt_link_lock'] = None
         state['_keep_alive_thread'] = None
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state):  # pylint: disable=client-method-name-no-double-underscore
         state['_received_messages'] = queue.Queue()
         state['_mgmt_link_lock'] = threading.Lock()
         state['_keep_alive_thread'] = threading.Thread(target=self._keep_alive)

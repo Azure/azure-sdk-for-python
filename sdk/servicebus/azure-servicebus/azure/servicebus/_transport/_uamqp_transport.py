@@ -1071,8 +1071,11 @@ try:
 
         @staticmethod
         def create_servicebus_exception(
-            logger: "Logger", exception: Exception, *, custom_endpoint_address: Optional[str] = None
-        ) -> "ServiceBusError": # pylint: disable=unused-argument
+            logger: "Logger",
+            exception: Exception,
+            *,
+            custom_endpoint_address: Optional[str] = None   # pylint: disable=unused-argument
+        ) -> "ServiceBusError":
             if isinstance(exception, AMQPError):
                 try:
                     # handling AMQP Errors that have the condition field
