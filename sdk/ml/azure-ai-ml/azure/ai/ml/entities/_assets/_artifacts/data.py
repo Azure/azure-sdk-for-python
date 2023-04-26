@@ -148,9 +148,6 @@ class Data(Artifact):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        print("output")
-        # self.auto_delete_setting = {"condition": "created_greater_than"}
-        print(self)
         return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_container_rest_object(self) -> DataContainer:
@@ -181,11 +178,7 @@ class Data(Artifact):
 
     @classmethod
     def _from_container_rest_object(cls, data_container_rest_object: DataContainer) -> "Data":
-        print("_from_container_rest_object")
         data_rest_object_details: DataContainerProperties = data_container_rest_object.properties
-        print("data_container_rest_object", data_container_rest_object)
-        print("data_container_rest_object.system_data", data_container_rest_object.system_data)
-        print("data_container_rest_object.properties", data_container_rest_object.properties)
         data = Data(
             name=data_container_rest_object.name,
             creation_context=SystemData._from_rest_object(data_container_rest_object.system_data),
@@ -198,14 +191,7 @@ class Data(Artifact):
 
     @classmethod
     def _from_rest_object(cls, data_rest_object: DataVersionBase) -> "Data":
-        print("_from_rest_object")
-
         data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
-        print("data_rest_object", data_rest_object)
-        print("data_rest_object.system_data",
-              data_rest_object.system_data)
-        print('data_rest_object_details', data_rest_object_details)
-        print("data_rest_object_details.properties", data_rest_object_details.properties)
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
         data = Data(
