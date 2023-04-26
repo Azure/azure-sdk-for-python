@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
@@ -64,8 +64,9 @@ class TestFeatureStoreEntityOperations:
     def test_archive_version(self, mock_feature_store_entity_operations: FeatureStoreEntityOperations):
         name = "random_name"
         featureStoreEntity_version = Mock(
-            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
+            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties(is_archived=False)))
         )
+        featureStoreEntity_version.properties.is_archived = False
         version = "1"
         mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
         mock_feature_store_entity_operations.archive(name=name, version=version)

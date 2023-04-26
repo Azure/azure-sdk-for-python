@@ -16,6 +16,7 @@ from azure.ai.ml._schema.component.input_output import (
     PrimitiveOutputSchema,
 )
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
+from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import (
     ExperimentalField,
     FileRefField,
@@ -30,8 +31,19 @@ from azure.ai.ml._schema.job.distribution import (
     RayDistributionSchema,
 )
 from azure.ai.ml._schema.job.parameterized_command import ParameterizedCommandSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureDevopsArtifactsType
 from azure.ai.ml.constants._component import ComponentSource, NodeType
+
+
+class AzureDevopsArtifactsSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(allowed_values=[AzureDevopsArtifactsType.ARTIFACT])
+    feed = fields.Str()
+    name = fields.Str()
+    version = fields.Str()
+    scope = fields.Str()
+    organization = fields.Str()
+    project = fields.Str()
 
 
 class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
@@ -61,11 +73,23 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
     )
     properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
 
+    # Note: AzureDevopsArtifactsSchema only available when private preview flag opened before init of command component
+    # schema class.
+    if is_private_preview_enabled():
+        additional_includes = fields.List(UnionField([fields.Str(), NestedField(AzureDevopsArtifactsSchema)]))
+    else:
+        additional_includes = fields.List(fields.Str())
+
     @post_dump
     def remove_unnecessary_fields(self, component_schema_dict, **kwargs):
         # remove empty properties to keep the component spec unchanged
         if not component_schema_dict.get("properties"):
             component_schema_dict.pop("properties", None)
+        if (
+            component_schema_dict.get("additional_includes") is not None
+            and len(component_schema_dict["additional_includes"]) == 0
+        ):
+            component_schema_dict.pop("additional_includes")
         return component_schema_dict
 
 
