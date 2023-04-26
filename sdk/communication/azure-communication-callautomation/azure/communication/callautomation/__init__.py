@@ -1,16 +1,11 @@
 from ._version import VERSION
 from ._call_connection_client import CallConnectionClient
-from ._call_media_client import CallMediaClient
-from ._call_recording_client import CallRecordingClient
 from ._call_automation_client import (
-    CallAutomationClient,
-    AnswerCallResult,
-    CreateCallResult
+    CallAutomationClient
 )
 from ._call_automation_event_parser import CallAutomationEventParser
 from ._models import (
-    RecordingStateResponse,
-    StartRecordingOptions,
+    RecordingStateResult,
     ServerCallLocator,
     GroupCallLocator,
     CallInvite,
@@ -20,10 +15,8 @@ from ._models import (
     RecordingChannel,
     PlaySource,
     FileSource,
-    CallMediaRecognizeOptions,
     CallConnectionProperties,
     CallParticipant,
-    CallMediaRecognizeDtmfOptions,
     Gender,
     DtmfTone,
     CallRejectReason
@@ -53,11 +46,13 @@ from ._events import (
     RemoveParticipantFailed,
 )
 from ._generated.models import (
-    GetParticipantsResponse,
-    TransferCallResponse,
-    AddParticipantResponse,
+    GetParticipantsResult,
+    TransferCallResult,
+    AddParticipantResult,
+    RemoveParticipantResult,
     CustomContext,
-    RemoveParticipantResponse
+    RecognizeInputType,
+    ResultInformation,
 )
 
 __all__ = [
@@ -67,10 +62,7 @@ __all__ = [
     'RecordingStorage',
     'RecordingChannel',
     'CallConnectionClient',
-    'CallMediaClient',
-    'CallRecordingClient',
-    "StartRecordingOptions",
-    "RecordingStateResponse",
+    "RecordingStateResult",
     "ServerCallLocator",
     "GroupCallLocator",
     "CallAutomationEventParser",
@@ -95,21 +87,19 @@ __all__ = [
     "MicrosoftTeamsUserIdentifier",
     "PlaySource",
     "FileSource",
-    "CallMediaRecognizeOptions",
-    "CallMediaRecognizeDtmfOptions",
-    "AnswerCallResult",
-    "CreateCallResult",
     "CallConnectionProperties",
     "CallParticipant",
-    "GetParticipantsResponse",
-    "TransferCallResponse",
-    "AddParticipantResponse",
+    "GetParticipantsResult",
+    "TransferCallResult",
+    "AddParticipantResult",
     "CustomContext",
-    "RemoveParticipantResponse",
+    "RemoveParticipantResult",
     "Gender",
     "DtmfTone",
     "CallRejectReason",
     "RemoveParticipantSucceeded",
-    "RemoveParticipantFailed"
+    "RemoveParticipantFailed",
+    "RecognizeInputType",
+    "ResultInformation"
 ]
 __version__ = VERSION

@@ -8,10 +8,9 @@
 
 from ._models import AddParticipantFailed
 from ._models import AddParticipantRequest
-from ._models import AddParticipantResponse
+from ._models import AddParticipantResult
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
-from ._models import BlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -29,9 +28,8 @@ from ._models import CommunicationUserIdentifierModel
 from ._models import CreateCallRequest
 from ._models import CustomContext
 from ._models import DtmfOptions
-from ._models import ExternalStorage
 from ._models import FileSource
-from ._models import GetParticipantsResponse
+from ._models import GetParticipantsResult
 from ._models import MediaStreamingConfiguration
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -53,15 +51,12 @@ from ._models import RecordingStateChanged
 from ._models import RecordingStateResponse
 from ._models import RedirectCallRequest
 from ._models import RejectCallRequest
-from ._models import RemoveParticipantFailed
 from ._models import RemoveParticipantRequest
-from ._models import RemoveParticipantResponse
-from ._models import RemoveParticipantSucceeded
+from ._models import RemoveParticipantResult
 from ._models import ResultInformation
-from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import TextSource
-from ._models import TransferCallResponse
+from ._models import TransferCallResult
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
@@ -91,10 +86,9 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AddParticipantFailed",
     "AddParticipantRequest",
-    "AddParticipantResponse",
+    "AddParticipantResult",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
-    "BlobStorage",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
@@ -112,9 +106,8 @@ __all__ = [
     "CreateCallRequest",
     "CustomContext",
     "DtmfOptions",
-    "ExternalStorage",
     "FileSource",
-    "GetParticipantsResponse",
+    "GetParticipantsResult",
     "MediaStreamingConfiguration",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -136,15 +129,12 @@ __all__ = [
     "RecordingStateResponse",
     "RedirectCallRequest",
     "RejectCallRequest",
-    "RemoveParticipantFailed",
     "RemoveParticipantRequest",
-    "RemoveParticipantResponse",
-    "RemoveParticipantSucceeded",
+    "RemoveParticipantResult",
     "ResultInformation",
-    "SsmlSource",
     "StartCallRecordingRequest",
     "TextSource",
-    "TransferCallResponse",
+    "TransferCallResult",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",

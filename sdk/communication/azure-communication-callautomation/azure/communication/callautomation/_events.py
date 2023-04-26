@@ -26,7 +26,8 @@ from ._generated.models import (
 from ._communication_identifier_serializer import deserialize_identifier
 
 class AddParticipantSucceeded(AddParticipantSucceededRest):
-    """Event sent when the participant was successfully added to the call.
+    """
+    Event sent when the participant was successfully added to the call.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -56,7 +57,8 @@ class AddParticipantSucceeded(AddParticipantSucceededRest):
 
 
 class AddParticipantFailed(AddParticipantFailedRest):
-    """Event sent when the participant was not added successfully to the call.
+    """
+    Event sent when the participant was not added successfully to the call.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -86,7 +88,8 @@ class AddParticipantFailed(AddParticipantFailedRest):
 
 
 class CallConnected(CallConnectedRest):
-    """Event sent when the call is established.
+    """
+    Event sent when the call is established.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -110,7 +113,8 @@ class CallConnected(CallConnectedRest):
 
 
 class CallDisconnected(CallDisconnectedRest):
-    """Event sent when the call is terminated.
+    """
+    Event sent when the call is terminated.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -134,7 +138,8 @@ class CallDisconnected(CallDisconnectedRest):
 
 
 class CallTransferAccepted(CallTransferAcceptedRest):
-    """Event sent when transfer of the call was successful.
+    """
+    Event sent when transfer of the call was successful.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -161,7 +166,8 @@ class CallTransferAccepted(CallTransferAcceptedRest):
 
 
 class CallTransferFailed(CallTransferFailedRest):
-    """Event sent when transfer of the call was not successful.
+    """
+    Event sent when transfer of the call was not successful.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -188,7 +194,8 @@ class CallTransferFailed(CallTransferFailedRest):
 
 
 class ParticipantsUpdated(ParticipantsUpdatedRest):
-    """Event sent when a participant joins, leaves, muted or unmuted.
+    """
+    Event sent when a participant joins, leaves, muted or unmuted.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -213,7 +220,8 @@ class ParticipantsUpdated(ParticipantsUpdatedRest):
 
 
 class RecordingStateChanged(RecordingStateChangedRest):
-    """Event sent when recording state changes.
+    """
+    Event sent when recording state changes.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -242,7 +250,8 @@ class RecordingStateChanged(RecordingStateChangedRest):
 
 
 class PlayCompleted(PlayCompletedRest):
-    """Event sent when media play is completed successfully.
+    """
+    Event sent when media play is completed successfully.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -269,7 +278,8 @@ class PlayCompleted(PlayCompletedRest):
 
 
 class PlayFailed(PlayFailedRest):
-    """Event sent when media play failed.
+    """
+    Event sent when media play failed.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -296,7 +306,8 @@ class PlayFailed(PlayFailedRest):
 
 
 class PlayCanceled(PlayCanceledRest):
-    """Event sent when media play is cancelled.
+    """
+    Event sent when media play is cancelled.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -320,7 +331,8 @@ class PlayCanceled(PlayCanceledRest):
 
 
 class RecognizeCompleted(RecognizeCompletedRest):
-    """Event sent when recognize is completed successfully.
+    """
+    Event sent when recognize is completed successfully.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -359,7 +371,8 @@ class RecognizeCompleted(RecognizeCompletedRest):
 
 
 class RecognizeFailed(RecognizeFailedRest):
-    """Event sent when recognize action failed.
+    """
+    Event sent when recognize action failed.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -383,7 +396,8 @@ class RecognizeFailed(RecognizeFailedRest):
 
 
 class RecognizeCanceled(RecognizeCanceledRest):
-    """Event sent when recognize is cancelled.
+    """
+    Event sent when recognize is cancelled.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -407,7 +421,8 @@ class RecognizeCanceled(RecognizeCanceledRest):
 
 
 class RemoveParticipantSucceeded(RemoveParticipantSucceededRest):
-    """Event sent when the participant was successfully removed to the call.
+    """
+    Event sent when the participant was successfully removed to the call.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -437,7 +452,8 @@ class RemoveParticipantSucceeded(RemoveParticipantSucceededRest):
 
 
 class RemoveParticipantFailed(RemoveParticipantFailedRest):
-    """Event sent when the participant was not removed successfully to the call.
+    """
+    Event sent when the participant was not removed successfully to the call.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str

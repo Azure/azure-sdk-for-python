@@ -28,10 +28,10 @@ class CallAutomationCreateCallSample(object):
         call_invite = CallInvite(target=user)
         callback_uri = "https://contoso.com/event"
 
-        response = callautomation_client.create_call(call_invite, callback_uri)
+        call_connection_properties = callautomation_client.create_call(call_invite, callback_uri)
 
         # callconnection id of the call
-        print(response.call_connection_properties.call_connection_id)
+        print(call_connection_properties.call_connection_id)
 
 if __name__ == '__main__':
     sample = CallAutomationCreateCallSample()

@@ -32,3 +32,24 @@ no-async: false
 add-credential: false
 title: Azure Communication Call Automation Service
 ```
+
+### Rename response to result
+```yaml
+directive:
+- from: swagger-document
+  where: $.definitions.GetParticipantsResponse
+  transform: >
+    $["x-ms-client-name"] = "GetParticipantsResult";
+- from: swagger-document
+  where: $.definitions.TransferCallResponse
+  transform: >
+    $["x-ms-client-name"] = "TransferCallResult";
+- from: swagger-document
+  where: $.definitions.AddParticipantResponse
+  transform: >
+    $["x-ms-client-name"] = "AddParticipantResult";
+- from: swagger-document
+  where: $.definitions.RemoveParticipantResponse
+  transform: >
+    $["x-ms-client-name"] = "RemoveParticipantResult";
+```

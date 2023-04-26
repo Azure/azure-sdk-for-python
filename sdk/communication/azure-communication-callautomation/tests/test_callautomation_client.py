@@ -42,14 +42,14 @@ class TestCallAutomationClient(unittest.TestCase):
         call_invite = CallInvite(target=user)
 
         callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-        response = None
+        call_connection_properties = None
         try:
-            response = callautomation_client.create_call(call_invite, self.callback_uri)
+            call_connection_properties = callautomation_client.create_call(call_invite, self.callback_uri)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.call_connection_id, response.call_connection_properties.call_connection_id)
-        self.assertEqual(self.server_callI_id, response.call_connection_properties.server_call_id)
-        self.assertEqual(self.callback_uri, response.call_connection_properties.callback_uri)
+        self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
+        self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
+        self.assertEqual(self.callback_uri, call_connection_properties.callback_uri)

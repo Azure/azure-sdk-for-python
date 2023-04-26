@@ -6,14 +6,13 @@
 import unittest
 
 from azure.communication.callautomation import (
-    CallMediaClient,
+    CallConnectionClient,
     _communication_identifier_serializer
 )
 from azure.communication.callautomation._models import (
     FileSource,
     PhoneNumberIdentifier,
-    DtmfTone,
-    CallMediaRecognizeDtmfOptions
+    DtmfTone
 )
 from azure.communication.callautomation._generated.models import (
     PlayRequest,
@@ -24,7 +23,11 @@ from azure.communication.callautomation._generated.models import (
     RecognizeOptions,
     DtmfOptions
 )
+from azure.communication.callautomation._generated.models._enums import (
+    RecognizeInputType
+)
 from unittest.mock import Mock
+from azure.core.credentials import AzureKeyCredential
 
 class TestCallMediaClient(unittest.TestCase):
     def setUp(self):
@@ -34,14 +37,19 @@ class TestCallMediaClient(unittest.TestCase):
         self.target_user = PhoneNumberIdentifier(self.phone_number)
         self.call_media_operations = Mock()
 
-        self.call_media_client = CallMediaClient(call_connection_id=self.call_connection_id, call_media_operations=self.call_media_operations)
+        self.call_connection_client = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id)
+
+        self.call_connection_client._call_media_client = self.call_media_operations
 
     def test_play(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
         play_source = FileSource(uri=self.uri)
 
-        self.call_media_client.play(play_source=play_source, play_to=[self.target_user])
+        self.call_connection_client.play_media(play_source=play_source, play_to=[self.target_user])
 
         expected_play_request = PlayRequest(
             play_source_info=PlaySource(
@@ -50,7 +58,7 @@ class TestCallMediaClient(unittest.TestCase):
                 play_source_id=None
             ),
             play_to=[_communication_identifier_serializer.serialize_identifier(self.target_user)],
-            play_options=PlayOptions(loop=False)            
+            play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -61,13 +69,12 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
-
     def test_play_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
         play_source = FileSource(uri=self.uri)
 
-        self.call_media_client.play_to_all(play_source=play_source)
+        self.call_connection_client.play_media_to_all(play_source=play_source)
 
         expected_play_request = PlayRequest(
             play_source_info=PlaySource(
@@ -76,7 +83,7 @@ class TestCallMediaClient(unittest.TestCase):
                 play_source_id=None
             ),
             play_to=[],
-            play_options=PlayOptions(loop=False)            
+            play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -86,41 +93,44 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-    
+
     def test_recognize(self):
         mock_recognize = Mock()
         self.call_media_operations.recognize = mock_recognize
-        play_source = FileSource(uri=self.uri)
 
-        recognize_options = CallMediaRecognizeDtmfOptions(
-                target_participant=self.target_user,
-                max_tones_to_collect=3)
-        recognize_options.inter_tone_timeout = 10
-        recognize_options.stop_dtmf_tones = [DtmfTone.FOUR]
-        recognize_options.interrupt_prompt = True
-        recognize_options.initial_silence_timeout = 5
-        recognize_options.play_prompt = play_source
+        test_input_type = RecognizeInputType.DTMF
+        test_max_tones_to_collect = 3
+        test_inter_tone_timeout = 10
+        test_stop_dtmf_tones = [DtmfTone.FOUR]
+        test_interrupt_prompt = True
+        test_initial_silence_timeout = 5
+        test_play_source = FileSource(uri=self.uri)
 
-        self.call_media_client.start_recognizing(recognize_options=recognize_options)
+        self.call_connection_client.start_recognizing_media(target_participant=self.target_user,
+                                                            input_type=test_input_type,
+                                                            dtmf_max_tones_to_collect=test_max_tones_to_collect,
+                                                            dtmf_inter_tone_timeout=test_inter_tone_timeout,
+                                                            dtmf_stop_tones=test_stop_dtmf_tones,
+                                                            interrupt_prompt=test_interrupt_prompt,
+                                                            initial_silence_timeout=test_initial_silence_timeout,
+                                                            play_prompt=test_play_source)
 
         mock_recognize.assert_called_once()
 
         actual_recognize_request = mock_recognize.call_args[0][1]
 
         expected_recognize_request = RecognizeRequest(
-            recognize_input_type=recognize_options.input_type,
-            play_prompt=self.call_media_client._create_play_source_internal(play_source),
-            interrupt_call_media_operation=recognize_options.interrupt_call_media_operation,
-            operation_context=recognize_options.operation_context,
+            recognize_input_type=test_input_type,
+            play_prompt=self.call_connection_client._create_play_source_internal(test_play_source),
             recognize_options=RecognizeOptions(
                 target_participant=_communication_identifier_serializer.serialize_identifier(
-                    recognize_options.target_participant),
-                interrupt_prompt=recognize_options.interrupt_prompt,
-                initial_silence_timeout_in_seconds=recognize_options.initial_silence_timeout,
+                    self.target_user),
+                interrupt_prompt=test_interrupt_prompt,
+                initial_silence_timeout_in_seconds=test_initial_silence_timeout,
                 dtmf_options=DtmfOptions(
-                    inter_tone_timeout_in_seconds=recognize_options.inter_tone_timeout,
-                    max_tones_to_collect=recognize_options.max_tones_to_collect,
-                    stop_tones=recognize_options.stop_dtmf_tones
+                    inter_tone_timeout_in_seconds=test_inter_tone_timeout,
+                    max_tones_to_collect=test_max_tones_to_collect,
+                    stop_tones=test_stop_dtmf_tones
                 )
             )
         )
@@ -137,12 +147,11 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.max_tones_to_collect, actual_recognize_request.recognize_options.dtmf_options.max_tones_to_collect)
         self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.stop_tones, actual_recognize_request.recognize_options.dtmf_options.stop_tones)
 
-
     def test_cancel(self):
         mock_cancel_all = Mock()
         self.call_media_operations.cancel_all_media_operations = mock_cancel_all
 
-        self.call_media_client.cancel_all_media_operations()
+        self.call_connection_client.cancel_all_media_operations()
 
         mock_cancel_all.assert_called_once()
         actual_call_connection_id = mock_cancel_all.call_args[0][0]
