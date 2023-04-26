@@ -10,7 +10,7 @@ from typing import Any
 from marshmallow import ValidationError, fields, post_load, validates
 
 from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
-from azure.ai.ml._schema.core.fields import ArmStr, ExperimentalField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType, PublicNetworkAccess
 
 module_logger = logging.getLogger(__name__)
@@ -27,15 +27,13 @@ class OnlineEndpointSchema(EndpointSchema):
     )
     kind = fields.Str(dump_only=True)
 
-    mirror_traffic = ExperimentalField(
-        fields.Dict(
-            keys=fields.Str(),
-            values=fields.Int(),
-            metadata={
-                "description": """a dict with key as deployment name and value as traffic percentage.
+    mirror_traffic = fields.Dict(
+        keys=fields.Str(),
+        values=fields.Int(),
+        metadata={
+            "description": """a dict with key as deployment name and value as traffic percentage.
                  Only one key will be accepted and value needs to be less than or equal to 50%"""
-            },
-        )
+        },
     )
 
     @validates("traffic")
