@@ -582,8 +582,11 @@ class WebSocketTransportAsync(
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
         async with self.socket_lock:
-            await self.ws.close()
-            await self.session.close()
+            try:
+                await self.session.close()
+                await self.ws.close()
+            except Exception as e:  # pylint: disable=broad-except
+                _LOGGER.debug("Error shutting down socket: %r", e, extra=self.network_trace_params)
             self.connected = False
 
     async def _write(self, s):

@@ -287,10 +287,9 @@ class AMQPClientAsync(AMQPClientSync):
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()
             self._cbs_authenticator = None
-        await self._session.end()
-        self._session = None
         if not self._external_connection:
             await self._connection.close()
+            self._session = None
             self._connection = None
         if self._keep_alive_thread:
             await self._keep_alive_thread

@@ -218,7 +218,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Disconnect the transport and set state to END."""
         if self.state == ConnectionState.END:
             return
-        await self._set_state(ConnectionState.END)
+        try:
+            await self._set_state(ConnectionState.END)
+        except Exception as e:  # pylint: disable=broad-except
+            # Even if exc, should try to close underlying objects.
+            _LOGGER.debug("Error sending disconnect END frame: %r", e)
+
+        # If not connected, then no sessions in outgoing endpoints.
+        for session in self._outgoing_endpoints.values():
+            await session.end()
         await self._transport.close()
 
     def _can_read(self):
@@ -551,7 +559,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         try:
             await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
             self._incoming_endpoints.pop(channel)
-            self._outgoing_endpoints.pop(channel)
+            session = self._outgoing_endpoints.pop(channel)
+            session.end()
         except KeyError:
             #close the connection
             await self.close(
@@ -869,6 +878,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         except Exception as exc:  # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
             _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
-            await self._set_state(ConnectionState.END)
+            await self._set_state(ConnectionState.DISCARDING)
         finally:
             await self._disconnect()
