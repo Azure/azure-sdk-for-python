@@ -557,6 +557,7 @@ def snapshot_hash_sanitizer(request: FixtureRequest):
         add_general_regex_sanitizer(
             value="000000000000000000000000000000000000",
             regex=_query_param_regex("hash"),
+            function_scoped=True,
         )
 
 
