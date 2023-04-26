@@ -640,6 +640,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
