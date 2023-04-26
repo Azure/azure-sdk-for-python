@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DataContainer,
     DataContainerProperties,
     DataType,
@@ -148,6 +148,9 @@ class Data(Artifact):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
+        print("output")
+        # self.auto_delete_setting = {"condition": "created_greater_than"}
+        print(self)
         return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_container_rest_object(self) -> DataContainer:
@@ -170,6 +173,7 @@ class Data(Artifact):
             is_archived=False,
             properties=self.properties,
             data_uri=self.path,
+            auto_delete_setting=self.auto_delete_setting
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
             data_version_details.referenced_uris = self._referenced_uris
@@ -177,7 +181,11 @@ class Data(Artifact):
 
     @classmethod
     def _from_container_rest_object(cls, data_container_rest_object: DataContainer) -> "Data":
+        print("_from_container_rest_object")
         data_rest_object_details: DataContainerProperties = data_container_rest_object.properties
+        print("data_container_rest_object", data_container_rest_object)
+        print("data_container_rest_object.system_data", data_container_rest_object.system_data)
+        print("data_container_rest_object.properties", data_container_rest_object.properties)
         data = Data(
             name=data_container_rest_object.name,
             creation_context=SystemData._from_rest_object(data_container_rest_object.system_data),
@@ -190,7 +198,14 @@ class Data(Artifact):
 
     @classmethod
     def _from_rest_object(cls, data_rest_object: DataVersionBase) -> "Data":
+        print("_from_rest_object")
+
         data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
+        print("data_rest_object", data_rest_object)
+        print("data_rest_object.system_data",
+              data_rest_object.system_data)
+        print('data_rest_object_details', data_rest_object_details)
+        print("data_rest_object_details.properties", data_rest_object_details.properties)
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
         data = Data(
@@ -205,6 +220,7 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
+            auto_delete_setting=getattr(data_rest_object_details, "auto_delete_setting", None),
         )
         return data
 

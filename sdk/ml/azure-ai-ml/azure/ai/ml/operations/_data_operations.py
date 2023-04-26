@@ -24,8 +24,8 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -38,6 +38,7 @@ from azure.ai.ml._utils._asset_utils import (
     _create_or_update_autoincrement,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
+    _check_or_modify_auto_delete_setting
 )
 from azure.ai.ml._utils._data_utils import (
     download_mltable_metadata_schema,
@@ -82,7 +83,7 @@ class DataOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -311,6 +312,9 @@ class DataOperations(_ScopeDependentOperations):
                 artifact_type=ErrorTarget.DATA,
                 show_progress=self._show_progress,
             )
+            
+            _check_or_modify_auto_delete_setting(data.auto_delete_setting)
+
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
 

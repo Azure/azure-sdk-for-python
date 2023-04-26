@@ -864,3 +864,8 @@ class AzureDevopsArtifactsType:
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
+
+
+class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CREATED_GREATER_THAN = "created_greater_than"
+    LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"

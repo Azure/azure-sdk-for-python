@@ -48,7 +48,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelVersionsOperations,
 )
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
-from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
+from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
@@ -938,6 +938,13 @@ def _resolve_label_to_asset(
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return resolver(name)
+
+
+def _check_or_modify_auto_delete_setting(autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],):
+    if autoDeleteSetting != None and hasattr(autoDeleteSetting, "condition"):
+        condition = getattr(autoDeleteSetting, "condition")
+        condition = snake_to_camel(condition)
+        setattr(autoDeleteSetting, "condition", condition)
 
 
 class FileUploadProgressBar(tqdm):

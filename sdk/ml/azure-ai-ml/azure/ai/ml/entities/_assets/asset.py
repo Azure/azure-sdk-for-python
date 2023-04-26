@@ -26,6 +26,8 @@ class Asset(Resource):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param properties: The asset property dictionary.
+    :type properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -41,6 +43,8 @@ class Asset(Resource):
     ):
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
+        self.auto_delete_setting = kwargs.pop("auto_delete_setting", False)
+
 
         if not name and version is None:
             name = _get_random_name()
@@ -119,6 +123,7 @@ class Asset(Resource):
             and self.base_path == other.base_path
             and self._is_anonymous == other._is_anonymous
             and self._auto_increment_version == other._auto_increment_version
+            and self.auto_delete_setting == other._auto_delete_setting
         )
 
     def __ne__(self, other) -> bool:
