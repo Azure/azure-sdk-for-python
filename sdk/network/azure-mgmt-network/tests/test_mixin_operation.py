@@ -5,21 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-
-# TEST SCENARIO COVERAGE
-# ----------------------
-# Methods Total   : 5
-# Methods Covered : 5
-# Examples Total  : 5
-# Examples Tested : 5
-# Coverage %      : 100
-# ----------------------
-
-#  web_application_firewall_policies: /5
-
-import unittest
-
 from azure.core.exceptions import ResourceNotFoundError
 import azure.mgmt.network
 from devtools_testutils import (
@@ -29,8 +14,6 @@ from devtools_testutils import (
 )
 import pytest
 
-AZURE_LOCATION = "eastus"
-
 
 class TestMgmtNetworkMixinOperation(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
@@ -38,17 +21,12 @@ class TestMgmtNetworkMixinOperation(AzureMgmtRecordedTestCase):
             azure.mgmt.network.NetworkManagementClient
         )
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(location="eastus")
     @recorded_by_proxy
     def test_mixin_operation(self, resource_group):
         with pytest.raises(ResourceNotFoundError):
-          self.mgmt_client.list_network_manager_effective_connectivity_configurations(
-              resource_group_name=resource_group.name,
-              virtual_network_name="virtual_network_name",
-              parameters={},
-          )
-
-
-# ------------------------------------------------------------------------------
-if __name__ == "__main__":
-    unittest.main()
+            self.mgmt_client.list_network_manager_effective_connectivity_configurations(
+                resource_group_name=resource_group.name,
+                virtual_network_name="virtual_network_name",
+                parameters={},
+            )
