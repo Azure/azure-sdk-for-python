@@ -3,11 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-"""Tests for models used for receipt verification."""
+"""Tests for models used for receipt application claims verification."""
 
 import pytest
 
-from azure.confidentialledger.receipt._models import (
+from azure.confidentialledger.receipt._receipt_models import (
     LeafComponents,
     ProofElement,
     Receipt,
@@ -17,7 +17,7 @@ from azure.confidentialledger.receipt._utils import (
     _convert_dict_to_camel_case,
 )
 
-from ._shared.constants import (
+from ._shared.receipt_constants import (
     get_test_valid_receipt_1,
     get_test_valid_receipt_1_dict,
     get_test_valid_receipt_2,
@@ -26,7 +26,6 @@ from ._shared.constants import (
 
 
 def test_receipt_init_with_valid_receipt_arguments():
-
     # Check that Receipt constructor does not throw any exception
     # with valid receipt arguments
     try:
@@ -51,7 +50,6 @@ def test_receipt_init_with_valid_receipt_arguments():
 
 
 def test_receipt_init_with_missing_optional_arguments():
-
     # Check that Receipt constructor does not throw any exception
     # with optional missing arguments (e.g., service_endorsements)
     try:
@@ -75,7 +73,6 @@ def test_receipt_init_with_missing_optional_arguments():
 
 
 def test_receipt_init_throws_exceptions_with_missing_required_fields():
-
     # Throws exception when missing different required fields
     with pytest.raises(TypeError, match="missing . required .* argument"):
         Receipt(
@@ -84,7 +81,6 @@ def test_receipt_init_throws_exceptions_with_missing_required_fields():
 
 
 def test_receipt_init_throws_exceptions_with_missing_required_fields_in_subobjects():
-
     # Throws exception when missing required fields inside LeafComponents
     with pytest.raises(TypeError, match="missing . required .* argument"):
         Receipt(
@@ -113,7 +109,6 @@ def test_receipt_init_throws_exceptions_with_missing_required_fields_in_subobjec
     ],
 )
 def test_receipt_creation_from_dict(input_receipt_dict, expected_receipt):
-
     receipt = Receipt.from_dict(_convert_dict_to_camel_case(input_receipt_dict))
 
     # Check that the receipt created from dict is the same as the expected receipt
