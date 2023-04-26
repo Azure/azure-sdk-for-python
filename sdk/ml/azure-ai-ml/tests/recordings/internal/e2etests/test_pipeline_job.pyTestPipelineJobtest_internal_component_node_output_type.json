@@ -8658,8 +8658,8 @@
               "type": "CommandComponent",
               "outputs": {
                 "output": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_file"
+                  "job_output_type": "uri_file",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -8754,8 +8754,8 @@
               "type": "CommandComponent",
               "outputs": {
                 "output": {
-                  "mode": "ReadWriteMount",
-                  "job_output_type": "uri_file"
+                  "job_output_type": "uri_file",
+                  "mode": "ReadWriteMount"
                 }
               },
               "_source": "YAML.COMPONENT",

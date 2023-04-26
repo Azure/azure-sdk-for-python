@@ -588,8 +588,8 @@
           "jobType": "Pipeline",
           "inputs": {
             "pipeline_input": {
-              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_imdb_reviews_train/versions/2",
-              "jobInputType": "mltable"
+              "jobInputType": "mltable",
+              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_imdb_reviews_train/versions/2"
             }
           },
           "jobs": {

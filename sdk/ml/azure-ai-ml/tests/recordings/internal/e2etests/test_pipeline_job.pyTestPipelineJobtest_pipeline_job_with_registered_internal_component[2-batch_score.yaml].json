@@ -960,7 +960,7 @@
                 },
                 "images_to_score": {
                   "job_input_type": "mltable",
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist/versions/2",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist/versions/2"
                 }
               },
               "_source": "REMOTE.WORKSPACE.COMPONENT",
