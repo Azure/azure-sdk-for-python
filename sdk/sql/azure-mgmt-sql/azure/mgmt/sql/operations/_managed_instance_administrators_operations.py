@@ -270,8 +270,9 @@ class ManagedInstanceAdministratorsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -338,8 +339,9 @@ class ManagedInstanceAdministratorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -408,8 +410,9 @@ class ManagedInstanceAdministratorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -530,8 +533,8 @@ class ManagedInstanceAdministratorsOperations:
         :type managed_instance_name: str
         :param administrator_name: "ActiveDirectory" Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
-        :param parameters: The requested administrator parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested administrator parameters. Is either a
+         ManagedInstanceAdministrator type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdministrator or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -636,8 +639,9 @@ class ManagedInstanceAdministratorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

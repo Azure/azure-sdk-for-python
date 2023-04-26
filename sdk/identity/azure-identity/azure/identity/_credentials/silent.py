@@ -18,6 +18,7 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
+from .._constants import EnvironmentVariables
 from .. import AuthenticationRecord
 
 
@@ -85,7 +86,7 @@ class SilentAuthenticationCredential:
         )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
-            capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
+            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
             self._client_applications[tenant_id] = PublicClientApplication(
                 client_id=self._auth_record.client_id,
                 authority="https://{}/{}".format(self._auth_record.authority, tenant_id),

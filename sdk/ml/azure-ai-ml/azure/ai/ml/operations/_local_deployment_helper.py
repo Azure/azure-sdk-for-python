@@ -37,8 +37,7 @@ module_logger = logging.getLogger(__name__)
 class _LocalDeploymentHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create,
-    invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
     """
 
     def __init__(
@@ -280,8 +279,7 @@ class _LocalDeploymentHelper(object):
 
 
 def _convert_container_to_deployment(container: "docker.models.containers.Container") -> OnlineDeployment:
-    """Converts provided Container for local deployment to OnlineDeployment
-    entity.
+    """Converts provided Container for local deployment to OnlineDeployment entity.
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container

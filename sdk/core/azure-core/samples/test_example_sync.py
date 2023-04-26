@@ -27,20 +27,12 @@
 from azure.core.pipeline import Pipeline
 from azure.core import PipelineClient
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    RedirectPolicy,
-    RetryPolicy
-)
+from azure.core.pipeline.policies import UserAgentPolicy, RedirectPolicy, RetryPolicy
 
 
 def test_example_requests():
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy(),
-        RetryPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy(), RetryPolicy()]
     # [START requests]
     from azure.core.pipeline.transport import RequestsTransport
 
@@ -59,10 +51,7 @@ def test_example_pipeline():
 
     # example: create request and policies
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # run the pipeline
     with Pipeline(transport=RequestsTransport(), policies=policies) as pipeline:
@@ -79,10 +68,7 @@ def test_example_pipeline_client():
     from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
 
     # example configuration with some policies
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     client = PipelineClient(base_url=url, policies=policies)
     request = client.get("https://bing.com")
@@ -92,6 +78,7 @@ def test_example_pipeline_client():
 
     response = pipeline_response.http_response
     assert isinstance(response.status_code, int)
+
 
 def test_example_redirect_policy():
 
@@ -139,10 +126,7 @@ def test_example_retry_policy():
 
     url = "https://bing.com"
 
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # [START retry_policy]
     from azure.core.pipeline.policies import RetryPolicy
@@ -193,12 +177,13 @@ def test_example_retry_policy():
         retry_status=5,
         retry_backoff_factor=0.5,
         retry_backoff_max=120,
-        retry_on_methods=['GET']
+        retry_on_methods=["GET"],
     )
     # [END retry_policy]
 
     response = pipeline_response.http_response
     assert isinstance(response.status_code, int)
+
 
 def test_example_no_retries():
     url = "https://bing.com"

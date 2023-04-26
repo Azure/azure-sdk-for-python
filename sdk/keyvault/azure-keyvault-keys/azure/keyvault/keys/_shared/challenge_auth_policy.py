@@ -35,17 +35,15 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
 
-def _enforce_tls(request):
-    # type: (PipelineRequest) -> None
+def _enforce_tls(request: PipelineRequest) -> None:
     if not request.http_request.url.lower().startswith("https"):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
 
 
-def _update_challenge(request, challenger):
-    # type: (PipelineRequest, PipelineResponse) -> HttpChallenge
-    """parse challenge from challenger, cache it, return it"""
+def _update_challenge(request: PipelineRequest, challenger: "PipelineResponse") -> HttpChallenge:
+    """Parse challenge from challenger, cache it, return it"""
 
     challenge = HttpChallenge(
         request.http_request.url,
@@ -57,17 +55,15 @@ def _update_challenge(request, challenger):
 
 
 class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
-    """policy for handling HTTP authentication challenges"""
+    """Policy for handling HTTP authentication challenges"""
 
-    def __init__(self, credential, *scopes, **kwargs):
-        # type: (TokenCredential, *str, **Any) -> None
+    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
@@ -78,7 +74,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                 self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
-            request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
+            request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -90,8 +86,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             request.http_request.set_json_body(None)
             request.http_request.headers["Content-Length"] = "0"
 
-    def on_challenge(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> bool
+    def on_challenge(self, request: PipelineRequest, response: "PipelineResponse") -> bool:
         try:
             challenge = _update_challenge(request, response)
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
@@ -119,6 +114,5 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         return True
 
     @property
-    def _need_new_token(self):
-        # type: () -> bool
+    def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300

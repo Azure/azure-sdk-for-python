@@ -26,7 +26,6 @@ from azure.data.tables import (
     UpdateMode
 )
 from azure.data.tables._common_conversion import TZ_UTC
-from azure.identity import DefaultAzureCredential
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -1223,6 +1222,20 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
+    def test_delete_entity_with_empty_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity(rk="")
+            self.table.delete_entity(entity)
+            entity, _ = self._insert_random_entity(pk="", rk="")
+            self.table.delete_entity(partition_key="", row_key="")
+            res = self.table.list_entities()
+            assert len(list(res)) == 0
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    @recorded_by_proxy
     def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -2240,17 +2253,10 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             self._tear_down()
 
     @tables_decorator
+    @recorded_by_proxy
     def test_list_tables_with_invalid_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
-        credential = DefaultAzureCredential(
-            exclude_environment_credential=True,
-            exclude_managed_identity_credential=False,
-            exclude_shared_token_cache_credential=True,
-            exclude_visual_studio_code_credential=True,
-            exclude_cli_credential=True,
-            exclude_interactive_browser_credential=True,
-            exclude_powershell_credential=True,
-        )
+        credential = self.generate_fake_token_credential()
         client = TableServiceClient(credential=credential, endpoint=account_url, api_version="2020-12-06")
         with pytest.raises(ClientAuthenticationError):
             for _ in client.list_tables():

@@ -7,9 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class ErrorResponse(_serialization.Model):
@@ -26,7 +30,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -66,7 +70,7 @@ class ManagementGroupProxyOnlyResource(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -140,8 +144,8 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         event_hub_name: Optional[str] = None,
         logs: Optional[List["_models.ManagementGroupLogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -185,7 +189,9 @@ class ManagementGroupDiagnosticSettingsResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[ManagementGroupDiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of management group diagnostic settings resources.
         :paramtype value:
@@ -217,7 +223,7 @@ class ManagementGroupLogSettings(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(self, *, category: str, enabled: bool, **kwargs):
+    def __init__(self, *, category: str, enabled: bool, **kwargs: Any) -> None:
         """
         :keyword category: Name of a Management Group Diagnostic Log category for a resource type this
          setting is applied to. Required.

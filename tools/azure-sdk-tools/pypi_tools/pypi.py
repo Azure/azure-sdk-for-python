@@ -4,6 +4,7 @@ import pdb
 from urllib3 import Retry, PoolManager
 import json
 import os
+from typing import List
 
 
 def get_pypi_xmlrpc_client():
@@ -51,7 +52,7 @@ class PyPIClient:
 
         return results
 
-    def get_ordered_versions(self, package_name, filter_by_compatibility=False):
+    def get_ordered_versions(self, package_name, filter_by_compatibility=False) -> List[Version]:
         project = self.project(package_name)
 
         versions = [Version(package_version) for package_version in project["releases"].keys()]

@@ -103,6 +103,14 @@ class CompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TAR_G_ZIP = "tarGZip"
 
 
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the spark config."""
+
+    DEFAULT = "Default"
+    CUSTOMIZED = "Customized"
+    ARTIFACT = "Artifact"
+
+
 class CopyBehaviorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All available types of copy behavior."""
 

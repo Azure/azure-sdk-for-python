@@ -48,7 +48,7 @@ async def run_sample():
     imported_pfx_cert = await client.import_certificate(
         certificate_name=pfx_cert_name, certificate_bytes=pfx_cert_bytes
     )
-    print("PFX certificate '{}' imported successfully.".format(imported_pfx_cert.name))
+    print(f"PFX certificate '{imported_pfx_cert.name}' imported successfully.")
 
     # Now let's import a PEM-formatted certificate.
     # To import a PEM-formatted certificate, you must provide a CertificatePolicy that sets the content_type to
@@ -60,7 +60,7 @@ async def run_sample():
     imported_pem_cert = await client.import_certificate(
         certificate_name=pem_cert_name, certificate_bytes=pem_cert_bytes, policy=pem_cert_policy
     )
-    print("PEM-formatted certificate '{}' imported successfully.".format(imported_pem_cert.name))
+    print(f"PEM-formatted certificate '{imported_pem_cert.name}' imported successfully.")
 
     await credential.close()
     await client.close()

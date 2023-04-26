@@ -1,0 +1,11 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: pipeline_job_from_pipeline_component
+description: A pipeline job created against a pipeline component
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+
+component: ./if_else/simple_pipeline.yml

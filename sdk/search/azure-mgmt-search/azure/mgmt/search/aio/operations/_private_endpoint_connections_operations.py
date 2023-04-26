@@ -75,7 +75,7 @@ class PrivateEndpointConnectionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Updates a Private Endpoint connection to the Search service in the given resource group.
+        """Updates a Private Endpoint connection to the search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
@@ -113,7 +113,7 @@ class PrivateEndpointConnectionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Updates a Private Endpoint connection to the Search service in the given resource group.
+        """Updates a Private Endpoint connection to the search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
@@ -149,7 +149,7 @@ class PrivateEndpointConnectionsOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Updates a Private Endpoint connection to the Search service in the given resource group.
+        """Updates a Private Endpoint connection to the search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
@@ -185,11 +185,11 @@ class PrivateEndpointConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateEndpointConnection]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -217,9 +217,9 @@ class PrivateEndpointConnectionsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -236,7 +236,9 @@ class PrivateEndpointConnectionsOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"
+    }
 
     @distributed_trace_async
     async def get(
@@ -247,7 +249,7 @@ class PrivateEndpointConnectionsOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Gets the details of the private endpoint connection to the Search service in the given resource
+        """Gets the details of the private endpoint connection to the search service in the given resource
         group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -278,10 +280,10 @@ class PrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateEndpointConnection]
+        )
+        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -299,9 +301,9 @@ class PrivateEndpointConnectionsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -318,7 +320,9 @@ class PrivateEndpointConnectionsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"
+    }
 
     @distributed_trace_async
     async def delete(
@@ -329,7 +333,7 @@ class PrivateEndpointConnectionsOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> Optional[_models.PrivateEndpointConnection]:
-        """Disconnects the private endpoint connection and deletes it from the Search service.
+        """Disconnects the private endpoint connection and deletes it from the search service.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
@@ -359,10 +363,10 @@ class PrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.PrivateEndpointConnection]]
+        )
+        cls: ClsType[Optional[_models.PrivateEndpointConnection]] = kwargs.pop("cls", None)
 
         _client_request_id = None
         if search_management_request_options is not None:
@@ -380,9 +384,9 @@ class PrivateEndpointConnectionsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -401,7 +405,9 @@ class PrivateEndpointConnectionsOperations:
 
         return deserialized
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"
+    }
 
     @distributed_trace
     def list_by_service(
@@ -432,10 +438,10 @@ class PrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2020-03-13"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateEndpointConnectionListResult]
+        )
+        cls: ClsType[_models.PrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -462,7 +468,7 @@ class PrivateEndpointConnectionsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -478,7 +484,7 @@ class PrivateEndpointConnectionsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -486,13 +492,13 @@ class PrivateEndpointConnectionsOperations:
             deserialized = self._deserialize("PrivateEndpointConnectionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -505,4 +511,6 @@ class PrivateEndpointConnectionsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_service.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections"}  # type: ignore
+    list_by_service.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections"
+    }

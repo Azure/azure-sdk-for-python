@@ -28,50 +28,52 @@ from ._models_py3 import SourceControlConfiguration
 from ._models_py3 import SourceControlConfigurationList
 from ._models_py3 import SystemData
 
-
-from ._source_control_configuration_client_enums import (
-    ComplianceStateType,
-    Enum0,
-    Enum1,
-    InstallStateType,
-    LevelType,
-    MessageLevelType,
-    OperatorScopeType,
-    OperatorType,
-    ProvisioningStateType,
-    ResourceIdentityType,
-)
+from ._source_control_configuration_client_enums import ComplianceStateType
+from ._source_control_configuration_client_enums import Enum0
+from ._source_control_configuration_client_enums import Enum1
+from ._source_control_configuration_client_enums import InstallStateType
+from ._source_control_configuration_client_enums import LevelType
+from ._source_control_configuration_client_enums import MessageLevelType
+from ._source_control_configuration_client_enums import OperatorScopeType
+from ._source_control_configuration_client_enums import OperatorType
+from ._source_control_configuration_client_enums import ProvisioningStateType
+from ._source_control_configuration_client_enums import ResourceIdentityType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ComplianceStatus',
-    'ConfigurationIdentity',
-    'ErrorDefinition',
-    'ErrorResponse',
-    'ExtensionInstance',
-    'ExtensionInstanceUpdate',
-    'ExtensionInstancesList',
-    'ExtensionStatus',
-    'HelmOperatorProperties',
-    'ProxyResource',
-    'Resource',
-    'ResourceProviderOperation',
-    'ResourceProviderOperationDisplay',
-    'ResourceProviderOperationList',
-    'Result',
-    'Scope',
-    'ScopeCluster',
-    'ScopeNamespace',
-    'SourceControlConfiguration',
-    'SourceControlConfigurationList',
-    'SystemData',
-    'ComplianceStateType',
-    'Enum0',
-    'Enum1',
-    'InstallStateType',
-    'LevelType',
-    'MessageLevelType',
-    'OperatorScopeType',
-    'OperatorType',
-    'ProvisioningStateType',
-    'ResourceIdentityType',
+    "ComplianceStatus",
+    "ConfigurationIdentity",
+    "ErrorDefinition",
+    "ErrorResponse",
+    "ExtensionInstance",
+    "ExtensionInstanceUpdate",
+    "ExtensionInstancesList",
+    "ExtensionStatus",
+    "HelmOperatorProperties",
+    "ProxyResource",
+    "Resource",
+    "ResourceProviderOperation",
+    "ResourceProviderOperationDisplay",
+    "ResourceProviderOperationList",
+    "Result",
+    "Scope",
+    "ScopeCluster",
+    "ScopeNamespace",
+    "SourceControlConfiguration",
+    "SourceControlConfigurationList",
+    "SystemData",
+    "ComplianceStateType",
+    "Enum0",
+    "Enum1",
+    "InstallStateType",
+    "LevelType",
+    "MessageLevelType",
+    "OperatorScopeType",
+    "OperatorType",
+    "ProvisioningStateType",
+    "ResourceIdentityType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

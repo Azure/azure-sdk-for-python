@@ -4,17 +4,11 @@
 # ------------------------------------
 
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from unittest import mock
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 
 from azure.search.documents._generated.models import (
-    IndexBatch,
     SearchDocumentsResult,
     SearchResult,
 )
@@ -42,7 +36,7 @@ CRUD_METHOD_MAP = dict(
 )
 
 
-class Test_odata(object):
+class Test_odata:
     def test_const(self):
         assert odata("no escapes") == "no escapes"
 
@@ -64,7 +58,7 @@ class Test_odata(object):
         assert odata("foo eq '{foo}'", foo="a string") == "foo eq 'a string'"
 
 
-class TestSearchClient(object):
+class TestSearchClient:
     def test_init(self):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         assert client._headers == {

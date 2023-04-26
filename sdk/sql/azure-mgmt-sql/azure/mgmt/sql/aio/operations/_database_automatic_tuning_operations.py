@@ -102,8 +102,9 @@ class DatabaseAutomaticTuningOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -203,8 +204,8 @@ class DatabaseAutomaticTuningOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested automatic tuning resource state. Is either a model type or a
-         IO type. Required.
+        :param parameters: The requested automatic tuning resource state. Is either a
+         DatabaseAutomaticTuning type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseAutomaticTuning or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -255,8 +256,9 @@ class DatabaseAutomaticTuningOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

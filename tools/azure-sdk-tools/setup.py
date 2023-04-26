@@ -20,7 +20,8 @@ DEPENDENCIES = [
     "pyopenssl",
     "python-dotenv",
     "PyYAML",
-    "urllib3"
+    "urllib3",
+    "tomli"
 ]
 
 setup(
@@ -32,6 +33,7 @@ setup(
     packages=find_packages(),
     long_description="Build and test tooling for the Azure SDK for Python",
     install_requires=DEPENDENCIES,
+    include_package_data=True,
     entry_points={
         "console_scripts": [
             "generate_package=packaging_tools.generate_package:generate_main",
@@ -42,12 +44,13 @@ setup(
             "sdk_set_dev_version=ci_tools.versioning.version_set_dev:version_set_dev_main",
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
             "sdk_increment_version=ci_tools.versioning.version_increment:version_increment_main",
+            "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
         ],
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
-        "build": ["six", "setuptools", "pyparsing", "requests"],
+        "build": ["six", "setuptools", "pyparsing", "certifi"],
     },
 )

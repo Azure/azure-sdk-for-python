@@ -1,0 +1,105 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/sanitized/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "131",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "Expires": "-1",
+        "P3P": "sanitized",
+        "Pragma": "no-cache",
+        "Set-Cookie": "sanitized",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "sanitized",
+        "x-ms-httpver": "1.1",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/offerings?skip=0\u0026api-version=2022-12-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-03-07, 2022-12-01",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "894ms"
+      },
+      "ResponseBody": {
+        "phoneNumberOfferings": [
+          {
+            "phoneNumberType": "geographic",
+            "assignmentType": "person",
+            "availableCapabilities": {
+              "calling": "inbound\u002Boutbound",
+              "sms": "none"
+            },
+            "cost": {
+              "amount": 1.0,
+              "currencyCode": "USD",
+              "billingFrequency": "monthly"
+            }
+          },
+          {
+            "phoneNumberType": "geographic",
+            "assignmentType": "application",
+            "availableCapabilities": {
+              "calling": "inbound\u002Boutbound",
+              "sms": "none"
+            },
+            "cost": {
+              "amount": 1.0,
+              "currencyCode": "USD",
+              "billingFrequency": "monthly"
+            }
+          },
+          {
+            "phoneNumberType": "tollFree",
+            "assignmentType": "application",
+            "availableCapabilities": {
+              "calling": "inbound\u002Boutbound",
+              "sms": "inbound\u002Boutbound"
+            },
+            "cost": {
+              "amount": 2.0,
+              "currencyCode": "USD",
+              "billingFrequency": "monthly"
+            }
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}

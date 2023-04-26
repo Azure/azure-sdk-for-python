@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -58,7 +58,7 @@ class CustomAlertRule(_serialization.Model):
         }
     }
 
-    def __init__(self, *, is_enabled: bool, **kwargs):
+    def __init__(self, *, is_enabled: bool, **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -67,11 +67,12 @@ class CustomAlertRule(_serialization.Model):
         self.display_name = None
         self.description = None
         self.is_enabled = is_enabled
-        self.rule_type = None  # type: Optional[str]
+        self.rule_type: Optional[str] = None
 
 
 class ThresholdCustomAlertRule(CustomAlertRule):
-    """A custom alert rule that checks if a value (depends on the custom alert type) is within the given range.
+    """A custom alert rule that checks if a value (depends on the custom alert type) is within the
+    given range.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TimeWindowCustomAlertRule
@@ -114,7 +115,7 @@ class ThresholdCustomAlertRule(CustomAlertRule):
 
     _subtype_map = {"rule_type": {"TimeWindowCustomAlertRule": "TimeWindowCustomAlertRule"}}
 
-    def __init__(self, *, is_enabled: bool, min_threshold: int, max_threshold: int, **kwargs):
+    def __init__(self, *, is_enabled: bool, min_threshold: int, max_threshold: int, **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -124,13 +125,14 @@ class ThresholdCustomAlertRule(CustomAlertRule):
         :paramtype max_threshold: int
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.rule_type = "ThresholdCustomAlertRule"  # type: str
+        self.rule_type: str = "ThresholdCustomAlertRule"
         self.min_threshold = min_threshold
         self.max_threshold = max_threshold
 
 
 class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
-    """A custom alert rule that checks if the number of activities (depends on the custom alert type) in a time window is within the given range.
+    """A custom alert rule that checks if the number of activities (depends on the custom alert type)
+    in a time window is within the given range.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ActiveConnectionsNotInAllowedRange, AmqpC2DMessagesNotInAllowedRange,
@@ -210,8 +212,8 @@ class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -223,7 +225,7 @@ class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
         :paramtype time_window_size: ~datetime.timedelta
         """
         super().__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, **kwargs)
-        self.rule_type = "TimeWindowCustomAlertRule"  # type: str
+        self.rule_type: str = "TimeWindowCustomAlertRule"
         self.time_window_size = time_window_size
 
 
@@ -277,8 +279,8 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -296,7 +298,7 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "ActiveConnectionsNotInAllowedRange"  # type: str
+        self.rule_type: str = "ActiveConnectionsNotInAllowedRange"
 
 
 class AdditionalWorkspacesProperties(_serialization.Model):
@@ -323,8 +325,8 @@ class AdditionalWorkspacesProperties(_serialization.Model):
         workspace: Optional[str] = None,
         type: Union[str, "_models.AdditionalWorkspaceType"] = "Sentinel",
         data_types: Optional[List[Union[str, "_models.AdditionalWorkspaceDataType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace: Workspace resource id.
         :paramtype workspace: str
@@ -386,13 +388,13 @@ class ListCustomAlertRule(CustomAlertRule):
         }
     }
 
-    def __init__(self, *, is_enabled: bool, **kwargs):
+    def __init__(self, *, is_enabled: bool, **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.rule_type = "ListCustomAlertRule"  # type: str
+        self.rule_type: str = "ListCustomAlertRule"
         self.value_type = None
 
 
@@ -449,7 +451,7 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
         }
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs):
+    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -458,7 +460,7 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
         :paramtype allowlist_values: list[str]
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.rule_type = "AllowlistCustomAlertRule"  # type: str
+        self.rule_type: str = "AllowlistCustomAlertRule"
         self.allowlist_values = allowlist_values
 
 
@@ -512,8 +514,8 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -531,7 +533,7 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "AmqpC2DMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "AmqpC2DMessagesNotInAllowedRange"
 
 
 class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -584,8 +586,8 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -603,7 +605,7 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "AmqpC2DRejectedMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "AmqpC2DRejectedMessagesNotInAllowedRange"
 
 
 class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -656,8 +658,8 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -675,7 +677,7 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "AmqpD2CMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "AmqpD2CMessagesNotInAllowedRange"
 
 
 class CloudErrorBody(_serialization.Model):
@@ -711,7 +713,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -722,7 +724,8 @@ class CloudErrorBody(_serialization.Model):
 
 
 class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
-    """Inbound connection from an ip that isn't allowed. Allow list consists of ipv4 or ipv6 range in CIDR notation.
+    """Inbound connection from an ip that isn't allowed. Allow list consists of ipv4 or ipv6 range in
+    CIDR notation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -762,7 +765,7 @@ class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs):
+    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -771,11 +774,12 @@ class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
         :paramtype allowlist_values: list[str]
         """
         super().__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
-        self.rule_type = "ConnectionFromIpNotAllowed"  # type: str
+        self.rule_type: str = "ConnectionFromIpNotAllowed"
 
 
 class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
-    """Outbound connection to an ip that isn't allowed. Allow list consists of ipv4 or ipv6 range in CIDR notation.
+    """Outbound connection to an ip that isn't allowed. Allow list consists of ipv4 or ipv6 range in
+    CIDR notation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -815,7 +819,7 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs):
+    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -824,7 +828,7 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         :paramtype allowlist_values: list[str]
         """
         super().__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
-        self.rule_type = "ConnectionToIpNotAllowed"  # type: str
+        self.rule_type: str = "ConnectionToIpNotAllowed"
 
 
 class DenylistCustomAlertRule(ListCustomAlertRule):
@@ -868,7 +872,7 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
         "denylist_values": {"key": "denylistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, denylist_values: List[str], **kwargs):
+    def __init__(self, *, is_enabled: bool, denylist_values: List[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -877,7 +881,7 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
         :paramtype denylist_values: list[str]
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.rule_type = "DenylistCustomAlertRule"  # type: str
+        self.rule_type: str = "DenylistCustomAlertRule"
         self.denylist_values = denylist_values
 
 
@@ -906,7 +910,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -961,8 +965,8 @@ class DeviceSecurityGroup(Resource):
         time_window_rules: Optional[List["_models.TimeWindowCustomAlertRule"]] = None,
         allowlist_rules: Optional[List["_models.AllowlistCustomAlertRule"]] = None,
         denylist_rules: Optional[List["_models.DenylistCustomAlertRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword threshold_rules: The list of custom alert threshold rules.
         :paramtype threshold_rules:
@@ -1004,7 +1008,7 @@ class DeviceSecurityGroupList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DeviceSecurityGroup"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DeviceSecurityGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of device security group objects.
         :paramtype value: list[~azure.mgmt.security.v2019_08_01.models.DeviceSecurityGroup]
@@ -1064,8 +1068,8 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -1083,7 +1087,7 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "DirectMethodInvokesNotInAllowedRange"  # type: str
+        self.rule_type: str = "DirectMethodInvokesNotInAllowedRange"
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1107,7 +1111,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -1164,8 +1168,8 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -1183,7 +1187,7 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "FailedLocalLoginsNotInAllowedRange"  # type: str
+        self.rule_type: str = "FailedLocalLoginsNotInAllowedRange"
 
 
 class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -1236,8 +1240,8 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -1255,7 +1259,7 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "FileUploadsNotInAllowedRange"  # type: str
+        self.rule_type: str = "FileUploadsNotInAllowedRange"
 
 
 class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -1308,8 +1312,8 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -1327,7 +1331,7 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "HttpC2DMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "HttpC2DMessagesNotInAllowedRange"
 
 
 class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -1380,8 +1384,8 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -1399,7 +1403,7 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "HttpC2DRejectedMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "HttpC2DRejectedMessagesNotInAllowedRange"
 
 
 class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -1452,8 +1456,8 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -1471,7 +1475,7 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "HttpD2CMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "HttpD2CMessagesNotInAllowedRange"
 
 
 class TagsResource(_serialization.Model):
@@ -1485,7 +1489,7 @@ class TagsResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1580,7 +1584,7 @@ class IoTSecurityAggregatedAlert(Resource, TagsResource):  # pylint: disable=too
         },
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1629,7 +1633,7 @@ class IoTSecurityAggregatedAlertList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecurityAggregatedAlert"], **kwargs):
+    def __init__(self, *, value: List["_models.IoTSecurityAggregatedAlert"], **kwargs: Any) -> None:
         """
         :keyword value: List of aggregated alerts data. Required.
         :paramtype value: list[~azure.mgmt.security.v2019_08_01.models.IoTSecurityAggregatedAlert]
@@ -1664,7 +1668,7 @@ class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(_serialization.Mode
         "last_occurrence": {"key": "lastOccurrence", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.device_id = None
@@ -1740,7 +1744,9 @@ class IoTSecurityAggregatedRecommendation(Resource, TagsResource):  # pylint: di
         "log_analytics_query": {"key": "properties.logAnalyticsQuery", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, recommendation_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, tags: Optional[Dict[str, str]] = None, recommendation_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1789,7 +1795,7 @@ class IoTSecurityAggregatedRecommendationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecurityAggregatedRecommendation"], **kwargs):
+    def __init__(self, *, value: List["_models.IoTSecurityAggregatedRecommendation"], **kwargs: Any) -> None:
         """
         :keyword value: List of aggregated recommendations data. Required.
         :paramtype value:
@@ -1821,7 +1827,7 @@ class IoTSecurityAlertedDevice(_serialization.Model):
         "alerts_count": {"key": "alertsCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.device_id = None
@@ -1829,7 +1835,8 @@ class IoTSecurityAlertedDevice(_serialization.Model):
 
 
 class IoTSecurityDeviceAlert(_serialization.Model):
-    """Statistical information about the number of alerts per alert type during last set number of days.
+    """Statistical information about the number of alerts per alert type during last set number of
+    days.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1854,7 +1861,7 @@ class IoTSecurityDeviceAlert(_serialization.Model):
         "alerts_count": {"key": "alertsCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.alert_display_name = None
@@ -1863,7 +1870,8 @@ class IoTSecurityDeviceAlert(_serialization.Model):
 
 
 class IoTSecurityDeviceRecommendation(_serialization.Model):
-    """Statistical information about the number of recommendations per device, per recommendation type.
+    """Statistical information about the number of recommendations per device, per recommendation
+    type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1888,7 +1896,7 @@ class IoTSecurityDeviceRecommendation(_serialization.Model):
         "devices_count": {"key": "devicesCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.recommendation_display_name = None
@@ -1962,8 +1970,8 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
         top_alerted_devices: Optional[List["_models.IoTSecurityAlertedDevice"]] = None,
         most_prevalent_device_alerts: Optional[List["_models.IoTSecurityDeviceAlert"]] = None,
         most_prevalent_device_recommendations: Optional[List["_models.IoTSecurityDeviceRecommendation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword top_alerted_devices: List of the 3 devices with the most alerts.
         :paramtype top_alerted_devices:
@@ -2009,7 +2017,7 @@ class IoTSecuritySolutionAnalyticsModelList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecuritySolutionAnalyticsModel"], **kwargs):
+    def __init__(self, *, value: List["_models.IoTSecuritySolutionAnalyticsModel"], **kwargs: Any) -> None:
         """
         :keyword value: List of Security analytics of your IoT Security solution. Required.
         :paramtype value:
@@ -2039,8 +2047,8 @@ class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(_serializati
         *,
         date: Optional[datetime.datetime] = None,
         devices_metrics: Optional["_models.IoTSeverityMetrics"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword date: Aggregation of IoT Security solution device alert metrics by date.
         :paramtype date: ~datetime.datetime
@@ -2148,8 +2156,8 @@ class IoTSecuritySolutionModel(Resource, TagsResource):  # pylint: disable=too-m
         recommendations_configuration: Optional[List["_models.RecommendationConfigurationProperties"]] = None,
         unmasked_ip_logging_status: Union[str, "_models.UnmaskedIpLoggingStatus"] = "Disabled",
         additional_workspaces: Optional[List["_models.AdditionalWorkspacesProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2229,7 +2237,7 @@ class IoTSecuritySolutionsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecuritySolutionModel"], **kwargs):
+    def __init__(self, *, value: List["_models.IoTSecuritySolutionModel"], **kwargs: Any) -> None:
         """
         :keyword value: List of IoT Security solutions. Required.
         :paramtype value: list[~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel]
@@ -2257,8 +2265,8 @@ class IoTSeverityMetrics(_serialization.Model):
     }
 
     def __init__(
-        self, *, high: Optional[int] = None, medium: Optional[int] = None, low: Optional[int] = None, **kwargs
-    ):
+        self, *, high: Optional[int] = None, medium: Optional[int] = None, low: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword high: Count of high severity alerts/recommendations.
         :paramtype high: int
@@ -2314,7 +2322,7 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs):
+    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2323,7 +2331,7 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         :paramtype allowlist_values: list[str]
         """
         super().__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
-        self.rule_type = "LocalUserNotAllowed"  # type: str
+        self.rule_type: str = "LocalUserNotAllowed"
 
 
 class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -2376,8 +2384,8 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2395,7 +2403,7 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "MqttC2DMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "MqttC2DMessagesNotInAllowedRange"
 
 
 class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -2448,8 +2456,8 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2467,7 +2475,7 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "MqttC2DRejectedMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "MqttC2DRejectedMessagesNotInAllowedRange"
 
 
 class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -2520,8 +2528,8 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2539,7 +2547,7 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "MqttD2CMessagesNotInAllowedRange"  # type: str
+        self.rule_type: str = "MqttD2CMessagesNotInAllowedRange"
 
 
 class ProcessNotAllowed(AllowlistCustomAlertRule):
@@ -2583,7 +2591,7 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs):
+    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2592,7 +2600,7 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         :paramtype allowlist_values: list[str]
         """
         super().__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
-        self.rule_type = "ProcessNotAllowed"  # type: str
+        self.rule_type: str = "ProcessNotAllowed"
 
 
 class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -2645,8 +2653,8 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2664,7 +2672,7 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "QueuePurgesNotInAllowedRange"  # type: str
+        self.rule_type: str = "QueuePurgesNotInAllowedRange"
 
 
 class RecommendationConfigurationProperties(_serialization.Model):
@@ -2706,8 +2714,8 @@ class RecommendationConfigurationProperties(_serialization.Model):
         *,
         recommendation_type: Union[str, "_models.RecommendationType"],
         status: Union[str, "_models.RecommendationConfigStatus"] = "Enabled",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recommendation_type: The type of IoT Security recommendation. Required. Known values
          are: "IoT_ACRAuthentication", "IoT_AgentSendsUnutilizedMessages", "IoT_Baseline",
@@ -2765,8 +2773,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2842,8 +2850,8 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2861,7 +2869,7 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "TwinUpdatesNotInAllowedRange"  # type: str
+        self.rule_type: str = "TwinUpdatesNotInAllowedRange"
 
 
 class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -2914,8 +2922,8 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
         min_threshold: int,
         max_threshold: int,
         time_window_size: datetime.timedelta,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2933,7 +2941,7 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
             time_window_size=time_window_size,
             **kwargs
         )
-        self.rule_type = "UnauthorizedOperationsNotInAllowedRange"  # type: str
+        self.rule_type: str = "UnauthorizedOperationsNotInAllowedRange"
 
 
 class UpdateIotSecuritySolutionData(TagsResource):
@@ -2965,8 +2973,8 @@ class UpdateIotSecuritySolutionData(TagsResource):
         tags: Optional[Dict[str, str]] = None,
         user_defined_resources: Optional["_models.UserDefinedResourcesProperties"] = None,
         recommendations_configuration: Optional[List["_models.RecommendationConfigurationProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3007,7 +3015,7 @@ class UserDefinedResourcesProperties(_serialization.Model):
         "query_subscriptions": {"key": "querySubscriptions", "type": "[str]"},
     }
 
-    def __init__(self, *, query: str, query_subscriptions: List[str], **kwargs):
+    def __init__(self, *, query: str, query_subscriptions: List[str], **kwargs: Any) -> None:
         """
         :keyword query: Azure Resource Graph query which represents the security solution's user
          defined resources. Required to start with "where type != "Microsoft.Devices/IotHubs"".

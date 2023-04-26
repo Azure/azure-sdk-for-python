@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,20 +7,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CommunicationError(msrest.serialization.Model):
+class CommunicationError(_serialization.Model):
     """The Communication Services error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. The error code.
+    :ivar code: The error code. Required.
     :vartype code: str
-    :ivar message: Required. The error message.
+    :ivar message: The error message. Required.
     :vartype message: str
     :ivar target: The error target.
     :vartype target: str
@@ -30,146 +36,147 @@ class CommunicationError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"required": True},
+        "message": {"required": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CommunicationError]"},
+        "inner_error": {"key": "innererror", "type": "CommunicationError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
         """
-        :keyword code: Required. The error code.
+        :keyword code: The error code. Required.
         :paramtype code: str
-        :keyword message: Required. The error message.
+        :keyword message: The error message. Required.
         :paramtype message: str
         """
-        super(CommunicationError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
         self.target = None
         self.details = None
         self.inner_error = None
 
 
-class CommunicationErrorResponse(msrest.serialization.Model):
+class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar error: Required. The Communication Services error.
+    :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.phonenumbers.siprouting.models.CommunicationError
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'CommunicationError'},
+        "error": {"key": "error", "type": "CommunicationError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.CommunicationError", **kwargs: Any) -> None:
         """
-        :keyword error: Required. The Communication Services error.
+        :keyword error: The Communication Services error. Required.
         :paramtype error: ~azure.communication.phonenumbers.siprouting.models.CommunicationError
         """
-        super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs['error']
+        super().__init__(**kwargs)
+        self.error = error
 
 
-class SipConfiguration(msrest.serialization.Model):
+class SipConfiguration(_serialization.Model):
     """Represents a SIP configuration.
-When a call is being routed the routes are applied in the same order as in the routes list.
-A route is matched by its number pattern.
-Call is then directed into route's first available trunk, based on the order in the route's trunks list.
+    When a call is being routed the routes are applied in the same order as in the routes list.
+    A route is matched by its number pattern.
+    Call is then directed into route's first available trunk, based on the order in the route's
+    trunks list.
 
     :ivar trunks: SIP trunks for routing calls.
      Map key is trunk's FQDN (1-249 characters).
     :vartype trunks: dict[str,
      ~azure.communication.phonenumbers.siprouting.models.SipTrunkInternal]
     :ivar routes: Trunk routes for routing calls.
-    :vartype routes: list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRoute]
+    :vartype routes:
+     list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
     """
 
+    _validation = {
+        "routes": {"max_items": 250, "min_items": 0},
+    }
+
     _attribute_map = {
-        'trunks': {'key': 'trunks', 'type': '{SipTrunkInternal}'},
-        'routes': {'key': 'routes', 'type': '[SipTrunkRoute]'},
+        "trunks": {"key": "trunks", "type": "{SipTrunkInternal}"},
+        "routes": {"key": "routes", "type": "[SipTrunkRouteInternal]"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
+        *,
+        trunks: Optional[Dict[str, "_models.SipTrunkInternal"]] = None,
+        routes: Optional[List["_models.SipTrunkRouteInternal"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword trunks: SIP trunks for routing calls.
          Map key is trunk's FQDN (1-249 characters).
         :paramtype trunks: dict[str,
          ~azure.communication.phonenumbers.siprouting.models.SipTrunkInternal]
         :keyword routes: Trunk routes for routing calls.
-        :paramtype routes: list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRoute]
+        :paramtype routes:
+         list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
         """
-        super(SipConfiguration, self).__init__(**kwargs)
-        self.trunks = kwargs.get('trunks', None)
-        self.routes = kwargs.get('routes', None)
+        super().__init__(**kwargs)
+        self.trunks = trunks
+        self.routes = routes
 
 
-class SipTrunkInternal(msrest.serialization.Model):
+class SipTrunkInternal(_serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
+    :ivar sip_signaling_port: Gets or sets SIP signaling port of the trunk. Required.
     :vartype sip_signaling_port: int
     """
 
     _validation = {
-        'sip_signaling_port': {'required': True},
+        "sip_signaling_port": {"required": True},
     }
 
     _attribute_map = {
-        'sip_signaling_port': {'key': 'sipSignalingPort', 'type': 'int'},
+        "sip_signaling_port": {"key": "sipSignalingPort", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, sip_signaling_port: int, **kwargs: Any) -> None:
         """
-        :keyword sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
+        :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk. Required.
         :paramtype sip_signaling_port: int
         """
-        super(SipTrunkInternal, self).__init__(**kwargs)
-        self.sip_signaling_port = kwargs['sip_signaling_port']
+        super().__init__(**kwargs)
+        self.sip_signaling_port = sip_signaling_port
 
 
-class SipTrunkRoute(msrest.serialization.Model):
+class SipTrunkRouteInternal(_serialization.Model):
     """Represents a trunk route for routing calls.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar description: Gets or sets description of the route.
     :vartype description: str
-    :ivar name: Required. Gets or sets name of the route.
+    :ivar name: Gets or sets name of the route. Required.
     :vartype name: str
-    :ivar number_pattern: Required. Gets or sets regex number pattern for routing calls. .NET regex
-     format is supported.
+    :ivar number_pattern: Gets or sets regex number pattern for routing calls. .NET regex format is
+     supported.
      The regex should match only digits with an optional '+' prefix without spaces.
-     I.e. "^+[1-9][0-9]{3,23}$".
+     I.e. "^+[1-9][0-9]{3,23}$". Required.
     :vartype number_pattern: str
     :ivar trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
      FQDN.
@@ -177,38 +184,44 @@ class SipTrunkRoute(msrest.serialization.Model):
     """
 
     _validation = {
-        'description': {'max_length': 1024, 'min_length': 0},
-        'name': {'required': True, 'max_length': 256, 'min_length': 0},
-        'number_pattern': {'required': True, 'max_length': 1024, 'min_length': 0},
+        "description": {"max_length": 1024},
+        "name": {"required": True, "max_length": 256},
+        "number_pattern": {"required": True, "max_length": 1024},
+        "trunks": {"max_items": 250, "min_items": 0},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'number_pattern': {'key': 'numberPattern', 'type': 'str'},
-        'trunks': {'key': 'trunks', 'type': '[str]'},
+        "description": {"key": "description", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "number_pattern": {"key": "numberPattern", "type": "str"},
+        "trunks": {"key": "trunks", "type": "[str]"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
+        *,
+        name: str,
+        number_pattern: str,
+        description: Optional[str] = None,
+        trunks: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Gets or sets description of the route.
         :paramtype description: str
-        :keyword name: Required. Gets or sets name of the route.
+        :keyword name: Gets or sets name of the route. Required.
         :paramtype name: str
-        :keyword number_pattern: Required. Gets or sets regex number pattern for routing calls. .NET
-         regex format is supported.
+        :keyword number_pattern: Gets or sets regex number pattern for routing calls. .NET regex format
+         is supported.
          The regex should match only digits with an optional '+' prefix without spaces.
-         I.e. "^+[1-9][0-9]{3,23}$".
+         I.e. "^+[1-9][0-9]{3,23}$". Required.
         :paramtype number_pattern: str
         :keyword trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
          FQDN.
         :paramtype trunks: list[str]
         """
-        super(SipTrunkRoute, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.name = kwargs['name']
-        self.number_pattern = kwargs['number_pattern']
-        self.trunks = kwargs.get('trunks', None)
+        super().__init__(**kwargs)
+        self.description = description
+        self.name = name
+        self.number_pattern = number_pattern
+        self.trunks = trunks

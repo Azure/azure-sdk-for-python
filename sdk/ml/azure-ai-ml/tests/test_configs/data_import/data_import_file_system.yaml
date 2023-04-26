@@ -1,0 +1,10 @@
+$schema: http://azureml/sdk-2-0/DataImport.json
+type: uri_folder
+name: my_s3_asset
+
+source:
+  type: file_system
+  path: test1/*
+  connection: azureml:my_s3_connection
+
+path: azureml://datastores/workspaceblobstore/paths/{name}

@@ -9,13 +9,26 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob
+from azure.ai.ml._schema.core.fields import ExperimentalField
 from azure.ai.ml.entities._assets import Environment
 
 from ..._schema import NestedField, UnionField
-from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
-from .distribution import DistributionConfiguration, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from ..._schema.job.distribution import (
+    MPIDistributionSchema,
+    PyTorchDistributionSchema,
+    TensorFlowDistributionSchema,
+    RayDistributionSchema,
+)
+from .distribution import (
+    DistributionConfiguration,
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+    RayDistribution,
+)
 from .job_resource_configuration import JobResourceConfiguration
+from .queue_settings import QueueSettings
 
 module_logger = logging.getLogger(__name__)
 
@@ -25,8 +38,7 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """Command component that contains the training command and supporting
-    parameters for the command.
+    """Command component that contains the training command and supporting parameters for the command.
 
     :param command: Command to be executed in training.
     :type command: str
@@ -48,8 +60,17 @@ class ParameterizedCommand:
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         code: Optional[str] = None,
         environment_variables: Optional[Dict] = None,
-        distribution: Optional[Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+        distribution: Optional[
+            Union[
+                dict,
+                MpiDistribution,
+                TensorFlowDistribution,
+                PyTorchDistribution,
+                RayDistribution,
+            ]
+        ] = None,
         environment: Optional[Union[Environment, str]] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -57,13 +78,19 @@ class ParameterizedCommand:
         self.code = code
         self.environment_variables = dict(environment_variables) if environment_variables else {}
         self.environment = environment
-        self.distribution: Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = distribution
+        self.distribution: Union[
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+        ] = distribution
         self.resources = resources
+        self.queue_settings = queue_settings
 
     @property
     def distribution(
         self,
-    ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution]:
+    ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]:
         return self._distribution
 
     @distribution.setter
@@ -74,6 +101,7 @@ class ParameterizedCommand:
                     NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
                     NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
                     NestedField(MPIDistributionSchema, unknown=INCLUDE),
+                    ExperimentalField(NestedField(RayDistributionSchema, unknown=INCLUDE)),
                 ]
             )
             value = dist_schema._deserialize(value=value, attr=None, data=None)
@@ -98,5 +126,6 @@ class ParameterizedCommand:
             environment=sweep_job.trial.environment_id,
             distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
             resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
+            queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings),
         )
         return parameterized_command

@@ -33,6 +33,7 @@ from typing import (
     Tuple,
     Optional,
     Awaitable,
+    Any,
 )
 
 from .exceptions import AzureError
@@ -69,9 +70,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
         get_next: Callable[[Optional[str]], Awaitable[ResponseType]],
-        extract_data: Callable[
-            [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
-        ],
+        extract_data: Callable[[ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]],
         continuation_token: Optional[str] = None,
     ) -> None:
         """Return an async iterator of pages.
@@ -85,10 +84,10 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self._extract_data = extract_data
         self.continuation_token = continuation_token
         self._did_a_call_already = False
-        self._response = None
-        self._current_page = None
+        self._response: Optional[ResponseType] = None
+        self._current_page: Optional[AsyncIterator[ReturnType]] = None
 
-    async def __anext__(self):
+    async def __anext__(self) -> AsyncIterator[ReturnType]:
         if self.continuation_token is None and self._did_a_call_already:
             raise StopAsyncIteration("End of paging")
         try:
@@ -100,9 +99,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
         self._did_a_call_already = True
 
-        self.continuation_token, self._current_page = await self._extract_data(
-            self._response
-        )
+        self.continuation_token, self._current_page = await self._extract_data(self._response)
 
         # If current_page was a sync list, wrap it async-like
         if isinstance(self._current_page, collections.abc.Iterable):
@@ -112,7 +109,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
 
 class AsyncItemPaged(AsyncIterator[ReturnType]):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Return an async iterator of items.
 
         args and kwargs will be passed to the AsyncPageIterator constructor directly,
@@ -120,13 +117,9 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         """
         self._args = args
         self._kwargs = kwargs
-        self._page_iterator = (
-            None
-        )  # type: Optional[AsyncIterator[AsyncIterator[ReturnType]]]
-        self._page = None  # type: Optional[AsyncIterator[ReturnType]]
-        self._page_iterator_class = self._kwargs.pop(
-            "page_iterator_class", AsyncPageIterator
-        )
+        self._page_iterator: Optional[AsyncIterator[AsyncIterator[ReturnType]]] = None
+        self._page: Optional[AsyncIterator[ReturnType]] = None
+        self._page_iterator_class = self._kwargs.pop("page_iterator_class", AsyncPageIterator)
 
     def by_page(
         self,
@@ -140,9 +133,7 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
             this generator will begin returning results from this point.
         :returns: An async iterator of pages (themselves async iterator of objects)
         """
-        return self._page_iterator_class(
-            *self._args, **self._kwargs, continuation_token=continuation_token
-        )
+        return self._page_iterator_class(*self._args, **self._kwargs, continuation_token=continuation_token)
 
     async def __anext__(self) -> ReturnType:
         if self._page_iterator is None:

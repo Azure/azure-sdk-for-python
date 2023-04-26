@@ -11,7 +11,12 @@ and other secrets
 create, manage, and deploy public and private SSL/TLS certificates
 - Vault administration ([azure-keyvault-administration](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration)) - role-based access control (RBAC), and vault-level backup and restore options
 
-[Source code][library_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation][reference_docs] | [Product documentation][azure_keyvault] | [Samples][key_samples]
+[Source code][library_src]
+| [Package (PyPI)][pypi_package_keys]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-keyvault/)
+| [API reference documentation][reference_docs]
+| [Product documentation][azure_keyvault]
+| [Samples][key_samples]
 
 ## _Disclaimer_
 
@@ -41,16 +46,17 @@ In order to interact with the Azure Key Vault service, you will need an instance
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
 #### Create a client
-After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a key client (replacing the value of `vault_url` with your vault's URL):
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a key client (replacing the value of `VAULT_URL` with your vault's URL):
+
+<!-- SNIPPET:hello_world.create_a_key_client -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient
-
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-
-key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+client = KeyClient(vault_url=VAULT_URL, credential=credential)
 ```
+
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.keys.aio`'s `KeyClient` instead.
 
@@ -204,7 +210,7 @@ for key in keys:
 [CryptographyClient](https://aka.ms/azsdk/python/keyvault-keys/crypto/docs#azure.keyvault.keys.crypto.CryptographyClient)
 enables cryptographic operations (encrypt/decrypt, wrap/unwrap, sign/verify) using a particular key.
 
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
@@ -235,7 +241,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
@@ -327,7 +333,7 @@ level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 import sys
@@ -349,7 +355,7 @@ client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 client.get_key("my-key", logging_enable=True)
 ```
 
@@ -362,6 +368,7 @@ These provide example code for additional Key Vault scenarios:
 | [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for keys |
 | [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
 | [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
+| [send_request.py][send_request_sample] | use the `send_request` client method |
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the
@@ -421,6 +428,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
 
+[send_request_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/send_request.py
 [soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FREADME.png)

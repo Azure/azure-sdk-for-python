@@ -8,11 +8,13 @@ import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import ResponseNotReadError
 
+
 def test_normal_call(client, port):
     def _raise_and_get_text(response):
         response.raise_for_status()
         assert response.text() == "Hello, world!"
         assert response.is_closed
+
     request = HttpRequest("GET", url="/basic/string")
     response = client.send_request(request)
     _raise_and_get_text(response)
@@ -25,6 +27,7 @@ def test_normal_call(client, port):
     with response as response:
         _raise_and_get_text(response)
 
+
 def test_stream_call(client):
     def _raise_and_get_text(response):
         response.raise_for_status()
@@ -34,6 +37,7 @@ def test_stream_call(client):
         response.read()
         assert response.text() == "Hello, world!"
         assert response.is_closed
+
     request = HttpRequest("GET", url="/streams/basic")
     response = client.send_request(request, stream=True)
     _raise_and_get_text(response)
@@ -46,6 +50,7 @@ def test_stream_call(client):
     response = client.send_request(request, stream=True)
     with response as response:
         _raise_and_get_text(response)
+
 
 # TODO: commenting until https://github.com/Azure/azure-sdk-for-python/issues/18086 is fixed
 

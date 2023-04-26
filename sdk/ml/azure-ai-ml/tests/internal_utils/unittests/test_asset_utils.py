@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Callable, Tuple
+from typing import Tuple
 
 import pytest
 
@@ -12,6 +12,7 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     get_ignore_file,
     get_object_hash,
+    get_directory_size,
     traverse_directory,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
@@ -168,3 +169,19 @@ class TestAssetUtils:
         assert Path(target_file_path).resolve().as_posix() in local_paths
         # remote file names are relative to root and include the prefix
         assert prefix + Path(link_file_path).relative_to(storage_test_directory).as_posix() in remote_paths
+
+    def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
+        base_size = get_directory_size(storage_test_directory)
+        with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
+
+        # Note, the [1] index is the number of files counted in the directory size calculation.
+        # The [0] index is the sum file size, which we don't check here due to how instable that
+        # value is across systems/builds.
+        # Directory size calculated with ignore file should include less files
+        assert len(with_ignore_size[1]) < len(base_size[1])
+
+        # Directory size calculated after symlink creation should correctly include linked file size,
+        # and count symlink file itself towards file count.
+        _, _ = generate_link_file(storage_test_directory)
+        with_symlink_size = get_directory_size(storage_test_directory)
+        assert len(with_symlink_size[1]) == len(base_size[1]) + 2

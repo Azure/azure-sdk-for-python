@@ -31,7 +31,7 @@ class ApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Which authentication method Cassandra should use to authenticate clients. 'None' turns off
     authentication, so should not be used except in emergencies. 'Cassandra' is the default
-    password based authentication. The default is 'Cassandra'. 'Ldap' is in preview.
+    password based authentication. The default is 'Cassandra'.
     """
 
     NONE = "None"
@@ -94,13 +94,6 @@ class ConnectorOffer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SMALL = "Small"
 
 
-class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum to indicate type of Continuous backup tier."""
-
-    CONTINUOUS7_DAYS = "Continuous7Days"
-    CONTINUOUS30_DAYS = "Continuous30Days"
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -125,15 +118,6 @@ class DatabaseAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PARSE = "Parse"
 
 
-class DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DataTransferComponent."""
-
-    COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
-    COSMOS_DB_MONGO = "CosmosDBMongo"
-    COSMOS_DB_SQL = "CosmosDBSql"
-    AZURE_BLOB_STORAGE = "AzureBlobStorage"
-
-
 class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The datatype for which the indexing behavior is applied to."""
 
@@ -153,14 +137,6 @@ class DefaultConsistencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOUNDED_STALENESS = "BoundedStaleness"
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
-
-
-class EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describe the level of detail with which queries are to be logged."""
-
-    NONE = "None"
-    TRUE = "True"
-    FALSE = "False"
 
 
 class IndexingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -188,6 +164,15 @@ class KeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY_READONLY = "secondaryReadonly"
 
 
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the connection string key."""
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+    PRIMARY_READONLY = "PrimaryReadonly"
+    SECONDARY_READONLY = "SecondaryReadonly"
+
+
 class ManagedCassandraProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the resource at the time the operation was called."""
 
@@ -204,6 +189,16 @@ class ManagedCassandraResourceIdentityType(str, Enum, metaclass=CaseInsensitiveE
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
+
+
+class MinimalTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the minimum allowed Tls version. The default is Tls 1.0, except for Cassandra and
+    Mongo API's, which only work with Tls 1.2.
+    """
+
+    TLS = "Tls"
+    TLS11 = "Tls11"
+    TLS12 = "Tls12"
 
 
 class MongoRoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,7 +244,6 @@ class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "Create"
     REPLACE = "Replace"
     DELETE = "Delete"
-    RECREATE = "Recreate"
     SYSTEM_OPERATION = "SystemOperation"
 
 
@@ -352,12 +346,14 @@ class SpatialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MULTI_POLYGON = "MultiPolygon"
 
 
-class ThroughputPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ThroughputPolicy to apply for throughput redistribution."""
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate current buildout status of the region."""
 
-    NONE = "none"
-    EQUAL = "equal"
-    CUSTOM = "custom"
+    UNINITIALIZED = "Uninitialized"
+    INITIALIZING = "Initializing"
+    INTERNALLY_READY = "InternallyReady"
+    ONLINE = "Online"
+    DELETING = "Deleting"
 
 
 class TriggerOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -375,6 +371,20 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PRE = "Pre"
     POST = "Post"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the connection string."""
+
+    SQL = "Sql"
+    TABLE = "Table"
+    MONGO_DB = "MongoDB"
+    CASSANDRA = "Cassandra"
+    CASSANDRA_CONNECTOR_METADATA = "CassandraConnectorMetadata"
+    GREMLIN = "Gremlin"
+    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
+    GREMLIN_V2 = "GremlinV2"
+    UNDEFINED = "Undefined"
 
 
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

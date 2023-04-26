@@ -1,6 +1,6 @@
 # Release History
 
-## 1.26.3 (Unreleased)
+## 1.26.5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.26.4 (2023-04-06)
+
+### Features Added
+
+- Updated settings to include OpenTelemetry as a tracer provider.  #29095
+
+### Other Changes
+
+- Improved typing
+
+## 1.26.3 (2023-02-02)
+
+### Bugs Fixed
+
+- Fixed deflate decompression for aiohttp   #28483
 
 ## 1.26.2 (2023-01-05)
 

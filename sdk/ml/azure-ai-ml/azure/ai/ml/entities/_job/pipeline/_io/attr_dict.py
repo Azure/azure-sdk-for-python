@@ -160,7 +160,7 @@ class OutputsAttrDict(dict):
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
             mode = value.mode
-            value = Output(type=value.type, path=value.path, mode=mode)
+            value = Output(type=value.type, path=value.path, mode=mode, name=value.name, version=value.version)
         original_output = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
         original_output._data = original_output._build_data(value)
 

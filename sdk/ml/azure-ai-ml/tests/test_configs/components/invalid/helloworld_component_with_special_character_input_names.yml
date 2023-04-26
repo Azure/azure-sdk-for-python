@@ -51,4 +51,4 @@ command: >-
   $[[& echo ${{inputs.have_*@special_characters}}]]
   echo ${{outputs.component_out_path}} > ${{outputs.component_out_path}}/component_in_number
 
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

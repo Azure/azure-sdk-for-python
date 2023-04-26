@@ -43,7 +43,7 @@ class MicrosoftResourceHealthConfiguration(Configuration):  # pylint: disable=to
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(MicrosoftResourceHealthConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2015-01-01")  # type: Literal["2015-01-01"]
+        api_version: Literal["2015-01-01"] = kwargs.pop("api_version", "2015-01-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -57,10 +57,7 @@ class MicrosoftResourceHealthConfiguration(Configuration):  # pylint: disable=to
         kwargs.setdefault("sdk_moniker", "mgmt-resourcehealth/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

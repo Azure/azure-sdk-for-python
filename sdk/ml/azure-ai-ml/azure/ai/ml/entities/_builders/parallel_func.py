@@ -43,8 +43,8 @@ def parallel_run_function(
     is_deterministic: bool = True,
     **kwargs,
 ) -> Parallel:
-    """Create a Parallel object which can be used inside dsl.pipeline as a
-    function and can also be created as a standalone parallel job.
+    """Create a Parallel object which can be used inside dsl.pipeline as a function and can also be created as a
+    standalone parallel job.
 
     For an example of using ParallelRunStep, see the notebook
     https://aka.ms/parallel-example-notebook
@@ -67,30 +67,35 @@ def parallel_run_function(
         from azure.ai.ml import Input, Output, parallel
 
         parallel_run = parallel_run_function(
-            name = 'batch_score_with_tabular_input',
-            display_name = 'Batch Score with Tabular Dataset',
-            description = 'parallel component for batch score',
-            inputs = dict(
-            job_data_path=Input(type=AssetTypes.MLTABLE, description='The data to be split and scored in parallel'),
-            score_model=Input(type=AssetTypes.URI_FOLDER, description='The model for batch score.')
-            ),
-            outputs = dict(job_output_path=Output(type=AssetTypes.MLTABLE)),
-            input_data = '${{inputs.job_data_path}}',
-            max_concurrency_per_instance = 2,  # Optional, default is 1
-            mini_batch_size = '100',      # optional
-            mini_batch_error_threshold = 5,  # Optional, allowed failed count on mini batch items, default is -1
-            logging_level = 'DEBUG',     # Optional, default is INFO
-            error_threshold = 5,       # Optional, allowed failed count totally, default is -1
-            retry_settings = dict(max_retries=2, timeout=60),  # Optional
-            task = RunFunction(
-                code = './src',
-                entry_script = 'tabular_batch_inference.py',
-                environment = Environment(
-                    image= 'mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04',
-                    conda_file='./src/environment_parallel.yml'
+            name="batch_score_with_tabular_input",
+            display_name="Batch Score with Tabular Dataset",
+            description="parallel component for batch score",
+            inputs=dict(
+                job_data_path=Input(
+                    type=AssetTypes.MLTABLE,
+                    description="The data to be split and scored in parallel",
                 ),
-                program_arguments = '--model ${{inputs.score_model}}',
-                append_row_to = '${{outputs.job_output_path}}',   # Optional, if not set, summary_only
+                score_model=Input(
+                    type=AssetTypes.URI_FOLDER, description="The model for batch score."
+                ),
+            ),
+            outputs=dict(job_output_path=Output(type=AssetTypes.MLTABLE)),
+            input_data="${{inputs.job_data_path}}",
+            max_concurrency_per_instance=2,  # Optional, default is 1
+            mini_batch_size="100",  # optional
+            mini_batch_error_threshold=5,  # Optional, allowed failed count on mini batch items, default is -1
+            logging_level="DEBUG",  # Optional, default is INFO
+            error_threshold=5,  # Optional, allowed failed count totally, default is -1
+            retry_settings=dict(max_retries=2, timeout=60),  # Optional
+            task=RunFunction(
+                code="./src",
+                entry_script="tabular_batch_inference.py",
+                environment=Environment(
+                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+                    conda_file="./src/environment_parallel.yml",
+                ),
+                program_arguments="--model ${{inputs.score_model}}",
+                append_row_to="${{outputs.job_output_path}}",  # Optional, if not set, summary_only
             ),
         )
 

@@ -96,7 +96,7 @@ Use the returned token credential to authenticate the client:
         target_environment_type_name = list(client.environments.list_environment_types(target_project_name, top=1))[0]['name']
 
         # Stand up a new environment
-        create_response = client.environments.begin_create_environment(target_project_name,
+        create_response = client.environments.begin_create_or_update_environment(target_project_name,
                                                            "Dev_Environment",
                                                            {"catalogItemName": target_catalog_item_name, "environmentType": target_environment_type_name})
         environment_result = create_response.result()

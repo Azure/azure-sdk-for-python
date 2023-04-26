@@ -29,13 +29,13 @@ def main():
     )
 
     response = client.reservation.list_revisions(
-        reservation_id="6ef59113-3482-40da-8d79-787f823e34bc",
         reservation_order_id="276e7ae4-84d0-4da6-ab4b-d6b94f3557da",
+        reservation_id="6ef59113-3482-40da-8d79-787f823e34bc",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-03-01/examples/GetReservationRevisions.json
+# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-11-01/examples/GetReservationRevisions.json
 if __name__ == "__main__":
     main()

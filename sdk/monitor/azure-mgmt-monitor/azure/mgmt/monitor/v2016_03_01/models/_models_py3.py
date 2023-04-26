@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -51,7 +51,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -142,8 +142,8 @@ class AlertRuleResource(Resource):  # pylint: disable=too-many-instance-attribut
         provisioning_state: Optional[str] = None,
         action: Optional["_models.RuleAction"] = None,
         actions: Optional[List["_models.RuleAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -189,7 +189,7 @@ class AlertRuleResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[AlertRuleResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AlertRuleResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AlertRuleResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
         :paramtype value: list[~$(python-base-namespace).v2016_03_01.models.AlertRuleResource]
@@ -252,8 +252,8 @@ class AlertRuleResourcePatch(_serialization.Model):
         condition: Optional["_models.RuleCondition"] = None,
         action: Optional["_models.RuleAction"] = None,
         actions: Optional[List["_models.RuleAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -301,7 +301,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -347,7 +347,7 @@ class Incident(_serialization.Model):
         "resolved_time": {"key": "resolvedTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -368,7 +368,7 @@ class IncidentListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Incident]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Incident"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Incident"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the incident collection.
         :paramtype value: list[~$(python-base-namespace).v2016_03_01.models.Incident]
@@ -397,7 +397,7 @@ class LocalizableString(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: the invariant value. Required.
         :paramtype value: str
@@ -444,14 +444,14 @@ class RuleCondition(_serialization.Model):
         }
     }
 
-    def __init__(self, *, data_source: Optional["_models.RuleDataSource"] = None, **kwargs):
+    def __init__(self, *, data_source: Optional["_models.RuleDataSource"] = None, **kwargs: Any) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
         :paramtype data_source: ~$(python-base-namespace).v2016_03_01.models.RuleDataSource
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.data_source = data_source
 
 
@@ -495,8 +495,8 @@ class LocationThresholdRuleCondition(RuleCondition):
         failed_location_count: int,
         data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
@@ -510,7 +510,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         :paramtype failed_location_count: int
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"
         self.window_size = window_size
         self.failed_location_count = failed_location_count
 
@@ -532,7 +532,7 @@ class LogProfileCollection(_serialization.Model):
         "value": {"key": "value", "type": "[LogProfileResource]"},
     }
 
-    def __init__(self, *, value: List["_models.LogProfileResource"], **kwargs):
+    def __init__(self, *, value: List["_models.LogProfileResource"], **kwargs: Any) -> None:
         """
         :keyword value: the values of the log profiles. Required.
         :paramtype value: list[~$(python-base-namespace).v2016_03_01.models.LogProfileResource]
@@ -608,8 +608,8 @@ class LogProfileResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -679,8 +679,8 @@ class LogProfileResourcePatch(_serialization.Model):
         locations: Optional[List[str]] = None,
         categories: Optional[List[str]] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -735,8 +735,8 @@ class ManagementEventAggregationCondition(_serialization.Model):
         operator: Optional[Union[str, "_models.ConditionOperator"]] = None,
         threshold: Optional[float] = None,
         window_size: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operator: the condition operator. Known values are: "GreaterThan",
          "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
@@ -789,8 +789,8 @@ class ManagementEventRuleCondition(RuleCondition):
         *,
         data_source: Optional["_models.RuleDataSource"] = None,
         aggregation: Optional["_models.ManagementEventAggregationCondition"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
@@ -802,12 +802,13 @@ class ManagementEventRuleCondition(RuleCondition):
          ~$(python-base-namespace).v2016_03_01.models.ManagementEventAggregationCondition
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"
         self.aggregation = aggregation
 
 
 class MetricAvailability(_serialization.Model):
-    """Metric availability specifies the time grain (aggregation interval or frequency) and the retention period for that time grain.
+    """Metric availability specifies the time grain (aggregation interval or frequency) and the
+    retention period for that time grain.
 
     :ivar time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
@@ -827,8 +828,8 @@ class MetricAvailability(_serialization.Model):
         *,
         time_grain: Optional[datetime.timedelta] = None,
         retention: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the time grain specifies the aggregation interval for the metric.
          Expressed as a duration 'PT1M', 'P1D', etc.
@@ -884,8 +885,8 @@ class MetricDefinition(_serialization.Model):
         primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = None,
         metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: the resource identifier of the resource that emitted the metric.
         :paramtype resource_id: str
@@ -933,7 +934,7 @@ class MetricDefinitionCollection(_serialization.Model):
         "value": {"key": "value", "type": "[MetricDefinition]"},
     }
 
-    def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs):
+    def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs: Any) -> None:
         """
         :keyword value: the values for the metric definitions. Required.
         :paramtype value: list[~$(python-base-namespace).v2016_03_01.models.MetricDefinition]
@@ -964,7 +965,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: int, **kwargs):
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
         """
         :keyword enabled: a value indicating whether the retention policy is enabled. Required.
         :paramtype enabled: bool
@@ -978,7 +979,8 @@ class RetentionPolicy(_serialization.Model):
 
 
 class RuleAction(_serialization.Model):
-    """The action that is performed when the alert rule becomes active, and when an alert condition is resolved.
+    """The action that is performed when the alert rule becomes active, and when an alert condition is
+    resolved.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RuleEmailAction, RuleWebhookAction
@@ -1005,10 +1007,10 @@ class RuleAction(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class RuleDataSource(_serialization.Model):
@@ -1060,8 +1062,8 @@ class RuleDataSource(_serialization.Model):
         legacy_resource_id: Optional[str] = None,
         resource_location: Optional[str] = None,
         metric_namespace: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
          this property cannot be updated for an existing rule.
@@ -1075,7 +1077,7 @@ class RuleDataSource(_serialization.Model):
         :paramtype metric_namespace: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.resource_uri = resource_uri
         self.legacy_resource_id = legacy_resource_id
         self.resource_location = resource_location
@@ -1083,7 +1085,8 @@ class RuleDataSource(_serialization.Model):
 
 
 class RuleEmailAction(RuleAction):
-    """Specifies the action to send email when the rule condition is evaluated. The discriminator is always RuleEmailAction in this case.
+    """Specifies the action to send email when the rule condition is evaluated. The discriminator is
+    always RuleEmailAction in this case.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1109,8 +1112,8 @@ class RuleEmailAction(RuleAction):
     }
 
     def __init__(
-        self, *, send_to_service_owners: Optional[bool] = None, custom_emails: Optional[List[str]] = None, **kwargs
-    ):
+        self, *, send_to_service_owners: Optional[bool] = None, custom_emails: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword send_to_service_owners: Whether the administrators (service and co-administrators) of
          the service should be notified when the alert is activated.
@@ -1120,7 +1123,7 @@ class RuleEmailAction(RuleAction):
         :paramtype custom_emails: list[str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"
         self.send_to_service_owners = send_to_service_owners
         self.custom_emails = custom_emails
 
@@ -1136,7 +1139,7 @@ class RuleManagementEventClaimsDataSource(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, email_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, email_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword email_address: the email address.
         :paramtype email_address: str
@@ -1146,7 +1149,8 @@ class RuleManagementEventClaimsDataSource(_serialization.Model):
 
 
 class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many-instance-attributes
-    """A rule management event data source. The discriminator fields is always RuleManagementEventDataSource in this case.
+    """A rule management event data source. The discriminator fields is always
+    RuleManagementEventDataSource in this case.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1223,8 +1227,8 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
         status: Optional[str] = None,
         sub_status: Optional[str] = None,
         claims: Optional["_models.RuleManagementEventClaimsDataSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
          this property cannot be updated for an existing rule.
@@ -1265,7 +1269,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
             metric_namespace=metric_namespace,
             **kwargs
         )
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"
         self.event_name = event_name
         self.event_source = event_source
         self.level = level
@@ -1320,8 +1324,8 @@ class RuleMetricDataSource(RuleDataSource):
         resource_location: Optional[str] = None,
         metric_namespace: Optional[str] = None,
         metric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
          this property cannot be updated for an existing rule.
@@ -1343,12 +1347,13 @@ class RuleMetricDataSource(RuleDataSource):
             metric_namespace=metric_namespace,
             **kwargs
         )
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"
         self.metric_name = metric_name
 
 
 class RuleWebhookAction(RuleAction):
-    """Specifies the action to post to service when the rule condition is evaluated. The discriminator is always RuleWebhookAction in this case.
+    """Specifies the action to post to service when the rule condition is evaluated. The discriminator
+    is always RuleWebhookAction in this case.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1373,7 +1378,9 @@ class RuleWebhookAction(RuleAction):
         "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_uri: the service uri to Post the notification when the alert activates or
          resolves.
@@ -1383,7 +1390,7 @@ class RuleWebhookAction(RuleAction):
         :paramtype properties: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"
         self.service_uri = service_uri
         self.properties = properties
 
@@ -1440,8 +1447,8 @@ class ThresholdRuleCondition(RuleCondition):
         data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
         time_aggregation: Optional[Union[str, "_models.TimeAggregationOperator"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
@@ -1462,7 +1469,7 @@ class ThresholdRuleCondition(RuleCondition):
          ~$(python-base-namespace).v2016_03_01.models.TimeAggregationOperator
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"
         self.operator = operator
         self.threshold = threshold
         self.window_size = window_size

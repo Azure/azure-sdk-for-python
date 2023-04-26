@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class CaseInsensitiveDict(dict):
     """Case-insensitive Dictionary for headers.
 

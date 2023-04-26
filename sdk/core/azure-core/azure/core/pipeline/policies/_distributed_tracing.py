@@ -27,12 +27,7 @@
 import logging
 import sys
 import urllib
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-    Union,
-    Tuple,
-)  # pylint: disable=ungrouped-imports
+from typing import TYPE_CHECKING, Optional, Union, Tuple
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
@@ -44,22 +39,21 @@ if TYPE_CHECKING:
         HttpRequest,
         HttpResponse,
         AsyncHttpResponse,
-    )  # pylint: disable=ungrouped-imports
+    )
     from azure.core.tracing._abstract_span import (
         AbstractSpan,
-    )  # pylint: disable=ungrouped-imports
+    )
     from azure.core.pipeline import (
         PipelineRequest,
         PipelineResponse,
-    )  # pylint: disable=ungrouped-imports
+    )
 
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _default_network_span_namer(http_request):
-    # type (HttpRequest) -> str
+def _default_network_span_namer(http_request: "HttpRequest") -> str:
     """Extract the path to be used as network span name.
 
     :param http_request: The HTTP request
@@ -87,13 +81,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     _RESPONSE_ID = "x-ms-request-id"
 
     def __init__(self, **kwargs):
-        self._network_span_namer = kwargs.get(
-            "network_span_namer", _default_network_span_namer
-        )
+        self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: "PipelineRequest") -> None:
         ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
@@ -115,32 +106,32 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.warning("Unable to start network span: %s", err)
 
-    def end_span(self, request, response=None, exc_info=None):
-        # type: (PipelineRequest, Optional[HttpResponseType], Optional[Tuple]) -> None
+    def end_span(
+        self,
+        request: "PipelineRequest",
+        response: Optional["HttpResponseType"] = None,
+        exc_info: Optional[Tuple] = None,
+    ) -> None:
         """Ends the span that is tracing the network and updates its status."""
         if self.TRACING_CONTEXT not in request.context:
             return
 
-        span = request.context[self.TRACING_CONTEXT]  # type: AbstractSpan
-        http_request = request.http_request  # type: HttpRequest
+        span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
+        http_request: "HttpRequest" = request.http_request
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             request_id = http_request.headers.get(self._REQUEST_ID)
             if request_id is not None:
                 span.add_attribute(self._REQUEST_ID, request_id)
             if response and self._RESPONSE_ID in response.headers:
-                span.add_attribute(
-                    self._RESPONSE_ID, response.headers[self._RESPONSE_ID]
-                )
+                span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
             if exc_info:
                 span.__exit__(*exc_info)
             else:
                 span.finish()
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         self.end_span(request, response=response.http_response)
 
-    def on_exception(self, request):
-        # type: (PipelineRequest) -> None
+    def on_exception(self, request: "PipelineRequest") -> None:
         self.end_span(request, exc_info=sys.exc_info())

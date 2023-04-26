@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._models import (
-    CommunicationRoom,
     RoomParticipant,
-    ParticipantsCollection
+    UpsertParticipantsResult,
+    RemoveParticipantsResult
 )
 
 __all__ = [
-    "CommunicationRoom",
     "RoomParticipant",
-    "ParticipantsCollection"
+    "UpsertParticipantsResult",
+    "RemoveParticipantsResult"
 ]

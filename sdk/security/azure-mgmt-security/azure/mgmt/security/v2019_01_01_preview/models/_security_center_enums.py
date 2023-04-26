@@ -47,24 +47,24 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PropertyType.
     """
 
-    #: Applies for decimal and non-decimal operands
     EQUALS = "Equals"
-    #: Applies only for decimal operands
+    """Applies for decimal and non-decimal operands"""
     GREATER_THAN = "GreaterThan"
-    #: Applies only for decimal operands
+    """Applies only for decimal operands"""
     GREATER_THAN_OR_EQUAL_TO = "GreaterThanOrEqualTo"
-    #: Applies only for decimal operands
+    """Applies only for decimal operands"""
     LESSER_THAN = "LesserThan"
-    #: Applies only for decimal operands
+    """Applies only for decimal operands"""
     LESSER_THAN_OR_EQUAL_TO = "LesserThanOrEqualTo"
-    #: Applies  for decimal and non-decimal operands
+    """Applies only for decimal operands"""
     NOT_EQUALS = "NotEquals"
-    #: Applies only for non-decimal operands
+    """Applies  for decimal and non-decimal operands"""
     CONTAINS = "Contains"
-    #: Applies only for non-decimal operands
+    """Applies only for non-decimal operands"""
     STARTS_WITH = "StartsWith"
-    #: Applies only for non-decimal operands
+    """Applies only for non-decimal operands"""
     ENDS_WITH = "EndsWith"
+    """Applies only for non-decimal operands"""
 
 
 class PropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -97,34 +97,34 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The platform where the assessed resource resides."""
 
-    #: Resource is in Azure
     AZURE = "Azure"
-    #: Resource in an on premise machine connected to Azure cloud
+    """Resource is in Azure"""
     ON_PREMISE = "OnPremise"
-    #: SQL Resource in an on premise machine connected to Azure cloud
+    """Resource in an on premise machine connected to Azure cloud"""
     ON_PREMISE_SQL = "OnPremiseSql"
+    """SQL Resource in an on premise machine connected to Azure cloud"""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregative state based on the standard's supported controls states."""
 
-    #: All supported regulatory compliance controls in the given standard have a passed state
     PASSED = "Passed"
-    #: At least one supported regulatory compliance control in the given standard has a state of
-    #: failed
+    """All supported regulatory compliance controls in the given standard have a passed state"""
     FAILED = "Failed"
-    #: All supported regulatory compliance controls in the given standard have a state of skipped
+    """At least one supported regulatory compliance control in the given standard has a state of
+    #: failed"""
     SKIPPED = "Skipped"
-    #: No supported regulatory compliance data for the given standard
+    """All supported regulatory compliance controls in the given standard have a state of skipped"""
     UNSUPPORTED = "Unsupported"
+    """No supported regulatory compliance data for the given standard"""
 
 
 class SubAssessmentStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Programmatic code for the status of the assessment."""
 
-    #: The resource is healthy
     HEALTHY = "Healthy"
-    #: The resource has a security issue that needs to be addressed
+    """The resource is healthy"""
     UNHEALTHY = "Unhealthy"
-    #: Assessment for this resource did not happen
+    """The resource has a security issue that needs to be addressed"""
     NOT_APPLICABLE = "NotApplicable"
+    """Assessment for this resource did not happen"""

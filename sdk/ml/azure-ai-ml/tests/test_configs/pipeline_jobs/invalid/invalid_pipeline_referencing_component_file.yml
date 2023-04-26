@@ -1,0 +1,23 @@
+name: federated_learning_pipeline
+display_name: federated_learning_pipeline
+type: pipeline
+inputs:
+  train_model:
+    mode: ro_mount
+    type: custom_model
+    path: ./dummy_model/
+outputs:
+  best_model:
+    mode: rw_mount
+    type: uri_folder
+jobs:
+  loop_body:
+    type: pipeline
+    inputs:
+      input_model:
+        path: ${{parent.inputs.train_model}}
+    component: file:./loop_body_component.yaml
+
+settings:
+  default_compute: azureml:cpu-cluster
+experiment_name: pipeline_samples

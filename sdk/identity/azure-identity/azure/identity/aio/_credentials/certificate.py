@@ -48,7 +48,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
             self,
             tenant_id: str,
             client_id: str,
-            certificate_path: str = None,
+            certificate_path: Optional[str] = None,
             **kwargs: Any
     ) -> None:
         validate_tenant_id(tenant_id)
@@ -78,7 +78,9 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

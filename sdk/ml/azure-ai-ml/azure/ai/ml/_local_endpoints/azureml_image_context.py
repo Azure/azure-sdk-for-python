@@ -106,8 +106,7 @@ class AzureMlImageContext(object):
 
     @property
     def volumes(self) -> dict:
-        """Returns the volumes to mount when running the Azure ML Image
-        locally.
+        """Returns the volumes to mount when running the Azure ML Image locally.
 
         :return: dict
         """
@@ -115,8 +114,7 @@ class AzureMlImageContext(object):
 
     @property
     def environment(self) -> dict:
-        """Returns the environment variables to set when running the Azure ML
-        Image locally.
+        """Returns the environment variables to set when running the Azure ML Image locally.
 
         :return: dict
         """

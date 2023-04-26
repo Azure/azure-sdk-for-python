@@ -47,8 +47,8 @@ async def run_sample():
     print("\n.. Create Key")
     rsa_key = await client.create_rsa_key("rsaKeyNameAsync")
     ec_key = await client.create_ec_key("ecKeyNameAsync")
-    print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
-    print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_type))
+    print(f"Key with name '{rsa_key.name}' was created of type '{rsa_key.key_type}'.")
+    print(f"Key with name '{ec_key.name}' was created of type '{ec_key.key_type}'.")
 
     # You need to check the type of all the keys in the vault.
     # Let's list the keys and print their key types.
@@ -58,23 +58,19 @@ async def run_sample():
     keys = client.list_properties_of_keys()
     async for key in keys:
         retrieved_key = await client.get_key(key.name)
-        print(
-            "Key with name '{0}' with type '{1}' was found.".format(
-                retrieved_key.name, retrieved_key.key_type
-            )
-        )
+        print(f"Key with name '{retrieved_key.name}' with type '{retrieved_key.key_type}' was found.")
 
     # The rsa key size now should now be 3072, default - 2048. So you want to update the key in Key Vault to ensure
     # it reflects the new key size. Calling create_rsa_key on an existing key creates a new version of the key in
     # the Key Vault with the new key size.
     new_key = await client.create_rsa_key(rsa_key.name, size=3072)
-    print("New version was created for Key with name '{0}' with the updated size.".format(new_key.name))
+    print(f"New version was created for Key with name '{new_key.name}' with the updated size.")
 
     # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.
     print("\n.. List versions of the key using its name")
     key_versions = client.list_properties_of_key_versions(rsa_key.name)
     async for key in key_versions:
-        print("RSA Key with name '{0}' has version: '{1}'".format(key.name, key.version))
+        print(f"RSA Key with name '{key.name}' has version: '{key.version}'")
 
     # Both the rsa key and ec key are not needed anymore. Let's delete those keys.
     print("\n..Deleting keys...")
@@ -85,7 +81,7 @@ async def run_sample():
     print("\n.. List deleted keys from the Key Vault")
     deleted_keys = client.list_deleted_keys()
     async for deleted_key in deleted_keys:
-        print("Key with name '{0}' has recovery id '{1}'".format(deleted_key.name, deleted_key.recovery_id))
+        print(f"Key with name '{deleted_key.name}' has recovery id '{deleted_key.recovery_id}'")
 
     print("\nrun_sample done")
     await credential.close()

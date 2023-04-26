@@ -54,17 +54,17 @@ from .amqp import (
     AmqpMessageProperties,
 )
 from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
-from ._pyamqp.message import Message
+from ._pyamqp.message import Message as pyamqp_Message
 from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
     try:
         from uamqp import (  # pylint: disable=unused-import
-            Message as uamqp_Message,
+            Message,    # not importing as uamqp_Message, b/c type is exposed to user
             BatchMessage,
         )
     except ImportError:
-        uamqp_Message = None
+        Message = None
         BatchMessage = None
     from ._transport._base import AmqpTransport
 
@@ -134,8 +134,8 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self._uamqp_message: Optional[Union[LegacyMessage, uamqp_Message]] = None
-        self._message: Message = None  # type: ignore
+        self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
+        self._message: Union["Message", pyamqp_Message] = None  # type: ignore
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -226,7 +226,7 @@ class EventData(object):
     @classmethod
     def _from_message(
         cls,
-        message: Union[uamqp_Message, Message],
+        message: Union["Message", pyamqp_Message],
         raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
     ) -> EventData:
         # pylint:disable=protected-access
@@ -260,11 +260,11 @@ class EventData(object):
         return str(decode_with_recurse(seq_list, encoding))
 
     @property
-    def message(self) -> LegacyMessage:
-        """DEPRECATED: Get the underlying LegacyMessage.
+    def message(self) -> Union["Message", LegacyMessage]:
+        """DEPRECATED: Get the underlying uamqp.Message or LegacyMessage.
          This is deprecated and will be removed in a later release.
 
-        :rtype: LegacyMessage
+        :rtype: uamqp.Message or LegacyMessage
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -278,7 +278,7 @@ class EventData(object):
         return self._uamqp_message
 
     @message.setter
-    def message(self, value: "uamqp_Message") -> None:
+    def message(self, value: "Message") -> None:
         """DEPRECATED: Set the underlying Message.
         This is deprecated and will be removed in a later release.
         """
@@ -632,7 +632,7 @@ class EventDataBatch(object):
             DeprecationWarning,
         )
         if not self._uamqp_message:
-            message = AmqpAnnotatedMessage(message=Message(*self._message))
+            message = AmqpAnnotatedMessage(message=pyamqp_Message(*self._message))
             self._uamqp_message = LegacyBatchMessage(
                 message,
                 to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,

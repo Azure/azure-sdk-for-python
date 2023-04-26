@@ -75,7 +75,7 @@ class TestSparkComponentEntity:
     def test_spark_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "type": "spark",
-            "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],
             "files": ["my_files.txt"],
@@ -98,7 +98,7 @@ class TestSparkComponentEntity:
         yaml_component_version = load_component(yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(file_input=pipeline_input)
-        yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+        yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
 

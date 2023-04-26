@@ -1,14 +1,36 @@
 # Release History
 
-## 5.3.0b2 (Unreleased)
+## 5.3.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+- Removed `dynamic_classification` client method and related types: `DynamicClassificationResult` and `ClassificationType`.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.3.0b2 (2023-03-07)
+
+This version of the client library defaults to the service API version `2022-10-01-preview`.
+
+### Features Added
+
+- Added `begin_extract_summary` client method to perform extractive summarization on documents.
+- Added `begin_abstractive_summary` client method to perform abstractive summarization on documents.
+
+### Breaking Changes
+
+- Removed models `BaseResolution` and `BooleanResolution`.
+- Removed enum value `BooleanResolution` from `ResolutionKind`.
+- Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
+- Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
+- Removed keyword argument `autodetect_default_language` from long-running operation APIs.
+
+### Other Changes
+
+ - Improved static typing in the client library. 
 
 ## 5.3.0b1 (2022-11-17)
 

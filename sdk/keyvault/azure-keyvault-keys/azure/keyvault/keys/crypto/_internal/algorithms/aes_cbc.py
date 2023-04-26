@@ -85,12 +85,12 @@ class _AesCbc(SymmetricEncryptionAlgorithm):
         if not key:
             raise ValueError("A key is required for AES-CBC and AES-CBCPAD encryption and decryption")
         if len(key) < self.key_size_in_bytes():
-            raise ValueError("key must be at least %d bits" % self.key_size)
+            raise ValueError(f"key must be at least {self.key_size} bits")
 
         if not iv:
             raise ValueError("A 16-byte iv is required for AES-CBC and AES-CBCPAD encryption and decryption")
         if not len(iv) == self.block_size_in_bytes():
-            raise ValueError("iv must be %d bits" % self.block_size)
+            raise ValueError(f"iv must be {self.block_size} bits")
 
         return key[: self.key_size_in_bytes()], iv
 

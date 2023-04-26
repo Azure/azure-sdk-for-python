@@ -16,8 +16,7 @@ class TableEntity(dict):
     _metadata = {}  # type: Dict[str, Any]
 
     @property
-    def metadata(self):
-        # type: () -> Dict[str, Any]
+    def metadata(self) -> Dict[str, Any]:
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
         :rtype: Dict[str, Any]

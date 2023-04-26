@@ -128,7 +128,7 @@ def _get_local_environment_artifacts(base_path: str, environment: Environment):
             None,
             None,
             None,
-            absolute_dockerfile_path,
+            absolute_build_directory,
             dockerfile_contents,
             environment.inference_config,
         )

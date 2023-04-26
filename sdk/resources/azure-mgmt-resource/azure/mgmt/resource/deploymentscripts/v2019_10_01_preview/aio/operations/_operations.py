@@ -116,8 +116,9 @@ class DeploymentScriptsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -232,8 +233,8 @@ class DeploymentScriptsOperations:
         :type resource_group_name: str
         :param script_name: Name of the deployment script. Required.
         :type script_name: str
-        :param deployment_script: Deployment script supplied to the operation. Is either a model type
-         or a IO type. Required.
+        :param deployment_script: Deployment script supplied to the operation. Is either a
+         DeploymentScript type or a IO type. Required.
         :type deployment_script:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -378,7 +379,7 @@ class DeploymentScriptsOperations:
         :param script_name: Name of the deployment script. Required.
         :type script_name: str
         :param deployment_script: Deployment script resource with the tags to be updated. Is either a
-         model type or a IO type. Default value is None.
+         DeploymentScriptUpdateParameter type or a IO type. Default value is None.
         :type deployment_script:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScriptUpdateParameter
          or IO
@@ -433,8 +434,9 @@ class DeploymentScriptsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -497,8 +499,9 @@ class DeploymentScriptsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -564,8 +567,9 @@ class DeploymentScriptsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -649,8 +653,9 @@ class DeploymentScriptsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -709,8 +714,9 @@ class DeploymentScriptsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -780,8 +786,9 @@ class DeploymentScriptsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -875,8 +882,9 @@ class DeploymentScriptsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

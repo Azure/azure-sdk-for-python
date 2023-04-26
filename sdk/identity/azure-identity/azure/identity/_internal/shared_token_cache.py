@@ -122,8 +122,7 @@ class SharedTokenCacheBase(ABC):
     def _get_auth_client(self, **kwargs) -> AadClientBase:
         pass
 
-    def _get_cache_items_for_authority(self, credential_type):
-        # type: (msal.TokenCache.CredentialType) -> List[CacheItem]
+    def _get_cache_items_for_authority(self, credential_type: msal.TokenCache.CredentialType) -> List[CacheItem]:
         """yield cache items matching this credential's authority or one of its aliases"""
 
         items = []
@@ -154,7 +153,7 @@ class SharedTokenCacheBase(ABC):
         return accounts.values()
 
     @wrap_exceptions
-    def _get_account(self, username: str = None, tenant_id: str = None)  -> CacheItem:
+    def _get_account(self, username: Optional[str] = None, tenant_id: Optional[str] = None)  -> CacheItem:
         """returns exactly one account which has a refresh token and matches username and/or tenant_id"""
 
         accounts = self._get_accounts_having_matching_refresh_tokens()

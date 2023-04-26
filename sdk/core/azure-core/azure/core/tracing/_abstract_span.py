@@ -4,15 +4,17 @@
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
 from enum import Enum
+from urllib.parse import urlparse
+
 from typing import (
     TYPE_CHECKING,
     Any,
     Sequence,
-    Dict,
     Optional,
     Union,
     Callable,
     ContextManager,
+    Dict,
 )
 
 if TYPE_CHECKING:
@@ -54,32 +56,28 @@ class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
     def __init__(  # pylint: disable=super-init-not-called
-        self, span=None, name=None, **kwargs
-    ):
-        # type: (Optional[Any], Optional[str], Any) -> None
+        self, span: Optional[Any] = None, name: Optional[str] = None, **kwargs
+    ) -> None:
         """
         If a span is given wraps the span. Else a new span is created.
         The optional argument name is given to the new span.
         """
 
-    def span(self, name="child_span", **kwargs):
-        # type: (Optional[str], Any) -> AbstractSpan
+    def span(self, name: str = "child_span", **kwargs) -> "AbstractSpan":
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
         """
 
     @property
-    def kind(self):
-        # type: () -> Optional[SpanKind]
+    def kind(self) -> Optional[SpanKind]:
         """Get the span kind of this span.
 
         :rtype: SpanKind
         """
 
     @kind.setter
-    def kind(self, value):
-        # type: (SpanKind) -> None
+    def kind(self, value: SpanKind) -> None:
         """Set the span kind of this span."""
 
     def __enter__(self):
@@ -88,33 +86,28 @@ class AbstractSpan(Protocol):
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
 
-    def start(self):
-        # type: () -> None
+    def start(self) -> None:
         """Set the start time for a span."""
 
-    def finish(self):
-        # type: () -> None
+    def finish(self) -> None:
         """Set the end time for a span."""
 
-    def to_header(self):
-        # type: () -> Dict[str, str]
+    def to_header(self) -> Dict[str, str]:
         """
         Returns a dictionary with the header labels and values.
         """
 
-    def add_attribute(self, key, value):
-        # type: (str, Union[str, int]) -> None
+    def add_attribute(self, key: str, value: Union[str, int]) -> None:
         """
         Add attribute (key value pair) to the current span.
 
         :param key: The key of the key value pair
         :type key: str
         :param value: The value of the key value pair
-        :type value: str
+        :type value: Union[str, int]
         """
 
-    def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, Optional[HttpResponseType]) -> None
+    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -124,8 +117,7 @@ class AbstractSpan(Protocol):
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
 
-    def get_trace_parent(self):
-        # type: () -> str
+    def get_trace_parent(self) -> str:
         """Return traceparent string.
 
         :return: a traceparent string
@@ -133,15 +125,13 @@ class AbstractSpan(Protocol):
         """
 
     @property
-    def span_instance(self):
-        # type: () -> Any
+    def span_instance(self) -> Any:
         """
         Returns the span the class is wrapping.
         """
 
     @classmethod
-    def link(cls, traceparent, attributes=None):
-        # type: (str, Attributes) -> None
+    def link(cls, traceparent: str, attributes: Optional["Attributes"] = None) -> None:
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 
@@ -150,8 +140,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link_from_headers(cls, headers, attributes=None):
-        # type: (Dict[str, str], Attributes) -> None
+    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -160,44 +149,38 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def get_current_span(cls):
-        # type: () -> Any
+    def get_current_span(cls) -> Any:
         """
         Get the current span from the execution context. Return None otherwise.
         """
 
     @classmethod
-    def get_current_tracer(cls):
-        # type: () -> Any
+    def get_current_tracer(cls) -> Any:
         """
         Get the current tracer from the execution context. Return None otherwise.
         """
 
     @classmethod
-    def set_current_span(cls, span):
-        # type: (Any) -> None
+    def set_current_span(cls, span: Any) -> None:
         """
         Set the given span as the current span in the execution context.
         """
 
     @classmethod
-    def set_current_tracer(cls, tracer):
-        # type: (Any) -> None
+    def set_current_tracer(cls, tracer: Any) -> None:
         """
         Set the given tracer as the current tracer in the execution context.
         """
 
     @classmethod
-    def change_context(cls, span):
-        # type: (AbstractSpan) -> ContextManager
+    def change_context(cls, span: "AbstractSpan") -> ContextManager:
         """Change the context for the life of this context manager.
 
         :rtype: contextmanager
         """
 
     @classmethod
-    def with_current_context(cls, func):
-        # type: (Callable) -> Callable
+    def with_current_context(cls, func: Callable) -> Callable:
         """Passes the current spans to the new context the function will be run in.
 
         :param func: The function that will be run in the new context
@@ -221,21 +204,29 @@ class HttpSpanMixin(_MIXIN_BASE):
     _HTTP_METHOD = "http.method"
     _HTTP_URL = "http.url"
     _HTTP_STATUS_CODE = "http.status_code"
+    _NET_PEER_NAME = "net.peer.name"
+    _NET_PEER_PORT = "net.peer.port"
 
-    def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, Optional[HttpResponseType]) -> None
+    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
         """
         Add correct attributes for a http client span.
 
         :param request: The request made
         :type request: HttpRequest
-        :param response: The response received by the server. Is None if no response received.
+        :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.kind = SpanKind.CLIENT
         self.add_attribute(self._SPAN_COMPONENT, "http")
         self.add_attribute(self._HTTP_METHOD, request.method)
         self.add_attribute(self._HTTP_URL, request.url)
+
+        parsed_url = urlparse(request.url)
+        if parsed_url.hostname:
+            self.add_attribute(self._NET_PEER_NAME, parsed_url.hostname)
+        if parsed_url.port and parsed_url.port not in [80, 443]:
+            self.add_attribute(self._NET_PEER_PORT, parsed_url.port)
+
         user_agent = request.headers.get("User-Agent")
         if user_agent:
             self.add_attribute(self._HTTP_USER_AGENT, user_agent)
@@ -245,7 +236,7 @@ class HttpSpanMixin(_MIXIN_BASE):
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
 
 
-class Link(object):
+class Link:
     """
     This is a wrapper class to link the context to the current tracer.
     :param headers: A dictionary of the request header as key value pairs.
@@ -254,7 +245,6 @@ class Link(object):
     :type attributes: dict
     """
 
-    def __init__(self, headers, attributes=None):
-        # type: (Dict[str, str], Attributes) -> None
+    def __init__(self, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
         self.headers = headers
         self.attributes = attributes

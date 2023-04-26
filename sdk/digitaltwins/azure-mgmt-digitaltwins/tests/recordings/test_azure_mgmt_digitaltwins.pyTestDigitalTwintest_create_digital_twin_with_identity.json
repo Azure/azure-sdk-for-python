@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:11 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:11 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,12 +172,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "863097dc-acd7-490a-9ddb-7012dd2b79a6",
+        "client-request-id": "b1194f89-d54b-461c-98cf-f219b03a18c9",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "863097dc-acd7-490a-9ddb-7012dd2b79a6",
+        "client-request-id": "b1194f89-d54b-461c-98cf-f219b03a18c9",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:11 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:12 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14357.7 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -213,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname?api-version=2021-04-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname?api-version=2022-09-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -221,12 +221,12 @@
         "Connection": "keep-alive",
         "Content-Length": "160",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/23.0.0b1 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "location": "westus2",
         "tags": {
-          "DeleteAfter": "2022-12-23T03:44:11",
+          "DeleteAfter": "2023-02-28T11:04:11",
           "BuildId": "local",
           "BuildJob": "local",
           "BuildNumber": "local",
@@ -238,14 +238,14 @@
         "Cache-Control": "no-cache",
         "Content-Length": "336",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:14 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:17 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b170a3db-2ff8-43fb-80e9-c28f2515d607",
+        "x-ms-correlation-request-id": "0b6ef98c-984d-4366-9693-b5e239e0b64a",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194415Z:b170a3db-2ff8-43fb-80e9-c28f2515d607"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030417Z:0b6ef98c-984d-4366-9693-b5e239e0b64a"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname",
@@ -253,7 +253,7 @@
         "type": "Microsoft.Resources/resourceGroups",
         "location": "westus2",
         "tags": {
-          "DeleteAfter": "2022-12-23T03:44:11",
+          "DeleteAfter": "2023-02-28T11:04:11",
           "BuildId": "local",
           "BuildJob": "local",
           "BuildNumber": "local",
@@ -271,7 +271,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -281,12 +281,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:14 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -365,7 +365,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -374,13 +374,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-8ciYy_hRffVrOO7BY2aDWA\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:14 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -436,12 +437,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "d543d4c3-3739-43f4-96ba-23c449ee68a2",
+        "client-request-id": "e814d34e-bf63-4585-9959-b3f5bf307197",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -454,10 +455,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "d543d4c3-3739-43f4-96ba-23c449ee68a2",
+        "client-request-id": "e814d34e-bf63-4585-9959-b3f5bf307197",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:15 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:17 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -465,7 +466,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14357.7 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -477,7 +478,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityResourcecea8383b?api-version=2018-11-30",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityResourcecea8383b?api-version=2023-01-31",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -485,7 +486,7 @@
         "Connection": "keep-alive",
         "Content-Length": "23",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-msi/6.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-msi/7.1.0b1 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "location": "westus2"
@@ -495,15 +496,15 @@
         "Cache-Control": "no-cache",
         "Content-Length": "457",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:18 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:25 GMT",
         "Expires": "-1",
         "Location": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityResourcecea8383b",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "09a1ad8c-6eea-4d61-967e-6d9a00afdb18",
+        "x-ms-correlation-request-id": "ad0967d9-c6ea-4091-9b3b-9d8f24c4308e",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194418Z:09a1ad8c-6eea-4d61-967e-6d9a00afdb18"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030425Z:ad0967d9-c6ea-4091-9b3b-9d8f24c4308e"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityResourcecea8383b",
@@ -513,8 +514,8 @@
         "tags": {},
         "properties": {
           "tenantId": "00000000-0000-0000-0000-000000000000",
-          "principalId": "d86aaa37-1a39-4878-a35d-f11f8f1a9a2d",
-          "clientId": "fbef33fd-7732-40d2-95c6-cfed7c31b225"
+          "principalId": "a258cdb5-e987-4b53-8b5c-6c7bcac43aa1",
+          "clientId": "452d9605-6f5a-4b1b-b54f-63f373dc19fa"
         }
       }
     },
@@ -525,7 +526,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -535,12 +536,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:18 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:25 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -619,7 +620,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -629,12 +630,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:18 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:25 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -690,12 +691,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "5c363c11-6ea4-49f9-b6cc-e0d9346d932e",
+        "client-request-id": "fb09a14a-fc01-48ca-92e9-49cd7f435519",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.4 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -708,10 +709,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "5c363c11-6ea4-49f9-b6cc-e0d9346d932e",
+        "client-request-id": "fb09a14a-fc01-48ca-92e9-49cd7f435519",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:18 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:25 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -719,7 +720,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14357.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14711.6 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -731,7 +732,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b?api-version=2023-01-31",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -739,7 +740,7 @@
         "Connection": "keep-alive",
         "Content-Length": "254",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "location": "westus2",
@@ -752,22 +753,22 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb?api-version=2022-10-31",
+        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943?api-version=2023-01-31",
         "Cache-Control": "no-cache",
-        "Content-Length": "1050",
+        "Content-Length": "1052",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:20 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:30 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationResults/eyJvcGVyYXRpb25LaW5kIjoiQ3JlYXRlIiwicmVzb3VyY2VLaW5kIjoiRGlnaXRhbFR3aW5zSW5zdGFuY2UiLCJyZXNvdXJjZUdyb3VwTmFtZSI6InJncHktZGdseTZzNXViamd4NmtzeW1kcG5id2F5bHRpcTJkYWR0dmNodDZvaXN0Z3lpdTJvNWxvMm9sZGE2YmZwaXA1M3QyaXhxeWYzMjN3IiwicmVzb3VyY2VOYW1lIjoiZGlnaXRhbFR3aW5jZWE4MzgzYiJ9?api-version=2022-10-31",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationResults/eyJvcGVyYXRpb25LaW5kIjoiQ3JlYXRlIiwicmVzb3VyY2VLaW5kIjoiRGlnaXRhbFR3aW5zSW5zdGFuY2UiLCJyZXNvdXJjZUdyb3VwTmFtZSI6InJncHktdHh3eXphZG11ank3ZWF1em55czVoYmI3enFieHVkaHZ0cnlsZnI0emtoeHhubHk3ZGNtcHNxZHZsZDdndWxyM2ltcGxpNHFsZndnIiwicmVzb3VyY2VOYW1lIjoiZGlnaXRhbFR3aW5jZWE4MzgzYiJ9?api-version=2023-01-31",
         "Pragma": "no-cache",
         "Retry-After": "10",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-fbf126bb945c35ca76693d3358cb5c1b-8e071844e53c3de2-01",
+        "traceresponse": "00-f33ec290394fa8e51220018c9c083154-de3b4e7f71c2831d-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "670bcc69-62f4-4733-a2d1-1d2fbc4a7dca",
+        "x-ms-correlation-request-id": "613bcdb0-9bd4-4f6c-954a-c83b10c83017",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194421Z:670bcc69-62f4-4733-a2d1-1d2fbc4a7dca"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030431Z:613bcdb0-9bd4-4f6c-954a-c83b10c83017"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b",
@@ -775,8 +776,8 @@
         "type": "Microsoft.DigitalTwins/digitalTwinsInstances",
         "properties": {
           "provisioningState": "Provisioning",
-          "createdTime": "2022-12-22T19:44:20.6955751Z",
-          "lastUpdatedTime": "2022-12-22T19:44:20.6955751Z",
+          "createdTime": "2023-02-28T03:04:29.6685022Z",
+          "lastUpdatedTime": "2023-02-28T03:04:29.6685022Z",
           "hostName": null,
           "publicNetworkAccess": "Enabled"
         },
@@ -795,21 +796,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2022-12-22T19:44:20.273014Z",
+          "createdAt": "2023-02-28T03:04:28.6884697Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2022-12-22T19:44:20.273014Z"
+          "lastModifiedAt": "2023-02-28T03:04:28.6884697Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943?api-version=2023-01-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -817,34 +818,34 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:44:31 GMT",
+        "Date": "Tue, 28 Feb 2023 03:04:31 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-55477ae58f5bc27858d7e9d049f43ad5-7c3eec40d0d4deae-01",
+        "traceresponse": "00-50428a95d192411f2ae7cb99b5846d98-0496e486a875398f-01",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "55a019c1-d797-4d31-b831-3e6aaf163dd1",
+        "x-ms-correlation-request-id": "cbbb14e7-808a-45ba-88a7-7c2de5a74334",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194431Z:55a019c1-d797-4d31-b831-3e6aaf163dd1"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030432Z:cbbb14e7-808a-45ba-88a7-7c2de5a74334"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb",
-        "name": "f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943",
+        "name": "79549c37-ceab-45bd-b410-f94b18bad943",
         "status": "Running",
-        "startTime": "2022-12-22T19:44:20.7119975Z"
+        "startTime": "2023-02-28T03:04:29.6815069Z"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943?api-version=2023-01-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -852,34 +853,34 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:45:01 GMT",
+        "Date": "Tue, 28 Feb 2023 03:05:01 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-89fe29d9c5a98f56d133534d59750d30-5d49dc82ef8f0c0d-01",
+        "traceresponse": "00-02f7b19e4f6173c1bcb3f81be51aec12-351656c61c4de95e-01",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "34b86584-5205-48cb-9e4d-162d5a985383",
+        "x-ms-correlation-request-id": "5cab7a24-01b7-49be-9b68-52b7a8c39a4f",
         "x-ms-ratelimit-remaining-subscription-reads": "11998",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194501Z:34b86584-5205-48cb-9e4d-162d5a985383"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030502Z:5cab7a24-01b7-49be-9b68-52b7a8c39a4f"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb",
-        "name": "f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943",
+        "name": "79549c37-ceab-45bd-b410-f94b18bad943",
         "status": "Running",
-        "startTime": "2022-12-22T19:44:20.7119975Z"
+        "startTime": "2023-02-28T03:04:29.6815069Z"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943?api-version=2023-01-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -887,35 +888,35 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:45:31 GMT",
+        "Date": "Tue, 28 Feb 2023 03:05:31 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-622fc77743a68e1c589c8484b2e77b32-897754bea22e6afe-01",
+        "traceresponse": "00-9f3c6b9a153811c9fb1545183689c6e2-08cecb0fd4588cad-01",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "102e0d37-dcc3-4def-a05d-1a357ba5ef32",
+        "x-ms-correlation-request-id": "cd4da39d-330a-450f-90f2-123f4041d4c7",
         "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194532Z:102e0d37-dcc3-4def-a05d-1a357ba5ef32"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030532Z:cd4da39d-330a-450f-90f2-123f4041d4c7"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb",
-        "name": "f2e2c3ac-6bab-4ab6-8f95-59456a0f2dcb",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/79549c37-ceab-45bd-b410-f94b18bad943",
+        "name": "79549c37-ceab-45bd-b410-f94b18bad943",
         "status": "Succeeded",
-        "startTime": "2022-12-22T19:44:20.7119975Z",
-        "endTime": "2022-12-22T19:45:07.3294972Z"
+        "startTime": "2023-02-28T03:04:29.6815069Z",
+        "endTime": "2023-02-28T03:05:10.367731Z"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b?api-version=2023-01-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -923,18 +924,18 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:45:32 GMT",
+        "Date": "Tue, 28 Feb 2023 03:05:32 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-d749ce7b5e4b0022eff0009eacc2b11b-c82c6b29e0b301ac-01",
+        "traceresponse": "00-b396585071fd40a8b6faa5553df92d61-0a082711bb28ed52-01",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "271a7e65-c87f-4d64-b195-be94739fd129",
+        "x-ms-correlation-request-id": "116ec2ec-06fd-4157-9652-0e8636b9e839",
         "x-ms-ratelimit-remaining-subscription-reads": "11996",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194532Z:271a7e65-c87f-4d64-b195-be94739fd129"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030533Z:116ec2ec-06fd-4157-9652-0e8636b9e839"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b",
@@ -942,8 +943,8 @@
         "type": "Microsoft.DigitalTwins/digitalTwinsInstances",
         "properties": {
           "provisioningState": "Succeeded",
-          "createdTime": "2022-12-22T19:44:20.6955751Z",
-          "lastUpdatedTime": "2022-12-22T19:45:07.0011019Z",
+          "createdTime": "2023-02-28T03:04:29.6685022Z",
+          "lastUpdatedTime": "2023-02-28T03:05:00.8026926Z",
           "hostName": "digitalTwincea8383b.api.wus2.digitaltwins.azure.net",
           "privateEndpointConnections": [],
           "publicNetworkAccess": "Enabled"
@@ -954,8 +955,8 @@
           "tenantId": "00000000-0000-0000-0000-000000000000",
           "userAssignedIdentities": {
             "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityResourcecea8383b": {
-              "clientId": "fbef33fd-7732-40d2-95c6-cfed7c31b225",
-              "principalId": "d86aaa37-1a39-4878-a35d-f11f8f1a9a2d"
+              "clientId": "452d9605-6f5a-4b1b-b54f-63f373dc19fa",
+              "principalId": "a258cdb5-e987-4b53-8b5c-6c7bcac43aa1"
             }
           }
         },
@@ -963,42 +964,42 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2022-12-22T19:44:20.273014Z",
+          "createdAt": "2023-02-28T03:04:28.6884697Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2022-12-22T19:44:20.273014Z"
+          "lastModifiedAt": "2023-02-28T03:04:28.6884697Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b?api-version=2023-01-31",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/85bc77fc-f8e4-4256-bec7-03230abfd32a?api-version=2022-10-31",
+        "Azure-AsyncOperation": "https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/861db0ac-a8db-482e-aeb3-7dd74d1f688e?api-version=2023-01-31",
         "Cache-Control": "no-cache",
-        "Content-Length": "1163",
+        "Content-Length": "1165",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:45:32 GMT",
+        "Date": "Tue, 28 Feb 2023 03:05:33 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationResults/eyJvcGVyYXRpb25LaW5kIjoiRGVsZXRlIiwicmVzb3VyY2VLaW5kIjoiRGlnaXRhbFR3aW5zSW5zdGFuY2UiLCJyZXNvdXJjZUdyb3VwTmFtZSI6InJncHktZGdseTZzNXViamd4NmtzeW1kcG5id2F5bHRpcTJkYWR0dmNodDZvaXN0Z3lpdTJvNWxvMm9sZGE2YmZwaXA1M3QyaXhxeWYzMjN3IiwicmVzb3VyY2VOYW1lIjoiZGlnaXRhbFR3aW5jZWE4MzgzYiJ9?api-version=2022-10-31",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationResults/eyJvcGVyYXRpb25LaW5kIjoiRGVsZXRlIiwicmVzb3VyY2VLaW5kIjoiRGlnaXRhbFR3aW5zSW5zdGFuY2UiLCJyZXNvdXJjZUdyb3VwTmFtZSI6InJncHktdHh3eXphZG11ank3ZWF1em55czVoYmI3enFieHVkaHZ0cnlsZnI0emtoeHhubHk3ZGNtcHNxZHZsZDdndWxyM2ltcGxpNHFsZndnIiwicmVzb3VyY2VOYW1lIjoiZGlnaXRhbFR3aW5jZWE4MzgzYiJ9?api-version=2023-01-31",
         "Pragma": "no-cache",
         "Retry-After": "10",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-47baeac998096f80106084e54db6da00-c2fe7ef8cd9e7fcf-01",
+        "traceresponse": "00-2564be375ab4c4dea68e304562bbaa9c-4f597db320fceb38-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "28676fe0-a2ad-4594-8941-cadefeb004bd",
+        "x-ms-correlation-request-id": "c2239d71-2ee8-43ef-90d6-ce05741f1a74",
         "x-ms-ratelimit-remaining-subscription-deletes": "14999",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194533Z:28676fe0-a2ad-4594-8941-cadefeb004bd"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030534Z:c2239d71-2ee8-43ef-90d6-ce05741f1a74"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.DigitalTwins/digitalTwinsInstances/digitalTwincea8383b",
@@ -1006,8 +1007,8 @@
         "type": "Microsoft.DigitalTwins/digitalTwinsInstances",
         "properties": {
           "provisioningState": "Deleting",
-          "createdTime": "2022-12-22T19:44:20.6955751Z",
-          "lastUpdatedTime": "2022-12-22T19:45:07.0011019Z",
+          "createdTime": "2023-02-28T03:04:29.6685022Z",
+          "lastUpdatedTime": "2023-02-28T03:05:00.8026926Z",
           "hostName": "digitalTwincea8383b.api.wus2.digitaltwins.azure.net",
           "publicNetworkAccess": "Enabled"
         },
@@ -1017,8 +1018,8 @@
           "tenantId": "00000000-0000-0000-0000-000000000000",
           "userAssignedIdentities": {
             "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityResourcecea8383b": {
-              "clientId": "fbef33fd-7732-40d2-95c6-cfed7c31b225",
-              "principalId": "d86aaa37-1a39-4878-a35d-f11f8f1a9a2d"
+              "clientId": "452d9605-6f5a-4b1b-b54f-63f373dc19fa",
+              "principalId": "a258cdb5-e987-4b53-8b5c-6c7bcac43aa1"
             }
           }
         },
@@ -1026,21 +1027,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2022-12-22T19:44:20.273014Z",
+          "createdAt": "2023-02-28T03:04:28.6884697Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2022-12-22T19:44:20.273014Z"
+          "lastModifiedAt": "2023-02-28T03:04:28.6884697Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/85bc77fc-f8e4-4256-bec7-03230abfd32a?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/861db0ac-a8db-482e-aeb3-7dd74d1f688e?api-version=2023-01-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1048,34 +1049,34 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:45:43 GMT",
+        "Date": "Tue, 28 Feb 2023 03:05:33 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-5edfd5c73d20564541450b009284d63a-b87db95660194fd0-01",
+        "traceresponse": "00-b39cfa0af969257198afb1b2ffe3e3f4-068d8bc0b71a1417-01",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7496ff54-d709-47c6-8630-027c9e875f32",
+        "x-ms-correlation-request-id": "fad44b61-0bcb-4492-b180-9767322d2de4",
         "x-ms-ratelimit-remaining-subscription-reads": "11995",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194543Z:7496ff54-d709-47c6-8630-027c9e875f32"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030534Z:fad44b61-0bcb-4492-b180-9767322d2de4"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/85bc77fc-f8e4-4256-bec7-03230abfd32a",
-        "name": "85bc77fc-f8e4-4256-bec7-03230abfd32a",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/861db0ac-a8db-482e-aeb3-7dd74d1f688e",
+        "name": "861db0ac-a8db-482e-aeb3-7dd74d1f688e",
         "status": "Running",
-        "startTime": "2022-12-22T19:45:32.8470889Z"
+        "startTime": "2023-02-28T03:05:34.2951392Z"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/85bc77fc-f8e4-4256-bec7-03230abfd32a?api-version=2022-10-31",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/operationsStatuses/861db0ac-a8db-482e-aeb3-7dd74d1f688e?api-version=2023-01-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.3.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-digitaltwins/6.4.0 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1083,52 +1084,52 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Dec 2022 19:46:13 GMT",
+        "Date": "Tue, 28 Feb 2023 03:06:04 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceresponse": "00-5d98ad899f9177a70b3a7e49a472c53b-aabc6583fe08a39d-01",
+        "traceresponse": "00-59a97623ac1b7a421c0eef503acd0648-bda2aa172fda7739-01",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "76fe5624-2547-4b6b-9141-8096b2257b68",
+        "x-ms-correlation-request-id": "e4758335-b8f0-4573-b326-406721cfac22",
         "x-ms-ratelimit-remaining-subscription-reads": "11994",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194613Z:76fe5624-2547-4b6b-9141-8096b2257b68"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030605Z:e4758335-b8f0-4573-b326-406721cfac22"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/85bc77fc-f8e4-4256-bec7-03230abfd32a",
-        "name": "85bc77fc-f8e4-4256-bec7-03230abfd32a",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2/operationsStatuses/861db0ac-a8db-482e-aeb3-7dd74d1f688e",
+        "name": "861db0ac-a8db-482e-aeb3-7dd74d1f688e",
         "status": "Succeeded",
-        "startTime": "2022-12-22T19:45:32.8470889Z",
-        "endTime": "2022-12-22T19:46:10.1283291Z"
+        "startTime": "2023-02-28T03:05:34.2951392Z",
+        "endTime": "2023-02-28T03:05:57.6952715Z"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname?api-version=2021-04-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname?api-version=2022-09-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/23.0.0b1 Python/3.8.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 22 Dec 2022 19:46:14 GMT",
+        "Date": "Tue, 28 Feb 2023 03:06:07 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SR1BZOjJEREdMWTZTNVVCSkdYNktTWU1EUE5CV0FZTFRJUTJEQURUVkNIVDZPSXw4NjNDNUE4Rjg0OUREQkY3LVdFU1RVUzIiLCJqb2JMb2NhdGlvbiI6Indlc3R1czIifQ?api-version=2021-04-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SR1BZOjJEVFhXWVpBRE1VSlk3RUFVWk5ZUzVIQkI3WlFCWFVESFZUUllMRlI0WnxDQzZCNjUyRjA0RTE5NEYwLVdFU1RVUzIiLCJqb2JMb2NhdGlvbiI6Indlc3R1czIifQ?api-version=2022-09-01",
         "Pragma": "no-cache",
         "Retry-After": "15",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c763af75-6cf4-4ff5-814f-49942604c7fe",
+        "x-ms-correlation-request-id": "527126e7-d76c-4cb6-a6bc-cb1e5264363f",
         "x-ms-ratelimit-remaining-subscription-deletes": "14998",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20221222T194614Z:c763af75-6cf4-4ff5-814f-49942604c7fe"
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20230228T030607Z:527126e7-d76c-4cb6-a6bc-cb1e5264363f"
       },
       "ResponseBody": null
     }

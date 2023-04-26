@@ -1,0 +1,47 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+name: basic_component
+version: 0.0.1
+display_name: Basic component
+inputs:
+  component_in_number:
+    type: integer
+    optional: true
+  component_in_number_1:
+    type: integer
+    optional: true
+  component_in_path:
+    type: uri_folder
+outputs:
+  output_in_path:
+    type: uri_folder
+  output_in_number:
+    type: integer
+    is_control: true
+  is_number_larger_than_zero:
+    type: boolean
+    is_control: true
+
+environment:
+  conda_file:
+    name: example-environment
+    channels:
+      - defaults
+    dependencies:
+      - python=3.8.12
+      - pip=21.2.2
+      - pip:
+          - --extra-index-url=https://azuremlsdktestpypi.azureedge.net/sdk-cli-v2
+          - mldesigner==0.0.71974906
+          - mlflow
+          - azureml-mlflow
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+
+code: ./basic_component
+command: >-
+  python basic_component.py
+  $[[--component_in_number ${{inputs.component_in_number}}]]
+  $[[--component_in_number_1 ${{inputs.component_in_number_1}}]]
+  --component_in_path ${{inputs.component_in_path}}
+  --output_in_path ${{outputs.output_in_path}}

@@ -1,0 +1,3795 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "247",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:15 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b73bf430-b791-46a9-a9da-d88969aa770a",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064215Z:b73bf430-b791-46a9-a9da-d88969aa770a"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "The Resource \u0027Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555\u0027 under resource group \u002700000\u0027 was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/DefaultResourceGroup-southcentralus?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "272",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:16 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "74bf106d-e95e-4630-9362-f8c05a12f0de",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064216Z:74bf106d-e95e-4630-9362-f8c05a12f0de"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/DefaultResourceGroup-southcentralus",
+        "name": "DefaultResourceGroup-southcentralus",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "southcentralus",
+        "properties": {
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/DefaultResourceGroup-southcentralus/resources?$filter=substringof%28%27DefaultWorkspace-southcentralus%27%2Cname%29\u0026api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "322",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:17 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "3bda2801-e633-4c68-b513-c081aed78eb3",
+        "x-ms-ratelimit-remaining-subscription-reads": "11983",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064217Z:3bda2801-e633-4c68-b513-c081aed78eb3"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/DefaultResourceGroup-southcentralus/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-southcentralus",
+            "name": "DefaultWorkspace-southcentralus",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "location": "southcentralus"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "19620",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "workspaceName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Specifies the name of the Azure Machine Learning workspace."
+                }
+              },
+              "description": {
+                "type": "string",
+                "metadata": {
+                  "description": "Description string."
+                }
+              },
+              "friendlyName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Friendly name."
+                }
+              },
+              "location": {
+                "type": "string",
+                "metadata": {
+                  "description": "Specifies the location for all resources."
+                }
+              },
+              "resourceGroupName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Specifies the resource group name of the Azure Machine Learning workspace."
+                }
+              },
+              "storageAccountOption": {
+                "type": "string",
+                "defaultValue": "new",
+                "allowedValues": [
+                  "new",
+                  "existing"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not a new storage should be provisioned."
+                }
+              },
+              "storageAccountName": {
+                "type": "string",
+                "defaultValue": "[concat(\u0027sa\u0027, uniqueString(parameters(\u0027resourceGroupName\u0027), parameters(\u0027workspaceName\u0027)))]",
+                "metadata": {
+                  "description": "Name of the storage account."
+                }
+              },
+              "storageAccountType": {
+                "type": "string",
+                "defaultValue": "Standard_LRS"
+              },
+              "storageAccountBehindVNet": {
+                "type": "string",
+                "defaultValue": "false",
+                "allowedValues": [
+                  "true",
+                  "false"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not to put the storage account behind VNet"
+                }
+              },
+              "storageAccountResourceGroupName": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027resourceGroupName\u0027)]"
+              },
+              "storageAccountLocation": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027location\u0027)]"
+              },
+              "keyVaultOption": {
+                "type": "string",
+                "defaultValue": "new",
+                "allowedValues": [
+                  "new",
+                  "existing"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not a new key vault should be provisioned."
+                }
+              },
+              "keyVaultName": {
+                "type": "string",
+                "defaultValue": "[concat(\u0027kv\u0027, uniqueString(parameters(\u0027resourceGroupName\u0027), parameters(\u0027workspaceName\u0027)))]",
+                "metadata": {
+                  "description": "Name of the key vault."
+                }
+              },
+              "keyVaultBehindVNet": {
+                "type": "string",
+                "defaultValue": "false",
+                "allowedValues": [
+                  "true",
+                  "false"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not to put the storage account behind VNet"
+                }
+              },
+              "keyVaultResourceGroupName": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027resourceGroupName\u0027)]"
+              },
+              "keyVaultLocation": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027location\u0027)]"
+              },
+              "applicationInsightsOption": {
+                "type": "string",
+                "defaultValue": "new",
+                "allowedValues": [
+                  "new",
+                  "existing"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not new ApplicationInsights should be provisioned."
+                }
+              },
+              "applicationInsightsName": {
+                "type": "string",
+                "defaultValue": "[concat(\u0027ai\u0027, uniqueString(parameters(\u0027resourceGroupName\u0027), parameters(\u0027workspaceName\u0027)))]",
+                "metadata": {
+                  "description": "Name of ApplicationInsights."
+                }
+              },
+              "applicationInsightsResourceGroupName": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027resourceGroupName\u0027)]"
+              },
+              "applicationInsightsLocation": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027location\u0027)]"
+              },
+              "containerRegistryOption": {
+                "type": "string",
+                "defaultValue": "none",
+                "allowedValues": [
+                  "new",
+                  "existing",
+                  "none"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not a new container registry should be provisioned."
+                }
+              },
+              "containerRegistryName": {
+                "type": "string",
+                "defaultValue": "[concat(\u0027cr\u0027, uniqueString(parameters(\u0027resourceGroupName\u0027), parameters(\u0027workspaceName\u0027)))]",
+                "metadata": {
+                  "description": "The container registry bind to the workspace."
+                }
+              },
+              "containerRegistrySku": {
+                "type": "string",
+                "defaultValue": "Standard",
+                "allowedValues": [
+                  "Basic",
+                  "Standard",
+                  "Premium"
+                ]
+              },
+              "containerRegistryResourceGroupName": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027resourceGroupName\u0027)]"
+              },
+              "containerRegistryBehindVNet": {
+                "type": "string",
+                "defaultValue": "false",
+                "allowedValues": [
+                  "true",
+                  "false"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not to put container registry behind VNet."
+                }
+              },
+              "containerRegistryLocation": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027location\u0027)]"
+              },
+              "vnetOption": {
+                "type": "string",
+                "defaultValue": "[if(equals(parameters(\u0027privateEndpointType\u0027), \u0027none\u0027), \u0027none\u0027, \u0027new\u0027)]",
+                "allowedValues": [
+                  "new",
+                  "existing",
+                  "none"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not a new VNet should be provisioned."
+                }
+              },
+              "vnetName": {
+                "type": "string",
+                "defaultValue": "[concat(\u0027vn\u0027,uniqueString(parameters(\u0027resourceGroupName\u0027), parameters(\u0027workspaceName\u0027)))]",
+                "metadata": {
+                  "description": "Name of the VNet"
+                }
+              },
+              "vnetResourceGroupName": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027resourceGroupName\u0027)]"
+              },
+              "addressPrefixes": {
+                "type": "array",
+                "defaultValue": [
+                  "10.0.0.0/16"
+                ],
+                "metadata": {
+                  "description": "Address prefix of the virtual network"
+                }
+              },
+              "subnetOption": {
+                "type": "string",
+                "defaultValue": "[if(or(not(equals(parameters(\u0027privateEndpointType\u0027), \u0027none\u0027)), equals(parameters(\u0027vnetOption\u0027), \u0027new\u0027)), \u0027new\u0027, \u0027none\u0027)]",
+                "allowedValues": [
+                  "new",
+                  "existing",
+                  "none"
+                ],
+                "metadata": {
+                  "description": "Determines whether or not a new subnet should be provisioned."
+                }
+              },
+              "subnetName": {
+                "type": "string",
+                "defaultValue": "[concat(\u0027sn\u0027,uniqueString(parameters(\u0027resourceGroupName\u0027), parameters(\u0027workspaceName\u0027)))]",
+                "metadata": {
+                  "description": "Name of the subnet"
+                }
+              },
+              "subnetPrefix": {
+                "type": "string",
+                "defaultValue": "10.0.0.0/24",
+                "metadata": {
+                  "description": "Subnet prefix of the virtual network"
+                }
+              },
+              "adbWorkspace": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "Azure Databrick workspace to be linked to the workspace"
+                }
+              },
+              "confidential_data": {
+                "type": "string",
+                "defaultValue": "false",
+                "allowedValues": [
+                  "false",
+                  "true"
+                ],
+                "metadata": {
+                  "description": "Specifies that the Azure Machine Learning workspace holds highly confidential data."
+                }
+              },
+              "encryption_status": {
+                "type": "string",
+                "defaultValue": "Disabled",
+                "allowedValues": [
+                  "Enabled",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "description": "Specifies if the Azure Machine Learning workspace should be encrypted with customer managed key."
+                }
+              },
+              "cmk_keyvault": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "Specifies the customer managed keyVault arm id."
+                }
+              },
+              "resource_cmk_uri": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "Specifies if the customer managed keyvault key uri."
+                }
+              },
+              "privateEndpointType": {
+                "type": "string",
+                "defaultValue": "none",
+                "allowedValues": [
+                  "AutoApproval",
+                  "ManualApproval",
+                  "none"
+                ]
+              },
+              "tagValues": {
+                "type": "object"
+              },
+              "privateEndpointName": {
+                "type": "string",
+                "defaultValue": "pe",
+                "metadata": {
+                  "description": "Name of the private end point added to the workspace"
+                }
+              },
+              "privateEndpointResourceGroupName": {
+                "type": "string",
+                "defaultValue": "[parameters(\u0027resourceGroupName\u0027)]",
+                "metadata": {
+                  "description": "Name of the resource group where the private end point is added to"
+                }
+              },
+              "imageBuildCompute": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "The name of the compute target to use for building environment Docker images with the container registry is behind a VNet."
+                }
+              },
+              "publicNetworkAccess": {
+                "type": "string",
+                "defaultValue": "Enabled",
+                "allowedValues": [
+                  "Disabled",
+                  "Enabled"
+                ],
+                "metadata": {
+                  "description": "Whether to allow public endpoint connectivity when a workspace is private link enabled."
+                }
+              },
+              "soft_delete_enabled": {
+                "type": "string",
+                "defaultValue": "false",
+                "allowedValues": [
+                  "false",
+                  "true"
+                ],
+                "metadata": {
+                  "description": "Whether to create a workspace with soft delete capability"
+                }
+              },
+              "allow_recover_softdeleted_workspace": {
+                "type": "string",
+                "defaultValue": "false",
+                "allowedValues": [
+                  "false",
+                  "true"
+                ],
+                "metadata": {
+                  "description": "Whether to allow an existing soft-deleted workspace to be recovered"
+                }
+              },
+              "encryption_cosmosdb_resourceid": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "The Bring-Your-Own cosmosdb account that customer brings to store data"
+                }
+              },
+              "encryption_storage_resourceid": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "The Bring-Your-Own storage account that customer brings to store data"
+                }
+              },
+              "encryption_search_resourceid": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "The Bring-Your-Own search account that customer brings to store data"
+                }
+              },
+              "identity": {
+                "type": "object",
+                "defaultValue": {
+                  "type": "systemAssigned"
+                },
+                "metadata": {
+                  "description": "Managed identities assigned to workspace. If not specificed, SystemAssigned managed identity is the default."
+                }
+              },
+              "primaryUserAssignedIdentity": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                  "description": "ARM identifier of primary user assigned managed identity, in case multiple ones are specified. Also the default managed identity for clusterless compute."
+                }
+              },
+              "managedNetwork": {
+                "type": "object",
+                "defaultValue": {
+                  "isolationMode": "Disabled"
+                },
+                "metadata": {
+                  "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
+                }
+              }
+            },
+            "variables": {
+              "tenantId": "[subscription().tenantId]",
+              "storageAccount": "[resourceId(parameters(\u0027storageAccountResourceGroupName\u0027), \u0027Microsoft.Storage/storageAccounts\u0027, parameters(\u0027storageAccountName\u0027))]",
+              "keyVault": "[resourceId(parameters(\u0027keyVaultResourceGroupName\u0027), \u0027Microsoft.KeyVault/vaults\u0027, parameters(\u0027keyVaultName\u0027))]",
+              "containerRegistry": "[resourceId(parameters(\u0027containerRegistryResourceGroupName\u0027), \u0027Microsoft.ContainerRegistry/registries\u0027, parameters(\u0027containerRegistryName\u0027))]",
+              "applicationInsights": "[resourceId(parameters(\u0027applicationInsightsResourceGroupName\u0027), \u0027Microsoft.Insights/components\u0027, parameters(\u0027applicationInsightsName\u0027))]",
+              "vnet": "[resourceId(parameters(\u0027vnetResourceGroupName\u0027), \u0027Microsoft.Network/virtualNetworks\u0027, parameters(\u0027vnetName\u0027))]",
+              "subnet": "[resourceId(parameters(\u0027vnetResourceGroupName\u0027), \u0027Microsoft.Network/virtualNetworks/subnets\u0027, parameters(\u0027vnetName\u0027), parameters(\u0027subnetName\u0027))]",
+              "enablePE": true,
+              "networkRuleSetBehindVNet": {
+                "defaultAction": "deny",
+                "virtualNetworkRules": [
+                  {
+                    "action": "Allow",
+                    "id": "[variables(\u0027subnet\u0027)]"
+                  }
+                ]
+              },
+              "privateEndpointSettings": {
+                "name": "[concat(parameters(\u0027workspaceName\u0027), \u0027-PrivateEndpoint\u0027)]",
+                "properties": {
+                  "privateLinkServiceId": "[resourceId(\u0027Microsoft.MachineLearningServices/workspaces\u0027, parameters(\u0027workspaceName\u0027))]",
+                  "groupIds": [
+                    "amlworkspace"
+                  ]
+                }
+              },
+              "defaultPEConnections": "[array(variables(\u0027privateEndpointSettings\u0027))]",
+              "privateEndpointDeploymentName": "[concat(\u0027DeployPrivateEndpoint-\u0027, uniqueString(parameters(\u0027privateEndpointName\u0027)))]"
+            },
+            "resources": [
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), equals(parameters(\u0027vnetOption\u0027), \u0027new\u0027))]",
+                "type": "Microsoft.Network/virtualNetworks",
+                "apiVersion": "2019-09-01",
+                "name": "[parameters(\u0027vnetName\u0027)]",
+                "location": "[parameters(\u0027location\u0027)]",
+                "tags": "[parameters(\u0027tagValues\u0027)]",
+                "properties": {
+                  "addressSpace": {
+                    "addressPrefixes": "[parameters(\u0027addressPrefixes\u0027)]"
+                  },
+                  "enableDdosProtection": false,
+                  "enableVmProtection": false
+                }
+              },
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), equals(parameters(\u0027subnetOption\u0027), \u0027new\u0027))]",
+                "type": "Microsoft.Network/virtualNetworks/subnets",
+                "apiVersion": "2019-09-01",
+                "name": "[concat(parameters(\u0027vnetName\u0027), \u0027/\u0027, parameters(\u0027subnetName\u0027))]",
+                "dependsOn": [
+                  "[resourceId(\u0027Microsoft.Network/virtualNetworks\u0027, parameters(\u0027vnetName\u0027))]"
+                ],
+                "properties": {
+                  "addressPrefix": "[parameters(\u0027subnetPrefix\u0027)]",
+                  "privateEndpointNetworkPolicies": "Disabled",
+                  "privateLinkServiceNetworkPolicies": "Enabled",
+                  "serviceEndpoints": [
+                    {
+                      "service": "Microsoft.Storage"
+                    },
+                    {
+                      "service": "Microsoft.KeyVault"
+                    },
+                    {
+                      "service": "Microsoft.ContainerRegistry"
+                    }
+                  ]
+                }
+              },
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), equals(parameters(\u0027storageAccountOption\u0027), \u0027new\u0027))]",
+                "type": "Microsoft.Storage/storageAccounts",
+                "apiVersion": "2019-04-01",
+                "name": "[parameters(\u0027storageAccountName\u0027)]",
+                "tags": "[parameters(\u0027tagValues\u0027)]",
+                "dependsOn": [
+                  "[resourceId(\u0027Microsoft.Network/virtualNetworks/subnets\u0027, parameters(\u0027vnetName\u0027), parameters(\u0027subnetName\u0027))]"
+                ],
+                "location": "[parameters(\u0027storageAccountLocation\u0027)]",
+                "sku": {
+                  "name": "[parameters(\u0027storageAccountType\u0027)]"
+                },
+                "kind": "StorageV2",
+                "properties": {
+                  "encryption": {
+                    "services": {
+                      "blob": {
+                        "enabled": true
+                      },
+                      "file": {
+                        "enabled": true
+                      }
+                    },
+                    "keySource": "Microsoft.Storage"
+                  },
+                  "supportsHttpsTrafficOnly": true,
+                  "allowBlobPublicAccess": false,
+                  "networkAcls": "[if(equals(parameters(\u0027storageAccountBehindVNet\u0027), \u0027true\u0027), variables(\u0027networkRuleSetBehindVNet\u0027), json(\u0027null\u0027))]"
+                }
+              },
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), equals(parameters(\u0027keyVaultOption\u0027), \u0027new\u0027))]",
+                "type": "Microsoft.KeyVault/vaults",
+                "apiVersion": "2019-09-01",
+                "tags": "[parameters(\u0027tagValues\u0027)]",
+                "dependsOn": [
+                  "[resourceId(\u0027Microsoft.Network/virtualNetworks/subnets\u0027, parameters(\u0027vnetName\u0027), parameters(\u0027subnetName\u0027))]"
+                ],
+                "name": "[parameters(\u0027keyVaultName\u0027)]",
+                "location": "[parameters(\u0027keyVaultLocation\u0027)]",
+                "properties": {
+                  "tenantId": "[variables(\u0027tenantId\u0027)]",
+                  "sku": {
+                    "name": "standard",
+                    "family": "A"
+                  },
+                  "accessPolicies": [],
+                  "networkAcls": "[if(equals(parameters(\u0027keyVaultBehindVNet\u0027), \u0027true\u0027), variables(\u0027networkRuleSetBehindVNet\u0027), json(\u0027null\u0027))]"
+                }
+              },
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), equals(parameters(\u0027containerRegistryOption\u0027), \u0027new\u0027))]",
+                "type": "Microsoft.ContainerRegistry/registries",
+                "apiVersion": "2019-05-01",
+                "tags": "[parameters(\u0027tagValues\u0027)]",
+                "name": "[parameters(\u0027containerRegistryName\u0027)]",
+                "dependsOn": [
+                  "[resourceId(\u0027Microsoft.Network/virtualNetworks/subnets\u0027, parameters(\u0027vnetName\u0027), parameters(\u0027subnetName\u0027))]"
+                ],
+                "location": "[parameters(\u0027containerRegistryLocation\u0027)]",
+                "sku": {
+                  "name": "[parameters(\u0027containerRegistrySku\u0027)]"
+                },
+                "properties": {
+                  "adminUserEnabled": true,
+                  "networkRuleSet": "[if(equals(parameters(\u0027containerRegistryBehindVNet\u0027), \u0027true\u0027), variables(\u0027networkRuleSetBehindVNet\u0027), json(\u0027null\u0027))]"
+                }
+              },
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), equals(parameters(\u0027applicationInsightsOption\u0027), \u0027new\u0027))]",
+                "type": "Microsoft.Insights/components",
+                "tags": "[parameters(\u0027tagValues\u0027)]",
+                "apiVersion": "2020-02-02-preview",
+                "name": "[parameters(\u0027applicationInsightsName\u0027)]",
+                "location": "[if(or(equals(toLower(parameters(\u0027applicationInsightsLocation\u0027)),\u0027westcentralus\u0027), equals(toLower(parameters(\u0027applicationInsightsLocation\u0027)),\u0027eastus2euap\u0027), equals(toLower(parameters(\u0027applicationInsightsLocation\u0027)),\u0027centraluseuap\u0027)),\u0027southcentralus\u0027, parameters(\u0027applicationInsightsLocation\u0027))]",
+                "kind": "web",
+                "properties": {
+                  "Application_Type": "web",
+                  "WorkspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/DefaultResourceGroup-southcentralus/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-southcentralus"
+                }
+              },
+              {
+                "condition": "[variables(\u0027enablePE\u0027)]",
+                "type": "Microsoft.MachineLearningServices/workspaces",
+                "apiVersion": "2022-12-01-preview",
+                "tags": "[parameters(\u0027tagValues\u0027)]",
+                "name": "[parameters(\u0027workspaceName\u0027)]",
+                "location": "[parameters(\u0027location\u0027)]",
+                "dependsOn": [
+                  "[resourceId(\u0027Microsoft.Storage/storageAccounts\u0027, parameters(\u0027storageAccountName\u0027))]",
+                  "[resourceId(\u0027Microsoft.KeyVault/vaults\u0027, parameters(\u0027keyVaultName\u0027))]",
+                  "[resourceId(\u0027Microsoft.Insights/components\u0027, parameters(\u0027applicationInsightsName\u0027))]",
+                  "[resourceId(\u0027Microsoft.ContainerRegistry/registries\u0027, parameters(\u0027containerRegistryName\u0027))]"
+                ],
+                "identity": "[parameters(\u0027identity\u0027)]",
+                "properties": {
+                  "friendlyName": "[parameters(\u0027friendlyName\u0027)]",
+                  "description": "[parameters(\u0027description\u0027)]",
+                  "storageAccount": "[variables(\u0027storageAccount\u0027)]",
+                  "keyVault": "[variables(\u0027keyVault\u0027)]",
+                  "applicationInsights": "[variables(\u0027applicationInsights\u0027)]",
+                  "containerRegistry": "[if(not(equals(parameters(\u0027containerRegistryOption\u0027), \u0027none\u0027)), variables(\u0027containerRegistry\u0027), json(\u0027null\u0027))]",
+                  "hbiWorkspace": "[parameters(\u0027confidential_data\u0027)]",
+                  "imageBuildCompute": "[parameters(\u0027imageBuildCompute\u0027)]",
+                  "publicNetworkAccess": "[parameters(\u0027publicNetworkAccess\u0027)]",
+                  "softDeleteEnabled": "[parameters(\u0027soft_delete_enabled\u0027)]",
+                  "allowRecoverSoftDeletedWorkspace": "[parameters(\u0027allow_recover_softdeleted_workspace\u0027)]",
+                  "encryption": {
+                    "status": "[parameters(\u0027encryption_status\u0027)]",
+                    "keyVaultProperties": {
+                      "keyVaultArmId": "[parameters(\u0027cmk_keyvault\u0027)]",
+                      "keyIdentifier": "[parameters(\u0027resource_cmk_uri\u0027)]"
+                    },
+                    "cosmosDbArmId": "[parameters(\u0027encryption_cosmosdb_resourceid\u0027)]",
+                    "storageAccountArmId": "[parameters(\u0027encryption_storage_resourceid\u0027)]",
+                    "SearchAccountArmId": "[parameters(\u0027encryption_search_resourceid\u0027)]"
+                  },
+                  "primaryUserAssignedIdentity": "[parameters(\u0027primaryUserAssignedIdentity\u0027)]",
+                  "managedNetwork": "[parameters(\u0027managedNetwork\u0027)]"
+                }
+              },
+              {
+                "condition": "[and(variables(\u0027enablePE\u0027), not(equals(parameters(\u0027privateEndpointType\u0027), \u0027none\u0027)))]",
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2020-06-01",
+                "name": "[variables(\u0027privateEndpointDeploymentName\u0027)]",
+                "resourceGroup": "[parameters(\u0027privateEndpointResourceGroupName\u0027)]",
+                "dependsOn": [
+                  "[resourceId(\u0027Microsoft.MachineLearningServices/workspaces\u0027, parameters(\u0027workspaceName\u0027))]",
+                  "[resourceId(\u0027Microsoft.Network/virtualNetworks/subnets\u0027, parameters(\u0027vnetName\u0027), parameters(\u0027subnetName\u0027))]"
+                ],
+                "properties": {
+                  "mode": "Incremental",
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                      {
+                        "apiVersion": "2020-06-01",
+                        "name": "[parameters(\u0027privateEndpointName\u0027)]",
+                        "type": "Microsoft.Network/privateEndpoints",
+                        "location": "[parameters(\u0027location\u0027)]",
+                        "tags": "[parameters(\u0027tagValues\u0027)]",
+                        "properties": {
+                          "privateLinkServiceConnections": "[if(equals(parameters(\u0027privateEndpointType\u0027), \u0027AutoApproval\u0027), variables(\u0027defaultPEConnections\u0027), json(\u0027null\u0027))]",
+                          "manualPrivateLinkServiceConnections": "[if(equals(parameters(\u0027privateEndpointType\u0027), \u0027ManualApproval\u0027), variables(\u0027defaultPEConnections\u0027), json(\u0027null\u0027))]",
+                          "subnet": {
+                            "id": "[variables(\u0027subnet\u0027)]"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "parameters": {
+            "location": {
+              "value": "eastus2euap"
+            },
+            "workspaceName": {
+              "value": "e2etest_test_474941332555"
+            },
+            "resourceGroupName": {
+              "value": "00000"
+            },
+            "description": {
+              "value": "e2etest_test_474941332555 description"
+            },
+            "friendlyName": {
+              "value": "e2etest_test_474941332555 display name"
+            },
+            "tagValues": {
+              "value": {
+                "createdByToolkit": "sdk-v2-1.5.0"
+              }
+            },
+            "keyVaultOption": {
+              "value": "new"
+            },
+            "keyVaultName": {
+              "value": "e2etesttkeyvaultd9a09cf8"
+            },
+            "keyVaultResourceGroupName": {
+              "value": "00000"
+            },
+            "storageAccountOption": {
+              "value": "new"
+            },
+            "storageAccountName": {
+              "value": "e2etesttstoragee411cab6d"
+            },
+            "storageAccountResourceGroupName": {
+              "value": "00000"
+            },
+            "applicationInsightsOption": {
+              "value": "new"
+            },
+            "applicationInsightsName": {
+              "value": "e2etesttinsights08805d9b"
+            },
+            "applicationInsightsResourceGroupName": {
+              "value": "00000"
+            },
+            "containerRegistryOption": {
+              "value": "none"
+            },
+            "containerRegistryName": {
+              "value": "name"
+            },
+            "containerRegistryResourceGroupName": {
+              "value": ""
+            },
+            "encryption_status": {
+              "value": "Disabled"
+            },
+            "cmk_keyvault": {
+              "value": ""
+            },
+            "resource_cmk_uri": {
+              "value": ""
+            },
+            "privateEndpointName": {
+              "value": "name"
+            },
+            "subnetOption": {
+              "value": "existing"
+            },
+            "subnetName": {
+              "value": "default"
+            },
+            "vnetOption": {
+              "value": "existing"
+            },
+            "vnetName": {
+              "value": "name"
+            },
+            "vnetResourceGroupName": {
+              "value": "name"
+            },
+            "privateEndpointType": {
+              "value": "none"
+            },
+            "privateEndpointResourceGroupName": {
+              "value": "name"
+            },
+            "confidential_data": {
+              "value": "false"
+            },
+            "imageBuildCompute": {
+              "value": ""
+            },
+            "publicNetworkAccess": {
+              "value": "Enabled"
+            },
+            "soft_delete_enabled": {
+              "value": "false"
+            },
+            "allow_recover_softdeleted_workspace": {
+              "value": "false"
+            },
+            "encryption_cosmosdb_resourceid": {
+              "value": ""
+            },
+            "encryption_storage_resourceid": {
+              "value": ""
+            },
+            "encryption_search_resourceid": {
+              "value": ""
+            },
+            "identity": {
+              "value": {
+                "type": "SystemAssigned"
+              }
+            },
+            "primaryUserAssignedIdentity": {
+              "value": ""
+            },
+            "managedNetwork": {
+              "value": {
+                "isolationMode": "Disabled"
+              }
+            }
+          },
+          "mode": "incremental"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "7947",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:21 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "dd610f96-6db4-4ca4-9d38-057db2ca0143",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064221Z:dd610f96-6db4-4ca4-9d38-057db2ca0143"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525",
+        "name": "e2etest_test_474941332555-3109525",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "4984303229931942319",
+          "parameters": {
+            "workspaceName": {
+              "type": "String",
+              "value": "e2etest_test_474941332555"
+            },
+            "description": {
+              "type": "String",
+              "value": "e2etest_test_474941332555 description"
+            },
+            "friendlyName": {
+              "type": "String",
+              "value": "e2etest_test_474941332555 display name"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "resourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "storageAccountOption": {
+              "type": "String",
+              "value": "new"
+            },
+            "storageAccountName": {
+              "type": "String",
+              "value": "e2etesttstoragee411cab6d"
+            },
+            "storageAccountType": {
+              "type": "String",
+              "value": "Standard_LRS"
+            },
+            "storageAccountBehindVNet": {
+              "type": "String",
+              "value": "false"
+            },
+            "storageAccountResourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "storageAccountLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "keyVaultOption": {
+              "type": "String",
+              "value": "new"
+            },
+            "keyVaultName": {
+              "type": "String",
+              "value": "e2etesttkeyvaultd9a09cf8"
+            },
+            "keyVaultBehindVNet": {
+              "type": "String",
+              "value": "false"
+            },
+            "keyVaultResourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "keyVaultLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "applicationInsightsOption": {
+              "type": "String",
+              "value": "new"
+            },
+            "applicationInsightsName": {
+              "type": "String",
+              "value": "e2etesttinsights08805d9b"
+            },
+            "applicationInsightsResourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "applicationInsightsLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "containerRegistryOption": {
+              "type": "String",
+              "value": "none"
+            },
+            "containerRegistryName": {
+              "type": "String",
+              "value": "name"
+            },
+            "containerRegistrySku": {
+              "type": "String",
+              "value": "Standard"
+            },
+            "containerRegistryResourceGroupName": {
+              "type": "String",
+              "value": ""
+            },
+            "containerRegistryBehindVNet": {
+              "type": "String",
+              "value": "false"
+            },
+            "containerRegistryLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "vnetOption": {
+              "type": "String",
+              "value": "existing"
+            },
+            "vnetName": {
+              "type": "String",
+              "value": "name"
+            },
+            "vnetResourceGroupName": {
+              "type": "String",
+              "value": "name"
+            },
+            "addressPrefixes": {
+              "type": "Array",
+              "value": [
+                "10.0.0.0/16"
+              ]
+            },
+            "subnetOption": {
+              "type": "String",
+              "value": "existing"
+            },
+            "subnetName": {
+              "type": "String",
+              "value": "default"
+            },
+            "subnetPrefix": {
+              "type": "String",
+              "value": "10.0.0.0/24"
+            },
+            "adbWorkspace": {
+              "type": "String",
+              "value": ""
+            },
+            "confidential_data": {
+              "type": "String",
+              "value": "false"
+            },
+            "encryption_status": {
+              "type": "String",
+              "value": "Disabled"
+            },
+            "cmk_keyvault": {
+              "type": "String",
+              "value": ""
+            },
+            "resource_cmk_uri": {
+              "type": "String",
+              "value": ""
+            },
+            "privateEndpointType": {
+              "type": "String",
+              "value": "none"
+            },
+            "tagValues": {
+              "type": "Object",
+              "value": {
+                "createdByToolkit": "sdk-v2-1.5.0"
+              }
+            },
+            "privateEndpointName": {
+              "type": "String",
+              "value": "name"
+            },
+            "privateEndpointResourceGroupName": {
+              "type": "String",
+              "value": "name"
+            },
+            "imageBuildCompute": {
+              "type": "String",
+              "value": ""
+            },
+            "publicNetworkAccess": {
+              "type": "String",
+              "value": "Enabled"
+            },
+            "soft_delete_enabled": {
+              "type": "String",
+              "value": "false"
+            },
+            "allow_recover_softdeleted_workspace": {
+              "type": "String",
+              "value": "false"
+            },
+            "encryption_cosmosdb_resourceid": {
+              "type": "String",
+              "value": ""
+            },
+            "encryption_storage_resourceid": {
+              "type": "String",
+              "value": ""
+            },
+            "encryption_search_resourceid": {
+              "type": "String",
+              "value": ""
+            },
+            "identity": {
+              "type": "Object",
+              "value": {
+                "type": "SystemAssigned"
+              }
+            },
+            "primaryUserAssignedIdentity": {
+              "type": "String",
+              "value": ""
+            },
+            "managedNetwork": {
+              "type": "Object",
+              "value": {
+                "isolationMode": "Disabled"
+              }
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Accepted",
+          "timestamp": "2023-02-17T06:42:21.5277007Z",
+          "duration": "PT0.0009238S",
+          "correlationId": "dd610f96-6db4-4ca4-9d38-057db2ca0143",
+          "providers": [
+            {
+              "namespace": "Microsoft.Storage",
+              "resourceTypes": [
+                {
+                  "resourceType": "storageAccounts",
+                  "locations": [
+                    "eastus2euap"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.KeyVault",
+              "resourceTypes": [
+                {
+                  "resourceType": "vaults",
+                  "locations": [
+                    "eastus2euap"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Insights",
+              "resourceTypes": [
+                {
+                  "resourceType": "components",
+                  "locations": [
+                    "southcentralus"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.MachineLearningServices",
+              "resourceTypes": [
+                {
+                  "resourceType": "workspaces",
+                  "locations": [
+                    "eastus2euap"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name",
+                  "resourceType": "Microsoft.Network/virtualNetworks",
+                  "resourceName": "name"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+              "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+              "resourceName": "name/default"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+              "resourceType": "Microsoft.Storage/storageAccounts",
+              "resourceName": "e2etesttstoragee411cab6d"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+              "resourceType": "Microsoft.KeyVault/vaults",
+              "resourceName": "e2etesttkeyvaultd9a09cf8"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/name",
+              "resourceType": "Microsoft.ContainerRegistry/registries",
+              "resourceName": "name"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "e2etesttstoragee411cab6d"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                  "resourceType": "Microsoft.KeyVault/vaults",
+                  "resourceName": "e2etesttkeyvaultd9a09cf8"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                  "resourceType": "Microsoft.Insights/components",
+                  "resourceName": "e2etesttinsights08805d9b"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/name",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "name"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+              "resourceType": "Microsoft.MachineLearningServices/workspaces",
+              "resourceName": "e2etest_test_474941332555"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                  "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                  "resourceName": "e2etest_test_474941332555"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/name/providers/Microsoft.Resources/deployments/DeployPrivateEndpoint-q2xi2ah3t47py",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "DeployPrivateEndpoint-q2xi2ah3t47py"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "21",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:21 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "0d73cf47-bd50-40e6-823e-3c1a6c9b52b8",
+        "x-ms-ratelimit-remaining-subscription-reads": "11982",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064222Z:0d73cf47-bd50-40e6-823e-3c1a6c9b52b8"
+      },
+      "ResponseBody": {
+        "status": "Accepted"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2067",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:26 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "dae219c8-3c71-4152-8bfc-1926b5cdc090",
+        "x-ms-ratelimit-remaining-subscription-reads": "11981",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064227Z:dae219c8-3c71-4152-8bfc-1926b5cdc090"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:25.8776998Z",
+              "duration": "PT3.819156S",
+              "trackingId": "121bc7b3-7179-4476-a15c-9da0abb723a9",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:24.7510487Z",
+              "duration": "PT2.7476644S",
+              "trackingId": "fab0e520-a2dd-4ce8-8ac6-b95d5939ebfd",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:26 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "abedb01d-b0e5-436b-8f56-0dc968611d3e",
+        "x-ms-ratelimit-remaining-subscription-reads": "11980",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064227Z:abedb01d-b0e5-436b-8f56-0dc968611d3e"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2067",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:32 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "94953219-67f6-4c79-98c8-5eda950527db",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064232Z:94953219-67f6-4c79-98c8-5eda950527db"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:25.8776998Z",
+              "duration": "PT3.819156S",
+              "trackingId": "121bc7b3-7179-4476-a15c-9da0abb723a9",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:24.7510487Z",
+              "duration": "PT2.7476644S",
+              "trackingId": "fab0e520-a2dd-4ce8-8ac6-b95d5939ebfd",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:32 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e7068064-4666-4665-934f-927cd46f5f1d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11979",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064232Z:e7068064-4666-4665-934f-927cd46f5f1d"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:37 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "3b8c9be9-058d-4f2f-921d-f5f50535c3a2",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064237Z:3b8c9be9-058d-4f2f-921d-f5f50535c3a2"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2067",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:37 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "57d90165-9fe5-40bb-8e6c-7d9324aa992c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11978",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064237Z:57d90165-9fe5-40bb-8e6c-7d9324aa992c"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:25.8776998Z",
+              "duration": "PT3.819156S",
+              "trackingId": "121bc7b3-7179-4476-a15c-9da0abb723a9",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:24.7510487Z",
+              "duration": "PT2.7476644S",
+              "trackingId": "fab0e520-a2dd-4ce8-8ac6-b95d5939ebfd",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:42 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "435cd52c-4933-42a3-b9a3-745342ff651c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11977",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064242Z:435cd52c-4933-42a3-b9a3-745342ff651c"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2070",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "85972465-0981-4dfe-a1b0-18a38d9e9563",
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064243Z:85972465-0981-4dfe-a1b0-18a38d9e9563"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:25.8776998Z",
+              "duration": "PT3.819156S",
+              "trackingId": "121bc7b3-7179-4476-a15c-9da0abb723a9",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/78caa30b-af63-4c64-9238-ae16c8ecf75e?api-version=2022-12-01-preview\u0026type=async",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-821e8aa0e0e208fd09678ca6175025af-5b204d0712e758a0-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "14428bd9-d1df-4aea-b662-2650e7df846f",
+        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064244Z:14428bd9-d1df-4aea-b662-2650e7df846f",
+        "x-request-time": "0.018"
+      },
+      "ResponseBody": {
+        "status": "InProgress"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:48 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "7b6fbc4b-a4bb-4668-8936-1e4f6d7081f8",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064248Z:7b6fbc4b-a4bb-4668-8936-1e4f6d7081f8"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2789",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:48 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "8e6e804e-9b28-440e-b381-e97546493d9d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11976",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064248Z:8e6e804e-9b28-440e-b381-e97546493d9d"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/8934105CD6D8A792",
+            "operationId": "8934105CD6D8A792",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:47.2634286Z",
+              "duration": "PT1.9811342S",
+              "trackingId": "44de0859-d093-458a-88a4-b6538fada35a",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                "resourceName": "e2etest_test_474941332555"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:45.1988122Z",
+              "duration": "PT23.1402684S",
+              "trackingId": "33766eb2-95d1-4de7-af1f-8ce96c8c2f25",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:52 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "16328d9e-48cf-4ee5-ac79-9e9bad54467e",
+        "x-ms-ratelimit-remaining-subscription-reads": "11975",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064253Z:16328d9e-48cf-4ee5-ac79-9e9bad54467e"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2789",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "994cf09a-c1f1-4502-b086-45704cac79f2",
+        "x-ms-ratelimit-remaining-subscription-reads": "11974",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064253Z:994cf09a-c1f1-4502-b086-45704cac79f2"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/8934105CD6D8A792",
+            "operationId": "8934105CD6D8A792",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:47.2634286Z",
+              "duration": "PT1.9811342S",
+              "trackingId": "44de0859-d093-458a-88a4-b6538fada35a",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                "resourceName": "e2etest_test_474941332555"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:45.1988122Z",
+              "duration": "PT23.1402684S",
+              "trackingId": "33766eb2-95d1-4de7-af1f-8ce96c8c2f25",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a36fedf9-94b4-478c-996f-cff3164f0590",
+        "x-ms-ratelimit-remaining-subscription-reads": "11973",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064258Z:a36fedf9-94b4-478c-996f-cff3164f0590"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2789",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:42:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4a657dcc-0142-4303-a679-227e7ef08622",
+        "x-ms-ratelimit-remaining-subscription-reads": "11972",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064259Z:4a657dcc-0142-4303-a679-227e7ef08622"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/8934105CD6D8A792",
+            "operationId": "8934105CD6D8A792",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:47.2634286Z",
+              "duration": "PT1.9811342S",
+              "trackingId": "44de0859-d093-458a-88a4-b6538fada35a",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                "resourceName": "e2etest_test_474941332555"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:45.1988122Z",
+              "duration": "PT23.1402684S",
+              "trackingId": "33766eb2-95d1-4de7-af1f-8ce96c8c2f25",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "20",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:03 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4afefc25-1f60-4cbb-9261-16f2d57a8dfa",
+        "x-ms-ratelimit-remaining-subscription-reads": "11971",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064303Z:4afefc25-1f60-4cbb-9261-16f2d57a8dfa"
+      },
+      "ResponseBody": {
+        "status": "Running"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2789",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:03 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "ed7aa66b-9006-43c6-89b8-41b3d17a104d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11970",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064304Z:ed7aa66b-9006-43c6-89b8-41b3d17a104d"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/8934105CD6D8A792",
+            "operationId": "8934105CD6D8A792",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Running",
+              "timestamp": "2023-02-17T06:42:47.2634286Z",
+              "duration": "PT1.9811342S",
+              "trackingId": "44de0859-d093-458a-88a4-b6538fada35a",
+              "statusCode": "Accepted",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                "resourceName": "e2etest_test_474941332555"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:45.1988122Z",
+              "duration": "PT23.1402684S",
+              "trackingId": "33766eb2-95d1-4de7-af1f-8ce96c8c2f25",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operationStatuses/08585249907455002045?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "22",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:08 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "36bebb63-b516-4916-86ab-c2326e5f667d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11969",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064309Z:36bebb63-b516-4916-86ab-c2326e5f667d"
+      },
+      "ResponseBody": {
+        "status": "Succeeded"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "8560",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:08 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "ef1261d2-e27b-4fa0-970f-3440e1f0f0bc",
+        "x-ms-ratelimit-remaining-subscription-reads": "11968",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064309Z:ef1261d2-e27b-4fa0-970f-3440e1f0f0bc"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525",
+        "name": "e2etest_test_474941332555-3109525",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "4984303229931942319",
+          "parameters": {
+            "workspaceName": {
+              "type": "String",
+              "value": "e2etest_test_474941332555"
+            },
+            "description": {
+              "type": "String",
+              "value": "e2etest_test_474941332555 description"
+            },
+            "friendlyName": {
+              "type": "String",
+              "value": "e2etest_test_474941332555 display name"
+            },
+            "location": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "resourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "storageAccountOption": {
+              "type": "String",
+              "value": "new"
+            },
+            "storageAccountName": {
+              "type": "String",
+              "value": "e2etesttstoragee411cab6d"
+            },
+            "storageAccountType": {
+              "type": "String",
+              "value": "Standard_LRS"
+            },
+            "storageAccountBehindVNet": {
+              "type": "String",
+              "value": "false"
+            },
+            "storageAccountResourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "storageAccountLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "keyVaultOption": {
+              "type": "String",
+              "value": "new"
+            },
+            "keyVaultName": {
+              "type": "String",
+              "value": "e2etesttkeyvaultd9a09cf8"
+            },
+            "keyVaultBehindVNet": {
+              "type": "String",
+              "value": "false"
+            },
+            "keyVaultResourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "keyVaultLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "applicationInsightsOption": {
+              "type": "String",
+              "value": "new"
+            },
+            "applicationInsightsName": {
+              "type": "String",
+              "value": "e2etesttinsights08805d9b"
+            },
+            "applicationInsightsResourceGroupName": {
+              "type": "String",
+              "value": "00000"
+            },
+            "applicationInsightsLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "containerRegistryOption": {
+              "type": "String",
+              "value": "none"
+            },
+            "containerRegistryName": {
+              "type": "String",
+              "value": "name"
+            },
+            "containerRegistrySku": {
+              "type": "String",
+              "value": "Standard"
+            },
+            "containerRegistryResourceGroupName": {
+              "type": "String",
+              "value": ""
+            },
+            "containerRegistryBehindVNet": {
+              "type": "String",
+              "value": "false"
+            },
+            "containerRegistryLocation": {
+              "type": "String",
+              "value": "eastus2euap"
+            },
+            "vnetOption": {
+              "type": "String",
+              "value": "existing"
+            },
+            "vnetName": {
+              "type": "String",
+              "value": "name"
+            },
+            "vnetResourceGroupName": {
+              "type": "String",
+              "value": "name"
+            },
+            "addressPrefixes": {
+              "type": "Array",
+              "value": [
+                "10.0.0.0/16"
+              ]
+            },
+            "subnetOption": {
+              "type": "String",
+              "value": "existing"
+            },
+            "subnetName": {
+              "type": "String",
+              "value": "default"
+            },
+            "subnetPrefix": {
+              "type": "String",
+              "value": "10.0.0.0/24"
+            },
+            "adbWorkspace": {
+              "type": "String",
+              "value": ""
+            },
+            "confidential_data": {
+              "type": "String",
+              "value": "false"
+            },
+            "encryption_status": {
+              "type": "String",
+              "value": "Disabled"
+            },
+            "cmk_keyvault": {
+              "type": "String",
+              "value": ""
+            },
+            "resource_cmk_uri": {
+              "type": "String",
+              "value": ""
+            },
+            "privateEndpointType": {
+              "type": "String",
+              "value": "none"
+            },
+            "tagValues": {
+              "type": "Object",
+              "value": {
+                "createdByToolkit": "sdk-v2-1.5.0"
+              }
+            },
+            "privateEndpointName": {
+              "type": "String",
+              "value": "name"
+            },
+            "privateEndpointResourceGroupName": {
+              "type": "String",
+              "value": "name"
+            },
+            "imageBuildCompute": {
+              "type": "String",
+              "value": ""
+            },
+            "publicNetworkAccess": {
+              "type": "String",
+              "value": "Enabled"
+            },
+            "soft_delete_enabled": {
+              "type": "String",
+              "value": "false"
+            },
+            "allow_recover_softdeleted_workspace": {
+              "type": "String",
+              "value": "false"
+            },
+            "encryption_cosmosdb_resourceid": {
+              "type": "String",
+              "value": ""
+            },
+            "encryption_storage_resourceid": {
+              "type": "String",
+              "value": ""
+            },
+            "encryption_search_resourceid": {
+              "type": "String",
+              "value": ""
+            },
+            "identity": {
+              "type": "Object",
+              "value": {
+                "type": "SystemAssigned"
+              }
+            },
+            "primaryUserAssignedIdentity": {
+              "type": "String",
+              "value": ""
+            },
+            "managedNetwork": {
+              "type": "Object",
+              "value": {
+                "isolationMode": "Disabled"
+              }
+            }
+          },
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "2023-02-17T06:43:05.2770329Z",
+          "duration": "PT43.750256S",
+          "correlationId": "dd610f96-6db4-4ca4-9d38-057db2ca0143",
+          "providers": [
+            {
+              "namespace": "Microsoft.Storage",
+              "resourceTypes": [
+                {
+                  "resourceType": "storageAccounts",
+                  "locations": [
+                    "eastus2euap"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.KeyVault",
+              "resourceTypes": [
+                {
+                  "resourceType": "vaults",
+                  "locations": [
+                    "eastus2euap"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.Insights",
+              "resourceTypes": [
+                {
+                  "resourceType": "components",
+                  "locations": [
+                    "southcentralus"
+                  ]
+                }
+              ]
+            },
+            {
+              "namespace": "Microsoft.MachineLearningServices",
+              "resourceTypes": [
+                {
+                  "resourceType": "workspaces",
+                  "locations": [
+                    "eastus2euap"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name",
+                  "resourceType": "Microsoft.Network/virtualNetworks",
+                  "resourceName": "name"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+              "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+              "resourceName": "name/default"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+              "resourceType": "Microsoft.Storage/storageAccounts",
+              "resourceName": "e2etesttstoragee411cab6d"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+              "resourceType": "Microsoft.KeyVault/vaults",
+              "resourceName": "e2etesttkeyvaultd9a09cf8"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/name",
+              "resourceType": "Microsoft.ContainerRegistry/registries",
+              "resourceName": "name"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                  "resourceType": "Microsoft.Storage/storageAccounts",
+                  "resourceName": "e2etesttstoragee411cab6d"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                  "resourceType": "Microsoft.KeyVault/vaults",
+                  "resourceName": "e2etesttkeyvaultd9a09cf8"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                  "resourceType": "Microsoft.Insights/components",
+                  "resourceName": "e2etesttinsights08805d9b"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/name",
+                  "resourceType": "Microsoft.ContainerRegistry/registries",
+                  "resourceName": "name"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+              "resourceType": "Microsoft.MachineLearningServices/workspaces",
+              "resourceName": "e2etest_test_474941332555"
+            },
+            {
+              "dependsOn": [
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                  "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                  "resourceName": "e2etest_test_474941332555"
+                },
+                {
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Network/virtualNetworks/name/subnets/default",
+                  "resourceType": "Microsoft.Network/virtualNetworks/subnets",
+                  "resourceName": "name/default"
+                }
+              ],
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/name/providers/Microsoft.Resources/deployments/DeployPrivateEndpoint-q2xi2ah3t47py",
+              "resourceType": "Microsoft.Resources/deployments",
+              "resourceName": "DeployPrivateEndpoint-q2xi2ah3t47py"
+            }
+          ],
+          "outputResources": [
+            {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b"
+            },
+            {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8"
+            },
+            {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555"
+            },
+            {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Connection": "close",
+        "Content-Encoding": "gzip",
+        "Content-Length": "3248",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:09 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2abef39f-a717-4b88-af93-04bfb7de9211",
+        "x-ms-ratelimit-remaining-subscription-reads": "11967",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064309Z:2abef39f-a717-4b88-af93-04bfb7de9211"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/8934105CD6D8A792",
+            "operationId": "8934105CD6D8A792",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:43:05.0623633Z",
+              "duration": "PT19.7800689S",
+              "trackingId": "1e59fc7b-2321-44f0-bd26-4edec15fee85",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                "resourceName": "e2etest_test_474941332555"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:45.1988122Z",
+              "duration": "PT23.1402684S",
+              "trackingId": "33766eb2-95d1-4de7-af1f-8ce96c8c2f25",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/08585249907455002045",
+            "operationId": "08585249907455002045",
+            "properties": {
+              "provisioningOperation": "EvaluateDeploymentOutput",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:43:05.2541269Z",
+              "duration": "PT19.9718325S",
+              "trackingId": "a59c5f72-497f-40a7-9be1-9bae5b88832d",
+              "statusCode": "OK"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/deployments/e2etest_test_474941332555-3109525/operations?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "3248",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:09 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "75152197-8764-422b-a019-5484dc1515bc",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064310Z:75152197-8764-422b-a019-5484dc1515bc"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/8934105CD6D8A792",
+            "operationId": "8934105CD6D8A792",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:43:05.0623633Z",
+              "duration": "PT19.7800689S",
+              "trackingId": "1e59fc7b-2321-44f0-bd26-4edec15fee85",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+                "resourceType": "Microsoft.MachineLearningServices/workspaces",
+                "resourceName": "e2etest_test_474941332555"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/A09FA3BD3978F259",
+            "operationId": "A09FA3BD3978F259",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:45.1988122Z",
+              "duration": "PT23.1402684S",
+              "trackingId": "33766eb2-95d1-4de7-af1f-8ce96c8c2f25",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+                "resourceType": "Microsoft.Storage/storageAccounts",
+                "resourceName": "e2etesttstoragee411cab6d"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/6C44AC6580784C97",
+            "operationId": "6C44AC6580784C97",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:25.0273955Z",
+              "duration": "PT3.0240112S",
+              "trackingId": "c3787fe6-c860-4894-b083-5eb432e20658",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Insights/components/e2etesttinsights08805d9b",
+                "resourceType": "Microsoft.Insights/components",
+                "resourceName": "e2etesttinsights08805d9b"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/2ED234D674EE24AE",
+            "operationId": "2ED234D674EE24AE",
+            "properties": {
+              "provisioningOperation": "Create",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:42:40.0186775Z",
+              "duration": "PT18.0152932S",
+              "trackingId": "8d1af094-a7d6-4e0b-99ef-78848337b53f",
+              "statusCode": "OK",
+              "targetResource": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.KeyVault/vaults/e2etesttkeyvaultd9a09cf8",
+                "resourceType": "Microsoft.KeyVault/vaults",
+                "resourceName": "e2etesttkeyvaultd9a09cf8"
+              }
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/e2etest_test_474941332555-3109525/operations/08585249907455002045",
+            "operationId": "08585249907455002045",
+            "properties": {
+              "provisioningOperation": "EvaluateDeploymentOutput",
+              "provisioningState": "Succeeded",
+              "timestamp": "2023-02-17T06:43:05.2541269Z",
+              "duration": "PT19.9718325S",
+              "trackingId": "a59c5f72-497f-40a7-9be1-9bae5b88832d",
+              "statusCode": "OK"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:10 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-707882fb621c56599883bc423b0ced6f-45f3bfe24269f2a6-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a8b02cf5-7c1a-4a7b-b1a2-cb8738729f90",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064310Z:a8b02cf5-7c1a-4a7b-b1a2-cb8738729f90",
+        "x-request-time": "0.035"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+        "name": "e2etest_test_474941332555",
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "eastus2euap",
+        "tags": {
+          "createdByToolkit": "sdk-v2-1.5.0"
+        },
+        "etag": null,
+        "properties": {
+          "friendlyName": "e2etest_test_474941332555 display name",
+          "description": "e2etest_test_474941332555 description",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/e2etesttkeyvaultd9a09cf8",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/e2etesttinsights08805d9b",
+          "hbiWorkspace": false,
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "imageBuildCompute": null,
+          "provisioningState": "Succeeded",
+          "managedNetwork": {
+            "networkId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+            "outboundRules": {}
+          },
+          "v1LegacyMode": false,
+          "softDeleteEnabled": false,
+          "containerRegistry": "",
+          "creationTime": "2023-02-17T06:42:45.8948990Z",
+          "notebookInfo": {
+            "resourceId": "b5d2053b4689457ca822f1fcd22a71db",
+            "fqdn": "ml-e2etesttest-eastus2euap-80abaafd-54b4-4eca-8d09-df12cf8288b4.eastus2euap.notebooks.azure.net",
+            "isPrivateLinkEnabled": false,
+            "notebookPreparationError": null
+          },
+          "storageHnsEnabled": false,
+          "workspaceId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+          "linkedModelInventoryArmId": null,
+          "privateLinkCount": 0,
+          "publicNetworkAccess": "Enabled",
+          "discoveryUrl": "https://eastus2euap.api.azureml.ms/discovery",
+          "mlFlowTrackingUri": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+          "sdkTelemetryAppInsightsKey": "bf5fc3cc-fd87-47a0-99e2-70f15d4bb11e",
+          "sasGetterUri": "",
+          "enableDataIsolation": false
+        },
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "9be83ad5-1d4a-46e7-a314-41a4beb18108",
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        },
+        "kind": "Default",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "systemData": {
+          "createdAt": "2023-02-17T06:42:45.894899Z",
+          "createdBy": "joharrington@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-02-17T06:42:45.894899Z",
+          "lastModifiedBy": "joharrington@microsoft.com",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe?api-version=2018-11-30",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-msi/6.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:11 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "93366827-b376-46ce-aa8f-095de9c260a7",
+        "x-ms-ratelimit-remaining-subscription-reads": "11992",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064311Z:93366827-b376-46ce-aa8f-095de9c260a7"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe",
+        "name": "uai-mhe",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "location": "eastus",
+        "tags": {},
+        "properties": {
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "principalId": "93029813-8a07-45a2-a347-6486be4f2240",
+          "clientId": "335eea06-5b20-4224-98c6-95bf072558db"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe2?api-version=2018-11-30",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-msi/6.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:11 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "f7298447-a63e-45c1-8a31-ba9b619f43e0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11991",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064312Z:f7298447-a63e-45c1-8a31-ba9b619f43e0"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe2",
+        "name": "uai-mhe2",
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "location": "eastus",
+        "tags": {},
+        "properties": {
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "principalId": "418a373d-26e5-4f86-b861-6b248a35d953",
+          "clientId": "e37a7014-b884-4869-8a52-41134b368c26"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:11 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-b0fc66001460c28bd8f009c9920b20e6-efb43fbbbe60e6c4-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "045964f0-279a-42ad-9f0c-4bd617aaadee",
+        "x-ms-ratelimit-remaining-subscription-reads": "11990",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064312Z:045964f0-279a-42ad-9f0c-4bd617aaadee",
+        "x-request-time": "0.032"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+        "name": "e2etest_test_474941332555",
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "eastus2euap",
+        "tags": {
+          "createdByToolkit": "sdk-v2-1.5.0"
+        },
+        "etag": null,
+        "properties": {
+          "friendlyName": "e2etest_test_474941332555 display name",
+          "description": "e2etest_test_474941332555 description",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/e2etesttkeyvaultd9a09cf8",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/e2etesttinsights08805d9b",
+          "hbiWorkspace": false,
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "imageBuildCompute": null,
+          "provisioningState": "Succeeded",
+          "managedNetwork": {
+            "networkId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+            "outboundRules": {}
+          },
+          "v1LegacyMode": false,
+          "softDeleteEnabled": false,
+          "containerRegistry": "",
+          "creationTime": "2023-02-17T06:42:45.8948990Z",
+          "notebookInfo": {
+            "resourceId": "b5d2053b4689457ca822f1fcd22a71db",
+            "fqdn": "ml-e2etesttest-eastus2euap-80abaafd-54b4-4eca-8d09-df12cf8288b4.eastus2euap.notebooks.azure.net",
+            "isPrivateLinkEnabled": false,
+            "notebookPreparationError": null
+          },
+          "storageHnsEnabled": false,
+          "workspaceId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+          "linkedModelInventoryArmId": null,
+          "privateLinkCount": 0,
+          "publicNetworkAccess": "Enabled",
+          "discoveryUrl": "https://eastus2euap.api.azureml.ms/discovery",
+          "mlFlowTrackingUri": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+          "sdkTelemetryAppInsightsKey": "bf5fc3cc-fd87-47a0-99e2-70f15d4bb11e",
+          "sasGetterUri": "",
+          "enableDataIsolation": false
+        },
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "9be83ad5-1d4a-46e7-a314-41a4beb18108",
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        },
+        "kind": "Default",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "systemData": {
+          "createdAt": "2023-02-17T06:42:45.894899Z",
+          "createdBy": "joharrington@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-02-17T06:42:45.894899Z",
+          "lastModifiedBy": "joharrington@microsoft.com",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "382",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "tags": {},
+        "identity": {
+          "type": "Systemassigned,Userassigned",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe": {},
+            "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe2": {}
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/XX34LREfwu3CSd2M93frFKHY-rmMbQN-XdBECiNKbag?api-version=2022-12-01-preview\u0026type=async",
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Feb 2023 06:43:13 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/XX34LREfwu3CSd2M93frFKHY-rmMbQN-XdBECiNKbag?api-version=2022-12-01-preview\u0026type=location",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "380850a7-bab5-4bba-876c-ba9b2f2f9e69",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064313Z:380850a7-bab5-4bba-876c-ba9b2f2f9e69",
+        "x-request-time": "0.109"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/XX34LREfwu3CSd2M93frFKHY-rmMbQN-XdBECiNKbag?api-version=2022-12-01-preview\u0026type=async",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:13 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-6b1dadd095a0f874ff50f9a70cafc3f0-056f88cd1de882e0-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "14c65266-f995-4adb-8fc4-77d014280e14",
+        "x-ms-ratelimit-remaining-subscription-reads": "11989",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064313Z:14c65266-f995-4adb-8fc4-77d014280e14",
+        "x-request-time": "0.018"
+      },
+      "ResponseBody": {
+        "status": "InProgress"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/78caa30b-af63-4c64-9238-ae16c8ecf75e?api-version=2022-12-01-preview\u0026type=async",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:14 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-94ab709c136d7a4ac07b335e7afda771-ef5ce4eba1774727-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "65e0c260-916f-4db9-8501-b80741408667",
+        "x-ms-ratelimit-remaining-subscription-reads": "11988",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064314Z:65e0c260-916f-4db9-8501-b80741408667",
+        "x-request-time": "0.018"
+      },
+      "ResponseBody": {
+        "status": "InProgress"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/XX34LREfwu3CSd2M93frFKHY-rmMbQN-XdBECiNKbag?api-version=2022-12-01-preview\u0026type=async",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-1996227ff14038f501152f569d21ebe9-b155b7a70da6ac04-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "93a8befa-4784-49d5-8a2a-dc5ddf0ce86c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11987",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064343Z:93a8befa-4784-49d5-8a2a-dc5ddf0ce86c",
+        "x-request-time": "0.021"
+      },
+      "ResponseBody": {
+        "status": "Succeeded",
+        "percentComplete": 100.0
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-43ebc96c18dcf9a558765df455f78076-2d8343e29bd01fc4-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "110e0400-f40b-4382-9630-43ac64bcdc02",
+        "x-ms-ratelimit-remaining-subscription-reads": "11986",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064344Z:110e0400-f40b-4382-9630-43ac64bcdc02",
+        "x-request-time": "0.028"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+        "name": "e2etest_test_474941332555",
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "eastus2euap",
+        "tags": {},
+        "etag": null,
+        "properties": {
+          "friendlyName": "e2etest_test_474941332555 display name",
+          "description": "e2etest_test_474941332555 description",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/e2etesttkeyvaultd9a09cf8",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/e2etesttinsights08805d9b",
+          "hbiWorkspace": false,
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "imageBuildCompute": null,
+          "provisioningState": "Succeeded",
+          "managedNetwork": {
+            "networkId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+            "outboundRules": {}
+          },
+          "v1LegacyMode": false,
+          "softDeleteEnabled": false,
+          "containerRegistry": "",
+          "creationTime": "2023-02-17T06:42:45.8948990Z",
+          "notebookInfo": {
+            "resourceId": "b5d2053b4689457ca822f1fcd22a71db",
+            "fqdn": "ml-e2etesttest-eastus2euap-80abaafd-54b4-4eca-8d09-df12cf8288b4.eastus2euap.notebooks.azure.net",
+            "isPrivateLinkEnabled": false,
+            "notebookPreparationError": null
+          },
+          "storageHnsEnabled": false,
+          "workspaceId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+          "linkedModelInventoryArmId": null,
+          "privateLinkCount": 0,
+          "publicNetworkAccess": "Enabled",
+          "discoveryUrl": "https://eastus2euap.api.azureml.ms/discovery",
+          "mlFlowTrackingUri": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+          "sdkTelemetryAppInsightsKey": "bf5fc3cc-fd87-47a0-99e2-70f15d4bb11e",
+          "sasGetterUri": "",
+          "enableDataIsolation": false
+        },
+        "identity": {
+          "type": "SystemAssigned,UserAssigned",
+          "principalId": "9be83ad5-1d4a-46e7-a314-41a4beb18108",
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe": {
+              "principalId": "93029813-8a07-45a2-a347-6486be4f2240",
+              "clientId": "335eea06-5b20-4224-98c6-95bf072558db"
+            },
+            "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe2": {
+              "principalId": "418a373d-26e5-4f86-b861-6b248a35d953",
+              "clientId": "e37a7014-b884-4869-8a52-41134b368c26"
+            }
+          }
+        },
+        "kind": "Default",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "systemData": {
+          "createdAt": "2023-02-17T06:42:45.894899Z",
+          "createdBy": "joharrington@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-02-17T06:43:13.3181795Z",
+          "lastModifiedBy": "joharrington@microsoft.com",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-7234c4d7e74b56b8d6fbba52d5367568-c46900f2225d9fc0-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "652a5e9a-6613-4b48-ad06-d5e953326dbc",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064344Z:652a5e9a-6613-4b48-ad06-d5e953326dbc",
+        "x-request-time": "0.030"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+        "name": "e2etest_test_474941332555",
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "eastus2euap",
+        "tags": {},
+        "etag": null,
+        "properties": {
+          "friendlyName": "e2etest_test_474941332555 display name",
+          "description": "e2etest_test_474941332555 description",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/e2etesttkeyvaultd9a09cf8",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/e2etesttinsights08805d9b",
+          "hbiWorkspace": false,
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "imageBuildCompute": null,
+          "provisioningState": "Succeeded",
+          "managedNetwork": {
+            "networkId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+            "outboundRules": {}
+          },
+          "v1LegacyMode": false,
+          "softDeleteEnabled": false,
+          "containerRegistry": "",
+          "creationTime": "2023-02-17T06:42:45.8948990Z",
+          "notebookInfo": {
+            "resourceId": "b5d2053b4689457ca822f1fcd22a71db",
+            "fqdn": "ml-e2etesttest-eastus2euap-80abaafd-54b4-4eca-8d09-df12cf8288b4.eastus2euap.notebooks.azure.net",
+            "isPrivateLinkEnabled": false,
+            "notebookPreparationError": null
+          },
+          "storageHnsEnabled": false,
+          "workspaceId": "80abaafd-54b4-4eca-8d09-df12cf8288b4",
+          "linkedModelInventoryArmId": null,
+          "privateLinkCount": 0,
+          "publicNetworkAccess": "Enabled",
+          "discoveryUrl": "https://eastus2euap.api.azureml.ms/discovery",
+          "mlFlowTrackingUri": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555",
+          "sdkTelemetryAppInsightsKey": "bf5fc3cc-fd87-47a0-99e2-70f15d4bb11e",
+          "sasGetterUri": "",
+          "enableDataIsolation": false
+        },
+        "identity": {
+          "type": "SystemAssigned,UserAssigned",
+          "principalId": "9be83ad5-1d4a-46e7-a314-41a4beb18108",
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe": {
+              "principalId": "93029813-8a07-45a2-a347-6486be4f2240",
+              "clientId": "335eea06-5b20-4224-98c6-95bf072558db"
+            },
+            "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-mhe2": {
+              "principalId": "418a373d-26e5-4f86-b861-6b248a35d953",
+              "clientId": "e37a7014-b884-4869-8a52-41134b368c26"
+            }
+          }
+        },
+        "kind": "Default",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "systemData": {
+          "createdAt": "2023-02-17T06:42:45.894899Z",
+          "createdBy": "joharrington@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-02-17T06:43:13.3181795Z",
+          "lastModifiedBy": "joharrington@microsoft.com",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/78caa30b-af63-4c64-9238-ae16c8ecf75e?api-version=2022-12-01-preview\u0026type=async",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-16fe892f4d4ade8a23762342426b3b85-b017fe87ef097cce-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "30ea1d4d-ca2b-42c8-8aa7-74fd0e562c19",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064344Z:30ea1d4d-ca2b-42c8-8aa7-74fd0e562c19",
+        "x-request-time": "0.021"
+      },
+      "ResponseBody": {
+        "status": "Succeeded",
+        "percentComplete": 100.0
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/e2etesttinsights08805d9b?api-version=2015-05-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "Request-Context",
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Feb 2023 06:43:50 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:7f83c1fe-8c94-4d55-9337-4ddc696f61ed",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b9a964be-2b01-470c-959d-ab630fa8e024",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064350Z:b9a964be-2b01-470c-959d-ab630fa8e024",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/e2etesttstoragee411cab6d?api-version=2019-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "ef29c6f0-13b8-4921-979e-24a0bd97c51a",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14998",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064355Z:ef29c6f0-13b8-4921-979e-24a0bd97c51a"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/e2etesttkeyvaultd9a09cf8?api-version=2019-09-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Feb 2023 06:43:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "f60c0899-da10-4d7a-8171-34df017781b5",
+        "x-ms-keyvault-service-version": "1.5.666.2",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14997",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064359Z:f60c0899-da10-4d7a-8171-34df017781b5"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/e2etest_test_474941332555?api-version=2022-12-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/db9869e4-4b45-461a-825b-b05228ac0e9c?api-version=2022-12-01-preview\u0026type=async",
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Feb 2023 06:43:59 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/db9869e4-4b45-461a-825b-b05228ac0e9c?api-version=2022-12-01-preview\u0026type=location",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "51b41240-5f07-4e81-861f-7d2f17b9f531",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14996",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064359Z:51b41240-5f07-4e81-861f-7d2f17b9f531",
+        "x-request-time": "0.121"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/db9869e4-4b45-461a-825b-b05228ac0e9c?api-version=2022-12-01-preview\u0026type=async",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTY3NjYxNTQ4NCwibmJmIjoxNjc2NjE1NDg0LCJleHAiOjE2NzY2MjAyNTIsIl9jbGFpbV9uYW1lcyI6eyJncm91cHMiOiJzcmMxIn0sIl9jbGFpbV9zb3VyY2VzIjp7InNyYzEiOnsiZW5kcG9pbnQiOiJodHRwczovL2dyYXBoLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny91c2Vycy9jMWFmZTY2My05MmU3LTQ5M2MtOWI1Ny0xNDBlZTkxNzQ1NDkvZ2V0TWVtYmVyT2JqZWN0cyJ9fSwiYWNyIjoiMSIsImFpbyI6IkFWUUFxLzhUQUFBQWRLQnpkdzl3NWk2SnM4RDVEaFQwV3FTam5OL1pyL1l2VkJ0WWwyaDlNZGJIMUFjNzE2aGhnNytOVmdURkxmYTljd2plWWtaTDNOS2dIRSs3ZjVUVnJlekhKNitGSW8rR0RoYzVXZDhDdGZzPSIsImFtciI6WyJyc2EiLCJtZmEiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJkZXZpY2VpZCI6ImM0YzQ4YTY1LTQ4YjUtNDUyNS1hYjU3LWU0NjljYjcwYTU2ZSIsImZhbWlseV9uYW1lIjoiSGFycmluZ3RvbiIsImdpdmVuX25hbWUiOiJKb3NoIiwiaXBhZGRyIjoiNzYuMjguMTUzLjYxIiwibmFtZSI6Ikpvc2ggSGFycmluZ3RvbiIsIm9pZCI6ImMxYWZlNjYzLTkyZTctNDkzYy05YjU3LTE0MGVlOTE3NDU0OSIsIm9ucHJlbV9zaWQiOiJTLTEtNS0yMS0yMTI3NTIxMTg0LTE2MDQwMTI5MjAtMTg4NzkyNzUyNy01OTU5MTU4OCIsInB1aWQiOiIxMDAzMjAwMjE1RTM4QkJFIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlIwWklmM2tBdXRkUHVrUGF3ZmoyTUJNYUFPMC4iLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJUMzVkNm1uai1qc1lET3J5UU54MDQ5VWw1eWtrNkh0RTRRT0FVRDhFemxZIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidW5pcXVlX25hbWUiOiJqb2hhcnJpbmd0b25AbWljcm9zb2Z0LmNvbSIsInVwbiI6ImpvaGFycmluZ3RvbkBtaWNyb3NvZnQuY29tIiwidXRpIjoiQXRfVUQ0MEZRa0ttQkRES1Nfd1NBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiYjc5ZmJmNGQtM2VmOS00Njg5LTgxNDMtNzZiMTk0ZTg1NTA5Il0sInhtc19jYyI6WyJDUDEiXSwieG1zX3RjZHQiOjEyODkyNDE1NDd9.E7T4jNI1OZXaiNg4S_9mm7Rf4HELm4HJ7ukJwcywrYBeW2qypcgt5BW3SMHIm7H8MqF5ibTKWUD1m1Am6udfyiAOphCH2gzCzGcFPjbHBdnCxPaozXGGdRzwTCvFJkqXjh3vBA4pCkilA3Zf8lw6wHdHCWTQFhiDfElNGEcfi51XNzV_yW0tlBZwWHb5Tqg96AbMmxNd68K6KmaV0qTIs2gCcxREhxDECZD7hmy1qGKZPFf5PuvOMTJLs7-__i51Jvc8Ur1o46e2LxZET19LtYCu0fTEsMkRdmFvDnEtXrFBk51adzI0lDTAWKLqW3_3YKA3oBlSwVQPCdExiWwt4A",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "75328905-ae8e-11ed-95d0-f42679b37e91"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Feb 2023 06:43:59 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-b1f0d8b398bdc6e04e34438a0fa2c502-0701da8d1166d63d-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2bcc64cf-e657-47eb-a674-11c9301d7aa7",
+        "x-ms-ratelimit-remaining-subscription-reads": "11983",
+        "x-ms-request-id": "2bcc64cf-e657-47eb-a674-11c9301d7aa7",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230217T064359Z:2bcc64cf-e657-47eb-a674-11c9301d7aa7",
+        "x-request-time": "0.019"
+      },
+      "ResponseBody": {
+        "status": "InProgress"
+      }
+    }
+  ],
+  "Variables": {
+    "deployment_name": "e2etest_test_474941332555-3109525",
+    "insights_name": "e2etesttinsights08805d9b",
+    "keyvault_name": "e2etesttkeyvaultd9a09cf8",
+    "storage_name": "e2etesttstoragee411cab6d",
+    "wps_name": "test_474941332555"
+  }
+}

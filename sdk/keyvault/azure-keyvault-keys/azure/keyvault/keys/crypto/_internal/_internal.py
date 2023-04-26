@@ -72,7 +72,7 @@ def _int_to_fixed_length_bigendian_bytes(i, length):
     b = _int_to_bytes(i)
 
     if len(b) > length:
-        raise ValueError("{} is too large to be represented by {} bytes".format(i, length))
+        raise ValueError(f"{i} is too large to be represented by {length} bytes")
 
     if len(b) < length:
         b = (b"\0" * (length - len(b))) + b

@@ -6,6 +6,7 @@
 # pylint: disable=no-self-use
 
 import asyncio
+import inspect
 import threading
 from asyncio import Lock
 from io import UnsupportedOperation
@@ -186,10 +187,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             while True:
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
-                if asyncio.iscoroutinefunction(self.stream.read):
-                    temp = await self.stream.read(read_size)
-                else:
-                    temp = self.stream.read(read_size)
+                temp = self.stream.read(read_size)
+                if inspect.isawaitable(temp):
+                    temp = await temp
                 if not isinstance(temp, bytes):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""

@@ -9,18 +9,16 @@ from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
+
 def _assert_stream_state(response, open):
     # if open is true, check the stream is open.
     # if false, check if everything is closed
-    checks = [
-        response._internal_response._content_consumed,
-        response.is_closed,
-        response.is_stream_consumed
-    ]
+    checks = [response._internal_response._content_consumed, response.is_closed, response.is_stream_consumed]
     if open:
         assert not any(checks)
     else:
         assert all(checks)
+
 
 def test_iter_raw(client):
     request = HttpRequest("GET", "/streams/basic")
@@ -36,6 +34,7 @@ def test_iter_raw(client):
     assert response.is_closed
     assert response.is_stream_consumed
 
+
 def test_iter_raw_on_iterable(client):
     request = HttpRequest("GET", "/streams/iterable")
 
@@ -44,6 +43,7 @@ def test_iter_raw_on_iterable(client):
         for part in response.iter_raw():
             raw += part
         assert raw == b"Hello, world!"
+
 
 def test_iter_with_error(client):
     request = HttpRequest("GET", "/errors/403")
@@ -64,6 +64,7 @@ def test_iter_with_error(client):
             raise ValueError("Should error before entering")
     assert response.is_closed
 
+
 def test_iter_bytes(client):
     request = HttpRequest("GET", "/streams/basic")
 
@@ -79,6 +80,7 @@ def test_iter_bytes(client):
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
 
+
 @pytest.mark.skip(reason="We've gotten rid of iter_text for now")
 def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
@@ -87,6 +89,7 @@ def test_iter_text(client):
         for part in response.iter_text():
             content += part
         assert content == "Hello, world!"
+
 
 @pytest.mark.skip(reason="We've gotten rid of iter_lines for now")
 def test_iter_lines(client):
@@ -97,6 +100,7 @@ def test_iter_lines(client):
         for line in response.iter_lines():
             content.append(line)
         assert content == ["Hello,\n", "world!"]
+
 
 def test_sync_streaming_response(client):
     request = HttpRequest("GET", "/streams/basic")
@@ -110,6 +114,7 @@ def test_sync_streaming_response(client):
         assert content == b"Hello, world!"
         assert response.content == b"Hello, world!"
         assert response.is_closed
+
 
 def test_cannot_read_after_stream_consumed(client, port):
     request = HttpRequest("GET", "/streams/basic")
@@ -127,6 +132,7 @@ def test_cannot_read_after_stream_consumed(client, port):
     assert "<HttpRequest [GET], url: 'http://localhost:{}/streams/basic'>".format(port) in str(ex.value)
     assert "You have likely already consumed this stream, so it can not be accessed anymore" in str(ex.value)
 
+
 def test_cannot_read_after_response_closed(port, client):
     request = HttpRequest("GET", "/streams/basic")
 
@@ -137,6 +143,7 @@ def test_cannot_read_after_response_closed(port, client):
     # breaking up assert into multiple lines
     assert "<HttpRequest [GET], url: 'http://localhost:{}/streams/basic'>".format(port) in str(ex.value)
     assert "can no longer be read or streamed, since the response has already been closed" in str(ex.value)
+
 
 def test_decompress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
@@ -149,6 +156,7 @@ def test_decompress_plain_no_header(client):
     response.read()
     assert response.content == b"test"
 
+
 def test_compress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
     account_name = "coretests"
@@ -159,6 +167,7 @@ def test_compress_plain_no_header(client):
     data = b"".join(list(iter))
     assert data == b"test"
 
+
 def test_decompress_compressed_no_header(client):
     # thanks to Xiang Yan for this test!
     account_name = "coretests"
@@ -167,7 +176,8 @@ def test_decompress_compressed_no_header(client):
     response = client.send_request(request, stream=True)
     iter = response.iter_bytes()
     data = b"".join(list(iter))
-    assert data == b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\n+I-.\x01\x00\x0c~\x7f\xd8\x04\x00\x00\x00'
+    assert data == b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\n+I-.\x01\x00\x0c~\x7f\xd8\x04\x00\x00\x00"
+
 
 def test_decompress_compressed_header(client):
     # thanks to Xiang Yan for this test!
@@ -180,6 +190,7 @@ def test_decompress_compressed_header(client):
     data = b"".join(list(iter))
     assert data == b"test"
 
+
 def test_iter_read(client):
     # thanks to McCoy Patiño for this test!
     request = HttpRequest("GET", "/basic/string")
@@ -189,6 +200,7 @@ def test_iter_read(client):
     for part in iterator:
         assert part
     assert response.text()
+
 
 def test_iter_read_back_and_forth(client):
     # thanks to McCoy Patiño for this test!
@@ -209,13 +221,15 @@ def test_iter_read_back_and_forth(client):
     with pytest.raises(ResponseNotReadError):
         response.text()
 
+
 def test_stream_with_return_pipeline_response(client):
     request = HttpRequest("GET", "/basic/string")
     pipeline_response = client.send_request(request, stream=True, _return_pipeline_response=True)
     assert hasattr(pipeline_response, "http_request")
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
-    assert list(pipeline_response.http_response.iter_bytes()) == [b'Hello, world!']
+    assert list(pipeline_response.http_response.iter_bytes()) == [b"Hello, world!"]
+
 
 def test_error_reading(client):
     request = HttpRequest("GET", "/errors/403")
@@ -230,17 +244,20 @@ def test_error_reading(client):
     assert response.content == b""
     # try giving a really slow response, see what happens
 
+
 def test_pass_kwarg_to_iter_bytes(client):
     request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
     for part in response.iter_bytes(chunk_size=5):
         assert part
 
+
 def test_pass_kwarg_to_iter_raw(client):
     request = HttpRequest("GET", "/basic/string")
     response = client.send_request(request, stream=True)
     for part in response.iter_raw(chunk_size=5):
         assert part
+
 
 def test_decompress_compressed_header(client):
     # expect plain text
@@ -251,6 +268,17 @@ def test_decompress_compressed_header(client):
     assert response.content == content
     assert response.text() == "hello world"
 
+
+def test_deflate_decompress_compressed_header(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/deflate")
+    response = client.send_request(request)
+    content = response.read()
+    assert content == b"hi there"
+    assert response.content == content
+    assert response.text() == "hi there"
+
+
 def test_decompress_compressed_header_stream(client):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")
@@ -259,6 +287,7 @@ def test_decompress_compressed_header_stream(client):
     assert content == b"hello world"
     assert response.content == content
     assert response.text() == "hello world"
+
 
 def test_decompress_compressed_header_stream_body_content(client):
     # expect plain text

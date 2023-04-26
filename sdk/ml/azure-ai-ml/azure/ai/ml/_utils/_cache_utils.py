@@ -10,17 +10,19 @@ import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from functools import partial
 from pathlib import Path
-from typing import List, Dict, Optional, Union, Callable
+from typing import Callable, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
-from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled, \
-    is_private_preview_enabled, open_file_with_int_mode
-from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS
+from azure.ai.ml._utils.utils import (
+    is_concurrent_component_registration_enabled,
+    is_on_disk_cache_enabled,
+    is_private_preview_enabled,
+    write_to_shared_file,
+)
+from azure.ai.ml.constants._common import AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, AzureMLResourceType
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
-
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +44,9 @@ class _CacheContent:
     # so it will work even if the code folders are changed among runs
     on_disk_hash: Optional[str] = None
     arm_id: Optional[str] = None
+
+    def update_on_disk_hash(self):
+        self.on_disk_hash = CachedNodeResolver.calc_on_disk_hash_for_component(self.component_ref, self.in_memory_hash)
 
 
 class CachedNodeResolver(object):
@@ -98,9 +103,7 @@ class CachedNodeResolver(object):
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._client_hash = self._get_client_hash(
-            subscription_id, resource_group_name, workspace_name, registry_name
-        )
+        self._client_hash = self._get_client_hash(subscription_id, resource_group_name, workspace_name, registry_name)
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
 
@@ -112,6 +115,7 @@ class CachedNodeResolver(object):
         registry_name: Optional[str],
     ) -> str:
         """Get a hash for used client.
+
         Works for both workspace client and registry client.
         """
         object_hash = hashlib.sha256()
@@ -141,7 +145,7 @@ class CachedNodeResolver(object):
                 "Please reset the value to an integer.",
                 AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
                 os.environ.get(AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS),
-                default_max_workers
+                default_max_workers,
             )
             max_workers = default_max_workers
         return max_workers
@@ -149,8 +153,9 @@ class CachedNodeResolver(object):
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
         """Get a hash for a component.
-        This function assumes that there is no change in code folder among hash calculations,
-        which is true during resolution of 1 root pipeline component/job.
+
+        This function assumes that there is no change in code folder among hash calculations, which is true during
+        resolution of 1 root pipeline component/job.
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -172,10 +177,11 @@ class CachedNodeResolver(object):
         return _ANONYMOUS_HASH_PREFIX + component._get_anonymous_hash()  # pylint: disable=protected-access
 
     @staticmethod
-    def _get_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
+    def calc_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
         """Get a hash for a component.
-        This function will calculate the hash based on the component's code folder if the component has code,
-        so it's unique even if code folder is changed.
+
+        This function will calculate the hash based on the component's code folder if the component has code, so it's
+        unique even if code folder is changed.
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -208,6 +214,7 @@ class CachedNodeResolver(object):
     def _on_disk_cache_dir(self) -> Path:
         """Get the base path for on disk cache."""
         from azure.ai.ml._version import VERSION
+
         return Path(tempfile.gettempdir()).joinpath(
             ".azureml",
             "azure-ai-ml",
@@ -245,8 +252,7 @@ class CachedNodeResolver(object):
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with open_file_with_int_mode(on_disk_cache_path, "w") as f:
-                f.write(arm_id)
+            write_to_shared_file(on_disk_cache_path, arm_id)
         except PermissionError:
             logger.warning(
                 "Failed to save on-disk cache for component due to permission error. "
@@ -255,28 +261,29 @@ class CachedNodeResolver(object):
             )
 
     def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver):
-        """Resolve all components to resolve and save the results in cache.
-        """
-        _components = list(map(lambda x: x.component_ref, cache_contents_to_resolve))
-        _map_func = partial(resolver, azureml_type=AzureMLResourceType.COMPONENT)
+        """Resolve all components to resolve and save the results in cache."""
 
-        if len(_components) > 1 and is_concurrent_component_registration_enabled() and is_private_preview_enabled():
+        def _map_func(_cache_content: _CacheContent):
+            _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
+            if is_on_disk_cache_enabled() and is_private_preview_enabled():
+                self._save_to_on_disk_cache(_cache_content.on_disk_hash, _cache_content.arm_id)
+
+        if (
+            len(cache_contents_to_resolve) > 1
+            and is_concurrent_component_registration_enabled()
+            and is_private_preview_enabled()
+        ):
             # given deduplication has already been done, we can safely assume that there is no
             # conflict in concurrent local cache access
             with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
-                resolution_results = executor.map(_map_func, _components)
+                list(executor.map(_map_func, cache_contents_to_resolve))
         else:
-            resolution_results = map(_map_func, _components)
-
-        for cache_content, resolution_results in zip(cache_contents_to_resolve, resolution_results):
-            cache_content.arm_id = resolution_results
-            if is_on_disk_cache_enabled() and is_private_preview_enabled():
-                self._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
+            list(map(_map_func, cache_contents_to_resolve))
 
     def _prepare_items_to_resolve(self):
-        """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve.
-        Nodes in self._nodes_to_resolve will be grouped by component hash and saved to a dict of list.
-        Distinct dependent components not in current cache will be saved to a list.
+        """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve. Nodes in
+        self._nodes_to_resolve will be grouped by component hash and saved to a dict of list. Distinct dependent
+        components not in current cache will be saved to a list.
 
         :return: a tuple of (dict of nodes to resolve, list of cache contents to resolve)
         """
@@ -298,20 +305,25 @@ class CachedNodeResolver(object):
         self._nodes_to_resolve.clear()
         return dict_of_nodes_to_resolve, cache_contents_to_resolve
 
-    def _resolve_cache_contents_from_disk(
-        self,
-        cache_contents_to_resolve: List[_CacheContent]
-    ) -> List[_CacheContent]:
-        """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return
-        unresolved cache contents.
-        """
+    def _resolve_cache_contents_from_disk(self, cache_contents_to_resolve: List[_CacheContent]) -> List[_CacheContent]:
+        """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return unresolved cache
+        contents."""
         # Note that we should recalculate the hash based on code for local cache, as
-        # we can't assume that the code folder won't change among dependency resolution
-        for cache_content in cache_contents_to_resolve:
-            cache_content.on_disk_hash = self._get_on_disk_hash_for_component(
-                cache_content.component_ref,
-                cache_content.in_memory_hash
-            )
+        # we can't assume that the code folder won't change among dependency
+        # On-disk hash calculation can be slow as it involved data copying and artifact downloading.
+        # It is thread-safe given:
+        # 1. artifact downloading is thread-safe as we have a lock in ArtifactCache
+        # 2. data copying is thread-safe as there is only read operation on source folder
+        #    and target folder is unique for each thread
+        if (
+            len(cache_contents_to_resolve) > 1
+            and is_concurrent_component_registration_enabled()
+            and is_private_preview_enabled()
+        ):
+            with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
+                executor.map(_CacheContent.update_on_disk_hash, cache_contents_to_resolve)
+        else:
+            list(map(_CacheContent.update_on_disk_hash, cache_contents_to_resolve))
 
         left_cache_contents_to_resolve = []
         # need to deduplicate disk hash first if concurrent resolution is enabled
@@ -331,6 +343,7 @@ class CachedNodeResolver(object):
 
     def _resolve_nodes(self):
         """Processing logic of self.resolve_nodes.
+
         Should not be called in subgraph creation.
         """
         dict_of_nodes_to_resolve, cache_contents_to_resolve = self._prepare_items_to_resolve()
@@ -343,16 +356,14 @@ class CachedNodeResolver(object):
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
 
     def register_node_for_lazy_resolution(self, node: BaseNode):
-        """Register a node with its component to resolve.
-        """
+        """Register a node with its component to resolve."""
         component = node._component  # pylint: disable=protected-access
 
         # directly resolve node and skip registration if the resolution involves no remote call
         # so that all node will be skipped when resolving a subgraph recursively
         if isinstance(component, str):
             node._component = self._resolver(  # pylint: disable=protected-access
-                component,
-                azureml_type=AzureMLResourceType.COMPONENT
+                component, azureml_type=AzureMLResourceType.COMPONENT
             )
             return
         if component.id is not None:
@@ -362,8 +373,10 @@ class CachedNodeResolver(object):
         self._nodes_to_resolve.append(node)
 
     def resolve_nodes(self):
-        """Resolve all dependent components with resolver and set resolved component arm id back to newly
-        registered nodes. Registered nodes will be cleared after resolution.
+        """Resolve all dependent components with resolver and set resolved component arm id back to newly registered
+        nodes.
+
+        Registered nodes will be cleared after resolution.
         """
         if not self._nodes_to_resolve:
             return

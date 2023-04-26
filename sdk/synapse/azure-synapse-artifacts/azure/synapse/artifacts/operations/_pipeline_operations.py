@@ -34,6 +34,10 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -46,7 +50,7 @@ def build_get_pipelines_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,8 +71,8 @@ def build_create_or_update_pipeline_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +88,7 @@ def build_create_or_update_pipeline_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -105,7 +109,7 @@ def build_get_pipeline_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -121,7 +125,7 @@ def build_get_pipeline_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -138,7 +142,7 @@ def build_delete_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -154,7 +158,7 @@ def build_delete_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -169,8 +173,8 @@ def build_rename_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -186,7 +190,7 @@ def build_rename_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -210,8 +214,8 @@ def build_create_pipeline_run_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -227,7 +231,7 @@ def build_create_pipeline_run_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -279,8 +283,8 @@ class PipelineOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PipelineListResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[_models.PipelineListResponse] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -305,7 +309,7 @@ class PipelineOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 request = HttpRequest("GET", next_link)
@@ -315,7 +319,7 @@ class PipelineOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -323,13 +327,13 @@ class PipelineOperations:
             deserialized = self._deserialize("PipelineListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -342,7 +346,7 @@ class PipelineOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    get_pipelines_by_workspace.metadata = {"url": "/pipelines"}  # type: ignore
+    get_pipelines_by_workspace.metadata = {"url": "/pipelines"}
 
     def _create_or_update_pipeline_initial(
         self,
@@ -362,9 +366,9 @@ class PipelineOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.PipelineResource]]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.PipelineResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -389,9 +393,9 @@ class PipelineOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -410,7 +414,7 @@ class PipelineOperations:
 
         return deserialized
 
-    _create_or_update_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}  # type: ignore
+    _create_or_update_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}
 
     @overload
     def begin_create_or_update_pipeline(
@@ -520,14 +524,14 @@ class PipelineOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PipelineResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PipelineResource] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_pipeline_initial(  # type: ignore
+            raw_result = self._create_or_update_pipeline_initial(
                 pipeline_name=pipeline_name,
                 pipeline=pipeline,
                 if_match=if_match,
@@ -551,9 +555,9 @@ class PipelineOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -565,9 +569,9 @@ class PipelineOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}  # type: ignore
+    begin_create_or_update_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
 
     @distributed_trace
     def get_pipeline(
@@ -597,8 +601,8 @@ class PipelineOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.PipelineResource]]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[Optional[_models.PipelineResource]] = kwargs.pop("cls", None)
 
         request = build_get_pipeline_request(
             pipeline_name=pipeline_name,
@@ -612,9 +616,9 @@ class PipelineOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -633,7 +637,7 @@ class PipelineOperations:
 
         return deserialized
 
-    get_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}  # type: ignore
+    get_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
 
     def _delete_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, **kwargs: Any
@@ -649,8 +653,8 @@ class PipelineOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_pipeline_request(
             pipeline_name=pipeline_name,
@@ -663,9 +667,9 @@ class PipelineOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -678,7 +682,7 @@ class PipelineOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}  # type: ignore
+    _delete_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}
 
     @distributed_trace
     def begin_delete_pipeline(self, pipeline_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -701,11 +705,11 @@ class PipelineOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_pipeline_initial(  # type: ignore
                 pipeline_name=pipeline_name,
@@ -726,9 +730,9 @@ class PipelineOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -740,9 +744,9 @@ class PipelineOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}  # type: ignore
+    begin_delete_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
 
     def _rename_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -758,9 +762,9 @@ class PipelineOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
@@ -778,9 +782,9 @@ class PipelineOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -793,7 +797,7 @@ class PipelineOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _rename_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}/rename"}  # type: ignore
+    _rename_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}/rename"}
 
     @distributed_trace
     def begin_rename_pipeline(
@@ -820,12 +824,12 @@ class PipelineOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._rename_pipeline_initial(  # type: ignore
                 pipeline_name=pipeline_name,
@@ -848,9 +852,9 @@ class PipelineOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -862,9 +866,9 @@ class PipelineOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_rename_pipeline.metadata = {"url": "/pipelines/{pipelineName}/rename"}  # type: ignore
+    begin_rename_pipeline.metadata = {"url": "/pipelines/{pipelineName}/rename"}
 
     @overload
     def create_pipeline_run(
@@ -988,9 +992,9 @@ class PipelineOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CreateRunResponse]
+        api_version: Literal["2020-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CreateRunResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1020,9 +1024,9 @@ class PipelineOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1039,4 +1043,4 @@ class PipelineOperations:
 
         return deserialized
 
-    create_pipeline_run.metadata = {"url": "/pipelines/{pipelineName}/createRun"}  # type: ignore
+    create_pipeline_run.metadata = {"url": "/pipelines/{pipelineName}/createRun"}

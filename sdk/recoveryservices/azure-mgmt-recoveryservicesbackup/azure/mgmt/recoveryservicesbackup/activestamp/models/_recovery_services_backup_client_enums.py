@@ -487,6 +487,7 @@ class ProtectedItemState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
+    BACKUPS_SUSPENDED = "BackupsSuspended"
 
 
 class ProtectionIntentItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -509,6 +510,7 @@ class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
+    BACKUPS_SUSPENDED = "BackupsSuspended"
 
 
 class ProtectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -690,6 +692,14 @@ class SupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEFAULT_OFF = "DefaultOFF"
     DEFAULT_ON = "DefaultON"
     NOT_SUPPORTED = "NotSupported"
+
+
+class TargetDiskNetworkAccessOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network access settings to be used for restored disks."""
+
+    SAME_AS_ON_SOURCE_DISKS = "SameAsOnSourceDisks"
+    ENABLE_PRIVATE_ACCESS_FOR_ALL_DISKS = "EnablePrivateAccessForAllDisks"
+    ENABLE_PUBLIC_ACCESS_FOR_ALL_DISKS = "EnablePublicAccessForAllDisks"
 
 
 class TieringMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

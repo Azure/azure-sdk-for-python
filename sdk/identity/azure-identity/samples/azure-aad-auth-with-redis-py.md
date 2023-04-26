@@ -32,7 +32,7 @@ This sample is intended to assist in authenticating with Azure AD via the redis 
 When migrating your existing application code, you need to replace the password input with the Azure AD token.
 Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
-```py
+```python
 import redis
 from azure.identity import DefaultAzureCredential
 
@@ -80,7 +80,7 @@ This sample is intended to assist in authenticating with Azure AD via the redis 
 When migrating your existing application code, you need to replace the password input with the Azure AD token.
 Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
-```py
+```python
 import logging
 import redis
 from azure.identity import DefaultAzureCredential

@@ -6,6 +6,8 @@ stages:
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
       SupportedClouds: 'Public,UsGov,China'
+      MatrixReplace:
+        - TestSamples=.*/true
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_TEST_RUN_LIVE: 'true'

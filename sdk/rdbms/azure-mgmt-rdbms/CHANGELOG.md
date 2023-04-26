@@ -1,5 +1,16 @@
 # Release History
 
+## 10.2.0b7 (2023-04-18)
+
+### Features Added
+
+  - Added operation group BackupAndExportOperations
+
+### Breaking Changes
+
+  - Renamed `SYSTEM_ASSIGNED` to `SYSTEM_MANAGED` in enum `ArmServerKeyType`
+  - Removed `SECONDARY`, `WAL_REPLICA`, `SYNC_REPLICA`, `GEO_SYNC_REPLICA` from enum `ReplicationRole`
+
 ## 10.2.0b6 (2023-01-04)
 
 ### Features Added

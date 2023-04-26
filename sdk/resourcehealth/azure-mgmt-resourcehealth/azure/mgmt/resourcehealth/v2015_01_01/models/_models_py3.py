@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -48,8 +48,8 @@ class AvailabilityStatus(_serialization.Model):
         type: Optional[str] = None,
         location: Optional[str] = None,
         properties: Optional["_models.AvailabilityStatusProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Azure Resource Manager Identity for the availabilityStatuses resource.
         :paramtype id: str
@@ -92,7 +92,9 @@ class AvailabilityStatusListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AvailabilityStatus"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.AvailabilityStatus"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of availabilityStatuses. Required.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2015_01_01.models.AvailabilityStatus]
@@ -186,8 +188,8 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
         recently_resolved_state: Optional["_models.AvailabilityStatusPropertiesRecentlyResolvedState"] = None,
         recommended_actions: Optional[List["_models.RecommendedAction"]] = None,
         service_impacting_events: Optional[List["_models.ServiceImpactingEvent"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword availability_state: Availability status of the resource. Known values are:
          "Available", "Unavailable", and "Unknown".
@@ -248,7 +250,8 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
 
 
 class AvailabilityStatusPropertiesRecentlyResolvedState(_serialization.Model):
-    """An annotation describing a change in the availabilityState to Available from Unavailable with a reasonType of type Unplanned.
+    """An annotation describing a change in the availabilityState to Available from Unavailable with a
+    reasonType of type Unplanned.
 
     :ivar unavailable_occurred_time: Timestamp for when the availabilityState changed to
      Unavailable.
@@ -271,8 +274,8 @@ class AvailabilityStatusPropertiesRecentlyResolvedState(_serialization.Model):
         unavailable_occurred_time: Optional[datetime.datetime] = None,
         resolved_time: Optional[datetime.datetime] = None,
         unavailability_summary: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unavailable_occurred_time: Timestamp for when the availabilityState changed to
          Unavailable.
@@ -314,7 +317,7 @@ class ErrorResponse(_serialization.Model):
         "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -336,7 +339,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -375,8 +380,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Provider name.
         :paramtype provider: str
@@ -411,7 +416,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: List["_models.Operation"], **kwargs):
+    def __init__(self, *, value: List["_models.Operation"], **kwargs: Any) -> None:
         """
         :keyword value: List of operations available in the resourcehealth resource provider. Required.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2015_01_01.models.Operation]
@@ -443,8 +448,8 @@ class RecommendedAction(_serialization.Model):
         action: Optional[str] = None,
         action_url: Optional[str] = None,
         action_url_text: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action: Recommended action.
         :paramtype action: str
@@ -492,8 +497,8 @@ class ServiceImpactingEvent(_serialization.Model):
         correlation_id: Optional[str] = None,
         status: Optional["_models.ServiceImpactingEventStatus"] = None,
         incident_properties: Optional["_models.ServiceImpactingEventIncidentProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_start_time: Timestamp for when the event started.
         :paramtype event_start_time: ~datetime.datetime
@@ -542,8 +547,8 @@ class ServiceImpactingEventIncidentProperties(_serialization.Model):
         service: Optional[str] = None,
         region: Optional[str] = None,
         incident_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword title: Title of the incident.
         :paramtype title: str
@@ -572,7 +577,7 @@ class ServiceImpactingEventStatus(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Current status of the event.
         :paramtype value: str

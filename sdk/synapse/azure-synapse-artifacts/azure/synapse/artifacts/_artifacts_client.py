@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
+from . import models as _models
 from ._configuration import ArtifactsClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
@@ -112,7 +112,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -178,15 +178,12 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ArtifactsClient
+    def __enter__(self) -> "ArtifactsClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

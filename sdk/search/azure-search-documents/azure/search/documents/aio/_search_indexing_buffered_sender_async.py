@@ -3,26 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING, Union
+from typing import cast, List, Union, Any, Dict
 import time
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
 from .._utils import is_retryable_status_code, get_authentication_policy
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from .._generated.aio import SearchIndexClient
-from .._generated.models import IndexingResult, IndexBatch
+from .._generated.models import IndexingResult, IndexBatch, IndexAction
 from .._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch_async import IndexDocumentsBatch
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixin):
@@ -59,7 +55,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self,
         endpoint: str,
         index_name: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs
     ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
@@ -69,28 +65,27 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = SearchIndexClient(
+            self._client: SearchIndexClient = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: SearchIndexClient
+            )
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client = SearchIndexClient(
+            self._client: SearchIndexClient = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 authentication_policy=authentication_policy,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: SearchIndexClient
+            )
         self._reset_timer()
 
-    async def _cleanup(self, flush=True):
-        # type: () -> None
+    async def _cleanup(self, flush: bool = True) -> None:
         """Clean up the client.
 
         :param bool flush: flush the actions queue before shutdown the client
@@ -101,30 +96,26 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if self._auto_flush:
             self._timer.cancel()
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<SearchIndexingBufferedSender [endpoint={}, index={}]>".format(
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
     @property
-    def actions(self):
-        # type: () -> List[IndexAction]
+    def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
         :rtype: List[IndexAction]
         """
         return self._index_documents_batch.actions
 
     @distributed_trace_async
-    async def close(self, **kwargs):  # pylint: disable=unused-argument
-        # type: () -> None
+    async def close(self, **kwargs) -> None:  # pylint: disable=unused-argument
         """Close the :class:`~azure.search.documents.aio.SearchClient` session."""
         await self._cleanup(flush=True)
         return await self._client.close()
 
     @distributed_trace_async
-    async def flush(self, timeout=86400, **kwargs):  # pylint:disable=unused-argument
-        # type: (bool) -> bool
+    async def flush(self, timeout: int = 86400, **kwargs) -> bool:  # pylint:disable=unused-argument
         """Flush the batch.
         :param int timeout: time out setting. Default is 86400s (one day)
         :return: True if there are errors. Else False
@@ -147,8 +138,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 has_error = True
         return has_error
 
-    async def _process(self, timeout=86400, **kwargs):
-        # type: (int) -> bool
+    async def _process(self, timeout: int = 86400, **kwargs) -> bool:
         from ..indexes.aio import SearchIndexClient as SearchServiceClient
 
         raise_error = kwargs.pop("raise_error", True)
@@ -199,8 +189,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                     raise
                 return True
 
-    async def _process_if_needed(self):
-        # type: () -> bool
+    async def _process_if_needed(self) -> bool:
         """Every time when a new action is queued, this method
         will be triggered. It checks the actions already queued and flushes them if:
         1. Auto_flush is on
@@ -224,39 +213,30 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._timer = Timer(self._auto_flush_interval, self._process)
 
     @distributed_trace_async
-    async def upload_documents(
-        self, documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
-        :type documents: List[dict]
+        :type documents: List[Dict]
         """
         actions = await self._index_documents_batch.add_upload_actions(documents)
         await self._callback_new(actions)
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def delete_documents(
-        self, documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue delete documents actions
         :param documents: A list of documents to delete.
-        :type documents: List[dict]
+        :type documents: List[Dict]
         """
         actions = await self._index_documents_batch.add_delete_actions(documents)
         await self._callback_new(actions)
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def merge_documents(
-        self, documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+    async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue merge documents actions
         :param documents: A list of documents to merge.
-        :type documents: List[dict]
+        :type documents: List[Dict]
         """
         actions = await self._index_documents_batch.add_merge_actions(documents)
         await self._callback_new(actions)
@@ -264,12 +244,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
     @distributed_trace_async
     async def merge_or_upload_documents(
-        self, documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (List[dict]) -> None
+        self, documents: List[Dict], **kwargs: Any
+    ) -> None:
+        # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.
-        :type documents: List[dict]
+        :type documents: List[Dict]
         """
         actions = await self._index_documents_batch.add_merge_or_upload_actions(
             documents
@@ -278,8 +258,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def index_documents(self, batch, **kwargs):
-        # type: (IndexDocumentsBatch, **Any) -> List[IndexingResult]
+    async def index_documents(self, batch: IndexDocumentsBatch, **kwargs: Any) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
@@ -289,8 +268,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    async def _index_documents_actions(self, actions, **kwargs):
-        # type: (List[IndexAction], **Any) -> List[IndexingResult]
+    async def _index_documents_actions(self, actions: List[IndexAction], **kwargs: Any) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         timeout = kwargs.pop("timeout", 86400)
@@ -337,17 +315,14 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             return result_first_half.extend(result_second_half)
 
     async def __aenter__(self):
-        # type: () -> SearchIndexingBufferedSender
         await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
     async def __aexit__(self, *args):
-        # type: (*Any) -> None
         await self.close()
-        await self._client.__aexit__(*args)  # pylint: disable=no-member
+        await self._client.__aexit__(*args)
 
-    async def _retry_action(self, action):
-        # type: (IndexAction) -> None
+    async def _retry_action(self, action: IndexAction) -> None:
         if not self._index_key:
             await self._callback_fail(action)
             return
@@ -364,22 +339,19 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         else:
             await self._callback_fail(action)
 
-    async def _callback_succeed(self, action):
-        # type: (IndexAction) -> None
+    async def _callback_succeed(self, action: IndexAction) -> None:
         if self._on_remove:
             await self._on_remove(action)
         if self._on_progress:
             await self._on_progress(action)
 
-    async def _callback_fail(self, action):
-        # type: (IndexAction) -> None
+    async def _callback_fail(self, action: IndexAction) -> None:
         if self._on_remove:
             await self._on_remove(action)
         if self._on_error:
             await self._on_error(action)
 
-    async def _callback_new(self, actions):
-        # type: (List[IndexAction]) -> None
+    async def _callback_new(self, actions: List[IndexAction]) -> None:
         if self._on_new:
             for action in actions:
                 await self._on_new(action)

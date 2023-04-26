@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.dataprotection import DataProtectionClient
+from azure.mgmt.dataprotection import DataProtectionMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.dataprotection import DataProtectionClient
 
 
 def main():
-    client = DataProtectionClient(
+    client = DataProtectionMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="0b352192-dcac-4cc7-992e-a96190ccc68c",
     )
@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2022-12-01/examples/GetOperationStatus.json
+# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/GetOperationStatus.json
 if __name__ == "__main__":
     main()

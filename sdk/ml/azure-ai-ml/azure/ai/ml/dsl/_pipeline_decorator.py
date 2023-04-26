@@ -30,6 +30,7 @@ from azure.ai.ml.exceptions import (
 from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from ._settings import _dsl_settings_stack
 from ._utils import _resolve_source_file
+from ..entities._builders import BaseNode
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
@@ -61,8 +62,7 @@ def pipeline(
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ):
-    """Build a pipeline which contains all component nodes defined in this
-    function. Set AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED to enable multi layer pipeline.
+    """Build a pipeline which contains all component nodes defined in this function.
 
     .. note::
 
@@ -71,23 +71,24 @@ def pipeline(
     .. code-block:: python
 
                 # Define a pipeline with decorator
-                @pipeline(name='sample_pipeline', description='pipeline description')
+                @pipeline(name="sample_pipeline", description="pipeline description")
                 def sample_pipeline_func(pipeline_input, pipeline_str_param):
-                        # component1 and component2 will be added into the current pipeline
-                        component1 = component1_func(input1=pipeline_input, param1='literal')
-                        component2 = component2_func(input1=dataset, param1=pipeline_str_param)
-                        # A decorated pipeline function needs to return outputs.
-                        # In this case, the pipeline has two outputs: component1's output1 and component2's output1,
-                        # and let's rename them to 'pipeline_output1' and 'pipeline_output2'
-                        return {
-                            'pipeline_output1': component1.outputs.output1,
-                            'pipeline_output2': component2.outputs.output1
-                        }
+                    # component1 and component2 will be added into the current pipeline
+                    component1 = component1_func(input1=pipeline_input, param1="literal")
+                    component2 = component2_func(input1=dataset, param1=pipeline_str_param)
+                    # A decorated pipeline function needs to return outputs.
+                    # In this case, the pipeline has two outputs: component1's output1 and component2's output1,
+                    # and let's rename them to 'pipeline_output1' and 'pipeline_output2'
+                    return {
+                        "pipeline_output1": component1.outputs.output1,
+                        "pipeline_output2": component2.outputs.output1,
+                    }
+
 
                 # E.g.: This call returns a pipeline job with nodes=[component1, component2],
                 pipeline_job = sample_pipeline_func(
-                    pipeline_input=Input(type='uri_folder', path='./local-data'),
-                    pipeline_str_param='literal'
+                    pipeline_input=Input(type="uri_folder", path="./local-data"),
+                    pipeline_str_param="literal",
                 )
                 ml_client.jobs.create_or_update(pipeline_job, experiment_name="pipeline_samples")
 
@@ -277,6 +278,17 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
 
     for pipeline_input_name in provided_args:
         data = provided_args[pipeline_input_name]
+        # for input_key, input_value in kwargs.items():
+        if isinstance(data, BaseNode):
+            if len(data.outputs) != 1:
+                raise ValueError(
+                    "Provided input {} is not a single output node, cannot be used as a node input.".format(
+                        pipeline_input_name
+                    )
+                )
+            data = next(iter(data.outputs.values()))
+            provided_args[pipeline_input_name] = data
+
         if data is not None and not _is_supported_data_type(data) and pipeline_input_name not in non_pipeline_inputs:
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._source_control_configuration_client_enums import *
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23,31 +31,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -66,28 +70,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -95,32 +95,28 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -136,31 +132,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -175,27 +168,23 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
-class Extension(ProxyResource):
+class Extension(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The Extension object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -234,8 +223,8 @@ class Extension(ProxyResource):
     :ivar configuration_protected_settings: Configuration settings that are sensitive, as
      name-value pairs for configuring this extension.
     :vartype configuration_protected_settings: dict[str, str]
-    :ivar provisioning_state: The provisioning state of the extension resource. Possible values
-     include: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
+    :ivar provisioning_state: The provisioning state of the extension resource. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ProvisioningState
     :ivar statuses: Status from this extension.
@@ -252,52 +241,55 @@ class Extension(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'custom_location_settings': {'readonly': True},
-        'package_uri': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "custom_location_settings": {"readonly": True},
+        "package_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'extension_type': {'key': 'properties.extensionType', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'release_train': {'key': 'properties.releaseTrain', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'scope': {'key': 'properties.scope', 'type': 'Scope'},
-        'configuration_settings': {'key': 'properties.configurationSettings', 'type': '{str}'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ExtensionStatus]'},
-        'error_info': {'key': 'properties.errorInfo', 'type': 'ErrorDetail'},
-        'custom_location_settings': {'key': 'properties.customLocationSettings', 'type': '{str}'},
-        'package_uri': {'key': 'properties.packageUri', 'type': 'str'},
-        'aks_assigned_identity': {'key': 'properties.aksAssignedIdentity', 'type': 'ExtensionPropertiesAksAssignedIdentity'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "extension_type": {"key": "properties.extensionType", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "release_train": {"key": "properties.releaseTrain", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "scope": {"key": "properties.scope", "type": "Scope"},
+        "configuration_settings": {"key": "properties.configurationSettings", "type": "{str}"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ExtensionStatus]"},
+        "error_info": {"key": "properties.errorInfo", "type": "ErrorDetail"},
+        "custom_location_settings": {"key": "properties.customLocationSettings", "type": "{str}"},
+        "package_uri": {"key": "properties.packageUri", "type": "str"},
+        "aks_assigned_identity": {
+            "key": "properties.aksAssignedIdentity",
+            "type": "ExtensionPropertiesAksAssignedIdentity",
+        },
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
         extension_type: Optional[str] = None,
-        auto_upgrade_minor_version: Optional[bool] = True,
-        release_train: Optional[str] = "Stable",
+        auto_upgrade_minor_version: bool = True,
+        release_train: str = "Stable",
         version: Optional[str] = None,
-        scope: Optional["Scope"] = None,
+        scope: Optional["_models.Scope"] = None,
         configuration_settings: Optional[Dict[str, str]] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        statuses: Optional[List["ExtensionStatus"]] = None,
-        error_info: Optional["ErrorDetail"] = None,
-        aks_assigned_identity: Optional["ExtensionPropertiesAksAssignedIdentity"] = None,
-        **kwargs
-    ):
+        statuses: Optional[List["_models.ExtensionStatus"]] = None,
+        error_info: Optional["_models.ErrorDetail"] = None,
+        aks_assigned_identity: Optional["_models.ExtensionPropertiesAksAssignedIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity of the Extension resource.
         :paramtype identity: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.Identity
@@ -331,7 +323,7 @@ class Extension(ProxyResource):
         :paramtype aks_assigned_identity:
          ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ExtensionPropertiesAksAssignedIdentity
         """
-        super(Extension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.system_data = None
         self.extension_type = extension_type
@@ -349,7 +341,7 @@ class Extension(ProxyResource):
         self.aks_assigned_identity = aks_assigned_identity
 
 
-class ExtensionPropertiesAksAssignedIdentity(msrest.serialization.Model):
+class ExtensionPropertiesAksAssignedIdentity(_serialization.Model):
     """Identity of the Extension resource in an AKS cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -358,41 +350,35 @@ class ExtensionPropertiesAksAssignedIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
+    :ivar type: The identity type. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
-        :keyword type: The identity type. The only acceptable values to pass in are None and
-         "SystemAssigned". The default value is None.
+        :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
         """
-        super(ExtensionPropertiesAksAssignedIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class ExtensionsList(msrest.serialization.Model):
-    """Result of the request to list Extensions.  It contains a list of Extension objects and a URL link to get the next set of results.
+class ExtensionsList(_serialization.Model):
+    """Result of the request to list Extensions.  It contains a list of Extension objects and a URL
+    link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -403,35 +389,30 @@ class ExtensionsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Extension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Extension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExtensionsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ExtensionStatus(msrest.serialization.Model):
+class ExtensionStatus(_serialization.Model):
     """Status from the extension.
 
     :ivar code: Status code provided by the Extension.
     :vartype code: str
     :ivar display_status: Short description of status of the extension.
     :vartype display_status: str
-    :ivar level: Level of the status. Possible values include: "Error", "Warning", "Information".
-     Default value: "Information".
+    :ivar level: Level of the status. Known values are: "Error", "Warning", and "Information".
     :vartype level: str or ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.LevelType
     :ivar message: Detailed message of the status from the Extension.
     :vartype message: str
@@ -440,11 +421,11 @@ class ExtensionStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "str"},
     }
 
     def __init__(
@@ -452,25 +433,24 @@ class ExtensionStatus(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         display_status: Optional[str] = None,
-        level: Optional[Union[str, "LevelType"]] = "Information",
+        level: Union[str, "_models.LevelType"] = "Information",
         message: Optional[str] = None,
         time: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Status code provided by the Extension.
         :paramtype code: str
         :keyword display_status: Short description of status of the extension.
         :paramtype display_status: str
-        :keyword level: Level of the status. Possible values include: "Error", "Warning",
-         "Information". Default value: "Information".
+        :keyword level: Level of the status. Known values are: "Error", "Warning", and "Information".
         :paramtype level: str or ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.LevelType
         :keyword message: Detailed message of the status from the Extension.
         :paramtype message: str
         :keyword time: DateLiteral (per ISO8601) noting the time of installation status.
         :paramtype time: str
         """
-        super(ExtensionStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.display_status = display_status
         self.level = level
@@ -478,7 +458,7 @@ class ExtensionStatus(msrest.serialization.Model):
         self.time = time
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -487,40 +467,33 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
+    :ivar type: The identity type. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
-        :keyword type: The identity type. The only acceptable values to pass in are None and
-         "SystemAssigned". The default value is None.
+        :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class OperationStatusList(msrest.serialization.Model):
+class OperationStatusList(_serialization.Model):
     """The async operations in progress, in the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -533,27 +506,23 @@ class OperationStatusList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationStatusResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationStatusResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationStatusList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationStatusResult(msrest.serialization.Model):
+class OperationStatusResult(_serialization.Model):
     """The current status of an async operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -562,7 +531,7 @@ class OperationStatusResult(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Name of the async operation.
     :vartype name: str
-    :ivar status: Required. Operation status.
+    :ivar status: Operation status. Required.
     :vartype status: str
     :ivar properties: Additional information, if available.
     :vartype properties: dict[str, str]
@@ -571,40 +540,40 @@ class OperationStatusResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
         status: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ID for the async operation.
         :paramtype id: str
         :keyword name: Name of the async operation.
         :paramtype name: str
-        :keyword status: Required. Operation status.
+        :keyword status: Operation status. Required.
         :paramtype status: str
         :keyword properties: Additional information, if available.
         :paramtype properties: dict[str, str]
         :keyword error: The error detail.
         :paramtype error: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ErrorDetail
         """
-        super(OperationStatusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -612,7 +581,7 @@ class OperationStatusResult(msrest.serialization.Model):
         self.error = error
 
 
-class PatchExtension(msrest.serialization.Model):
+class PatchExtension(_serialization.Model):
     """The Extension Patch Request object.
 
     :ivar auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
@@ -633,23 +602,23 @@ class PatchExtension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'release_train': {'key': 'properties.releaseTrain', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'configuration_settings': {'key': 'properties.configurationSettings', 'type': '{str}'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "release_train": {"key": "properties.releaseTrain", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "configuration_settings": {"key": "properties.configurationSettings", "type": "{str}"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        auto_upgrade_minor_version: Optional[bool] = True,
-        release_train: Optional[str] = "Stable",
+        auto_upgrade_minor_version: bool = True,
+        release_train: str = "Stable",
         version: Optional[str] = None,
         configuration_settings: Optional[Dict[str, str]] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword auto_upgrade_minor_version: Flag to note if this extension participates in auto
          upgrade of minor version, or not.
@@ -667,7 +636,7 @@ class PatchExtension(msrest.serialization.Model):
          name-value pairs for configuring this extension.
         :paramtype configuration_protected_settings: dict[str, str]
         """
-        super(PatchExtension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.release_train = release_train
         self.version = version
@@ -675,7 +644,7 @@ class PatchExtension(msrest.serialization.Model):
         self.configuration_protected_settings = configuration_protected_settings
 
 
-class ResourceProviderOperation(msrest.serialization.Model):
+class ResourceProviderOperation(_serialization.Model):
     """Supported operation of this resource provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -692,24 +661,24 @@ class ResourceProviderOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
+        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -717,14 +686,14 @@ class ResourceProviderOperation(msrest.serialization.Model):
         :paramtype display:
          ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ResourceProviderOperationDisplay
         """
-        super(ResourceProviderOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.is_data_action = None
         self.origin = None
 
 
-class ResourceProviderOperationDisplay(msrest.serialization.Model):
+class ResourceProviderOperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
     :ivar provider: Resource provider: Microsoft KubernetesConfiguration.
@@ -738,10 +707,10 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -751,8 +720,8 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider: Microsoft KubernetesConfiguration.
         :paramtype provider: str
@@ -763,14 +732,14 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         :keyword description: Description of this operation.
         :paramtype description: str
         """
-        super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ResourceProviderOperationList(msrest.serialization.Model):
+class ResourceProviderOperationList(_serialization.Model):
     """Result of the request to list operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -783,31 +752,26 @@ class ResourceProviderOperationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceProviderOperation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceProviderOperation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by this resource provider.
         :paramtype value:
          list[~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ResourceProviderOperation]
         """
-        super(ResourceProviderOperationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class Scope(msrest.serialization.Model):
+class Scope(_serialization.Model):
     """Scope of the extension. It can be either Cluster or Namespace; but not both.
 
     :ivar cluster: Specifies that the scope of the extension is Cluster.
@@ -817,29 +781,29 @@ class Scope(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cluster': {'key': 'cluster', 'type': 'ScopeCluster'},
-        'namespace': {'key': 'namespace', 'type': 'ScopeNamespace'},
+        "cluster": {"key": "cluster", "type": "ScopeCluster"},
+        "namespace": {"key": "namespace", "type": "ScopeNamespace"},
     }
 
     def __init__(
         self,
         *,
-        cluster: Optional["ScopeCluster"] = None,
-        namespace: Optional["ScopeNamespace"] = None,
-        **kwargs
-    ):
+        cluster: Optional["_models.ScopeCluster"] = None,
+        namespace: Optional["_models.ScopeNamespace"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cluster: Specifies that the scope of the extension is Cluster.
         :paramtype cluster: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeCluster
         :keyword namespace: Specifies that the scope of the extension is Namespace.
         :paramtype namespace: ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.ScopeNamespace
         """
-        super(Scope, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cluster = cluster
         self.namespace = namespace
 
 
-class ScopeCluster(msrest.serialization.Model):
+class ScopeCluster(_serialization.Model):
     """Specifies that the scope of the extension is Cluster.
 
     :ivar release_namespace: Namespace where the extension Release must be placed, for a Cluster
@@ -848,25 +812,20 @@ class ScopeCluster(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'release_namespace': {'key': 'releaseNamespace', 'type': 'str'},
+        "release_namespace": {"key": "releaseNamespace", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        release_namespace: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, release_namespace: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword release_namespace: Namespace where the extension Release must be placed, for a Cluster
          scoped extension.  If this namespace does not exist, it will be created.
         :paramtype release_namespace: str
         """
-        super(ScopeCluster, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.release_namespace = release_namespace
 
 
-class ScopeNamespace(msrest.serialization.Model):
+class ScopeNamespace(_serialization.Model):
     """Specifies that the scope of the extension is Namespace.
 
     :ivar target_namespace: Namespace where the extension will be created for an Namespace scoped
@@ -875,39 +834,34 @@ class ScopeNamespace(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'target_namespace': {'key': 'targetNamespace', 'type': 'str'},
+        "target_namespace": {"key": "targetNamespace", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_namespace: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, target_namespace: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_namespace: Namespace where the extension will be created for an Namespace
          scoped extension.  If this namespace does not exist, it will be created.
         :paramtype target_namespace: str
         """
-        super(ScopeNamespace, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_namespace = target_namespace
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -915,44 +869,44 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_09_01.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

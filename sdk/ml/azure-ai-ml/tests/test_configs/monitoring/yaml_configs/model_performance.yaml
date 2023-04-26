@@ -1,0 +1,52 @@
+name: data-drift-test
+trigger:
+  type: recurrence
+  frequency: week
+  time_zone: utc
+  interval: 1
+  schedule:
+    hours:
+      - 22
+      - 20
+    minutes:
+      - 0
+      - 0
+    week_days:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+create_monitor:
+  compute: azureml:mycompute
+  monitoring_target:
+    endpoint_deployment_id: fake_endpoint_id
+  monitoring_signals:
+    testSignal:
+      type: model_performance
+      model_type: regression
+      target_dataset:
+        dataset:
+          input_dataset:
+            type: mltable
+            path: azureml:Direct:1
+          dataset_context: test
+        lookback_period: 60
+      baseline_dataset:
+        input_dataset:
+          type: mltable
+          path: azureml:Direct:1
+        dataset_context: test
+      metric_thresholds:
+        metric_name: rmse
+        threshold: 0.5
+      data_segment:
+        feature_name: foo
+        feature_values:
+          - a
+          - b
+          - c
+properties:
+  prop1: value
+tags:
+  tag1: tag

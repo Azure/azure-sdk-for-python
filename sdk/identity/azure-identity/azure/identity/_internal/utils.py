@@ -5,7 +5,7 @@
 import os
 import logging
 from contextvars import ContextVar
-from typing import List
+from typing import List, Optional
 
 from urllib.parse import urlparse
 
@@ -49,7 +49,7 @@ def validate_tenant_id(tenant_id: str) -> None:
 
 def resolve_tenant(
         default_tenant: str,
-        tenant_id: str = None,
+        tenant_id: Optional[str] = None,
         *,
         additionally_allowed_tenants: List[str] = [],
         **_) -> str:

@@ -131,9 +131,7 @@ def regenerate_restclient(api_tag, verbose):
     )
 
 
-
 if __name__ == "__main__":
-
     parser = ArgumentParser()
 
     parser.add_argument(

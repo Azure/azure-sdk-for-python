@@ -11,9 +11,10 @@ from flask import (
 )
 from .helpers import assert_with_message
 
-urlencoded_api = Blueprint('urlencoded_api', __name__)
+urlencoded_api = Blueprint("urlencoded_api", __name__)
 
-@urlencoded_api.route('/pet/add/<pet_id>', methods=['POST'])
+
+@urlencoded_api.route("/pet/add/<pet_id>", methods=["POST"])
 def basic(pet_id):
     assert_with_message("pet_id", "1", pet_id)
     assert_with_message("content type", "application/x-www-form-urlencoded", request.content_type)

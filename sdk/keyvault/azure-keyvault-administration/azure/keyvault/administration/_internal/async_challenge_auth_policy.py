@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs) -> None:
         super().__init__(credential, *scopes, **kwargs)
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
@@ -44,13 +44,13 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
-            if self._need_new_token:
+            if self._need_new_token():
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
-            request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
+            request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -90,7 +90,5 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
         return True
 
-    @property
     def _need_new_token(self) -> bool:
-        # pylint:disable=invalid-overridden-method
         return not self._token or self._token.expires_on - time.time() < 300

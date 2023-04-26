@@ -6,8 +6,7 @@
 
 
 from ._sip_routing_client import SipRoutingClient
-from ._generated.models import SipTrunkRoute
-from ._models import SipTrunk
+from ._models import SipTrunk, SipTrunkRoute
 
 __all__ = [
     'SipRoutingClient',

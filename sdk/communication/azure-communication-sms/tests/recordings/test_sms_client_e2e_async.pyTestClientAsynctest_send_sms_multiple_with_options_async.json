@@ -1,0 +1,71 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/sms?api-version=2021-03-07",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "322",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-communication-sms/1.1.0 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "from": "sanitized",
+        "smsRecipients": [
+          {
+            "to": "sanitized",
+            "repeatabilityRequestId": "sanitized",
+            "repeatabilityFirstSent": "sanitized"
+          },
+          {
+            "to": "sanitized",
+            "repeatabilityRequestId": "sanitized",
+            "repeatabilityFirstSent": "sanitized"
+          }
+        ],
+        "message": "Hello World via SMS",
+        "smsSendOptions": {
+          "enableDeliveryReport": true,
+          "tag": "custom-tag"
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "api-supported-versions": "2020-07-20-preview1, 2020-08-20-preview, 2021-03-07",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "183ms"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "to": "sanitized",
+            "messageId": "sanitized",
+            "httpStatusCode": 202,
+            "repeatabilityResult": "accepted",
+            "successful": true
+          },
+          {
+            "to": "sanitized",
+            "messageId": "sanitized",
+            "httpStatusCode": 202,
+            "repeatabilityResult": "accepted",
+            "successful": true
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -37,7 +37,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -45,7 +45,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -78,7 +79,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -117,7 +118,9 @@ class PrivateLinkAssociation(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PrivateLinkAssociationPropertiesExpanded"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.PrivateLinkAssociationPropertiesExpanded"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The private link association properties.
         :paramtype properties:
@@ -142,7 +145,7 @@ class PrivateLinkAssociationGetResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkAssociation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkAssociation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkAssociation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: private link association information.
         :paramtype value:
@@ -164,7 +167,9 @@ class PrivateLinkAssociationObject(_serialization.Model):
         "properties": {"key": "properties", "type": "PrivateLinkAssociationProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PrivateLinkAssociationProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.PrivateLinkAssociationProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of the PrivateLinkAssociation.
         :paramtype properties:
@@ -194,8 +199,8 @@ class PrivateLinkAssociationProperties(_serialization.Model):
         *,
         private_link: Optional[str] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessOptions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link: The rmpl Resource ID.
         :paramtype private_link: str
@@ -236,8 +241,8 @@ class PrivateLinkAssociationPropertiesExpanded(_serialization.Model):
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessOptions"]] = None,
         tenant_id: Optional[str] = None,
         scope: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link: The rmpl Resource ID.
         :paramtype private_link: str
@@ -293,8 +298,8 @@ class ResourceManagementPrivateLink(_serialization.Model):
         *,
         properties: Optional["_models.ResourceManagementPrivateLinkEndpointConnections"] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties:
         :paramtype properties:
@@ -321,7 +326,7 @@ class ResourceManagementPrivateLinkEndpointConnections(_serialization.Model):
         "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[str]"},
     }
 
-    def __init__(self, *, private_endpoint_connections: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, private_endpoint_connections: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword private_endpoint_connections: The private endpoint connections.
         :paramtype private_endpoint_connections: list[str]
@@ -342,7 +347,7 @@ class ResourceManagementPrivateLinkListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ResourceManagementPrivateLink]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ResourceManagementPrivateLink"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ResourceManagementPrivateLink"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of resource management private links.
         :paramtype value:
@@ -363,7 +368,7 @@ class ResourceManagementPrivateLinkLocation(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: the region to create private link association.
         :paramtype location: str

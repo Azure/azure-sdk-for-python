@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2022-08-11-preview/examples/PrivateEndpointConnectionList.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2022-03-10/examples/PrivateEndpointConnectionList.json
 if __name__ == "__main__":
     main()

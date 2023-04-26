@@ -17,10 +17,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Datasets downloaded by test are too large to record reliably"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestTextNer(AzureRecordedTestCase):
     def test_remote_run_text_ner(
         self,

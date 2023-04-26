@@ -19,36 +19,45 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
     
-    This sample assumes the registry "myacr.azurecr.io" has a repository "hello-world" with image tagged "v1".
+    This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
+    run load_registry() if you don't have.
+    Set the environment variables with your own values before running load_registry():
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
+    3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
+    4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
+    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
+    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
-
-from dotenv import find_dotenv, load_dotenv
 import os
-
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from azure.identity import DefaultAzureCredential
+from utilities import load_registry, get_authority, get_audience, get_credential
+
 
 class SetImageProperties(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = get_credential(self.authority)
 
     def set_image_properties(self):
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        audience = "https://management.azure.com"
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Set permissions on the v1 image's "latest" tag
             client.update_manifest_properties(
                 "library/hello-world",
-                "latest",
+                "v1",
                 can_write=False,
                 can_delete=False
             )
-            # After this update, if someone were to push an update to `myacr.azurecr.io\hello-world:v1`, it would fail.
-            # It's worth noting that if this image also had another tag, such as `latest`, and that tag did not have
-            # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
-            # if someone were to push an update to `<registry endpoint>\hello-world:latest`
+            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
+            # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
+            # and that tag did not have permissions set to prevent reads or deletes, the image could still be
+            # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
             # (which references the same image), it would succeed.
 
 

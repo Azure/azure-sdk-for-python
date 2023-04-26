@@ -18,7 +18,7 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         "not_callable": "func must be a function or a callable object",
         "conflict_argument": "Injected param name __self conflicts with function args {args}",
         "not_all_template_separators_used": "Not all template separators are used, "
-                                            "please switch to a compatible version of Python.",
+        "please switch to a compatible version of Python.",
     }
     injected_param = "__self"
 
@@ -31,8 +31,7 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         raise NotImplementedError()
 
     def call(self, func, _all_kwargs) -> Tuple[Any, dict]:
-        """Get outputs and locals in calling func with _all_kwargs.
-        Locals will be used to update node variable names.
+        """Get outputs and locals in calling func with _all_kwargs. Locals will be used to update node variable names.
 
         :param func: The function to execute.
         :type func: Union[FunctionType, MethodType]
@@ -43,10 +42,10 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         """
         if isinstance(func, (FunctionType, MethodType)):
             pass
-        elif hasattr(func, '__call__'):
+        elif hasattr(func, "__call__"):
             func = func.__call__
         else:
-            raise TypeError(self.make_error('not_callable'))
+            raise TypeError(self.make_error("not_callable"))
 
         if self.injected_param in func.__code__.co_varnames:
             raise ValueError(self.make_error("conflict_argument", args=list(func.__code__.co_varnames)))
@@ -94,7 +93,6 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
 try:
     from bytecode import Bytecode, Instr
 
-
     class PersistentLocalsFunction(object):
         def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
             """
@@ -121,17 +119,14 @@ try:
                     for skip_local in __self._skip_locals:
                         __self.locals.pop(skip_local, None)
 
-
     def _source_template_func(mock_arg):
         return mock_arg
-
 
     def _target_template_func(__self, mock_arg):
         try:
             return mock_arg
         finally:
             __self.locals = locals().copy()
-
 
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionBuilder):
         def __init__(self):
@@ -167,6 +162,7 @@ try:
 
         def _create_code(self, instructions: List[Instr], base_func: Union[FunctionType, MethodType]):
             """Create the base bytecode for the function to be generated.
+
             Will keep information of the function, such as name, globals, etc., but skip all instructions.
             """
             fn_code = Bytecode.from_code(base_func.__code__)
@@ -178,12 +174,7 @@ try:
 
         # endregion
 
-        def _split_instructions(
-                self,
-                instructions,
-                *,
-                skip_body_instr=False
-        ) -> List[List[Any]]:
+        def _split_instructions(self, instructions, *, skip_body_instr=False) -> List[List[Any]]:
             """Split instructions into several pieces by template separators.
             For example, in Python 3.11, the template separators will be:
             [
@@ -225,9 +216,8 @@ try:
             return pieces
 
         def _build_func(self, func: Union[FunctionType, MethodType]) -> PersistentLocalsFunction:
-            """Build a persistent locals function from the given function.
-            Use bytecode injection to add try...finally statement around code to
-            persistent the locals in the function.
+            """Build a persistent locals function from the given function. Use bytecode injection to add try...finally
+            statement around code to persistent the locals in the function.
 
             It will change the func bytecode in this way:
                 def func(__self, *func_args):
@@ -247,12 +237,9 @@ try:
             generated_instructions = []
 
             for template_piece, input_piece, separator in zip(
-                    self._template_body,
-                    self._split_instructions(
-                        self.get_instructions(func),
-                        skip_body_instr=True
-                    ),
-                    self._template_separators,
+                self._template_body,
+                self._split_instructions(self.get_instructions(func), skip_body_instr=True),
+                self._template_separators,
             ):
                 generated_instructions.extend(template_piece)
                 generated_instructions.extend(input_piece)
@@ -265,7 +252,7 @@ try:
                 func.__globals__,
                 func.__name__,
                 func.__defaults__,
-                func.__closure__
+                func.__closure__,
             )
             return PersistentLocalsFunction(
                 generated_func,
@@ -285,8 +272,7 @@ except ImportError:
 
 
 def get_outputs_and_locals(func, _all_kwargs):
-    """Get outputs and locals from self.func.
-    Locals will be used to update node variable names.
+    """Get outputs and locals from self.func. Locals will be used to update node variable names.
 
     :param func: The function to execute.
     :type func: Union[FunctionType, MethodType]

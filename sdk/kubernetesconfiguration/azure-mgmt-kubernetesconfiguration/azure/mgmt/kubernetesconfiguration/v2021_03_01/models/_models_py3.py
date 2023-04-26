@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,42 +8,43 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._source_control_configuration_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ComplianceStatus(msrest.serialization.Model):
+class ComplianceStatus(_serialization.Model):
     """Compliance Status details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar compliance_state: The compliance state of the configuration. Possible values include:
-     "Pending", "Compliant", "Noncompliant", "Installed", "Failed".
+    :ivar compliance_state: The compliance state of the configuration. Known values are: "Pending",
+     "Compliant", "Noncompliant", "Installed", and "Failed".
     :vartype compliance_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.ComplianceStateType
     :ivar last_config_applied: Datetime the configuration was last applied.
     :vartype last_config_applied: ~datetime.datetime
     :ivar message: Message from when the configuration was applied.
     :vartype message: str
-    :ivar message_level: Level of the message. Possible values include: "Error", "Warning",
+    :ivar message_level: Level of the message. Known values are: "Error", "Warning", and
      "Information".
     :vartype message_level: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.MessageLevelType
     """
 
     _validation = {
-        'compliance_state': {'readonly': True},
+        "compliance_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'compliance_state': {'key': 'complianceState', 'type': 'str'},
-        'last_config_applied': {'key': 'lastConfigApplied', 'type': 'iso-8601'},
-        'message': {'key': 'message', 'type': 'str'},
-        'message_level': {'key': 'messageLevel', 'type': 'str'},
+        "compliance_state": {"key": "complianceState", "type": "str"},
+        "last_config_applied": {"key": "lastConfigApplied", "type": "iso-8601"},
+        "message": {"key": "message", "type": "str"},
+        "message_level": {"key": "messageLevel", "type": "str"},
     }
 
     def __init__(
@@ -50,68 +52,62 @@ class ComplianceStatus(msrest.serialization.Model):
         *,
         last_config_applied: Optional[datetime.datetime] = None,
         message: Optional[str] = None,
-        message_level: Optional[Union[str, "MessageLevelType"]] = None,
-        **kwargs
-    ):
+        message_level: Optional[Union[str, "_models.MessageLevelType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_config_applied: Datetime the configuration was last applied.
         :paramtype last_config_applied: ~datetime.datetime
         :keyword message: Message from when the configuration was applied.
         :paramtype message: str
-        :keyword message_level: Level of the message. Possible values include: "Error", "Warning",
+        :keyword message_level: Level of the message. Known values are: "Error", "Warning", and
          "Information".
         :paramtype message_level: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.MessageLevelType
         """
-        super(ComplianceStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.compliance_state = None
         self.last_config_applied = last_config_applied
         self.message = message
         self.message_level = message_level
 
 
-class ErrorDefinition(msrest.serialization.Model):
+class ErrorDefinition(_serialization.Model):
     """Error definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. Service specific error code which serves as the substatus for the HTTP
-     error code.
+    :ivar code: Service specific error code which serves as the substatus for the HTTP error code.
+     Required.
     :vartype code: str
-    :ivar message: Required. Description of the error.
+    :ivar message: Description of the error. Required.
     :vartype message: str
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
         """
-        :keyword code: Required. Service specific error code which serves as the substatus for the HTTP
-         error code.
+        :keyword code: Service specific error code which serves as the substatus for the HTTP error
+         code. Required.
         :paramtype code: str
-        :keyword message: Required. Description of the error.
+        :keyword message: Description of the error. Required.
         :paramtype message: str
         """
-        super(ErrorDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -121,24 +117,20 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+        "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.error = None
 
 
-class HelmOperatorProperties(msrest.serialization.Model):
+class HelmOperatorProperties(_serialization.Model):
     """Properties for Helm operator.
 
     :ivar chart_version: Version of the operator Helm chart.
@@ -148,29 +140,25 @@ class HelmOperatorProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'chart_version': {'key': 'chartVersion', 'type': 'str'},
-        'chart_values': {'key': 'chartValues', 'type': 'str'},
+        "chart_version": {"key": "chartVersion", "type": "str"},
+        "chart_values": {"key": "chartValues", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        chart_version: Optional[str] = None,
-        chart_values: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, chart_version: Optional[str] = None, chart_values: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword chart_version: Version of the operator Helm chart.
         :paramtype chart_version: str
         :keyword chart_values: Values override for the operator Helm chart.
         :paramtype chart_values: str
         """
-        super(HelmOperatorProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.chart_version = chart_version
         self.chart_values = chart_values
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -186,31 +174,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -225,27 +210,23 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
-class ResourceProviderOperation(msrest.serialization.Model):
+class ResourceProviderOperation(_serialization.Model):
     """Supported operation of this resource provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -260,22 +241,22 @@ class ResourceProviderOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_data_action': {'readonly': True},
+        "is_data_action": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
+        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -283,13 +264,13 @@ class ResourceProviderOperation(msrest.serialization.Model):
         :paramtype display:
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.ResourceProviderOperationDisplay
         """
-        super(ResourceProviderOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.is_data_action = None
 
 
-class ResourceProviderOperationDisplay(msrest.serialization.Model):
+class ResourceProviderOperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
     :ivar provider: Resource provider: Microsoft KubernetesConfiguration.
@@ -303,10 +284,10 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -316,8 +297,8 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider: Microsoft KubernetesConfiguration.
         :paramtype provider: str
@@ -328,14 +309,14 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         :keyword description: Description of this operation.
         :paramtype description: str
         """
-        super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ResourceProviderOperationList(msrest.serialization.Model):
+class ResourceProviderOperationList(_serialization.Model):
     """Result of the request to list operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -348,31 +329,26 @@ class ResourceProviderOperationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceProviderOperation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceProviderOperation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by this resource provider.
         :paramtype value:
          list[~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.ResourceProviderOperation]
         """
-        super(ResourceProviderOperationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class Result(msrest.serialization.Model):
+class Result(_serialization.Model):
     """Sample result definition.
 
     :ivar sample_property: Sample property of type string.
@@ -380,24 +356,19 @@ class Result(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sample_property': {'key': 'sampleProperty', 'type': 'str'},
+        "sample_property": {"key": "sampleProperty", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sample_property: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, sample_property: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword sample_property: Sample property of type string.
         :paramtype sample_property: str
         """
-        super(Result, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sample_property = sample_property
 
 
-class SourceControlConfiguration(ProxyResource):
+class SourceControlConfiguration(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The SourceControl Configuration object returned in Get & Put response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -421,7 +392,7 @@ class SourceControlConfiguration(ProxyResource):
     :ivar operator_instance_name: Instance name of the operator - identifying the specific
      configuration.
     :vartype operator_instance_name: str
-    :ivar operator_type: Type of the operator. Possible values include: "Flux".
+    :ivar operator_type: Type of the operator. "Flux"
     :vartype operator_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.OperatorType
     :ivar operator_params: Any Parameters for the Operator instance in string format.
@@ -429,8 +400,8 @@ class SourceControlConfiguration(ProxyResource):
     :ivar configuration_protected_settings: Name-value pairs of protected configuration settings
      for the configuration.
     :vartype configuration_protected_settings: dict[str, str]
-    :ivar operator_scope: Scope at which the operator will be installed. Possible values include:
-     "cluster", "namespace". Default value: "cluster".
+    :ivar operator_scope: Scope at which the operator will be installed. Known values are:
+     "cluster" and "namespace".
     :vartype operator_scope: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.OperatorScopeType
     :ivar repository_public_key: Public Key associated with this SourceControl configuration
@@ -444,8 +415,8 @@ class SourceControlConfiguration(ProxyResource):
     :ivar helm_operator_properties: Properties for Helm operator.
     :vartype helm_operator_properties:
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.HelmOperatorProperties
-    :ivar provisioning_state: The provisioning state of the resource provider. Possible values
-     include: "Accepted", "Deleting", "Running", "Succeeded", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource provider. Known values are:
+     "Accepted", "Deleting", "Running", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.ProvisioningStateType
     :ivar compliance_status: Compliance Status of the Configuration.
@@ -454,50 +425,50 @@ class SourceControlConfiguration(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'repository_public_key': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'compliance_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "repository_public_key": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "compliance_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
-        'operator_namespace': {'key': 'properties.operatorNamespace', 'type': 'str'},
-        'operator_instance_name': {'key': 'properties.operatorInstanceName', 'type': 'str'},
-        'operator_type': {'key': 'properties.operatorType', 'type': 'str'},
-        'operator_params': {'key': 'properties.operatorParams', 'type': 'str'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
-        'operator_scope': {'key': 'properties.operatorScope', 'type': 'str'},
-        'repository_public_key': {'key': 'properties.repositoryPublicKey', 'type': 'str'},
-        'ssh_known_hosts_contents': {'key': 'properties.sshKnownHostsContents', 'type': 'str'},
-        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'bool'},
-        'helm_operator_properties': {'key': 'properties.helmOperatorProperties', 'type': 'HelmOperatorProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'compliance_status': {'key': 'properties.complianceStatus', 'type': 'ComplianceStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "repository_url": {"key": "properties.repositoryUrl", "type": "str"},
+        "operator_namespace": {"key": "properties.operatorNamespace", "type": "str"},
+        "operator_instance_name": {"key": "properties.operatorInstanceName", "type": "str"},
+        "operator_type": {"key": "properties.operatorType", "type": "str"},
+        "operator_params": {"key": "properties.operatorParams", "type": "str"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
+        "operator_scope": {"key": "properties.operatorScope", "type": "str"},
+        "repository_public_key": {"key": "properties.repositoryPublicKey", "type": "str"},
+        "ssh_known_hosts_contents": {"key": "properties.sshKnownHostsContents", "type": "str"},
+        "enable_helm_operator": {"key": "properties.enableHelmOperator", "type": "bool"},
+        "helm_operator_properties": {"key": "properties.helmOperatorProperties", "type": "HelmOperatorProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "compliance_status": {"key": "properties.complianceStatus", "type": "ComplianceStatus"},
     }
 
     def __init__(
         self,
         *,
         repository_url: Optional[str] = None,
-        operator_namespace: Optional[str] = "default",
+        operator_namespace: str = "default",
         operator_instance_name: Optional[str] = None,
-        operator_type: Optional[Union[str, "OperatorType"]] = None,
+        operator_type: Optional[Union[str, "_models.OperatorType"]] = None,
         operator_params: Optional[str] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        operator_scope: Optional[Union[str, "OperatorScopeType"]] = "cluster",
+        operator_scope: Union[str, "_models.OperatorScopeType"] = "cluster",
         ssh_known_hosts_contents: Optional[str] = None,
         enable_helm_operator: Optional[bool] = None,
-        helm_operator_properties: Optional["HelmOperatorProperties"] = None,
-        **kwargs
-    ):
+        helm_operator_properties: Optional["_models.HelmOperatorProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword repository_url: Url of the SourceControl Repository.
         :paramtype repository_url: str
@@ -507,7 +478,7 @@ class SourceControlConfiguration(ProxyResource):
         :keyword operator_instance_name: Instance name of the operator - identifying the specific
          configuration.
         :paramtype operator_instance_name: str
-        :keyword operator_type: Type of the operator. Possible values include: "Flux".
+        :keyword operator_type: Type of the operator. "Flux"
         :paramtype operator_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.OperatorType
         :keyword operator_params: Any Parameters for the Operator instance in string format.
@@ -515,8 +486,8 @@ class SourceControlConfiguration(ProxyResource):
         :keyword configuration_protected_settings: Name-value pairs of protected configuration settings
          for the configuration.
         :paramtype configuration_protected_settings: dict[str, str]
-        :keyword operator_scope: Scope at which the operator will be installed. Possible values
-         include: "cluster", "namespace". Default value: "cluster".
+        :keyword operator_scope: Scope at which the operator will be installed. Known values are:
+         "cluster" and "namespace".
         :paramtype operator_scope: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.OperatorScopeType
         :keyword ssh_known_hosts_contents: Base64-encoded known_hosts contents containing public SSH
@@ -528,7 +499,7 @@ class SourceControlConfiguration(ProxyResource):
         :paramtype helm_operator_properties:
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.HelmOperatorProperties
         """
-        super(SourceControlConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.repository_url = repository_url
         self.operator_namespace = operator_namespace
@@ -545,8 +516,9 @@ class SourceControlConfiguration(ProxyResource):
         self.compliance_status = None
 
 
-class SourceControlConfigurationList(msrest.serialization.Model):
-    """Result of the request to list Source Control Configurations.  It contains a list of SourceControlConfiguration objects and a URL link to get the next set of results.
+class SourceControlConfigurationList(_serialization.Model):
+    """Result of the request to list Source Control Configurations.  It contains a list of
+    SourceControlConfiguration objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -558,41 +530,37 @@ class SourceControlConfigurationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SourceControlConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SourceControlConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SourceControlConfigurationList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -600,44 +568,44 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2021_03_01.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

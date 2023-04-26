@@ -104,6 +104,12 @@ class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL_SQUASH = "AllSquash"
 
 
+class ShareTokenIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ShareTokenIntent."""
+
+    BACKUP = "backup"
+
+
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error codes returned by the service."""
 

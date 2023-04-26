@@ -4,17 +4,18 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DumpableEnumField, VersionField
 
 
 class InternalEnvironmentSchema(PathAwareSchema):
     docker = fields.Dict()
     conda = fields.Dict()
     os = DumpableEnumField(
-        allowed_values=["Linux", "Windows"],
+        # add enum instead of use string transformer here to avoid changing the value
+        allowed_values=["Linux", "Windows", "linux", "windows"],
         required=False,
     )
     name = fields.Str()
-    version = fields.Str()
+    version = VersionField()
     python = fields.Dict()

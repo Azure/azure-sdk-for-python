@@ -24,6 +24,7 @@ class ComputeSchema(PathAwareSchema):
     created_on = fields.Str(dump_only=True)
     provisioning_state = fields.Str(dump_only=True)
     resource_id = fields.Str()
+    tags = fields.Dict(keys=fields.Str(), values=fields.Str())
 
 
 class NetworkSettingsSchema(PathAwareSchema):

@@ -15,8 +15,7 @@ from ._models_py3 import AbstractiveSummarizationTaskParametersBase
 from ._models_py3 import AbstractiveSummary
 from ._models_py3 import AbstractiveSummaryDocumentResult
 from ._models_py3 import AbstractiveSummaryDocumentResultWithDetectedLanguage
-from ._models_py3 import AgeResolution
-from ._models_py3 import AnalyzeTextDynamicClassificationInput
+from ._patch import AgeResolution
 from ._models_py3 import AnalyzeTextEntityLinkingInput
 from ._models_py3 import AnalyzeTextEntityRecognitionInput
 from ._models_py3 import AnalyzeTextJobState
@@ -30,12 +29,11 @@ from ._models_py3 import AnalyzeTextPiiEntitiesRecognitionInput
 from ._models_py3 import AnalyzeTextSentimentAnalysisInput
 from ._models_py3 import AnalyzeTextTask
 from ._models_py3 import AnalyzeTextTaskResult
-from ._models_py3 import AreaResolution
+from ._patch import AreaResolution
 from ._models_py3 import BaseResolution
-from ._models_py3 import BooleanResolution
 from ._models_py3 import ClassificationDocumentResult
 from ._models_py3 import ClassificationResult
-from ._models_py3 import CurrencyResolution
+from ._patch import CurrencyResolution
 from ._models_py3 import CustomEntitiesLROTask
 from ._models_py3 import CustomEntitiesResult
 from ._models_py3 import CustomEntitiesResultDocumentsItem
@@ -51,7 +49,7 @@ from ._models_py3 import CustomSingleLabelClassificationLROResult
 from ._models_py3 import CustomSingleLabelClassificationLROTask
 from ._models_py3 import CustomSingleLabelClassificationTaskParameters
 from ._models_py3 import CustomTaskParameters
-from ._models_py3 import DateTimeResolution
+from ._patch import DateTimeResolution
 from ._models_py3 import DetectedLanguage
 from ._models_py3 import DocumentDetectedLanguage
 from ._models_py3 import DocumentDetectedLanguageString
@@ -60,11 +58,6 @@ from ._models_py3 import DocumentRequestStatistics
 from ._models_py3 import DocumentResult
 from ._models_py3 import DocumentStatistics
 from ._models_py3 import DocumentWarning
-from ._models_py3 import DynamicClassificationDocumentResult
-from ._models_py3 import DynamicClassificationResult
-from ._models_py3 import DynamicClassificationResultDocumentsItem
-from ._models_py3 import DynamicClassificationTaskParameters
-from ._models_py3 import DynamicClassificationTaskResult
 from ._models_py3 import EntitiesDocumentResult
 from ._models_py3 import EntitiesLROTask
 from ._models_py3 import EntitiesResult
@@ -100,7 +93,7 @@ from ._models_py3 import HealthcareRelation
 from ._models_py3 import HealthcareRelationEntity
 from ._models_py3 import HealthcareResult
 from ._models_py3 import HealthcareTaskParameters
-from ._models_py3 import InformationResolution
+from ._patch import InformationResolution
 from ._models_py3 import InnerErrorModel
 from ._models_py3 import InputError
 from ._models_py3 import JobState
@@ -117,15 +110,15 @@ from ._models_py3 import LanguageDetectionResult
 from ._models_py3 import LanguageDetectionTaskParameters
 from ._models_py3 import LanguageDetectionTaskResult
 from ._models_py3 import LanguageInput
-from ._models_py3 import LengthResolution
+from ._patch import LengthResolution
 from ._models_py3 import LinkedEntitiesDocumentResult
 from ._models_py3 import LinkedEntity
 from ._models_py3 import Match
 from ._models_py3 import MultiLanguageAnalysisInput
 from ._models_py3 import MultiLanguageInput
-from ._models_py3 import NumberResolution
-from ._models_py3 import NumericRangeResolution
-from ._models_py3 import OrdinalResolution
+from ._patch import NumberResolution
+from ._patch import NumericRangeResolution
+from ._patch import OrdinalResolution
 from ._models_py3 import PIIResultWithDetectedLanguage
 from ._models_py3 import Pagination
 from ._models_py3 import PiiEntitiesDocumentResult
@@ -149,7 +142,7 @@ from ._models_py3 import SentimentLROResult
 from ._models_py3 import SentimentResponse
 from ._models_py3 import SentimentResponseDocumentsItem
 from ._models_py3 import SentimentTaskResult
-from ._models_py3 import SpeedResolution
+from ._patch import SpeedResolution
 from ._models_py3 import SummaryContext
 from ._models_py3 import TargetConfidenceScoreLabel
 from ._models_py3 import TargetRelation
@@ -158,10 +151,10 @@ from ._models_py3 import TaskParameters
 from ._models_py3 import TaskState
 from ._models_py3 import TasksState
 from ._models_py3 import TasksStateTasks
-from ._models_py3 import TemperatureResolution
-from ._models_py3 import TemporalSpanResolution
-from ._models_py3 import VolumeResolution
-from ._models_py3 import WeightResolution
+from ._patch import TemperatureResolution
+from ._patch import TemporalSpanResolution
+from ._patch import VolumeResolution
+from ._patch import WeightResolution
 
 
 from ._text_analytics_client_enums import AgeUnit
@@ -172,7 +165,6 @@ from ._text_analytics_client_enums import AnalyzeTextTaskResultsKind
 from ._text_analytics_client_enums import AreaUnit
 from ._text_analytics_client_enums import Association
 from ._text_analytics_client_enums import Certainty
-from ._text_analytics_client_enums import ClassificationType
 from ._text_analytics_client_enums import Conditionality
 from ._text_analytics_client_enums import DateTimeSubKind
 from ._text_analytics_client_enums import DocumentSentimentValue
@@ -217,7 +209,6 @@ __all__ = [
     'AbstractiveSummaryDocumentResult',
     'AbstractiveSummaryDocumentResultWithDetectedLanguage',
     'AgeResolution',
-    'AnalyzeTextDynamicClassificationInput',
     'AnalyzeTextEntityLinkingInput',
     'AnalyzeTextEntityRecognitionInput',
     'AnalyzeTextJobState',
@@ -233,7 +224,6 @@ __all__ = [
     'AnalyzeTextTaskResult',
     'AreaResolution',
     'BaseResolution',
-    'BooleanResolution',
     'ClassificationDocumentResult',
     'ClassificationResult',
     'CurrencyResolution',
@@ -261,11 +251,6 @@ __all__ = [
     'DocumentResult',
     'DocumentStatistics',
     'DocumentWarning',
-    'DynamicClassificationDocumentResult',
-    'DynamicClassificationResult',
-    'DynamicClassificationResultDocumentsItem',
-    'DynamicClassificationTaskParameters',
-    'DynamicClassificationTaskResult',
     'EntitiesDocumentResult',
     'EntitiesLROTask',
     'EntitiesResult',
@@ -371,7 +356,6 @@ __all__ = [
     'AreaUnit',
     'Association',
     'Certainty',
-    'ClassificationType',
     'Conditionality',
     'DateTimeSubKind',
     'DocumentSentimentValue',

@@ -1,0 +1,19 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:adftest
+
+jobs:
+  blob_azuresql_node_input:
+    type: data_transfer
+    task: export_data
+    inputs:
+      source:
+        type: uri_folder
+        path: ../../../data/testFile_ForSqlDB.parquet
+    sink:
+      type: database
+      table_name: dbo.Persons
+      connection: azureml:my_export_azuresqldb_connection

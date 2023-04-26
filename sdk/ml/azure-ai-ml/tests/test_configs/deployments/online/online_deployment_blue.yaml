@@ -13,7 +13,7 @@ code_configuration:
 environment:
     name: k8s-env
     version: 3
-    image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+    image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
     conda_file: ../model-1/environment/conda.yml
 instance_type: cpuinstance
 liveness_probe:

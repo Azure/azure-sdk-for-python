@@ -29,8 +29,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Import(BaseNode):
-    """Base class for import node, used for import component version
-    consumption.
+    """Base class for import node, used for import component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from a builder function.

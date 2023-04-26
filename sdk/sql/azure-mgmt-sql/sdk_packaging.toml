@@ -3,5 +3,5 @@ package_name = "azure-mgmt-sql"
 package_pprint_name = "SQL Management"
 package_doc_id = "sql"
 is_stable = false
-sample_link = "sql"
+sample_link = ""
 title = "SqlManagementClient"

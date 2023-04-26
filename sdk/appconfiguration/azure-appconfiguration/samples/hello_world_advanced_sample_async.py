@@ -45,9 +45,11 @@ async def main():
     print("")
 
     print("List configuration settings")
+    # [START list_config_setting]
     config_settings = client.list_configuration_settings(label_filter="MyLabel")
     async for item in config_settings:
         print_configuration_setting(item)
+    # [END list_config_setting]
 
     print("Delete configuration setting")
     await client.delete_configuration_setting(

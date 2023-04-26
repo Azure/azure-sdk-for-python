@@ -16,65 +16,54 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_QUESTIONANSWERING_ENDPOINT - the endpoint to your QuestionAnswering resource.
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
+    3) AZURE_QUESTIONANSWERING_PROJECT - your existing Question Answering project to export/import.
 """
 
 
 def sample_export_import_project():
     # [START export_import_project]
     import os
+    import io
+    import zipfile
+    from azure.core.rest import HttpRequest
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering.authoring import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+    project_name = os.environ["AZURE_QUESTIONANSWERING_PROJECT"]
 
     # create client
     client = AuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
 
-        # create project
-        project_name = "IssacNewton"
-        client.create_project(
-            project_name=project_name,
-            options={
-                "description": "biography of Sir Issac Newton",
-                "language": "en",
-                "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
-
         # export
+        export_format = "json"
         export_poller = client.begin_export(
             project_name=project_name,
-            file_format="json"
+            file_format=export_format
         )
         export_result = export_poller.result()
         export_url = export_result["resultUrl"]
+        request = HttpRequest("GET", export_url)
+        exported_project = None
+
+        if export_format == "json":
+            response = client.send_request(request)
+            exported_project = response.json()
+        elif export_format == "excel" or export_format == "tsv":
+            response = client.send_request(request, stream=True)
+            exported_project = zipfile.ZipFile(io.BytesIO(response.read()))
+            exported_project.extractall("./ExportedProject")
+            exported_project.close()
+            print(f"{export_format} project files written to ./ExportedProject.")
+            return
 
         # import project
-        project = {
-            "Metadata": {
-                "ProjectName": "IssacNewton",
-                "Description": "biography of Sir Issac Newton",
-                "Language": "en",
-                "DefaultAnswer": None,
-                "MultilingualResource": False,
-                "CreatedDateTime": "2022-01-25T13:10:08Z",
-                "LastModifiedDateTime": "2022-01-25T13:10:08Z",
-                "LastDeployedDateTime": None,
-                "Settings": {
-                    "DefaultAnswer": "no answer",
-                    "EnableHierarchicalExtraction": None,
-                    "DefaultAnswerUsedForExtraction": None
-                }
-            }
-        }
         import_poller = client.begin_import_assets(
-            project_name=project_name,
-            options=project
+            project_name=f"{project_name}-imported",
+            options=exported_project,
         )
         import_poller.result()
 

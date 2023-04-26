@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, c
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
+from ._transport._pyamqp_transport import PyamqpTransport
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -182,6 +183,8 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
+        if self._amqp_transport != PyamqpTransport:
+            event_data._uamqp_message == message    # pylint: disable=pointless-statement
         self._last_received_event = event_data
         return event_data
 
@@ -224,6 +227,9 @@ class EventHubConsumer(
                         self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
+                    # If optional dependency is not installed, do not retry.
+                    if isinstance(exception, ImportError):
+                        raise exception
                     self._amqp_transport.check_link_stolen(self, exception)
                     # TODO: below block hangs when retry_total > 0
                     # need to remove/refactor, issue #27137

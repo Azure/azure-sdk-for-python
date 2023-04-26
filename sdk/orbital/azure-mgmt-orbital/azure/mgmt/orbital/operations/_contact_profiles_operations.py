@@ -49,7 +49,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +82,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -118,7 +118,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_update_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -187,7 +187,7 @@ def build_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -287,7 +287,7 @@ class ContactProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ContactProfile] = kwargs.pop("cls", None)
@@ -312,7 +312,8 @@ class ContactProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ContactProfile", pipeline_response)
 
@@ -330,14 +331,15 @@ class ContactProfilesOperations:
         resource_group_name: str,
         contact_profile_name: str,
         location: str,
+        network_configuration: _models.ContactProfilesPropertiesNetworkConfiguration,
+        links: List[_models.ContactProfileLink],
         tags: Optional[Dict[str, str]] = None,
         provisioning_state: Optional[Union[str, _models.ContactProfilesPropertiesProvisioningState]] = None,
         minimum_viable_contact_duration: Optional[str] = None,
         minimum_elevation_degrees: Optional[float] = None,
         auto_tracking_configuration: Optional[Union[str, _models.AutoTrackingConfiguration]] = None,
         event_hub_uri: Optional[str] = None,
-        network_configuration: Optional[_models.ContactProfilesPropertiesNetworkConfiguration] = None,
-        links: Optional[List[_models.ContactProfileLink]] = None,
+        third_party_configurations: Optional[List[_models.ContactProfileThirdPartyConfiguration]] = None,
         **kwargs: Any
     ) -> _models.ContactProfile:
         error_map = {
@@ -351,7 +353,7 @@ class ContactProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -367,6 +369,7 @@ class ContactProfilesOperations:
             network_configuration=network_configuration,
             provisioning_state=provisioning_state,
             tags=tags,
+            third_party_configurations=third_party_configurations,
         )
         _json = self._serialize.body(_parameters, "ContactProfile")
 
@@ -392,7 +395,8 @@ class ContactProfilesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 200:
@@ -420,14 +424,15 @@ class ContactProfilesOperations:
         resource_group_name: str,
         contact_profile_name: str,
         location: str,
+        network_configuration: _models.ContactProfilesPropertiesNetworkConfiguration,
+        links: List[_models.ContactProfileLink],
         tags: Optional[Dict[str, str]] = None,
         provisioning_state: Optional[Union[str, _models.ContactProfilesPropertiesProvisioningState]] = None,
         minimum_viable_contact_duration: Optional[str] = None,
         minimum_elevation_degrees: Optional[float] = None,
         auto_tracking_configuration: Optional[Union[str, _models.AutoTrackingConfiguration]] = None,
         event_hub_uri: Optional[str] = None,
-        network_configuration: Optional[_models.ContactProfilesPropertiesNetworkConfiguration] = None,
-        links: Optional[List[_models.ContactProfileLink]] = None,
+        third_party_configurations: Optional[List[_models.ContactProfileThirdPartyConfiguration]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.ContactProfile]:
         """Creates or updates a contact profile.
@@ -439,11 +444,17 @@ class ContactProfilesOperations:
         :type contact_profile_name: str
         :param location: The geo-location where the resource lives. Required.
         :type location: str
+        :param network_configuration: Network configuration of customer virtual network. Required.
+        :type network_configuration:
+         ~azure.mgmt.orbital.models.ContactProfilesPropertiesNetworkConfiguration
+        :param links: Links of the Contact Profile. Describes RF links, modem processing, and IP
+         endpoints. Required.
+        :type links: list[~azure.mgmt.orbital.models.ContactProfileLink]
         :param tags: Resource tags. Default value is None.
         :type tags: dict[str, str]
         :param provisioning_state: The current state of the resource's creation, deletion, or
-         modification. Known values are: "Creating", "Succeeded", "Failed", "Canceled", "Updating", and
-         "Deleting". Default value is None.
+         modification. Known values are: "creating", "succeeded", "failed", "canceled", "updating", and
+         "deleting". Default value is None.
         :type provisioning_state: str or
          ~azure.mgmt.orbital.models.ContactProfilesPropertiesProvisioningState
         :param minimum_viable_contact_duration: Minimum viable contact duration in ISO 8601 format.
@@ -461,13 +472,10 @@ class ContactProfilesOperations:
          granting Orbital Resource Provider the rights to send telemetry into the hub. Default value is
          None.
         :type event_hub_uri: str
-        :param network_configuration: Network configuration of customer virtual network. Default value
-         is None.
-        :type network_configuration:
-         ~azure.mgmt.orbital.models.ContactProfilesPropertiesNetworkConfiguration
-        :param links: Links of the Contact Profile. Describes RF links, modem processing, and IP
-         endpoints. Default value is None.
-        :type links: list[~azure.mgmt.orbital.models.ContactProfileLink]
+        :param third_party_configurations: Third-party mission configuration of the Contact Profile.
+         Describes RF links, modem processing, and IP endpoints. Default value is None.
+        :type third_party_configurations:
+         list[~azure.mgmt.orbital.models.ContactProfileThirdPartyConfiguration]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -484,7 +492,7 @@ class ContactProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -497,14 +505,15 @@ class ContactProfilesOperations:
                 resource_group_name=resource_group_name,
                 contact_profile_name=contact_profile_name,
                 location=location,
+                network_configuration=network_configuration,
+                links=links,
                 tags=tags,
                 provisioning_state=provisioning_state,
                 minimum_viable_contact_duration=minimum_viable_contact_duration,
                 minimum_elevation_degrees=minimum_elevation_degrees,
                 auto_tracking_configuration=auto_tracking_configuration,
                 event_hub_uri=event_hub_uri,
-                network_configuration=network_configuration,
-                links=links,
+                third_party_configurations=third_party_configurations,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -555,7 +564,7 @@ class ContactProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -580,7 +589,8 @@ class ContactProfilesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
@@ -617,7 +627,7 @@ class ContactProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -679,7 +689,7 @@ class ContactProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -716,7 +726,8 @@ class ContactProfilesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         response_headers = {}
@@ -822,8 +833,8 @@ class ContactProfilesOperations:
         :type resource_group_name: str
         :param contact_profile_name: Contact Profile name. Required.
         :type contact_profile_name: str
-        :param parameters: Parameters supplied to update contact profile tags. Is either a model type
-         or a IO type. Required.
+        :param parameters: Parameters supplied to update contact profile tags. Is either a TagsObject
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.orbital.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -844,7 +855,7 @@ class ContactProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -913,7 +924,7 @@ class ContactProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ContactProfileListResult] = kwargs.pop("cls", None)
@@ -975,7 +986,8 @@ class ContactProfilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -1008,7 +1020,7 @@ class ContactProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ContactProfileListResult] = kwargs.pop("cls", None)
@@ -1071,7 +1083,8 @@ class ContactProfilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

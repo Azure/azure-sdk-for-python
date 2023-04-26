@@ -117,8 +117,9 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -230,8 +231,8 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         :type database_name: str
         :param tde_name: The name of the transparent data encryption configuration. "current" Required.
         :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
-        :param parameters: The database transparent data encryption. Is either a model type or a IO
-         type. Required.
+        :param parameters: The database transparent data encryption. Is either a
+         ManagedTransparentDataEncryption type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedTransparentDataEncryption or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -283,8 +284,9 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -378,8 +380,9 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

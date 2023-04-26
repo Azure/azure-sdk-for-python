@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -53,8 +53,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -88,7 +88,7 @@ class BackupSecretResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -140,8 +140,8 @@ class SecretBundle(_serialization.Model):
         content_type: Optional[str] = None,
         attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -165,7 +165,8 @@ class SecretBundle(_serialization.Model):
 
 
 class DeletedSecretBundle(SecretBundle):
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information on when it will be purged.
+    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
+    on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -223,8 +224,8 @@ class DeletedSecretBundle(SecretBundle):
         attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -283,8 +284,8 @@ class SecretItem(_serialization.Model):
         attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
@@ -353,8 +354,8 @@ class DeletedSecretItem(SecretItem):
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
@@ -396,7 +397,7 @@ class DeletedSecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -428,7 +429,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -453,7 +454,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -509,8 +510,8 @@ class SecretAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -546,7 +547,7 @@ class SecretListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -564,7 +565,7 @@ class SecretProperties(_serialization.Model):
         "content_type": {"key": "contentType", "type": "str"},
     }
 
-    def __init__(self, *, content_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, content_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content_type: The media type (MIME type).
         :paramtype content_type: str
@@ -590,7 +591,7 @@ class SecretRestoreParameters(_serialization.Model):
         "secret_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, secret_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, secret_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword secret_bundle_backup: The backup blob associated with a secret bundle. Required.
         :paramtype secret_bundle_backup: bytes
@@ -632,8 +633,8 @@ class SecretSetParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         secret_attributes: Optional["_models.SecretAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The value of the secret. Required.
         :paramtype value: str
@@ -674,8 +675,8 @@ class SecretUpdateParameters(_serialization.Model):
         content_type: Optional[str] = None,
         secret_attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str

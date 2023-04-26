@@ -43,7 +43,7 @@ class MicrosoftResourceHealthConfiguration(Configuration):  # pylint: disable=to
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(MicrosoftResourceHealthConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2018-07-01")  # type: Literal["2018-07-01"]
+        api_version: Literal["2018-07-01"] = kwargs.pop("api_version", "2018-07-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

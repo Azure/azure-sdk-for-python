@@ -159,7 +159,7 @@ def test_receive_batch_no_max_wait_time(connstr_senders, uamqp_transport):
 
 
 @pytest.mark.parametrize("max_wait_time, sleep_time, expected_result",
-                         [(3, 10, []),
+                         [(3, 15, []),
                           (3, 2, None)])
 def test_receive_batch_empty_with_max_wait_time(uamqp_transport, connection_str, max_wait_time, sleep_time, expected_result):
     '''Test whether event handler is called when max_wait_time > 0 and no event is received

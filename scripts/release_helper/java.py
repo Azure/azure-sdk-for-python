@@ -5,8 +5,10 @@ from typing import Any, List
 _JAVA_OWNER = {'azure-sdk'}
 _JS_ASSIGNEE = {'weidongxu-microsoft', 'haolingdong-msft', 'XiaofeiCao'}
 
+
 class IssueProcessJava(IssueProcess):
     pass
+
 
 class Java(Common):
     def __init__(self, issues, language_owner, sdk_assignees):
@@ -14,7 +16,5 @@ class Java(Common):
         self.file_out_name = 'release_java_status.md'
 
 
-
-def java_process(issues: List[Any]):
-    instance = Java(issues, _JAVA_OWNER, _JS_ASSIGNEE)
-    instance.run()
+def java_process(issues: List[Any]) -> Java:
+    return Java(issues, _JAVA_OWNER, _JS_ASSIGNEE)

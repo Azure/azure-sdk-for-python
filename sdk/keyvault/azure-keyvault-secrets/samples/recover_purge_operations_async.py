@@ -41,19 +41,19 @@ async def run_sample():
     print("\n.. Create Secret")
     bank_secret = await client.set_secret("recoverPurgeBankSecretNameAsync", "recoverPurgeSecretValue1")
     storage_secret = await client.set_secret("recoverPurgeStorageSecretNameAsync", "recoverPurgeSecretValue2")
-    print("Secret with name '{0}' was created.".format(bank_secret.name))
-    print("Secret with name '{0}' was created.".format(storage_secret.name))
+    print(f"Secret with name '{bank_secret.name}' was created.")
+    print(f"Secret with name '{storage_secret.name}' was created.")
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Secret")
     secret = await client.delete_secret(bank_secret.name)
-    print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
+    print(f"Secret with name '{secret.name}' was deleted on date {secret.deleted_date}.")
 
     # We accidentally deleted the bank account secret. Let's recover it.
     # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted Secret")
     recovered_secret = await client.recover_deleted_secret(bank_secret.name)
-    print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
+    print(f"Recovered Secret with name '{recovered_secret.name}'.")
 
     # Let's delete storage account now.
     # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted secret needs to be purged.

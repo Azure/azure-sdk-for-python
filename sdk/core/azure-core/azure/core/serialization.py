@@ -9,7 +9,6 @@
 
 import functools
 import sys
-import logging
 import base64
 import re
 import copy
@@ -26,18 +25,15 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping
 
-_LOGGER = logging.getLogger(__name__)
-
 __all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
+TZ_UTC = timezone.utc
 
 
-class _Null(object):
+class _Null:
     """To create a Falsy object"""
 
     def __bool__(self):
         return False
-
-    __nonzero__ = __bool__  # Python2 compatibility
 
 
 NULL = _Null()
@@ -47,7 +43,6 @@ with no data. This gets serialized to `null` on the wire.
 """
 
 TZ_UTC = timezone.utc
-
 
 def _timedelta_as_isostr(td: timedelta) -> str:
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
@@ -104,12 +99,7 @@ def _timedelta_as_isostr(td: timedelta) -> str:
 
 
 def _datetime_as_isostr(dt: typing.Union[datetime, date, time, timedelta]) -> str:
-    """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string
-
-    :param timedelta dt: The date object to convert
-    :rtype: str
-    :return: ISO8601 version of this datetime
-    """
+    """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
         dt = typing.cast(datetime, dt)

@@ -26,8 +26,8 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 
 def _request_function(f: Callable[["HttpPipeline"], None]):
-    """A decorator that provides the implementation for the request-style
-       convenience functions of the HttpPipeline class
+    """A decorator that provides the implementation for the request-style convenience functions of the HttpPipeline
+    class.
 
     :param Callable[[], None] f: A function whose name will be used as the http
                                  request method
@@ -41,7 +41,7 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
     def _(_: Callable[Concatenate[str, P], Any] = HttpRequest):
         @wraps(f)
         def decorated(self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs) -> HttpResponse:
-            """A function that sends an HTTP request and returns the response
+            """A function that sends an HTTP request and returns the response.
 
             Accepts the same parameters as azure.core.rest.HttpRequest, except for the method.
             All other kwargs are forwarded to azure.core.Pipeline.run
@@ -68,8 +68,8 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
 
 
 class HttpPipeline(Pipeline):
-    """A *very* thin wrapper over azure.core.pipeline.Pipeline that facilitates
-    sending miscellaneous http requests by adding:
+    """A *very* thin wrapper over azure.core.pipeline.Pipeline that facilitates sending miscellaneous http requests by
+    adding:
 
     * A requests-style api for sending http requests
     * Facilities for populating policies for the client, include defaults,
@@ -132,9 +132,7 @@ class HttpPipeline(Pipeline):
         self._config = config
 
     def with_policies(self, **kwargs) -> Self:
-        """A named constructor which facilitates creating a new pipeline
-           using an existing one as a base.
-
+        """A named constructor which facilitates creating a new pipeline using an existing one as a base.
 
            Accepts the same parameters as __init__
 

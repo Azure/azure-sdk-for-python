@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: Serverless Compute in Pipeline with Job Tier
+experiment_name: Serverless in Pipeline
+settings:
+  default_compute: azureml:serverless
+jobs:
+  spot_job_tier:
+    command: echo "Hello World"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    resources:
+      instance_type: Standard_D3_v2
+    queue_settings:
+      job_tier: spot
+  standard_job_tier:
+    command: echo "Hello World"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    resources:
+      instance_type: Standard_D3_v2
+    queue_settings:
+      job_tier: standard

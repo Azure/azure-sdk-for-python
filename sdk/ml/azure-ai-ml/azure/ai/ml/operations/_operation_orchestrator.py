@@ -18,6 +18,9 @@ from azure.ai.ml._utils._arm_id_utils import (
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
+    is_singularity_full_name_for_resource,
+    is_singularity_id_for_resource,
+    is_singularity_short_name_for_resource,
     parse_name_label,
     parse_prefixed_name_version,
 )
@@ -37,6 +40,9 @@ from azure.ai.ml.constants._common import (
     MLFLOW_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
     REGISTRY_VERSION_PATTERN,
+    SINGULARITY_FULL_NAME_REGEX_FORMAT,
+    SINGULARITY_ID_FORMAT,
+    SINGULARITY_SHORT_NAME_REGEX_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
     AzureMLResourceType,
@@ -94,6 +100,10 @@ class OperationOrchestrator(object):
     def _component(self):
         return self._operation_container.all_operations[AzureMLResourceType.COMPONENT]
 
+    @property
+    def _virtual_cluster(self):
+        return self._operation_container.all_operations[AzureMLResourceType.VIRTUALCLUSTER]
+
     def get_asset_arm_id(
         self,
         asset: Optional[Union[str, Asset]],
@@ -101,9 +111,8 @@ class OperationOrchestrator(object):
         register_asset: bool = True,
         sub_workspace_resource: bool = True,
     ) -> Optional[Union[str, Asset]]:
-        """This method converts AzureML Id to ARM Id. Or if the given asset is
-        entity object, it tries to register/upload the asset based on
-        register_asset and azureml_type.
+        """This method converts AzureML Id to ARM Id. Or if the given asset is entity object, it tries to
+        register/upload the asset based on register_asset and azureml_type.
 
         :param asset: The asset to resolve/register. It can be a ARM id or a entity's object.
         :type asset: Optional[Union[str, Asset]]
@@ -120,12 +129,18 @@ class OperationOrchestrator(object):
         :return: The ARM Id or entity object
         :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
         """
+        # pylint: disable=too-many-return-statements, too-many-branches
         if (
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
             or is_registry_id_for_resource(asset)
+            or is_singularity_id_for_resource(asset)
         ):
             return asset
+        if is_singularity_full_name_for_resource(asset):
+            return self._get_singularity_arm_id_from_full_name(asset)
+        if is_singularity_short_name_for_resource(asset):
+            return self._get_singularity_arm_id_from_short_name(asset)
         if isinstance(asset, str):
             if azureml_type in AzureMLResourceType.NAMED_TYPES:
                 return NAMED_RESOURCE_ID_FORMAT.format(
@@ -142,9 +157,10 @@ class OperationOrchestrator(object):
                 if azureml_type == AzureMLResourceType.ENVIRONMENT:
                     azureml_prefix = "azureml:"
                     # return the same value if resolved result is passed in
-                    _asset = asset[len(azureml_prefix):] if asset.startswith(azureml_prefix) else asset
+                    _asset = asset[len(azureml_prefix) :] if asset.startswith(azureml_prefix) else asset
                     if _asset.startswith(CURATED_ENV_PREFIX) or re.match(
-                            REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"):
+                        REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"
+                    ):
                         return f"{azureml_prefix}{_asset}"
 
                 name, label = parse_name_label(asset)
@@ -343,18 +359,44 @@ class OperationOrchestrator(object):
         return data_asset
 
     def _get_component_arm_id(self, component: Component) -> str:
-        """If component arm id is already resolved, return the id Or get arm id
-        via remote call, register the component if necessary, and FILL BACK the
-        arm id to component to reduce remote call."""
+        """If component arm id is already resolved, return the id Or get arm id via remote call, register the component
+        if necessary, and FILL BACK the arm id to component to reduce remote call."""
         if not component.id:
             component._id = self._component.create_or_update(
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress
             ).id
         return component.id
 
+    def _get_singularity_arm_id_from_full_name(self, singularity: str) -> str:
+        match = re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, singularity)
+        subscription_id = match.group("subscription_id")
+        resource_group_name = match.group("resource_group_name")
+        vc_name = match.group("name")
+        arm_id = SINGULARITY_ID_FORMAT.format(subscription_id, resource_group_name, vc_name)
+        vc = self._virtual_cluster.get(arm_id)
+        return vc["id"]
+
+    def _get_singularity_arm_id_from_short_name(self, singularity: str) -> str:
+        match = re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, singularity)
+        vc_name = match.group("name")
+        # below list operation can be time-consuming, may need an optimization on this
+        match_vcs = [vc for vc in self._virtual_cluster.list() if vc["name"] == vc_name]
+        num_match_vc = len(match_vcs)
+        if num_match_vc != 1:
+            if num_match_vc == 0:
+                msg = "The virtual cluster {} could not be found."
+            else:
+                msg = "More than one match virtual clusters {} found."
+            raise ValidationException(
+                message=msg.format(vc_name),
+                no_personal_data_message=msg.format(""),
+                target=ErrorTarget.COMPUTE,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return match_vcs[0]["id"]
+
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
-        """Given an AzureML id of the form name@label, resolves the label to
-        the actual ID.
+        """Given an AzureML id of the form name@label, resolves the label to the actual ID.
 
         :param aml_id: AzureML id of the form name@label
         :type aml_id: str
@@ -381,9 +423,8 @@ class OperationOrchestrator(object):
 
     # pylint: disable=unused-argument
     def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
-        """This function converts ARM id to name or name:version AzureML id. It
-        parses the ARM id and matches the subscription Id, resource group name
-        and workspace_name.
+        """This function converts ARM id to name or name:version AzureML id. It parses the ARM id and matches the
+        subscription Id, resource group name and workspace_name.
 
         TODO: It is debatable whether this method should be in operation_orchestrator.
 

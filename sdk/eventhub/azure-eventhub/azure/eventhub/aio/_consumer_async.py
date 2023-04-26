@@ -177,10 +177,12 @@ class EventHubConsumer(
     async def _open_with_retry(self) -> None:
         await self._do_retryable_operation(self._open, operation_need_param=False)
 
+    # only used by _uamqp_transport_async
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
+        event_data._uamqp_message = message
         self._last_received_event = event_data
         return event_data
 

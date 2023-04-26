@@ -166,7 +166,7 @@ class DatabaseProxy(object):
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
-        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -260,7 +260,7 @@ class DatabaseProxy(object):
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
-        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
@@ -278,19 +278,17 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
-
+        indexing_policy = kwargs.pop('indexing_policy', None)
+        default_ttl = kwargs.pop('default_ttl', None)
+        unique_key_policy = kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        offer_throughput = kwargs.pop('offer_throughput', None)
         try:
             container_proxy = self.get_container_client(id)
             await container_proxy.read(**kwargs)
             return container_proxy
         except CosmosResourceNotFoundError:
-            indexing_policy = kwargs.pop('indexing_policy', None)
-            default_ttl = kwargs.pop('default_ttl', None)
-            unique_key_policy = kwargs.pop('unique_key_policy', None)
-            conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
-            analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
-            offer_throughput = kwargs.pop('offer_throughput', None)
-            response_hook = kwargs.pop('response_hook', None)
             return await self.create_container(
                 id=id,
                 partition_key=partition_key,
@@ -299,8 +297,7 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl,
-                response_hook=response_hook
+                analytical_storage_ttl=analytical_storage_ttl
             )
 
     def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:
@@ -760,7 +757,8 @@ class DatabaseProxy(object):
 
         If no ThroughputProperties already exist for the database, an exception is raised.
 
-        :param int throughput: The throughput to be set (an integer).
+        :param throughput: The throughput to be set.
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database

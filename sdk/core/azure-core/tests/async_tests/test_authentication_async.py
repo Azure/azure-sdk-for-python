@@ -17,6 +17,7 @@ import pytest
 pytestmark = pytest.mark.asyncio
 from utils import HTTP_REQUESTS
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_bearer_policy_adds_header(http_request):
     """The bearer token policy should add a header containing a token from its credential"""
@@ -209,6 +210,7 @@ async def test_bearer_policy_calls_sansio_methods(http_request):
             fake_send.calls = 1
             return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
         raise TestException()
+
     fake_send.calls = 0
 
     policy = TestPolicy(credential, "scope")

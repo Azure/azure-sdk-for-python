@@ -6,10 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+import sys
+from typing import Any, Optional, Union
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+
+from .. import models as _models
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 VERSION = "unknown"
 
@@ -23,8 +31,16 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
+    :param file_request_intent: Valid value is backup. "backup" Default value is None.
+    :type file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+    :param allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
+     Default value is None.
+    :type allow_trailing_dot: bool
+    :param allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
+     URI. Default value is None.
+    :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-12-02". Note that overriding this default value may result in unsupported behavior.
+     is "2022-11-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -32,15 +48,25 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     :paramtype file_range_write_from_url: str
     """
 
-    def __init__(self, url: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        url: str,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop("version", "2021-12-02")  # type: str
-        file_range_write_from_url = kwargs.pop("file_range_write_from_url", "update")  # type: str
+        version: Literal["2022-11-02"] = kwargs.pop("version", "2022-11-02")
+        file_range_write_from_url: Literal["update"] = kwargs.pop("file_range_write_from_url", "update")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
 
         self.url = url
+        self.file_request_intent = file_request_intent
+        self.allow_trailing_dot = allow_trailing_dot
+        self.allow_source_trailing_dot = allow_source_trailing_dot
         self.version = version
         self.file_range_write_from_url = file_range_write_from_url
         kwargs.setdefault("sdk_moniker", "azurefilestorage/{}".format(VERSION))
