@@ -27,8 +27,10 @@ def analyze_text():
         print("Error message: {}".format(e.error.message))
         return
 
-    print(response.hate_result)
-    print(response.self_harm_result)
+    if response.hate_result is not None:
+        print("Hate severity: {}".format(response.hate_result.severity))
+    if response.self_harm_result is not None:
+        print("SelfHarm severity: {}".format(response.self_harm_result.severity))
 
 
 if __name__ == "__main__":
