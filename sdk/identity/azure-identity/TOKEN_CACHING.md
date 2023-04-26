@@ -45,11 +45,13 @@ ClientSecretCredential(
 ```
 
 #### Persist user authentication record
+
 When authenticating a user via `InteractiveBrowserCredential`, `DeviceCodeCredential`, or `UsernamePasswordCredential`, an `AuthenticationRecord` can be persisted as well. The authentication record is:
+
 - Returned from the `authenticate` API and contains data identifying an authenticated account.
 - Needed to identify the appropriate entry in the persisted token cache to silently authenticate on subsequent executions.
-There's no sensitive data in the `AuthenticationRecord`, so it can be persisted in a non-protected state.
-Here's an example of an app storing the `AuthenticationRecord` to the local file system after authenticating the user:
+
+There's no sensitive data in the `AuthenticationRecord`, so it can be persisted in a non-protected state. Here's an example of an app storing the `AuthenticationRecord` to the local file system after authenticating the user:
 
 ```python
 credential = InteractiveBrowserCredential(cache_persistence_options=TokenCachePersistenceOptions())
