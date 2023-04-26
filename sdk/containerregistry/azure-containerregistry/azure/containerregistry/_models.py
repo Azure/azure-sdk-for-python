@@ -9,7 +9,6 @@ from enum import Enum
 from typing import List
 
 from azure.core import CaseInsensitiveEnumMeta
-
 from ._generated.models import (
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
@@ -305,17 +304,15 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class DownloadManifestResult(object):
-    """The result from downloading a manifest from the registry.
+class GetManifestResult(object):
+    """The get manifest result.
 
-    :ivar manifest: The OCI manifest that was downloaded.
-    :vartype manifest: ~azure.containerregistry.models.OCIManifest
-    :ivar data: The manifest stream that was downloaded.
-    :vartype data: IO
+    :ivar dict manifest: The manifest JSON.
+    :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 
     def __init__(self, **kwargs):
         self.manifest = kwargs.get("manifest")
-        self.data = kwargs.get("data")
+        self.media_type = kwargs.get("media_type")
         self.digest = kwargs.get("digest")
