@@ -552,6 +552,7 @@ class DataOperations(_ScopeDependentOperations):
         return self.get(name, version=latest_version)
 
     @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
+    @experimental
     def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Data:
         """Share a data asset from workspace to registry.
 
