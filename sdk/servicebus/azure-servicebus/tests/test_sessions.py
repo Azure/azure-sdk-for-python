@@ -176,6 +176,10 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                 assert received_cnt_dic['0'] == 2 and received_cnt_dic['1'] == 2 and received_cnt_dic['2'] == 2
                 assert count == 6
 
+            with pytest.raises(ServiceBusError):
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=1)
+                with receiver:
+                    pass
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

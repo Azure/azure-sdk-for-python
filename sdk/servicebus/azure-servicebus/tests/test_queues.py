@@ -2678,6 +2678,18 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         received_messages.append(message)
                 assert len(received_messages) == 6
 
+                batch_message = sender.create_message_batch(max_size_in_bytes=73)
+                for _ in range(2):
+                    try:
+                        batch_message.add_message(message_dict)
+                    except ValueError:
+                        break
+                sender.send_messages(batch_message)
+                received_messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    for message in receiver:
+                        received_messages.append(message)
+                assert len(received_messages) == 1
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
