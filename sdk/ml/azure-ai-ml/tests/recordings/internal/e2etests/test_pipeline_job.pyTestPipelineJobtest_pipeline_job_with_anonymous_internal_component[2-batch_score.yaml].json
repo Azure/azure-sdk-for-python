@@ -769,12 +769,12 @@
               "type": "ParallelComponent",
               "inputs": {
                 "model_path": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist_model/versions/2",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist_model/versions/2"
                 },
                 "images_to_score": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist/versions/2",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist/versions/2"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -880,12 +880,12 @@
               "type": "ParallelComponent",
               "inputs": {
                 "model_path": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist_model/versions/2",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist_model/versions/2"
                 },
                 "images_to_score": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist/versions/2",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_mnist/versions/2"
                 }
               },
               "_source": "YAML.COMPONENT",

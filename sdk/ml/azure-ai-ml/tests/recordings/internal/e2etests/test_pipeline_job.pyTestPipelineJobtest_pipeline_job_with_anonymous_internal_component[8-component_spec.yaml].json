@@ -788,8 +788,8 @@
                   "value": "2022.08.11.22.04.00"
                 },
                 "DataToLookAt": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_reghits/versions/2",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_reghits/versions/2"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -891,8 +891,8 @@
                   "value": "2022.08.11.22.04.00"
                 },
                 "DataToLookAt": {
-                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_reghits/versions/2",
-                  "job_input_type": "mltable"
+                  "job_input_type": "mltable",
+                  "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/mltable_reghits/versions/2"
                 }
               },
               "_source": "YAML.COMPONENT",
