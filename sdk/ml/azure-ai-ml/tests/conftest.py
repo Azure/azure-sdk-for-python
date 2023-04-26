@@ -551,14 +551,13 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
 
 
 @pytest.fixture
-def snapshot_hash_sanitizer(request: FixtureRequest):
-    if "disable_snapshot_hash_sanitizer" not in request.keywords:
-        # masks hash value in URIs
-        add_general_regex_sanitizer(
-            value="000000000000000000000000000000000000",
-            regex=_query_param_regex("hash"),
-            function_scoped=True,
-        )
+def snapshot_hash_sanitizer(test_proxy):
+    # masks hash value in URIs
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex=_query_param_regex("hash"),
+        function_scoped=True,
+    )
 
 
 @pytest.fixture
