@@ -93,6 +93,8 @@ class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     DTMF = "dtmf"
+    SPEECH = "speech"
+    SPEECH_OR_DTMF = "speechOrDtmf"
     CHOICES = "choices"
 
 
@@ -100,6 +102,8 @@ class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the recognition."""
 
     DTMF = "dtmf"
+    SPEECH = "speech"
+    SPEECH_OR_DTMF = "speechOrDtmf"
     CHOICES = "choices"
 
 

@@ -22,16 +22,34 @@ from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = 'Azure Developer CLI could not be found. '\
                  'Please visit https://aka.ms/azure-dev for installation instructions and then,'\
-                 'once installed, authenticate to your Azure account using \'azd login\'.'
+                 'once installed, authenticate to your Azure account using \'azd auth login\'.'
 COMMAND_LINE = "azd auth token --output json --scope {}"
 EXECUTABLE_NAME = "azd"
-NOT_LOGGED_IN = "Please run 'azd login' from a command prompt to authenticate before using this credential."
+NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
 
 
 class AzureDeveloperCliCredential:
     """Authenticates by requesting a token from the Azure Developer CLI.
 
-    This requires previously logging in to Azure via "azd login", and will use the CLI's currently logged in identity.
+    Azure Developer CLI is a command-line interface tool that allows developers to create, manage, and deploy
+    resources in Azure. It's built on top of the Azure CLI and provides additional functionality specific
+    to Azure developers. It allows users to authenticate as a user and/or a service principal against
+    `Azure Active Directory (Azure AD) <"https://learn.microsoft.com/azure/active-directory/fundamentals/">`__.
+    The AzureDeveloperCliCredential authenticates in a development environment and acquires a token on behalf of
+    the logged-in user or service principal in Azure Developer CLI. It acts as the Azure Developer CLI logged-in user
+    or service principal and executes an Azure CLI command underneath to authenticate the application against
+    Azure Active Directory.
+
+    To use this credential, the developer needs to authenticate locally in Azure Developer CLI using one of the
+    commands below:
+
+      * Run "azd auth login" in Azure Developer CLI to authenticate interactively as a user.
+      * Run "azd auth login --client-id 'client_id' --client-secret 'client_secret' --tenant-id 'tenant_id'"
+        to authenticate as a service principal.
+
+    You may need to repeat this process after a certain time period, depending on the refresh token validity in your
+    organization. Generally, the refresh token validity period is a few weeks to a few months.
+    AzureDeveloperCliCredential will prompt you to sign in again.
 
     :keyword str tenant_id: Optional tenant to include in the token request.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
@@ -39,6 +57,15 @@ class AzureDeveloperCliCredential:
         acquire tokens for any tenant the application can access.
     :keyword int process_timeout: Seconds to wait for the Azure Developer CLI process to respond. Defaults
         to 10 seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START azure_developer_cli_credential]
+            :end-before: [END azure_developer_cli_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an AzureDeveloperCliCredential.
     """
 
     def __init__(
@@ -98,7 +125,9 @@ class AzureDeveloperCliCredential:
         if not token:
             sanitized_output = sanitize_output(output)
             raise ClientAuthenticationError(
-                message="Unexpected output from Azure Developer CLI: '{}'. \n".format(sanitized_output)
+                message="Unexpected output from Azure CLI: '{}'. \n"
+                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                        "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
             )
 
         return token
@@ -165,7 +194,7 @@ def _run_command(command: str, timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'azd' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND)
-        if "not logged in, run `azd login` to login" in ex.stderr:
+        if "not logged in, run `azd auth login` to login" in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
         # return code is from the CLI -> propagate its output

@@ -95,6 +95,11 @@ class TestWorkspaceOperation:
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
+    def test_purge(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, force_to_purge=True)
+        mock_workspace_operation._operation.begin_delete.assert_called_once()
+
     def test_begin_diagnose_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()

@@ -42,6 +42,9 @@ from ...operations._operations import (
     build_call_media_cancel_all_media_operations_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
+    build_call_media_send_dtmf_request,
+    build_call_media_start_continuous_dtmf_recognition_request,
+    build_call_media_stop_continuous_dtmf_recognition_request,
     build_call_recording_get_recording_properties_request,
     build_call_recording_pause_recording_request,
     build_call_recording_resume_recording_request,
@@ -2164,6 +2167,374 @@ class CallMediaOperations:
             _json = self._serialize.body(recognize_request, "RecognizeRequest")
 
         request = build_call_media_recognize_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @overload
+    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        continuous_dtmf_recognition_request: _models.ContinuousDtmfRecognitionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Start continuous Dtmf recognition by subscribing to tones.
+
+        Start continuous Dtmf recognition by subscribing to tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
+        :type continuous_dtmf_recognition_request:
+         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        continuous_dtmf_recognition_request: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Start continuous Dtmf recognition by subscribing to tones.
+
+        Start continuous Dtmf recognition by subscribing to tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
+        :type continuous_dtmf_recognition_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        continuous_dtmf_recognition_request: Union[_models.ContinuousDtmfRecognitionRequest, IO],
+        **kwargs: Any
+    ) -> None:
+        """Start continuous Dtmf recognition by subscribing to tones.
+
+        Start continuous Dtmf recognition by subscribing to tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param continuous_dtmf_recognition_request: The continuous recognize request. Is either a
+         ContinuousDtmfRecognitionRequest type or a IO type. Required.
+        :type continuous_dtmf_recognition_request:
+         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(continuous_dtmf_recognition_request, (IOBase, bytes)):
+            _content = continuous_dtmf_recognition_request
+        else:
+            _json = self._serialize.body(continuous_dtmf_recognition_request, "ContinuousDtmfRecognitionRequest")
+
+        request = build_call_media_start_continuous_dtmf_recognition_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @overload
+    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        continuous_dtmf_recognition_request: _models.ContinuousDtmfRecognitionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
+        :type continuous_dtmf_recognition_request:
+         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        continuous_dtmf_recognition_request: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
+        :type continuous_dtmf_recognition_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        continuous_dtmf_recognition_request: Union[_models.ContinuousDtmfRecognitionRequest, IO],
+        **kwargs: Any
+    ) -> None:
+        """Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param continuous_dtmf_recognition_request: The continuous recognize request. Is either a
+         ContinuousDtmfRecognitionRequest type or a IO type. Required.
+        :type continuous_dtmf_recognition_request:
+         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(continuous_dtmf_recognition_request, (IOBase, bytes)):
+            _content = continuous_dtmf_recognition_request
+        else:
+            _json = self._serialize.body(continuous_dtmf_recognition_request, "ContinuousDtmfRecognitionRequest")
+
+        request = build_call_media_stop_continuous_dtmf_recognition_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @overload
+    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        send_dtmf_request: _models.SendDtmfRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Send dtmf tones.
+
+        Send dtmf tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param send_dtmf_request: The send dtmf request. Required.
+        :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
+        self, call_connection_id: str, send_dtmf_request: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Send dtmf tones.
+
+        Send dtmf tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param send_dtmf_request: The send dtmf request. Required.
+        :type send_dtmf_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
+        self, call_connection_id: str, send_dtmf_request: Union[_models.SendDtmfRequest, IO], **kwargs: Any
+    ) -> None:
+        """Send dtmf tones.
+
+        Send dtmf tones.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param send_dtmf_request: The send dtmf request. Is either a SendDtmfRequest type or a IO type.
+         Required.
+        :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(send_dtmf_request, (IOBase, bytes)):
+            _content = send_dtmf_request
+        else:
+            _json = self._serialize.body(send_dtmf_request, "SendDtmfRequest")
+
+        request = build_call_media_send_dtmf_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,

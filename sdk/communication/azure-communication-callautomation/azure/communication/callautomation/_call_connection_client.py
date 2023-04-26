@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Optional, List  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, Any, Optional, List, Union  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -42,7 +42,10 @@ from ._generated.models import (
     FileSource as FileSourceInternal,
     PlaySourceType,
     DtmfOptions,
-    PlayOptions
+    PlayOptions,
+    ContinuousDtmfRecognitionRequest,
+    SendDtmfRequest,
+    Tone
 )
 from ._shared.utils import get_authentication_policy
 
@@ -351,6 +354,103 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         self._call_media_client.cancel_all_media_operations(
             self._call_connection_id)
+
+    def start_continuous_dtmf_recognition(
+        self,
+        target: CommunicationIdentifier,
+        operation_context: str = None,
+        **kwargs
+    ) -> None:
+        """
+        Start continuous Dtmf recognition by subscribing to tones.
+
+        :param target: Target participant of continuous DTMF tone recognition. Required.
+        :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
+        :param operation_context: The value to identify context of the operation. Optional.
+        :type operation_context: str
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        if not target:
+            raise ValueError('target cannot be None.')
+
+        continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
+            target_participant=serialize_identifier(target),
+            operation_context=operation_context)
+
+        self._call_media_operations.start_continuous_dtmf_recognition(
+            self.call_connection_id,
+            continuous_dtmf_recognition_request,
+            **kwargs)
+
+    def stop_continuous_dtmf_recognition(
+        self,
+        target: CommunicationIdentifier,
+        operation_context: str = None,
+        **kwargs
+    ) -> None:
+        """
+        Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        :param target: Target participant of continuous DTMF tone recognition. Required.
+        :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
+        :param operation_context: The value to identify context of the operation. Optional.
+        :type operation_context: str
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        if not target:
+            raise ValueError('target cannot be None.')
+
+        continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
+            target_participant=serialize_identifier(target),
+            operation_context=operation_context)
+
+        self._call_media_operations.stop_continuous_dtmf_recognition(
+            self.call_connection_id,
+            continuous_dtmf_recognition_request,
+            **kwargs)
+
+    def send_dtmf(
+        self,
+        target: CommunicationIdentifier,
+        tones: List[Union[str, Tone]],
+        operation_context: str = None,
+        **kwargs
+    ) -> None:
+        """
+        Send dtmf tones.
+
+        :param target: Target participant of Send DTMF tone. Required.
+        :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
+        :param tones: The captured tones. Required.
+        :type tones: list[str or ~azure.communication.callautomation.models.Tone]
+        :param operation_context: The value to identify context of the operation. Optional.
+        :type operation_context: str
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        if not target:
+            raise ValueError('target cannot be None.')
+
+        send_dtmf_request = SendDtmfRequest(
+            target_participant=serialize_identifier(target),
+            tones=tones,
+            operation_context=operation_context)
+
+        self._call_media_operations.send_dtmf(
+            self.call_connection_id,
+            send_dtmf_request,
+            **kwargs)
 
     @staticmethod
     def _create_play_source_internal(play_source):

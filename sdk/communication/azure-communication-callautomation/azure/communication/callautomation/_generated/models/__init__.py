@@ -25,9 +25,15 @@ from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import CommunicationIdentifierModel
 from ._models import CommunicationUserIdentifierModel
+from ._models import ContinuousDtmfRecognitionRequest
+from ._models import ContinuousDtmfRecognitionStopped
+from ._models import ContinuousDtmfRecognitionToneFailed
+from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
 from ._models import CustomContext
 from ._models import DtmfOptions
+from ._models import DtmfResult
+from ._models import ExternalStorage
 from ._models import FileSource
 from ._models import GetParticipantsResult
 from ._models import MediaStreamingConfiguration
@@ -54,9 +60,16 @@ from ._models import RejectCallRequest
 from ._models import RemoveParticipantRequest
 from ._models import RemoveParticipantResult
 from ._models import ResultInformation
+from ._models import SendDtmfCompleted
+from ._models import SendDtmfFailed
+from ._models import SendDtmfRequest
+from ._models import SpeechOptions
+from ._models import SpeechResult
+from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import TextSource
-from ._models import TransferCallResult
+from ._models import ToneInfo
+from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
@@ -103,9 +116,15 @@ __all__ = [
     "CommunicationErrorResponse",
     "CommunicationIdentifierModel",
     "CommunicationUserIdentifierModel",
+    "ContinuousDtmfRecognitionRequest",
+    "ContinuousDtmfRecognitionStopped",
+    "ContinuousDtmfRecognitionToneFailed",
+    "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
     "CustomContext",
     "DtmfOptions",
+    "DtmfResult",
+    "ExternalStorage",
     "FileSource",
     "GetParticipantsResult",
     "MediaStreamingConfiguration",
@@ -132,9 +151,16 @@ __all__ = [
     "RemoveParticipantRequest",
     "RemoveParticipantResult",
     "ResultInformation",
+    "SendDtmfCompleted",
+    "SendDtmfFailed",
+    "SendDtmfRequest",
+    "SpeechOptions",
+    "SpeechResult",
+    "SsmlSource",
     "StartCallRecordingRequest",
     "TextSource",
-    "TransferCallResult",
+    "ToneInfo",
+    "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
