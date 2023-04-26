@@ -1,6 +1,6 @@
 matrix:
   image:
-    - Dockerfile
+    - Dockerfile38
   scenarios:
     event-async:
       testTarget: event-async
