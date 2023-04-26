@@ -6,8 +6,9 @@
 # pylint: disable=too-many-lines
 import functools
 import hashlib
+import json
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, MutableMapping
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
@@ -22,16 +23,16 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors, OCIManifest, ManifestWrapper
+from ._generated.models import AcrErrors
 from ._download_stream import DownloadBlobStream
 from ._helpers import (
     _compute_digest,
     _is_tag,
     _parse_next_link,
-    _serialize_manifest,
     _validate_digest,
-    OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
+    OCI_IMAGE_MANIFEST,
+    SUPPORTED_MANIFEST_MEDIA_TYPES,
     DEFAULT_AUDIENCE,
     DEFAULT_CHUNK_SIZE,
 )
@@ -39,11 +40,13 @@ from ._models import (
     RepositoryProperties,
     ArtifactTagProperties,
     ArtifactManifestProperties,
-    DownloadManifestResult,
+    GetManifestResult,
 )
 
-def _return_response_and_deserialized(pipeline_response, deserialized, _):
-    return pipeline_response, deserialized
+JSON = MutableMapping[str, Any]
+
+def _return_response(pipeline_response, _, __):
+    return pipeline_response
 
 def _return_response_and_headers(pipeline_response, _, response_headers):
     return pipeline_response, response_headers
@@ -859,24 +862,35 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def upload_manifest(
-        self, repository: str, manifest: Union[OCIManifest, IO], *, tag: Optional[str] = None, **kwargs
+    def set_manifest(
+        self,
+        repository: str,
+        manifest: Union[JSON, IO[bytes]],
+        *,
+        tag: Optional[str] = None,
+        media_type: str = OCI_IMAGE_MANIFEST,
+        **kwargs
     ) -> str:
-        """Upload a manifest for an OCI artifact.
+        """Set a manifest for an artifact.
 
-        :param str repository: Name of the repository.
-        :param manifest: The manifest to upload. Note: This must be a seekable stream.
-        :type manifest: ~azure.containerregistry.models.OCIManifest or IO
+        :param str repository: Name of the repository
+        :param manifest: The manifest to set. It can be a JSON formatted dict or seekable stream.
+        :type manifest: dict or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
-        :returns: The digest of the uploaded manifest, calculated by the registry.
+        :keyword media_type: The media type of the manifest. If not specified, this value will be set to
+            a default value of "application/vnd.oci.image.manifest.v1+json". Note: the current known media types are:
+            "application/vnd.oci.image.manifest.v1+json", and "application/vnd.docker.distribution.manifest.v2+json".
+        :paramtype media_type: str
+        :returns: The digest of the set manifest, calculated by the registry.
         :rtype: str
         :raises ValueError: If the parameter repository or manifest is None,
-            or the digest in the response does not match the digest of the uploaded manifest.
+            or the digest in the response does not match the digest of the set manifest.
         """
         try:
-            if isinstance(manifest, OCIManifest):
-                data = _serialize_manifest(manifest)
+            data: IO[bytes]
+            if isinstance(manifest, MutableMapping):
+                data = BytesIO(json.dumps(manifest).encode())
             else:
                 data = manifest
             tag_or_digest = tag
@@ -887,19 +901,54 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 name=repository,
                 reference=tag_or_digest,
                 payload=data,
-                content_type=OCI_MANIFEST_MEDIA_TYPE,
-                headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
+                content_type=media_type,
                 cls=_return_response_headers,
                 **kwargs
             )
             digest = response_headers['Docker-Content-Digest']
             if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
+                raise ValueError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.") from e
             raise
         return digest
+
+    @distributed_trace
+    def get_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> GetManifestResult:
+        """Get the manifest for an artifact.
+
+        :param str repository: Name of the repository.
+        :param str tag_or_digest: The tag or digest of the manifest to get.
+            When digest is provided, will use this digest to compare with the one calculated by the response payload.
+            When tag is provided, will use the digest in response headers to compare.
+        :returns: GetManifestResult
+        :rtype: ~azure.containerregistry.GetManifestResult
+        :raises ValueError: If the requested digest does not match the digest of the received manifest.
+        """
+        response = cast(
+            PipelineResponse,
+            self._client.container_registry.get_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
+                cls=_return_response,
+                **kwargs
+            )
+        )
+        media_type = response.http_response.headers['Content-Type']
+        manifest_bytes = response.http_response.read()
+        manifest_json = response.http_response.json()
+        if tag_or_digest.startswith("sha256:"):
+            digest = tag_or_digest
+            if not _validate_digest(manifest_bytes, digest):
+                raise ValueError("The requested digest does not match the digest of the received manifest.")
+        else:
+            digest = response.http_response.headers['Docker-Content-Digest']
+            if not _validate_digest(manifest_bytes, digest):
+                raise ValueError("The server-computed digest does not match the client-computed digest.")
+
+        return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 
     @distributed_trace
     def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
@@ -949,40 +998,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             hasher.update(buffer)
             buffer = data.read(DEFAULT_CHUNK_SIZE)
             blob_size += len(buffer)
-        return "sha256:" + hasher.hexdigest(), location, blob_size
-
-    @distributed_trace
-    def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
-        """Download the manifest for an OCI artifact.
-
-        :param str repository: Name of the repository.
-        :param str tag_or_digest: The tag or digest of the manifest to download.
-            When digest is provided, will use this digest to compare with the one calculated by the response payload.
-            When tag is provided, will use the digest in response headers to compare.
-        :returns: DownloadManifestResult
-        :rtype: ~azure.containerregistry.DownloadManifestResult
-        :raises ValueError: If the requested digest does not match the digest of the received manifest.
-        """
-        response, manifest_wrapper = cast(
-            Tuple[PipelineResponse, ManifestWrapper],
-            self._client.container_registry.get_manifest(
-                name=repository,
-                reference=tag_or_digest,
-                headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
-                cls=_return_response_and_deserialized,
-                **kwargs
-            )
-        )
-        manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
-        manifest_stream = _serialize_manifest(manifest)
-        if tag_or_digest.startswith("sha256:"):
-            digest = tag_or_digest
-        else:
-            digest = response.http_response.headers['Docker-Content-Digest']
-        if not _validate_digest(manifest_stream, digest):
-            raise ValueError("The requested digest does not match the digest of the received manifest.")
-
-        return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
+        return f"sha256:{hasher.hexdigest()}", location, blob_size
 
     @distributed_trace
     def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobStream:
