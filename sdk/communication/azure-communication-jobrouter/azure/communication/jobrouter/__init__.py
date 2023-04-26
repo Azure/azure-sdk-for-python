@@ -47,6 +47,7 @@ from ._generated.models import (
     RouterJobStatus,
     JobAssignment,
     AcceptJobOfferResult,
+    UnassignJobResult,
     JobPositionDetails,
     JobStateSelector,
     WorkerAssignment,
