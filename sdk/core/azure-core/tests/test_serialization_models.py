@@ -9,7 +9,7 @@ from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, T
 import pytest
 import base64
 import isodate
-from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator, rest_readonly
+from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator
 
 class BasicResource(Model):
     platform_update_domain_count: int = rest_field(name="platformUpdateDomainCount")  # How many times the platform update domain has been counted
@@ -161,7 +161,7 @@ class OptionalModel(Model):
         optional_str: Optional[str] = None,
         optional_time: Optional[datetime.time] = None,
         optional_dict: Optional[Dict[str, Optional[Pet]]] = None,
-        optional_myself: Optional["OptionalModel"] = rest_field(),
+        optional_myself: Optional["OptionalModel"] = None,
     ):
         ...
 
@@ -229,6 +229,12 @@ def test_optional_property():
     assert model.optional_myself.optional_model.name == "Lady"
     assert model.optional_myself.optional_model.species == "Newt"
     assert model.optional_myself.optional_myself is None
+
+def test_model_pass_in_none():
+    model = OptionalModel(optional_str=None)
+    assert model.optional_str == None
+    with pytest.raises(KeyError):
+        model["optionalStr"]
 
 def test_modify_dict():
     model = BasicResource(
@@ -1806,7 +1812,7 @@ def test_deserialization_is():
 
 class ModelWithReadonly(Model):
     normal_property: str = rest_field(name="normalProperty")
-    readonly_property: str = rest_readonly(name="readonlyProperty")
+    readonly_property: str = rest_field(name="readonlyProperty", readonly=True)
 
     @overload
     def __init__(self, *, normal_property: str):

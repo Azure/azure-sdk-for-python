@@ -416,15 +416,20 @@ class Model(_MyMutableMapping):
             if rest_field._default is not _UNSET
         }
         if args:
+            # pass in through dictionary
             dict_to_pass.update(
                 {k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v) for k, v in args[0].items()}
             )
         else:
+            # pass in through attr syntax
             non_attr_kwargs = [k for k in kwargs if k not in self._attr_to_rest_field]
             if non_attr_kwargs:
                 # actual type errors only throw the first wrong keyword arg they see, so following that.
                 raise TypeError(f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'")
-            dict_to_pass.update({self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items()})
+            dict_to_pass.update({
+                self._attr_to_rest_field[k]._rest_name: _serialize(v)
+                for k, v in kwargs.items() if v is not None
+            })
         super().__init__(dict_to_pass)
 
     def copy(self) -> "Model":
