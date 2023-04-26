@@ -400,8 +400,8 @@
               "environmentVariables": {},
               "inputs": {
                 "hello_input": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "jobInputType": "uri_folder"
+                  "jobInputType": "uri_folder",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "outputs": {}
@@ -800,9 +800,9 @@
               "environmentVariables": {},
               "inputs": {
                 "hello_input": {
+                  "jobInputType": "uri_folder",
                   "mode": "ReadOnlyMount",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/",
-                  "jobInputType": "uri_folder"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
                 }
               },
               "outputs": {},

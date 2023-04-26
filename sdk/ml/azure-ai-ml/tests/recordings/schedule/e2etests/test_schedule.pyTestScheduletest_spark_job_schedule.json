@@ -634,9 +634,9 @@
               },
               "inputs": {
                 "input1": {
+                  "jobInputType": "uri_file",
                   "mode": "Direct",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/simpleshakespeare.txt",
-                  "jobInputType": "uri_file"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/simpleshakespeare.txt"
                 }
               },
               "outputs": {},
@@ -1051,9 +1051,9 @@
               },
               "inputs": {
                 "input1": {
+                  "jobInputType": "uri_file",
                   "mode": "Direct",
-                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/simpleshakespeare.txt",
-                  "jobInputType": "uri_file"
+                  "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/simpleshakespeare.txt"
                 }
               },
               "outputs": {},
