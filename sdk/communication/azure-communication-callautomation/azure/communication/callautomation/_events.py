@@ -20,6 +20,11 @@ from ._generated.models import (
     RecognizeFailed as RecognizeFailedRest,
     RemoveParticipantSucceeded as RemoveParticipantSucceededRest,
     RemoveParticipantFailed as RemoveParticipantFailedRest,
+    ContinuousDtmfRecognitionToneReceived as ContinuousDtmfRecognitionToneReceivedRest,
+    ContinuousDtmfRecognitionToneFailed as ContinuousDtmfRecognitionToneFailedRest,
+    ContinuousDtmfRecognitionStopped as ContinuousDtmfRecognitionStoppedRest,
+    SendDtmfCompleted as SendDtmfCompletedRest,
+    SendDtmfFailed as SendDtmfFailedRest,
     CallParticipant
 )
 
@@ -464,3 +469,143 @@ class RemoveParticipantFailed(RemoveParticipantFailedRest):
         self.result_information = parent.result_information
         self.participant = deserialize_identifier(parent.participant)
         self.kind = "RemovedParticipantFailed"
+
+
+class ContinuousDtmfRecognitionToneReceived(ContinuousDtmfRecognitionToneReceivedRest):
+    """Event sent when Dtmf tone received from targeted participant in call.
+
+    :ivar tone_info: Information about Tone.
+    :vartype tone_info: ~azure.communication.callautomation.models.ToneInfo
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId or
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: ContinuousDtmfRecognitionToneReceivedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tone_info = parent.tone_info
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.result_information = parent.result_information
+        self.kind = "ContinuousDtmfRecognitionToneReceived"
+
+
+class ContinuousDtmfRecognitionToneFailed(ContinuousDtmfRecognitionToneFailedRest):
+    """Event sent when failed to start continuous Dtmf recognition.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: ContinuousDtmfRecognitionToneFailedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.result_information = parent.result_information
+        self.kind = "ContinuousDtmfRecognitionToneFailed"
+
+
+class ContinuousDtmfRecognitionStopped(ContinuousDtmfRecognitionStoppedRest):
+    """Event sent when start continuous Dtmf recognition stopped.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: ContinuousDtmfRecognitionStoppedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.kind = "ContinuousDtmfRecognitionStopped"
+
+
+class SendDtmfCompleted(SendDtmfCompletedRest):
+    """Event sent when Dtmf tones send completed successfully.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: SendDtmfCompletedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.kind = "SendDtmfCompleted"
+
+
+class SendDtmfFailed(SendDtmfFailedRest):
+    """Event sent when Dtmf tones send failed.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
+     services.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
+    def __init__(self, parent: SendDtmfFailedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.kind = "SendDtmfFailed"

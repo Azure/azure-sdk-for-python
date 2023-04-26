@@ -9,7 +9,7 @@ Use the client library for App Configuration to create and manage application co
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration)
 | [Package (Pypi)][package]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-appconfiguration/)
-| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration)
+| [API reference documentation](https://learn.microsoft.com/python/api/azure-appconfiguration/azure.appconfiguration?view=azure-python)
 | [Product documentation][appconfig_docs]
 
 ## _Disclaimer_
@@ -333,4 +333,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
+[troubleshooting_guide]: https://aka.ms/azsdk/python/appconfiguration/troubleshoot

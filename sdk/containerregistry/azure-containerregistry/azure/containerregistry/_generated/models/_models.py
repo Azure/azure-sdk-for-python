@@ -1081,50 +1081,49 @@ class OCIIndex(Manifest):
         self.annotations = annotations
 
 
-class OCIManifest(_serialization.Model):
+class OCIManifest(Manifest):
     """Returns the requested OCI Manifest file.
 
+    :ivar schema_version: Schema version.
+    :vartype schema_version: int
     :ivar config: V2 image config descriptor.
     :vartype config: ~container_registry.models.Descriptor
     :ivar layers: List of V2 image layer information.
     :vartype layers: list[~container_registry.models.Descriptor]
     :ivar annotations: Additional information provided through arbitrary metadata.
     :vartype annotations: ~container_registry.models.Annotations
-    :ivar schema_version: Schema version.
-    :vartype schema_version: int
     """
 
     _attribute_map = {
+        "schema_version": {"key": "schemaVersion", "type": "int"},
         "config": {"key": "config", "type": "Descriptor"},
         "layers": {"key": "layers", "type": "[Descriptor]"},
         "annotations": {"key": "annotations", "type": "Annotations"},
-        "schema_version": {"key": "schemaVersion", "type": "int"},
     }
 
     def __init__(
         self,
         *,
+        schema_version: Optional[int] = None,
         config: Optional["_models.Descriptor"] = None,
         layers: Optional[List["_models.Descriptor"]] = None,
         annotations: Optional["_models.Annotations"] = None,
-        schema_version: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword schema_version: Schema version.
+        :paramtype schema_version: int
         :keyword config: V2 image config descriptor.
         :paramtype config: ~container_registry.models.Descriptor
         :keyword layers: List of V2 image layer information.
         :paramtype layers: list[~container_registry.models.Descriptor]
         :keyword annotations: Additional information provided through arbitrary metadata.
         :paramtype annotations: ~container_registry.models.Annotations
-        :keyword schema_version: Schema version.
-        :paramtype schema_version: int
         """
-        super().__init__(**kwargs)
+        super().__init__(schema_version=schema_version, **kwargs)
         self.config = config
         self.layers = layers
         self.annotations = annotations
-        self.schema_version = schema_version
 
 
 class Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema(_serialization.Model):

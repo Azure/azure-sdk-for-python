@@ -57,7 +57,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
-from azure.ai.ml._utils.utils import _is_https_url, is_private_preview_enabled
+from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -363,11 +363,7 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name
-            else self._service_client_02_2023_preview
-            if is_private_preview_enabled
-            else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
@@ -385,7 +381,7 @@ class MLClient:
         self._environments = EnvironmentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._operation_container,
             **ops_kwargs,
         )

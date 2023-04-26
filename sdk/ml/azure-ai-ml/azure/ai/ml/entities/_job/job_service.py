@@ -6,12 +6,21 @@
 
 import logging
 from typing import Dict, Optional, Union
+
 from typing_extensions import Literal
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AllNodes
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobService as RestJobService
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AllNodes
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobService as RestJobService,
+)
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
