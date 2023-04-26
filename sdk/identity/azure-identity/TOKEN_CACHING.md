@@ -61,6 +61,7 @@ record_json = record.serialize()
 ```
 
 #### Silently authenticating a user with AuthenticationRecord and TokenCachePersistenceOptions
+
 Once an app has configured an `InteractiveBrowserCredential`, `DeviceCodeCredential`, or `UsernamePasswordCredential` to persist token data and an `AuthenticationRecord`, it's possible to silently authenticate. This example demonstrates an app setting the `TokenCachePersistenceOptions` and retrieving an `AuthenticationRecord` from the local file system to create an `InteractiveBrowserCredential` capable of silent authentication:
 
 ```python
