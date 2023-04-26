@@ -27,7 +27,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
-from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
+from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType, MonitorDatasetContext
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
@@ -91,6 +91,13 @@ class TargetDataset:
     ):
         self.dataset = dataset
         self.lookback_period = lookback_period
+
+    @classmethod
+    def _get_default_target_dataset(cls, target_data_id: str) -> "TargetDataset":
+        return cls(
+            dataset=MonitorInputData(input_dataset),
+            lookback_period=60,
+        )
 
 
 @experimental
@@ -198,6 +205,24 @@ class DataDriftSignal(DataSignal):
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
         )
 
+    @classmethod
+    def _get_default_data_drift_signal(cls, target_data_id: str, baseline_data_id: str) -> "DataDriftSignal":
+        return cls(
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData(
+                    dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+                    input_dataset=None,
+                ),
+                lookback_period=60,
+            ),
+            baseline_dataset=MonitorInputData(
+                input_dataset=None,
+                dataset_context=MonitorDatasetContext.TRAINING,
+            ),
+            features=ALL_FEATURES,
+            metric_thresholds=DataDriftMetricThreshold._get_default_thresholds(),
+        )
+
 
 @experimental
 class PredictionDriftSignal(MonitoringSignal):
@@ -244,6 +269,23 @@ class PredictionDriftSignal(MonitoringSignal):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+        )
+
+    @classmethod
+    def _get_default_prediction_drift_signal(cls, target_data_id: str, baseline_data_id: str) -> "PredictionDriftSignal":
+        return cls(
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData(
+                    dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                    input_dataset=None,
+                ),
+                lookback_period=60,
+            ),
+            baseline_dataset=MonitorInputData(
+                input_dataset=None,
+                dataset_context=MonitorDatasetContext.TRAINING,
+            ),
+            metric_thresholds=PredictionDriftMetricThreshold._get_default_thresholds(),
         )
 
 
@@ -295,6 +337,24 @@ class DataQualitySignal(DataSignal):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+        )
+
+    @classmethod
+    def _get_default_data_quality_signal(cls, target_data_id: str, baseline_data_id: str) -> "DataQualitySignal":
+        return cls(
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData(
+                    dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+                    input_dataset=None,
+                ),
+                lookback_period=60,
+            ),
+            baseline_dataset=MonitorInputData(
+                input_dataset=None,
+                dataset_context=MonitorDatasetContext.TRAINING,
+            ),
+            features=ALL_FEATURES,
+            metric_thresholds=DataQualityMetricThreshold._get_default_thresholds(),
         )
 
 

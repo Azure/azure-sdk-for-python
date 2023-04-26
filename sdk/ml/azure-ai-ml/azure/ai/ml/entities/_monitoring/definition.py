@@ -85,3 +85,15 @@ class MonitorDefinition(RestTranslatableMixin):
             },
             alert_notification=from_rest_alert_notification,
         )
+
+    def _populate_default_signal_information(
+            self,
+            model_inputs_target_data_id: str,
+            model_outputs_target_data_id: str,
+            baseline_data_id: str,
+    ):
+        self.monitoring_signals = {
+            "data-drift-signal":  DataDriftSignal._get_default_data_drift_signal(model_inputs_target_data_id, baseline_data_id),
+            "prediction-drift-signal": PredictionDriftSignal._get_default_prediction_drift_signal(model_outputs_target_data_id, baseline_data_id),
+            "data-quality-signal": DataQualitySignal._get_default_data_quality_signal(model_inputs_target_data_id, baseline_data_id)
+        }
