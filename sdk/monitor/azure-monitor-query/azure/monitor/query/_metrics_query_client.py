@@ -17,7 +17,7 @@ from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_authentication_policy, construct_iso8601
 
 
-class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
+class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient should be used to collect numeric data from monitored resources into a
     time series database. Metrics are numerical values that are collected at regular intervals and
     describe some aspect of a system at a particular time. Metrics are lightweight and capable of
@@ -122,12 +122,8 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         kwargs.setdefault("interval", kwargs.pop("granularity", None))
         kwargs.setdefault("orderby", kwargs.pop("order_by", None))
         kwargs.setdefault("metricnamespace", kwargs.pop("metric_namespace", None))
-        generated = self._metrics_op.list(
-            resource_uri, connection_verify=False, **kwargs
-        )
-        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
-            generated
-        )
+        generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        return MetricsQueryResult._from_generated(generated)  # pylint: disable=protected-access
 
     @distributed_trace
     def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> ItemPaged[MetricNamespace]:
@@ -150,10 +146,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             start_time=start_time,
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
-                    for x in objs
-                ],
+                lambda objs: [MetricNamespace._from_generated(x) for x in objs],  # pylint: disable=protected-access
             ),
             **kwargs
         )
@@ -177,10 +170,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             metricnamespace=metric_namespace,
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
-                    for x in objs
-                ],
+                lambda objs: [MetricDefinition._from_generated(x) for x in objs],  # pylint: disable=protected-access
             ),
             **kwargs
         )
