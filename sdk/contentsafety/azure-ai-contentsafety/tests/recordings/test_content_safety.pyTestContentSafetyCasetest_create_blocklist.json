@@ -17,16 +17,16 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "66865700-799c-4f7b-bcb7-d828df438f61",
+        "apim-request-id": "e61295d9-4651-4f84-9398-478358a92ed9",
         "apim-subscription-id": "973fda3f71b6448db2933f4e72c9d160",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 23 Apr 2023 06:41:10 GMT",
+        "Date": "Wed, 26 Apr 2023 14:21:24 GMT",
         "Location": "00000000000000000000000000000000contentsafety/text/blocklists/TestBlocklist?api-version=2023-04-30-preview",
         "Server": "istio-envoy",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "235",
+        "x-envoy-upstream-service-time": "41",
         "x-ms-region": "Central US EUAP"
       },
       "ResponseBody": {

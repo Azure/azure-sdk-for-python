@@ -3,7 +3,7 @@ import functools
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.contentsafety import ContentSafetyClient
-from azure.ai.contentsafety.models import *
+from azure.ai.contentsafety.models import AnalyzeTextOptions, ImageData, AnalyzeImageOptions, TextBlocklist
 from azure.core.credentials import AzureKeyCredential
 from test_data import *
 
