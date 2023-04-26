@@ -14,7 +14,7 @@ from ._generated.models import (
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
     CallParticipant as CallParticipantRest,
     CallConnectionProperties as CallConnectionPropertiesRest,
-    AddParticipantResultRest
+    AddParticipantResult
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -316,7 +316,7 @@ class AddParticipantResult(object):
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, add_participant_result_generated: AddParticipantResultRest):
+    def _from_generated(cls, add_participant_result_generated: AddParticipantResult):
         return cls(participant=CallParticipant._from_generated(# pylint:disable=protected-access
             add_participant_result_generated.participant),
             operation_context=add_participant_result_generated.operation_context)

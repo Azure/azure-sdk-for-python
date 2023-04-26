@@ -358,7 +358,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     def start_continuous_dtmf_recognition(
         self,
         target: CommunicationIdentifier,
-        operation_context: str = None,
         **kwargs
     ) -> None:
         """
@@ -367,8 +366,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :param target: Target participant of continuous DTMF tone recognition. Required.
         :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
         :param operation_context: The value to identify context of the operation. Optional.
-        :type operation_context: str
-
+        :keyword operation_context: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -379,17 +377,16 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target),
-            operation_context=operation_context)
+            operation_context=kwargs.pop("operation_context", None))
 
-        self._call_media_operations.start_continuous_dtmf_recognition(
-            self.call_connection_id,
+        self._call_media_client.start_continuous_dtmf_recognition(
+            self._call_connection_id,
             continuous_dtmf_recognition_request,
             **kwargs)
 
     def stop_continuous_dtmf_recognition(
         self,
         target: CommunicationIdentifier,
-        operation_context: str = None,
         **kwargs
     ) -> None:
         """
@@ -397,9 +394,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target: Target participant of continuous DTMF tone recognition. Required.
         :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
-        :param operation_context: The value to identify context of the operation. Optional.
+        :keyword operation_context: The value to identify context of the operation. Optional.
         :type operation_context: str
-
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -410,10 +406,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target),
-            operation_context=operation_context)
+            operation_context=kwargs.pop("operation_context", None))
 
-        self._call_media_operations.stop_continuous_dtmf_recognition(
-            self.call_connection_id,
+        self._call_media_client.stop_continuous_dtmf_recognition(
+            self._call_connection_id,
             continuous_dtmf_recognition_request,
             **kwargs)
 
@@ -421,7 +417,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         self,
         target: CommunicationIdentifier,
         tones: List[Union[str, Tone]],
-        operation_context: str = None,
         **kwargs
     ) -> None:
         """
@@ -431,7 +426,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
         :param tones: The captured tones. Required.
         :type tones: list[str or ~azure.communication.callautomation.models.Tone]
-        :param operation_context: The value to identify context of the operation. Optional.
+        :keyword operation_context: The value to identify context of the operation. Optional.
         :type operation_context: str
 
         :return: None
@@ -445,10 +440,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         send_dtmf_request = SendDtmfRequest(
             target_participant=serialize_identifier(target),
             tones=tones,
-            operation_context=operation_context)
+            operation_context=kwargs.pop("operation_context", None))
 
-        self._call_media_operations.send_dtmf(
-            self.call_connection_id,
+        self._call_media_client.send_dtmf(
+            self._call_connection_id,
             send_dtmf_request,
             **kwargs)
 

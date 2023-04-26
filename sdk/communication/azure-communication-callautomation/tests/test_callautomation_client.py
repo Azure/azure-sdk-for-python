@@ -20,7 +20,7 @@ from unittest.mock import Mock
 class TestCallAutomationClient(unittest.TestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     server_callI_id = "12345"
-    callback_uri = "https://contoso.com/event"
+    callback_url = "https://contoso.com/event"
     communication_user_id = "8:acs:123"
     communication_user_source_id = "8:acs:456"
 
@@ -31,7 +31,7 @@ class TestCallAutomationClient(unittest.TestCase):
             return mock_response(status_code=201, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
-                "callbackUri": self.callback_uri,
+                "callbackUri": self.callback_url,
                 "targets": [{"rawId": self.communication_user_id, "communicationUser": { "id": self.communication_user_id }}],
                 "sourceIdentity": {"rawId": self.communication_user_source_id,"communicationUser": {"id": self.communication_user_source_id}}})
 
@@ -44,7 +44,8 @@ class TestCallAutomationClient(unittest.TestCase):
         callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         call_connection_properties = None
         try:
-            call_connection_properties = callautomation_client.create_call(call_invite, self.callback_uri)
+            call_connection_properties = callautomation_client.create_call(call_invite, self.callback_url
+            )
         except:
             raised = True
             raise
@@ -52,4 +53,4 @@ class TestCallAutomationClient(unittest.TestCase):
         self.assertFalse(raised, 'Expected is no excpetion raised')
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
-        self.assertEqual(self.callback_uri, call_connection_properties.callback_uri)
+        self.assertEqual(self.callback_url, call_connection_properties.callback_url)

@@ -24,7 +24,8 @@ from azure.communication.callautomation._generated.models import (
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
     Tone,
-    SendDtmfRequest
+    SendDtmfRequest,
+    FileSource as FileSourceInternal
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType
@@ -35,7 +36,7 @@ from azure.core.credentials import AzureKeyCredential
 class TestCallMediaClient(unittest.TestCase):
     def setUp(self):
         self.call_connection_id = "10000000-0000-0000-0000-000000000000"
-        self.uri = "https://file_source_url.com/audio_file.wav"
+        self.url = "https://file_source_url.com/audio_file.wav"
         self.phone_number = "+12345678900"
         self.target_user = PhoneNumberIdentifier(self.phone_number)
         self.tones = [Tone.ONE, Tone.TWO, Tone.THREE, Tone.POUND]
@@ -52,16 +53,12 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_source = FileSource(uri=self.uri)
+        play_source = FileSource(url=self.url)
 
         self.call_connection_client.play_media(play_source=play_source, play_to=[self.target_user])
 
         expected_play_request = PlayRequest(
-            play_source_info=PlaySource(
-                source_type=PlaySourceType.FILE,
-                file_source=FileSource(uri=self.uri),
-                play_source_id=None
-            ),
+            play_source_info=self.call_connection_client._create_play_source_internal(play_source),
             play_to=[_communication_identifier_serializer.serialize_identifier(self.target_user)],
             play_options=PlayOptions(loop=False)
         )
@@ -77,16 +74,12 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_source = FileSource(uri=self.uri)
+        play_source = FileSource(url=self.url)
 
         self.call_connection_client.play_media_to_all(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_source_info=PlaySource(
-                source_type=PlaySourceType.FILE,
-                file_source=FileSource(uri=self.uri),
-                play_source_id=None
-            ),
+            play_source_info=self.call_connection_client._create_play_source_internal(play_source),
             play_to=[],
             play_options=PlayOptions(loop=False)
         )
@@ -109,7 +102,7 @@ class TestCallMediaClient(unittest.TestCase):
         test_stop_dtmf_tones = [DtmfTone.FOUR]
         test_interrupt_prompt = True
         test_initial_silence_timeout = 5
-        test_play_source = FileSource(uri=self.uri)
+        test_play_source = FileSource(url=self.url)
 
         self.call_connection_client.start_recognizing_media(target_participant=self.target_user,
                                                             input_type=test_input_type,
@@ -165,7 +158,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_start_continuous_dtmf_recognition(self):
         mock_start_continuous_dtmf_recognition = Mock()
         self.call_media_operations.start_continuous_dtmf_recognition = mock_start_continuous_dtmf_recognition
-        self.call_media_client.start_continuous_dtmf_recognition(target=self.target_user)
+        self.call_connection_client.start_continuous_dtmf_recognition(target=self.target_user)
 
         expected_continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=_communication_identifier_serializer.serialize_identifier(self.target_user))
@@ -183,7 +176,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_stop_continuous_dtmf_recognition(self):
         mock_stop_continuous_dtmf_recognition = Mock()
         self.call_media_operations.stop_continuous_dtmf_recognition = mock_stop_continuous_dtmf_recognition
-        self.call_media_client.stop_continuous_dtmf_recognition(target=self.target_user)
+        self.call_connection_client.stop_continuous_dtmf_recognition(target=self.target_user)
 
         expected_continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=_communication_identifier_serializer.serialize_identifier(self.target_user))
@@ -201,9 +194,9 @@ class TestCallMediaClient(unittest.TestCase):
     def test_send_dtmf(self):
         mock_send_dtmf = Mock()
         self.call_media_operations.send_dtmf = mock_send_dtmf
-        self.call_media_client.send_dtmf(target=self.target_user,
-                                         tones=self.tones,
-                                         operation_context=self.operation_context)
+        self.call_connection_client.send_dtmf(target=self.target_user,
+                                              tones=self.tones,
+                                              operation_context=self.operation_context)
 
         expected_send_dtmf_request = SendDtmfRequest(
             target_participant=_communication_identifier_serializer.serialize_identifier(self.target_user),
