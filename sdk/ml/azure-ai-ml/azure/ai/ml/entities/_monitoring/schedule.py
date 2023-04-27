@@ -118,3 +118,17 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             is_enabled=properties.is_enabled,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
+
+    def _create_default_monitor_definition(
+            self,
+            model_inputs_arm_id: str,
+            model_outputs_arm_id: str,
+            user_email_address: Optional[str] = None,
+    ):
+        self.create_monitor._populate_default_signal_information(
+            model_inputs_arm_id,
+            model_outputs_arm_id,
+            user_email_address=user_email_address,
+        )
+
+        # add appropriate tags to schedule

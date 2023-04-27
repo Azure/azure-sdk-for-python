@@ -12,6 +12,11 @@ ALL_FEATURES = "all_features"
 
 AZMONITORING = "azmonitoring"
 
+DEPLOYMENT_MODEL_INPUTS_NAME_KEY = "data_collector.collections.model_inputs.data.name"
+DEPLOYMENT_MODEL_INPUTS_VERSION_KEY = "data_collector.collections.model_inputs.data.version"
+DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY = "data_collector.collections.model_outputs.data.name"
+DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = "data_collector.collections.model_outputs.data.version"
+
 
 class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_DRIFT = "data_drift"

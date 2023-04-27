@@ -2,8 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
+import jwt
 from typing import Any, Iterable
 
+from azure.ai.ml._azure_environments import (
+    _get_base_url_from_metadata,
+    _resource_to_scopes,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -21,7 +26,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
-from .._utils._arm_id_utils import is_ARM_id_for_parented_resource
+from .._utils._arm_id_utils import is_ARM_id_for_parented_resource, AMLNamedArmId
 from .._utils.utils import snake_to_camel
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import (
@@ -30,9 +35,16 @@ from ..constants._common import (
     LROConfigurations,
     NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
     AZUREML_RESOURCE_PROVIDER,
+    de
 )
-from ..constants._monitoring import MonitorSignalType
-from . import JobOperations
+from ..constants._monitoring import (
+    MonitorSignalType,
+    DEPLOYMENT_MODEL_INPUTS_NAME_KEY,
+    DEPLOYMENT_MODEL_INPUTS_VERSION_KEY,
+    DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY,
+    DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
+)
+from . import JobOperations, OnlineDeploymentOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -79,6 +91,10 @@ class ScheduleOperations(_ScopeDependentOperations):
     @property
     def _job_operations(self) -> JobOperations:
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
+
+    @property
+    def _online_deployment_operations(self) -> OnlineDeploymentOperations:
+        return self._all_operations.get_operation(AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations))
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
@@ -243,6 +259,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
         # resolve target ARM ID
+        endpoint_name, deployment_name = None, None
         target = schedule.create_monitor.monitoring_target
         if target and target.endpoint_deployment_id:
             target.endpoint_deployment_id = (
@@ -268,6 +285,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                     AzureMLResourceType.DEPLOYMENT,
                     deployment_name,
                 )
+            else:
+                deployment_arm_id_entity = AMLNamedArmId(target.endpoint_deployment_id)
+                endpoint_name = deployment_arm_id_entity.parent_asset_name
+                deployment_name = deployment_arm_id_entity.asset_name
 
         elif target and target.model_id:
             target.model_id = self._orchestrators.get_asset_arm_id(
@@ -275,6 +296,38 @@ class ScheduleOperations(_ScopeDependentOperations):
                 AzureMLResourceType.MODEL,
                 register_asset=False,
             )
+        
+        if not schedule.create_monitor.monitoring_signals:
+            if target and target.endpoint_deployment_id:
+                online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
+                model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+                model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+                model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+                model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+                model_inputs_arm_id = self._orchestrators.get_asset_arm_id(
+                    f"{model_inputs_name}:{model_inputs_version}",
+                    AzureMLResourceType.DATA,
+                    register_asset=False,
+                )
+                model_outputs_arm_id = self._orchestrators.get_asset_arm_id(
+                    f"{model_outputs_name}:{model_outputs_version}",
+                    AzureMLResourceType.DATA,
+                    register_asset=False,
+                )
+
+                # attempt to get user's email from token
+                default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
+                decode = jwt.decode(
+                    self._credential.get_token(*default_scopes).token,
+                    options={"verify_signature": False, "verify_aud": False},
+                )
+                user_email_address = decode.get("unique_name", None)
+
+                schedule._create_default_monitor_definition(
+                    model_inputs_arm_id,
+                    model_outputs_arm_id,
+                    user_email_address=user_email_address,
+                )
 
         # resolve input paths and preprocessing component ids
         for signal in schedule.create_monitor.monitoring_signals.values():

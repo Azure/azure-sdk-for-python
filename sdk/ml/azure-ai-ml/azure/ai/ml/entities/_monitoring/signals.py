@@ -28,6 +28,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
 from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType, MonitorDatasetContext
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
@@ -91,13 +92,6 @@ class TargetDataset:
     ):
         self.dataset = dataset
         self.lookback_period = lookback_period
-
-    @classmethod
-    def _get_default_target_dataset(cls, target_data_id: str) -> "TargetDataset":
-        return cls(
-            dataset=MonitorInputData(input_dataset),
-            lookback_period=60,
-        )
 
 
 @experimental
@@ -210,14 +204,21 @@ class DataDriftSignal(DataSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData(
+                    input_dataset=Input(
+                        path=target_data_id,
+                        type="mltable"
+                    ),
                     dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                     input_dataset=None,
                 ),
                 lookback_period=60,
             ),
             baseline_dataset=MonitorInputData(
-                input_dataset=None,
-                dataset_context=MonitorDatasetContext.TRAINING,
+                input_dataset=Input(
+                    path=baseline_data_id,
+                    type="mltable"
+                ),
+                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
             ),
             features=ALL_FEATURES,
             metric_thresholds=DataDriftMetricThreshold._get_default_thresholds(),
@@ -276,14 +277,21 @@ class PredictionDriftSignal(MonitoringSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData(
+                    input_dataset=Input(
+                        path=target_data_id,
+                        type="uri_folder",
+                    ),
                     dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
                     input_dataset=None,
                 ),
                 lookback_period=60,
             ),
             baseline_dataset=MonitorInputData(
-                input_dataset=None,
-                dataset_context=MonitorDatasetContext.TRAINING,
+                input_dataset=Input(
+                    path=baseline_data_id,
+                    type="mltable",
+                ),
+                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
             ),
             metric_thresholds=PredictionDriftMetricThreshold._get_default_thresholds(),
         )
@@ -344,14 +352,21 @@ class DataQualitySignal(DataSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData(
+                    input_dataset=Input(
+                        path=target_data_id,
+                        type="mltable",
+                    ),
                     dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                     input_dataset=None,
                 ),
                 lookback_period=60,
             ),
             baseline_dataset=MonitorInputData(
-                input_dataset=None,
-                dataset_context=MonitorDatasetContext.TRAINING,
+                input_dataset=Input(
+                    path=baseline_data_id,
+                    type="mltable",
+                ),
+                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
             ),
             features=ALL_FEATURES,
             metric_thresholds=DataQualityMetricThreshold._get_default_thresholds(),
