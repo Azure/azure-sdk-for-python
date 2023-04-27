@@ -947,7 +947,7 @@ def _resolve_label_to_asset(
 
 
 def _check_or_modify_auto_delete_setting(autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],):
-    if autoDeleteSetting is not None: 
+    if autoDeleteSetting is not None:
         if hasattr(autoDeleteSetting, "condition"):
             condition = getattr(autoDeleteSetting, "condition")
             condition = snake_to_camel(condition)
@@ -974,7 +974,8 @@ def _validate_workspace_managed_datastore(
     return path
 
 
-def _validate_auto_delete_setting_in_data_output(auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]) -> None:
+def _validate_auto_delete_setting_in_data_output(
+        auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]) -> None:
     # avoid specifying auto_delete_setting in job output now
     if auto_delete_setting:
         raise ValidationException(
