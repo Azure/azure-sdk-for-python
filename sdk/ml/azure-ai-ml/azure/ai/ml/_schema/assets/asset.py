@@ -10,7 +10,7 @@ from marshmallow import ValidationError, fields
 from marshmallow.decorators import pre_load
 
 from azure.ai.ml._schema.core.auto_delete_setting import AutoDeleteSettingSchema
-from azure.ai.ml._schema.core.fields import NestedField, VersionField
+from azure.ai.ml._schema.core.fields import NestedField, VersionField, ExperimentalField
 from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 
 from ..core.resource import ResourceSchema
@@ -22,7 +22,7 @@ class AssetSchema(ResourceSchema):
     version = VersionField()
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     latest_version = fields.Str(dump_only=True)
-    auto_delete_setting = NestedField(AutoDeleteSettingSchema, dump_only=True)
+    auto_delete_setting = ExperimentalField(NestedField(AutoDeleteSettingSchema, dump_only=True))
 
 
 class AnonymousAssetSchema(AssetSchema):

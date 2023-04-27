@@ -3,11 +3,12 @@
 # ---------------------------------------------------------
 
 from typing import Any
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoDeleteSetting as RestAutoDeleteSetting
 
-
+@experimental
 class AutoDeleteSetting(RestTranslatableMixin):
     """Class which defines the auto delete setting.
     :param condition: When to check if an asset is expired. Possible values include: "CreatedGreaterThan", "LastAccessedGreaterThan".
