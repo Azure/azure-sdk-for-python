@@ -407,10 +407,9 @@ class CallAutomationClient(object):
             The content type of call recording. Known values are: "audio" and "audioVideo".
         :keyword Union[str, ~azure.communication.callautomation.models.RecordingChannel] recording_channel_type:
             The channel type of call recording. Known values are: "mixed" and "unmixed".
-        :keyword recording_format_type:
-            The format type of call recording. Known values are: "wav", "mp3", and "mp4".
+        :keyword recording_format_type: The format type of call recording. Known values are: "wav", "mp3", and "mp4".
         :type recording_format_type: str or ~azure.communication.callautomation.models.RecordingFormat
-        :keyword list[~azure.communication.callautomation._shared.models.CommunicationIdentifier] audio_channel_participant_ordering:
+        :keyword list[CommunicationIdentifier] audio_channel_participant_ordering:
             The sequential order in which audio channels are assigned to participants in the unmixed recording.
             When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
             the audio channel to participant mapping will be automatically assigned based on the order in
@@ -554,7 +553,7 @@ class CallAutomationClient(object):
         """
         self._downloader.delete_recording(recording_location = recording_location, **kwargs)
 
-    def download_recording__to_path(
+    def download_recording_to_path(
         self,
         source_location: str,
         destination_path: str,
@@ -585,7 +584,7 @@ class CallAutomationClient(object):
             writer.write(stream.read())
 
 
-    def download_recording__to_stream(
+    def download_recording_to_stream(
         self,
         source_location: str,
         destination_stream: BytesIO,

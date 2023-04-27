@@ -45,7 +45,8 @@ from ._generated.models import (
     PlayOptions,
     ContinuousDtmfRecognitionRequest,
     SendDtmfRequest,
-    Tone
+    Tone,
+    RecognizeInputType
 )
 from ._shared.utils import get_authentication_policy
 
@@ -282,18 +283,16 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
     def start_recognizing_media(
         self,
-        input_type,
-        target_participant,
+        input_type : RecognizeInputType,
+        target_participant: CommunicationIdentifier,
         **kwargs
     ) -> None:
         """
         Recognize tones from specific participant in the call.
 
-        :param input_type:
-            Determines the type of the recognition.
+        :param input_type: Determines the type of the recognition.
         :type input_type: str or ~azure.communication.callautomation.models.RecognizeInputType
-        :param target_participant:
-            Target participant of DTMF tone recognition.
+        :param target_participant: Target participant of DTMF tone recognition.
         :type target_participant: ~azure.communication.callautomation._shared.models.CommunicationIdentifier
         :keyword int initial_silence_timeout:
             Time to wait for first input after prompt in seconds (if any).
