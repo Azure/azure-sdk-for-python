@@ -42,7 +42,6 @@ def request_file() -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
     mir_endpoint_name: str,
