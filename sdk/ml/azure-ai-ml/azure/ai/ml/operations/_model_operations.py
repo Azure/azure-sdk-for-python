@@ -613,7 +613,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         module_logger.info("Creating package with name: %s", package_request.target_environment_name)
 
-        package_out = self._model_versions_operation.package(
+        package_out = self._model_versions_operation.begin_package(
             name=name,
             version=version,
             workspace_name=self._workspace_name,
