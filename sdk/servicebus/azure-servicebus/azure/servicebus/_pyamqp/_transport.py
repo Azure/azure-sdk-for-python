@@ -643,6 +643,8 @@ class SSLTransport(_AbstractTransport):
                             raise socket.timeout()
                         continue
                     raise
+                except AttributeError:
+                    raise IOError("Socket closed")
                 if not nbytes:
                     raise IOError("Server unexpectedly closed connection")
 
@@ -655,7 +657,10 @@ class SSLTransport(_AbstractTransport):
 
     def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        write = self.sock.send
+        try:
+            write = self.sock.send
+        except AttributeError:
+            raise IOError("Socket closed")
         while s:
             try:
                 n = write(s)
@@ -714,9 +719,7 @@ class WebSocketTransport(_AbstractTransport):
     def __getstate__(self):
         state = self.__dict__.copy()
         state['socket_lock'] = None
-        state['sock'] = None
         state['ws'] = None
-        state['_quick_recv'] = None
         return state
 
     def __setstate__(self, state):

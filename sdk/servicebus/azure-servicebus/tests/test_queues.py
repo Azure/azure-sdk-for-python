@@ -7,6 +7,7 @@
 import logging
 import sys
 import os
+import json
 from concurrent.futures import ThreadPoolExecutor
 import types
 import pytest
@@ -466,6 +467,63 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             with pytest.raises(ValueError):
                 receiver.peek_messages()
 
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            with sender, receiver:
+                if not uamqp_transport:
+                    sender = pickle.loads(pickle.dumps(sender))
+                    receiver = pickle.loads(pickle.dumps(receiver))
+
+                # send previously unpicklable message
+                msg = {
+                    "body":"W1tdLCB7ImlucHV0X2lkIjogNH0sIHsiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgImNoYWluIjogbnVsbCwgImNob3JkIjogbnVsbH1d",
+                    "content-encoding":"utf-8",
+                    "content-type":"application/json",
+                    "headers":{
+                        "lang":"py",
+                        "task":"tasks.example_task",
+                        "id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "shadow":None,
+                        "eta":"2021-10-07T02:30:23.764066+00:00",
+                        "expires":None,
+                        "group":None,
+                        "group_index":None,
+                        "retries":1,
+                        "timelimit":[
+                            None,
+                            None
+                        ],
+                        "root_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "parent_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "argsrepr":"()",
+                        "kwargsrepr":"{'input_id': 4}",
+                        "origin":"gen36@94713e01a9c0",
+                        "ignore_result":1,
+                        "x_correlator":"44a1978d-c869-4173-afe4-da741f0edfb9"
+                    },
+                    "properties":{
+                        "correlation_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "reply_to":"7b9a3672-2fed-3e9b-8bfd-23ae2397d9ad",
+                        "origin":"gen68@c33d4eef123a",
+                        "delivery_mode":2,
+                        "delivery_info":{
+                            "exchange":"",
+                            "routing_key":"celery_task_queue"
+                        },
+                        "priority":0,
+                        "body_encoding":"base64",
+                        "delivery_tag":"dc83ddb6-8cdc-4413-b88a-06c56cbde90d"
+                    }
+                }
+                sender.send_messages(ServiceBusMessage(json.dumps(msg)))
+                messages = receiver.receive_messages(max_wait_time=10, max_message_count=1)
+                if not uamqp_transport:
+                    pickled = pickle.loads(pickle.dumps(messages[0]))
+                    assert json.loads(str(pickled)) == json.loads(str(messages[0]))
+                else:
+                    with pytest.raises(TypeError):
+                        pickled = pickle.loads(pickle.dumps(messages[0]))
+                receiver.complete_message(messages[0])
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2307,11 +2365,14 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender.send_messages(message)
                 expected_count = 2
                 if not uamqp_transport:
+                    sender = pickle.loads(pickle.dumps(sender))
                     pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
                     sender.send_messages(pickled_recvd)
                     expected_count = 3
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
+                    if not uamqp_transport:
+                        receiver = pickle.loads(pickle.dumps(receiver))
                     for message in receiver:
                         messages.append(message)
                         receiver.complete_message(message)

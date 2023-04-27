@@ -506,7 +506,6 @@ class WebSocketTransportAsync(
     def __getstate__(self):
         state = self.__dict__.copy()
         state['socket_lock'] = None
-        state['sock'] = None
         state['sslopts'] = None
         state['ws'] = None
         state['session'] = None
@@ -601,6 +600,8 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[toread:])
                     toread = 0
             return view
+        except AttributeError:
+            raise IOError("Websocket connection has already been closed.")
         except:
             self._read_buffer = BytesIO(view[:length])
             raise
@@ -618,4 +619,7 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        try:
+            await self.ws.send_bytes(s)
+        except AttributeError:
+            raise IOError("Websocket connection has already been closed.")
