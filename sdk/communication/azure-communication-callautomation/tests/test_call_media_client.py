@@ -16,16 +16,13 @@ from azure.communication.callautomation._models import (
 )
 from azure.communication.callautomation._generated.models import (
     PlayRequest,
-    PlaySource,
-    PlaySourceType,
     PlayOptions,
     RecognizeRequest,
     RecognizeOptions,
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
     Tone,
-    SendDtmfRequest,
-    FileSource as FileSourceInternal
+    SendDtmfRequest
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType

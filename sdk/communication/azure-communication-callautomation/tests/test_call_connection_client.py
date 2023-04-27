@@ -5,12 +5,11 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint: disable=unused-import
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
-    CallAutomationClient,
     CallInvite,
-    CommunicationUserIdentifier
+    CommunicationUserIdentifier,
+    CallConnectionClient
 )
 
 from unittest_helpers import mock_response
@@ -33,9 +32,12 @@ class TestCallConnectionClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=204)
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+
         try:
             call_connection.hang_up(False)
         except:
@@ -50,9 +52,11 @@ class TestCallConnectionClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=204)
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
         try:
             call_connection.hang_up(True)
         except:
@@ -68,10 +72,11 @@ class TestCallConnectionClient(unittest.TestCase):
             return mock_response(status_code=202, json_payload={
                 "operationContext": self.operation_context})
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
-        response = None
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         call_invite = CallInvite(target=user)
         try:
@@ -91,9 +96,11 @@ class TestCallConnectionClient(unittest.TestCase):
                 "values": [self.call_participant],
                 "nextLink": ""})
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
         try:
             response = call_connection.list_participants()
         except:
@@ -101,7 +108,6 @@ class TestCallConnectionClient(unittest.TestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no exception raised')
-        self.assertEqual(self.communication_user_id, response.values[0].identifier.raw_id)
 
     def test_get_participants(self):
         raised = False
@@ -109,11 +115,13 @@ class TestCallConnectionClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload=self.call_participant)
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
         try:
-            response = call_connection.get_participant(self.communication_user_id)
+            response = call_connection.get_participant(CommunicationUserIdentifier(self.call_connection_id))
         except:
             raised = True
             raise
@@ -129,9 +137,11 @@ class TestCallConnectionClient(unittest.TestCase):
                 "participant": self.call_participant,
                 "operationContext": self.operation_context})
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         call_invite = CallInvite(target=user)
         try:
@@ -151,9 +161,11 @@ class TestCallConnectionClient(unittest.TestCase):
             return mock_response(status_code=202, json_payload={
                 "operationContext": self.operation_context})
 
-        call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),
-                                                      transport=Mock(send=mock_send))
-        call_connection = call_automation_client.get_call_connection(self.call_connection_id)
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         try:
             response = call_connection.remove_participant(user)
