@@ -569,6 +569,12 @@ class Serializer:
         client_initialization = strip_version_from_docs(
             re.search(r"([\s\S]*?)    @classmethod", main_client_source).group(1)
         )
+        if any(og.is_mixin for og in self.code_model.operation_groups):
+            client_initialization.extend([
+                "        self._serialize = Serializer(self._models_dict())\n",
+                "        self._deserialize = Deserializer(self._models_dict())\n",
+                "        self._serialize.client_side_validation = False\n",
+            ])
 
         # TODO: switch to current file path
         with open(f"{self.code_model.get_root_of_code(async_mode)}/_client.py", "w") as fd:
