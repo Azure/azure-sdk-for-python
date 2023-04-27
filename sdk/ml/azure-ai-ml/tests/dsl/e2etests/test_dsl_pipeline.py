@@ -2350,7 +2350,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("TODO (2370129): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
+    @pytest.mark.skip("TODO (2375086): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
