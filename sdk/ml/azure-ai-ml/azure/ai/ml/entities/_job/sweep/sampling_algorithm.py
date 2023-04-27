@@ -41,7 +41,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
     :vartype type: str
-    :param logbase: An optional positive number or e in string format to be used as base for log
+    :param logbase: A positive number or e in string format to be used as base for log
         based random sampling.
     :type logbase: Union[float, str]
     :param rule: The specific type of random algorithm. Possible values include: "random",
