@@ -160,9 +160,9 @@ class RoomsClient(object):
 
         :keyword room_id: Required. Id of room to be updated
         :type room_id: str
-        :keyword valid_from: The timestamp from when the room is open for joining.
+        :keyword valid_from: Required. The timestamp from when the room is open for joining.
         :type valid_from: ~datetime.datetime
-        :keyword valid_until: The timestamp from when the room can no longer be joined.
+        :keyword valid_until: Required. The timestamp from when the room can no longer be joined.
         :type valid_until: ~datetime.datetime
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
@@ -248,7 +248,10 @@ class RoomsClient(object):
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participant: Required. Collection of identities to be removed from the room.
-        :type participant: List[Union[~azure.communication.rooms.RoomParticipant, ~azure.communication.rooms.CommunicationIdentifier]]
+        :type participant: List[Union[
+            ~azure.communication.rooms.RoomParticipant,
+            ~azure.communication.rooms.CommunicationIdentifier]
+        ]
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
