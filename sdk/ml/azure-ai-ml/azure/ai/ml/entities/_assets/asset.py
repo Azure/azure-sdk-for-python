@@ -43,7 +43,7 @@ class Asset(Resource):
     ):
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
-        self.auto_delete_setting = kwargs.pop("auto_delete_setting", False)
+        self.auto_delete_setting = kwargs.pop("auto_delete_setting", None)
 
 
         if not name and version is None:

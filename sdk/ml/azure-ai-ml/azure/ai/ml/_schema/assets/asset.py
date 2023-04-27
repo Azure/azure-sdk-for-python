@@ -22,7 +22,7 @@ class AssetSchema(ResourceSchema):
     version = VersionField()
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     latest_version = fields.Str(dump_only=True)
-    auto_delete_setting = ExperimentalField(NestedField(AutoDeleteSettingSchema, dump_only=True))
+    auto_delete_setting = ExperimentalField(NestedField(AutoDeleteSettingSchema))
 
 
 class AnonymousAssetSchema(AssetSchema):

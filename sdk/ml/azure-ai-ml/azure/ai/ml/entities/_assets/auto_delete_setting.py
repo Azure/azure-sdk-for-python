@@ -11,7 +11,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoDeleteSetting
 @experimental
 class AutoDeleteSetting(RestTranslatableMixin):
     """Class which defines the auto delete setting.
-    :param condition: When to check if an asset is expired. Possible values include: "CreatedGreaterThan", "LastAccessedGreaterThan".
+    :param condition: When to check if an asset is expired.
+     Possible values include: "CreatedGreaterThan", "LastAccessedGreaterThan".
     :type condition: AutoDeleteCondition
     :param value: Expiration condition value.
     :type value: str
