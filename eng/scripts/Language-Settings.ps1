@@ -435,11 +435,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
   $remainingPackages = @()
   if ($Mode -eq 'preview') {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionPreview.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and $_.Package.EndsWith("-nspkg")
     })
   } else {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionGA.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionGA.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and $_.Package.EndsWith("-nspkg")
     })
   }
 
