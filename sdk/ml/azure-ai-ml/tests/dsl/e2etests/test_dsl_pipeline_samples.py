@@ -48,6 +48,8 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     "mock_component_hash",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
+    "mock_asset_name",
+    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
