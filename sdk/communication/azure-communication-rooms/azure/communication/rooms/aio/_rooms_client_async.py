@@ -248,10 +248,8 @@ class RoomsClient(object):
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities to be removed from the room.
-        :type participants: List[Union[
-            ~azure.communication.rooms.RoomParticipant,
-            ~azure.communication.rooms.CommunicationIdentifier]
-        ]
+        :type participants:
+         List[Union[~azure.communication.rooms.RoomParticipant, ~azure.communication.rooms.CommunicationIdentifier]]
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
