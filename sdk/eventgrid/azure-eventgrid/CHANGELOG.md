@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added new enum values to `SystemEventNames` related to Storage Tasks.
+
 ### Breaking Changes
 
 ### Bugs Fixed
