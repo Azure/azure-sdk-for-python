@@ -155,8 +155,7 @@ def settle_trace_context_manager(
 def trace_message(
     message: Union[uamqp_Message, pyamqp_Message],
     amqp_transport: Union[AmqpTransport, AmqpTransportAsync],
-    additional_attributes: Optional[Dict[str, Union[str, int]]] = None,
-    parent_span: Optional[AbstractSpan] = None
+    additional_attributes: Optional[Dict[str, Union[str, int]]] = None
 ) -> Union["uamqp_Message", "pyamqp_Message"]:
     """Adds tracing information to the message and returns the updated message.
 
@@ -165,11 +164,7 @@ def trace_message(
     try:
         span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
         if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-
-            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
+            with span_impl_type(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER) as message_span:
                 headers = message_span.to_header()
 
                 if "traceparent" in headers:

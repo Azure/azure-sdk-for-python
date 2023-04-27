@@ -10,7 +10,7 @@
 
 ### Other Changes
 
- - Updated tracing:
+ - Updated tracing ([#29995](https://github.com/Azure/azure-sdk-for-python/pull/29995)):
    - A span will now be created upon calls to the service that settle messages.
    - Additional attributes added to spans:
      - `messaging.system` - messaging system (i.e., `servicebus`)
