@@ -15,7 +15,7 @@ from ._operations import EventGridNamespaceClientOperationsMixin as OperationsMi
 
 class EventGridNamespaceClientOperationsMixin(OperationsMixin):
     @overload
-    async def publish(
+    async def publish_cloud_events(
         self,
         topic_name: str,
         body: List[CloudEvent],
@@ -39,7 +39,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    async def publish(
+    async def publish_cloud_events(
         self,
         topic_name: str,
         body: CloudEvent,
@@ -63,7 +63,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         """
 
     @distributed_trace_async
-    async def publish(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> None:
+    async def publish_cloud_events(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> None:
         """Publish Cloud Events to namespace topic.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
@@ -87,10 +87,10 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
             internal_body_list = []
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
-            await self._publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
+            await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
 
     @distributed_trace_async
-    async def receive(
+    async def receive_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -117,7 +117,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
         """
 
         deserialized_response = []
-        received_response = await self._receive_batch_of_cloud_events(
+        received_response = await self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
         )
         for detail_item in received_response.get("value"):
@@ -125,18 +125,6 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
             detail_item["event"] = deserialized_cloud_event
             deserialized_response.append(detail_item)
         return deserialized_response
-
-    @distributed_trace_async
-    async def release(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
-    ) -> LockTokensResponse:
-        await self.release_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
-
-    @distributed_trace_async
-    async def acknowledge(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
-    ) -> LockTokensResponse:
-        await self.acknowledge_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
 
 
 __all__: List[str] = [

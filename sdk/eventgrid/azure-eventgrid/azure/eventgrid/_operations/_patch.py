@@ -41,7 +41,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
 
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
-    def publish(
+    def publish_cloud_events(
         self,
         topic_name: str,
         body: List[CloudEvent],
@@ -65,7 +65,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @overload
-    def publish(
+    def publish_cloud_events(
         self,
         topic_name: str,
         body: CloudEvent,
@@ -89,7 +89,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @distributed_trace
-    def publish(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> None:
+    def publish_cloud_events(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> None:
         """Publish Cloud Events to namespace topic.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
@@ -117,7 +117,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             self._publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
 
     @distributed_trace
-    def receive(
+    def receive_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,
@@ -152,19 +152,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             detail_item["event"] = deserialized_cloud_event
             deserialized_response.append(detail_item)
         return deserialized_response
-
-    @distributed_trace
-    def release(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
-    ) -> LockTokensResponse:
-        self.release_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
-
-    @distributed_trace
-    def acknowledge(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: List[LockToken], **kwargs: Any
-    ) -> LockTokensResponse:
-        self.acknowledge_batch_of_cloud_events(topic_name, event_subscription_name, lock_tokens, **kwargs)
-
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
