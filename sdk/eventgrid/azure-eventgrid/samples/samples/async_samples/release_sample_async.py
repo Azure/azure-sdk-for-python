@@ -17,13 +17,16 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 async def run():
     # Release a LockToken
     try:
-        tokens = ReleaseOptions(lock_tokens=["token"])
-        release = await client.release_cloud_events(
-            topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=tokens
-        )
-        print(release)
+        async with client:
+            tokens = ReleaseOptions(lock_tokens=["token"])
+            release = await client.release_cloud_events(
+                topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=tokens
+            )
+            print(release)   
     except HttpResponseError:
         raise
 
 
-asyncio.run(run())
+
+if __name__ == '__main__':
+    asyncio.run(run())

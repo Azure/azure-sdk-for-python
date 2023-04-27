@@ -17,12 +17,13 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 async def run():
     # Receive CloudEvents
     try:
-        receive_response = await client.receive_cloud_events(
-            topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, max_wait_time=10
-        )
-        print(receive_response)
+        async with client:
+            receive_response = await client.receive_cloud_events(
+                topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, max_wait_time=10
+            )
+            print(receive_response)
     except HttpResponseError:
         raise
 
-
-asyncio.run(run())
+if __name__ == '__main__':
+    asyncio.run(run())

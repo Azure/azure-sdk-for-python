@@ -19,17 +19,20 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 async def run():
     # Publish a CloudEvent
     try:
-        cloud_event = CloudEvent(data="HI", source="https://example.com", type="example")
-        await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+        async with client:
+            cloud_event = CloudEvent(data="HI", source="https://example.com", type="example")
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
     except HttpResponseError:
         raise
 
     # Publish a list of CloudEvents
     try:
-        list_of_cloud_events = [cloud_event, cloud_event]
-        await client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+        async with client:
+            list_of_cloud_events = [cloud_event, cloud_event]
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
     except HttpResponseError:
         raise
 
 
-asyncio.run(run())
+if __name__ == '__main__':
+    asyncio.run(run())
