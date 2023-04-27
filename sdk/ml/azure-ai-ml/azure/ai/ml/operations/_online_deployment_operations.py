@@ -12,7 +12,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -61,7 +61,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_02_2022_preview: ServiceClient022022Preview,
+        service_client_04_2023_preview: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
         credentials: Optional[TokenCredential] = None,
@@ -70,8 +70,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
-        self._online_deployment = service_client_02_2022_preview.online_deployments
-        self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
+        self._online_deployment = service_client_04_2023_preview.online_deployments
+        self._online_endpoint_operations = service_client_04_2023_preview.online_endpoints
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
@@ -171,6 +171,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 if kwargs.pop("package_model", False):
                     deployment = package_deployment(deployment, self._all_operations.all_operations)
                     module_logger.info("\nStarting deployment")
+
                 deployment_rest = deployment._to_rest_object(location=location)
 
                 poller = self._online_deployment.begin_create_or_update(

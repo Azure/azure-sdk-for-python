@@ -391,7 +391,7 @@ class MLClient:
         self._online_endpoints = OnlineEndpointOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_02_2022_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._local_endpoint_helper,
             self._credential,
@@ -413,7 +413,7 @@ class MLClient:
         self._online_deployments = OnlineDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_02_2022_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._local_deployment_helper,
             self._credential,

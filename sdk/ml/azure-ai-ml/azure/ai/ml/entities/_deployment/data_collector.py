@@ -66,8 +66,8 @@ class DataCollector:
             self.request_logging = self.request_logging._to_rest_object()
         if self.collections:
             rest_collections = dict()
-            for collection in self.collections.values():
-                rest_collections[collection] = collection._to_rest_object()
+            for k, v in self.collections.items():
+                rest_collections[k] = v._to_rest_object()
         return RestDataCollector(
             collections=rest_collections, rolling_rate=self.rolling_rate, request_logging=self.request_logging
         )
