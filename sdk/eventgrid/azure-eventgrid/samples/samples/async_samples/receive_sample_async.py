@@ -17,7 +17,7 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 async def run():
     # Receive CloudEvents
     try:
-        receive_response = await client.receive(
+        receive_response = await client.receive_cloud_events(
             topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, max_wait_time=10
         )
         print(receive_response)

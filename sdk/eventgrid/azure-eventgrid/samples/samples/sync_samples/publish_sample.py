@@ -18,13 +18,13 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 # Publish a CloudEvent
 try:
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-    client.publish(topic_name=TOPIC_NAME, body=cloud_event)
+    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
 except HttpResponseError:
     raise
 
 # Publish a list of CloudEvents
 try:
     list_of_cloud_events = [cloud_event, cloud_event]
-    client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+    client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
 except HttpResponseError:
     raise

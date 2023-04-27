@@ -17,9 +17,9 @@ client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
 async def run():
     # Release a LockToken
     try:
-        tokens = [LockToken({"lockToken": "token"})]
-        release = await client.release_batch_of_cloud_events(
-            topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, tokens=tokens
+        tokens = ReleaseOptions(lock_tokens=["token"])
+        release = await client.release_cloud_events(
+            topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=tokens
         )
         print(release)
     except HttpResponseError:
