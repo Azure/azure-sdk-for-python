@@ -151,8 +151,8 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        valid_from: Optional[datetime],
-        valid_until: Optional[datetime],
+        valid_from: datetime,
+        valid_until: datetime,
         **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed
