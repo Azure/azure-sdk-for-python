@@ -124,7 +124,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
         **kwargs: Any
-    ) -> List[ReceiveResult]:
+    ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
@@ -151,6 +151,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             detail_item["event"] = deserialized_cloud_event
             deserialized_response.append(detail_item)
         return deserialized_response
+
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"

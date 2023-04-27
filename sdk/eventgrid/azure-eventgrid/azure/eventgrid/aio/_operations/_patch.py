@@ -98,7 +98,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
         **kwargs: Any
-    ) -> List[ReceiveResult]:
+    ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
