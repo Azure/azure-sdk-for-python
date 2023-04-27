@@ -22,6 +22,10 @@ from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
+    WORKSPACE_MANAGED_DATASTORE,
+    WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
+    AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+    INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
@@ -378,6 +382,30 @@ class DataOperations(_ScopeDependentOperations):
 
         experiment_name = "data_import_" + data_import.name
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
+
+        # block cumtomer specified path on managed datastore
+        temp_path = data_import.path
+        if temp_path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or temp_path == WORKSPACE_MANAGED_DATASTORE:
+            temp_path = temp_path.rstrip("/")
+            if temp_path != WORKSPACE_MANAGED_DATASTORE:
+                raise AssetPathException(
+                    message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                    tartget=ErrorTarget.DATA,
+                    no_personal_data_message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+            else:
+                data_import.path = data_import.path.rstrip("/") + "/paths"
+
+        # avoid specifying auto_delete_setting in job output now
+        if data_import.auto_delete_setting:
+            raise ValidationException(
+                    message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+                    tartget=ErrorTarget.DATA,
+                    no_personal_data_message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+
         if "${{name}}" not in data_import.path:
             data_import.path = data_import.path.rstrip("/") + "/${{name}}"
         import_job = import_data_func(
