@@ -44,8 +44,8 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     :param logbase: An optional positive number or e in string format to be used as base for log
         based random sampling.
     :type logbase: Union[float, str]
-    :param rule: The specific type of random algorithm. Possible values include: "Random",
-        "Sobol".
+    :param rule: The specific type of random algorithm. Possible values include: "random",
+        "sobol".
     :type rule: str
     :param seed: An integer to use as the seed for random number generation.
     :type seed: int
