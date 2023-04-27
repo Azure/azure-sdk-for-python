@@ -45,6 +45,9 @@ from azure.ai.ml._restclient.v2023_02_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient042023Preview,
 )
+from azure.ai.ml._restclient.v2023_04_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient042023,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -274,6 +277,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023 = ServiceClient042023(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -373,7 +383,7 @@ class MLClient:
         self._code = CodeOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023,
             self._datastores,
             **ops_kwargs,
         )
