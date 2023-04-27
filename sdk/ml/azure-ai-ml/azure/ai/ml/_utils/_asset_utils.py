@@ -946,7 +946,9 @@ def _resolve_label_to_asset(
     return resolver(name)
 
 
-def _check_or_modify_auto_delete_setting(autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],):
+def _check_or_modify_auto_delete_setting(
+    autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],
+):
     if autoDeleteSetting is not None:
         if hasattr(autoDeleteSetting, "condition"):
             condition = getattr(autoDeleteSetting, "condition")
@@ -956,8 +958,7 @@ def _check_or_modify_auto_delete_setting(autoDeleteSetting: Union[Dict, "AutoDel
             autoDeleteSetting["condition"] = snake_to_camel(autoDeleteSetting["condition"])
 
 
-def _validate_workspace_managed_datastore(
-        path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
+def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
     # block cumtomer specified path on managed datastore
     if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
         path = path.rstrip("/")
@@ -975,15 +976,16 @@ def _validate_workspace_managed_datastore(
 
 
 def _validate_auto_delete_setting_in_data_output(
-        auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]) -> None:
+    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]
+) -> None:
     # avoid specifying auto_delete_setting in job output now
     if auto_delete_setting:
         raise ValidationException(
-                message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
-                tartget=ErrorTarget.DATA,
-                no_personal_data_message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+            message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+            tartget=ErrorTarget.DATA,
+            no_personal_data_message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+            error_category=ErrorCategory.USER_ERROR,
+        )
 
 
 class FileUploadProgressBar(tqdm):

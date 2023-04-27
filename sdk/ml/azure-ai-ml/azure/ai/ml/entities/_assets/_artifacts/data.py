@@ -170,7 +170,7 @@ class Data(Artifact):
             is_archived=False,
             properties=self.properties,
             data_uri=self.path,
-            auto_delete_setting=self.auto_delete_setting
+            auto_delete_setting=self.auto_delete_setting,
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
             data_version_details.referenced_uris = self._referenced_uris

@@ -46,5 +46,7 @@ STORAGE_URI_REGEX = (
 
 WORKSPACE_MANAGED_DATASTORE_WITH_SLASH = "azureml://datastores/workspacemanageddatastore/"
 WORKSPACE_MANAGED_DATASTORE = "azureml://datastores/workspacemanageddatastore"
-AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA = "Auto delete setting cannot be specified in JobOutput now. Please remove it and try again."
-INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA = f"Cannot specify a sub-path for workspace managed datastore. Please set \"{WORKSPACE_MANAGED_DATASTORE}\" as the path."
+AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA = (
+    "Auto delete setting cannot be specified in JobOutput now. Please remove it and try again."
+)
+INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA = f'Cannot specify a sub-path for workspace managed datastore. Please set "{WORKSPACE_MANAGED_DATASTORE}" as the path.'

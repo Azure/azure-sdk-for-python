@@ -40,7 +40,7 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
     _check_or_modify_auto_delete_setting,
     _validate_auto_delete_setting_in_data_output,
-    _validate_workspace_managed_datastore
+    _validate_workspace_managed_datastore,
 )
 from azure.ai.ml._utils._data_utils import (
     download_mltable_metadata_schema,

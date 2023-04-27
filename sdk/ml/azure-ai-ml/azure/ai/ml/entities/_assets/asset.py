@@ -45,7 +45,6 @@ class Asset(Resource):
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
         self.auto_delete_setting = kwargs.pop("auto_delete_setting", None)
 
-
         if not name and version is None:
             name = _get_random_name()
             version = "1"

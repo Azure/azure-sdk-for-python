@@ -16,7 +16,7 @@ from azure.ai.ml._utils._asset_utils import (
     traverse_directory,
     _check_or_modify_auto_delete_setting,
     _validate_auto_delete_setting_in_data_output,
-    _validate_workspace_managed_datastore
+    _validate_workspace_managed_datastore,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 from azure.ai.ml.exceptions import (
@@ -25,6 +25,7 @@ from azure.ai.ml.exceptions import (
 )
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
+
 
 @pytest.fixture
 def storage_test_directory() -> str:
@@ -214,17 +215,13 @@ class TestAssetUtils:
 
     def test_validate_workspace_managed_datastore(self):
         with pytest.raises(AssetPathException):
-            _validate_workspace_managed_datastore(
-                "azureml://datastores/workspacemanageddatastore/123")
+            _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore/123")
 
-        path = _validate_workspace_managed_datastore(
-            "azureml://datastores/workspacemanageddatastore")
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore")
         assert path == "azureml://datastores/workspacemanageddatastore/paths"
 
-        path = _validate_workspace_managed_datastore(
-            "azureml://datastores/workspacemanageddatastore/")
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore/")
         assert path == "azureml://datastores/workspacemanageddatastore/paths"
 
-        path = _validate_workspace_managed_datastore(
-            "azureml://datastores/workspacemanageddatastore123")
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore123")
         assert path == "azureml://datastores/workspacemanageddatastore123"
