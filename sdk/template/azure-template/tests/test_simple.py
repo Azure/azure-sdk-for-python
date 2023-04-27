@@ -1,15 +1,18 @@
 # Testing Azure Packages has some additional complication/reading required.
-# Reference https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
+# Reference https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md
 # Pytest should be leveraged to test your project.
 
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 from azure.template import template_main
 
-# this test case highlights that there are some additional Test capabilities present in devtools_testutils
-# as a package owner you are not required to use these. Standard PyTest implementation will work.
-class TemplateTest(AzureMgmtTestCase):
-    def setUp(self):
-        super(TemplateTest, self).setUp()
+# This test case highlights that there are some additional test capabilities present in devtools_testutils
+# AzureMgmtRecordedTestCase provides methods for client creation, resource naming, and more. 
+# As a package owner you are not required to use these. Standard pytest implementation will work.
+class TestTemplate(AzureMgmtRecordedTestCase):
+    def setup_method(self, method):
+        # Code in this optional method will be executed before each test in the class runs.
+        # Fixtures can perform test-specific setup: https://docs.pytest.org/latest/explanation/fixtures.html
+        pass
 
     def test_case_default(self):
-        self.assertEqual(template_main(), True)
+        assert template_main() == True
