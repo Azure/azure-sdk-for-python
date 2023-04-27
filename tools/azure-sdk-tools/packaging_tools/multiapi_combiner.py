@@ -570,7 +570,7 @@ class Serializer:
             re.search(r"([\s\S]*?)    @classmethod", main_client_source).group(1)
         )
         if any(og.is_mixin for og in self.code_model.operation_groups):
-            client_initialization.extend([
+            client_initialization = client_initialization + "".join([
                 "        self._serialize = Serializer(self._models_dict())\n",
                 "        self._deserialize = Deserializer(self._models_dict())\n",
                 "        self._serialize.client_side_validation = False\n",
