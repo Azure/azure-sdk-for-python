@@ -9,8 +9,8 @@ import base64
 from typing import List, overload, Union, Any, Optional
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from azure.core.messaging import CloudEvent
-from ..models._models import CloudEventEvent as InternalCloudEvent, LockToken, LockTokensResponse
-from ..models._models import ReceiveResponse
+from ..models._models import CloudEventEvent as InternalCloudEvent
+from ..models._models import ReceiveResult
 from azure.core.tracing.decorator import distributed_trace
 
 
@@ -114,7 +114,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             internal_body_list = []
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
-            self._publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
+            self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
 
     @distributed_trace
     def receive_cloud_events(
@@ -125,7 +125,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         max_events: Optional[int] = None,
         max_wait_time: Optional[int] = None,
         **kwargs: Any
-    ) -> List[ReceiveResponse]:
+    ) -> List[ReceiveResult]:
         """Receive Batch of Cloud Events from the Event Subscription.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
@@ -144,7 +144,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         deserialized_response = []
-        received_response = self._receive_batch_of_cloud_events(
+        received_response = self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
         )
         for detail_item in received_response.get("value"):
