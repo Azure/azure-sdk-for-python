@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 """Contains supported operations for Azure Machine Learning SDKv2.
+
 Operations are classes contain logic to interact with backend services, usually auto generated operations call.
 """
-
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 
@@ -27,6 +27,7 @@ from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
+
 __all__ = [
     "ComputeOperations",
     "DatastoreOperations",
