@@ -1019,8 +1019,10 @@ class JobRouterAdministrationOperations:
         _content = None
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
+            print(_content)
         else:
             _json = self._serialize.body(patch, "ClassificationPolicy")
+            print(_json)
 
         request = build_job_router_administration_upsert_classification_policy_request(
             id=id,

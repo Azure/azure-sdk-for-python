@@ -35,7 +35,6 @@ from ._generated.models import (
     ChannelConfiguration,
     RouterWorker,
     RouterWorkerItem,
-    UnassignJobResult,
     DeclineJobOfferResult,
     ReclassifyJobResult,
     CancelJobResult,
@@ -1049,7 +1048,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             cls = lambda http_response, deserialized_response, args: ReclassifyJobResult(deserialized_response),
             **kwargs
         )
-    
+
     @distributed_trace
     def unassign_job(
             self,
@@ -1077,7 +1076,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
-        
+
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 

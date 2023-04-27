@@ -1081,7 +1081,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
-        
+
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
@@ -1090,7 +1090,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             assignment_id = assignment_id,
             **kwargs
         )
-        
+
     # endregion JobAio
 
     # region OfferAio

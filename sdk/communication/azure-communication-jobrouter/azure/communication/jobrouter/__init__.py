@@ -120,6 +120,7 @@ __all__ = [
     'RouterJobStatus',
     'JobAssignment',
     'AcceptJobOfferResult',
+    'UnassignJobResult',
     'JobPositionDetails',
     'JobStateSelector',
     'WorkerAssignment',
