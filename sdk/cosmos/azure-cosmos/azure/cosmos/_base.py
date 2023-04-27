@@ -224,7 +224,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if cosmos_client_connection.master_key:
-        headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
+        headers[http_constants.HttpHeaders.XDate] = format_date_RFC_1123(datetime.datetime.utcnow())
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
         resource_type = _internal_resourcetype(resource_type)
@@ -748,3 +748,18 @@ def _internal_resourcetype(resource_type: str) -> str:
     if resource_type.lower() ==  "partitionkey":
         return "colls"
     return resource_type
+
+def format_date_RFC_1123(dt: datetime) -> str:
+    """Formats UTC dates to be RFC 1123 compliant regardless of current locale.
+
+    :param dt: datetime
+    :return: Formatted date that is RFC 1123 Compliant
+    """
+
+    #Hardcoded Array of weekdays and Months. Makes it non dependant on libraries
+    #Numerical representation of weekday and month used as an index
+    day_abbr = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][dt.weekday()]
+    month_abbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+             "Oct", "Nov", "Dec"][dt.month - 1]
+    ret = f"{day_abbr}, {dt.day:02d} {month_abbr} {dt.year} {dt.hour:02d}:{dt.minute:02d}:{dt.second:02d} GMT"
+    return ret
