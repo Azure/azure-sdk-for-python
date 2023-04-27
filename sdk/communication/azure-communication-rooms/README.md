@@ -102,11 +102,11 @@ except HttpResponseError as ex:
 ```
 
 ### List rooms
-Retrieve all created rooms by calling the `list_room` function from `RoomsClient`.
+Retrieve all created rooms by calling the `list_rooms` function from `RoomsClient`.
 
 ```python
 try:
-    list_room_response = client.list_room()
+    list_room_response = client.list_rooms()
 except HttpResponseError as ex:
     print(ex)
 ```
@@ -149,17 +149,17 @@ communication_identifiers = [CommunicationUserIdentifier("<ACS User MRI identity
 try:
     remove_participants_response = client.remove_participants(
         room_id=room_id,
-        communication_identifiers=communication_identifiers
+        participants=communication_identifiers
     )
 except HttpResponseError as ex:
     print(ex)
 ```
-### Get participants
+### List participants
 Retrieve the list of participants for an existing room by referencing the `room_id`:
 
 ```python
 try:
-    participants = self.rooms_client.get_participants(room_id)
+    participants = self.rooms_client.list_participants(room_id)
 except HttpResponseError as ex:
     print(ex)
 ```
