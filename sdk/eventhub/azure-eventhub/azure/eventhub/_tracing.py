@@ -116,8 +116,7 @@ def process_context_manager(client: Optional[ClientBase], links: Optional[List[L
 def trace_message(
     message: Union[uamqp_Message, Message],
     amqp_transport: AmqpTransport,
-    additional_attributes: Optional[Dict[str, Any]] = None,
-    parent_span: Optional[AbstractSpan] = None
+    additional_attributes: Optional[Dict[str, Any]] = None
 ) -> Union[uamqp_Message, Message]:
     """Add tracing information to the message and return the updated message.
 
@@ -126,11 +125,7 @@ def trace_message(
     try:
         span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
         if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-
-            with current_span.span(name="EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
+            with span_impl_type(name="EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
                 headers = message_span.to_header()
 
                 if "traceparent" in headers:
