@@ -31,6 +31,7 @@ from azure.communication.jobrouter import (
     AcceptJobOfferResult,
     CompleteJobResult,
     CloseJobResult,
+    UnassignJobResult,
     RouterJob,
     JobAssignment,
     JobRouterError,
@@ -60,13 +61,6 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                     if self._testMethodName in self.worker_ids \
                             and any(self.worker_ids[self._testMethodName]):
                         for _id in set(self.worker_ids[self._testMethodName]):
-                            # de-register worker
-                            await router_client.update_worker(worker_id = _id, available_for_offers = False)
-
-                            await self._poll_until_no_exception(
-                                self.validate_worker_deregistration,  # cSpell:disable-line
-                                Exception,
-                                _id)
                             # delete worker
                             await router_client.delete_worker(worker_id = _id)
 
@@ -190,8 +184,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             router_worker: RouterWorker = await router_client.get_worker(worker_id = worker_id)
             offer_for_jobs = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_id]
-            assigned_jobs = [assigned_job for assigned_job in router_worker.assigned_jobs if assigned_job.job_id == job_id]
-            assert any(offer_for_jobs) or any(assigned_jobs)
+            assert any(offer_for_jobs)
 
     async def validate_worker_deregistration(  # cSpell:disable-line
             self,
@@ -267,7 +260,42 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                     offer_id = offer_id
                 )
             assert sre is not None
+            
+            # unassign job
+            unassign_job_result: UnassignJobResult = await router_client.unassign_job(
+                job_id = router_job.id,
+                assignment_id = assignment_id
+            )
+            
+            # accept unassigned job
+            await self._poll_until_no_exception(
+                self.validate_worker_has_offer,
+                AssertionError,
+                self.get_router_worker_id(),
+                job_identifier
+            )
 
+            router_worker = await router_client.get_worker(worker_id = self.get_router_worker_id())
+            job_offers = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_identifier]
+
+            assert len(job_offers) == 1
+            job_offer: JobOffer = job_offers[0]
+            assert job_offer.capacity_cost == 1
+            assert job_offer.offer_time_utc is not None
+            assert job_offer.expiry_time_utc is not None
+
+            # accept job offer
+            offer_id = job_offer.id
+            accept_job_offer_result: AcceptJobOfferResult = await router_client.accept_job_offer(
+                worker_id = self.get_router_worker_id(),
+                offer_id = offer_id
+            )
+
+            assert accept_job_offer_result.job_id == job_identifier
+            assert accept_job_offer_result.worker_id == self.get_router_worker_id()
+
+            assignment_id = accept_job_offer_result.assignment_id
+            
             # complete job
             complete_job_result: CompleteJobResult = await router_client.complete_job(
                 job_id = job_identifier,
