@@ -9,11 +9,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 from .._patch import EventGridSharedAccessKeyPolicy
 from azure.core.credentials import AzureKeyCredential
-from ._client import EventGridNamespaceClient as ServiceClientGenerated
+from ._client import EventGridClient as ServiceClientGenerated
 from .._legacy.aio import EventGridPublisherClient
 
 
-class EventGridNamespaceClient(ServiceClientGenerated):
+class EventGridClient(ServiceClientGenerated):
     """Azure Messaging EventGrid Namespace Client.
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
@@ -46,6 +46,6 @@ def patch_sdk():
 
 
 __all__: List[str] = [
-    "EventGridNamespaceClient",
+    "EventGridClient",
     "EventGridPublisherClient",
 ]  # Add all objects you want publicly available to users at this package level

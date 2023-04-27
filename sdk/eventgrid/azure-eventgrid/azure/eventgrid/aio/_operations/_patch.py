@@ -7,13 +7,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
-from ...models import ReceiveResult
+from ...models._models import ReceiveResult
 from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._operations import EventGridNamespaceClientOperationsMixin as OperationsMixin
+from ._operations import EventGridClientOperationsMixin as OperationsMixin
 
 
-class EventGridNamespaceClientOperationsMixin(OperationsMixin):
+class EventGridClientOperationsMixin(OperationsMixin):
     @overload
     async def publish_cloud_events(
         self,
@@ -128,7 +128,7 @@ class EventGridNamespaceClientOperationsMixin(OperationsMixin):
 
 
 __all__: List[str] = [
-    "EventGridNamespaceClientOperationsMixin"
+    "EventGridClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
