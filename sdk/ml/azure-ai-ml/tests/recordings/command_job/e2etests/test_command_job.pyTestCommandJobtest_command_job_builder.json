@@ -547,12 +547,12 @@
           "environmentVariables": {},
           "inputs": {
             "uri": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-              "jobInputType": "uri_file"
+              "jobInputType": "uri_file",
+              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
             },
             "data_asset": {
-              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/list_data_v2_test/versions/1",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/list_data_v2_test/versions/1"
             },
             "local_data": {
               "jobInputType": "uri_folder",
@@ -714,17 +714,17 @@
           "environmentVariables": {},
           "inputs": {
             "data_asset": {
-              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/list_data_v2_test/versions/2",
-              "jobInputType": "uri_folder"
+              "jobInputType": "uri_folder",
+              "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/list_data_v2_test/versions/2"
             },
             "uri": {
+              "jobInputType": "uri_file",
               "mode": "ReadOnlyMount",
-              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv",
-              "jobInputType": "uri_file"
+              "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
             },
             "local_data": {
-              "mode": "ReadOnlyMount",
               "jobInputType": "uri_folder",
+              "mode": "ReadOnlyMount",
               "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/00000000000000000000000000000000/data/"
             }
           },
