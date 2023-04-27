@@ -45,6 +45,7 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        enable_data_isolation: bool = False,
         **kwargs,
     ):
         """Azure ML workspace.
@@ -92,6 +93,9 @@ class Workspace(Resource):
         :type primary_user_assigned_identity: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
+        :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+            The flag can only be set at the creation phase, it can't be updated.
+        :type enable_data_isolation: bool
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -115,6 +119,7 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.enable_data_isolation = enable_data_isolation
 
     @property
     def discovery_url(self) -> str:
@@ -236,6 +241,7 @@ class Workspace(Resource):
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
+            enable_data_isolation=rest_obj.enable_data_isolation,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -265,4 +271,5 @@ class Workspace(Resource):
             if self.managed_network
             else None,  # pylint: disable=protected-access
             feature_store_Settings=feature_store_Settings,
+            enable_data_isolation=self.enable_data_isolation,
         )
