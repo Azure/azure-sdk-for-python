@@ -352,19 +352,37 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
-        for collection in deployment.data_collector.collections:
-            data_name = f"{deployment.endpoint_name}-{deployment.name}-{collection}"
-            short_form_path = (
-                f"{deployment.data_collector.destination.path}/{deployment.endpoint_name}/{deployment.name}/{collection}"  # pylint: disable=line-too-long
-                if deployment.data_collector.destination and deployment.data_collector.destination.path
-                else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}"
-            )
+        for name, value in deployment.data_collector.collections.items():
+            data_name = f"{deployment.endpoint_name}-{deployment.name}-{name}"
+            data_version = "1"
+            data_path = f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{name}"
+            if value.data:
+                if value.data.name:
+                    data_name = value.data.name
+
+                if value.data.version:
+                    data_version = value.data.version
+
+                if value.data.path:
+                    data_path = value.data.path
+
             data_object = Data(
                 name=data_name,
-                path=short_form_path,
-                is_anonymous=True,
+                version=data_version,
+                path=data_path,
             )
-            result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
-            deployment.data_collector.collections[collection].data = DataAsset(
-                path=short_form_path, name=result.name, version=result.version
-            )
+
+            try:
+                result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
+            except Exception as e:
+                if "already exists" in str(e):
+                    result = self._all_operations._all_operations[AzureMLResourceType.DATA].get(data_name, data_version)
+                else:
+                    raise e
+            deployment.data_collector.collections[
+                name
+            ].data = f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}/data/{result.name}/versions/{result.version}"
+
+        print(
+            f"Registered data asset {result.name} with version {result.version} for collection {name} in deployment {deployment.name}."
+        )
