@@ -54,7 +54,6 @@ from ..constants import (
     WEBSOCKET_PORT,
     AMQP_WS_SUBPROTOCOL,
     TIMEOUT_INTERVAL,
-    READ_TIMEOUT_INTERVAL,
 )
 from .._transport import (
     AMQP_FRAME,
@@ -63,7 +62,6 @@ from .._transport import (
     DEFAULT_SOCKET_SETTINGS,
     SIGNED_INT_MAX,
     _UNAVAIL,
-    set_cloexec,
     AMQP_PORT,
 )
 from ..error import AuthenticationException, ErrorCondition
@@ -296,7 +294,6 @@ class AsyncTransport(
                 await self.writer.wait_closed()
                 self.connected = False
             raise
-   
 
     def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
         tcp_opts = {}
