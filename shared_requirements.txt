@@ -45,3 +45,4 @@ azure-schemaregistry
 avro
 uamqp
 yarl
+importlib-metadata
