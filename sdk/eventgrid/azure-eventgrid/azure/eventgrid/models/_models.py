@@ -18,6 +18,73 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AcknowledgeOptions(_model_base.Model):
+    """Array of lock token strings for the corresponding received Cloud Events to be acknowledged.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar lock_tokens: String array of lock tokens. Required.
+    :vartype lock_tokens: list[str]
+    """
+
+    lock_tokens: List[str] = rest_field(name="lockTokens")
+    """String array of lock tokens. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class AcknowledgeResult(_model_base.Model):
+    """The result of the Acknowledge operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Required.
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
+    :ivar succeeded_lock_tokens: Array of LockToken values for succeeded cloud events. Required.
+    :vartype succeeded_lock_tokens: list[str]
+    """
+
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    """Array of LockToken values for failed cloud events. Required."""
+    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    """Array of LockToken values for succeeded cloud events. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class BrokerProperties(_model_base.Model):
     """Properties of the Event Broker operation.
 
@@ -159,17 +226,47 @@ class LockToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class LockTokenInput(_model_base.Model):
-    """Lock token input formatting.
+class ReceiveDetails(_model_base.Model):
+    """Receive operation details per Cloud Event.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar lock_tokens: LockTokens. Required.
+    :ivar broker_properties: The Event Broker details. Required.
+    :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
+    :ivar event: Cloud Event details. Required.
+    :vartype event: ~azure.eventgrid.models.CloudEventEvent
+    """
+
+    broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
+    """The Event Broker details. Required."""
+    event: "_models._models.CloudEventEvent" = rest_field()
+    """Cloud Event details. Required."""
+
+
+class ReceiveResult(_model_base.Model):
+    """Details of the Receive operation response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Array of receive responses, one per cloud event. Required.
+    :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
+    """
+
+    value: List["_models._models.ReceiveDetails"] = rest_field()
+    """Array of receive responses, one per cloud event. Required."""
+
+
+class ReleaseOptions(_model_base.Model):
+    """Array of lock token strings for the corresponding received Cloud Events to be released.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar lock_tokens: String array of lock tokens. Required.
     :vartype lock_tokens: list[str]
     """
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
-    """LockTokens. Required."""
+    """String array of lock tokens. Required."""
 
     @overload
     def __init__(
@@ -190,9 +287,8 @@ class LockTokenInput(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class LockTokensResponse(_model_base.Model):
-    """Details of the LockTokens information. This is used for both Acknowledge and Release operation
-    response.
+class ReleaseResult(_model_base.Model):
+    """The result of the Release operation.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -225,33 +321,3 @@ class LockTokensResponse(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class ReceiveDetails(_model_base.Model):
-    """Receive operation details per Cloud Event.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar broker_properties: The Event Broker details. Required.
-    :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
-    :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.eventgrid.models.CloudEventEvent
-    """
-
-    broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
-    """The Event Broker details. Required."""
-    event: "_models._models.CloudEventEvent" = rest_field()
-    """Cloud Event details. Required."""
-
-
-class ReceiveResponse(_model_base.Model):
-    """Details of the Receive operation response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Array of receive responses, one per cloud event. Required.
-    :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
-    """
-
-    value: List["_models._models.ReceiveDetails"] = rest_field()
-    """Array of receive responses, one per cloud event. Required."""
