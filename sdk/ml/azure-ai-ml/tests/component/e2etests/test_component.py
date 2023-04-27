@@ -989,6 +989,9 @@ class TestComponent(AzureRecordedTestCase):
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
 
+    @pytest.mark.skip(
+        reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world"
+    )
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
         component_path = "./tests/test_configs/components/component_ipp.yml"

@@ -39,9 +39,17 @@ from azure.communication.jobrouter import (
     PassThroughWorkerSelectorAttachment,
     WorkerWeightedAllocation,
     WeightedAllocationWorkerSelectorAttachment,
+    StaticQueueSelectorAttachment,
+    ConditionalQueueSelectorAttachment,
+    RuleEngineQueueSelectorAttachment,
+    PassThroughQueueSelectorAttachment,
+    QueueWeightedAllocation,
+    WeightedAllocationQueueSelectorAttachment,
     WorkerSelector,
     FunctionRule,
     FunctionRuleCredential,
+    StaticRule,
+    QueueSelector
 )
 
 
@@ -203,6 +211,16 @@ class WorkerSelectorValidator(object):
         else:
             assert actual.expedite == expected.expedite
 
+class QueueSelectorValidator(object):
+    @staticmethod
+    def validate_queue_selector(
+            actual,  # type: QueueSelector
+            expected,  # type: QueueSelector
+            **kwargs,  # type: Any
+    ):
+        assert actual.key == expected.key
+        assert actual.label_operator == expected.label_operator
+        assert actual.value == expected.value
 
 class RouterRuleValidator(object):
     @staticmethod
@@ -227,6 +245,19 @@ class RouterRuleValidator(object):
                 assert actual_credential.client_id == actual.credential.client_id \
                        or actual_credential.client_id == SANITIZED
 
+    def validate_static_rule(
+            actual: StaticRule,
+            expected: StaticRule,
+            **kwargs: Any
+    ):
+        assert actual.kind == expected.kind
+        if (type(actual.value) == list):
+            for i, j in zip(actual.value, expected.value):
+                if type(i) == WorkerSelector:
+                    WorkerSelectorValidator.validate_worker_selector(i, j)
+                if type(i) == QueueSelector:
+                    QueueSelectorValidator.validate_queue_selector(i, j)
+
     @staticmethod
     def validate_router_rule(
             actual,
@@ -237,6 +268,8 @@ class RouterRuleValidator(object):
 
         if type(actual) == FunctionRule:
             RouterRuleValidator.validate_function_rule(actual, expected)
+        elif type(actual) == StaticRule:
+            RouterRuleValidator.validate_static_rule(actual, expected)
         else:
             assert actual == expected
 
@@ -276,7 +309,55 @@ class ClassificationPolicyValidator(object):
 
         for actual, expected in zip(entity.queue_selectors, queue_selectors):
             assert type(actual) == type(expected)
-            assert actual == expected
+            def validate_static_queue_selector_attachment(
+                actual,  # type: StaticQueueSelectorAttachment
+                expected,  # type: StaticQueueSelectorAttachment
+                **kwargs
+            ):
+                QueueSelectorValidator.validate_queue_selector(actual.label_selector, expected.label_selector)
+
+            def validate_conditional_queue_selector_attachment(
+                    actual,  # type: ConditionalQueueSelectorAttachment
+                    expected,  # type: ConditionalQueueSelectorAttachment
+                    **kwargs,  # type: Any
+            ):
+                assert actual.condition == expected.condition
+
+                for i,j in zip(actual.label_selectors, expected.label_selectors):
+                    QueueSelectorValidator.validate_queue_selector(i, j)
+
+            def validate_rule_engine_selector_attachment(
+                    actual,  # type: RuleEngineQueueSelectorAttachment
+                    expected,  # type: RuleEngineQueueSelectorAttachment
+                    **kwargs,  # type: Any
+            ):
+                RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
+
+            def validate_weighted_allocation_selector_attachment(
+                    actual,  # type: WeightedAllocationQueueSelectorAttachment
+                    expected,  # type: WeightedAllocationQueueSelectorAttachment
+                    **kwargs,  # type: Any
+            ):
+                for i, j in zip(actual.allocations, expected.allocations):
+                    assert i.weight == j.weight
+                    for ac_qs, ex_qs in zip(i.label_selectors, j.label_selectors):
+                        QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
+
+            assert len(entity.queue_selectors) == len(queue_selectors)
+
+            for actual, expected in zip(entity.queue_selectors, queue_selectors):
+                assert type(actual) == type(expected)
+
+                if type(actual) == StaticQueueSelectorAttachment:
+                    validate_static_queue_selector_attachment(actual, expected)
+                elif type(actual) == ConditionalQueueSelectorAttachment:
+                    validate_conditional_queue_selector_attachment(actual, expected)
+                elif type(actual) == WeightedAllocationQueueSelectorAttachment:
+                    validate_weighted_allocation_selector_attachment(actual, expected)
+                elif type(actual) == RuleEngineQueueSelectorAttachment:
+                    validate_rule_engine_selector_attachment(actual, expected)
+                else:
+                    assert actual == expected
 
     @staticmethod
     def validate_prioritization_rule(
@@ -310,6 +391,13 @@ class ClassificationPolicyValidator(object):
             for i,j in zip(actual.label_selectors, expected.label_selectors):
                 WorkerSelectorValidator.validate_worker_selector(i, j)
 
+        def validate_rule_engine_selector_attachment(
+                actual,  # type: RuleEngineWorkerSelectorAttachment
+                expected,  # type: RuleEngineWorkerSelectorAttachment
+                **kwargs,  # type: Any
+        ):
+            RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
+
         def validate_weighted_allocation_selector_attachment(
                 actual,  # type: WeightedAllocationWorkerSelectorAttachment
                 expected,  # type: WeightedAllocationWorkerSelectorAttachment
@@ -331,6 +419,8 @@ class ClassificationPolicyValidator(object):
                 validate_conditional_worker_selector_attachment(actual, expected)
             elif type(actual) == WeightedAllocationWorkerSelectorAttachment:
                 validate_weighted_allocation_selector_attachment(actual, expected)
+            elif type(actual) == RuleEngineWorkerSelectorAttachment:
+                validate_rule_engine_selector_attachment(actual, expected)
             else:
                 assert actual == expected
 
