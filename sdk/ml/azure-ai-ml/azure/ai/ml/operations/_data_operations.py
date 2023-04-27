@@ -385,7 +385,7 @@ class DataOperations(_ScopeDependentOperations):
         _validate_auto_delete_setting_in_data_output(data_import.auto_delete_setting)
 
         # block cumtomer specified path on managed datastore
-        data_import.path = data_import.path.rstrip("/") + "/paths"
+        data_import.path = _validate_workspace_managed_datastore(data_import.path)
 
         if "${{name}}" not in data_import.path:
             data_import.path = data_import.path.rstrip("/") + "/${{name}}"
