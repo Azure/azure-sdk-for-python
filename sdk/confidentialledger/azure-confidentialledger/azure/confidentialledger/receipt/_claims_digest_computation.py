@@ -62,8 +62,7 @@ def _validate_application_claims(application_claims: List[Dict[str, Any]]):
 
         # Assert on the ledger entry claim
         if claim_kind == "LedgerEntry":
-            assert "ledgerEntry" in application_claim_object
-            ledger_entry_claim = application_claim_object["ledgerEntry"]
+            ledger_entry_claim = application_claim_object.get("ledgerEntry")
             assert isinstance(ledger_entry_claim, dict)
 
             # Assert on the collection id

@@ -143,7 +143,7 @@ def _validate_receipt_content(receipt: Dict[str, Any]):
         if "serviceEndorsements" in receipt:
             assert isinstance(receipt["serviceEndorsements"], list)
 
-            # Validate elements in proof
+            # Validate elements in serviceEndorsements
             for elem in receipt["serviceEndorsements"]:
                 assert isinstance(elem, str)
 
