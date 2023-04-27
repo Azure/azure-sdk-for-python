@@ -13,7 +13,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     OperatingSystemType,
     Route,
 )
-from azure.ai.ml._schema.core.fields import NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (
@@ -91,6 +92,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         },
         required=False,
     )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema), dump_only=True)
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -108,6 +110,10 @@ class _BaseEnvironmentSchema(AssetSchema):
         from azure.ai.ml.entities._assets import Environment
 
         if isinstance(data, Environment):
+            if data._intellectual_property:  # pylint: disable=protected-access
+                ipp_field = data._intellectual_property  # pylint: disable=protected-access
+                if ipp_field:
+                    setattr(data, "intellectual_property", ipp_field)
             return data
         if data is None or not hasattr(data, "get"):
             raise ValidationError("Environment cannot be None")

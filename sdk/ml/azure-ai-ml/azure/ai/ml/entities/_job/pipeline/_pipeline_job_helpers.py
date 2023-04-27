@@ -4,10 +4,10 @@
 import re
 from typing import Dict, List, Tuple, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Mpi, PyTorch, TensorFlow
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, TensorFlow, Ray
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -156,7 +156,9 @@ def from_dict_to_rest_io(
     return io_bindings, rest_io_objects
 
 
-def from_dict_to_rest_distribution(distribution_dict: Dict[str, Union[str, int]]) -> Union[PyTorch, Mpi, TensorFlow]:
+def from_dict_to_rest_distribution(
+    distribution_dict: Dict[str, Union[str, int]]
+) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
     target_type = distribution_dict["distribution_type"].lower()
     if target_type == "pytorch":
         return PyTorch(**distribution_dict)
@@ -164,7 +166,9 @@ def from_dict_to_rest_distribution(distribution_dict: Dict[str, Union[str, int]]
         return Mpi(**distribution_dict)
     if target_type == "tensorflow":
         return TensorFlow(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi or tensorflow: {}".format(target_type)
+    if target_type == "ray":
+        return Ray(**distribution_dict)
+    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
     raise ValidationException(
         message=msg,
         no_personal_data_message=msg,

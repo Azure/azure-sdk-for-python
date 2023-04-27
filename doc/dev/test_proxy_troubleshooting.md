@@ -15,6 +15,7 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
     - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
     - [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
     - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+    - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
     - [Recordings not being produced](#recordings-not-being-produced)
     - [ConnectionError during tests](#connectionerror-during-tests)
     - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
@@ -80,6 +81,23 @@ Body matching can be turned off with the test proxy by calling the `set_bodiless
 [devtools_testutils/sanitizers.py][py_sanitizers] at the very start of a test method. This matcher applies only to the
 test method that `set_bodiless_matcher` is called from, so other tests in the `pytest` session will still have body
 matching enabled by default.
+
+## Playback failures from inconsistent line breaks
+
+Some tests require recording content to completely match, including line breaks (for example, when sending the content of
+a test file in a request body). Line breaks can vary between OSes and cause tests to fail on certain platforms, in which
+case it can help to specify a particular format for test files by using [`.gitattributes`][gitattributes].
+
+A `.gitattributes` file can be placed at the root of a directory to apply git settings to each file under that directory.
+If a test directory contains files that need to have consistent line breaks, for example LF breaks instead of CRLF ones,
+you can create a `.gitattributes` file in the directory with the following content:
+```
+# Force git to checkout text files with LF (line feed) as the ending (vs CRLF)
+# This allows us to consistently run tests that depend on the exact contents of a file
+* text=auto eol=lf
+```
+
+For a real example, refer to https://github.com/Azure/azure-sdk-for-python/pull/29955.
 
 ## Recordings not being produced
 
@@ -172,6 +190,7 @@ chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/initial-investigation.md
+[gitattributes]: https://git-scm.com/docs/gitattributes
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L108

@@ -22,6 +22,9 @@ class ApplicationConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     IN = "In"
     """Checks that the string value of the data defined in Property equals any of the given values
     #: (exact fit)"""
+    IN_ENUM = "In"
+    """Checks that the string value of the data defined in Property equals any of the given values
+    #: (exact fit)"""
 
 
 class ApplicationSourceResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
