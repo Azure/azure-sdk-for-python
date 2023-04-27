@@ -1,8 +1,10 @@
 # Release History
 
-## 4.10.1 (Unreleased)
+## 4.11.0 (Unreleased)
 
 ### Features Added
+
+- Added new enum values to `SystemEventNames` related to Storage Tasks.
 
 ### Breaking Changes
 
