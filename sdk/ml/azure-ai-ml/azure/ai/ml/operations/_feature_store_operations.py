@@ -70,7 +70,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self._workspace_connection_operation = service_client.workspace_connections
 
     # @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[FeatureStore]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP, **kwargs: Dict) -> Iterable[FeatureStore]:
         """List all feature stores that the user has access to in the current
         resource group or subscription.
 
@@ -82,13 +82,15 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
+                **kwargs,
                 cls=lambda objs: [
                     FeatureStore._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
-                ]
+                ],
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
+            **kwargs,
             cls=lambda objs: [
                 FeatureStore._from_rest_object(filterObj)
                 for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
@@ -109,7 +111,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         feature_store = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        rest_workspace_obj = self._operation.get(resource_group, name)
+        rest_workspace_obj = self._operation.get(resource_group, name, **kwargs)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
             feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
@@ -175,6 +177,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def begin_create(
         self,
         feature_store: FeatureStore,
+        *,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[FeatureStore]:
@@ -363,7 +366,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller[None]:
         """Delete a FeatureStore.
 
         :param name: Name of the FeatureStore
