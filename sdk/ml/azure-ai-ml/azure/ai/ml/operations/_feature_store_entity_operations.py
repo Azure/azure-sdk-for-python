@@ -9,8 +9,8 @@ from typing import Dict, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, FeaturestoreEntityVersion
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, FeaturestoreEntityVersion
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.exceptions import ValidationException
 
@@ -20,7 +20,6 @@ from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -29,7 +28,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class FeatureStoreEntityOperations(_ScopeDependentOperations):
     """FeatureStoreEntityOperations.
 
@@ -42,7 +40,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient022023Preview,
+        service_client: ServiceClient042023Preview,
         **kwargs: Dict,
     ):
         super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)

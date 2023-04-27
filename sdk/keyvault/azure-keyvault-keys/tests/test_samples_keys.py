@@ -8,7 +8,7 @@ import os
 import time
 
 import pytest
-from azure.keyvault.keys import ApiVersion, KeyCurveName, KeyType
+from azure.keyvault.keys import KeyType
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
@@ -16,7 +16,6 @@ from _test_case import KeysClientPreparer, get_decorator
 from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
-only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4])
 only_hsm = get_decorator(only_hsm=True)
 
 

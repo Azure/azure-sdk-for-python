@@ -124,7 +124,9 @@ class ContainerRegistryOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get_manifest(self, name: str, reference: str, **kwargs: Any) -> _models.ManifestWrapper:
+    async def get_manifest(
+        self, name: str, reference: str, *, accept: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         """Get the manifest identified by ``name`` and ``reference`` where ``reference`` can be a tag or
         digest.
 
@@ -132,8 +134,11 @@ class ContainerRegistryOperations:
         :type name: str
         :param reference: A tag or a digest, pointing to a specific image. Required.
         :type reference: str
-        :return: ManifestWrapper
-        :rtype: ~container_registry.models.ManifestWrapper
+        :keyword accept: Accept header string delimited by comma. For example,
+         application/vnd.docker.distribution.manifest.v2+json. Default value is None.
+        :paramtype accept: str
+        :return: Async iterator of the response bytes
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -147,11 +152,12 @@ class ContainerRegistryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ManifestWrapper] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         request = build_container_registry_get_manifest_request(
             name=name,
             reference=reference,
+            accept=accept,
             headers=_headers,
             params=_params,
         )
@@ -160,7 +166,7 @@ class ContainerRegistryOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -172,12 +178,12 @@ class ContainerRegistryOperations:
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ManifestWrapper", pipeline_response)
+        deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def create_manifest(self, name: str, reference: str, payload: IO, **kwargs: Any) -> Any:

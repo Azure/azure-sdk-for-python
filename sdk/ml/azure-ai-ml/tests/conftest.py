@@ -13,11 +13,14 @@ from functools import partial
 from importlib import reload
 from os import getenv
 from pathlib import Path
-from typing import Callable, Tuple, Union, Optional
+from typing import Callable, Optional, Tuple, Union
 from unittest.mock import Mock, patch
 
 import pytest
 from _pytest.fixtures import FixtureRequest
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
+from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -32,12 +35,18 @@ from devtools_testutils.helpers import is_live_and_not_recording
 from devtools_testutils.proxy_fixtures import VariableRecorder
 from pytest_mock import MockFixture
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
 
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml._utils._asset_utils import IgnoreFile
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, SINGULARITY_ID_FORMAT
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_COMPONENT_NAME,
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    SINGULARITY_ID_FORMAT,
+)
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -45,11 +54,6 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.transport import HttpTransport
-from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
-
-from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -67,11 +71,31 @@ def fake_datastore_key() -> str:
     return str(b64_key, "ascii")
 
 
+def _query_param_regex(name, *, only_value=True) -> str:
+    """Builds a regex that matches against a query parameter of the form
+         (?|&)name=value
+
+    :param: name - The name of the query parameter to match against
+    :param: only_value (Optional) - Whether the regex match should just
+            match the value of the query param (instead of the name and value)
+    """
+    # Character that marks the end of a query string value
+    QUERY_STRING_DELIMETER = "&#"
+    value_regex = rf'[^{QUERY_STRING_DELIMETER}"\s]*'
+    name_regex = rf"(?<=[?&]){name}="
+    if only_value:
+        name_regex = rf"(?<={name_regex})"
+
+    return rf'{name_regex}{value_regex}(?=[{QUERY_STRING_DELIMETER}"\s]|$)'
+
+
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
-        excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+        # compare_bodies=False,
+        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+        ignored_query_parameters="api-version",
     )
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
@@ -99,6 +123,8 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
+    # masks signature in SAS uri
+    add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
 
 
 def pytest_addoption(parser):
@@ -525,6 +551,41 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
 
 
 @pytest.fixture
+def snapshot_hash_sanitizer(test_proxy):
+    # masks hash value in URIs
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex=_query_param_regex("hash"),
+        function_scoped=True,
+    )
+
+
+@pytest.fixture
+def mock_anon_component_version(mocker: MockFixture):
+
+    fake_uuid = "000000000000000000000"
+
+    def generate_name_version(*args, **kwargs):
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        return ANONYMOUS_COMPONENT_NAME, real_uuid
+
+    def fake_name_version(*args, **kwargs):
+        return ANONYMOUS_COMPONENT_NAME, fake_uuid
+
+    if is_live():
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=generate_name_version,
+        )
+    else:
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=fake_name_version,
+        )
+
+
+@pytest.fixture
 def mock_asset_name(mocker: MockFixture):
     fake_uuid = "000000000000000000000"
 
@@ -795,8 +856,8 @@ def enable_private_preview_schema_features():
     from azure.ai.ml.entities._job.pipeline import pipeline_job as pipeline_job_entity
 
     def _reload_related_classes():
-        reload(component_schema)
         reload(input_output)
+        reload(component_schema)
         reload(command_component_schema)
         reload(pipeline_component_schema)
         reload(pipeline_job_schema)
@@ -958,3 +1019,14 @@ def singularity_vc(client: MLClient) -> SingularityVirtualCluster:
         return SingularityVirtualCluster(
             subscription_id=vc["subscriptionId"], resource_group_name=vc["resourceGroup"], name=vc["name"]
         )
+
+
+@pytest.fixture
+def use_python_amlignore_during_upload(mocker: MockFixture) -> None:
+    """Makes _upload_to_datastore default to using an ignore file that ignores
+    non-essential python files (e.g. .pyc)
+    """
+    IGNORE_FILE_DIR = Path(__file__).parent / "test_configs" / "_ignorefiles"
+    py_ignore = IGNORE_FILE_DIR / "Python.amlignore"
+    # Meant to influence azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore when an ignore file isn't provided
+    mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_ignore_file", return_value=IgnoreFile(py_ignore))
