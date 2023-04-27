@@ -38,14 +38,14 @@ class RoomParticipant:
     def __init__(
         self,
         *,
-        communication_identifier: Union[str, CommunicationIdentifier],
+        communication_identifier: CommunicationIdentifier,
         role: Union[str, ParticipantRole] = ParticipantRole.ATTENDEE,
     ) -> None:
         """
         :keyword communication_identifier: Raw ID representation of the communication identifier. Please refer to the
          following document for additional information on Raw ID. :code:`<br>`
          https://learn.microsoft.com/azure/communication-services/concepts/identifiers?pivots=programming-language-rest#raw-id-representation.
-        :paramtype communication_identifier: str or ~azure.communication.rooms.CommunicationIdentifier
+        :paramtype communication_identifier: ~azure.communication.rooms.CommunicationIdentifier
         :keyword role: The role of a room participant. The default value is Attendee. Known
          values are: "Presenter", "Attendee", and "Consumer".
         :paramtype role: str or ~azure.communication.rooms.models.ParticipantRole
@@ -64,11 +64,7 @@ class RoomParticipant:
         elif args:
             raise TypeError(f"RoomParticipant.__init__() takes 2 positional arguments but {len(args) + 1} were given.")
         else:
-            identifier = kwargs['communication_identifier']
-            if isinstance(identifier, str):
-                self.communication_identifier = identifier_from_raw_id(identifier)
-            else:
-                self.communication_identifier = identifier
+            self.communication_identifier = kwargs['communication_identifier']
             self.role = kwargs.get('role', ParticipantRole.ATTENDEE)
         self.role=self.role or ParticipantRole.ATTENDEE
 
