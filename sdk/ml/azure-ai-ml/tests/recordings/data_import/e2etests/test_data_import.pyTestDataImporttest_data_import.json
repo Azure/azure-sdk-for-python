@@ -36,8 +36,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/${{name}}",
                   "job_output_type": "mltable",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/${{name}}",
                   "name": "my_azuresqldb_asset"
                 }
               },
@@ -129,8 +129,8 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/${{name}}",
                   "job_output_type": "mltable",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/${{name}}",
                   "name": "my_azuresqldb_asset"
                 }
               },
