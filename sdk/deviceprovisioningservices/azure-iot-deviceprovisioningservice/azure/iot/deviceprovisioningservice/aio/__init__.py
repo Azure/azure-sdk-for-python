@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from .client_async import ProvisioningServiceClient
 from .._generated import VERSION
+from ._client_async import ProvisioningServiceClient
 
 __all__ = ["ProvisioningServiceClient"]
 

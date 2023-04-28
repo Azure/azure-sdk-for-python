@@ -4,34 +4,38 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+
 from typing import TYPE_CHECKING, Any, Union
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
+    AsyncRetryPolicy,
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HeadersPolicy,
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
-    RetryPolicy,
     UserAgentPolicy,
 )
-from azure.core.pipeline.transport import (
-    RequestsTransport,
-)  # pylint: disable=no-name-in-module
-from azure.iot.deviceprovisioningservice._generated import (
+
+from .._api_version import DEFAULT_VERSION, ApiVersion
+from .._auth import SasCredentialPolicy, SharedKeyCredentialPolicy
+from .._generated._version import VERSION
+from .._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
-from azure.iot.deviceprovisioningservice._generated._version import VERSION
-
-from ._auth import SasCredentialPolicy, SharedKeyCredentialPolicy
-from ._util import parse_connection_string
+from .._generated.aio.operations import (
+    DeviceRegistrationStateOperations,
+    EnrollmentGroupOperations,
+    IndividualEnrollmentOperations,
+)
+from .._util import parse_connection_string
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ProvisioningServiceClient(
@@ -45,16 +49,24 @@ class ProvisioningServiceClient(
     :type credential:
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
-        ~azure.core.credentials.TokenCredential
+        ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: The Device Provisioning Service API version to use for requests. Default value is the most
+        recent service version that is compatible with the current SDK. Setting to an older version may result
+        in reduced feature compatibility.
+    :paramtype api_version: str or ApiVersion
     """
 
     def __init__(
         self,
         endpoint: str,
         credential: Union[
-            "TokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "AsyncTokenCredential",
         ],
-        **kwargs,
+        *,
+        api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
+        **kwargs: Any,
     ) -> None:
         self._pipeline = self._create_pipeline(
             credential=credential, base_url=endpoint, **kwargs
@@ -68,33 +80,54 @@ class ProvisioningServiceClient(
             raise ValueError("Endpoint URL must be a string.")
         endpoint = endpoint.rstrip("/")
 
-        # Generate base client
+        # Validate api-version
+        try:
+            api_version = ApiVersion(api_version).value
+        except ValueError:
+            raise ValueError(f"Invalid api-version {api_version} specified")
+
+        # Generate protocol client
         self._runtime_client = GeneratedProvisioningServiceClient(
             credential=credential,  # type: ignore
             endpoint=endpoint,
             pipeline=self._pipeline,
+            api_version=api_version,
             **kwargs,
         )
 
-        self.individual_enrollment = self._runtime_client.individual_enrollment
-        self.enrollment_group = self._runtime_client.enrollment_group
-        self.device_registration_state = self._runtime_client.device_registration_state
+        self.individual_enrollment: IndividualEnrollmentOperations = (
+            self._runtime_client.individual_enrollment
+        )
+        self.enrollment_group: EnrollmentGroupOperations = (
+            self._runtime_client.enrollment_group
+        )
+        self.device_registration_state: DeviceRegistrationStateOperations = (
+            self._runtime_client.device_registration_state
+        )
 
     @classmethod
     def from_connection_string(
-        cls, connection_string: str, **kwargs: Any
+        cls,
+        connection_string: str,
+        *,
+        api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
+        **kwargs: Any,
     ) -> "ProvisioningServiceClient":
         """
         Create a Provisioning Service Client from a connection string
 
-        :param str connection_string: The connection string for the Device Provisioning Service
+        :param str connection_string: The connection string for the Device Provisioning Service instance
+        :keyword api_version: The Device Provisioning Service API version to use for requests. Default value is the most
+            recent service version that is compatible with the current SDK. Setting to an older version may result
+            in reduced feature compatibility.
+        :paramtype api_version: str or ApiVersion
         :return: A new instance of :class:`ProvisioningServiceClient
-         <azure.iot.deviceprovisioningservice.ProvisioningServiceClient>`
+            <azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient>`
         :rtype: :class:`ProvisioningServiceClient
-         <azure.iot.deviceprovisioningservice.ProvisioningServiceClient>`
+            <azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient>`
         :raises: ValueError if connection string is invalid
         """
-        cs_args = parse_connection_string(connection_string)
+        cs_args = parse_connection_string(connection_string=connection_string)
         host_name, shared_access_key_name, shared_access_key = (
             cs_args["HostName"],
             cs_args["SharedAccessKeyName"],
@@ -105,17 +138,19 @@ class ProvisioningServiceClient(
             name=shared_access_key_name, key=shared_access_key
         )
 
-        return cls(endpoint=host_name, credential=credential, **kwargs)  # type: ignore
+        return cls(endpoint=host_name, credential=credential, api_version=api_version, **kwargs)  # type: ignore
 
     def _create_pipeline(
         self,
         credential: Union[
-            "TokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "AsyncTokenCredential",
         ],
         base_url: str,
-        **kwargs,
-    ) -> Pipeline:
-        transport = kwargs.get("transport") or RequestsTransport(**kwargs)
+        **kwargs: Any,
+    ) -> AsyncPipeline:
+        transport = kwargs.get("transport")
         user_agent_policy = kwargs.get("user_agent_policy") or UserAgentPolicy(
             sdk_moniker=f"az-iot-dps-python/{VERSION}", **kwargs
         )
@@ -123,7 +158,7 @@ class ProvisioningServiceClient(
         # Choose appropriate credential policy
         self._credential_policy = None  # type: ignore
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(  # type: ignore
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(  # type: ignore
                 credential, "https://azure-devices-provisioning.net/.default"  # type: ignore
             )
         elif isinstance(credential, AzureSasCredential):
@@ -137,13 +172,23 @@ class ProvisioningServiceClient(
         elif credential is not None:
             raise TypeError(f"Unsupported credential: {credential}")
 
+        transport = kwargs.get("transport", None)
+        if not transport:
+            try:
+                from azure.core.pipeline.transport import AioHttpTransport
+            except ImportError:
+                raise ImportError(
+                    "Unable to create async transport. Please check aiohttp is installed."
+                )
+            transport = AioHttpTransport(**kwargs)
+
         policies = [
             user_agent_policy,
             self._credential_policy,  # type: ignore
             HeadersPolicy(**kwargs),
             UserAgentPolicy(**kwargs),
             ContentDecodePolicy(**kwargs),
-            RetryPolicy(**kwargs),
+            AsyncRetryPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
@@ -152,4 +197,4 @@ class ProvisioningServiceClient(
         if kwargs.get("_additional_pipeline_policies"):
             policies.extend([kwargs.get("_additional_pipeline_policies")])
 
-        return Pipeline(transport, policies=policies)  # type: ignore
+        return AsyncPipeline(transport, policies=policies)  # type: ignore

@@ -6,11 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from .client import ProvisioningServiceClient
+from ._api_version import ApiVersion
 from ._auth import generate_sas_token
-from ._util import parse_connection_string
+from ._client import ProvisioningServiceClient
 from ._generated import VERSION
+from ._util import parse_connection_string
 
-__all__ = ["ProvisioningServiceClient", "generate_sas_token", "parse_connection_string"]
+__all__ = [
+    "ProvisioningServiceClient",
+    "generate_sas_token",
+    "parse_connection_string",
+    "ApiVersion",
+]
 
 __version__ = VERSION
