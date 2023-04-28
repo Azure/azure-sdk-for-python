@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import os
 import json
+import random
 from datetime import datetime, timedelta
 from typing import (
     Any,
@@ -190,10 +191,7 @@ def _buildprovider(
     return provider
 
 
-def _resolve_keyvault_reference(
-    config,
-    provider: "AzureAppConfigurationProvider",
-) -> str:
+def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
     if provider._key_vault_options is None:
         raise ValueError(
             "Key Vault options must be set to resolve Key Vault references."
@@ -281,6 +279,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
+        self._attempts = 1
+        self._min_backoff: Optional[int] = kwargs.pop("min_backoff", 30)
+        self._max_backoff: Optional[int] = kwargs.pop("min_backoff", 600)
 
     def refresh(self) -> None:
         if (
@@ -314,22 +315,32 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
         # Only update individual keys if the refresh_all didn't trigger
         updated_dict = self._dict.copy()
-        for registration in self._refresh_options.get_refresh_registrations():
-            if registration.refresh_all == False:
-                updated_sentinel = self._client.get_configuration_setting(
-                    key=registration.key_filter, label=registration.label_filter
-                )
-                if registration.etag == updated_sentinel.etag:
-                    continue
-                else:
-                    registration.etag = updated_sentinel.etag
-                    updated_dict[
-                        self._proccess_key_name(updated_sentinel)
-                    ] = self._proccess_key_value(updated_sentinel)
-        self._dict = updated_dict
-        self._next_refresh_time = datetime.now() + timedelta(
-            seconds=self._refresh_options._refresh_interval
-        )
+        updated_registrations = self._refresh_options.get_refresh_registrations().copy()
+        
+        try:
+            for registration in updated_registrations:
+                if registration.refresh_all == False:
+                    updated_sentinel = self._client.get_configuration_setting(
+                        key=registration.key_filter, label=registration.label_filter
+                    )
+                    if registration.etag == updated_sentinel.etag:
+                        continue
+                    else:
+                        registration.etag = updated_sentinel.etag
+                        updated_dict[
+                            self._proccess_key_name(updated_sentinel)
+                        ] = self._proccess_key_value(updated_sentinel)
+            
+            self._dict = updated_dict
+            self._refresh_options.set_refresh_registrations(updated_registrations)
+            self._next_refresh_time = datetime.now() + timedelta(
+                seconds=self._refresh_options._refresh_interval
+            )
+            self._attempts = 1
+        except:
+            # Refresh All or None, any failure will trigger a backoff
+            self._next_refresh_time = datetime.now() + timedelta(microseconds=self._calculate_backoff())
+            self._attempts += 1
 
     def _load_all(self):
         dict = {}
@@ -357,7 +368,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             if config.key.startswith(trim):
                 trimmed_key = config.key[len(trim) :]
                 break
-
         if isinstance(config, FeatureFlagConfigurationSetting):
             if trimmed_key.startswith(FEATURE_FLAG_PREFIX):
                 return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
@@ -366,13 +376,31 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def _proccess_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
-        elif _is_json_content_type(config.content_type):
+        elif (_is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting)):
+            # Feature flags are of type json, but don't treat them as such
             try:
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 # If the value is not a valid JSON, treat it like regular string value
                 return config.value
         return config.value
+
+    def _calculate_backoff(self):
+        max_attempts = 30
+        microsecond = 1000000 # 1 Second in microseconds
+
+        min_backoff_microseconds = self._min_backoff * microsecond
+        max_backoff_microseconds = self._max_backoff * microsecond
+
+        if (self._attempts <= 1 or self._max_backoff <= self._min_backoff):
+            return min_backoff_microseconds
+
+        calculated_microseconds = max(1, min_backoff_microseconds) * (1 << min(self._attempts, max_attempts))
+
+        if (calculated_microseconds > max_backoff_microseconds or calculated_microseconds <= 0):
+            calculated_microseconds = max_backoff_microseconds
+
+        return min_backoff_microseconds + (random.uniform(0.0, 1.0) * (calculated_microseconds - min_backoff_microseconds))
 
     def __getitem__(self, key: str) -> str:
         """
