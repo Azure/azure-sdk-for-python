@@ -18,7 +18,7 @@ def create_authorization_code_credential():
     # [END create_authorization_code_credential]
 
 
-def create_authorization_code_credential_async():
+async def create_authorization_code_credential_async():
     # [START create_authorization_code_credential_async]
     from azure.identity.aio import AuthorizationCodeCredential
 
@@ -39,7 +39,7 @@ def create_azure_cli_credential():
     # [END create_azure_cli_credential]
 
 
-def create_azure_cli_credential_async():
+async def create_azure_cli_credential_async():
     # [START create_azure_cli_credential_async]
     from azure.identity.aio import AzureCliCredential
 
@@ -55,7 +55,7 @@ def create_azure_developer_cli_credential():
     # [END azure_developer_cli_credential]
 
 
-def create_azure_developer_cli_credential_async():
+async def create_azure_developer_cli_credential_async():
     # [START azure_developer_cli_credential_async]
     from azure.identity.aio import AzureDeveloperCliCredential
 
@@ -71,7 +71,7 @@ def create_azure_power_shell_credential():
     # [END create_azure_power_shell_credential]
 
 
-def create_azure_power_shell_credential_async():
+async def create_azure_power_shell_credential_async():
     # [START create_azure_power_shell_credential_async]
     from azure.identity.aio import AzurePowerShellCredential
 
@@ -99,7 +99,7 @@ def create_certificate_credential():
     # [END create_certificate_credential]
 
 
-def create_certificate_credential_async():
+async def create_certificate_credential_async():
     # [START create_certificate_credential_async]
     from azure.identity.aio import CertificateCredential
 
@@ -123,26 +123,26 @@ def create_chained_token_credential():
     # [START create_chained_token_credential]
     from azure.identity import ChainedTokenCredential, EnvironmentCredential, AzureCliCredential
 
-    credential_chain = [
+    credential_chain = (
         # Try EnvironmentCredential first
         EnvironmentCredential(),
         # Fallback to Azure CLI if EnvironmentCredential fails
         AzureCliCredential(),
-    ]
-    credential = ChainedTokenCredential(*credential_chain)
+    )
+    credential = ChainedTokenCredential(credential_chain)
     # [END create_chained_token_credential]
 
 
-def create_chained_token_credential_async():
+async def create_chained_token_credential_async():
     # [START create_chained_token_credential_async]
     from azure.identity.aio import ChainedTokenCredential, EnvironmentCredential, AzureCliCredential
 
-    credential_chain = [
+    credential_chain = (
         # Try EnvironmentCredential first
         EnvironmentCredential(),
         # Fallback to Azure CLI if EnvironmentCredential fails
         AzureCliCredential(),
-    ]
+    )
     credential = ChainedTokenCredential(*credential_chain)
     # [END create_chained_token_credential_async]
 
@@ -162,7 +162,7 @@ def create_client_assertion_credential():
     # [END create_client_assertion_credential]
 
 
-def create_client_assertion_credential_async():
+async def create_client_assertion_credential_async():
     # [START create_client_assertion_credential_async]
     from azure.identity.aio import ClientAssertionCredential
 
@@ -189,7 +189,7 @@ def create_client_secret_credential():
     # [END create_client_secret_credential]
 
 
-def create_client_secret_credential_async():
+async def create_client_secret_credential_async():
     # [START create_client_secret_credential_async]
     from azure.identity.aio import ClientSecretCredential
 
@@ -209,7 +209,7 @@ def create_default_credential():
     # [END create_default_credential]
 
 
-def create_default_credential_async():
+async def create_default_credential_async():
     # [START create_default_credential_async]
     from azure.identity.aio import DefaultAzureCredential
 
@@ -233,7 +233,7 @@ def create_environment_credential():
     # [END create_environment_credential]
 
 
-def create_environment_credential_async():
+async def create_environment_credential_async():
     # [START create_environment_credential_async]
     from azure.identity.aio import EnvironmentCredential
 
@@ -264,7 +264,7 @@ def create_managed_identity_credential():
     # [END create_managed_identity_credential]
 
 
-def create_managed_identity_credential_async():
+async def create_managed_identity_credential_async():
     # [START create_managed_identity_credential_async]
     from azure.identity.aio import ManagedIdentityCredential
 
@@ -290,20 +290,7 @@ def create_on_behalf_of_credential():
     # [END create_on_behalf_of_credential]
 
 
-def create_on_behalf_of_credential_async():
-    # [START create_on_behalf_of_credential_async]
-    from azure.identity.aio import OnBehalfOfCredential
-
-    credential = OnBehalfOfCredential(
-        tenant_id="<tenant_id>",
-        client_id="<client_id>",
-        client_secret="<client_secret>",
-        user_assertion="<access_token>",
-    )
-    # [END create_on_behalf_of_credential_async]
-
-
-def create_on_behalf_of_credential_async():
+async def create_on_behalf_of_credential_async():
     # [START create_on_behalf_of_credential_async]
     from azure.identity.aio import OnBehalfOfCredential
 
@@ -346,7 +333,7 @@ def create_workload_identity_credential():
     # [END workload_identity_credential]
 
 
-def create_workload_identity_credential_async():
+async def create_workload_identity_credential_async():
     # [START workload_identity_credential_async]
     from azure.identity.aio import WorkloadIdentityCredential
 
