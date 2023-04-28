@@ -6,7 +6,7 @@
 import re
 from typing import Any, Dict, List
 
-from marshmallow import INCLUDE, Schema, ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validate, validates
+from marshmallow import ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validate, validates
 
 from azure.ai.ml._schema.core.fields import CodeField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -102,7 +102,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     jars = fields.List(fields.Str(required=True))
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
-    conf = fields.Dict(keys=fields.Str(), values= fields.Raw())
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
@@ -156,7 +156,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
                     conf[dict_name] = val
             data["conf"] = conf
         return data
-    
+
     @post_load
     def demote_conf_fields(self, data, **kwargs):
         conf = data["conf"] if "conf" in data else None
