@@ -200,7 +200,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
-        name: str
+        name: str,
         **kwargs,
     ) -> LROPoller[Schedule]:
         """Enable a schedule.
