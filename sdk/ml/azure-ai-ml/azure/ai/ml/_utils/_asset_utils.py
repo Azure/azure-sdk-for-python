@@ -12,6 +12,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import suppress
 from multiprocessing import cpu_count
+from os import PathLike
 from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
@@ -32,6 +33,10 @@ from azure.ai.ml._artifacts._constants import (
     MAX_CONCURRENCY,
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
+    WORKSPACE_MANAGED_DATASTORE,
+    WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
+    AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+    INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataVersionBaseData,
@@ -49,10 +54,11 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelVersionsOperations,
 )
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
-from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
+from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
+    AssetPathException,
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
@@ -939,6 +945,48 @@ def _resolve_label_to_asset(
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return resolver(name)
+
+
+def _check_or_modify_auto_delete_setting(
+    autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],
+):
+    if autoDeleteSetting is not None:
+        if hasattr(autoDeleteSetting, "condition"):
+            condition = getattr(autoDeleteSetting, "condition")
+            condition = snake_to_camel(condition)
+            setattr(autoDeleteSetting, "condition", condition)
+        elif "condition" in autoDeleteSetting:
+            autoDeleteSetting["condition"] = snake_to_camel(autoDeleteSetting["condition"])
+
+
+def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
+    # block cumtomer specified path on managed datastore
+    if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
+        path = path.rstrip("/")
+
+        if path != WORKSPACE_MANAGED_DATASTORE:
+            raise AssetPathException(
+                message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                tartget=ErrorTarget.DATA,
+                no_personal_data_message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+        return path + "/paths"
+    return path
+
+
+def _validate_auto_delete_setting_in_data_output(
+    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]
+) -> None:
+    # avoid specifying auto_delete_setting in job output now
+    if auto_delete_setting:
+        raise ValidationException(
+            message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+            tartget=ErrorTarget.DATA,
+            no_personal_data_message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+            error_category=ErrorCategory.USER_ERROR,
+        )
 
 
 class FileUploadProgressBar(tqdm):
