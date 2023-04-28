@@ -84,6 +84,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_default_credential]
+            :end-before: [END create_default_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a DefaultAzureCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements

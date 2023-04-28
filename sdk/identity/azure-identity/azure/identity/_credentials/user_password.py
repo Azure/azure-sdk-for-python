@@ -40,6 +40,15 @@ class UsernamePasswordCredential(InteractiveCredential):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_username_password_credential]
+            :end-before: [END create_username_password_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a UsernamePasswordCredential.
     """
 
     def __init__(
