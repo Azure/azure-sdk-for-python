@@ -17,7 +17,6 @@ from azure.ai.ml.entities._assets.intellectual_property import IntellectualPrope
 class BaseIntellectualPropertySchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs) -> "IntellectualProperty":
-
         return IntellectualProperty(**data)
 
 

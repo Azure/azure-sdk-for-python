@@ -42,38 +42,46 @@ client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
 
 - `valid_from`: A datetime object from which room will start existing
 - `valid_until`: A datetime object after which room meeting would end
-- `room_join_policy`: The join policy of the room. Allows only participants or any communication
-        service users to join
-- `participants`: A list of RoomParticipant containing MRI's of invitees to the room
+- `participants`: A list of `RoomParticipant`s containing MRI's of invitees to the room as well as optional `ParticipantRole`. If `ParticipantRole` is not specified, then it will be `Attendee` by default.
 All the above attributes are optional. The service provides default values of valid_until and
-valid_from if they are missing.
+valid_from if they are missing. The default for`valid_from` is current date time and the default for `valid_until` is `valid_from + 180 days`.
 
-### Create Room
+### Create a room
+To create a room, call the `create_room` function from `RoomsClient`. The `valid_from`, `valid_until`, and `participants` arguments are all optional.
+
 ```python
-from azure.communication.rooms import RoomsClient
 from azure.core.exceptions import HttpResponseError
 from datetime import datetime, timedelta
+from azure.communication.rooms import (
+    RoomsClient,
+    RoomParticipant,
+    ParticipantRole
+)
+from azure.communication.identity import CommunicationUserIdentifier
 
 client = RoomsClient.from_connection_string(conn_str='<connection_str>')
+valid_from = datetime.now()
+valid_until = valid_from + relativedelta(months=+1)
+participants = []
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.CONSUMER))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.PRESENTER))
+
 try:
-    response = client.create_room(
-        valid_from=datetime.now(),
-        valid_until=valid_from + timedelta(weeks=4)
-        participants=["first-participant", "second-participant"]
+    create_room_response = client.create_room(
+        valid_from=valid_from,
+        valid_until=valid_until,
+        participants=participants
     )
-except HttpResponseError as e:
-    print('service responds error: {}'.format(e))
-
+except HttpResponseError as ex:
+    print(ex)
 ```
-### Update Room
-```python
-from azure.communication.rooms import RoomsClient
-from azure.core.exceptions import HttpResponseError
-from datetime import datetime, timedelta
+### Update a room
+The `valid_from` and `valid_until` properties of a created room can be updated by calling the `update_room` function from `RoomsClient`.
 
-client = RoomsClient.from_connection_string(conn_str='<connection_str>')
+```python
 try:
-    response = client.update_room(
+    update_room_response = client.update_room(
         room_id="id of the room to be updated",
         valid_from=datetime.now(),
         valid_until=valid_from + timedelta(weeks=4)
@@ -83,12 +91,30 @@ except HttpResponseError as e:
 
 ```
 
-### Delete a Room
-```python
-from azure.communication.rooms import RoomsClient
-from azure.core.exceptions import HttpResponseError
+### Get a room
+A created room can be retrieved by calling the `get_room` function from `RoomsClient` and passing in the associated `room_id`.
 
-client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+```python
+try:
+    get_room_response = client.get_room(room_id="id of the room to get")
+except HttpResponseError as ex:
+    print(ex)
+```
+
+### List rooms
+Retrieve all created rooms by calling the `list_rooms` function from `RoomsClient`.
+
+```python
+try:
+    list_room_response = client.list_rooms()
+except HttpResponseError as ex:
+    print(ex)
+```
+
+### Delete a room
+To delete a room, call the `delete_room` function from RoomsClient.
+
+```python
 try:
     client.delete_room(
         room_id="id of the room to be deleted")
@@ -97,33 +123,53 @@ except HttpResponseError as e:
 
 ```
 
-### Add participants to Room
-```python
-from azure.communication.rooms import RoomsClient
-from azure.core.exceptions import HttpResponseError
+### Add or update participants in a room
+In order to insert new participants or update existing participants, call the `add_or_update_participants` function from RoomsClient.
 
-client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+```python
+participants = []
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.ATTENDEE))
+participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.CONSUMER))
 try:
-    response = client.add_participants(
+    response = client.add_or_update_participants(
         room_id="id of the room to be updated",
-        participants=["new-participant-one", "new-participant-two"]
+        participants=participants
     )
 except HttpResponseError as e:
     print('service responds error: {}'.format(e))
-
 ```
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms/samples) directory for detailed examples of how to use this library to create and manage rooms.
+### Remove participants
+Remove participants from a room by calling the `remove_participants` function from RoomsClient.
 
+```python
+communication_identifiers = [CommunicationUserIdentifier("<ACS User MRI identity 2>")]
+
+try:
+    remove_participants_response = client.remove_participants(
+        room_id=room_id,
+        participants=communication_identifiers
+    )
+except HttpResponseError as ex:
+    print(ex)
+```
+### List participants
+Retrieve the list of participants for an existing room by referencing the `room_id`:
+
+```python
+try:
+    participants = self.rooms_client.list_participants(room_id)
+except HttpResponseError as ex:
+    print(ex)
+```
 ## Troubleshooting
 
 Rooms operations will throw an exception if the request to the server fails. The Rooms client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
-
 ## Next steps
 ### More sample code
-
-More examples are coming soon...
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms/samples) directory for detailed examples of how to use this library to create and manage rooms.
 
 ## Provide Feedback
 

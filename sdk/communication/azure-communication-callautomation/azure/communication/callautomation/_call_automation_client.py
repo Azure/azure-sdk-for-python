@@ -188,6 +188,7 @@ class CallAutomationClient(object):
         :type azure_cognitive_services_endpoint_url: str
         :return: Instance of CreateCallResult.
         :rtype: CreateCallResult
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not target:
@@ -264,6 +265,7 @@ class CallAutomationClient(object):
         :type voip_headers: Dict[str, str]
         :return: Instance of CreateCallResult.
         :rtype: CreateCallResult
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not targets:
@@ -345,6 +347,7 @@ class CallAutomationClient(object):
         :type repeatability_first_sent: str
         :return: Instance of AnswerCallResult.
         :rtype: AnswerCallResult
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not incoming_call_context:
@@ -396,6 +399,7 @@ class CallAutomationClient(object):
         :type target: CallInvite
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not incoming_call_context:
@@ -437,6 +441,7 @@ class CallAutomationClient(object):
         :type call_reject_reason: str or CallRejectReason
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError
         """
 
         if not incoming_call_context:

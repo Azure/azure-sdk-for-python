@@ -379,7 +379,7 @@ to the process of updating recordings.
 ##### Environment prerequisites
 
 - The targeted library is already migrated to use the test proxy.
-- Git version > 2.25.0 is to on the machine and in the path. Git is used by the script and test proxy.
+- Git version > 2.30.0 is to on the machine and in the path. Git is used by the script and test proxy.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
   - These settings are also set with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively (in your environment or your local `.env` file).
 - Membership in the `azure-sdk-write` GitHub group.

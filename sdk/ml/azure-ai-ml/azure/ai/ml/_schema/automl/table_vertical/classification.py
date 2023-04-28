@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ClassificationPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationPrimaryMetrics, TaskType
 from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTableVerticalSchema
 from azure.ai.ml._schema.automl.training_settings import ClassificationTrainingSettingsSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
@@ -33,6 +33,5 @@ class AutoMLClassificationSchema(AutoMLTableVerticalSchema):
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:
-
         data.pop("task_type")
         return data

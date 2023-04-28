@@ -10,18 +10,18 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
 
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml.entities._workspace.feature_store_settings import _FeatureStoreSettings
-from azure.ai.ml.entities._workspace.compute_runtime import _ComputeRuntime
+from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
-from .materialization_store import _MaterializationStore
+from .materialization_store import MaterializationStore
 from ._constants import (
     OFFLINE_STORE_CONNECTION_NAME,
     ONLINE_STORE_CONNECTION_NAME,
@@ -31,14 +31,14 @@ from ._constants import (
 
 
 @experimental
-class _FeatureStore(Workspace):
+class FeatureStore(Workspace):
     def __init__(
         self,
         *,
         name: str,
-        compute_runtime: Optional[_ComputeRuntime] = None,
-        offline_store: Optional[_MaterializationStore] = None,
-        online_store: Optional[_MaterializationStore] = None,
+        compute_runtime: Optional[ComputeRuntime] = None,
+        offline_store: Optional[MaterializationStore] = None,
+        online_store: Optional[MaterializationStore] = None,
         materialization_identity: Optional[ManagedIdentityConfiguration] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -57,19 +57,18 @@ class _FeatureStore(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
-
         """FeatureStore.
 
         :param name: Name of the feature store.
         :type name: str
         :param compute_runtime: Compute runtime of the feature store.
-        :type compute_runtime: ~azure.ai.ml.entities._ComputeRuntime
+        :type compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
         :param offline_store: Offline store for feature store.
         materialization_identity is required when offline_store is passed.
-        :type offline_store: ~azure.ai.ml.entities._MaterializationStore
+        :type offline_store: ~azure.ai.ml.entities.MaterializationStore
         :param online_store: Online store for feature store.
         materialization_identity is required when online_store is passed.
-        :type online_store: ~azure.ai.ml.entities._MaterializationStore
+        :type online_store: ~azure.ai.ml.entities.MaterializationStore
         :param materialization_identity: Identity used for materialization.
         :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
         :param description: Description of the feature store.
@@ -121,10 +120,10 @@ class _FeatureStore(Workspace):
         if online_store and not materialization_identity:
             raise ValidationError("materialization_identity is required to setup online store")
 
-        feature_store_settings = _FeatureStoreSettings(
+        feature_store_settings = FeatureStoreSettings(
             compute_runtime=compute_runtime
             if compute_runtime
-            else _ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             offline_store_connection_name=(
                 OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
             ),
@@ -160,17 +159,17 @@ class _FeatureStore(Workspace):
         self.identity = identity
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "_FeatureStore":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":
         if not rest_obj:
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
-        return _FeatureStore(
+        return FeatureStore(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
-            compute_runtime=_ComputeRuntime._from_rest_object(
+            compute_runtime=ComputeRuntime._from_rest_object(
                 workspace_object._feature_store_settings.compute_runtime
                 if workspace_object._feature_store_settings
                 else None
@@ -198,7 +197,7 @@ class _FeatureStore(Workspace):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "_FeatureStore":
+    ) -> "FeatureStore":
         data = data or {}
         params_override = params_override or []
         context = {
@@ -206,7 +205,7 @@ class _FeatureStore(Workspace):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(FeatureStoreSchema, data, context, **kwargs)
-        return _FeatureStore(**loaded_schema)
+        return FeatureStore(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
