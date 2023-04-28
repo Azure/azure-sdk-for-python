@@ -30,18 +30,6 @@ class AutoDeleteSetting(DictMixin):
     def _from_rest_object(cls, obj: RestAutoDeleteSetting) -> "AutoDeleteSetting":
         return cls(condition=obj.condition, value=obj.value)
 
-    def _to_dict(self) -> Dict:
-        from azure.ai.ml._schema.core.auto_delete_setting import AutoDeleteSettingSchema
-
-        return AutoDeleteSettingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-
-    @classmethod
-    def _load_from_dict(cls, auto_delete_setting_dict: dict) -> "AutoDeleteSetting":
-        return AutoDeleteSetting(
-            condition=auto_delete_setting_dict.get("condition", AutoDeleteCondition.CREATED_GREATER_THAN),
-            value=auto_delete_setting_dict.get("value", None),
-        )
-
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AutoDeleteSetting):
             return NotImplemented
