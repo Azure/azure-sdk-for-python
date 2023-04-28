@@ -26,8 +26,6 @@ class Asset(Resource):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
