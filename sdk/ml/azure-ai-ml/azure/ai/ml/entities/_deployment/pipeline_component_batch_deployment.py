@@ -49,7 +49,7 @@ class PipelineComponentBatchDeployment(Deployment):
         component: Optional[Union[Component, str]] = None,
         settings: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ):  
+    ):
         self.job_definition = kwargs.pop("job_definition", None)
         super().__init__(endpoint_name=endpoint_name, name=name, **kwargs)
         self.component = component
