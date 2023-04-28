@@ -7,8 +7,10 @@ import os
 
 from azure.core.pipeline.transport import HttpRequest
 
+from ._AzureMLSparkOnBehalfOfCredential import _AzureMLSparkOnBehalfOfCredential
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
+
 
 
 class AzureMLOnBehalfOfCredential(object):
@@ -22,7 +24,11 @@ class AzureMLOnBehalfOfCredential(object):
     # pylint: enable=line-too-long
 
     def __init__(self, **kwargs):
-        self._credential = _AzureMLOnBehalfOfCredential(**kwargs)
+        provider_type = os.environ.get("AZUREML_DATAPREP_TOKEN_PROVIDER")
+        if provider_type == "sparkobo":  # cspell:disable-line
+            self._credential = _AzureMLSparkOnBehalfOfCredential(**kwargs)
+        else:
+            self._credential = _AzureMLOnBehalfOfCredential(**kwargs)
 
     def get_token(self, *scopes, **kwargs):
         """Request an access token for `scopes`.
