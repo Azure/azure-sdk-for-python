@@ -28,7 +28,6 @@ title: Azure Communication Rooms Service
 require:
     - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/49ef4666b13e2e5675dfb92dab3b3d13aa8b3596/specification/communication/data-plane/Rooms/readme.md
 output-folder: ../azure/communication/rooms/_generated
-models-mode: msrest
 namespace: azure.communication.rooms
 package-name: azure-communication-rooms
 no-namespace-folders: true
