@@ -94,7 +94,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         super(QueueClient, self).__init__(
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
-        self._client_async = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
+        self._client_async = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client_async._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
