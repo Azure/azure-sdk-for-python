@@ -39,6 +39,15 @@ class EnvironmentCredential(AsyncContextManager):
       - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_environment_credential_async]
+            :end-before: [END create_environment_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create an EnvironmentCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
