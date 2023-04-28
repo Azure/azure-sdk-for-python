@@ -466,7 +466,7 @@ class Handle(DictMixin):
      the handle has last been reconnected. (UTC)
     :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to (UTC)
     :keyword access_rights: Access rights of the handle.
-    :paramtype access_rights: List[Literal['Read', 'Write', 'Delete']]
+    :paramtype access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]]
     """
 
     def __init__(self, **kwargs):
