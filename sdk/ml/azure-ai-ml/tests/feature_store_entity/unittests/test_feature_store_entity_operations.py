@@ -51,7 +51,7 @@ class TestFeatureStoreEntityOperations:
         name_only = "some_name"
         version = "1"
         featurestoreEntity = FeatureStoreEntity(
-            name=name_only, version=version, index_columns=[DataColumn(name="test", type=DataColumnType.string)]
+            name=name_only, version=version, index_columns=[DataColumn(name="test", type=DataColumnType.STRING)]
         )
         with patch.object(ItemPaged, "next"), patch.object(
             FeatureStoreEntity, "_from_rest_object", return_value=featurestoreEntity
