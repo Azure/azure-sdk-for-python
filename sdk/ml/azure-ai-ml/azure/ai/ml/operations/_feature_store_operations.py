@@ -8,7 +8,7 @@ from typing import Dict, Iterable, Optional
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -37,14 +37,12 @@ from azure.ai.ml.entities._feature_store._constants import (
 )
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._utils._experimental import experimental
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class FeatureStoreOperations(WorkspaceOperationsBase):
     """FeatureStoreOperations.
 
@@ -56,7 +54,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,

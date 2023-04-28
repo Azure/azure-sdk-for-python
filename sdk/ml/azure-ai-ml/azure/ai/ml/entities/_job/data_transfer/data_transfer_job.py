@@ -8,20 +8,21 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferCopyJobSchema,
-    DataTransferImportJobSchema,
     DataTransferExportJobSchema,
+    DataTransferImportJobSchema,
 )
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._component import (
-    ExternalDataType,
     DataTransferBuiltinComponentUri,
     DataTransferTaskType,
+    ExternalDataType,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import (
     ErrorCategory,
@@ -29,7 +30,6 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 
 from ..job import Job
 from ..job_io_mixin import JobIOMixin

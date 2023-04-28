@@ -99,7 +99,7 @@ class EnvironmentCredential(AsyncContextManager):
         if not self._credential:
             message = (
                 "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
-                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot."
+                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot "
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)

@@ -114,7 +114,7 @@ async def test_cannot_execute_shell():
 async def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    stderr = "ERROR: not logged in, run `azd login` to login"
+    stderr = "ERROR: not logged in, run `azd auth login` to login"
     with mock.patch("shutil.which", return_value="azd"):
         with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
             with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):

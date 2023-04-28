@@ -33,7 +33,6 @@ from azure.ai.ml._utils._feature_store_utils import (
     read_remote_feature_set_spec_metadata_contents,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
@@ -47,7 +46,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class FeatureSetOperations(_ScopeDependentOperations):
     """FeatureSetOperations.
 

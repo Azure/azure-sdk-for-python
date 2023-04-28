@@ -96,6 +96,7 @@ class InternalComponentSchema(ComponentSchema):
 
     environment = UnionField(
         [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             NestedField(InternalEnvironmentSchema),
         ]
