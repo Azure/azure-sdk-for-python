@@ -346,6 +346,11 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
       continue
     }
 
+    if ($package.package_info.name.EndsWith("-nspkg")) {
+      Write-Host "Skipping $($package.package_info.name) because it's a namespace package."
+      continue
+    }
+
     # Do not filter by GA/Preview status because we want differentiate between
     # tracked and non-tracked packages
     $matchingPublishedPackageArray = $DocsMetadata.Where( { $_.Package -eq $packageName })
@@ -430,11 +435,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
   $remainingPackages = @()
   if ($Mode -eq 'preview') {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionPreview.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and !$_.Package.EndsWith("-nspkg")
     })
   } else {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionGA.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionGA.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and !$_.Package.EndsWith("-nspkg")
     })
   }
 

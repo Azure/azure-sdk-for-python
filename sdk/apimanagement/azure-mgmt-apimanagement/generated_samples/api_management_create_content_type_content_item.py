@@ -34,10 +34,21 @@ def main():
         service_name="apimService1",
         content_type_id="page",
         content_item_id="4e3cf6a5-574a-ba08-1f23-2e7a38faa6d8",
+        parameters={
+            "properties": {
+                "en_us": {
+                    "description": "Short story about the company.",
+                    "documentId": "contentTypes/document/contentItems/4e3cf6a5-574a-ba08-1f23-2e7a38faa6d8",
+                    "keywords": "company, about",
+                    "permalink": "/about",
+                    "title": "About",
+                }
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2021-08-01/examples/ApiManagementCreateContentTypeContentItem.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateContentTypeContentItem.json
 if __name__ == "__main__":
     main()

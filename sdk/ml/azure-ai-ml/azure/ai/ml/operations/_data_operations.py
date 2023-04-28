@@ -7,8 +7,10 @@
 import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Iterable
+from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
+from azure.ai.ml._utils._registry_utils import get_registry_client
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
@@ -22,8 +24,8 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -36,6 +38,9 @@ from azure.ai.ml._utils._asset_utils import (
     _create_or_update_autoincrement,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
+    _check_or_modify_auto_delete_setting,
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
 )
 from azure.ai.ml._utils._data_utils import (
     download_mltable_metadata_schema,
@@ -80,11 +85,10 @@ class DataOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
@@ -279,11 +283,16 @@ class DataOperations(_ScopeDependentOperations):
                             target=ErrorTarget.DATA,
                             error_category=ErrorCategory.USER_ERROR,
                         )
-                    data = data._to_rest_object()
+                    data_res_obj = data._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
-                    )
-                    return result
+                        resource_group_name=self._resource_group_name,
+                        registry_name=self._registry_name,
+                        body=data_res_obj,
+                    ).result()
+
+                    if not result:
+                        data_res_obj = self._get(name=data.name, version=data.version)
+                        return Data._from_rest_object(data_res_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -305,6 +314,9 @@ class DataOperations(_ScopeDependentOperations):
                 artifact_type=ErrorTarget.DATA,
                 show_progress=self._show_progress,
             )
+
+            _check_or_modify_auto_delete_setting(data.auto_delete_setting)
+
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
 
@@ -368,6 +380,13 @@ class DataOperations(_ScopeDependentOperations):
 
         experiment_name = "data_import_" + data_import.name
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
+
+        # avoid specifying auto_delete_setting in job output now
+        _validate_auto_delete_setting_in_data_output(data_import.auto_delete_setting)
+
+        # block cumtomer specified path on managed datastore
+        data_import.path = _validate_workspace_managed_datastore(data_import.path)
+
         if "${{name}}" not in data_import.path:
             data_import.path = data_import.path.rstrip("/") + "/${{name}}"
         import_job = import_data_func(
@@ -545,20 +564,25 @@ class DataOperations(_ScopeDependentOperations):
         )
         return self.get(name, version=latest_version)
 
-    # pylint: disable=no-self-use
-    def _prepare_to_copy(
-        self, data: Data, name: Optional[str] = None, version: Optional[str] = None
-    ) -> WorkspaceAssetReference:
+    @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
+    @experimental
+    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Data:
+        """Share a data asset from workspace to registry.
 
-        """Returns WorkspaceAssetReference to copy a registered data to registry given the asset id.
-
-        :param data: Registered data
-        :type data: Data
-        :param name: Destination name
+        :param name: Name of data asset.
         :type name: str
-        :param version: Destination version
+        :param version: Version of data asset.
         :type version: str
+        :param share_with_name: Name of data asset to share with.
+        :type share_with_name: str
+        :param share_with_version: Version of data asset to share with.
+        :type share_with_version: str
+        :param registry_name: Name of the destination registry.
+        :type registry_name: str
+        :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
+
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
             resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
@@ -571,15 +595,46 @@ class DataOperations(_ScopeDependentOperations):
             workspace_location,
             workspace_guid,
             AzureMLResourceType.DATA,
-            data.name,
-            data.version,
+            name,
+            version,
         )
 
-        return WorkspaceAssetReference(
-            name=name if name else data.name,
-            version=version if version else data.version,
+        data_ref = WorkspaceAssetReference(
+            name=share_with_name if share_with_name else name,
+            version=share_with_version if share_with_version else version,
             asset_id=asset_id,
         )
+
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(data_ref)
+
+    @contextmanager
+    def _set_registry_client(self, registry_name: str) -> None:
+        """Sets the registry client for the data operations.
+
+        :param registry_name: Name of the registry.
+        :type registry_name: str
+        """
+        rg_ = self._operation_scope._resource_group_name
+        sub_ = self._operation_scope._subscription_id
+        registry_ = self._operation_scope.registry_name
+        client_ = self._service_client
+        data_versions_operation_ = self._operation
+
+        try:
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            self._operation_scope.registry_name = registry_name
+            self._operation_scope._resource_group_name = _rg
+            self._operation_scope._subscription_id = _sub
+            self._service_client = _client
+            self._operation = _client.data_versions
+            yield
+        finally:
+            self._operation_scope.registry_name = registry_
+            self._operation_scope._resource_group_name = rg_
+            self._operation_scope._subscription_id = sub_
+            self._service_client = client_
+            self._operation = data_versions_operation_
 
 
 def _assert_local_path_matches_asset_type(

@@ -22,7 +22,7 @@ jobs:
       - script: |
           python -m pip freeze
           python -m pip --version
-          python -m pip install setuptools==67.6.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
+          python -m pip install setuptools==58.3.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
           python -m pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
         displayName: Install Dependencies
 
@@ -67,7 +67,7 @@ jobs:
           sudo apt-get install build-essential -y
           python -m pip freeze
           python -m pip --version
-          python -m pip install setuptools==67.6.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
+          python -m pip install setuptools==58.3.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
           python -m pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
         displayName: Install Dependencies
 
@@ -131,7 +131,7 @@ jobs:
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
           python3 -m pip install setuptools==67.6.0 wheel
-          python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
+          python3 -m pip install tox tox-monorepo packaging twine beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
           python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl" --filter-type="None"

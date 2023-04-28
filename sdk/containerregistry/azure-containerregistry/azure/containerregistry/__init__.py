@@ -17,7 +17,7 @@ from ._models import (
     ArtifactManifestProperties,
     RepositoryProperties,
     ArtifactTagProperties,
-    DownloadManifestResult,
+    GetManifestResult,
 )
 from ._download_stream import DownloadBlobStream
 from ._version import VERSION
@@ -33,6 +33,6 @@ __all__ = [
     "RepositoryProperties",
     "ArtifactTagOrder",
     "ArtifactTagProperties",
-    "DownloadManifestResult",
+    "GetManifestResult",
     "DownloadBlobStream",
 ]

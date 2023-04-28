@@ -29,6 +29,7 @@ from .._generated.models import (
     WorkerStateSelector,
     JobStateSelector,
     AcceptJobOfferResult,
+    UnassignJobResult,
     JobPositionDetails,
     CancelJobRequest,
     CompleteJobRequest,
@@ -95,7 +96,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
+        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         self._client = AzureCommunicationJobRouterService(
             self._endpoint,
             api_version=self._api_version,
@@ -1050,6 +1051,43 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             id = job_id,
             # pylint:disable=protected-access
             cls = lambda http_response, deserialized_response, args: ReclassifyJobResult(deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace
+    async def unassign_job(
+            self,
+            job_id: str,
+            assignment_id: str,
+            **kwargs: Any
+    ) -> UnassignJobResult:
+        """Unassign a job.
+
+        :param str job_id: Id of the job.
+        :param str assignment_id: Id of the assignment.
+
+        :return: UnassignJobResult
+        :rtype: ~azure.communication.jobrouter.UnassignJobResult
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START unassign_job]
+                :end-before: [END unassign_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to unassign a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        if not assignment_id:
+            raise ValueError("assignment_id cannot be None.")
+
+        return await self._client.job_router.unassign_job_action(
+            id = job_id,
+            assignment_id = assignment_id,
             **kwargs
         )
 

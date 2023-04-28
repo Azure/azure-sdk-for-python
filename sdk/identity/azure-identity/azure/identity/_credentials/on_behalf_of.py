@@ -44,6 +44,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword bool disable_authority_validation_and_instance_discovery: Determines whether or not instance discovery
+        is performed when attempting to authenticate. Setting this to true will completely disable instance discovery
+        and authority validation.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.

@@ -4,8 +4,10 @@
 from enum import Enum
 
 # pylint: disable=unused-import
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TrainingMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    NlpLearningRateScheduler,
+    TrainingMode,
+)
 from azure.ai.ml._utils._experimental import experimental
 
 
