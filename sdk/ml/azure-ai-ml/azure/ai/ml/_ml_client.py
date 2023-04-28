@@ -61,6 +61,8 @@ from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
+    ModelBatchDeployment,
+    PipelineComponentBatchDeployment,
     BatchEndpoint,
     Component,
     Compute,
@@ -1026,6 +1028,18 @@ def _(entity: OnlineDeployment, operations, *args, **kwargs):
 
 @_begin_create_or_update.register(BatchDeployment)
 def _(entity: BatchDeployment, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating batch_deployments")
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(ModelBatchDeployment)
+def _(entity: ModelBatchDeployment, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating batch_deployments")
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(PipelineComponentBatchDeployment)
+def _(entity: PipelineComponentBatchDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating batch_deployments")
     return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 

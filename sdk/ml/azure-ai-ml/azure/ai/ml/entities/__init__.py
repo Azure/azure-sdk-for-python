@@ -66,7 +66,7 @@ from ._deployment.online_deployment import (
     OnlineDeployment,
 )
 from ._deployment.model_batch_deployment import ModelBatchDeployment
-from ._deployment.model_deployment_settings import ModelDeploymentSettings
+from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings, OnlineScaleSettings
@@ -231,7 +231,7 @@ __all__ = [
     "BuildContext",
     "Model",
     "ModelBatchDeployment",
-    "ModelDeploymentSettings",
+    "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",

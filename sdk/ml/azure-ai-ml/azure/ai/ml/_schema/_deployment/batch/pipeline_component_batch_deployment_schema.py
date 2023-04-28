@@ -11,17 +11,18 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema import (
     ArmVersionedStr,
-    PatchedSchemaMeta,
+    ArmStr,
     UnionField,
     RegistryStr,
 )
+from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineComponentBatchDeploymentSchema(metaclass=PatchedSchemaMeta):
+class PipelineComponentBatchDeploymentSchema(DeploymentSchema):
     name = fields.Str()
     endpoint_name = fields.Str()
     component = UnionField(
@@ -33,6 +34,13 @@ class PipelineComponentBatchDeploymentSchema(metaclass=PatchedSchemaMeta):
     )
     settings = fields.Dict()
     name = fields.Str()
+    type = fields.Str()
+    job_definition = UnionField(
+        [
+            ArmStr(azureml_type=AzureMLResourceType.JOB),
+            PipelineComponentFileRefField(),
+        ]
+    )
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

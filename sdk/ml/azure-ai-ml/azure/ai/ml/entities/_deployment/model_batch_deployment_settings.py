@@ -4,11 +4,13 @@
 
 from typing import Dict, Optional
 
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml._schema._deployment.batch.model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
 
 
-class ModelDeploymentSettings:
+class ModelBatchDeploymentSettings:
     """Job Definition entity.
 
     :param type: Job definition type. Allowed value is: pipeline
@@ -50,3 +52,8 @@ class ModelDeploymentSettings:
         self.environment_variables = environment_variables
         self.error_threshold = error_threshold
         self.logging_level = logging_level
+
+
+def _to_dict(self) -> Dict:
+    # pylint: disable=no-member
+    return ModelBatchDeploymentSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

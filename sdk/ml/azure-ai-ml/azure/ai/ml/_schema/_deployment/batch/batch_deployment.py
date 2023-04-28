@@ -73,7 +73,6 @@ class BatchDeploymentSchema(DeploymentSchema):
             PipelineComponentFileRefField(),
         ]
     )
-    settings = fields.Dict()
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     provisioning_state = fields.Str(dump_only=True)
 

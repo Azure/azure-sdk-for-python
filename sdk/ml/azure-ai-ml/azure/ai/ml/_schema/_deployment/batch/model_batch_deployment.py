@@ -9,19 +9,18 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
-from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
-from azure.ai.ml._schema.core.fields import ComputeField, ExperimentalField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
+from azure.ai.ml.constants._deployment import BatchDeploymentType
+from .model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
 
-from .batch_deployment_settings import BatchRetrySettingsSchema
 
 module_logger = logging.getLogger(__name__)
 
 
-class ModelBatchDeploymentSchema(BatchDeploymentSchema):
+class ModelBatchDeploymentSchema(DeploymentSchema):
     compute = ComputeField(required=True)
     error_threshold = fields.Int(
         metadata={
@@ -32,32 +31,12 @@ class ModelBatchDeploymentSchema(BatchDeploymentSchema):
             If set to -1 (the lower bound), all failures during batch inference will be ignored."""
         }
     )
-    retry_settings = NestedField(BatchRetrySettingsSchema)
-    mini_batch_size = fields.Int()
-    logging_level = fields.Str(
-        metadata={
-            "description": """A string of the logging level name, which is defined in 'logging'.
-            Possible values are 'warning', 'info', and 'debug'."""
-        }
-    )
-    output_action = StringTransformedEnum(
-        allowed_values=[
-            BatchDeploymentOutputAction.APPEND_ROW,
-            BatchDeploymentOutputAction.SUMMARY_ONLY,
-        ],
-        metadata={"description": "Indicates how batch inferencing will handle output."},
-        dump_default=BatchDeploymentOutputAction.APPEND_ROW,
-    )
-    output_file_name = fields.Str(metadata={"description": "Customized output file name for append_row output action."})
-    max_concurrency_per_instance = fields.Int(
-        metadata={"description": "Indicates maximum number of parallelism per instance."}
-    )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(
         allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
     )
 
-    job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
+    settings = NestedField(ModelBatchDeploymentSettingsSchema)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
