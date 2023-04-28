@@ -12,7 +12,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class FeatureSetBackfillResponse(RestTranslatableMixin):
+class FeatureSetBackfillMetadata(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -24,7 +24,7 @@ class FeatureSetBackfillResponse(RestTranslatableMixin):
         self.job_id = job_id
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetVersionBackfillResponse) -> "FeatureSetBackfillResponse":
+    def _from_rest_object(cls, obj: RestFeaturesetVersionBackfillResponse) -> "FeatureSetBackfillMetadata":
         if not obj:
             return None
-        return FeatureSetBackfillResponse(job_id=obj.job_id)
+        return FeatureSetBackfillMetadata(job_id=obj.job_id)
