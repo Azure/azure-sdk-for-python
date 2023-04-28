@@ -10,8 +10,9 @@ import re
 @pytest.mark.data_experiences_test
 class TestListMaterializationJobRequest:
     # ---------------------------------------------------------
-    # Ensure tEt the list_materialization_jobs request is a POST request
-    # Regenerating the rest client will fail this test
+    # Ensure list_materialization_jobs request is a POST request
+    # Regenerating the rest client for v2023-04-01-preview will fail this test
+    # because the request method is set to GET in list_materialization_jobs function
     # To fix manuallay update the _featureset_versions_operations.py file in rest client
     # Upate: request.method = "POST" in list_materialization_jobs function
     # ---------------------------------------------------------
