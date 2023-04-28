@@ -129,7 +129,7 @@ def create_chained_token_credential():
         # Fallback to Azure CLI if EnvironmentCredential fails
         AzureCliCredential(),
     )
-    credential = ChainedTokenCredential(credential_chain)
+    credential = ChainedTokenCredential(*credential_chain)
     # [END create_chained_token_credential]
 
 
