@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+ - Fixed minor overlap bug in job schema that caused parsing issues.
 
 ### Breaking Changes
 
