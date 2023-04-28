@@ -5,7 +5,6 @@
 
 from typing import Dict, List, Optional
 
-import azure.mgmt.resourcegraph as arg  # pylint: disable=import-error
 from azure.core.credentials import TokenCredential
 
 from .._vendor.azure_resources import ResourceManagementClient
@@ -27,6 +26,11 @@ def get_resources_from_subscriptions(
         subsClient = SubscriptionClient(credential)
         for sub in subsClient.subscriptions.list():
             subsList.append(sub.as_dict().get("subscription_id"))
+
+    try:
+        import azure.mgmt.resourcegraph as arg  # pylint: disable=import-error
+    except ImportError:
+        raise ImportError("azure-mgmt-resourcegraph is required query resources from subscriptions")
 
     # Create Azure Resource Graph client and set options
     argClient = arg.ResourceGraphClient(credential)
