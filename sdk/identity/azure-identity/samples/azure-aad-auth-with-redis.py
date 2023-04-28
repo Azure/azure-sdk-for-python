@@ -13,7 +13,7 @@ import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The scope will be changed for AAD Public Preview
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required

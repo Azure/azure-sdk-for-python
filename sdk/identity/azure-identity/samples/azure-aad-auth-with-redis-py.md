@@ -36,7 +36,7 @@ Integrate the logic in your application code to fetch an Azure AD access token v
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The scope will be changed for AAD Public Preview
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -85,7 +85,7 @@ import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The scope will be changed for AAD Public Preview
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 In this error scenario, the username provided and the access token used as password are not compatible.
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
-- In **RBAC Rules**, you've assigned the required role to your user/service principal identity.
+- In **Data Access Configuration**, you've assigned the required role to your user/service principal identity.
 - In **Advanced settings**, the **AAD access authorization** box is selected. If not, select it and select the **Save** button.
 
 ##### Permissions not granted / NOPERM Error
@@ -139,5 +139,5 @@ To mitigate this error, navigate to your Azure Cache for Redis resource in the A
 In this error scenario, the authentication was successful, but your registered user/service principal is not granted the RBAC permission to perform the action.
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
-- In **RBAC Rules**, you've assigned the appropriate role (Owner, Contributor, Reader) to your user/service principal identity.
+- In **Data Access Configuration**, you've assigned the appropriate role (Owner, Contributor, Reader) to your user/service principal identity.
 - In the event you're using a custom role, ensure the permissions granted under your custom role include the one required for your target action.
