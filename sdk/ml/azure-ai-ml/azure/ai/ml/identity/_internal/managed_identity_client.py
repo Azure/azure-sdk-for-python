@@ -42,8 +42,8 @@ class ManagedIdentityClientBase(ABC):
         self._pipeline = self._build_pipeline(**kwargs)
         self._request_factory = request_factory
 
-    def _process_response(self, response, request_time):
-        # type: (PipelineResponse, int) -> AccessToken
+    def _process_response(self, response, request_time, resource):
+        # type: (PipelineResponse, int, str) -> AccessToken
 
         content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
         if not content:
@@ -89,7 +89,7 @@ class ManagedIdentityClientBase(ABC):
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
-            event={"response": content, "scope": [content["resource"]]},
+            event={"response": content, "scope": [content.get("resource") or resource]},
             now=request_time,
         )
 
@@ -132,7 +132,7 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
         request = self._request_factory(resource)
         request_time = int(time.time())
         response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
-        token = self._process_response(response, request_time)
+        token = self._process_response(response, request_time, resource)
         return token
 
     def _build_pipeline(self, **kwargs):
