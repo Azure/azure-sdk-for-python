@@ -47,9 +47,6 @@ class OnlineScaleSettings(RestTranslatableMixin):
     def _from_rest_object(  # pylint: disable=arguments-renamed
         cls, settings: RestOnlineScaleSettings
     ) -> "OnlineScaleSettings":
-        # import debugpy
-        # debugpy.connect(("localhost", 5678))
-        # debugpy.breakpoint()
         if isinstance(settings, RestDefaultScaleSettings):
             return DefaultScaleSettings._from_rest_object(settings)
         if isinstance(settings, RestTargetUtilizationScaleSettings):

@@ -15,15 +15,15 @@ class DeploymentCollection:
 
     :param enabled: Is logging for this collection enabled.
     :type enabled: str, optional
-    :param data: Data asset associated with collection logging.
-    :type data: DataAsset, optional
+    :param data: Data asset id associated with collection logging.
+    :type data: str, optional
     :param client_id: Client ID associated with collection logging.
     :type client_id: str, optional
 
     """
 
     # pylint: disable=unused-argument,no-self-use
-    def __init__(self, enabled: str = None, data: DataAsset = None, client_id: str = None, **kwargs):
+    def __init__(self, *, enabled: str = None, data: str = None, client_id: str = None, **kwargs):
         self.enabled = enabled  # maps to data_collection_mode
         self.data = data  # maps to data_id
         self.sampling_rate = kwargs.get(
@@ -38,7 +38,7 @@ class DeploymentCollection:
     @classmethod
     def _from_rest_object(cls, rest_obj: RestCollection) -> "DeploymentCollection":
         return DeploymentCollection(
-            enabled="true" if rest_obj.data_collection_mode == "Enabled" else "False",
+            enabled="true" if rest_obj.data_collection_mode == "Enabled" else "false",
             sampling_rate=rest_obj.sampling_rate,
             data=rest_obj.data_id,
             client_id=rest_obj.client_id,

@@ -216,10 +216,6 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         if local:
             deployment = self._local_deployment_helper.get(endpoint_name=endpoint_name, deployment_name=name)
         else:
-            import debugpy
-
-            debugpy.connect(("localhost", 5678))
-            debugpy.breakpoint()
             deployment = OnlineDeployment._from_rest_object(
                 self._online_deployment.get(
                     endpoint_name=endpoint_name,
@@ -387,7 +383,3 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             deployment.data_collector.collections[
                 name
             ].data = f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}/data/{result.name}/versions/{result.version}"
-
-        print(
-            f"Registered data asset {result.name} with version {result.version} for collection {name} in deployment {deployment.name}."
-        )

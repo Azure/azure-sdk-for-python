@@ -15,7 +15,7 @@ class DataCollector:
     """Data Capture deployment entity.
 
     :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
-    :type collections: Mapping[str, DeploymentCollection], optional
+    :type collections: Mapping[str, DeploymentCollection]
     :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
     :type rolling_rate: str, optional
     :param sampling_rate: The sampling rate of mdc files, possible values: [0.0, 1.0].
@@ -26,7 +26,8 @@ class DataCollector:
 
     def __init__(
         self,
-        collections: Optional[Dict[str, DeploymentCollection]] = None,
+        *,
+        collections: Dict[str, DeploymentCollection],
         rolling_rate: Optional[str] = None,
         sampling_rate: Optional[float] = None,
         request_logging: Optional[RequestLogging] = None,
@@ -56,7 +57,9 @@ class DataCollector:
         return DataCollector(
             collections=collections,
             rolling_rate=rest_obj.rolling_rate,
-            request_logging=rest_obj.request_logging,
+            request_logging=RequestLogging._from_rest_object(rest_obj.request_logging)
+            if rest_obj.request_logging
+            else None,
             sampling_rate=sampling_rate,
         )
 

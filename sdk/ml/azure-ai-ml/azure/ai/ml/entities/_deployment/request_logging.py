@@ -18,6 +18,7 @@ class RequestLogging:
 
     def __init__(
         self,
+        *,
         capture_headers: List[str] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
