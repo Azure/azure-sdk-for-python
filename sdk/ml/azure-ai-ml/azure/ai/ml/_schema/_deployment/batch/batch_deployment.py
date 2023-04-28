@@ -12,6 +12,7 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema.core.fields import ComputeField, ExperimentalField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
@@ -56,6 +57,8 @@ class BatchDeploymentSchema(DeploymentSchema):
     type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL])
 
     job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
+    creation_context = NestedField(CreationContextSchema, dump_only=True)
+    provisioning_state = fields.Str(dump_only=True)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

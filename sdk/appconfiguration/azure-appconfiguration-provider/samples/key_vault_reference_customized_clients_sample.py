@@ -10,12 +10,11 @@ from azure.appconfiguration.provider import (
     SettingSelector
 )
 import os
-from sample_utilities import get_authority, get_audience, get_credential
+from sample_utilities import get_authority, get_credential
 
 endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
 key_vault_uri = os.environ.get("AZURE_KEYVAULT_URI")
 authority = get_authority(endpoint)
-audience = get_audience(authority)
 credential = get_credential(authority)
 
 # Connection to Azure App Configuration using AAD with Provided Client
@@ -25,4 +24,3 @@ key_vault_options = AzureAppConfigurationKeyVaultOptions(client_configs=client_c
 config = load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
 print(config["secret"])
-print(config["secondSecret"])

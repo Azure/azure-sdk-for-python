@@ -13,7 +13,7 @@ from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
 
 if TYPE_CHECKING:
-    from typing import Any, Iterable, Optional
+    from typing import Optional
 
 if os.getenv("REQUESTS_CA_BUNDLE"):
     http_client = PoolManager(
@@ -82,7 +82,7 @@ def set_bodiless_matcher() -> None:
     _send_matcher_request("BodilessMatcher", {"x-recording-id": x_recording_id})
 
 
-def set_custom_default_matcher(**kwargs: "Any") -> None:
+def set_custom_default_matcher(**kwargs) -> None:
     """Exposes the default matcher in a customizable way.
 
     All optional settings are safely defaulted. This means that providing zero additional configuration will produce a
@@ -138,11 +138,13 @@ def set_headerless_matcher() -> None:
 # ------------------------------
 
 
-def add_body_key_sanitizer(**kwargs: "Any") -> None:
+def add_body_key_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that offers regex update of a specific JTokenPath within a returned body.
 
     For example, "TableName" within a json response body having its value replaced by whatever substitution is offered.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str json_path: The SelectToken path (which could possibly match multiple entries) that will be used to
         select JTokens for value replacement.
     :keyword str value: The substitution value.
@@ -156,16 +158,20 @@ def add_body_key_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("BodyKeySanitizer", request_args)
+    _send_sanitizer_request("BodyKeySanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_body_regex_sanitizer(**kwargs: "Any") -> None:
+def add_body_regex_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that offers regex replace within a returned body.
 
     Specifically, this means regex applying to the raw JSON. If you are attempting to simply replace a specific key, the
     BodyKeySanitizer is probably the way to go.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The substitution value.
     :keyword str regex: A regex. Can be defined as a simple regex, or if a ``group_for_replace`` is provided, a
         substitution operation.
@@ -177,16 +183,20 @@ def add_body_regex_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("BodyRegexSanitizer", request_args)
+    _send_sanitizer_request("BodyRegexSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_body_string_sanitizer(**kwargs: "Any") -> None:
+def add_body_string_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that cleans request and response bodies via straightforward string replacement.
 
     Specifically, this replacement applies to the raw JSON of a body. If you are attempting to simply replace a specific
     key, add_body_key_sanitizer is probably more suitable.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The substitution value.
     :keyword str target: A target string. This could contain special regex characters like "?()+*" but they will be
         treated as a literal.
@@ -196,17 +206,21 @@ def add_body_string_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("BodyStringSanitizer", request_args)
+    _send_sanitizer_request("BodyStringSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_continuation_sanitizer(**kwargs: "Any") -> None:
+def add_continuation_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that's used to anonymize private keys in response/request pairs.
 
     For instance, a request hands back a "sessionId" that needs to be present in the next request. Supports "all further
     requests get this key" as well as "single response/request pair". Defaults to maintaining same key for rest of
     recording.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str key: The name of the header whose value will be replaced from response -> next request.
     :keyword str method: The method by which the value of the targeted key will be replaced. Defaults to guid
         replacement.
@@ -214,15 +228,19 @@ def add_continuation_sanitizer(**kwargs: "Any") -> None:
         same value?
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("ContinuationSanitizer", request_args)
+    _send_sanitizer_request("ContinuationSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_general_regex_sanitizer(**kwargs: "Any") -> None:
+def add_general_regex_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that offers a general regex replace across request/response Body, Headers, and URI.
 
     For the body, this means regex applying to the raw JSON.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The substitution value.
     :keyword str regex: A regex. Can be defined as a simple regex, or if a ``group_for_replace`` is provided, a
         substitution operation.
@@ -234,16 +252,20 @@ def add_general_regex_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("GeneralRegexSanitizer", request_args)
+    _send_sanitizer_request("GeneralRegexSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_general_string_sanitizer(**kwargs: "Any") -> None:
+def add_general_string_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that cleans request and response URIs, headers, and bodies via string replacement.
 
     This sanitizer offers a value replace across request/response bodies, headers, and URIs. For the body, this means a
     string replacement applied directly to the raw JSON.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The substitution value.
     :keyword str target: A target string. This could contain special regex characters like "?()+*" but they will be
         treated as a literal.
@@ -253,13 +275,17 @@ def add_general_string_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("GeneralStringSanitizer", request_args)
+    _send_sanitizer_request("GeneralStringSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_header_regex_sanitizer(**kwargs: "Any") -> None:
+def add_header_regex_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that offers regex replace on returned headers.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     Can be used for multiple purposes: 1) To replace a key with a specific value, do not set "regex" value. 2) To do a
     simple regex replace operation, define arguments "key", "value", and "regex". 3) To do a targeted substitution of a
     specific group, define all arguments "key", "value", and "regex".
@@ -276,15 +302,19 @@ def add_header_regex_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("HeaderRegexSanitizer", request_args)
+    _send_sanitizer_request("HeaderRegexSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_header_string_sanitizer(**kwargs: "Any") -> None:
+def add_header_string_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that cleans headers in a recording via straightforward string replacement.
 
     This sanitizer ONLY applies to the request/response headers -- bodies and URIs are left untouched.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str key: The name of the header we're operating against.
     :keyword str target: A target string. This could contain special regex characters like "?()+*" but they will be
         treated as a literal.
@@ -295,19 +325,29 @@ def add_header_string_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("HeaderStringSanitizer", request_args)
+    _send_sanitizer_request("HeaderStringSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_oauth_response_sanitizer() -> None:
-    """Registers a sanitizer that cleans out all request/response pairs that match an oauth regex in their URI."""
+def add_oauth_response_sanitizer(**kwargs) -> None:
+    """Registers a sanitizer that cleans out all request/response pairs that match an oauth regex in their URI.
 
-    _send_sanitizer_request("OAuthResponseSanitizer", {})
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
+    """
+
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
+    _send_sanitizer_request("OAuthResponseSanitizer", {}, {"x-recording-id": x_recording_id})
 
 
-def add_remove_header_sanitizer(**kwargs: "Any") -> None:
+def add_remove_header_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that removes specified headers before saving a recording.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str headers: A comma separated list. Should look like "Location, Transfer-Encoding" or something along
         those lines. Don't worry about whitespace between the commas separating each key. They will be ignored.
     :keyword str condition: A condition that dictates when this sanitizer applies to a request/response pair. The
@@ -316,13 +356,17 @@ def add_remove_header_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("RemoveHeaderSanitizer", request_args)
+    _send_sanitizer_request("RemoveHeaderSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_uri_regex_sanitizer(**kwargs: "Any") -> None:
+def add_uri_regex_sanitizer(**kwargs) -> None:
     """Registers a sanitizer for cleaning URIs via regex.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The substitution value.
     :keyword str regex: A regex. Can be defined as a simple regex, or if a ``group_for_replace`` is provided, a
         substitution operation.
@@ -334,15 +378,19 @@ def add_uri_regex_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("UriRegexSanitizer", request_args)
+    _send_sanitizer_request("UriRegexSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_uri_string_sanitizer(**kwargs: "Any") -> None:
+def add_uri_string_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that cleans URIs via straightforward string replacement.
 
     Runs a simple string replacement against the request/response URIs.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The substitution value.
     :keyword str target: A target string. This could contain special regex characters like "?()+*" but they will be
         treated as a literal.
@@ -352,16 +400,20 @@ def add_uri_string_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("UriStringSanitizer", request_args)
+    _send_sanitizer_request("UriStringSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
-def add_uri_subscription_id_sanitizer(**kwargs: "Any") -> None:
+def add_uri_subscription_id_sanitizer(**kwargs) -> None:
     """Registers a sanitizer that replaces subscription IDs in URIs.
 
     This sanitizer ONLY affects the URI of a request/response pair. Subscription IDs are replaced with
     "00000000-0000-0000-0000-000000000000" by default.
 
+    :keyword bool function_scoped: Whether or not the sanitizer should apply only to the test function being currently
+        executed. If set to True, the sanitizer must be called during a specific test's execution. Defaults to False.
     :keyword str value: The fake subscription ID that will be placed where the real one is in the real request.
     :keyword str condition: A condition that dictates when this sanitizer applies to a request/response pair. The
         content of this should be a JSON object that contains configuration keys. Currently, that only includes the key
@@ -369,8 +421,10 @@ def add_uri_subscription_id_sanitizer(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    function_scoped = kwargs.pop("function_scoped", False)
+    x_recording_id = get_recording_id() if function_scoped else None
     request_args = _get_request_args(**kwargs)
-    _send_sanitizer_request("UriSubscriptionIdSanitizer", request_args)
+    _send_sanitizer_request("UriSubscriptionIdSanitizer", request_args, {"x-recording-id": x_recording_id})
 
 
 # ----------TRANSFORMS----------
@@ -382,19 +436,29 @@ def add_uri_subscription_id_sanitizer(**kwargs: "Any") -> None:
 
 
 def add_api_version_transform() -> None:
-    """Registers a transform that copies a request's "api-version" header onto the response before returning it."""
+    """Registers a transform that copies a request's "api-version" header onto the response before returning it.
 
-    _send_transform_request("ApiVersionTransform", {})
+    This method should be called during test case execution, rather than at a session, module, or class level.
+    """
+
+    x_recording_id = get_recording_id()
+    _send_transform_request("ApiVersionTransform", {}, {"x-recording-id": x_recording_id})
 
 
 def add_client_id_transform() -> None:
-    """Registers a transform that copies a request's "x-ms-client-id" header onto the response before returning it."""
+    """Registers a transform that copies a request's "x-ms-client-id" header onto the response before returning it.
 
-    _send_transform_request("ClientIdTransform", {})
+    This method should be called during test case execution, rather than at a session, module, or class level.
+    """
+
+    x_recording_id = get_recording_id()
+    _send_transform_request("ClientIdTransform", {}, {"x-recording-id": x_recording_id})
 
 
-def add_header_transform(**kwargs: "Any") -> None:
+def add_header_transform(**kwargs) -> None:
     """Registers a transform that sets a header in a response.
+
+    This method should be called during test case execution, rather than at a session, module, or class level.
 
     :keyword str key: The key for the header.
     :keyword str value: The value for the header.
@@ -404,14 +468,19 @@ def add_header_transform(**kwargs: "Any") -> None:
         sanitizer" }'. Defaults to "apply always".
     """
 
+    x_recording_id = get_recording_id()
     request_args = _get_request_args(**kwargs)
-    _send_transform_request("HeaderTransform", request_args)
+    _send_transform_request("HeaderTransform", request_args, {"x-recording-id": x_recording_id})
 
 
 def add_storage_request_id_transform() -> None:
-    """Registers a transform that ensures a response's "x-ms-client-request-id" header matches the request's."""
+    """Registers a transform that ensures a response's "x-ms-client-request-id" header matches the request's.
+    
+    This method should be called during test case execution, rather than at a session, module, or class level.
+    """
 
-    _send_transform_request("StorageRequestIdTransform", {})
+    x_recording_id = get_recording_id()
+    _send_transform_request("StorageRequestIdTransform", {}, {"x-recording-id": x_recording_id})
 
 
 # ----------RECORDING OPTIONS----------
@@ -422,7 +491,7 @@ def add_storage_request_id_transform() -> None:
 # -------------------------------------
 
 
-def set_function_recording_options(**kwargs: "Any") -> None:
+def set_function_recording_options(**kwargs) -> None:
     """Sets custom recording options for the current test only.
 
     This must be called during test case execution, rather than at a session, module, or class level. To set recording
@@ -444,7 +513,7 @@ def set_function_recording_options(**kwargs: "Any") -> None:
     _send_recording_options_request(request_args, {"x-recording-id": x_recording_id})
 
 
-def set_session_recording_options(**kwargs: "Any") -> None:
+def set_session_recording_options(**kwargs) -> None:
     """Sets custom recording options for all tests.
 
     This will set the specified recording options for an entire test session. To set recording options for a single test
@@ -480,7 +549,7 @@ class PemCertificate:
 # ----------HELPERS----------
 
 
-def _get_recording_option_args(**kwargs: "Any") -> dict:
+def _get_recording_option_args(**kwargs) -> dict:
     """Returns a dictionary of recording option request arguments, formatted for test proxy consumption."""
 
     certificates = kwargs.pop("certificates", None)
@@ -506,7 +575,7 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
     return request_args
 
 
-def _get_request_args(**kwargs: "Any") -> dict:
+def _get_request_args(**kwargs) -> dict:
     """Returns a dictionary of request arguments, formatted for test proxy consumption."""
 
     request_args = {}
@@ -562,7 +631,6 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
         return
 
     headers_to_send = {"x-abstraction-identifier": matcher}
-
     for key in headers:
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
@@ -619,10 +687,10 @@ def _send_reset_request(headers: dict) -> None:
         if headers[key] is not None:
             headers_to_send[key] = headers[key]
 
-    request = http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers_to_send)
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers_to_send)
 
 
-def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
+def _send_sanitizer_request(sanitizer: str, parameters: dict, headers: "Optional[dict]" = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified sanitizer.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
@@ -635,18 +703,20 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
     if is_live_and_not_recording():
         return
 
+    headers_to_send = {"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"}
+    for key in headers:
+        if headers[key] is not None:
+            headers_to_send[key] = headers[key]
+
     http_client.request(
         method="POST",
         url="{}/Admin/AddSanitizer".format(PROXY_URL),
-        headers={
-            "x-abstraction-identifier": sanitizer,
-            "Content-Type": "application/json",
-        },
+        headers=headers_to_send,
         body=json.dumps(parameters).encode("utf-8"),
     )
 
 
-def _send_transform_request(transform: str, parameters: dict) -> None:
+def _send_transform_request(transform: str, parameters: dict, headers: "Optional[dict]" = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified transform.
 
     If live tests are being run, no request will be sent.
@@ -658,9 +728,14 @@ def _send_transform_request(transform: str, parameters: dict) -> None:
     if is_live():
         return
 
+    headers_to_send = {"x-abstraction-identifier": transform, "Content-Type": "application/json"}
+    for key in headers:
+        if headers[key] is not None:
+            headers_to_send[key] = headers[key]
+
     http_client.request(
         method="POST",
         url=f"{PROXY_URL}/Admin/AddTransform",
-        headers={"x-abstraction-identifier": transform, "Content-Type": "application/json"},
+        headers=headers_to_send,
         body=json.dumps(parameters).encode("utf-8"),
     )

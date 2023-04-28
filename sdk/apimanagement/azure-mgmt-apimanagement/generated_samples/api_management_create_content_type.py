@@ -33,10 +33,58 @@ def main():
         resource_group_name="rg1",
         service_name="apimService1",
         content_type_id="page",
+        parameters={
+            "properties": {
+                "description": "A regular page",
+                "name": "Page",
+                "schema": {
+                    "additionalProperties": False,
+                    "properties": {
+                        "en_us": {
+                            "additionalProperties": False,
+                            "properties": {
+                                "description": {
+                                    "description": "Page description. This property gets included in SEO attributes.",
+                                    "indexed": True,
+                                    "title": "Description",
+                                    "type": "string",
+                                },
+                                "documentId": {
+                                    "description": "Reference to page content document.",
+                                    "title": "Document ID",
+                                    "type": "string",
+                                },
+                                "keywords": {
+                                    "description": "Page keywords. This property gets included in SEO attributes.",
+                                    "indexed": True,
+                                    "title": "Keywords",
+                                    "type": "string",
+                                },
+                                "permalink": {
+                                    "description": "Page permalink, e.g. '/about'.",
+                                    "indexed": True,
+                                    "title": "Permalink",
+                                    "type": "string",
+                                },
+                                "title": {
+                                    "description": "Page title. This property gets included in SEO attributes.",
+                                    "indexed": True,
+                                    "title": "Title",
+                                    "type": "string",
+                                },
+                            },
+                            "required": ["title", "permalink", "documentId"],
+                            "type": "object",
+                        }
+                    },
+                },
+                "version": "1.0.0",
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2021-08-01/examples/ApiManagementCreateContentType.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateContentType.json
 if __name__ == "__main__":
     main()

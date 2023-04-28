@@ -368,6 +368,7 @@ These provide example code for additional Key Vault scenarios:
 | [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for keys |
 | [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
 | [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
+| [send_request.py][send_request_sample] | use the `send_request` client method |
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the
@@ -427,6 +428,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
 
+[send_request_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/send_request.py
 [soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FREADME.png)

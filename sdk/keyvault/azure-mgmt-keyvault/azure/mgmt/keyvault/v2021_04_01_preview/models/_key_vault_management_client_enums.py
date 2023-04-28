@@ -43,6 +43,7 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PURGE = "purge"
     BACKUP = "backup"
     RESTORE = "restore"
+    IMPORT_ENUM = "import"
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -50,18 +51,6 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RECOVER = "recover"
     DEFAULT = "default"
-
-
-class Enum12(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum12."""
-
-    RESOURCE_TYPE_EQ_MICROSOFT_KEY_VAULT_VAULTS_ = "resourceType eq 'Microsoft.KeyVault/vaults'"
-
-
-class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum13."""
-
-    TWO_THOUSAND_FIFTEEN11_01 = "2015-11-01"
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,6 +82,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVER = "recover"
     PURGE = "purge"
     RELEASE = "release"
+    IMPORT_ENUM = "import"
 
 
 class ManagedHsmSkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):

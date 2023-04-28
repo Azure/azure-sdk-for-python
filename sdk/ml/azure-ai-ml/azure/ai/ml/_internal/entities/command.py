@@ -6,9 +6,7 @@ from typing import Dict, List, Union
 
 from marshmallow import INCLUDE, Schema
 
-from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from ..._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from ..._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, RayDistribution
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration
@@ -107,13 +105,11 @@ class Command(InternalBaseNode):
         obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
         return obj
 
 
@@ -140,14 +136,14 @@ class Distributed(Command):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
         """The distribution config of component, e.g. distribution={'type': 'mpi'}."""
         return self._distribution
 
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
     ):
         if isinstance(value, dict):
             dist_schema = DistributionField(unknown=INCLUDE)

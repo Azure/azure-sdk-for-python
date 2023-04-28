@@ -8,10 +8,10 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
@@ -20,7 +20,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
-from .feature_store_settings import _FeatureStoreSettings
+from .feature_store_settings import FeatureStoreSettings
 from .networking import ManagedNetwork
 
 
@@ -45,9 +45,9 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        enable_data_isolation: bool = False,
         **kwargs,
     ):
-
         """Azure ML workspace.
 
         :param name: Name of the workspace.
@@ -93,13 +93,16 @@ class Workspace(Resource):
         :type primary_user_assigned_identity: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
+        :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+            The flag can only be set at the creation phase, it can't be updated.
+        :type enable_data_isolation: bool
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
         self._kind = kwargs.pop("kind", "default")
-        self._feature_store_settings: Optional[_FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -116,6 +119,7 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.enable_data_isolation = enable_data_isolation
 
     @property
     def discovery_url(self) -> str:
@@ -211,7 +215,7 @@ class Workspace(Resource):
             and rest_obj.feature_store_settings
             and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
         ):
-            feature_store_settings = _FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
+            feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
         return Workspace(
@@ -237,6 +241,7 @@ class Workspace(Resource):
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
+            enable_data_isolation=rest_obj.enable_data_isolation,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -266,4 +271,5 @@ class Workspace(Resource):
             if self.managed_network
             else None,  # pylint: disable=protected-access
             feature_store_Settings=feature_store_Settings,
+            enable_data_isolation=self.enable_data_isolation,
         )

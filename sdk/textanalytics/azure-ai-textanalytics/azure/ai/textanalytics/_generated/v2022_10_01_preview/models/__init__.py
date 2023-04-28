@@ -16,7 +16,6 @@ from ._models_py3 import AbstractiveSummary
 from ._models_py3 import AbstractiveSummaryDocumentResult
 from ._models_py3 import AbstractiveSummaryDocumentResultWithDetectedLanguage
 from ._patch import AgeResolution
-from ._models_py3 import AnalyzeTextDynamicClassificationInput
 from ._models_py3 import AnalyzeTextEntityLinkingInput
 from ._models_py3 import AnalyzeTextEntityRecognitionInput
 from ._models_py3 import AnalyzeTextJobState
@@ -59,11 +58,6 @@ from ._models_py3 import DocumentRequestStatistics
 from ._models_py3 import DocumentResult
 from ._models_py3 import DocumentStatistics
 from ._models_py3 import DocumentWarning
-from ._models_py3 import DynamicClassificationDocumentResult
-from ._models_py3 import DynamicClassificationResult
-from ._models_py3 import DynamicClassificationResultDocumentsItem
-from ._models_py3 import DynamicClassificationTaskParameters
-from ._models_py3 import DynamicClassificationTaskResult
 from ._models_py3 import EntitiesDocumentResult
 from ._models_py3 import EntitiesLROTask
 from ._models_py3 import EntitiesResult
@@ -171,7 +165,6 @@ from ._text_analytics_client_enums import AnalyzeTextTaskResultsKind
 from ._text_analytics_client_enums import AreaUnit
 from ._text_analytics_client_enums import Association
 from ._text_analytics_client_enums import Certainty
-from ._text_analytics_client_enums import ClassificationType
 from ._text_analytics_client_enums import Conditionality
 from ._text_analytics_client_enums import DateTimeSubKind
 from ._text_analytics_client_enums import DocumentSentimentValue
@@ -216,7 +209,6 @@ __all__ = [
     'AbstractiveSummaryDocumentResult',
     'AbstractiveSummaryDocumentResultWithDetectedLanguage',
     'AgeResolution',
-    'AnalyzeTextDynamicClassificationInput',
     'AnalyzeTextEntityLinkingInput',
     'AnalyzeTextEntityRecognitionInput',
     'AnalyzeTextJobState',
@@ -259,11 +251,6 @@ __all__ = [
     'DocumentResult',
     'DocumentStatistics',
     'DocumentWarning',
-    'DynamicClassificationDocumentResult',
-    'DynamicClassificationResult',
-    'DynamicClassificationResultDocumentsItem',
-    'DynamicClassificationTaskParameters',
-    'DynamicClassificationTaskResult',
     'EntitiesDocumentResult',
     'EntitiesLROTask',
     'EntitiesResult',
@@ -369,7 +356,6 @@ __all__ = [
     'AreaUnit',
     'Association',
     'Certainty',
-    'ClassificationType',
     'Conditionality',
     'DateTimeSubKind',
     'DocumentSentimentValue',

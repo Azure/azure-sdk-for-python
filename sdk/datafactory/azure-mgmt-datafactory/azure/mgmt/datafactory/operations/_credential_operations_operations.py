@@ -442,8 +442,8 @@ class CredentialOperationsOperations:
         :type factory_name: str
         :param credential_name: Credential name. Required.
         :type credential_name: str
-        :param credential: Credential resource definition. Is either a model type or a IO type.
-         Required.
+        :param credential: Credential resource definition. Is either a
+         ManagedIdentityCredentialResource type or a IO type. Required.
         :type credential: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource or IO
         :param if_match: ETag of the credential entity. Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.

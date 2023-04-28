@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -32,8 +32,12 @@ class Action(_serialization.Model):
     }
 
     def __init__(
-        self, *, action_group_id: Optional[str] = None, web_hook_properties: Optional[Dict[str, str]] = None, **kwargs
-    ):
+        self,
+        *,
+        action_group_id: Optional[str] = None,
+        web_hook_properties: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_group_id: Action Group resource Id to invoke when the alert fires.
         :paramtype action_group_id: str
@@ -103,8 +107,8 @@ class Condition(_serialization.Model):
         resource_id_column: Optional[str] = None,
         dimensions: Optional[List["_models.Dimension"]] = None,
         failing_periods: Optional["_models.ConditionFailingPeriods"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query: Log query alert.
         :paramtype query: str
@@ -142,7 +146,8 @@ class Condition(_serialization.Model):
 
 
 class ConditionFailingPeriods(_serialization.Model):
-    """The minimum number of violations required within the selected lookback time window required to raise an alert.
+    """The minimum number of violations required within the selected lookback time window required to
+    raise an alert.
 
     :ivar number_of_evaluation_periods: The number of aggregated lookback points. The lookback time
      window is calculated based on the aggregation granularity (windowSize) and the selected number
@@ -158,7 +163,9 @@ class ConditionFailingPeriods(_serialization.Model):
         "min_failing_periods_to_alert": {"key": "minFailingPeriodsToAlert", "type": "int"},
     }
 
-    def __init__(self, *, number_of_evaluation_periods: int = 1, min_failing_periods_to_alert: int = 1, **kwargs):
+    def __init__(
+        self, *, number_of_evaluation_periods: int = 1, min_failing_periods_to_alert: int = 1, **kwargs: Any
+    ) -> None:
         """
         :keyword number_of_evaluation_periods: The number of aggregated lookback points. The lookback
          time window is calculated based on the aggregation granularity (windowSize) and the selected
@@ -200,7 +207,9 @@ class Dimension(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, operator: Union[str, "_models.DimensionOperator"], values: List[str], **kwargs):
+    def __init__(
+        self, *, name: str, operator: Union[str, "_models.DimensionOperator"], values: List[str], **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
@@ -238,7 +247,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -256,7 +265,7 @@ class ErrorContract(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~$(python-base-namespace).v2020_05_01_preview.models.ErrorResponse
@@ -266,7 +275,8 @@ class ErrorContract(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -299,7 +309,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -336,7 +346,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -355,7 +365,7 @@ class ScheduledQueryRuleCriteria(_serialization.Model):
         "all_of": {"key": "allOf", "type": "[Condition]"},
     }
 
-    def __init__(self, *, all_of: Optional[List["_models.Condition"]] = None, **kwargs):
+    def __init__(self, *, all_of: Optional[List["_models.Condition"]] = None, **kwargs: Any) -> None:
         """
         :keyword all_of: A list of conditions to evaluate against the specified scopes.
         :paramtype all_of: list[~$(python-base-namespace).v2020_05_01_preview.models.Condition]
@@ -365,7 +375,8 @@ class ScheduledQueryRuleCriteria(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -400,7 +411,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -533,8 +544,8 @@ class ScheduledQueryRuleResource(TrackedResource):  # pylint: disable=too-many-i
         criteria: Optional["_models.ScheduledQueryRuleCriteria"] = None,
         mute_actions_duration: Optional[datetime.timedelta] = None,
         actions: Optional[List["_models.Action"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -607,7 +618,7 @@ class ScheduledQueryRuleResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[ScheduledQueryRuleResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ScheduledQueryRuleResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ScheduledQueryRuleResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The values for the scheduled query rule resources.
         :paramtype value:
@@ -703,8 +714,8 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
         criteria: Optional["_models.ScheduledQueryRuleCriteria"] = None,
         mute_actions_duration: Optional[datetime.timedelta] = None,
         actions: Optional[List["_models.Action"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]

@@ -1,5 +1,14 @@
 # Release History
 
+## 6.4.0 (2023-03-20)
+
+### Features Added
+
+  - Model AzureDataExplorerConnectionProperties has a new parameter adx_relationship_lifecycle_events_table_name
+  - Model AzureDataExplorerConnectionProperties has a new parameter adx_twin_lifecycle_events_table_name
+  - Model AzureDataExplorerConnectionProperties has a new parameter record_property_and_item_removals
+  - Operation TimeSeriesDatabaseConnectionsOperations.begin_delete has a new optional parameter cleanup_connection_artifacts
+
 ## 6.4.0b1 (2023-02-16)
 
 ### Other Changes

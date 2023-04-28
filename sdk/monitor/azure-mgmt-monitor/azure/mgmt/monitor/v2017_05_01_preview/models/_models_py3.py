@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -42,7 +42,7 @@ class ProxyOnlyResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -80,7 +80,7 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
         "category_type": {"key": "properties.categoryType", "type": "str"},
     }
 
-    def __init__(self, *, category_type: Optional[Union[str, "_models.CategoryType"]] = None, **kwargs):
+    def __init__(self, *, category_type: Optional[Union[str, "_models.CategoryType"]] = None, **kwargs: Any) -> None:
         """
         :keyword category_type: The type of the diagnostic settings category. Known values are:
          "Metrics" and "Logs".
@@ -103,7 +103,9 @@ class DiagnosticSettingsCategoryResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[DiagnosticSettingsCategoryResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DiagnosticSettingsCategoryResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.DiagnosticSettingsCategoryResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of diagnostic settings category resources.
         :paramtype value:
@@ -181,8 +183,8 @@ class DiagnosticSettingsResource(ProxyOnlyResource):  # pylint: disable=too-many
         logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         log_analytics_destination_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_id: The resource ID of the storage account to which you would like to
          send Diagnostic Logs.
@@ -232,7 +234,7 @@ class DiagnosticSettingsResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[DiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DiagnosticSettingsResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The collection of diagnostic settings resources;.
         :paramtype value:
@@ -256,7 +258,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -288,7 +290,7 @@ class LocalizableString(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: the invariant value. Required.
         :paramtype value: str
@@ -331,8 +333,8 @@ class LogSettings(_serialization.Model):
         enabled: bool,
         category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Diagnostic Log category for a resource type this setting is
          applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
@@ -364,7 +366,9 @@ class MetadataValue(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional["_models.LocalizableString"] = None, value: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional["_models.LocalizableString"] = None, value: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: the name of the metadata.
         :paramtype name: ~$(python-base-namespace).v2017_05_01_preview.models.LocalizableString
@@ -433,8 +437,8 @@ class Metric(_serialization.Model):
         display_description: Optional[str] = None,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: the metric Id. Required.
         :paramtype id: str
@@ -469,7 +473,8 @@ class Metric(_serialization.Model):
 
 
 class MetricAvailability(_serialization.Model):
-    """Metric availability specifies the time grain (aggregation interval or frequency) and the retention period for that time grain.
+    """Metric availability specifies the time grain (aggregation interval or frequency) and the
+    retention period for that time grain.
 
     :ivar time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
@@ -489,8 +494,8 @@ class MetricAvailability(_serialization.Model):
         *,
         time_grain: Optional[datetime.timedelta] = None,
         retention: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the time grain specifies the aggregation interval for the metric.
          Expressed as a duration 'PT1M', 'P1D', etc.
@@ -564,8 +569,8 @@ class MetricDefinition(_serialization.Model):
         metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         dimensions: Optional[List["_models.LocalizableString"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_dimension_required: Flag to indicate whether the dimension is required.
         :paramtype is_dimension_required: bool
@@ -627,7 +632,7 @@ class MetricDefinitionCollection(_serialization.Model):
         "value": {"key": "value", "type": "[MetricDefinition]"},
     }
 
-    def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs):
+    def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs: Any) -> None:
         """
         :keyword value: the values for the metric definitions. Required.
         :paramtype value: list[~$(python-base-namespace).v2017_05_01_preview.models.MetricDefinition]
@@ -671,8 +676,8 @@ class MetricSettings(_serialization.Model):
         time_grain: Optional[datetime.timedelta] = None,
         category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the timegrain of the metric in ISO8601 format.
         :paramtype time_grain: ~datetime.timedelta
@@ -735,8 +740,8 @@ class MetricValue(_serialization.Model):
         maximum: Optional[float] = None,
         total: Optional[float] = None,
         count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_stamp: the timestamp for the metric value in ISO 8601 format. Required.
         :paramtype time_stamp: ~datetime.datetime
@@ -800,8 +805,8 @@ class Response(_serialization.Model):
         value: List["_models.Metric"],
         cost: Optional[int] = None,
         interval: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cost: The integer value representing the relative cost of the query.
         :paramtype cost: int
@@ -845,7 +850,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: int, **kwargs):
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
         """
         :keyword enabled: a value indicating whether the retention policy is enabled. Required.
         :paramtype enabled: bool
@@ -886,7 +891,7 @@ class SubscriptionProxyOnlyResource(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -960,8 +965,8 @@ class SubscriptionDiagnosticSettingsResource(SubscriptionProxyOnlyResource):
         event_hub_name: Optional[str] = None,
         logs: Optional[List["_models.SubscriptionLogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -1005,7 +1010,9 @@ class SubscriptionDiagnosticSettingsResourceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[SubscriptionDiagnosticSettingsResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SubscriptionDiagnosticSettingsResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.SubscriptionDiagnosticSettingsResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection of subscription diagnostic settings resources.
         :paramtype value:
@@ -1036,7 +1043,7 @@ class SubscriptionLogSettings(_serialization.Model):
         "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: bool, category: Optional[str] = None, **kwargs):
+    def __init__(self, *, enabled: bool, category: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword category: Name of a Subscription Diagnostic Log category for a resource type this
          setting is applied to.
@@ -1070,8 +1077,8 @@ class TimeSeriesElement(_serialization.Model):
         *,
         metadatavalues: Optional[List["_models.MetadataValue"]] = None,
         data: Optional[List["_models.MetricValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metadatavalues: the metadata values returned if $filter was specified in the call.
         :paramtype metadatavalues:

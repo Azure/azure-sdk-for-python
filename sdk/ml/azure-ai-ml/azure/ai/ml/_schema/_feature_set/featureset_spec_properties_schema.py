@@ -9,7 +9,6 @@ from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import YamlFileSchema, PatchedSchemaMeta
-from azure.ai.ml._schema._feature_store_entity.data_column_schema import DataColumnSchema
 
 from .source_metadata_schema import SourceMetadataSchema
 
@@ -38,6 +37,5 @@ class FeaturesetSpecPropertiesSchema(YamlFileSchema):
         FeatureTransformationCodePropertiesSchema, data_key="featureTransformationCode"
     )
     features = fields.List(NestedField(FeaturePropertiesSchema), data_key="features")
-    index_columns = fields.List(NestedField(DataColumnSchema), data_key="indexColumns")
     source_lookback = fields.Nested(DelayMetadataPropertiesSchema, data_key="sourceLookback")
     temporal_join_lookback = fields.Nested(DelayMetadataPropertiesSchema, data_key="temporalJoinLookback")

@@ -6,7 +6,10 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionStatus
+
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -24,6 +27,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations_base import WorkspaceOperationsBase
+from .._utils._experimental import experimental
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -39,12 +43,13 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         ops_logger.update_info(kwargs)
+        self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,
             service_client=service_client,
@@ -117,6 +122,28 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
 
+    @experimental
+    @monitor_with_activity(logger, "Workspace.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    @distributed_trace
+    def begin_provision_network(
+        self,
+        *,
+        workspace_name: Optional[str] = None,
+        include_spark: Optional[bool] = False,
+    ) -> LROPoller[ManagedNetworkProvisionStatus]:
+        """Triggers the workspace to provision the managed network. Specifying spark enabled
+        as true prepares the workspace managed network for supporting Spark.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :return: An instance of LROPoller.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
+        workspace_name = self._check_workspace_name(workspace_name)
+        return self._provision_network_operation.begin_provision_managed_network(
+            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=include_spark)
+        )
+
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-differ
@@ -152,7 +179,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         """Delete a workspace.
 
         :param name: Name of the workspace
@@ -161,10 +190,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
+        :param permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
+            Set this flag to override the soft-delete behavior and permanently delete your workspace.
+        :type permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        return super().begin_delete(name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(
+            name, delete_dependent_resources=delete_dependent_resources, permanently_delete=permanently_delete, **kwargs
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)

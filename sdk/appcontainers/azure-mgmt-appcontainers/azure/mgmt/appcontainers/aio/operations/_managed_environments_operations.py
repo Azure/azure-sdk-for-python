@@ -481,8 +481,8 @@ class ManagedEnvironmentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param environment_envelope: Configuration details of the Environment. Is either a model type
-         or a IO type. Required.
+        :param environment_envelope: Configuration details of the Environment. Is either a
+         ManagedEnvironment type or a IO type. Required.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -833,8 +833,8 @@ class ManagedEnvironmentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param environment_envelope: Configuration details of the Environment. Is either a model type
-         or a IO type. Required.
+        :param environment_envelope: Configuration details of the Environment. Is either a
+         ManagedEnvironment type or a IO type. Required.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

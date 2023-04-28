@@ -443,8 +443,8 @@ class LinkedServicesOperations:
         :type factory_name: str
         :param linked_service_name: The linked service name. Required.
         :type linked_service_name: str
-        :param linked_service: Linked service resource definition. Is either a model type or a IO type.
-         Required.
+        :param linked_service: Linked service resource definition. Is either a LinkedServiceResource
+         type or a IO type. Required.
         :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceResource or IO
         :param if_match: ETag of the linkedService entity.  Should only be specified for update, for
          which it should match existing entity or can be * for unconditional update. Default value is

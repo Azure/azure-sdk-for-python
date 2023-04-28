@@ -21,7 +21,6 @@ from ci_tools.variables import in_ci
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-lint_plugin_path = os.path.join(root_dir, "scripts/pylint_custom_plugin")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -71,6 +70,6 @@ if __name__ == "__main__":
         )
     except CalledProcessError as e:
         logging.error(
-            "{} exited with linting error {}".format(pkg_details.name, e.returncode)
+            "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
         )
         exit(1)

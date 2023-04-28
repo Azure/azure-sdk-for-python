@@ -32,7 +32,7 @@ If the tests are successful, we can proceed to run the tests in LIVE mode.
 
 Because in LIVE mode we are hitting an actual resource, we must set the appropriate environment variable to make sure the code tests against the resource we want. Set up an env variable called `COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING` (just needed for SMS and Phone Numbers SDKs) and set it to the connection string of the resource you want to test against.
 
-Depending on which package you are testing, it may need special environment variables to test succesfully. The names of these variables can be found inside each test file in the `setUp()` function. Make sure to set these variables before running the tests themselves. You may need to restart your development environment after creating or updating these environment variables.
+Depending on which package you are testing, it may need special environment variables to test successfully. The names of these variables can be found inside each test file in the `setUp()` function. Make sure to set these variables before running the tests themselves. You may need to restart your development environment after creating or updating these environment variables.
 
 You can run the `pytest .` command after setting the `AZURE_TEST_RUN_LIVE` variable to `true`.
 
@@ -49,6 +49,10 @@ Another way to authenticate is to set up 3 environment variables called `AZURE_C
 If you are testing against a personal resource, you can check the [Managed Identity Quickstart Guide for ACS](https://docs.microsoft.com/azure/communication-services/quickstarts/managed-identity-from-cli) for an easy ramp-up process.
 
 For a more in-depth look on how to authenticate using managed identity, refer to the [Azure Identity client library for Python](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python) documentation. This document also has more ways for you to authenticate using the DefaultAzureCredential object besides the ones we discussed in this contributing file.
+
+### Running the New-TestResources and Remove-TestResources Scripts
+
+You may want to run the `New-TestResources.ps1` or `Remove-TestResources.ps1` scripts to test resource deployments in the SDK Live Test pipelines locally. You will need to add the additional `-TestResourceDirectories` parameter when running these scripts. If you are using the shared `test-resources.json` you can point to `communication/test-resources/`. If you are using a custom `test-resources.json`, you can point to `communication/<package-name>/test-resources.json`.
 
 ## Submitting a Pull Request
 

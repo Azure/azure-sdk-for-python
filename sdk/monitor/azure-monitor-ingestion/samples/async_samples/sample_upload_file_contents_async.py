@@ -38,13 +38,13 @@ from azure.monitor.ingestion.aio import LogsIngestionClient
 
 
 async def upload_file_contents() -> None:
-    endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
+    endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
     credential = DefaultAzureCredential()
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
     # Update this to point to a file containing a list of JSON objects.
-    FILE_PATH ="../../test-logs.json"
+    FILE_PATH = "../../test-logs.json"
 
     async with client:
         # Option 1: Upload the file contents by passing in the file stream. With this option, no chunking is done, and the
@@ -52,9 +52,8 @@ async def upload_file_contents() -> None:
         with open(FILE_PATH, "r") as f:
             try:
                 await client.upload(
-                    rule_id=os.environ['LOGS_DCR_RULE_ID'],
-                    stream_name=os.environ['LOGS_DCR_STREAM_NAME'],
-                    logs=f)
+                    rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=f
+                )
             except HttpResponseError as e:
                 print(f"File stream upload failed: {e}")
 
@@ -64,14 +63,13 @@ async def upload_file_contents() -> None:
             logs = json.load(f)
             try:
                 await client.upload(
-                    rule_id=os.environ['LOGS_DCR_RULE_ID'],
-                    stream_name=os.environ['LOGS_DCR_STREAM_NAME'],
-                    logs=logs)
+                    rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=logs
+                )
             except HttpResponseError as e:
                 print(f"List upload failed: {e}")
 
     await credential.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(upload_file_contents())

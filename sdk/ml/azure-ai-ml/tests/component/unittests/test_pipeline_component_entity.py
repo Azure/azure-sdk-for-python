@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
@@ -423,7 +422,7 @@ class TestPipelineComponentEntity:
             "literal_input2": {"job_input_type": "literal", "value": "12"},
         }
         assert node_dict["resources"] == {
-            "instance_count": 1,
+            "instance_count": "1",
             "properties": {"target_selector": {"my_resource_only": "false", "allow_spot_vm": "true"}},
             "shm_size": "2g",
         }

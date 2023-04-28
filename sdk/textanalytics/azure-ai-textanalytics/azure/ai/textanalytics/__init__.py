@@ -64,7 +64,6 @@ from ._models import (
     AbstractiveSummary,
     SummaryContext,
     AbstractiveSummaryAction,
-    DynamicClassificationResult,
 )
 from ._generated.models import (
     HealthcareDocumentType,
@@ -95,7 +94,6 @@ from ._generated.models import (
     TemperatureUnit,
     VolumeUnit,
     WeightUnit,
-    ClassificationType,
     DateTimeSubKind,
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
@@ -191,8 +189,6 @@ __all__ = [
     "AbstractiveSummary",
     "SummaryContext",
     "AbstractiveSummaryAction",
-    "ClassificationType",
-    "DynamicClassificationResult",
     "DateTimeSubKind",
 ]
 

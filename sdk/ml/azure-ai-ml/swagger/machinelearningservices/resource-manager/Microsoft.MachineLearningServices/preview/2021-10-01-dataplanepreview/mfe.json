@@ -1983,6 +1983,11 @@
             }
           },
           {
+            "in": "query",
+            "name": "stage",
+            "type": "string"
+          },
+          {
             "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
           },
           {
@@ -2282,7 +2287,10 @@
             }
           },
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ExecutePublishResponseDto"
+            }
           },
           "202": {
             "description": "Accepted",
@@ -2919,7 +2927,7 @@
             "name": "name",
             "required": true,
             "type": "string",
-            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+            "pattern": "^(?![\\-_.])[a-zA-Z0-9\\-_.]{1,255}(?<!\\.)$"
           },
           {
             "in": "path",
@@ -3022,20 +3030,25 @@
       "type": "object",
       "properties": {
         "acrAddress": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "acrName": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "acrRegion": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "armScope": {
           "type": "string",
-          "readOnly": true
+          "readOnly": true,
+          "x-nullable": true
         },
         "resourceGroupName": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "subscriptionId": {
           "format": "uuid",
@@ -3053,6 +3066,16 @@
         }
       ],
       "x-ms-discriminator-value": "AMLToken",
+      "additionalProperties": false
+    },
+    "AnonymousAccessCredentialDto": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredentialDto"
+        }
+      ],
+      "x-ms-discriminator-value": "NoCredentials",
       "additionalProperties": false
     },
     "AssetBase": {
@@ -3441,11 +3464,17 @@
       "properties": {
         "blobUri": {
           "format": "uri",
-          "type": "string"
+          "description": "https://blob.windows.core.net/Container/Path",
+          "type": "string",
+          "x-nullable": true
         },
-        "credential": {},
+        "credential": {
+          "$ref": "#/definitions/DataReferenceCredentialDto",
+          "x-nullable": true
+        },
         "storageAccountArmId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -3454,11 +3483,13 @@
       "type": "object",
       "properties": {
         "assetId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "blobUri": {
           "format": "uri",
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -3467,7 +3498,8 @@
       "type": "object",
       "properties": {
         "blobReferenceForConsumption": {
-          "$ref": "#/definitions/BlobReferenceForConsumptionDto"
+          "$ref": "#/definitions/BlobReferenceForConsumptionDto",
+          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -4104,6 +4136,132 @@
       "x-ms-discriminator-value": "DataPath",
       "additionalProperties": false
     },
+    "DataReferenceCredentialDto": {
+      "required": [
+        "credentialType"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ExtensibleObject"
+        }
+      ],
+      "properties": {
+        "credentialType": {
+          "$ref": "#/definitions/DataReferenceCredentialType"
+        }
+      },
+      "discriminator": "credentialType"
+    },
+    "DataReferenceCredentialType": {
+      "enum": [
+        "SAS",
+        "DockerCredentials",
+        "ManagedIdentity",
+        "NoCredentials"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataReferenceCredentialType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "DataType": {
+      "description": "Enum to determine the type of data.",
+      "enum": [
+        "uri_file",
+        "uri_folder",
+        "mltable"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "DataVersionBase": {
+      "description": "Data version base definition",
+      "required": [
+        "dataType",
+        "dataUri"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetBase"
+        }
+      ],
+      "properties": {
+        "dataType": {
+          "description": "Specifies the type of data.",
+          "$ref": "#/definitions/DataType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "dataUri": {
+          "description": "Uri of the data. Usage/meaning depends on Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "intellectualProperty": {
+          "description": "Intellectual Property details. Used if data is an Intellectual Property.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "discriminator": "dataType",
+      "x-ms-client-name": "DataVersionBaseDetails"
+    },
+    "DataVersionBaseResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "Additional attributes of the entity.",
+          "$ref": "#/definitions/DataVersionBase"
+        }
+      },
+      "x-ms-client-name": "DataVersionBaseData",
+      "additionalProperties": false
+    },
+    "DataVersionBaseResourceArmPaginatedResult": {
+      "description": "A paginated list of DataVersionBase entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of DataVersionBase objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type DataVersionBase.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataVersionBaseResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "Datastore": {
       "description": "Base definition for datastore contents configuration.",
       "required": [
@@ -4179,92 +4337,6 @@
       },
       "additionalProperties": false
     },
-    "DataType": {
-      "description": "Enum to determine the type of data.",
-      "enum": [
-        "uri_file",
-        "uri_folder",
-        "mltable"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "DataType",
-        "modelAsString": true
-      },
-      "additionalProperties": false
-    },
-    "DataVersionBase": {
-      "description": "Data version base definition",
-      "required": [
-        "dataType",
-        "dataUri"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/AssetBase"
-        }
-      ],
-      "properties": {
-        "dataType": {
-          "description": "Specifies the type of data.",
-          "$ref": "#/definitions/DataType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "dataUri": {
-          "description": "Uri of the data. Usage/meaning depends on Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType",
-          "pattern": "[a-zA-Z0-9_]",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "discriminator": "dataType",
-      "x-ms-client-name": "DataVersionBaseDetails"
-    },
-    "DataVersionBaseResource": {
-      "description": "Azure Resource Manager resource envelope.",
-      "required": [
-        "properties"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
-        }
-      ],
-      "properties": {
-        "properties": {
-          "description": "Additional attributes of the entity.",
-          "$ref": "#/definitions/DataVersionBase"
-        }
-      },
-      "x-ms-client-name": "DataVersionBaseData",
-      "additionalProperties": false
-    },
-    "DataVersionBaseResourceArmPaginatedResult": {
-      "description": "A paginated list of DataVersionBase entities.",
-      "type": "object",
-      "properties": {
-        "nextLink": {
-          "description": "The link to the next page of DataVersionBase objects. If null, there are no additional pages.",
-          "type": "string"
-        },
-        "value": {
-          "description": "An array of objects of type DataVersionBase.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataVersionBaseResource"
-          }
-        }
-      },
-      "additionalProperties": false
-    },
     "DistributionConfiguration": {
       "description": "Base definition for job distribution configuration.",
       "required": [
@@ -4295,6 +4367,26 @@
         "name": "DistributionType",
         "modelAsString": true
       },
+      "additionalProperties": false
+    },
+    "DockerCredentialDto": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredentialDto"
+        }
+      ],
+      "properties": {
+        "password": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "userName": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "DockerCredentials",
       "additionalProperties": false
     },
     "EarlyTerminationPolicy": {
@@ -4448,6 +4540,15 @@
             "read"
           ]
         },
+        "intellectualProperty": {
+          "description": "Intellectual Property details. Used if environment is an Intellectual Property.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
         "osType": {
           "description": "The OS type of the environment.",
           "default": "Linux",
@@ -4456,6 +4557,11 @@
             "create",
             "read"
           ]
+        },
+        "stage": {
+          "description": "Stage in the environment lifecycle assigned to this environment",
+          "type": "string",
+          "x-nullable": true
         }
       },
       "x-ms-client-name": "EnvironmentVersionDetails",
@@ -4497,6 +4603,14 @@
           }
         }
       },
+      "additionalProperties": false
+    },
+    "ExecutePublishResponseDto": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ExtensibleObject": {
+      "type": "object",
       "additionalProperties": false
     },
     "FlavorData": {
@@ -4583,14 +4697,20 @@
       "type": "object",
       "properties": {
         "acrDetails": {
-          "$ref": "#/definitions/AcrDetail"
+          "$ref": "#/definitions/AcrDetail",
+          "x-nullable": true
         },
-        "credential": {},
+        "credential": {
+          "$ref": "#/definitions/DataReferenceCredentialDto",
+          "x-nullable": true
+        },
         "imageName": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "imageRegistryReference": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -4624,6 +4744,26 @@
       "x-ms-enum": {
         "name": "InputDataDeliveryMode",
         "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "IntellectualProperty": {
+      "description": "Intellectual Property details for a resource.",
+      "required": [
+        "publisher"
+      ],
+      "type": "object",
+      "properties": {
+        "protectionLevel": {
+          "description": "Protection level of the Intellectual Property.",
+          "default": "All",
+          "$ref": "#/definitions/ProtectionLevel"
+        },
+        "publisher": {
+          "description": "Publisher of the Intellectual Property. Must be the same as Registry publisher name.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
@@ -5089,6 +5229,31 @@
       },
       "additionalProperties": false
     },
+    "MLTableData": {
+      "description": "MLTable data definition",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataVersionBase"
+        }
+      ],
+      "properties": {
+        "referencedUris": {
+          "description": "Uris referenced in the MLTable definition (required for lineage)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "mltable",
+      "additionalProperties": false
+    },
     "ManagedIdentity": {
       "description": "Managed identity configuration.",
       "type": "object",
@@ -5131,6 +5296,42 @@
       "x-ms-discriminator-value": "Managed",
       "additionalProperties": false
     },
+    "ManagedIdentityCredentialDto": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredentialDto"
+        }
+      ],
+      "properties": {
+        "managedIdentityType": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityClientId": {
+          "description": "ClientId for the UAMI. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityPrincipalId": {
+          "description": "PrincipalId for the UAMI. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityResourceId": {
+          "description": "Full arm scope for the Id. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "userManagedIdentityTenantId": {
+          "description": "TenantId for the UAMI. For ManagedIdentityType = SystemManaged, this field is null.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "ManagedIdentity",
+      "additionalProperties": false
+    },
     "MedianStoppingPolicy": {
       "description": "Defines an early termination policy based on running averages of the primary metric of all runs",
       "type": "object",
@@ -5140,31 +5341,6 @@
         }
       ],
       "x-ms-discriminator-value": "MedianStopping",
-      "additionalProperties": false
-    },
-    "MLTableData": {
-      "description": "MLTable data definition",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataVersionBase"
-        }
-      ],
-      "properties": {
-        "referencedUris": {
-          "description": "Uris referenced in the MLTable definition (required for lineage)",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "x-ms-discriminator-value": "mltable",
       "additionalProperties": false
     },
     "ModelContainer": {
@@ -5233,6 +5409,15 @@
           },
           "x-nullable": true
         },
+        "intellectualProperty": {
+          "description": "Intellectual Property details. Used if model is an Intellectual Property.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
         "jobName": {
           "description": "Name of the training job which produced this model",
           "type": "string",
@@ -5245,6 +5430,11 @@
         },
         "modelUri": {
           "description": "The URI path to the model contents.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "originAssetId": {
+          "description": "AssetId of origin model.",
           "type": "string",
           "x-nullable": true
         }
@@ -5469,6 +5659,19 @@
       "x-ms-discriminator-value": "Pipeline",
       "additionalProperties": false
     },
+    "ProtectionLevel": {
+      "description": "Protection level associated with the Intellectual Property.",
+      "enum": [
+        "All",
+        "None"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ProtectionLevel",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
     "PyTorch": {
       "description": "PyTorch distribution configuration.",
       "type": "object",
@@ -5638,6 +5841,24 @@
           "type": "integer"
         }
       },
+      "additionalProperties": false
+    },
+    "SASCredentialDto": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataReferenceCredentialDto"
+        }
+      ],
+      "properties": {
+        "sasUri": {
+          "format": "uri",
+          "description": "Full SAS Uri, including the storage, container/blob path and SAS token",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "SAS",
       "additionalProperties": false
     },
     "SamplingAlgorithm": {
@@ -5911,13 +6132,18 @@
       "type": "object",
       "properties": {
         "assetId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "temporaryDataReferenceId": {
-          "type": "string"
+          "description": "If TemporaryDataReferenceId = null then random guid will be used.",
+          "type": "string",
+          "x-nullable": true
         },
         "temporaryDataReferenceType": {
-          "type": "string"
+          "description": "Either TemporaryBlobReference or TemporaryImageReference",
+          "type": "string",
+          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -5926,16 +6152,21 @@
       "type": "object",
       "properties": {
         "blobReferenceForConsumption": {
-          "$ref": "#/definitions/BlobReferenceForConsumptionDto"
+          "description": "Container level read, write, list SAS",
+          "$ref": "#/definitions/BlobReferenceForConsumptionDto",
+          "x-nullable": true
         },
         "imageReferenceForConsumption": {
-          "$ref": "#/definitions/ImageReferenceForConsumptionDto"
+          "$ref": "#/definitions/ImageReferenceForConsumptionDto",
+          "x-nullable": true
         },
         "temporaryDataReferenceId": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         },
         "temporaryDataReferenceType": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "additionalProperties": false

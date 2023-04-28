@@ -36,14 +36,14 @@ class MicrosoftElasticConfiguration(Configuration):  # pylint: disable=too-many-
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
      00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-02-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(MicrosoftElasticConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-07-01-preview")  # type: Literal["2022-07-01-preview"]
+        api_version: Literal["2023-02-01-preview"] = kwargs.pop("api_version", "2023-02-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -57,10 +57,7 @@ class MicrosoftElasticConfiguration(Configuration):  # pylint: disable=too-many-
         kwargs.setdefault("sdk_moniker", "mgmt-elastic/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

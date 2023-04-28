@@ -14,7 +14,7 @@ pr:
     - sdk/core/
 
 variables:
-  NodeVersion: '14.x'
+  NodeVersion: '18.x'
   PythonVersion: '3.7'
   auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
   repo_branch: 'autorestv3'
@@ -40,7 +40,7 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          npm install -g pnpm
+          npm install -g pnpm@7.27.1
           git clone $(auto_rest_clone_url)
           cd autorest.python
           git checkout $(repo_branch)
@@ -49,16 +49,16 @@ jobs:
 
       - script: |
           cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
-          pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
-          pip install -r requirements.txt
+          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
+          python -m pip install -r requirements.txt
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
         displayName: 'Install azure-core and Test Vanilla Legacy'
 
       - script: |
           cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
-          pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
-          pip install -r requirements.txt
+          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
+          python -m pip install -r requirements.txt
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
         displayName: 'Install azure-mgmt-core and Test Azure Legacy'

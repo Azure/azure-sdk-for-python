@@ -62,7 +62,6 @@ class AnalyzeTextTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
     LANGUAGE_DETECTION = "LanguageDetection"
     ENTITY_LINKING = "EntityLinking"
-    DYNAMIC_CLASSIFICATION = "DynamicClassification"
 
 class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Text Analysis task results.
@@ -74,7 +73,6 @@ class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY_PHRASE_EXTRACTION_RESULTS = "KeyPhraseExtractionResults"
     LANGUAGE_DETECTION_RESULTS = "LanguageDetectionResults"
     ENTITY_LINKING_RESULTS = "EntityLinkingResults"
-    DYNAMIC_CLASSIFICATION_RESULTS = "DynamicClassificationResults"
 
 class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The area Unit of measurement.
@@ -110,14 +108,6 @@ class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEUTRAL_POSSIBLE = "neutralPossible"
     NEGATIVE_POSSIBLE = "negativePossible"
     NEGATIVE = "negative"
-
-class ClassificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies either one or multiple categories per document. Defaults to multi classification
-    which may return more than one class for each document.
-    """
-
-    SINGLE = "Single"
-    MULTI = "Multi"
 
 class Conditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes any conditionality on the entity.

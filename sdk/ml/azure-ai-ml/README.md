@@ -28,6 +28,7 @@ Install the Azure ML client library for Python with [pip][pip_link]:
 
 ```bash
 pip install azure-ai-ml
+pip install azure-identity
 ```
 
 ### Authenticate the client

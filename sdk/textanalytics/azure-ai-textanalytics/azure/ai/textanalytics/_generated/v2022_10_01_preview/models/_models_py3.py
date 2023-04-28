@@ -982,16 +982,15 @@ class AnalyzeTextTask(_serialization.Model):
     """AnalyzeTextTask.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AnalyzeTextDynamicClassificationInput, AnalyzeTextEntityLinkingInput,
-    AnalyzeTextEntityRecognitionInput, AnalyzeTextKeyPhraseExtractionInput,
-    AnalyzeTextLanguageDetectionInput, AnalyzeTextPiiEntitiesRecognitionInput,
-    AnalyzeTextSentimentAnalysisInput
+    AnalyzeTextEntityLinkingInput, AnalyzeTextEntityRecognitionInput,
+    AnalyzeTextKeyPhraseExtractionInput, AnalyzeTextLanguageDetectionInput,
+    AnalyzeTextPiiEntitiesRecognitionInput, AnalyzeTextSentimentAnalysisInput
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     """
 
@@ -1004,7 +1003,7 @@ class AnalyzeTextTask(_serialization.Model):
     }
 
     _subtype_map = {
-        'kind': {'DynamicClassification': 'AnalyzeTextDynamicClassificationInput', 'EntityLinking': 'AnalyzeTextEntityLinkingInput', 'EntityRecognition': 'AnalyzeTextEntityRecognitionInput', 'KeyPhraseExtraction': 'AnalyzeTextKeyPhraseExtractionInput', 'LanguageDetection': 'AnalyzeTextLanguageDetectionInput', 'PiiEntityRecognition': 'AnalyzeTextPiiEntitiesRecognitionInput', 'SentimentAnalysis': 'AnalyzeTextSentimentAnalysisInput'}
+        'kind': {'EntityLinking': 'AnalyzeTextEntityLinkingInput', 'EntityRecognition': 'AnalyzeTextEntityRecognitionInput', 'KeyPhraseExtraction': 'AnalyzeTextKeyPhraseExtractionInput', 'LanguageDetection': 'AnalyzeTextLanguageDetectionInput', 'PiiEntityRecognition': 'AnalyzeTextPiiEntitiesRecognitionInput', 'SentimentAnalysis': 'AnalyzeTextSentimentAnalysisInput'}
     }
 
     def __init__(
@@ -1017,54 +1016,6 @@ class AnalyzeTextTask(_serialization.Model):
         self.kind = None  # type: Optional[str]
 
 
-class AnalyzeTextDynamicClassificationInput(AnalyzeTextTask):
-    """AnalyzeTextDynamicClassificationInput.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
-     "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
-    :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
-    :ivar analysis_input:
-    :vartype analysis_input:
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.MultiLanguageAnalysisInput
-    :ivar parameters: Supported parameters for a Zero Shot Classification task.
-    :vartype parameters:
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationTaskParameters
-    """
-
-    _validation = {
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "analysis_input": {"key": "analysisInput", "type": "MultiLanguageAnalysisInput"},
-        "parameters": {"key": "parameters", "type": "DynamicClassificationTaskParameters"},
-    }
-
-    def __init__(
-        self,
-        *,
-        analysis_input: Optional["_models.MultiLanguageAnalysisInput"] = None,
-        parameters: Optional["_models.DynamicClassificationTaskParameters"] = None,
-        **kwargs
-    ):
-        """
-        :keyword analysis_input:
-        :paramtype analysis_input:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.MultiLanguageAnalysisInput
-        :keyword parameters: Supported parameters for a Zero Shot Classification task.
-        :paramtype parameters:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationTaskParameters
-        """
-        super().__init__(**kwargs)
-        self.kind = 'DynamicClassification'  # type: str
-        self.analysis_input = analysis_input
-        self.parameters = parameters
-
-
 class AnalyzeTextEntityLinkingInput(AnalyzeTextTask):
     """AnalyzeTextEntityLinkingInput.
 
@@ -1072,7 +1023,7 @@ class AnalyzeTextEntityLinkingInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1120,7 +1071,7 @@ class AnalyzeTextEntityRecognitionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1473,7 +1424,7 @@ class AnalyzeTextKeyPhraseExtractionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1520,7 +1471,7 @@ class AnalyzeTextLanguageDetectionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1568,7 +1519,7 @@ class AnalyzeTextPiiEntitiesRecognitionInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1614,7 +1565,7 @@ class AnalyzeTextSentimentAnalysisInput(AnalyzeTextTask):
 
     :ivar kind: Enumeration of supported Text Analysis tasks. Required. Known values are:
      "SentimentAnalysis", "EntityRecognition", "PiiEntityRecognition", "KeyPhraseExtraction",
-     "LanguageDetection", "EntityLinking", and "DynamicClassification".
+     "LanguageDetection", and "EntityLinking".
     :vartype kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskKind
     :ivar analysis_input:
     :vartype analysis_input:
@@ -1659,15 +1610,14 @@ class AnalyzeTextTaskResult(_serialization.Model):
     """AnalyzeTextTaskResult.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DynamicClassificationTaskResult, EntityLinkingTaskResult, EntitiesTaskResult,
-    KeyPhraseTaskResult, LanguageDetectionTaskResult, PiiTaskResult, SentimentTaskResult
+    EntityLinkingTaskResult, EntitiesTaskResult, KeyPhraseTaskResult, LanguageDetectionTaskResult,
+    PiiTaskResult, SentimentTaskResult
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     """
@@ -1681,7 +1631,7 @@ class AnalyzeTextTaskResult(_serialization.Model):
     }
 
     _subtype_map = {
-        'kind': {'DynamicClassificationResults': 'DynamicClassificationTaskResult', 'EntityLinkingResults': 'EntityLinkingTaskResult', 'EntityRecognitionResults': 'EntitiesTaskResult', 'KeyPhraseExtractionResults': 'KeyPhraseTaskResult', 'LanguageDetectionResults': 'LanguageDetectionTaskResult', 'PiiEntityRecognitionResults': 'PiiTaskResult', 'SentimentAnalysisResults': 'SentimentTaskResult'}
+        'kind': {'EntityLinkingResults': 'EntityLinkingTaskResult', 'EntityRecognitionResults': 'EntitiesTaskResult', 'KeyPhraseExtractionResults': 'KeyPhraseTaskResult', 'LanguageDetectionResults': 'LanguageDetectionTaskResult', 'PiiEntityRecognitionResults': 'PiiTaskResult', 'SentimentAnalysisResults': 'SentimentTaskResult'}
     }
 
     def __init__(
@@ -3234,268 +3184,6 @@ class DocumentWarning(_serialization.Model):
         self.target_ref = target_ref
 
 
-class DynamicClassificationDocumentResult(DocumentResult):
-    """DynamicClassificationDocumentResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar classifications: Required.
-    :vartype classifications:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'classifications': {'required': True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "classifications": {"key": "classifications", "type": "[ClassificationResult]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        classifications: List["_models.ClassificationResult"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword classifications: Required.
-        :paramtype classifications:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, **kwargs)
-        self.classifications = classifications
-
-
-class DynamicClassificationResult(PreBuiltResult):
-    """DynamicClassificationResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.textanalytics.v2022_10_01_preview.models.InputError]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
-    :vartype model_version: str
-    :ivar documents: Response by document. Required.
-    :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResultDocumentsItem]
-    """
-
-    _validation = {
-        'errors': {'required': True},
-        'model_version': {'required': True},
-        'documents': {'required': True},
-    }
-
-    _attribute_map = {
-        "errors": {"key": "errors", "type": "[InputError]"},
-        "statistics": {"key": "statistics", "type": "RequestStatistics"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[DynamicClassificationResultDocumentsItem]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        errors: List["_models.InputError"],
-        model_version: str,
-        documents: List["_models.DynamicClassificationResultDocumentsItem"],
-        statistics: Optional["_models.RequestStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword errors: Errors by document id. Required.
-        :paramtype errors: list[~azure.ai.textanalytics.v2022_10_01_preview.models.InputError]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the request payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.RequestStatistics
-        :keyword model_version: This field indicates which model is used for scoring. Required.
-        :paramtype model_version: str
-        :keyword documents: Response by document. Required.
-        :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResultDocumentsItem]
-        """
-        super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
-        self.documents = documents
-
-
-class DynamicClassificationResultDocumentsItem(DynamicClassificationDocumentResult):
-    """DynamicClassificationResultDocumentsItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar classifications: Required.
-    :vartype classifications:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'classifications': {'required': True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "classifications": {"key": "classifications", "type": "[ClassificationResult]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        classifications: List["_models.ClassificationResult"],
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword classifications: Required.
-        :paramtype classifications:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, classifications=classifications, **kwargs)
-
-
-class DynamicClassificationTaskParameters(PreBuiltTaskParameters):
-    """Supported parameters for a Zero Shot Classification task.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar logging_opt_out:
-    :vartype logging_opt_out: bool
-    :ivar model_version:
-    :vartype model_version: str
-    :ivar classification_type: Specifies either one or multiple categories per document. Defaults
-     to multi classification which may return more than one class for each document. Known values
-     are: "Single" and "Multi".
-    :vartype classification_type: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationType
-    :ivar categories: a list of categories to which input is classified to. Required.
-    :vartype categories: list[str]
-    """
-
-    _validation = {
-        'categories': {'required': True},
-    }
-
-    _attribute_map = {
-        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "classification_type": {"key": "classificationType", "type": "str"},
-        "categories": {"key": "categories", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        categories: List[str],
-        logging_opt_out: bool = False,
-        model_version: str = "latest",
-        classification_type: Union[str, "_models.ClassificationType"] = "Multi",
-        **kwargs
-    ):
-        """
-        :keyword logging_opt_out:
-        :paramtype logging_opt_out: bool
-        :keyword model_version:
-        :paramtype model_version: str
-        :keyword classification_type: Specifies either one or multiple categories per document.
-         Defaults to multi classification which may return more than one class for each document. Known
-         values are: "Single" and "Multi".
-        :paramtype classification_type: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationType
-        :keyword categories: a list of categories to which input is classified to. Required.
-        :paramtype categories: list[str]
-        """
-        super().__init__(logging_opt_out=logging_opt_out, model_version=model_version, **kwargs)
-        self.classification_type = classification_type
-        self.categories = categories
-
-
-class DynamicClassificationTaskResult(AnalyzeTextTaskResult):
-    """DynamicClassificationTaskResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
-     "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
-    :vartype kind: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results: Required.
-    :vartype results:
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResult
-    """
-
-    _validation = {
-        'kind': {'required': True},
-        'results': {'required': True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "results": {"key": "results", "type": "DynamicClassificationResult"},
-    }
-
-    def __init__(
-        self,
-        *,
-        results: "_models.DynamicClassificationResult",
-        **kwargs
-    ):
-        """
-        :keyword results: Required.
-        :paramtype results:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DynamicClassificationResult
-        """
-        super().__init__(**kwargs)
-        self.kind = 'DynamicClassificationResults'  # type: str
-        self.results = results
-
-
 class EntitiesLROTask(AnalyzeTextLROTask):
     """An object representing the task definition for an Entities Recognition task.
 
@@ -3719,8 +3407,7 @@ class EntitiesTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -4167,8 +3854,7 @@ class EntityLinkingTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -6057,8 +5743,7 @@ class KeyPhraseTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -6261,8 +5946,7 @@ class LanguageDetectionTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -7179,8 +6863,7 @@ class PiiTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.
@@ -7902,8 +7585,7 @@ class SentimentTaskResult(AnalyzeTextTaskResult):
 
     :ivar kind: Enumeration of supported Text Analysis task results. Required. Known values are:
      "SentimentAnalysisResults", "EntityRecognitionResults", "PiiEntityRecognitionResults",
-     "KeyPhraseExtractionResults", "LanguageDetectionResults", "EntityLinkingResults", and
-     "DynamicClassificationResults".
+     "KeyPhraseExtractionResults", "LanguageDetectionResults", and "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResultsKind
     :ivar results: Required.

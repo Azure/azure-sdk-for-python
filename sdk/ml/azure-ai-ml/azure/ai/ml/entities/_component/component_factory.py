@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 
-from ..._restclient.v2022_05_01.models import ComponentVersionData
+from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._utils.utils import is_internal_components_enabled
 from ...constants._common import AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
 from ...constants._component import DataTransferTaskType, NodeType
@@ -141,11 +141,11 @@ class _ComponentFactory:
         )
 
     @classmethod
-    def load_from_rest(cls, *, obj: ComponentVersionData, _type: Optional[str] = None) -> Component:
+    def load_from_rest(cls, *, obj: ComponentVersion, _type: Optional[str] = None) -> Component:
         """Load a component from a rest object.
 
         :param obj: The rest object.
-        :type obj: ComponentVersionData
+        :type obj: ComponentVersion
         :param _type: the type name of the component. When None, it will be inferred from the rest object.
         :type _type: str
         """

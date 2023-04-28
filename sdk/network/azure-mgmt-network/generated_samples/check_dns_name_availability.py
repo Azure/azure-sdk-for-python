@@ -31,11 +31,10 @@ def main():
 
     response = client.check_dns_name_availability(
         location="westus",
-        domain_name_label="testdns",
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-07-01/examples/CheckDnsNameAvailability.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-09-01/examples/CheckDnsNameAvailability.json
 if __name__ == "__main__":
     main()

@@ -72,13 +72,13 @@ def main():
                     ]
                 },
             },
-            "sku": {"capacity": 1, "name": "Standard_S1", "tier": "Standard"},
+            "sku": {"capacity": 1, "name": "Premium_P1", "tier": "Premium"},
             "tags": {"key1": "value1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/preview/2022-08-01-preview/examples/SignalR_Update.json
+# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/stable/2023-02-01/examples/SignalR_Update.json
 if __name__ == "__main__":
     main()

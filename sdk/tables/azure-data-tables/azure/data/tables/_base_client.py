@@ -26,7 +26,6 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     RequestIdPolicy,
@@ -36,7 +35,6 @@ from ._generated import AzureTable
 from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
-    STORAGE_OAUTH_SCOPE,
     DEFAULT_COSMOS_ENDPOINT_SUFFIX,
     DEFAULT_STORAGE_ENDPOINT_SUFFIX,
 )
@@ -47,7 +45,7 @@ from ._error import (
     _validate_tablename_error
 )
 from ._models import LocationMode
-from ._authentication import BearerTokenChallengePolicy, SharedKeyCredentialPolicy
+from ._authentication import _configure_credential
 from ._policies import (
     CosmosPatchTransformPolicy,
     StorageHeadersPolicy,
@@ -139,8 +137,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 LocationMode.PRIMARY: primary_hostname,
                 LocationMode.SECONDARY: secondary_hostname,
             }
-        self._credential_policy = None  # type: ignore
-        self._configure_credential(self.credential)  # type: ignore
+
         self._policies = self._configure_policies(hosts=self._hosts, **kwargs)  # type: ignore
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
@@ -244,12 +241,13 @@ class TablesBaseClient(AccountHostsMixin):
         self._client.__exit__(*args)
 
     def _configure_policies(self, **kwargs):
+        credential_policy = _configure_credential(self.credential)
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
             ProxyPolicy(**kwargs),
-            self._credential_policy,
+            credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(**kwargs),
@@ -259,22 +257,6 @@ class TablesBaseClient(AccountHostsMixin):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-
-    def _configure_credential(
-        self, credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]
-    ) -> None:
-        if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenChallengePolicy(
-                credential, STORAGE_OAUTH_SCOPE # type: ignore
-            )
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential  # type: ignore
-        elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential) # type: ignore
-        elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential) # type: ignore
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
 
     def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""

@@ -19,6 +19,7 @@ class FeatureStoreSchema(PathAwareSchema):
     name = fields.Str(required=True)
     compute_runtime = NestedField(ComputeRuntimeSchema)
     offline_store = NestedField(MaterializationStoreSchema)
+    online_store = NestedField(MaterializationStoreSchema)
     materialization_identity = NestedField(UserAssignedIdentitySchema)
     description = fields.Str()
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())

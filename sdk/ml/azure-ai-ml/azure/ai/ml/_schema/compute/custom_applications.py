@@ -6,7 +6,7 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, ExperimentalField
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml.constants._compute import CustomApplicationDefaults
 
@@ -46,10 +46,10 @@ class VolumeSettingsSchema(metaclass=PatchedSchemaMeta):
 class CustomApplicationsSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
     type = StringTransformedEnum(allowed_values=[CustomApplicationDefaults.DOCKER])
-    image = ExperimentalField(NestedField(ImageSettingsSchema))
-    endpoints = ExperimentalField(fields.List(NestedField(EndpointsSettingsSchema)))
+    image = NestedField(ImageSettingsSchema)
+    endpoints = fields.List(NestedField(EndpointsSettingsSchema))
     environment_variables = fields.Dict()
-    bind_mounts = ExperimentalField(fields.List(NestedField(VolumeSettingsSchema)))
+    bind_mounts = fields.List(NestedField(VolumeSettingsSchema))
 
     @post_load
     def make(self, data, **kwargs):
