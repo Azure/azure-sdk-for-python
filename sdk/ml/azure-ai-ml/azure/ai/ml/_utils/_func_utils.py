@@ -253,11 +253,14 @@ try:
         # endregion
 
         @classmethod
-        def _get_pieces(cls, _instructions, _separators):
+        def _get_pieces(cls, instructions, separators):
             """Split the instructions into pieces by the separators.
-            Return a list of pieces except the last piece and the last piece.
+            Note that separators is a list of instructions. For example,
+            instructions: [I3, I1, I2, I3, I1, I3, I1, I2, I3]
+            separators: [I1, I2]
+            result: [[I3], [I3, I1, I3], [I3]]
             """
-            separator_iter = iter(_separators)
+            separator_iter = iter(separators)
 
             def get_next_separator():
                 try:
@@ -268,22 +271,23 @@ try:
                 except StopIteration:
                     return None
 
-            _pieces = []
-            _last_piece = []
+            pieces = []
+            last_piece = []
             cur_separator = get_next_separator()
-            for instr in _instructions:
+            for instr in instructions:
                 if cls.is_instr_equal(instr, cur_separator):
                     # skip the separator
-                    _pieces.append(_last_piece)
+                    pieces.append(last_piece)
                     cur_separator = get_next_separator()
-                    _last_piece = []
+                    last_piece = []
                 else:
-                    _last_piece.append(instr)
+                    last_piece.append(instr)
+            pieces.append(last_piece)
 
             if cur_separator is not None:
                 raise ValueError(cls.make_error("not_all_template_separators_used"))
 
-            return _pieces, _last_piece
+            return pieces
 
         @classmethod
         def _split_instructions_based_on_template(
@@ -313,15 +317,14 @@ try:
             if remove_mock_body:
                 # this parameter should be set as True only when processing the template target function,
                 # when we should ignore the mock body
-                pieces, piece = cls._get_pieces(
+                pieces = cls._get_pieces(
                     instructions, cls._template_separators_before_body + cls._get_mock_body_instructions()
                 )
             else:
-                pieces, piece = cls._get_pieces(instructions, cls._template_separators_before_body)
+                pieces = cls._get_pieces(instructions, cls._template_separators_before_body)
 
-            reversed_pieces, piece = cls._get_pieces(reversed(piece), reversed(cls._template_separators_after_body))
+            reversed_pieces = cls._get_pieces(reversed(pieces.pop()), reversed(cls._template_separators_after_body))
 
-            reversed_pieces.append(piece)
             while reversed_pieces:
                 pieces.append(list(reversed(reversed_pieces.pop())))
 
