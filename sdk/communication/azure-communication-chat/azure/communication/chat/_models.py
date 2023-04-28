@@ -303,16 +303,6 @@ class ChatRetentionPolicy(object):
     :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
     """
 
-    _validation = {
-        "kind": {"required": True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-    }
-
-    _subtype_map = {"kind": {"threadCreationDate": "ThreadCreationDateRetentionPolicy"}}
-
     def __init__(
         self,
         **kwargs # type: Any
@@ -331,16 +321,6 @@ class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
      will be deleted. Only 90 is accepted for now. Required.
     :vartype delete_thread_after_days: int
     """
-
-    _validation = {
-        "kind": {"required": True},
-        "delete_thread_after_days": {"required": True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "delete_thread_after_days": {"key": "deleteThreadAfterDays", "type": "int"},
-    }
 
     def __init__(
         self,
