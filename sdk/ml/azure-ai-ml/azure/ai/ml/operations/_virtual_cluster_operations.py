@@ -25,11 +25,7 @@ from azure.ai.ml._utils.azure_resource_utils import (
     get_virtual_cluster_by_name,
     get_virtual_clusters_from_subscriptions,
 )
-from azure.ai.ml.constants._common import (
-    AZUREML_RESOURCE_PROVIDER,
-    LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
-    Scope,
-)
+from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT, Scope
 from azure.ai.ml.entities import Job
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
@@ -87,7 +83,15 @@ class VirtualClusterOperations:
             message = f"Invalid scope: {scope}. Valid values are 'subscription' or None."
             raise UserErrorException(message=message, no_personal_data_message=message)
 
-        return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
+        try:
+            return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
+        except ImportError:
+            raise UserErrorException(
+                message="Met ImportError when trying to list virtual clusters. "
+                "Please install azure-mgmt-resource to enable this feature; "
+                "and please install azure-mgmt-resource to enable listing virtual clusters "
+                "across all subscriptions a customer has access to."
+            )
 
     @distributed_trace
     @monitor_with_activity(logger, "VirtualCluster.ListJobs", ActivityType.PUBLICAPI)
