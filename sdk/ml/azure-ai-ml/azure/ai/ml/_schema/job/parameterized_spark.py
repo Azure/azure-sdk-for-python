@@ -6,7 +6,7 @@
 import re
 from typing import Any, Dict, List
 
-from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validate, validates
+from marshmallow import INCLUDE, Schema, ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validate, validates
 
 from azure.ai.ml._schema.core.fields import CodeField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -41,7 +41,7 @@ class SparkEntryClassSchema(metaclass=PatchedSchemaMeta):
         return {"class_name": data.entry}
 
 
-CONF_KEY_MAP = {
+CONF_KEY_MAP : Dict[str, str] = {
     "driver_cores": "spark.driver.cores",
     "driver_memory": "spark.driver.memory",
     "executor_cores": "spark.executor.cores",
@@ -53,40 +53,37 @@ CONF_KEY_MAP = {
 }
 
 
-class SparkConfSchema(metaclass=PatchedSchemaMeta):
-    conf = fields.Dict(
-        keys=fields.Str(),
-        values=UnionField(
-            [
-                fields.Int(),
-                fields.Str(validate=validate.Regexp(re_memory_pattern)),
-                fields.Bool(),
-            ]
-        ),
-        unknown=INCLUDE,
-    )
-
+class SparkConfSchema(Schema):
+    #conf = fields.Dict(key=fields.Str(), values= Uni)
+    driver_cores = fields.Int(data_key="spark.driver.cores")
+    driver_memory = fields.Str(data_key="spark.driver.memory",validate=validate.Regexp(re_memory_pattern))
+    executor_cores = fields.Int(data_key="spark.executor.cores")
+    executor_memory = fields.Str(data_key="spark.executor.memory",validate=validate.Regexp(re_memory_pattern))
+    executor_instances = fields.Int(data_key="spark.executor.instances")
+    dynamic_allocation_enabled = fields.Bool(data_key="spark.dynamicAllocation.enabled")
+    dynamic_allocation_min_executors = fields.Int(data_key="spark.dynamicAllocation.minExecutors")
+    dynamic_allocation_max_executors = fields.Int(data_key="spark.dynamicAllocation.maxExecutors")
+    
     @pre_load
     def deserialize_field_names(self, data, **kwargs):
-        conf = {}
         for field_key, dict_key in CONF_KEY_MAP.items():
             value = data.get(dict_key, None)
             if dict_key in data and value is not None:
-                conf[field_key] = value
                 del data[dict_key]
-        data = conf
+                data[field_key] = value
         return data
 
     @post_dump(pass_original=True)
-    def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
+    def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs) -> Dict:
         # pass original data here to dump conf fields which are not defined in SparkConfSchema
-        conf = data.get("conf", {})
+        for field_name, _ in original_data.items():
+            if field_name not in data:
+                data[field_name] = original_data[field_name]
         for field_name, dict_name in CONF_KEY_MAP.items():
-            val = conf.get(field_name, None)
-            if field_name in conf and val is not None:
-                conf[dict_name] = val
-                del conf[field_name]
-        data.update(conf)
+            val = data.get(field_name, None)
+            if field_name in data and val is not None:
+                del data[field_name]
+                data[dict_name] = val
         return data
 
 
@@ -106,7 +103,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     jars = fields.List(fields.Str(required=True))
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
@@ -132,9 +129,39 @@ class ParameterizedSparkSchema(PathAwareSchema):
     @validates("archives")
     def no_duplicate_archives(self, value):
         no_duplicates("archives", value)
+    
+    @pre_load
+    def deserialize_field_names(self, data, **kwargs):
+        conf = data["conf"] if "conf" in data else None
+        if conf is not None:
+            for field_key, dict_key in CONF_KEY_MAP.items():
+                value = conf.get(dict_key, None)
+                if dict_key in conf and value is not None:
+                    del conf[dict_key]
+                    conf[field_key] = value
+            data["conf"] = conf
+            return data
 
+    @post_dump(pass_original=True)
+    def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
+        # pass original data here to dump conf fields which are not defined in SparkConfSchema
+        
+        conf = data["conf"] if "conf" in data else None
+        if conf is not None:
+            for field_name, _ in original_data.conf.items():
+                if field_name not in conf:
+                    conf[field_name] = original_data[field_name]
+            for field_name, dict_name in CONF_KEY_MAP.items():
+                val = conf.get(field_name, None)
+                if field_name in conf and val is not None:
+                    del conf[field_name]
+                    conf[dict_name] = val
+            data["conf"] = conf
+        return data
+    
     @post_load
     def demote_conf_fields(self, data, **kwargs):
+        #print(data)
         conf = data["conf"] if "conf" in data else None
         if conf is not None:
             for field_name, _ in CONF_KEY_MAP.items():
@@ -147,6 +174,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     @pre_dump
     def promote_conf_fields(self, data: object, **kwargs):
         # copy fields from root object into the 'conf'
+        #print(data)
         conf = data.conf or {}
         for field_name, _ in CONF_KEY_MAP.items():
             value = data.__getattribute__(field_name)

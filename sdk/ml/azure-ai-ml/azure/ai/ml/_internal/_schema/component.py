@@ -209,5 +209,5 @@ class InternalSparkComponentSchema(InternalComponentSchema):
 
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    conf = fields.Dict(fields.Str(), fields.Raw())
     args = fields.Str(metadata={"description": "Command Line arguments."})

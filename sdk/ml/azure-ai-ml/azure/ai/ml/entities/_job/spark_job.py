@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from marshmallow import INCLUDE
+from marshmallow import INCLUDE, fields
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
@@ -250,11 +250,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @classmethod
     def _load_from_rest(cls, obj: JobBase) -> "SparkJob":
         rest_spark_job: RestSparkJob = obj.properties
-        conf_schema = UnionField(
-            [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
-            ]
-        )
+        conf_schema = fields.Dict(keys=fields.Str(), values=fields.Raw())
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
         rest_spark_conf = conf_schema._deserialize(value=rest_spark_conf, attr=None, data=None)
         spark_job = SparkJob(
