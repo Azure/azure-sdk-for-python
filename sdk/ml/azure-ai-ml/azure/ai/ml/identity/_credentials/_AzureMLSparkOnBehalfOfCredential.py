@@ -25,7 +25,7 @@ class _AzureMLSparkOnBehalfOfCredential(ManagedIdentityBase):
 
 
 def _get_client_args(**kwargs) -> Optional[dict]:
-    from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
 
     try:
         spark = SparkSession.builder.getOrCreate()
@@ -60,6 +60,9 @@ def _get_client_args(**kwargs) -> Optional[dict]:
     resource_group = os.environ.get("AZUREML_ARM_RESOURCEGROUP")
     workspace_name = os.environ.get("AZUREML_ARM_WORKSPACE_NAME")
 
+    if not obo_access_token:
+        return None
+
     # pylint: disable=line-too-long
     request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/getuseraccesstokenforrun"  # cspell:disable-line
     # pylint: enable=line-too-long
@@ -70,9 +73,6 @@ def _get_client_args(**kwargs) -> Optional[dict]:
         resource_group,
         workspace_name,
     )
-
-    if not obo_access_token:
-        return None
 
     return dict(
         kwargs,

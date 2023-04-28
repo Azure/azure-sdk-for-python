@@ -12,7 +12,6 @@ from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
 
 
-
 class AzureMLOnBehalfOfCredential(object):
     # pylint: disable=line-too-long
     """Authenticates a user via the on-behalf-of flow.

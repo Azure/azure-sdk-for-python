@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 import abc
-import dateutil
 import time
 from typing import TYPE_CHECKING
 
+import dateutil
 import six
 from msal import TokenCache
 
@@ -64,8 +64,9 @@ class ManagedIdentityClientBase(ABC):
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
 
-        if not ("access_token" in content or "token" in content) or \
-                not ("expires_in" in content or "expires_on" in content or "expiresOn" in content):
+        if not ("access_token" in content or "token" in content) or not (
+            "expires_in" in content or "expires_on" in content or "expiresOn" in content
+        ):
             if content and "access_token" in content:
                 content["access_token"] = "****"
             if content and "token" in content:
@@ -132,7 +133,7 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
         request = self._request_factory(resource)
         request_time = int(time.time())
         response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
-        token = self._process_response(response, request_time, resource)
+        token = self._process_response(response=response, request_time=request_time, resource=resource)
         return token
 
     def _build_pipeline(self, **kwargs):
