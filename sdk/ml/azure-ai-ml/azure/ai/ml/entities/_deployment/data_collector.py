@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Optional, List
+from typing import Dict, Optional
 
-from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema, RequestLoggingSchema
+from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection

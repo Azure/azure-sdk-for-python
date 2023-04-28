@@ -319,28 +319,6 @@ class OnlineDeployment(Deployment):
             self.instance_count = other.instance_count or self.instance_count
             self.instance_type = other.instance_type or self.instance_type
 
-    # @classmethod
-    # def _filter_datastore_from_rest_object(
-    #     cls, entity: "OnlineDeployment", deployment: RestOnlineDeploymentDetails
-    # ) -> "OnlineDeployment":
-    #     # Data collector is private preview. If Private Preview environment variable is not enable
-    #     # data collector will be removed from tags. Data Collector values will be stored in tags
-    #     # until data collector is added to the contract.
-    #     if not is_private_preview_enabled():
-    #         del_key = []
-    #         for k in entity.tags:
-    #             if k.startswith("data_collector"):
-    #                 del_key.append(k)
-    #         if len(del_key) > 0:
-    #             for k in del_key:
-    #                 del entity.tags[k]
-    #     else:
-    #         unflat_data = unflatten(entity.tags, ".")
-    #         if unflat_data.get("data_collector", None):
-    #             entity.data_collector = unflat_data.get("data_collector")
-    #     entity._provisioning_state = deployment.provisioning_state
-    #     return entity
-
     @classmethod
     def _set_scale_settings(cls, data: dict):
         if not hasattr(data, EndpointYamlFields.SCALE_SETTINGS):

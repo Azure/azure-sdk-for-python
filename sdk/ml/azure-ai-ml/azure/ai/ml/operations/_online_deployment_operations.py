@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-self-use
+# pylint: disable=protected-access,no-self-use,broad-except
 
 import random
 import re
@@ -380,6 +380,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     result = self._all_operations._all_operations[AzureMLResourceType.DATA].get(data_name, data_version)
                 else:
                     raise e
-            deployment.data_collector.collections[
-                name
-            ].data = f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}/data/{result.name}/versions/{result.version}"
+            deployment.data_collector.collections[name].data = (
+                f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}"
+                f"/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}"
+                f"/data/{result.name}/versions/{result.version}"
+            )
