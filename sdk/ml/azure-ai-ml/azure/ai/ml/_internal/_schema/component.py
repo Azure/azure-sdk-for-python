@@ -96,7 +96,6 @@ class InternalComponentSchema(ComponentSchema):
 
     environment = UnionField(
         [
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             NestedField(InternalEnvironmentSchema),
         ]
@@ -210,5 +209,5 @@ class InternalSparkComponentSchema(InternalComponentSchema):
 
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
-    conf = fields.Dict(fields.Str(), fields.Raw())
+    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
     args = fields.Str(metadata={"description": "Command Line arguments."})
