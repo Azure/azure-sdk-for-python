@@ -66,10 +66,10 @@ class TestFeatureStoreOperation:
             description="description",
         )
 
-        def outgoing_get_call(rg, name):
+        def outgoing_get_call(rg, name, **kwargs):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
 
-        def outgoing_call(rg, name, params, polling, cls):
+        def outgoing_call(rg, name, params, polling, cls, **kwargs):
             assert rg == "test_resource_group"
             assert name == "name"
             assert params.description == "description"
@@ -83,7 +83,7 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation._operation.begin_update.assert_called()
 
     def test_delete(self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture) -> None:
-        def outgoing_call(rg, name):
+        def outgoing_call(rg, name, **kwargs):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_call
@@ -94,7 +94,7 @@ class TestFeatureStoreOperation:
     def test_delete_non_feature_store_kind(
         self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture
     ) -> None:
-        def outgoing_call(rg, name):
+        def outgoing_call(rg, name, **kwargs):
             return Workspace(name=name)._to_rest_object()
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_call
