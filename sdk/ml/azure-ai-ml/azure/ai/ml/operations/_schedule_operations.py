@@ -76,6 +76,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         *,
         list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,  # pylint: disable=unused-argument
+        **kwargs,
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.
 
@@ -101,6 +102,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             list_view_type=list_view_type,
             cls=safe_from_rest_object,
             **self._kwargs,
+            **kwargs,
         )
 
     def _get_polling(self, name):
@@ -120,6 +122,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_delete(
         self,
         name: str,
+        **kwargs,
     ) -> LROPoller[None]:
         """Delete schedule.
 
@@ -132,6 +135,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             name=name,
             polling=self._get_polling(name),
             **self._kwargs,
+            **kwargs,
         )
         return poller
 
@@ -140,6 +144,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def get(
         self,
         name: str,
+        **kwargs,
     ) -> Schedule:
         """Get a schedule.
 
@@ -154,6 +159,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             name=name,
             cls=lambda _, obj, __: Schedule._from_rest_object(obj),
             **self._kwargs,
+            **kwargs,
         )
 
     @distributed_trace
@@ -161,6 +167,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_create_or_update(
         self,
         schedule: Schedule,
+        **kwargs,
     ) -> LROPoller[Schedule]:
         """Create or update schedule.
 
@@ -185,6 +192,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             body=schedule_data,
             polling=self._get_polling(schedule.name),
             **self._kwargs,
+            **kwargs,
         )
         return poller
 
@@ -193,6 +201,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def begin_enable(
         self,
         name: str,
+        **kwargs,
     ) -> LROPoller[Schedule]:
         """Enable a schedule.
 
@@ -203,13 +212,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         """
         schedule = self.get(name=name)
         schedule._is_enabled = True
-        return self.begin_create_or_update(schedule)
+        return self.begin_create_or_update(schedule, **kwargs)
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name: str,
+        **kwargs,
     ) -> LROPoller[Schedule]:
         """Disable a schedule.
 
@@ -220,4 +230,4 @@ class ScheduleOperations(_ScopeDependentOperations):
         """
         schedule = self.get(name=name)
         schedule._is_enabled = False
-        return self.begin_create_or_update(schedule)
+        return self.begin_create_or_update(schedule, **kwargs)
