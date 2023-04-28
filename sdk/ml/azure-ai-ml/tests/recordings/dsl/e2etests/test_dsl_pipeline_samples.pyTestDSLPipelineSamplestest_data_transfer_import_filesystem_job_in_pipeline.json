@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1422",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -76,22 +76,22 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "3291",
+        "Content-Length": "3292",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 18 Apr 2023 09:39:33 GMT",
+        "Date": "Fri, 28 Apr 2023 00:43:30 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-16eb2123b14f5fcbdcdd3876c580d34c-e8d0837d2c22196b-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-10057e5951f1e58d4d7b47dc9cb18673-0edd67f85bff4e51-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "int-02",
+        "x-aml-cluster": "vienna-westus-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3c82f8fc-7d03-4c46-949a-a49383cb8100",
-        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-correlation-request-id": "1e5542a0-0a56-4165-b692-d1a0a1bebad7",
+        "x-ms-ratelimit-remaining-subscription-writes": "1172",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230418T093934Z:3c82f8fc-7d03-4c46-949a-a49383cb8100",
-        "x-request-time": "0.482"
+        "x-ms-routing-request-id": "WESTUS:20230428T004331Z:1e5542a0-0a56-4165-b692-d1a0a1bebad7",
+        "x-request-time": "0.320"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -108,7 +108,7 @@
             "Tracking": {
               "jobServiceType": "Tracking",
               "port": null,
-              "endpoint": "azureml://int.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "endpoint": "azureml://westus.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -187,8 +187,8 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-04-18T09:39:33.6459033\u002B00:00",
-          "createdBy": "Ying Chen",
+          "createdAt": "2023-04-28T00:43:31.0605189\u002B00:00",
+          "createdBy": "Mayank Kumar",
           "createdByType": "User"
         }
       }
@@ -201,60 +201,84 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/1.0.0b1 Python/3.10.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 202,
+      "StatusCode": 400,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "4",
+        "Content-Length": "1222",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 18 Apr 2023 09:39:37 GMT",
-        "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:4cb595ba-a971-49ea-b17f-fc1f049f599d:000000000000000000000?api-version=2023-04-01-preview",
-        "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "int-02",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-async-operation-timeout": "PT1H",
-        "x-ms-correlation-request-id": "6073e93c-8f7f-44b5-a263-3bfcb9d88cc8",
-        "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230418T093937Z:6073e93c-8f7f-44b5-a263-3bfcb9d88cc8",
-        "x-request-time": "0.482"
-      },
-      "ResponseBody": "null"
-    },
-    {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:4cb595ba-a971-49ea-b17f-fc1f049f599d:000000000000000000000?api-version=2023-04-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "0",
-        "Date": "Tue, 18 Apr 2023 09:39:37 GMT",
+        "Date": "Fri, 28 Apr 2023 00:43:46 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-0d6e40993eef5fad218e57d694c1ce47-c4fa6d39bcc320ac-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "int-02",
+        "x-aml-cluster": "vienna-westus-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d9527e5f-ac7c-4a86-87d0-383a24a5233a",
-        "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230418T093938Z:d9527e5f-ac7c-4a86-87d0-383a24a5233a",
-        "x-request-time": "0.027"
+        "x-ms-correlation-request-id": "b30f1c22-3155-47a6-9bf0-e244002725f2",
+        "x-ms-ratelimit-remaining-subscription-writes": "1172",
+        "x-ms-response-type": "error",
+        "x-ms-routing-request-id": "WESTUS:20230428T004347Z:b30f1c22-3155-47a6-9bf0-e244002725f2",
+        "x-request-time": "14.870"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "error": {
+          "code": "UserError",
+          "message": "The pipeline run 000000000000000000000 is in terminal status, it can\u0027t be canceled.",
+          "details": [],
+          "additionalInfo": [
+            {
+              "type": "ComponentName",
+              "info": {
+                "value": "managementfrontend"
+              }
+            },
+            {
+              "type": "Correlation",
+              "info": {
+                "value": {
+                  "operation": "01b980dd69393815b5e2443acaffa6ee",
+                  "request": "02e72372014aeb87"
+                }
+              }
+            },
+            {
+              "type": "Environment",
+              "info": {
+                "value": "westus"
+              }
+            },
+            {
+              "type": "Location",
+              "info": {
+                "value": "westus"
+              }
+            },
+            {
+              "type": "Time",
+              "info": {
+                "value": "2023-04-28T00:43:47.2277033\u002B00:00"
+              }
+            },
+            {
+              "type": "InnerError",
+              "info": {
+                "value": {
+                  "code": "BadArgument",
+                  "innerError": {
+                    "code": "ArgumentInvalid",
+                    "innerError": {
+                      "code": "CancelPipelineRunInTerminalStatus",
+                      "innerError": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "Variables": {}
