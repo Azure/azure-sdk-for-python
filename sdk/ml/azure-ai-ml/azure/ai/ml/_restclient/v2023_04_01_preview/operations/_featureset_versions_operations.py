@@ -1060,7 +1060,7 @@ class FeaturesetVersionsOperations(object):
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+                request.method = "POST"
             return request
 
         def extract_data(pipeline_response):
