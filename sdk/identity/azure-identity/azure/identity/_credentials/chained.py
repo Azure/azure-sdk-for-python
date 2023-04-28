@@ -37,6 +37,15 @@ class ChainedTokenCredential:
 
     :param credentials: credential instances to form the chain
     :type credentials: :class:`azure.core.credentials.TokenCredential`
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_chained_token_credential]
+            :end-before: [END create_chained_token_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a ChainedTokenCredential.
     """
 
     def __init__(self, *credentials):
