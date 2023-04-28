@@ -227,14 +227,18 @@ class ChatThreadProperties(object):
         if created_by is not None:
             created_by = deserialize_identifier(chat_thread.created_by_communication_identifier)
 
+        retention_policy = chat_thread.retention_policy
+        if retention_policy is not None:
+            retention_policy = ChatRetentionPolicy(
+                delete_thread_after_days=chat_thread.retention_policy.delete_thread_after_days
+            )
+
         return cls(
             id=chat_thread.id,
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
             created_by=created_by,
-            retention_policy=ChatRetentionPolicy(
-                delete_thread_after_days=chat_thread.retention_policy.delete_thread_after_days
-            )
+            retention_policy=retention_policy
         )
 
 
