@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import abc
+import dateutil
 import time
 from typing import TYPE_CHECKING
 
@@ -63,9 +64,12 @@ class ManagedIdentityClientBase(ABC):
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
 
-        if "access_token" not in content or not ("expires_in" in content or "expires_on" in content):
+        if not ("access_token" in content or "token" in content) or \
+                not ("expires_in" in content or "expires_on" in content or "expiresOn" in content):
             if content and "access_token" in content:
                 content["access_token"] = "****"
+            if content and "token" in content:
+                content["token"] = "****"
             raise ClientAuthenticationError(
                 message='Unexpected response "{}"'.format(content),
                 response=response.http_response,
@@ -74,10 +78,14 @@ class ManagedIdentityClientBase(ABC):
         if self._content_callback:
             self._content_callback(content)
 
-        expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
+        if "expires_in" in content or "expires_on" in content:
+            expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
+        else:
+            expires_on = int(dateutil.parser.parse(content["expiresOn"]).timestamp())
         content["expires_on"] = expires_on
 
-        token = AccessToken(content["access_token"], content["expires_on"])
+        access_token = content.get("access_token") or content["token"]
+        token = AccessToken(access_token, content["expires_on"])
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(

@@ -103,5 +103,6 @@ def _get_request(url, resource) -> HttpRequest:
         "obo-access-token": obo_access_token,
         "x-ms-cluster-identifier": cluster_identifier,
     }
-    request = HttpRequest(method="POST", url=url, headers=headers, data=request_body)
+    request = HttpRequest(method="POST", url=url, headers=headers)
+    request.set_json_body(request_body)
     return request
