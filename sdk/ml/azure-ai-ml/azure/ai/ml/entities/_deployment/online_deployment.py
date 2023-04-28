@@ -25,7 +25,7 @@ from azure.ai.ml._schema._deployment.online.online_deployment import (
     ManagedOnlineDeploymentSchema,
 )
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, TYPE, ArmConstants
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._assets import Code
@@ -50,7 +50,6 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from .deployment import Deployment
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
@@ -174,7 +173,6 @@ class OnlineDeployment(Deployment):
         :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
         """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
-        # self.data_collector = kwargs.pop("data_collector", None)
 
         super(OnlineDeployment, self).__init__(
             name=name,
@@ -813,7 +811,9 @@ class ManagedOnlineDeployment(OnlineDeployment):
             instance_type=deployment.instance_type,
             endpoint_name=_parse_endpoint_name_from_deployment_id(resource.id),
             instance_count=resource.sku.capacity,
-            # private_network_connection=deployment.private_network_connection,
+            private_network_connection=deployment.private_network_connection
+            if hasattr(deployment, "private_network_connection")
+            else None,
             egress_public_network_access=deployment.egress_public_network_access,
             data_collector=DataCollector._from_rest_object(deployment.data_collector),
         )

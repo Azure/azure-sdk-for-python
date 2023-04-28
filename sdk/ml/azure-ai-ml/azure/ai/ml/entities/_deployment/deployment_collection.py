@@ -22,7 +22,6 @@ class DeploymentCollection:
 
     """
 
-    # pylint: disable=unused-argument,no-self-use
     def __init__(self, *, enabled: str = None, data: str = None, client_id: str = None, **kwargs):
         self.enabled = enabled  # maps to data_collection_mode
         self.data = data  # maps to data_id

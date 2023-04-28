@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=protected-access
 
 from typing import Dict, Optional
 
@@ -26,8 +27,8 @@ class DataCollector:
 
     def __init__(
         self,
-        *,
         collections: Dict[str, DeploymentCollection],
+        *,
         rolling_rate: Optional[str] = None,
         sampling_rate: Optional[float] = None,
         request_logging: Optional[RequestLogging] = None,

@@ -30,7 +30,6 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs, DEFAULT_MDC_PATH
 from azure.ai.ml.entities import OnlineDeployment, Data
-from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
