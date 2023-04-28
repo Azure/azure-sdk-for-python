@@ -73,5 +73,5 @@ class SasCredentialPolicy(SansIOHTTPPolicy):
         super(SasCredentialPolicy, self).__init__()
         self._credential = credential
 
-    def on_request(self, request):
+    def on_request(self, request: PipelineRequest) -> None:
         request.http_request.headers["Authorization"] = self._credential.signature
