@@ -32,6 +32,16 @@ def compute_claims_digest(application_claims: List[Dict[str, Any]]) -> str:
     :raises ValueError: If the claims digest computation has failed.
     """
 
+    # The logic is structured in three distinct steps:
+    # 1. Claim dictionary validation
+    # 2. Claim conversion to object
+    # 3. Claims digest computation
+    # For every step, we iterate over the list of application claims to process them one by one.
+    # While it could be slightly inefficient to have three sets of iterations instead of a single one,
+    # the main idea is to have a clean separation of concerns between the different steps (e.g., not mix syntax/formatting errors with logical errors).
+    # From a performance perspective, it is not expected to have a large number of application claims in a single receipt
+    # (at the time of writing, we only support a single claim per receipt), so the overhead of having three iterations should be negligible.
+
     # Validate application claims provided by the user
     _validate_application_claims(application_claims)
 
