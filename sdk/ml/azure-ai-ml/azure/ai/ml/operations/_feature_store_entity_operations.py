@@ -54,6 +54,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
     def list(
         self,
         name: Optional[str] = None,
+        *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
         **kwargs: Dict,
     ) -> ItemPaged[FeatureStoreEntity]:

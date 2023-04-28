@@ -74,8 +74,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        *,
         name: Optional[str] = None,
+        *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
         **kwargs: Dict,
     ) -> ItemPaged[FeatureSet]:
@@ -117,7 +117,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: str, **kwargs: Dict) -> FeatureSet:
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -227,9 +227,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
     def list_materialization_operations(
         self,
-        *,
         name: str,
         version: str,
+        *,
         feature_window_start_time: Optional[str] = None,
         feature_window_end_time: Optional[str] = None,
         filters: Optional[str] = None,
@@ -267,9 +267,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.ListFeatures", ActivityType.INTERNALCALL)
     def list_features(
         self,
-        *,
         feature_set_name: str,
         version: str,
+        *,
         feature_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[str] = None,
@@ -304,7 +304,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         return features
 
     # @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.INTERNALCALL)
-    def get_feature(self, *, feature_set_name: str, version: str, feature_name: str, **kwargs: Dict) -> "Feature":
+    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
         """Get Feature
 
         :param feature_set_name: Feature set name.
@@ -332,7 +332,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
-        *,
         name: str,
         version: str,
         **kwargs: Dict,
@@ -358,7 +357,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
-        *,
         name: str,
         version: str,
         **kwargs: Dict,
