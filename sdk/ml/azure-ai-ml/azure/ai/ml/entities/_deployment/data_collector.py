@@ -47,11 +47,17 @@ class DataCollector:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestDataCollector) -> "DataCollector":
+        collections = dict()
+        for k, v in rest_obj.collections.items():
+            sampling_rate = v.sampling_rate
+            collections[k] = DeploymentCollection._from_rest_object(v)
+            delattr(collections[k], "sampling_rate")
+
         return DataCollector(
-            collections=rest_obj.collections,
+            collections=collections,
             rolling_rate=rest_obj.rolling_rate,
             request_logging=rest_obj.request_logging,
-            sampling_rate=rest_obj.collections[0].sampling_rate,
+            sampling_rate=sampling_rate,
         )
 
     def _to_dict(self) -> Dict:

@@ -216,6 +216,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         if local:
             deployment = self._local_deployment_helper.get(endpoint_name=endpoint_name, deployment_name=name)
         else:
+            import debugpy
+
+            debugpy.connect(("localhost", 5678))
+            debugpy.breakpoint()
             deployment = OnlineDeployment._from_rest_object(
                 self._online_deployment.get(
                     endpoint_name=endpoint_name,

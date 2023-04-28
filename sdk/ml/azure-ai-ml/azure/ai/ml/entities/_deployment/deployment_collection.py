@@ -37,8 +37,8 @@ class DeploymentCollection:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestCollection) -> "DeploymentCollection":
-        return RestCollection(
-            enabled="True" if rest_obj.data_collection_mode == "enabled" else "False",
+        return DeploymentCollection(
+            enabled="true" if rest_obj.data_collection_mode == "Enabled" else "False",
             sampling_rate=rest_obj.sampling_rate,
             data=rest_obj.data_id,
             client_id=rest_obj.client_id,
