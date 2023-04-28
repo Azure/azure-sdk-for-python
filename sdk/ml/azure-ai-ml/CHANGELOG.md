@@ -22,6 +22,7 @@
 - Support additional_includes in command component
 - Added experimental `distribution: ray` support in command job.
 - Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
 
 ### Bugs Fixed
 
