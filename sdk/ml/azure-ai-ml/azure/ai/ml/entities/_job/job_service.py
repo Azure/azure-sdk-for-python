@@ -81,9 +81,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
 
     def _validate_type_name(self):
         if self.type and not self.type in JobServiceTypeNames.ENTITY_TO_REST.keys():
-            msg = (
-                f"type should be one of " f"{JobServiceTypeNames.ENTITY_TO_REST.keys()}, but received '{self.type}'."
-            )
+            msg = f"type should be one of " f"{JobServiceTypeNames.ENTITY_TO_REST.keys()}, but received '{self.type}'."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
