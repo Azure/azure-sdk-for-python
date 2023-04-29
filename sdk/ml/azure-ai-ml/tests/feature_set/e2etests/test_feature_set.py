@@ -116,7 +116,7 @@ class TestFeatureSet(AzureRecordedTestCase):
                 # TODO: wait for job to complete or cancel them manually
                 time.sleep(900)  # 15 mins
 
-        materialization_jobs = feature_store_client.feature_sets.list_materialization_operation(
+        materialization_jobs = feature_store_client.feature_sets.list_materialization_operations(
             name=fset_name, version=version
         )
         assert materialization_jobs is not None
