@@ -17,7 +17,6 @@ from azure.core.polling import LROPoller
 @pytest.mark.usefixtures(
     "mock_workspace_arm_template_deployment_name",
     "mock_workspace_dependent_resource_name_generator",
-    "enable_private_preview_feature_store_features",
 )
 class TestFeatureStore(AzureRecordedTestCase):
     @pytest.mark.skipif(

@@ -1002,12 +1002,6 @@ def disable_internal_components():
 
 
 @pytest.fixture()
-def enable_private_preview_feature_store_features():
-    with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
-        yield
-
-
-@pytest.fixture()
 def federated_learning_components_folder() -> Path:
     return Path("./tests/test_configs/components/fl_test_components")
 
