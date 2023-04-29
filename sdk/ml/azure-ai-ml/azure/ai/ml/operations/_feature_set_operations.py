@@ -36,8 +36,8 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
-from azure.ai.ml.entities._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
-from azure.ai.ml.entities._feature_set.feature_set_backfill_response import FeatureSetBackfillResponse
+from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
+from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -74,9 +74,10 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        *,
         name: Optional[str] = None,
+        *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+        **kwargs: Dict,
     ) -> ItemPaged[FeatureSet]:
         """List the FeatureSet assets of the workspace.
 
@@ -95,25 +96,28 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 cls=lambda objs: [FeatureSet._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
+                **kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
             cls=lambda objs: [FeatureSet._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
+            **kwargs,
         )
 
-    def _get(self, name: str, version: str = None) -> FeaturesetVersion:
+    def _get(self, name: str, version: str = None, **kwargs: Dict) -> FeaturesetVersion:
         return self._operation.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=name,
             version=version,
             **self._init_kwargs,
+            **kwargs,
         )
 
     # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: str) -> FeatureSet:
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -126,13 +130,13 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.FeatureSet
         """
         try:
-            featureset_version_resource = self._get(name, version)
+            featureset_version_resource = self._get(name, version, **kwargs)
             return FeatureSet._from_rest_object(featureset_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, featureset: FeatureSet) -> LROPoller[FeatureSet]:
+    def begin_create_or_update(self, featureset: FeatureSet, **kwargs: Dict) -> LROPoller[FeatureSet]:
         """Create or update FeatureSet
 
         :param featureset: FeatureSet definition.
@@ -158,6 +162,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             name=featureset.name,
             version=featureset.version,
             body=featureset_resource,
+            **kwargs,
             cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(deserialized),
         )
 
@@ -174,8 +179,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         tags: Optional[Dict[str, str]] = None,
         compute_resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        **kwargs,  # pylint: disable=unused-argument
-    ) -> LROPoller[FeatureSetBackfillResponse]:
+        **kwargs: Dict,
+    ) -> LROPoller[FeatureSetBackfillMetadata]:
         """Backfill.
 
         :param name: Feature set name. This is case-sensitive.
@@ -196,7 +201,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
         :param spark_configuration: Specifies the spark compute settings.
         :type spark_configuration: dict[str, str]
-        :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillResponse
+        :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         """
 
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
@@ -215,20 +220,21 @@ class FeatureSetOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             body=request_body,
-            cls=lambda response, deserialized, headers: FeatureSetBackfillResponse._from_rest_object(deserialized),
+            **kwargs,
+            cls=lambda response, deserialized, headers: FeatureSetBackfillMetadata._from_rest_object(deserialized),
         )
 
     # @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
-    def list_materialization_operation(
+    def list_materialization_operations(
         self,
+        name: str,
+        version: str,
         *,
-        name,
-        version,
         feature_window_start_time: Optional[str] = None,
         feature_window_end_time: Optional[str] = None,
         filters: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
-    ) -> ItemPaged[FeatureSetMaterializationResponse]:
+        **kwargs: Dict,
+    ) -> ItemPaged[FeatureSetMaterializationMetadata]:
         """List Materialization operation.
 
         :param name: Feature set name.
@@ -236,13 +242,13 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param version: Feature set version.
         :type version: str
         :param feature_window_start_time: Start time of the feature window to filter materialization jobs.
-        :type feature_window_start_time: datetime
+        :type feature_window_start_time: str
         :param feature_window_end_time: End time of the feature window to filter materialization jobs.
-        :type feature_window_end_time: datetime
+        :type feature_window_end_time: str
         :param filters: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
         :type filters: str
-        :return: An iterator like instance of ~azure.ai.ml.entities.FeatureSetMaterializationResponse objects
-        :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationResponse]
+        :return: An iterator like instance of ~azure.ai.ml.entities.FeatureSetMaterializationMetadata objects
+        :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationMetadata]
         """
 
         materialization_jobs = self._operation.list_materialization_jobs(
@@ -253,19 +259,21 @@ class FeatureSetOperations(_ScopeDependentOperations):
             filters=filters,
             feature_window_start=feature_window_start_time,
             feature_window_end=feature_window_end_time,
-            cls=lambda objs: [FeatureSetMaterializationResponse._from_rest_object(obj) for obj in objs],
+            **kwargs,
+            cls=lambda objs: [FeatureSetMaterializationMetadata._from_rest_object(obj) for obj in objs],
         )
         return materialization_jobs
 
     # @monitor_with_activity(logger, "FeatureSet.ListFeatures", ActivityType.INTERNALCALL)
     def list_features(
         self,
+        feature_set_name: str,
+        version: str,
         *,
-        feature_set_name,
-        version,
         feature_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[str] = None,
+        **kwargs: Dict,
     ) -> ItemPaged[Feature]:
         """List features
 
@@ -290,12 +298,13 @@ class FeatureSetOperations(_ScopeDependentOperations):
             tags=tags,
             feature_name=feature_name,
             description=description,
+            **kwargs,
             cls=lambda objs: [Feature._from_rest_object(obj) for obj in objs],
         )
         return features
 
     # @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.INTERNALCALL)
-    def get_feature(self, *, feature_set_name, version, feature_name) -> "Feature":
+    def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
         """Get Feature
 
         :param feature_set_name: Feature set name.
@@ -315,6 +324,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             featureset_name=feature_set_name,
             featureset_version=version,
             feature_name=feature_name,
+            **kwargs,
         )
 
         return Feature._from_rest_object(feature)
@@ -322,10 +332,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
-        *,
         name: str,
         version: str,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Dict,
     ) -> None:
         """Archive a FeatureSet asset.
 
@@ -342,15 +351,15 @@ class FeatureSetOperations(_ScopeDependentOperations):
             is_archived=True,
             name=name,
             version=version,
+            **kwargs,
         )
 
     # @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
-        *,
         name: str,
         version: str,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Dict,
     ) -> None:
         """Restore an archived FeatureSet asset.
 
@@ -367,6 +376,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             is_archived=False,
             name=name,
             version=version,
+            **kwargs,
         )
 
     def _validate_and_get_feature_set_spec(self, featureset: FeatureSet) -> FeaturesetSpecMetadata:

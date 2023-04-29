@@ -40,7 +40,7 @@ With persistent disk token caching enabled, the library first determines if a va
 
 The sample showcases how to activate persistence token caching in the credentials offered by the Azure Identity library. You need to specify `TokenCachePersistenceOptions` when creating the credential to activate persistent token caching.
 
-```python 
+```python
 ClientSecretCredential(
     "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
 )
@@ -88,7 +88,7 @@ The following table indicates the state of in-memory and persistent caching in e
 | `AzureDeveloperCliCredential`  | Not Supported                                                          | Not Supported                 |
 | `AzurePowershellCredential`    | Not Supported                                                          | Not Supported                 |
 | `ClientAssertionCredential`    | Supported                                                              | Not Supported                 |
-| `ClientCertificateCredential`  | Supported                                                              | Supported                     |
+| `CertificateCredential`        | Supported                                                              | Supported                     |
 | `ClientSecretCredential`       | Supported                                                              | Supported                     |
 | `DefaultAzureCredential`       | Supported if the target credential in the credential chain supports it | Not Supported                 |
 | `DeviceCodeCredential`         | Supported                                                              | Supported                     |

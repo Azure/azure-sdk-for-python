@@ -166,8 +166,8 @@ from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
-from ._feature_set.feature_set_backfill_response import FeatureSetBackfillResponse
-from ._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
+from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
+from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
 from ._notification.notification import Notification
@@ -323,8 +323,8 @@ __all__ = [
     "FeatureStore",
     "MaterializationStore",
     "Notification",
-    "FeatureSetBackfillResponse",
-    "FeatureSetMaterializationResponse",
+    "FeatureSetBackfillMetadata",
+    "FeatureSetMaterializationMetadata",
     # builders
     "Command",
     "Parallel",
