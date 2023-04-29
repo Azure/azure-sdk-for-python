@@ -107,7 +107,7 @@ class JobServiceTypeNames:
 
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
 
-    NAMES_ALLOWED_FOR_PUBLIC = [EntityNames.CUSTOM, EntityNames.TRACKING, EntityNames.STUDIO]
+    NAMES_NOT_ALLOWED_FOR_PUBLIC = [  EntityNames.CUSTOM, EntityNames.TRACKING, EntityNames.STUDIO]
 
 
 class JobTierNames:
