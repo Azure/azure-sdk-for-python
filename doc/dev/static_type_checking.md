@@ -175,9 +175,9 @@ version of the type checker ships. All client libraries in the Python SDK repo a
 
 The easiest way to install and run the type checkers locally is
 with [tox](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox). This reproduces the exact type checking
-environment run in CI and brings in the third party stub packages necessary. To begin, first install `tox` and `tox-monorepo`:
+environment run in CI and brings in the third party stub packages necessary. To begin, first install `tox`:
 
-`pip install tox tox-monorepo`
+`pip install tox<5`
 
 ### Run mypy
 

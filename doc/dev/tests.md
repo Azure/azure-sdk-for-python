@@ -124,7 +124,7 @@ If you have print statements in your tests for debugging you can add the `-s` fl
 ## Tox
 
 The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
-`(env) > pip install tox tox-monorepo`.
+`(env) > pip install tox<5`.
 
 To run a tox command from your directory use the following commands:
 ```cmd

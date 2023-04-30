@@ -9,9 +9,9 @@ Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https:
 
 ## Run locally with tox
 
-**1) Install tox and tox-monorepo:**
+**1) Install tox:**
 
-`pip install tox tox-monorepo`
+`pip install tox<5`
 
 **2) Run the `breaking` environment.**
 
