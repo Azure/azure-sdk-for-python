@@ -31,8 +31,8 @@ _SERIALIZER.client_side_validation = False
 class ContentDownloader(object):
     def __init__(
             self,
-            call_recording_client,  # type: CallRecordingOperations
-        ): # type: (...) -> None
+            call_recording_client:CallRecordingOperations
+        ) -> None:
 
         self._call_recording_client = call_recording_client
 

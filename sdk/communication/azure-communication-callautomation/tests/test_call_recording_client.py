@@ -27,7 +27,7 @@ class TestCallRecordingClient(unittest.TestCase):
 
         callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
-        call_locator = ServerCallLocator(locator_id = "locatorId")
+        call_locator = ServerCallLocator(server_call_id = "locatorId")
 
         try:
             callautomation_client.start_recording(call_locator=call_locator)

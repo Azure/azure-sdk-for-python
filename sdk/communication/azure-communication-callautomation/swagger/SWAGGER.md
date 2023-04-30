@@ -37,19 +37,27 @@ title: Azure Communication Call Automation Service
 ```yaml
 directive:
 - from: swagger-document
-  where: $.definitions.GetParticipantsResponse
+  where: $.definitions.RecordingContentType.x-ms-enum
   transform: >
-    $["x-ms-client-name"] = "GetParticipantsResult";
+    $["name"] = "RecordingContent";
 - from: swagger-document
-  where: $.definitions.TransferCallResponse
+  where: $.definitions.RecordingChannelType.x-ms-enum
   transform: >
-    $["x-ms-client-name"] = "TransferCallResult";
+    $["name"] = "RecordingChannel";
 - from: swagger-document
-  where: $.definitions.AddParticipantResponse
+  where: $.definitions.RecordingFormatType.x-ms-enum
   transform: >
-    $["x-ms-client-name"] = "AddParticipantResult";
+    $["name"] = "RecordingFormat";
 - from: swagger-document
-  where: $.definitions.RemoveParticipantResponse
+  where: $.definitions.RecordingStorageType.x-ms-enum
   transform: >
-    $["x-ms-client-name"] = "RemoveParticipantResult";
+    $["name"] = "RecordingStorage";
+- from: swagger-document
+  where: $.definitions.Tone.x-ms-enum
+  transform: >
+    $["name"] = "DtmfTone";
+- from: swagger-document
+  where: $.definitions.CallConnectionStateModel.x-ms-enum
+  transform: >
+    $["name"] = "CallConnectionState";
 ```

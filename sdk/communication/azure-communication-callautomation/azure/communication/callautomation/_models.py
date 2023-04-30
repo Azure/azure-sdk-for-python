@@ -1,165 +1,62 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
-from typing import Any, List, Optional, Union
-from enum import Enum
-from typing import Dict
-from azure.core import CaseInsensitiveEnumMeta
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+from typing import Any, List, Optional, Union, TYPE_CHECKING, Dict
 from ._generated.models import (
     CallLocator,
-    RecordingContentType, RecordingChannelType, RecordingFormatType,
-    CallConnectionStateModel,
-    RecordingStorageType,
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
-    CallParticipant as CallParticipantRest,
-    CallConnectionProperties as CallConnectionPropertiesRest,
-    AddParticipantResult as AddParticipantResultRest
+    FileSource as FileSourceInternal,
+    PlaySource as PlaySourceInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
 )
-from ._communication_identifier_serializer import (
+from ._generated.models._enums import (
+    PlaySourceType,
+)
+from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier
 )
-
-class ServerCallLocator(object):
-    """
-    The locator used for joining or taking action on a server call.
-
-    :ivar locator_id: The server call id.
-    :vartype locator_id: str
-    """
-    def __init__(
-        self,
-        *,
-        locator_id: str,
-        **kwargs: Any
-    ) -> None:
-
-        super().__init__(**kwargs)
-        self.id = locator_id
-        self.kind = "serverCallLocator"
-
-    def _to_generated(self):
-
-        return CallLocator(kind=self.kind,
-                           server_call_id=self.id
-                           )
-
-
-class GroupCallLocator(object):
-    """
-    The locator used for joining or taking action on a group call.
-
-    :ivar locator_id: The group call id.
-    :vartype locator_id: str
-    """
-    def __init__(
-        self,
-        *,
-        locator_id: str,
-        **kwargs: Any
-    ) -> None:
-
-        super().__init__(**kwargs)
-        self.id = locator_id
-        self.kind = "groupCallLocator"
-
-    def _to_generated(self):
-
-        return CallLocator(kind=self.kind,
-                           group_call_id=self.id
-                           )
-
-class RecordingStateResult(object):
-    """
-    RecordingStateResult.
-
-    :ivar recording_id:
-    :vartype recording_id: str
-    :ivar recording_state: Known values are: "active" and "inactive".
-    :vartype recording_state: str or ~azure.communication.callautomation.models.RecordingState
-    """
-
-    # pylint:disable=protected-access
-
-    def __init__(
-        self,
-        **kwargs  # type: Any
-    ):
-        self.recording_id = kwargs['recording_id']
-        self.recording_state = kwargs['recording_state']
-
-    @classmethod
-    def _from_generated(cls, recording_state_result):
-
-        return cls(
-            recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state
-        )
-
-
-class PlaySource(object):
-    """
-    The PlaySource model.
-
-    :ivar play_source_id: Defines the identifier to be used for caching related media.
-    :vartype play_source_id: str
-    """
-
-    def __init__(
-            self,
-            **kwargs
-    ):
-        self.play_source_id = kwargs['play_source_id']
-
-
-class FileSource(PlaySource):
-    """
-    The FileSource model.
-
-    :ivar url: Url for the audio file to be played.
-    :vartype url: str
-    """
-
-    def __init__(
-            self,
-            **kwargs
-    ):
-        self.url = kwargs['url']
-        super().__init__(play_source_id=kwargs.get('play_source_id'))
-
-class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice gender type."""
-
-    MALE = "male"
-    FEMALE = "female"
-
-
-class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Tone."""
-
-    ZERO = "zero"
-    ONE = "one"
-    TWO = "two"
-    THREE = "three"
-    FOUR = "four"
-    FIVE = "five"
-    SIX = "six"
-    SEVEN = "seven"
-    EIGHT = "eight"
-    NINE = "nine"
-    A = "a"
-    B = "b"
-    C = "c"
-    D = "d"
-    POUND = "pound"
-    ASTERISK = "asterisk"
+if TYPE_CHECKING:
+    from ._generated.models._enums  import (
+        MediaStreamingTransportType,
+        MediaStreamingContentType,
+        MediaStreamingAudioChannelType,
+        CallConnectionState,
+        DtmfTone
+    )
+    from ._generated.models  import (
+        CallParticipant as CallParticipantRest,
+        CallConnectionProperties as CallConnectionPropertiesRest,
+        ResultInformation as ResultInformationRest,
+        AddParticipantResponse as AddParticipantResultRest,
+        RemoveParticipantResponse as RemoveParticipantResultRest,
+        TransferCallResponse as TransferParticipantResultRest,
+        RecordingStateResponse as RecordingStateResultRest,
+        CollectTonesResult as CollectTonesResultRest,
+        ChoiceResult as ChoiceResultRest,
+        ToneInfo as ToneInfoRest,
+    )
 
 class CallInvite(object):
+    """Details of call invitation for outgoing call.
+
+    :ivar target: Target's identity.
+    :vartype target: ~azure.communication.callautomation.CommunicationIdentifier
+    :ivar source_caller_id_number: Caller's phone number identifier.
+     Required for PSTN outbound call.
+    :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+    :ivar source_display_name: Set display name for caller
+    :vartype source_display_name: str
+    :ivar sip_headers: Custom context for PSTN
+    :vartype sip_headers: str
+    :ivar voip_headers: Custom context for VOIP
+    :vartype voip_headers: str
+    """
     def __init__(
         self,
         target: CommunicationIdentifier,
@@ -168,18 +65,20 @@ class CallInvite(object):
         source_display_name: Optional[str] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword target: Target's identity. Required.
-        :paramtype target: ~azure.communication.callautomation._shared.models.CommunicationIdentifier
-        :keyword source_caller_id_number: Caller's phone number identifier
-        :paramtype source_caller_id_number: ~azure.communication.callautomation._shared.models.PhoneNumberIdentifier
+        **kwargs
+    ):
+        """CallInvitation that can be used to do outbound calls, such as creating call.
+
+        :param target: Target's identity.
+        :type target: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword source_caller_id_number: Caller's phone number identifier.
+         Required for PSTN outbound call.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :keyword source_display_name: Set display name for caller
         :paramtype source_display_name: str
-        :keyword sip_headers: Custom context for PSTN
+        :keyword sip_headers: Custom context for PSTN calls
         :paramtype sip_headers: str
-        :keyword voip_headers: Custom context for VOIP
+        :keyword voip_headers: Custom context for VOIP calls
         :paramtype voip_headers: str
         """
         super().__init__(**kwargs)
@@ -188,49 +87,173 @@ class CallInvite(object):
         self.source_display_name = source_display_name
         self.sip_headers = sip_headers
         self.voip_headers = voip_headers
-class CallConnectionProperties(object):
-    """Properties of a call connection."""
 
+class ServerCallLocator(object):
+    """The locator to locate ongoing call, using server call id.
+
+    :ivar server_call_id: The server call id of ongoing call.
+    :vartype server_call_id: str
+    """
+    def __init__(
+        self,
+        server_call_id: str,
+        **kwargs
+    ):
+        """The locator to locate ongoing call, using server call id.
+
+        :param server_call_id: The server call id of ongoing call.
+        :type server_call_id: str
+        """
+        super().__init__(**kwargs)
+        self.id = server_call_id
+        self.kind = "serverCallLocator"
+
+    def _to_generated(self):
+        return CallLocator(kind=self.kind,
+                           server_call_id=self.id)
+
+class GroupCallLocator(object):
+    """The locator to locate ongoing call, using group call id.
+
+    :ivar group_call_id: The group call id of ongoing call.
+    :vartype group_call_id: str
+    """
+    def __init__(
+        self,
+        group_call_id: str,
+        **kwargs
+    ):
+        """The locator to locate ongoing call, using group call id.
+
+        :param group_call_id: The group call id of ongoing call.
+        :type group_call_id: str
+        """
+        super().__init__(**kwargs)
+        self.id = group_call_id
+        self.kind = "groupCallLocator"
+
+    def _to_generated(self):
+        return CallLocator(kind=self.kind,
+                           group_call_id=self.id)
+
+class FileSource(object):
+    """Media file source of URL to be played in action such as Play media.
+
+    :ivar url: Url for the audio file to be played.
+    :vartype url: str
+    :ivar play_source_id: source id of the play media.
+    :vartype play_source_id: str
+    """
+    def __init__(
+        self,
+        url: str,
+        *,
+        play_source_id: Optional[str] = None,
+        **kwargs
+    ):
+        """Media file source of URL to be played in action such as Play media.
+
+        :param url: Url for the audio file to be played.
+        :type url: str
+        :keyword play_source_id: source id of the play media.
+        :paramtype play_source_id: str
+        """
+        super().__init__(**kwargs)
+        self.url = url
+        self.play_source_id = play_source_id
+
+    def _to_generated(self):
+        return PlaySourceInternal(
+                source_type=PlaySourceType.FILE,
+                file_source=FileSourceInternal(uri=self.url),
+                play_source_id=self.play_source_id
+            )
+
+class MediaStreamingConfiguration(object):
+    """Configuration of Media streaming.
+
+    :ivar transport_url: Transport URL for media streaming.
+    :vartype transport_url: str
+    :ivar transport_type: The type of transport to be used for media streaming.
+    :vartype transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
+    :ivar content_type: Content type to stream, eg. audio, audio/video.
+    :vartype content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
+    :ivar audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
+    :vartype audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
+    """
+    def __init__(
+        self,
+        transport_url: str,
+        transport_type: Union[str, 'MediaStreamingTransportType'],
+        content_type: Union[str, 'MediaStreamingContentType'],
+        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
+        **kwargs
+    ):
+        """Configuration of Media streaming details.
+
+        :param transport_url: Transport URL for media streaming.
+        :type transport_url: str
+        :param transport_type: The type of transport to be used for media streaming.
+        :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
+        :param content_type: Content type to stream, eg. audio, audio/video.
+        :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
+        :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
+        :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
+        """
+        super().__init__(**kwargs)
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.content_type = content_type
+        self.audio_channel_type = audio_channel_type
+
+    def to_generated(self):
+        return MediaStreamingConfigurationRest(
+            transport_url=self.transport_url,
+            transport_type=self.transport_type,
+            content_type=self.content_type,
+            audio_channel_type=self.audio_channel_type
+            )
+
+class CallConnectionProperties():
+    """ Detailed properties of the call.
+
+    :ivar call_connection_id: The call connection id of this call leg.
+    :vartype call_connection_id: str
+    :ivar server_call_id: The server call id of this call.
+    :vartype server_call_id: str
+    :ivar targets: The targets of the call when the call was originally initiated.
+    :vartype targets: list[~azure.communication.callautomation.CommunicationIdentifier]
+    :ivar call_connection_state: The state of the call.
+    :vartype call_connection_state: str or CallConnectionState
+    :ivar callback_url: The callback URL.
+    :vartype callback_url: str
+    :ivar media_subscription_id: SubscriptionId for media streaming.
+    :vartype media_subscription_id: str
+    :ivar source_caller_id_number:
+     The source caller Id, a phone number, that's shown to the
+     PSTN participant being invited.
+     Required only when calling a PSTN callee.
+    :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+    :ivar source_display_name:  Display name of the call if dialing out.
+    :vartype source_display_name: str
+    :ivar source_identity: Source identity of the caller.
+    :vartype source_identity: ~azure.communication.callautomation.CommunicationIdentifier
+    """
     def __init__(
         self,
         *,
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         targets: Optional[List[CommunicationIdentifier]] = None,
-        call_connection_state: Optional[Union[str,
-                                              CallConnectionStateModel]] = None,
+        call_connection_state:
+        Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
         media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source_identity: Optional[CommunicationIdentifier] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection_id: The call connection id.
-        :paramtype call_connection_id: str
-        :keyword server_call_id: The server call id.
-        :paramtype server_call_id: str
-        :keyword targets: The targets of the call.
-        :paramtype targets:
-         list[~azure.communication.callautomation._shared.models.CommunicationIdentifier]
-        :keyword call_connection_state: The state of the call connection. Known values are: "unknown",
-         "connecting", "connected", "transferring", "transferAccepted", "disconnecting", and
-         "disconnected".
-        :paramtype call_connection_state: str or CallConnectionStateModel
-        :keyword callback_url: The callback URL.
-        :paramtype callback_url: str
-        :keyword media_subscription_id: SubscriptionId for media streaming.
-        :paramtype media_subscription_id: str
-        :keyword source_caller_id_number: The source caller Id, a phone number, that's shown to the
-         PSTN participant being invited.
-         Required only when calling a PSTN callee.
-        :paramtype source_caller_id_number: ~azure.communication.callautomation._shared.models.PhoneNumberIdentifier
-        :keyword source_display_name: Display name of the call if dialing out to a pstn number.
-        :paramtype source_display_name: str
-        :keyword source_identity: Source identity.
-        :paramtype source_identity: ~azure.communication.callautomation._shared.models.CommunicationIdentifier
-        """
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
@@ -243,7 +266,7 @@ class CallConnectionProperties(object):
         self.source_identity = source_identity
 
     @classmethod
-    def _from_generated(cls, call_connection_properties_generated: CallConnectionPropertiesRest):
+    def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
         target_models = []
         for target in call_connection_properties_generated.targets:
             target_models.append(deserialize_identifier(target))
@@ -264,157 +287,219 @@ class CallConnectionProperties(object):
             if call_connection_properties_generated.source_identity
             else None)
 
+class ResultInformation(object):
+    """ Result Information of the call.
+    Contains detailed information of the call result,
+    such as the reason why the call recognition failed.
+
+    :ivar code: Generic Error code of the failure.
+    :vartype code: int
+    :ivar sub_code: Detailed Error code of the failure.
+    :vartype sub_code: int
+    :ivar message: Detailed message of the error result.
+    :vartype message: str
+    """
+    def __init__(
+        self,
+        *,
+        code: Optional[int] = None,
+        sub_code: Optional[int] = None,
+        message: Optional[str] = None,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.code = code
+        self.sub_code = sub_code
+        self.message = message
+
+    @classmethod
+    def _from_generated(cls, result_information_rest: 'ResultInformationRest'):
+        return cls(
+            code=result_information_rest.code,
+            sub_code=result_information_rest.sub_code,
+            message=result_information_rest.message)
 
 class CallParticipant(object):
-    """
-    Contract model of an ACS call participant.
-    """
+    """Details of an Azure Communication Service call participant.
 
+    :ivar identifier: Communication identifier of the participant.
+    :vartype identifier: ~azure.communication.callautomation.CommunicationIdentifier
+    :ivar is_muted: Is participant muted.
+    :vartype is_muted: bool
+    """
     def __init__(
         self,
         identifier: CommunicationIdentifier,
         *,
         is_muted: Optional[bool] = False,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword identifier: Communication identifier of the participant.
-        :paramtype identifier: ~azure.communication.callautomation._shared.models.CommunicationIdentifier
-        :keyword is_muted: Is participant muted.
-        :paramtype is_muted: bool
-        """
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.identifier = identifier
         self.is_muted = is_muted
 
     @classmethod
-    def _from_generated(cls, call_participant_generated: CallParticipantRest):
+    def _from_generated(cls, call_participant_generated: 'CallParticipantRest'):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier),
             is_muted=call_participant_generated.is_muted)
 
-class AddParticipantResult(object):
-    """
-    The result payload for adding participants to the call.
-    """
+class RecordingStateResult(object):
+    """State result of ongoing recording.
 
+    :ivar recording_id: Id of this recording operation.
+    :vartype recording_id: str
+    :ivar recording_state: state of ongoing recording.
+    :vartype recording_state: str or ~azure.communication.callautomation.RecordingState
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.recording_id = kwargs['recording_id']
+        self.recording_state = kwargs['recording_state']
+
+    @classmethod
+    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
+        return cls(
+            recording_id=recording_state_result.recording_id,
+            recording_state=recording_state_result.recording_state)
+
+class AddParticipantResult(object):
+    """ The result payload for adding participants to the call.
+
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    """
     def __init__(
         self,
         participant: CallParticipant,
         *,
         operation_context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword participant: List of current participants in the call.
-        :paramtype participant: CallParticipant
-        :keyword operation_context: The operation context provided by client.
-        :paramtype operation_context: str
-        """
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.participant = participant
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, add_participant_result_generated: AddParticipantResultRest):
+    def _from_generated(cls, add_participant_result_generated: 'AddParticipantResultRest'):
         return cls(participant=CallParticipant._from_generated(# pylint:disable=protected-access
             add_participant_result_generated.participant),
             operation_context=add_participant_result_generated.operation_context)
 
+class RemoveParticipantResult(object):
+    """The response payload for removing participants of the call.
 
-class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    MIXED = "mixed"
-    UNMIXED = "unmixed"
-
-
-class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio, audio/video."""
-
-    AUDIO = "audio"
-
-
-class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for media streaming, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
-
-
-class MediaStreamingConfiguration(object):
-    """Configuration of Media streaming.
-
-    All required parameters must be populated in order to send to Azure.
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
     """
-
     def __init__(
         self,
-        transport_url: str,
-        transport_type: Union[str, MediaStreamingTransportType],
-        content_type: Union[str, MediaStreamingContentType],
-        audio_channel_type: Union[str, MediaStreamingAudioChannelType],
+        *,
+        operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """
-        :param transport_url:
-            Transport URL for media streaming.
-        :paramtype transport_url: str
-        :param transport_type:
-            The type of transport to be used for media streaming.
-            Known values are: "websocket"
-        :paramtype transport_type: str or MediaStreamingTransportType
-        :param content_type:
-            Content type to stream, eg. audio, audio/video.
-            Known values are: "audio"
-        :paramtype content_type: str or MediaStreamingContentType
-        :param audio_channel_type:
-            Audio channel type to stream, eg. unmixed audio, mixed audio.
-            Known values are: "mixed" and "unmixed".
-        :paramtype audio_channel_type: str or MediaStreamingAudioChannelType
-        """
         super().__init__(**kwargs)
-        self.transport_url = transport_url
-        self.transport_type = transport_type
-        self.content_type = content_type
-        self.audio_channel_type = audio_channel_type
+        self.operation_context = operation_context
 
-    def to_generated(self):
-        return MediaStreamingConfigurationRest(
-            transport_url=self.transport_url,
-            transport_type=self.transport_type,
-            content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
-            )
+    @classmethod
+    def _from_generated(cls, remove_participant_result_generated: 'RemoveParticipantResultRest'):
+        return cls(operation_context=remove_participant_result_generated.operation_context)
 
+class TransferCallResult(object):
+    """The response payload for transferring the call.
 
-class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The rejection reason."""
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    """
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
 
-    NONE = "none"
-    BUSY = "busy"
-    FORBIDDEN = "forbidden"
+    @classmethod
+    def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
+        return cls(operation_context=transfer_result_generated.operation_context)
 
+class CollectTonesResult(object):
+    """CollectTonesResult.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-class RecordingContent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recording content type."""
+    :ivar tones:
+    :vartype tones: list[str or ~azure.communication.callautomation.DtmfTone]
+    """
+    def __init__(
+        self,
+        *,
+        tones: Optional[List['DtmfTone']] = None,
+        **kwargs: Any
+    ) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.tones = tones
 
-    AUDIO = RecordingContentType.AUDIO.value
-    AUDIO_VIDEO = RecordingContentType.AUDIO_VIDEO.value
+    @classmethod
+    def _from_generated(cls, collect_tones_generated: 'CollectTonesResultRest'):
+        return cls(tones=collect_tones_generated.tones)
 
-class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recording channel type."""
+class ChoiceResult(object):
+    """Result detail for choice recognition.
+    This result is returned on Recognition of choice.
 
-    MIXED = RecordingChannelType.MIXED.value
-    UNMIXED = RecordingChannelType.UNMIXED.value
+    :ivar label: Label is the primary identifier for the choice detected.
+    :vartype label: str
+    :ivar recognized_phrase: Phrases are set to the value if choice is selected via phrase detection.
+     If Dtmf input is recognized, then Label will be the identifier
+     for the choice detected and phrases will be set to null.
+    :vartype recognized_phrase: str
+    """
+    def __init__(
+        self,
+        *,
+        label: Optional[str] = None,
+        recognized_phrase: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(**kwargs)
+        self.label = label
+        self.recognized_phrase = recognized_phrase
 
-class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recording format type."""
-    WAV = RecordingFormatType.WAV.value
-    MP4 = RecordingFormatType.MP4.value
-    MP3 = RecordingFormatType.MP3.value
+    @classmethod
+    def _from_generated(cls, choice_result_generated: 'ChoiceResultRest'):
+        return cls(label=choice_result_generated.label,
+                   recognized_phrase=choice_result_generated.recognized_phrase)
 
-class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recording storage type."""
+class ToneInfo(object):
+    """The information about the tone detection.
 
-    ACS = RecordingStorageType.ACS.value
-    BLOB_STORAGE = RecordingStorageType.BLOB_STORAGE.value
+    :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
+     multiple times or if any tones were missed. Required.
+    :vartype sequence_id: int
+    :ivar tone: Details of the tone detection.
+    :vartype tone: str or ~azure.communication.callautomation.DtmfTone
+    :ivar participant_id: The id of participant.
+    :vartype participant_id: str
+    """
+    def __init__(
+        self,
+        *,
+        sequence_id: int,
+        tone: Union[str, 'DtmfTone'],
+        participant_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(**kwargs)
+        self.sequence_id = sequence_id
+        self.tone = tone
+        self.participant_id = participant_id
+
+    @classmethod
+    def _from_generated(cls, tone_info_generated: 'ToneInfoRest'):
+        return cls(sequence_id=tone_info_generated.sequence_id,
+                   tone=tone_info_generated.tone,
+                   participant_id=tone_info_generated.participant_id)

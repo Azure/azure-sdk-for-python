@@ -69,7 +69,7 @@ call_connection_id = result.call_connection_id
 call_connection = client.get_call_connection(call_connection_id)
 
 # from callconnection of result above, play media to all participants
-my_file = FileSource(uri="https://<FILE-SOURCE>/<SOME-FILE>.wav")
+my_file = FileSource(url="https://<FILE-SOURCE>/<SOME-FILE>.wav")
 call_connection.play_to_all(my_file)
 ```
 

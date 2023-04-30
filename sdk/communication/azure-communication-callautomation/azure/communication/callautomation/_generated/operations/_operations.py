@@ -1665,7 +1665,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.TransferCallResult:
+    ) -> _models.TransferCallResponse:
         """Transfer the call to a participant.
 
         Transfer the call to a participant.
@@ -1690,8 +1690,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TransferCallResult
-        :rtype: ~azure.communication.callautomation.models.TransferCallResult
+        :return: TransferCallResponse
+        :rtype: ~azure.communication.callautomation.models.TransferCallResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1705,7 +1705,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.TransferCallResult:
+    ) -> _models.TransferCallResponse:
         """Transfer the call to a participant.
 
         Transfer the call to a participant.
@@ -1729,8 +1729,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TransferCallResult
-        :rtype: ~azure.communication.callautomation.models.TransferCallResult
+        :return: TransferCallResponse
+        :rtype: ~azure.communication.callautomation.models.TransferCallResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1743,7 +1743,7 @@ class CallConnectionOperations:
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.TransferCallResult:
+    ) -> _models.TransferCallResponse:
         """Transfer the call to a participant.
 
         Transfer the call to a participant.
@@ -1769,8 +1769,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: TransferCallResult
-        :rtype: ~azure.communication.callautomation.models.TransferCallResult
+        :return: TransferCallResponse
+        :rtype: ~azure.communication.callautomation.models.TransferCallResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1785,7 +1785,7 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TransferCallResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TransferCallResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1823,7 +1823,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("TransferCallResult", pipeline_response)
+        deserialized = self._deserialize("TransferCallResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1831,15 +1831,15 @@ class CallConnectionOperations:
         return deserialized
 
     @distributed_trace
-    def get_participants(self, call_connection_id: str, **kwargs: Any) -> _models.GetParticipantsResult:
+    def get_participants(self, call_connection_id: str, **kwargs: Any) -> _models.GetParticipantsResponse:
         """Get participants from a call.
 
         Get participants from a call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :return: GetParticipantsResult
-        :rtype: ~azure.communication.callautomation.models.GetParticipantsResult
+        :return: GetParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.GetParticipantsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1853,7 +1853,7 @@ class CallConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.GetParticipantsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GetParticipantsResponse] = kwargs.pop("cls", None)
 
         request = build_call_connection_get_participants_request(
             call_connection_id=call_connection_id,
@@ -1878,7 +1878,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("GetParticipantsResult", pipeline_response)
+        deserialized = self._deserialize("GetParticipantsResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1895,7 +1895,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AddParticipantResult:
+    ) -> _models.AddParticipantResponse:
         """Add participants to the call.
 
         Add participants to the call.
@@ -1919,8 +1919,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AddParticipantResult
-        :rtype: ~azure.communication.callautomation.models.AddParticipantResult
+        :return: AddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1934,7 +1934,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AddParticipantResult:
+    ) -> _models.AddParticipantResponse:
         """Add participants to the call.
 
         Add participants to the call.
@@ -1958,8 +1958,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AddParticipantResult
-        :rtype: ~azure.communication.callautomation.models.AddParticipantResult
+        :return: AddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1972,7 +1972,7 @@ class CallConnectionOperations:
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AddParticipantResult:
+    ) -> _models.AddParticipantResponse:
         """Add participants to the call.
 
         Add participants to the call.
@@ -1997,8 +1997,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: AddParticipantResult
-        :rtype: ~azure.communication.callautomation.models.AddParticipantResult
+        :return: AddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2013,7 +2013,7 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AddParticipantResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AddParticipantResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2051,7 +2051,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("AddParticipantResult", pipeline_response)
+        deserialized = self._deserialize("AddParticipantResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2068,7 +2068,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RemoveParticipantResult:
+    ) -> _models.RemoveParticipantResponse:
         """Remove participant from the call using identifier.
 
         Remove participant from the call using identifier.
@@ -2093,8 +2093,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RemoveParticipantResult
-        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResult
+        :return: RemoveParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2108,7 +2108,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RemoveParticipantResult:
+    ) -> _models.RemoveParticipantResponse:
         """Remove participant from the call using identifier.
 
         Remove participant from the call using identifier.
@@ -2132,8 +2132,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RemoveParticipantResult
-        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResult
+        :return: RemoveParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2146,7 +2146,7 @@ class CallConnectionOperations:
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.RemoveParticipantResult:
+    ) -> _models.RemoveParticipantResponse:
         """Remove participant from the call using identifier.
 
         Remove participant from the call using identifier.
@@ -2172,8 +2172,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: RemoveParticipantResult
-        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResult
+        :return: RemoveParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2188,7 +2188,7 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RemoveParticipantResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RemoveParticipantResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2226,7 +2226,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RemoveParticipantResult", pipeline_response)
+        deserialized = self._deserialize("RemoveParticipantResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
