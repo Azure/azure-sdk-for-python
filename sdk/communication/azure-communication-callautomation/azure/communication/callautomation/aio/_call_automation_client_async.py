@@ -201,8 +201,8 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
-                result)
+        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
+            result)
 
     async def create_group_call(
         self,
@@ -275,8 +275,8 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
-                result)
+        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
+            result)
 
     async def answer_call(
         self,
@@ -324,8 +324,8 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
-                result)
+        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
+            result)
 
     async def redirect_call(
         self,

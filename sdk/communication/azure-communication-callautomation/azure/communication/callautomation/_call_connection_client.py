@@ -141,7 +141,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
 
-        return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
+        return CallConnectionProperties._from_generated(call_properties)# pylint:disable=protected-access
 
     def hang_up(self, is_for_everyone: bool, **kwargs) -> None:
         """Hangup the call.
@@ -180,7 +180,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         participant = self._call_connection_client.get_participant(
             self._call_connection_id, target_participant.raw_id, **kwargs)
 
-        return CallParticipant._from_generated(participant) # pylint:disable=protected-access
+        return CallParticipant._from_generated(participant)# pylint:disable=protected-access
 
     def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
         """List all participants from a call.
@@ -261,7 +261,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
+        return AddParticipantResult._from_generated(response)# pylint:disable=protected-access
 
     def remove_participant(
         self,
@@ -291,7 +291,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
+        return RemoveParticipantResult._from_generated(response)# pylint:disable=protected-access
 
     def play_media(
         self,
