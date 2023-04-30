@@ -166,7 +166,11 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         retention_policy = kwargs.pop('retention_policy', None)
 
-        create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants, retention_policy=retention_policy)
+        create_thread_request = CreateChatThreadRequest(
+            topic=topic,
+            participants=participants,
+            retention_policy=retention_policy
+        )
 
         create_chat_thread_result = self._client.chat.create_chat_thread(
             create_chat_thread_request=create_thread_request,
@@ -215,6 +219,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 8
                 :caption: Listing chat threads.
         """
+        # pylint:disable=protected-access
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
 

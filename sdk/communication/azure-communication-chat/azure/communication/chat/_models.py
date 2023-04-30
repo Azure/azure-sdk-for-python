@@ -312,7 +312,7 @@ class ChatRetentionPolicy(object):
 
     def __init__(
         self,
-        **kwargs Any
+        **kwargs: Any
     ) -> None:
         self.kind: Optional[str] = None
 

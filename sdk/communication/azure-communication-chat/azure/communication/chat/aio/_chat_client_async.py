@@ -20,10 +20,7 @@ from azure.core.async_paging import AsyncItemPaged
 from ._chat_thread_client_async import ChatThreadClient
 from .._shared.user_credential_async import CommunicationTokenCredential
 from .._generated.aio import AzureCommunicationChatService
-from .._generated.models import (
-    CreateChatThreadRequest,
-    ChatThreadItem
-)
+from .._generated.models import CreateChatThreadRequest
 from .._models import (
     ChatThreadProperties,
     ChatThreadItem,
@@ -217,6 +214,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 12
                 :caption: Listing chat threads.
         """
+        # pylint:disable=protected-access
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
 
