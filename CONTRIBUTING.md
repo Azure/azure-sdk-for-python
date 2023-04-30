@@ -11,7 +11,7 @@ If you want to contribute to a file that is generated (header contains `Code gen
 
 The Azure SDK team's Python CI leverages the tool `tox` to distribute tests to virtual environments, handle test dependency installation, and coordinate tooling reporting during PR/CI builds. This means that a dev working locally can reproduce _exactly_ what the build machine is doing.
 
-[A Brief Overview of Tox](https://tox.readthedocs.io/en/latest/)
+[A Brief Overview of Tox](https://tox.wiki/en/latest/)
 
 #### A Monorepo and Tox in Harmony
 

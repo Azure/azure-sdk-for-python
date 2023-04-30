@@ -58,5 +58,5 @@ Follow the instructions in the [Perform one-time test proxy setup][proxy_setup] 
 [python_39]: https://www.microsoft.com/p/python-39/9p7qfqmjrfp7
 [proxy_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#perform-one-time-test-proxy-setup
 [tests]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
-[tox]: https://tox.readthedocs.io/en/latest/
+[tox]: https://tox.wiki/en/latest/
 [virtual_environment]: https://docs.python.org/3/tutorial/venv.html
