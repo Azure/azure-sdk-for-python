@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, List, Union, Optional, TYPE_CHECKING, Iterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
 from urllib.parse import urlparse
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
@@ -413,7 +413,7 @@ class CallAutomationClient(object):
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        audio_channel_participant_ordering: Optional[list['CommunicationIdentifier']] = None,
+        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         recording_storage_type: Optional[str] = None,
         external_storage_location: Optional[str] = None,
         **kwargs
@@ -582,7 +582,7 @@ class CallAutomationClient(object):
         await self._client.__enter__()
         return self
 
-    async def __exit__(self, *args: "Any") -> None:
+    async def __exit__(self, *args) -> None:
         await self.close()
 
     async def close(self) -> None:

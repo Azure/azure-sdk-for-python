@@ -411,7 +411,7 @@ class CallAutomationClient(object):
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        audio_channel_participant_ordering: Optional[list['CommunicationIdentifier']] = None,
+        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         recording_storage_type: Optional[str] = None,
         external_storage_location: Optional[str] = None,
         **kwargs

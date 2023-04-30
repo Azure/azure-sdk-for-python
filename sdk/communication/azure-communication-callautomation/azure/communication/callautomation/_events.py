@@ -53,7 +53,7 @@ class AddParticipantSucceededEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -111,7 +111,7 @@ class AddParticipantFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -169,7 +169,7 @@ class CallConnectedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -214,7 +214,7 @@ class CallDisconnectedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -259,7 +259,7 @@ class CallTransferAcceptedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -310,7 +310,7 @@ class CallTransferFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -362,7 +362,7 @@ class ParticipantsUpdatedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar sequence_number: Sequence of this participant updated event in this call.
     :vartype sequence_number: int
@@ -413,7 +413,7 @@ class RecordingStateChangedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -467,7 +467,7 @@ class PlayCompletedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -517,7 +517,7 @@ class PlayFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -568,7 +568,7 @@ class PlayCanceledEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -612,7 +612,7 @@ class RecognizeCompletedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -681,7 +681,7 @@ class RecognizeFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -727,7 +727,7 @@ class RecognizeCanceledEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -771,7 +771,7 @@ class RemoveParticipantSucceededEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -828,7 +828,7 @@ class RemoveParticipantFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -885,7 +885,7 @@ class ContinuousDtmfRecognitionToneReceivedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar result_information: Detail Result information of the event.
 	 Contains detail information of the outcome if there is any issue.
@@ -935,7 +935,7 @@ class ContinuousDtmfRecognitionToneFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar result_information: Detail Result information of the event.
 	 Contains detail information of the outcome if there is any issue.
@@ -980,7 +980,7 @@ class ContinuousDtmfRecognitionStoppedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -1031,7 +1031,7 @@ class SendDtmfCompletedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.
@@ -1082,7 +1082,7 @@ class SendDtmfFailedEventData(object):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Id that can be used to corleate with the call. Also Called Skype-Chain-Id.
+    :ivar correlation_id: Id that can be used to correlate with the call. Also Called Skype-Chain-Id.
     :vartype correlation_id: str
     :ivar operation_context: Context that can be used to corelate with the request,
 	 if the request provided the context.

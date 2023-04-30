@@ -370,7 +370,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         interrupt_prompt: Optional[bool] = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[str] = None,
-        dtmf_stop_tones: Optional[list[str or 'DtmfTone']] = None,
+        dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in the call.

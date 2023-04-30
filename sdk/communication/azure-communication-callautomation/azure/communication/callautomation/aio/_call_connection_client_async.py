@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Optional, List, Union, cast
+from typing import TYPE_CHECKING, Optional, List, Union, cast
 from urllib.parse import urlparse
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -372,7 +372,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         interrupt_prompt: Optional[bool] = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[str] = None,
-        dtmf_stop_tones: Optional[list[str or 'DtmfTone']] = None,
+        dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in the call.
@@ -546,7 +546,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         await self._client.__enter__()
         return self
 
-    async def __exit__(self, *args: "Any") -> None:
+    async def __exit__(self, *args) -> None:
         await self.close()
 
     async def close(self) -> None:

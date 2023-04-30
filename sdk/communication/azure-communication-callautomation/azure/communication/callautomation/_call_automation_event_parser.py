@@ -44,9 +44,8 @@ class CallAutomationEventParser(object):
 
     def __init__(
         self,
-        **kwargs
     ):
-        super().__init__(**kwargs)
+        pass
 
     @classmethod
     def from_json(
