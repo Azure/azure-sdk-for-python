@@ -185,7 +185,7 @@ mypy is currently pinned to version [1.0.0](https://pypi.org/project/mypy/1.0.0/
 
 To run mypy on your library, run the tox mypy env at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e mypy -c ../../../eng/tox/tox.ini`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e mypy -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run mypy on its own:
 
@@ -217,7 +217,7 @@ Note that pyright requires that node is installed. The command-line [wrapper pac
 
 To run pyright on your library, run the tox pyright env at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e pyright -c ../../../eng/tox/tox.ini`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e pyright -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
@@ -249,7 +249,7 @@ from the code in the PR vs. the latest release on PyPi.
 
 To run verifytypes on your library, run the tox verifytypes env at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e verifytypes -c ../../../eng/tox/tox.ini`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e verifytypes -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
 
