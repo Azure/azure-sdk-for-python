@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
 from urllib.parse import urlparse
-from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._call_connection_client import CallConnectionClient
@@ -145,7 +144,6 @@ class CallAutomationClient(object):
             call_connection_id=call_connection_id,
             **kwargs)
 
-    @distributed_trace_async
     async def create_call(
         self,
         target_participant: 'CallInvite',
@@ -206,7 +204,6 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
                 result)
 
-    @distributed_trace_async
     async def create_group_call(
         self,
         target_participants: List['CommunicationIdentifier'],
@@ -281,7 +278,6 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
                 result)
 
-    @distributed_trace_async
     async def answer_call(
         self,
         incoming_call_context: str,
@@ -331,7 +327,6 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
                 result)
 
-    @distributed_trace_async
     async def redirect_call(
         self,
         incoming_call_context: str,
@@ -371,7 +366,6 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-    @distributed_trace_async
     async def reject_call(
         self,
         incoming_call_context: str,
@@ -404,7 +398,6 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-    @distributed_trace_async
     async def start_recording(
         self,
         call_locator: Union['ServerCallLocator', 'GroupCallLocator'],
@@ -468,7 +461,6 @@ class CallAutomationClient(object):
         return await RecordingStateResult._from_generated(# pylint:disable=protected-access
             recording_state_result)
 
-    @distributed_trace_async
     async def stop_recording(
         self,
         recording_id: str,
@@ -484,7 +476,6 @@ class CallAutomationClient(object):
         """
         await self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
 
-    @distributed_trace_async
     async def pause_recording(
         self,
         recording_id: str,
@@ -500,7 +491,6 @@ class CallAutomationClient(object):
         """
         await self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
 
-    @distributed_trace_async
     async def resume_recording(
         self,
         recording_id: str,
@@ -516,7 +506,6 @@ class CallAutomationClient(object):
         """
         await self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
 
-    @distributed_trace_async
     async def get_recording_properties(
         self,
         recording_id: str,
