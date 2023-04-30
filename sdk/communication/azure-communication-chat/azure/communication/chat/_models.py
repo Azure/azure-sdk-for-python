@@ -3,10 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
-from ._generated.models import ChatParticipant as ChatParticipantAutorest
-from ._generated.models import ChatMessageType
+from ._generated.models import (
+    RetentionPolicyKind,
+    ChatMessageType,
+    ChatThreadItem as ChatThreadItemAutorest,
+    ChatParticipant as ChatParticipantAutorest
+)
 from ._communication_identifier_serializer import serialize_identifier, deserialize_identifier
 
 # pylint: disable=unused-import,ungrouped-imports
@@ -211,9 +215,8 @@ class ChatThreadProperties(object):
 
     def __init__(
         self,
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs: Any
+    ) -> None:
         self.id = kwargs['id']
         self.topic = kwargs.get('topic', None)
         self.created_on = kwargs['created_on']
@@ -222,14 +225,13 @@ class ChatThreadProperties(object):
 
     @classmethod
     def _from_generated(cls, chat_thread):
-
         created_by = chat_thread.created_by_communication_identifier
         if created_by is not None:
             created_by = deserialize_identifier(chat_thread.created_by_communication_identifier)
 
         retention_policy = chat_thread.retention_policy
-        if retention_policy is not None:
-            retention_policy = ChatRetentionPolicy(
+        if retention_policy is not None and retention_policy.kind == RetentionPolicyKind.THREAD_CREATION_DATE:
+            retention_policy = ThreadCreationDateRetentionPolicy(
                 delete_thread_after_days=chat_thread.retention_policy.delete_thread_after_days
             )
 
@@ -278,6 +280,7 @@ class ChatMessageReadReceipt(object):
             read_on=read_receipt.read_on
         )
 
+
 class CreateChatThreadResult(object):
     """Result of the create chat thread operation.
 
@@ -289,11 +292,11 @@ class CreateChatThreadResult(object):
 
     def __init__(
         self,
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs: Any
+    ) -> None:
         self.chat_thread = kwargs['chat_thread']
         self.errors = kwargs.get('errors', None)
+
 
 class ChatRetentionPolicy(object):
     """Data retention policy for auto deletion. It's not updatable after creation.
@@ -309,10 +312,10 @@ class ChatRetentionPolicy(object):
 
     def __init__(
         self,
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs Any
+    ) -> None:
         self.kind: Optional[str] = None
+
 
 class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
     """Thread retention policy based on thread creation date.
@@ -330,8 +333,45 @@ class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
         self,
         *,
         delete_thread_after_days: int,
-         **kwargs # type: Any
-        ):
-       # type: (...) -> None
+        **kwargs: Any
+    ) -> None:
         self.kind: str = RetentionPolicyKind.THREAD_CREATION_DATE
         self.delete_thread_after_days = delete_thread_after_days
+
+
+class ChatThreadItem(ChatThreadItemAutorest):
+    """Summary information of a chat thread.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Chat thread id. Required.
+    :vartype id: str
+    :ivar topic: Chat thread topic. Required.
+    :vartype topic: str
+    :ivar deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
+     format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype deleted_on: ~datetime.datetime
+    :ivar last_message_received_on: The timestamp when the last message arrived at the server. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype last_message_received_on: ~datetime.datetime
+    :ivar retention_policy: Data retention policy for auto deletion. It's not updatable after
+     creation.
+    :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy or None
+    """
+    @classmethod
+    def _from_generated(cls, thread_item: ChatThreadItemAutorest) -> "ChatThreadItem":
+        retention_policy = thread_item.retention_policy
+        if retention_policy is not None and retention_policy.kind == RetentionPolicyKind.THREAD_CREATION_DATE:
+            retention_policy = ThreadCreationDateRetentionPolicy(
+                delete_thread_after_days=thread_item.retention_policy.delete_thread_after_days
+            )
+        wrapped = cls(
+            id=thread_item.id,
+            topic=thread_item.topic,
+            deleted_on=thread_item.deleted_on,
+            retention_policy=retention_policy
+        )
+        wrapped.last_message_received_on = thread_item.last_message_received_on
+        return wrapped

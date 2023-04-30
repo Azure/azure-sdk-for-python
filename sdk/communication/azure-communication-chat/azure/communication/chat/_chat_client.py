@@ -16,7 +16,8 @@ from ._generated import AzureCommunicationChatService
 from ._generated.models import CreateChatThreadRequest
 from ._models import (
     ChatThreadProperties,
-    CreateChatThreadResult
+    CreateChatThreadResult,
+    ChatThreadItem
 )
 from ._utils import ( # pylint: disable=unused-import
     _to_utc_datetime,
@@ -220,7 +221,9 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         return self._client.chat.list_chat_threads(
             max_page_size=results_per_page,
             start_time=start_time,
-            **kwargs)
+            cls=lambda threads: [ChatThreadItem._from_generated(t) for t in threads],
+            **kwargs
+        )
 
     @distributed_trace
     def delete_chat_thread(

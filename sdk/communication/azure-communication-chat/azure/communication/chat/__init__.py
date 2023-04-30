@@ -3,7 +3,6 @@ from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
 from ._generated.models import (
     SendChatMessageResult,
-    ChatThreadItem,
     ChatMessageType,
     ChatError,
     RetentionPolicyKind
@@ -18,6 +17,7 @@ from ._models import (
     CreateChatThreadResult,
     ChatRetentionPolicy,
     ThreadCreationDateRetentionPolicy,
+    ChatThreadItem
 )
 
 from ._shared.user_credential import CommunicationTokenCredential

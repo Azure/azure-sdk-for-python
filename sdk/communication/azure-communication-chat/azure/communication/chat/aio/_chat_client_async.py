@@ -26,14 +26,10 @@ from .._generated.models import (
 )
 from .._models import (
     ChatThreadProperties,
-    ChatParticipant,
+    ChatThreadItem,
     CreateChatThreadResult
 )
-from .._utils import ( # pylint: disable=unused-import
-    _to_utc_datetime,
-    return_response,
-    CommunicationErrorResponseConverter
-)
+from .._utils import CommunicationErrorResponseConverter
 from .._version import SDK_MONIKER
 
 
@@ -227,6 +223,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         return self._client.chat.list_chat_threads(
             max_page_size=results_per_page,
             start_time=start_time,
+            cls=lambda threads: [ChatThreadItem._from_generated(t) for t in threads],
             **kwargs)
 
     @distributed_trace_async
