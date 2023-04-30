@@ -73,6 +73,9 @@ Basic usage of `tox` within this monorepo is:
 
 1. `pip install tox<5`
 2. Run `tox -c path/to/tox.ini --root path/to/python_package`
+  * **Note**: You can use environment variables to provide defaults for tox config values
+    * With `TOX_CONFIG_FILE` set to the absolute path of `tox.ini`, you can avoid needing `-c path/to/tox.ini` in your tox invocations
+    * With `TOX_ROOT_DIR` set to the absolute path to your python package, you can avoid needing `--root path/to/python_package`
 
 The common `tox.ini` location is `eng/tox/tox.ini` within the repository.
 
