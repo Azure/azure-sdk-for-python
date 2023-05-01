@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING, Optional, List, Union, cast
 from urllib.parse import urlparse
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._utils import (
@@ -141,8 +142,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
 
-        return CallConnectionProperties._from_generated(call_properties)# pylint:disable=protected-access
+        return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
+    @distributed_trace
     def hang_up(self, is_for_everyone: bool, **kwargs) -> None:
         """Hangup the call.
 
@@ -163,6 +165,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             self._call_connection_client.hangup_call(
                 self._call_connection_id, **kwargs)
 
+    @distributed_trace
     def get_participant(
         self,
         target_participant: 'CommunicationIdentifier',
@@ -180,8 +183,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         participant = self._call_connection_client.get_participant(
             self._call_connection_id, target_participant.raw_id, **kwargs)
 
-        return CallParticipant._from_generated(participant)# pylint:disable=protected-access
+        return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
+    @distributed_trace
     def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
         """List all participants from a call.
 
@@ -191,6 +195,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
 
+    @distributed_trace
     def transfer_call_to_participant(
         self,
         target_participant: 'CallInvite',
@@ -222,6 +227,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
+    @distributed_trace
     def add_participant(
         self,
         target_participant: 'CallInvite',
@@ -261,8 +267,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return AddParticipantResult._from_generated(response)# pylint:disable=protected-access
+        return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
 
+    @distributed_trace
     def remove_participant(
         self,
         target_participant: 'CommunicationIdentifier',
@@ -291,8 +298,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return RemoveParticipantResult._from_generated(response)# pylint:disable=protected-access
+        return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
 
+    @distributed_trace
     def play_media(
         self,
         play_source: 'FileSource',
@@ -326,6 +334,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         )
         self._call_media_client.play(self._call_connection_id, play_request)
 
+    @distributed_trace
     def play_media_to_all(
         self,
         play_source: 'FileSource',
@@ -348,6 +357,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         self.play_media(play_source=play_source, play_to=[], loop=loop, **kwargs)
 
+    @distributed_trace
     def start_recognizing_media(
         self,
         input_type : Union[str, 'RecognizeInputType'],
@@ -420,6 +430,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         self._call_media_client.recognize(
             self._call_connection_id, recognize_request)
 
+    @distributed_trace
     def cancel_all_media_operations(
         self,
         **kwargs
@@ -433,6 +444,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
 
+    @distributed_trace
     def start_continuous_dtmf_recognition(
         self,
         target: 'CommunicationIdentifier',
@@ -463,6 +475,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             continuous_dtmf_recognition_request,
             **kwargs)
 
+    @distributed_trace
     def stop_continuous_dtmf_recognition(
         self,
         target: 'CommunicationIdentifier',
@@ -493,6 +506,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             continuous_dtmf_recognition_request,
             **kwargs)
 
+    @distributed_trace
     def send_dtmf(
         self,
         target: 'CommunicationIdentifier',

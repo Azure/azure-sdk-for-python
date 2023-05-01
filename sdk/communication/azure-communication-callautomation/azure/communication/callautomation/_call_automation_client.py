@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
 from urllib.parse import urlparse
+from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._call_connection_client import CallConnectionClient
@@ -142,6 +143,7 @@ class CallAutomationClient(object):
             call_connection_id=call_connection_id,
             **kwargs)
 
+    @distributed_trace
     def create_call(
         self,
         target_participant: 'CallInvite',
@@ -202,6 +204,7 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
             result)
 
+    @distributed_trace
     def create_group_call(
         self,
         target_participants: List['CommunicationIdentifier'],
@@ -219,9 +222,9 @@ class CallAutomationClient(object):
         """ Create a call connection request to a list of multiple target identities.
 
         :param target_participants: A list of targets.
-		:type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
         :param callback_url: The call back url for receiving events.
-		:type callback_url: str
+        :type callback_url: str
         :keyword source_caller_id_number: The source caller Id, a phone number,
          that's shown to the PSTN participant being invited.
          Required only when calling a PSTN callee.
@@ -276,6 +279,7 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
             result)
 
+    @distributed_trace
     def answer_call(
         self,
         incoming_call_context: str,
@@ -325,6 +329,7 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
             result)
 
+    @distributed_trace
     def redirect_call(
         self,
         incoming_call_context: str,
@@ -364,6 +369,7 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
+    @distributed_trace
     def reject_call(
         self,
         incoming_call_context: str,
@@ -396,6 +402,7 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
+    @distributed_trace
     def start_recording(
         self,
         call_locator: Union['ServerCallLocator', 'GroupCallLocator'],
@@ -459,6 +466,7 @@ class CallAutomationClient(object):
         return RecordingStateResult._from_generated(# pylint:disable=protected-access
             recording_state_result)
 
+    @distributed_trace
     def stop_recording(
         self,
         recording_id: str,
@@ -468,12 +476,13 @@ class CallAutomationClient(object):
 
         :param recording_id: The recording id.
         :type recording_id: str
-		:return: None
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
 
+    @distributed_trace
     def pause_recording(
         self,
         recording_id: str,
@@ -483,12 +492,13 @@ class CallAutomationClient(object):
 
         :param recording_id: The recording id.
         :type recording_id: str
-		:return: None
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
 
+    @distributed_trace
     def resume_recording(
         self,
         recording_id: str,
@@ -498,12 +508,13 @@ class CallAutomationClient(object):
 
         :param recording_id: The recording id.
         :type recording_id: str
-		:return: None
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
 
+    @distributed_trace
     def get_recording_properties(
         self,
         recording_id: str,
@@ -513,7 +524,7 @@ class CallAutomationClient(object):
 
         :param recording_id: The recording id.
         :type recording_id: str
-		:return: RecordingStateResult
+        :return: RecordingStateResult
         :rtype: ~azure.communication.callautomation.RecordingStateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -540,7 +551,7 @@ class CallAutomationClient(object):
         :param length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
         :type length: int
-		:return: Iterable[bytes]
+        :return: Iterable[bytes]
         :rtype: Iterable[bytes]
         """
         stream = self._downloader.download_streaming(
@@ -560,7 +571,7 @@ class CallAutomationClient(object):
 
         :param recording_url: Recording's url.
         :type recording_url: str
-		:return: None
+        :return: None
         :rtype: None
         """
         self._downloader.delete_recording(recording_location = recording_url, **kwargs)
