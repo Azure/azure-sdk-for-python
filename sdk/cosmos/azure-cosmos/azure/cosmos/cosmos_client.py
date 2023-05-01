@@ -74,26 +74,22 @@ def _build_auth(credential):
 def _build_connection_policy(kwargs):
     # type: (Dict[str, Any]) -> ConnectionPolicy
     # pylint: disable=protected-access
-    policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
+    policy = kwargs.pop('connection_policy', ConnectionPolicy())
 
     # Connection config
-    policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
-        kwargs.pop('connection_timeout', None) or \
-        policy.RequestTimeout
-    policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery') \
-        if 'enable_endpoint_discovery' in kwargs.keys() else policy.EnableEndpointDiscovery
-    policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
-        policy.UseMultipleWriteLocations
+    policy.RequestTimeout = kwargs.pop('request_timeout', policy.RequestTimeout)
+    policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
+    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
+    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
     policy.DisableSSLVerification = not bool(verify if verify is not None else True)
-    ssl = kwargs.pop('ssl_config', None) or policy.SSLConfiguration
+    ssl = kwargs.pop('ssl_config', policy.SSLConfiguration)
     if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', None) or ssl.SSLCertFile
+        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
         ssl.SSLCaCerts = verify or ssl.SSLCaCerts
         policy.SSLConfiguration = ssl
 

@@ -39,18 +39,11 @@ class _TimeoutFailoverRetryPolicy(object):
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
 
-        if self.request:
-            self.request.clear_route_to_location()
-
-            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-            # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-            self.request.route_to_location(self.location_endpoint)
-
     def needsRetry(self):
         if self.args:
             if (self.args[3].method == "GET") \
-                    or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
+                    or http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers\
+                    or http_constants.HttpHeaders.IsQuery in self.args[3].headers:
                 return True
         return False
 
@@ -74,17 +67,6 @@ class _TimeoutFailoverRetryPolicy(object):
             return False
 
         self.failover_retry_count += 1
-
-        if self.location_endpoint:
-            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                # Mark current read endpoint as unavailable
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
-            else:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
-
-        # set the refresh_needed flag to ensure that endpoint list is
-        # refreshed with new writable and readable locations
-        self.global_endpoint_manager.refresh_needed = True
 
         # clear previous location-based routing directive
         self.request.clear_route_to_location()

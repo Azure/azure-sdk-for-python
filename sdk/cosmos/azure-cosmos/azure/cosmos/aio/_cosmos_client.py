@@ -45,22 +45,19 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
 
     # Connection config
-    policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
-                            kwargs.pop('connection_timeout', None) or \
-                            policy.RequestTimeout
-    policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
-    policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
-                                       policy.UseMultipleWriteLocations
+    policy.RequestTimeout = kwargs.pop('request_timeout', policy.RequestTimeout)
+    policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
+    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
+    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
     policy.DisableSSLVerification = not bool(verify if verify is not None else True)
     ssl = kwargs.pop('ssl_config', None) or policy.SSLConfiguration
     if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', None) or ssl.SSLCertFile
+        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
         ssl.SSLCaCerts = verify or ssl.SSLCaCerts
         policy.SSLConfiguration = ssl
 
@@ -68,8 +65,8 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
-    retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
-        retry_options._fixed_retry_interval_in_milliseconds
+    retry_options._fixed_retry_interval_in_milliseconds = \
+        kwargs.pop('retry_fixed_interval', retry_options._fixed_retry_interval_in_milliseconds)
     max_backoff = kwargs.pop('retry_backoff_max', None)
     retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
