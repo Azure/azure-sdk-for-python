@@ -61,6 +61,7 @@ def _archive_or_restore(
     is_archived: bool,
     name: str,
     version: str,
+    **kwargs,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
@@ -98,4 +99,5 @@ def _archive_or_restore(
         resource_group_name=resource_group_name,
         workspace_name=workspace_name,
         body=version_resource,
+        **kwargs,
     )

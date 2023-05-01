@@ -27,6 +27,7 @@ class RouterJobSamples(object):
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"
+    _assignment_id = "sample_assignment"
     _distribution_policy_id = "sample_distribution_policy"
     _classification_policy_id = "sample_classification_policy"
     _queue_id = "sample_queue"
@@ -235,8 +236,22 @@ class RouterJobSamples(object):
 
         reclassify_job_result = router_client.reclassify_job(job_id = job_id)
 
-        print(f"Successfully re-classified router")
+        print(f"Successfully re-classified job")
         # [END reclassify_job]
+        
+    def unassign_job(self):
+        connection_string = self.endpoint
+        job_id = self._job_w_cp_id
+        assignment_id = self._assignment_id
+        # [START unassign_job]
+        from azure.communication.jobrouter import RouterClient
+
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+
+        unassign_job_result = router_client.unassign_job_result(job_id = job_id, assignment_id = assignment_id)
+
+        print(f"Successfully unassigned job")
+        # [END unassign_job]
 
     def accept_job_offer(self):
         connection_string = self.endpoint

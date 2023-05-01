@@ -1,6 +1,17 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.7.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+
+## 1.6.0 (05/01/2023)
 
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
@@ -11,6 +22,8 @@
 - Support additional_includes in command component
 - Added experimental `distribution: ray` support in command job.
 - Added data import schedule. The class added is `ImportDataSchedule`.
+- Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
 
 ### Bugs Fixed
 

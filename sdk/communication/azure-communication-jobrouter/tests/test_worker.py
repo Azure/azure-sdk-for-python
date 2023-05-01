@@ -36,8 +36,8 @@ worker_tags = {
     }
 
 worker_channel_configs = {
-    'fakeChannel1': ChannelConfiguration(capacity_cost_per_job = 10),
-    'fakeChannel2': ChannelConfiguration(capacity_cost_per_job = 90)
+    'fakeChannel1': ChannelConfiguration(capacity_cost_per_job = 10, max_number_of_jobs = 10),
+    'fakeChannel2': ChannelConfiguration(capacity_cost_per_job = 90, max_number_of_jobs = 1)
 }
 
 worker_total_capacity = 100

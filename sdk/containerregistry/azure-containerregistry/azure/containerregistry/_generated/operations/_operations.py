@@ -51,11 +51,9 @@ def build_container_registry_check_docker_v2_support_request(  # pylint: disable
 
 
 def build_container_registry_get_manifest_request(  # pylint: disable=name-too-long
-    name: str, reference: str, **kwargs: Any
+    name: str, reference: str, *, accept: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/v2/{name}/manifests/{reference}"
@@ -67,7 +65,8 @@ def build_container_registry_get_manifest_request(  # pylint: disable=name-too-l
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
@@ -485,6 +484,10 @@ def build_container_registry_blob_check_blob_exists_request(  # pylint: disable=
 def build_container_registry_blob_delete_blob_request(  # pylint: disable=name-too-long
     name: str, digest: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/octet-stream")
+
     # Construct URL
     _url = "/v2/{name}/blobs/{digest}"
     path_format_arguments = {
@@ -749,7 +752,9 @@ class ContainerRegistryOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def get_manifest(self, name: str, reference: str, **kwargs: Any) -> _models.ManifestWrapper:
+    def get_manifest(
+        self, name: str, reference: str, *, accept: Optional[str] = None, **kwargs: Any
+    ) -> Iterator[bytes]:
         """Get the manifest identified by ``name`` and ``reference`` where ``reference`` can be a tag or
         digest.
 
@@ -757,8 +762,11 @@ class ContainerRegistryOperations:
         :type name: str
         :param reference: A tag or a digest, pointing to a specific image. Required.
         :type reference: str
-        :return: ManifestWrapper
-        :rtype: ~container_registry.models.ManifestWrapper
+        :keyword accept: Accept header string delimited by comma. For example,
+         application/vnd.docker.distribution.manifest.v2+json. Default value is None.
+        :paramtype accept: str
+        :return: Iterator of the response bytes
+        :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -772,11 +780,12 @@ class ContainerRegistryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ManifestWrapper] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         request = build_container_registry_get_manifest_request(
             name=name,
             reference=reference,
+            accept=accept,
             headers=_headers,
             params=_params,
         )
@@ -785,7 +794,7 @@ class ContainerRegistryOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -797,12 +806,12 @@ class ContainerRegistryOperations:
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ManifestWrapper", pipeline_response)
+        deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def create_manifest(self, name: str, reference: str, payload: IO, **kwargs: Any) -> Any:

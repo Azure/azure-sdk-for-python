@@ -59,11 +59,15 @@ def mock_batch_deployment_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2023_02_01_preview: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
 ) -> BatchDeploymentOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
-    kwargs = {"service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview}
+    kwargs = {
+        "service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview,
+        "service_client_02_2023_preview": mock_aml_services_2023_02_01_preview,
+    }
 
     yield BatchDeploymentOperations(
         operation_scope=mock_workspace_scope,

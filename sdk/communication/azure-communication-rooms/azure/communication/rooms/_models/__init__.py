@@ -8,12 +8,12 @@
 
 from ._models import (
     RoomParticipant,
-    UpsertParticipantsResult,
-    RemoveParticipantsResult
+    ParticipantRole,
+    CommunicationRoom
 )
 
 __all__ = [
     "RoomParticipant",
-    "UpsertParticipantsResult",
-    "RemoveParticipantsResult"
+    "ParticipantRole",
+    "CommunicationRoom"
 ]
