@@ -91,6 +91,8 @@ jobs:
 
   - job: 'Build_Extended'
     displayName: Build Extended
+    dependsOn: 
+      - 'Build'
     timeoutInMinutes: 90
     variables:
       Codeql.Enabled: true

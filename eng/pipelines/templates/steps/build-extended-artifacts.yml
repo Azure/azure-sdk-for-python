@@ -24,6 +24,11 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'packages'
+      targetPath: $(Build.ArtifactStagingDirectory)
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
