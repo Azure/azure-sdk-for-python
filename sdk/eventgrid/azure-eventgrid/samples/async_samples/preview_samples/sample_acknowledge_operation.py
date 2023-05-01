@@ -19,10 +19,10 @@ async def run():
     try:
         async with client:
             lock_tokens = AcknowledgeOptions(lock_tokens=["token"])
-            ack = await client.acknowledge_cloud_events(
+            ack_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens
             )
-            print(ack)
+            print(ack_events)
     except HttpResponseError:
         raise
 

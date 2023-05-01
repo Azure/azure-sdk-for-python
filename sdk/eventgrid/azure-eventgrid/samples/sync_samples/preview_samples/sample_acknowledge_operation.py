@@ -16,9 +16,9 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 # Acknowledge a batch of CloudEvents
 try:
     lock_tokens = AcknowledgeOptions(lock_tokens=["token"])
-    ack = client.acknowledge_cloud_events(
+    ack_events = client.acknowledge_cloud_events(
         topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens
     )
-    print(ack)
+    print(ack_events)
 except HttpResponseError:
     raise

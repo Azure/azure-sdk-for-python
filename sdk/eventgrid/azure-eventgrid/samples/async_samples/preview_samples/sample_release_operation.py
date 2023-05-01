@@ -19,10 +19,10 @@ async def run():
     try:
         async with client:
             tokens = ReleaseOptions(lock_tokens=["token"])
-            release = await client.release_cloud_events(
+            release_events = await client.release_cloud_events(
                 topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=tokens
             )
-            print(release)   
+            print(release_events)   
     except HttpResponseError:
         raise
 
