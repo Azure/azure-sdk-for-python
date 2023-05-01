@@ -36,6 +36,13 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SAS = "Sas"
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
+class DataReferenceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    SAS = "SAS"
+    DOCKER_CREDENTIALS = "DockerCredentials"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    NO_CREDENTIALS = "NoCredentials"
+
 class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the datastore contents type.
     """
@@ -163,6 +170,13 @@ class OutputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
+
+class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Protection level associated with the Intellectual Property.
+    """
+
+    ALL = "All"
+    NONE = "None"
 
 class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine which reference method to use for an asset.

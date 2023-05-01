@@ -1,5 +1,27 @@
 # Release History
 
+## 9.1.0 (2023-04-21)
+
+### Features Added
+
+  - Model CassandraClusterDataCenterNodeItem has a new parameter cassandra_process_status
+  - Model CassandraClusterPublicStatus has a new parameter errors
+  - Model ClusterResourceProperties has a new parameter provision_error
+  - Model DataCenterResourceProperties has a new parameter authentication_method_ldap_properties
+  - Model DataCenterResourceProperties has a new parameter deallocated
+  - Model DataCenterResourceProperties has a new parameter provision_error
+  - Model DatabaseAccountConnectionString has a new parameter key_kind
+  - Model DatabaseAccountConnectionString has a new parameter type
+  - Model LocationProperties has a new parameter is_subscription_region_access_allowed_for_az
+  - Model LocationProperties has a new parameter is_subscription_region_access_allowed_for_regular
+  - Model LocationProperties has a new parameter status
+
+## 9.1.0b2 (2023-04-20)
+
+### Features Added
+
+  - Added operation group MongoClustersOperations
+
 ## 9.1.0b1 (2023-03-20)
 
 ### Features Added

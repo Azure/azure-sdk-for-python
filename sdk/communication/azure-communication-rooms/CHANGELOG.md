@@ -11,7 +11,7 @@
 - Removed `participants` from `CommunicationRoom` class.
 - Removed `room_join_policy`, all rooms are invite-only by default.
 - `update_room` no longer accepts participant list as input.
-- Replaced `add_participants` and `update_participants` with `upsert_participants`.
+- Replaced `add_participants` and `update_participants` with `add_or_update_participants`.
 - Renamed `RoleType` to `ParticipantRole`.
 - Renamed `created_on` to `created_at` in `CommunicationRoom`.
 - Renamed `get_participants` to `list_participants` in `RoomsClient`.

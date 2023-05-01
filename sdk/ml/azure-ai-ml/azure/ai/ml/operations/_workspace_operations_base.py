@@ -255,7 +255,9 @@ class WorkspaceOperationsBase:
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller[None]:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
@@ -320,6 +322,7 @@ class WorkspaceOperationsBase:
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
+            force_to_purge=permanently_delete,
             **self._init_kwargs,
         )
         module_logger.info("Delete request initiated for workspace: %s\n", name)
@@ -495,6 +498,8 @@ class WorkspaceOperationsBase:
         else:
             managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
+        if workspace.enable_data_isolation:
+            _set_val(param["enable_data_isolation"], "true")
 
         # Hub related param
         if workspace.storage_accounts:

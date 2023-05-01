@@ -8,6 +8,7 @@ from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionStatus
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -126,9 +127,10 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @distributed_trace
     def begin_provision_network(
         self,
+        *,
         workspace_name: Optional[str] = None,
         include_spark: Optional[bool] = False,
-    ) -> LROPoller:
+    ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
 
@@ -177,7 +179,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         """Delete a workspace.
 
         :param name: Name of the workspace
@@ -186,10 +190,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
+        :param permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
+            Set this flag to override the soft-delete behavior and permanently delete your workspace.
+        :type permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        return super().begin_delete(name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(
+            name, delete_dependent_resources=delete_dependent_resources, permanently_delete=permanently_delete, **kwargs
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)

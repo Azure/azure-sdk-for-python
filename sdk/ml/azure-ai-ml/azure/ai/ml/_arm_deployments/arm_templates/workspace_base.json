@@ -476,6 +476,17 @@
                 "description": "Whether to set up materialization store"
             }
         },
+        "enable_data_isolation": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "A flag to determine if workspace has data isolation enabled. The flag can only be set at the creation phase, it can't be updated."
+            }
+        },
         "storage_accounts" : {
             "type": "array",
             "defaultValue": [],
@@ -691,7 +702,7 @@
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2022-12-01-preview",
+            "apiVersion": "2023-04-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
@@ -734,6 +745,7 @@
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 },
+                "enableDataIsolation": "[parameters('enable_data_isolation')]",
                 "storageAccounts": "[if(equals(length(parameters('storage_accounts')), 0), variables('storageAccountList'), parameters('storage_accounts'))]",
                 "keyVaults": "[if(equals(length(parameters('key_vaults')), 0), variables('keyVaultList'), parameters('key_vaults'))]",
                 "containerRegistries": "[if(equals(length(parameters('container_registies')), 0), variables('containerRegistryList'), parameters('container_registies'))]",

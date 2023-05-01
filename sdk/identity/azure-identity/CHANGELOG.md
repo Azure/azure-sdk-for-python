@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Changed parameter from `disable_instance_discovery` to `disable_authority_validation_and_instance_discovery` to make it more explicit.
+
 ### Breaking Changes
 
 > These changes do not impact the API of stable versions such as 1.12.0.

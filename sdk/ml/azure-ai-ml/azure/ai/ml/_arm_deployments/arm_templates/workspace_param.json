@@ -45,7 +45,7 @@
         "value": ""
     },
     "logAnalyticsName": {
-        "value": ""
+        "value": "none"
     },
     "logAnalyticsArmId": {
         "value": ""
@@ -166,5 +166,8 @@
     },
     "hub_resource_id" : {
         "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
     }
 }

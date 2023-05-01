@@ -8,7 +8,7 @@ from typing import Dict, Iterable, Optional
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -37,14 +37,12 @@ from azure.ai.ml.entities._feature_store._constants import (
 )
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._utils._experimental import experimental
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class FeatureStoreOperations(WorkspaceOperationsBase):
     """FeatureStoreOperations.
 
@@ -56,7 +54,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -72,7 +70,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self._workspace_connection_operation = service_client.workspace_connections
 
     # @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[FeatureStore]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP, **kwargs: Dict) -> Iterable[FeatureStore]:
         """List all feature stores that the user has access to in the current
         resource group or subscription.
 
@@ -84,13 +82,15 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
+                **kwargs,
                 cls=lambda objs: [
                     FeatureStore._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
-                ]
+                ],
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
+            **kwargs,
             cls=lambda objs: [
                 FeatureStore._from_rest_object(filterObj)
                 for filterObj in filter(lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)
@@ -111,7 +111,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         feature_store = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        rest_workspace_obj = self._operation.get(resource_group, name)
+        rest_workspace_obj = self._operation.get(resource_group, name, **kwargs)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
             feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
@@ -177,6 +177,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def begin_create(
         self,
         feature_store: FeatureStore,
+        *,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[FeatureStore]:
@@ -365,7 +366,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller[None]:
         """Delete a FeatureStore.
 
         :param name: Name of the FeatureStore

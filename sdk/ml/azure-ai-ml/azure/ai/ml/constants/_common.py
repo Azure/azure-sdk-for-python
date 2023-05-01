@@ -26,6 +26,7 @@ ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
+NAMED_RESOURCE_ID_FORMAT_WITH_PARENT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
 LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
@@ -858,6 +859,15 @@ class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "none"
 
 
+class AzureDevopsArtifactsType:
+    ARTIFACT = "artifact"
+
+
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
+
+
+class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CREATED_GREATER_THAN = "created_greater_than"
+    LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"

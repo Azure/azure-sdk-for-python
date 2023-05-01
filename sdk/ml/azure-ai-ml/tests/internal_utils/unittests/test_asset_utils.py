@@ -14,8 +14,17 @@ from azure.ai.ml._utils._asset_utils import (
     get_object_hash,
     get_directory_size,
     traverse_directory,
+    _check_or_modify_auto_delete_setting,
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
+from azure.ai.ml.exceptions import (
+    AssetPathException,
+    ValidationException,
+)
+from azure.ai.ml.constants._common import AutoDeleteCondition
+from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
 
 
 @pytest.fixture
@@ -185,3 +194,34 @@ class TestAssetUtils:
         _, _ = generate_link_file(storage_test_directory)
         with_symlink_size = get_directory_size(storage_test_directory)
         assert len(with_symlink_size[1]) == len(base_size[1]) + 2
+
+    def test_check_or_modify_auto_delete_setting(self):
+        _check_or_modify_auto_delete_setting(None)
+
+        setting = {"condition": "created_greater_than"}
+        _check_or_modify_auto_delete_setting(setting)
+        assert setting["condition"] == "createdGreaterThan"
+
+        setting = AutoDeleteSetting(condition=AutoDeleteCondition.CREATED_GREATER_THAN)
+        _check_or_modify_auto_delete_setting(setting)
+        assert setting.condition == "createdGreaterThan"
+
+    def test_validate_auto_delete_setting_in_data_output(self):
+        with pytest.raises(ValidationException):
+            _validate_auto_delete_setting_in_data_output({"value": "30d"})
+
+        _validate_auto_delete_setting_in_data_output(None)
+        _validate_auto_delete_setting_in_data_output({})
+
+    def test_validate_workspace_managed_datastore(self):
+        with pytest.raises(AssetPathException):
+            _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore/123")
+
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore")
+        assert path == "azureml://datastores/workspacemanageddatastore/paths"
+
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore/")
+        assert path == "azureml://datastores/workspacemanageddatastore/paths"
+
+        path = _validate_workspace_managed_datastore("azureml://datastores/workspacemanageddatastore123")
+        assert path == "azureml://datastores/workspacemanageddatastore123"
