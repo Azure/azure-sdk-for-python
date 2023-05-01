@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Literal
+from typing import Any, Optional
 
 from ._generated.models import (
     RetentionPolicyKind,
@@ -12,13 +12,6 @@ from ._generated.models import (
     ChatParticipant as ChatParticipantAutorest
 )
 from ._communication_identifier_serializer import serialize_identifier, deserialize_identifier
-
-# pylint: disable=unused-import,ungrouped-imports
-from ._shared.models import CommunicationIdentifier
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 
 class ChatParticipant(object):
@@ -97,10 +90,8 @@ class ChatMessage(object): # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self,
-            **kwargs # type: Any
-    ):
-        # type: (...) -> None
-
+            **kwargs: Any
+    ) -> None:
         self.id = kwargs['id']
         self.type = kwargs['type']
         self.sequence_id = kwargs['sequence_id']
@@ -160,10 +151,8 @@ class ChatMessageContent(object):
 
     def __init__(
         self,
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
-
+        **kwargs: Any
+    ) -> None:
         self.message = kwargs.get('message', None)
         self.topic = kwargs.get('topic', None)
         self.participants = kwargs.get('participants', None)
@@ -210,7 +199,6 @@ class ChatThreadProperties(object):
     :ivar retention_policy: Data retention policy for auto deletion.
     :vartype retention_policy: ~azure.communication.chat.models.ChatRetentionPolicy or None
     """
-
     # pylint:disable=protected-access
 
     def __init__(
@@ -261,9 +249,8 @@ class ChatMessageReadReceipt(object):
 
     def __init__(
         self,
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs: Any
+    ) -> None:
         self.sender = kwargs['sender']
         self.chat_message_id = kwargs['chat_message_id']
         self.read_on = kwargs['read_on']
@@ -335,6 +322,7 @@ class ThreadCreationDateRetentionPolicy(ChatRetentionPolicy):
         delete_thread_after_days: int,
         **kwargs: Any
     ) -> None:
+        super().__init__(**kwargs)
         self.kind: str = RetentionPolicyKind.THREAD_CREATION_DATE
         self.delete_thread_after_days = delete_thread_after_days
 
