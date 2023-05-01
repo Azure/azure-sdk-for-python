@@ -29,7 +29,6 @@ from ._authentication import (
     BearerTokenCredentialPolicy,
     AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy,
-    AzureHttpKeyCredentialPolicy,
 )
 from ._custom_hook import CustomHookPolicy
 from ._redirect import RedirectPolicy
@@ -55,7 +54,6 @@ __all__ = [
     "BearerTokenCredentialPolicy",
     "AzureKeyCredentialPolicy",
     "AzureSasCredentialPolicy",
-    "AzureHttpKeyCredentialPolicy",
     "HeadersPolicy",
     "UserAgentPolicy",
     "NetworkTraceLoggingPolicy",

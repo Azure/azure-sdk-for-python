@@ -163,17 +163,23 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         return
 
 
-class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
+class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseTypeVar]):
     """Adds a key header for the provided credential.
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :param str name: The name of the key header used for the credential.
+    :keyword str auth_scheme: The name of the auth schema used for the credential.
     :raises: ValueError or TypeError
     """
 
     def __init__(
-        self, credential: "AzureKeyCredential", name: str, **kwargs  # pylint: disable=unused-argument
+        self,
+        credential: "AzureKeyCredential",
+        name: str,
+        *,
+        auth_scheme: str = None,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
@@ -182,36 +188,10 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
         self._name = name
-
-    def on_request(self, request):
-        request.http_request.headers[self._name] = self._credential.key
-
-
-class AzureHttpKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseTypeVar]):
-    """Adds a key header for the provided credential, using HTTP Authorization spec.
-
-    :param credential: The credential used to authenticate requests.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str auth_scheme: The name of the auth schema used for the credential.
-    :raises: ValueError or TypeError
-    """
-
-    def __init__(
-        self,
-        credential: "AzureKeyCredential",
-        auth_scheme: str = "Basic",
-        **kwargs: Any,  # pylint: disable=unused-argument
-    ) -> None:
-        super(AzureHttpKeyCredentialPolicy, self).__init__()
-        self._credential = credential
-        if not auth_scheme:
-            raise ValueError("Auth scheme can not be None or empty")
-        if not isinstance(auth_scheme, str):
-            raise TypeError("name must be a string.")
-        self._auth_scheme = auth_scheme
+        self._auth_scheme = auth_scheme + " " if auth_scheme else ""
 
     def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
-        request.http_request.headers["Authorization"] = f"{self._auth_scheme} {self._credential.key}"
+        request.http_request.headers[self._name] = f"{self._auth_scheme}{self._credential.key}"
 
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):

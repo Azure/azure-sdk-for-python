@@ -14,7 +14,6 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy,
-    AzureHttpKeyCredentialPolicy,
 )
 from utils import HTTP_REQUESTS
 
@@ -425,25 +424,7 @@ def test_azure_http_credential_policy(http_request):
 
     transport = Mock(send=verify_authorization_header)
     credential = AzureKeyCredential(api_key)
-    credential_policy = AzureHttpKeyCredentialPolicy(credential=credential, auth_scheme=auth_scheme)
-    pipeline = Pipeline(transport=transport, policies=[credential_policy])
-
-    pipeline.run(http_request("GET", "https://test_key_credential"))
-
-
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_azure_http_credential_policy_default_scheme(http_request):
-    """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
-
-    api_key = "test_key"
-    header_content = f"Basic {api_key}"
-
-    def verify_authorization_header(request):
-        assert request.headers["Authorization"] == header_content
-
-    transport = Mock(send=verify_authorization_header)
-    credential = AzureKeyCredential(api_key)
-    credential_policy = AzureHttpKeyCredentialPolicy(credential=credential)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", auth_scheme=auth_scheme)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", "https://test_key_credential"))
