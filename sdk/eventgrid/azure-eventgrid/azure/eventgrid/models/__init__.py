@@ -10,6 +10,8 @@ from ._models import AcknowledgeOptions
 from ._models import AcknowledgeResult
 from ._models import FailedLockToken
 from ._models import LockToken
+from ._models import RejectOptions
+from ._models import RejectResult
 from ._models import ReleaseOptions
 from ._models import ReleaseResult
 from ._patch import __all__ as _patch_all
@@ -21,6 +23,8 @@ __all__ = [
     "AcknowledgeResult",
     "FailedLockToken",
     "LockToken",
+    "RejectOptions",
+    "RejectResult",
     "ReleaseOptions",
     "ReleaseResult",
 ]

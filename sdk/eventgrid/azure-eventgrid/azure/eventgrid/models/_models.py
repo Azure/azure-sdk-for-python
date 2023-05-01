@@ -54,16 +54,20 @@ class AcknowledgeResult(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Required.
+    :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Each LockToken
+     includes the lock token value along with the related error information (namely, the error code
+     and description). Required.
     :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of LockToken values for succeeded cloud events. Required.
+    :ivar succeeded_lock_tokens: Array of lock tokens values for the successfully acknowledged
+     cloud events. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
     failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of LockToken values for failed cloud events. Required."""
+    """Array of LockToken values for failed cloud events. Each LockToken includes the lock token value
+     along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of LockToken values for succeeded cloud events. Required."""
+    """Array of lock tokens values for the successfully acknowledged cloud events. Required."""
 
     @overload
     def __init__(
@@ -92,13 +96,17 @@ class BrokerProperties(_model_base.Model):
 
     :ivar lock_token: The token used to lock the event. Required.
     :vartype lock_token: ~azure.eventgrid.models.LockToken
+    :ivar delivery_attempt_count: The attempt count for deliverying the event. Required.
+    :vartype delivery_attempt_count: int
     """
 
     lock_token: "_models.LockToken" = rest_field(name="lockToken")
     """The token used to lock the event. Required."""
+    delivery_attempt_count: int = rest_field(name="deliveryAttemptCount")
+    """The attempt count for deliverying the event. Required."""
 
 
-class CloudEventEvent(_model_base.Model):
+class CloudEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
     CloudEvent 1.0 Schema.
 
@@ -161,25 +169,29 @@ class FailedLockToken(_model_base.Model):
 
     :ivar lock_token: LockToken value. Required.
     :vartype lock_token: ~azure.eventgrid.models.LockToken
-    :ivar error_code: Error code. Required.
-    :vartype error_code: int
-    :ivar error_description: Description of the error. Required.
+    :ivar error_code: Error code related to the token. Example of such error codes are BadToken:
+     which indicates the Token is not formatted correctly, TokenLost: which indicates that token is
+     not found, and InternalServerError: For any internal server errors. Required.
+    :vartype error_code: str
+    :ivar error_description: Description of the token error. Required.
     :vartype error_description: str
     """
 
     lock_token: "_models.LockToken" = rest_field(name="lockToken")
     """LockToken value. Required."""
-    error_code: int = rest_field(name="errorCode")
-    """Error code. Required."""
+    error_code: str = rest_field(name="errorCode")
+    """Error code related to the token. Example of such error codes are BadToken: which indicates the
+     Token is not formatted correctly, TokenLost: which indicates that token is not found, and
+     InternalServerError: For any internal server errors. Required."""
     error_description: str = rest_field(name="errorDescription")
-    """Description of the error. Required."""
+    """Description of the token error. Required."""
 
     @overload
     def __init__(
         self,
         *,
         lock_token: "_models.LockToken",
-        error_code: int,
+        error_code: str,
         error_description: str,
     ):
         ...
@@ -234,12 +246,12 @@ class ReceiveDetails(_model_base.Model):
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.eventgrid.models.CloudEventEvent
+    :vartype event: ~azure.eventgrid.models.CloudEvent
     """
 
     broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
     """The Event Broker details. Required."""
-    event: "_models._models.CloudEventEvent" = rest_field()
+    event: "_models._models.CloudEvent" = rest_field()
     """Cloud Event details. Required."""
 
 
@@ -254,6 +266,77 @@ class ReceiveResult(_model_base.Model):
 
     value: List["_models._models.ReceiveDetails"] = rest_field()
     """Array of receive responses, one per cloud event. Required."""
+
+
+class RejectOptions(_model_base.Model):
+    """Array of lock token strings for the corresponding received Cloud Events to be rejected.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar lock_tokens: String array of lock tokens. Required.
+    :vartype lock_tokens: list[str]
+    """
+
+    lock_tokens: List[str] = rest_field(name="lockTokens")
+    """String array of lock tokens. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class RejectResult(_model_base.Model):
+    """The result of the Reject operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Each LockToken
+     includes the lock token value along with the related error information (namely, the error code
+     and description). Required.
+    :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
+    :ivar succeeded_lock_tokens: Array of lock tokens values for the successfully rejected cloud
+     events. Required.
+    :vartype succeeded_lock_tokens: list[str]
+    """
+
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    """Array of LockToken values for failed cloud events. Each LockToken includes the lock token value
+     along with the related error information (namely, the error code and description). Required."""
+    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    """Array of lock tokens values for the successfully rejected cloud events. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        failed_lock_tokens: List["_models.FailedLockToken"],
+        succeeded_lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class ReleaseOptions(_model_base.Model):
@@ -292,16 +375,20 @@ class ReleaseResult(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Required.
+    :ivar failed_lock_tokens: Array of LockToken values for failed cloud events. Each LockToken
+     includes the lock token value along with the related error information (namely, the error code
+     and description). Required.
     :vartype failed_lock_tokens: list[~azure.eventgrid.models.FailedLockToken]
-    :ivar succeeded_lock_tokens: Array of LockToken values for succeeded cloud events. Required.
+    :ivar succeeded_lock_tokens: Array of lock tokens values for the successfully released cloud
+     events. Required.
     :vartype succeeded_lock_tokens: list[str]
     """
 
     failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of LockToken values for failed cloud events. Required."""
+    """Array of LockToken values for failed cloud events. Each LockToken includes the lock token value
+     along with the related error information (namely, the error code and description). Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of LockToken values for succeeded cloud events. Required."""
+    """Array of lock tokens values for the successfully released cloud events. Required."""
 
     @overload
     def __init__(
