@@ -97,8 +97,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client_async = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client_async._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -129,7 +129,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = await self._client.service.get_statistics(
+            stats = await self._client_async.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
@@ -157,7 +157,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client_async.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -213,7 +213,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             cors=cors
         )
         try:
-            return await self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            return await self._client_async.service.set_properties(props, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -260,7 +260,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         timeout = kwargs.pop('timeout', None)
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            self._client_async.service.list_queues_segment,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,
