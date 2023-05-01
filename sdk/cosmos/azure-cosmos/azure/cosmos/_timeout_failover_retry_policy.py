@@ -23,7 +23,6 @@
 Cosmos database service.
 """
 from . import http_constants
-from ..cosmos.documents import _OperationType
 
 
 class _TimeoutFailoverRetryPolicy(object):
@@ -38,6 +37,7 @@ class _TimeoutFailoverRetryPolicy(object):
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
+        self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
 
     def needsRetry(self):
         if self.args:
