@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Mapping, Any
 from ._models import LockToken
-from ._models._models import ReceiveDetails as InternalReceiveDetails, ReceiveResult as InternalReceiveResult, BrokerProperties as InternalBrokerProperties
+from ._models import ReceiveDetails as InternalReceiveDetails, ReceiveResult as InternalReceiveResult, BrokerProperties as InternalBrokerProperties
 from azure.core.messaging import CloudEvent
 
 class ReceiveDetails(InternalReceiveDetails):
@@ -19,13 +19,8 @@ class ReceiveDetails(InternalReceiveDetails):
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azure.eventgrid.models.CloudEvent
+    :vartype event: ~azure.core.messaging.CloudEvent
     """
-
-    broker_properties: "BrokerProperties" = InternalReceiveDetails.rest_field(name="brokerProperties")
-    """The Event Broker details. Required."""
-    event: CloudEvent = InternalReceiveDetails.rest_field()
-    """Cloud Event details. Required."""
 
     @overload
     def __init__(
@@ -55,9 +50,6 @@ class ReceiveResult(InternalReceiveResult):
     :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
     """
 
-    value: List["ReceiveDetails"] = InternalReceiveResult.rest_field()
-    """Array of receive responses, one per cloud event. Required."""
-
     @overload
     def __init__(
         self,
@@ -86,11 +78,6 @@ class BrokerProperties(InternalBrokerProperties):
     :ivar delivery_attempt_count: The attempt count for deliverying the event. Required.
     :vartype delivery_attempt_count: int
     """
-
-    lock_token: "LockToken" = InternalBrokerProperties.rest_field(name="lockToken")
-    """The token used to lock the event. Required."""
-    delivery_attempt_count: int = InternalBrokerProperties.rest_field(name="deliveryAttemptCount")
-    """The attempt count for deliverying the event. Required."""
 
     @overload
     def __init__(
