@@ -23,14 +23,13 @@ class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
 
 
 class EventGridClient(ServiceClientGenerated):
-    """Azure Messaging EventGrid Namespace Client.
+    """Azure Messaging EventGrid Client.
+
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-06-01-preview". Note that overriding this default value may result in unsupported
      behavior.
