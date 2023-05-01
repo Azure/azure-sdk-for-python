@@ -178,7 +178,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
         credential: "AzureKeyCredential",
         name: str,
         *,
-        auth_scheme: str = None,
+        auth_scheme: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         super(AzureKeyCredentialPolicy, self).__init__()
