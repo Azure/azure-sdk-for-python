@@ -58,7 +58,7 @@ In addition to being a part of the CI, the custom pylint checkers are also integ
 
 There is now a new step on the CI pipeline called `Run Pylint Next`. This is merely a duplicate of the `Run Pylint` step with the exception that `Run Pylint Next` uses the latest version of pylint and the latest version of the custom pylint checkers.
 
-This next-pylint enviornment can also be run locally through tox:
+This next-pylint environment can also be run locally through tox:
 
     tox -e next-pylint -c ../../../eng/tox/tox.ini --root <path to python package>
 
