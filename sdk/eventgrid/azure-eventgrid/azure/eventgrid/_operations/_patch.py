@@ -142,15 +142,17 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        deserialized_response = []
+        detail_items = []
+        receive_result = ReceiveResult()
         received_response = self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
         )
         for detail_item in received_response.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
             detail_item["event"] = deserialized_cloud_event
-            deserialized_response.append(detail_item)
-        return deserialized_response
+            detail_items.append(detail_item)
+        receive_result["value"] = detail_items
+        return receive_result
 
 
 __all__: List[str] = [
