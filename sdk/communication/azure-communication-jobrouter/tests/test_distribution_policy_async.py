@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import copy
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from _router_test_case_async import AsyncRouterRecordedTestCase
@@ -112,8 +113,9 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 # Act
-                mode.min_concurrent_offers = 2
-                mode.max_concurrent_offers = 2
+                mode_copy = copy.deepcopy(mode)
+                mode_copy.min_concurrent_offers = 2
+                mode_copy.max_concurrent_offers = 2
                 distribution_policy_response.mode = mode
 
                 updated_distribution_policy = await router_client.update_distribution_policy(
@@ -126,7 +128,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     identifier = dp_identifier,
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
-                    mode = mode
+                    mode = mode_copy
                 )
 
     @RouterPreparersAsync.router_test_decorator_async
@@ -163,9 +165,10 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 # Act
-                mode.min_concurrent_offers = 2
-                mode.max_concurrent_offers = 2
-                distribution_policy_response.mode = mode
+                mode_copy = copy.deepcopy(mode)
+                mode_copy.min_concurrent_offers = 2
+                mode_copy.max_concurrent_offers = 2
+                distribution_policy_response.mode = mode_copy
 
                 updated_distribution_policy = await router_client.update_distribution_policy(
                     dp_identifier,
@@ -177,7 +180,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     identifier = dp_identifier,
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
-                    mode = mode
+                    mode = mode_copy
                 )
 
     @RouterPreparersAsync.router_test_decorator_async

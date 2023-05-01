@@ -1,0 +1,83 @@
+{
+    "properties": {
+        "action": {
+            "actionType": "CreateMonitor",
+            "monitorDefinition": {
+                "computeId": "cpu-cluster",
+                "monitoringTarget": "fake_endpoint_id",
+                "signals": {
+                    "testSignal": {
+                        "signalType": "DataDrift",
+                        "mode": "Enabled",
+                        "lookbackPeriod": "P60D",
+                        "targetData": {
+                            "dataContext": "test",
+                            "asset": {
+                                "jobInputType": "mltable",
+                                "uri": "Direct:1"
+                            }
+                        },
+                        "baselineData": {
+                            "dataContext": "test",
+                            "asset": {
+                                "jobInputType": "mltable",
+                                "uri": "Direct:1"
+                            }
+                        },
+                        "metricThresholds": [
+                            {
+                                "dataType": "Numerical",
+                                "metric": "jensenShannonDistance",
+                                "threshold": {
+                                    "value": 0.5
+                                }
+                            },
+                            {
+                                "dataType": "Categorical",
+                                "metric": "pearsonsChiSquaredTest",
+                                "threshold": {
+                                    "value": 0.2
+                                }
+                            }
+                        ],
+                        "dataSegment": {
+                            "feature": "foo",
+                            "values": [
+                                "a",
+                                "b",
+                                "c"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "trigger": {
+            "triggerType": "Recurrence",
+            "timeZone": "utc",
+            "frequency": "week",
+            "interval": 1,
+            "schedule": {
+                "hours": [
+                    22, 20
+                ],
+                "minutes": [
+                    0, 30
+                ],
+                "weekDays": [
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday"
+                ]
+            }
+        },
+        "properties": {
+            "prop1": "value"
+        },
+        "tags": {
+            "tag1": "tag"
+        }
+    }
+}
