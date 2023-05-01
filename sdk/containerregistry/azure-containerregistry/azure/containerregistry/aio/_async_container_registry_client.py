@@ -42,7 +42,13 @@ from .._helpers import (
     DEFAULT_AUDIENCE,
     DEFAULT_CHUNK_SIZE,
 )
-from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties, GetManifestResult
+from .._models import (
+    RepositoryProperties,
+    ArtifactManifestProperties,
+    ArtifactTagProperties,
+    GetManifestResult,
+    ManifestDigestValidationException,
+)
 
 JSON = MutableMapping[str, Any]
 
@@ -894,8 +900,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype media_type: str
         :returns: The digest of the set manifest, calculated by the registry.
         :rtype: str
-        :raises ValueError: If the parameter repository or manifest is None,
-            or the digest in the response does not match the digest of the set manifest.
+        :raises ValueError: If the parameter repository or manifest is None.
+        :raises ~azure.containerregistry.ManifestDigestValidationException:
+            If the server-computed digest does not match the client-computed digest.
         """
         try:
             if isinstance(manifest, MutableMapping):
@@ -916,7 +923,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
             digest = response_headers['Docker-Content-Digest']
             if not _validate_digest(data, digest):
-                raise ValueError("The server-computed digest does not match the client-computed digest.")
+                raise ManifestDigestValidationException("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.") from e
@@ -933,7 +940,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             When tag is provided, will use the digest in response headers to compare.
         :returns: GetManifestResult
         :rtype: ~azure.containerregistry.GetManifestResult
-        :raises ValueError: If the requested digest does not match the digest of the received manifest.
+        :raises ~azure.containerregistry.ManifestDigestValidationException:
+            If the requested digest does not match the digest of the received manifest, or
+            the server-computed digest does not match the client-computed digest when tag is passing.
         """
         response = cast(
             PipelineResponse,
@@ -951,11 +960,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
             if not _validate_digest(manifest_bytes, digest):
-                raise ValueError("The requested digest does not match the digest of the received manifest.")
+                raise ManifestDigestValidationException("The requested digest does not match the digest of the received manifest.")
         else:
             digest = response.http_response.headers['Docker-Content-Digest']
             if not _validate_digest(manifest_bytes, digest):
-                raise ValueError("The server-computed digest does not match the client-computed digest.")
+                raise ManifestDigestValidationException("The server-computed digest does not match the client-computed digest.")
 
         return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 

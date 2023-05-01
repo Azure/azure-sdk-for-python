@@ -10,6 +10,8 @@ import hashlib
 import json
 from datetime import datetime
 from io import BytesIO
+from unittest.mock import MagicMock
+from typing import Optional
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -17,10 +19,12 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     ArtifactTagOrder,
     ContainerRegistryClient,
+    ManifestDigestValidationException,
 )
 from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
 from testcase import ContainerRegistryTestClass, get_authority, get_audience
 from constants import HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
@@ -877,3 +881,56 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             if response is not None:
                 for manifest in response:
                     pass
+
+
+def test_manifest_digest_validation():
+    containerregistry_endpoint="https://fake_url.azurecr.io"
+
+    def text(encoding: Optional[str] = None) -> str:
+        return '{"hello": "world"}'
+        
+    def send_in_set_manifest(request: PipelineRequest, **kwargs) -> MagicMock:
+        content_digest = hashlib.sha256(b"hello world").hexdigest()
+        return MagicMock(
+            status_code=201,
+            headers={"Docker-Content-Digest": content_digest},
+            content_type="application/json; charset=utf-8",
+            text=text
+    )
+        
+    def read():
+        return b'{"hello": "world"}'
+    
+    def json():
+        return {"hello": "world"}
+    
+    def send_in_get_manifest(request: PipelineRequest, **kwargs) -> MagicMock:
+        content_digest = hashlib.sha256(b"hello world").hexdigest()
+        content_type = "application/vnd.oci.image.manifest.v1+json"
+        return MagicMock(
+            status_code=200,
+            headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type},
+            read=read,
+            json=json
+    )
+        
+    with ContainerRegistryClient(
+        endpoint=containerregistry_endpoint, transport = MagicMock(send=send_in_set_manifest)
+    ) as client:
+        with pytest.raises(ManifestDigestValidationException) as exp:
+            manifest = {"hello": "world"}
+            client.set_manifest("test-repo", manifest)
+            assert str(exp.value) == "The digest in the response does not match the digest of the uploaded manifest."
+        
+    with ContainerRegistryClient(
+        endpoint=containerregistry_endpoint,
+        transport = MagicMock(send=send_in_get_manifest)
+    ) as client:
+        with pytest.raises(ManifestDigestValidationException) as exp:
+            digest = hashlib.sha256(b'{"hello": "world"}').hexdigest()
+            client.get_manifest("test-repo", digest)
+            assert str(exp.value) == "The requested digest does not match the digest of the received manifest."
+            
+        with pytest.raises(ManifestDigestValidationException) as exp:
+            client.get_manifest("test-repo", "test-tag")
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
