@@ -5,13 +5,13 @@ from azure.eventgrid.aio import EventGridClient
 from azure.eventgrid.models import *
 from azure.core.exceptions import HttpResponseError
 
-# Create a client
-EG_KEY = os.environ.get("EG_KEY")
-EG_ENDPOINT = os.environ.get("EG_ENDPOINT")
+EVENTGRID_KEY = os.environ.get("EVENTGRID_KEY")
+EVENTGRID_ENDPOINT = os.environ.get("EVENTGRID_ENDPOINT")
 TOPIC_NAME = os.environ.get("TOPIC_NAME")
-ES_NAME = os.environ.get("ES_NAME")
+EVENT_SUBSCRIPTION_NAME = os.environ.get("EVENT_SUBSCRIPTION_NAME")
 
-client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+# Create a client
+client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
 async def run():
@@ -19,7 +19,7 @@ async def run():
     try:
         async with client:
             receive_response = await client.receive_cloud_events(
-                topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, max_events=10, max_wait_time=10
+                topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
             )
             print(receive_response)
     except HttpResponseError:

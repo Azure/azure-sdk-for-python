@@ -9,10 +9,10 @@
     from azure.core.exceptions import HttpResponseError
 
 
-    EG_KEY = os.environ.get("EG_KEY")
-    EG_ENDPOINT = os.environ.get("EG_ENDPOINT")
+    EVENTGRID_KEY = os.environ.get("EVENTGRID_KEY")
+    EVENTGRID_ENDPOINT = os.environ.get("EVENTGRID_ENDPOINT")
     TOPIC_NAME = os.environ.get("TOPIC_NAME")
-    ES_NAME = os.environ.get("ES_NAME")
+    EVENT_SUBSCRIPTION_NAME = os.environ.get("EVENT_SUBSCRIPTION_NAME")
 ```
 
 
@@ -21,7 +21,7 @@
     from azure.eventgrid.aio import EventGridClient
 
     # Create a client
-    client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+    client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 ```
 
 # Sync Create Client
@@ -29,7 +29,7 @@
     from azure.eventgrid import EventGridClient
 
     # Create a client
-    client = EventGridClient(EG_ENDPOINT, AzureKeyCredential(EG_KEY))
+    client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 ```
 
 # Publish Samples
@@ -83,7 +83,7 @@
 
         # Receive CloudEvents
         try:
-            receive_response = await client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
+            receive_response = await client.receive(topic_name=TOPIC_NAME,event_subscription_name=EVENT_SUBSCRIPTION_NAME,max_events=10,timeout=10)
             print(receive_response)
         except HttpResponseError:
             raise
@@ -95,7 +95,7 @@
 ```python
     # Receive CloudEvents
     try:
-        receive_response = client.receive(topic_name=TOPIC_NAME,event_subscription_name=ES_NAME,max_events=10,timeout=10)
+        receive_response = client.receive(topic_name=TOPIC_NAME,event_subscription_name=EVENT_SUBSCRIPTION_NAME,max_events=10,timeout=10)
         print(receive_response)
     except HttpResponseError:
         raise
@@ -110,7 +110,7 @@
         # Release a LockToken
         try: 
             tokens = [LockToken({'lockToken': 'token'})]
-            release = await client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, tokens=tokens)
+            release = await client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, tokens=tokens)
             print(release)
         except HttpResponseError:
             raise
@@ -123,7 +123,7 @@
     # Release a LockToken
     try: 
         tokens = [LockToken({'lockToken': 'token'})]
-        release = client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, tokens=tokens)
+        release = client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, tokens=tokens)
         print(release)
     except HttpResponseError:
         raise
@@ -140,7 +140,7 @@
         # Acknowledge a batch of CloudEvents
         try: 
             lock_tokens = LockTokenInput(lock_tokens=["token"])
-            ack = await client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=lock_tokens)
+            ack = await client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens)
             print(ack)
         except HttpResponseError:
             raise
@@ -153,7 +153,7 @@
     # Acknowledge a batch of CloudEvents
     try: 
         lock_tokens = LockTokenInput(lock_tokens=["token"])
-        ack = client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=ES_NAME, lock_tokens=lock_tokens)
+        ack = client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens)
         print(ack)
     except HttpResponseError:
         raise
