@@ -82,7 +82,32 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-    - template: ../steps/build-artifacts.yml
+    - template: ../steps/build-package-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Build_Extended'
+    displayName: Build Extended
+    timeoutInMinutes: 90
+    variables:
+      Codeql.Enabled: true
+      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+      Codeql.SkipTaskAutoInjection: false
+
+    pool:
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
+
+    steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+    - template: ../steps/build-extended-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
