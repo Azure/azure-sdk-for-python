@@ -19,7 +19,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 
 from azure.ai.ml.constants._common import Scope
-from azure.ai.ml.entities._workspace_hub._constants import HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import WORKSPACE_HUB_KIND
 from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
@@ -66,14 +66,14 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             return self._operation.list_by_subscription(
                 cls=lambda objs: [
                     WorkspaceHub._from_rest_object(filterObj)
-                    for filterObj in filter(lambda ws: ws.kind.lower() == HUB_KIND, objs)
+                    for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
                 ]
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
                 WorkspaceHub._from_rest_object(filterObj)
-                for filterObj in filter(lambda ws: ws.kind.lower() == HUB_KIND, objs)
+                for filterObj in filter(lambda ws: ws.kind.lower() == WORKSPACE_HUB_KIND, objs)
             ],
         )
 
@@ -92,7 +92,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         workspace_hub = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND:
+        if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND:
             workspace_hub = WorkspaceHub._from_rest_object(rest_workspace_obj)
 
         return workspace_hub
@@ -146,7 +146,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
-        if not (rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND):
+        if not (
+            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+        ):
             raise ValidationError("{0} is not a hub workspace".format(workspace_hub.name))
 
         def deserialize_callback(rest_obj):
@@ -175,7 +177,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
-        if not (rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND):
+        if not (
+            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
+        ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)

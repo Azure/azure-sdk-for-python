@@ -37,7 +37,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace_hub._constants import LEAN_KIND
+from azure.ai.ml.entities._workspace_hub._constants import LEAN_WORKSPACE_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -262,7 +262,7 @@ class WorkspaceOperationsBase:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         # prevent dependent resource delete for lean workspace, only delete appinsight
-        if workspace._kind == LEAN_KIND:
+        if workspace._kind == LEAN_WORKSPACE_KIND:
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,

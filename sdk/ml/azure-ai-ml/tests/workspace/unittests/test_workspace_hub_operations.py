@@ -54,7 +54,9 @@ class TestWorkspaceHubOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceHubOperations.get", return_value=None)
-        mocker.patch("azure.ai.ml.operations.WorkspaceHubOperations._populate_arm_paramaters", return_value=({}, {}, {}))
+        mocker.patch(
+            "azure.ai.ml.operations.WorkspaceHubOperations._populate_arm_paramaters", return_value=({}, {}, {})
+        )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_hub_operation.begin_create(workspace_hub=WorkspaceHub(name="name"))
 
@@ -88,7 +90,9 @@ class TestWorkspaceHubOperation:
         mock_workspace_hub_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_hub_operation._operation.begin_delete.assert_called_once()
 
-    def test_delete_non_hub_kind(self, mock_workspace_hub_operation: WorkspaceHubOperations, mocker: MockFixture) -> None:
+    def test_delete_non_hub_kind(
+        self, mock_workspace_hub_operation: WorkspaceHubOperations, mocker: MockFixture
+    ) -> None:
         def outgoing_call(rg, name):
             return Workspace(name=name)._to_rest_object()
 

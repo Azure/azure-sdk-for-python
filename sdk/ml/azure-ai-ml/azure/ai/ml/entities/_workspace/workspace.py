@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkSet
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
-from azure.ai.ml.entities._workspace_hub._constants import LEAN_KIND, HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import LEAN_WORKSPACE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
@@ -145,7 +145,7 @@ class Workspace(Resource):
         self.hub_resource_id = hub_resource_id
 
         if workspace_hub:
-            if workspace_hub._kind.lower() != HUB_KIND:
+            if workspace_hub._kind.lower() != WORKSPACE_HUB_KIND:
                 raise ValidationError("workspace_hub should be a workspaceHub")
             if all(
                 x is None
@@ -163,7 +163,7 @@ class Workspace(Resource):
                     customer_managed_key,
                 ]
             ):
-                self._kind = LEAN_KIND
+                self._kind = LEAN_WORKSPACE_KIND
                 self.hub_resource_id = workspace_hub.id
                 self.location = workspace_hub.location
             else:

@@ -18,7 +18,7 @@ from azure.ai.ml.entities import Workspace, CustomerManagedKey
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
-from ._constants import HUB_KIND
+from ._constants import WORKSPACE_HUB_KIND
 
 
 class WorkspaceHub(Workspace):
@@ -45,28 +45,28 @@ class WorkspaceHub(Workspace):
 
         """WorkspaceHub.
 
-        :param name: Name of the feature store.
+        :param name: Name of the WorkspaceHub.
         :type name: str
-        :param description: Description of the feature store.
+        :param description: Description of the WorkspaceHub.
         :type description: str
-        :param tags: Tags of the feature store.
+        :param tags: Tags of the WorkspaceHub.
         :type tags: dict
-        :param display_name: Display name for the feature store. This is non-unique within the resource group.
+        :param display_name: Display name for the WorkspaceHub. This is non-unique within the resource group.
         :type display_name: str
-        :param location: The location to create the feature store in.
+        :param location: The location to create the WorkspaceHub in.
             If not specified, the same location as the resource group will be used.
         :type location: str
-        :param resource_group: Name of resource group to create the feature store in.
+        :param resource_group: Name of resource group to create the WorkspaceHub in.
         :type resource_group: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
-        :param storage_accounts: List of storage accounts used by Hub
+        :param storage_accounts: List of storage accounts used by WorkspaceHub
         :type storage_accounts: List[str]
-        :param key_vaults: List of key vaults used by Hub
+        :param key_vaults: List of key vaults used by WorkspaceHub
         :key_vaults: List[str]
-        :param container_registries: List of container registries used by Hub
+        :param container_registries: List of container registries used by WorkspaceHub
         :type container_registries: List[str]
-        :param existing_workspaces: List of existing workspaces used by Hub to do convert
+        :param existing_workspaces: List of existing workspaces used by WorkspaceHub to do convert
         :type existing_workspaces: List[str]
         :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
             If not specified, Microsoft-managed keys will be used by default.
@@ -87,7 +87,7 @@ class WorkspaceHub(Workspace):
             name=name,
             description=description,
             tags=tags,
-            kind=HUB_KIND,
+            kind=WORKSPACE_HUB_KIND,
             display_name=display_name,
             location=location,
             resource_group=resource_group,
