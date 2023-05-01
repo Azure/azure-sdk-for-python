@@ -20,7 +20,7 @@ import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import NULL as AzureCoreNull
+from azure.core.serialization import _Null  # pylint: disable=protected-access
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -29,23 +29,8 @@ else:
 
 _LOGGER = logging.getLogger(__name__)
 
-__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
+__all__ = ["AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
-
-class _Null(object):
-    """To create a Falsy object"""
-
-    def __bool__(self):
-        return False
-
-    __nonzero__ = __bool__  # Python2 compatibility
-
-
-NULL = _Null()
-"""
-A falsy sentinel object which is supposed to be used to specify attributes
-with no data. This gets serialized to `null` on the wire.
-"""
 
 TZ_UTC = timezone.utc
 
@@ -166,7 +151,7 @@ class AzureJSONEncoder(JSONEncoder):
             return {k: v for k, v in o.items() if k not in readonly_props}
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
-        if o is AzureCoreNull:
+        if isinstance(o, _Null):
             return None
         try:
             return super(AzureJSONEncoder, self).default(o)
@@ -425,7 +410,9 @@ class Model(_MyMutableMapping):
             if non_attr_kwargs:
                 # actual type errors only throw the first wrong keyword arg they see, so following that.
                 raise TypeError(f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'")
-            dict_to_pass.update({self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items()})
+            dict_to_pass.update(
+                {self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items() if v is not None}
+            )
         super().__init__(dict_to_pass)
 
     def copy(self) -> "Model":

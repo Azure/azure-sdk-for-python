@@ -299,7 +299,7 @@ class JobPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self._get_batch_client(**kwargs)
             pool = self._get_batch_pool_id(**kwargs)
-            self.resource = azure.batch.models.BatchJob(
+            self.resource = azure.batch.models.BatchJobAddParameters(
                 id=name,
                 pool_info=pool,
                 **self.extra_args

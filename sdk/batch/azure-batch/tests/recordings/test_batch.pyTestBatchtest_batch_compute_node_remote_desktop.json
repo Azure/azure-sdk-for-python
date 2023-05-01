@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 20 Mar 2023 21:23:43 GMT",
+        "ocp-date": "Fri, 28 Apr 2023 23:25:23 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -15,8 +15,8 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Mar 2023 21:23:43 GMT",
-        "request-id": "d5afe44f-af47-481c-a2a4-7cf61d398216",
+        "Date": "Fri, 28 Apr 2023 23:25:24 GMT",
+        "request-id": "87c52041-3828-4d5c-8a37-303783abb721",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -26,14 +26,14 @@
         "odata.metadata": "https://batch67c125ff.eastus.batch.azure.com/$metadata#nodes",
         "value": [
           {
-            "id": "tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
-            "url": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
+            "id": "tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
+            "url": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
             "state": "creating",
             "schedulingState": "enabled",
-            "stateTransitionTime": "2023-03-20T21:23:41.1569244Z",
-            "allocationTime": "2023-03-20T21:23:41.1569244Z",
+            "stateTransitionTime": "2023-04-28T23:25:15.9865344Z",
+            "allocationTime": "2023-04-28T23:25:15.9865344Z",
             "ipAddress": "10.218.0.4",
-            "affinityId": "TVM:tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
+            "affinityId": "TVM:tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
             "vmSize": "standard_d2_v3",
             "totalTasksRun": 0,
             "totalTasksSucceeded": 0,
@@ -62,7 +62,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 20 Mar 2023 21:23:54 GMT",
+        "ocp-date": "Fri, 28 Apr 2023 23:25:34 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -70,8 +70,8 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Mar 2023 21:23:53 GMT",
-        "request-id": "365456e6-99b2-4dc8-b3a0-1ad8ed25f4c6",
+        "Date": "Fri, 28 Apr 2023 23:25:34 GMT",
+        "request-id": "a8d05127-7593-4d19-82b8-4b2fcb8677c7",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -81,14 +81,14 @@
         "odata.metadata": "https://batch67c125ff.eastus.batch.azure.com/$metadata#nodes",
         "value": [
           {
-            "id": "tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
-            "url": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
+            "id": "tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
+            "url": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
             "state": "starting",
             "schedulingState": "enabled",
-            "stateTransitionTime": "2023-03-20T21:23:52.1962086Z",
-            "allocationTime": "2023-03-20T21:23:41.1569244Z",
+            "stateTransitionTime": "2023-04-28T23:25:26.5287696Z",
+            "allocationTime": "2023-04-28T23:25:15.9865344Z",
             "ipAddress": "10.218.0.4",
-            "affinityId": "TVM:tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
+            "affinityId": "TVM:tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
             "vmSize": "standard_d2_v3",
             "totalTasksRun": 0,
             "totalTasksSucceeded": 0,
@@ -117,7 +117,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 20 Mar 2023 21:24:04 GMT",
+        "ocp-date": "Fri, 28 Apr 2023 23:25:44 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -125,8 +125,8 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Mar 2023 21:24:03 GMT",
-        "request-id": "f8143eda-a043-41e5-82b6-ce17b42e4910",
+        "Date": "Fri, 28 Apr 2023 23:25:44 GMT",
+        "request-id": "a8d5143f-608e-44d6-80d1-75056b3452ce",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -136,15 +136,15 @@
         "odata.metadata": "https://batch67c125ff.eastus.batch.azure.com/$metadata#nodes",
         "value": [
           {
-            "id": "tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
-            "url": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
+            "id": "tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
+            "url": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
             "state": "idle",
             "schedulingState": "enabled",
-            "stateTransitionTime": "2023-03-20T21:24:03.922068Z",
-            "lastBootTime": "2023-03-20T21:24:00.369395Z",
-            "allocationTime": "2023-03-20T21:23:41.1569244Z",
+            "stateTransitionTime": "2023-04-28T23:25:35.183684Z",
+            "lastBootTime": "2023-04-28T23:25:31.71489Z",
+            "allocationTime": "2023-04-28T23:25:15.9865344Z",
             "ipAddress": "10.218.0.4",
-            "affinityId": "TVM:tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d",
+            "affinityId": "TVM:tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d",
             "vmSize": "standard_d2_v3",
             "totalTasksRun": 0,
             "totalTasksSucceeded": 0,
@@ -163,8 +163,8 @@
               ]
             },
             "nodeAgentInfo": {
-              "lastUpdateTime": "2023-03-20T21:24:00.369395Z",
-              "version": "1.9.35"
+              "lastUpdateTime": "2023-04-28T23:25:31.71489Z",
+              "version": "1.9.43"
             },
             "virtualMachineInfo": {}
           }
@@ -172,13 +172,13 @@
       }
     },
     {
-      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_df07e7428644e68598ea5ab7be4bb1d43e72d9a159790790b5308fe192bf9863_d/rdp?api-version=2022-10-01.16.0",
+      "RequestUri": "https://batch67c125ff.eastus.batch.azure.com/pools/67c125ff/nodes/tvmps_7c1aadb5babc6884c0c72fc88f7730eb0663528030f06a159d17750114a4c6ef_d/rdp?api-version=2022-10-01.16.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 20 Mar 2023 21:24:04 GMT",
+        "ocp-date": "Fri, 28 Apr 2023 23:25:44 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -186,14 +186,14 @@
       "ResponseHeaders": {
         "Content-Type": "application/octet-stream",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 20 Mar 2023 21:24:03 GMT",
-        "request-id": "5666a0e8-9745-4002-bb0d-d59313b8dfe5",
+        "Date": "Fri, 28 Apr 2023 23:25:44 GMT",
+        "request-id": "c7396180-1e6b-474d-ae9a-f04fd426feaf",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
-      "ResponseBody": "ZnVsbCBhZGRyZXNzOnM6NC4yNDYuMjA2LjEwNg0KTG9hZEJhbGFuY2VJbmZvOnM6Q29va2llOiBtc3RzaGFzaD1UVk0jVFZNX0lOXzA="
+      "ResponseBody": "ZnVsbCBhZGRyZXNzOnM6NC4yMjcuMjUwLjIxNA0KTG9hZEJhbGFuY2VJbmZvOnM6Q29va2llOiBtc3RzaGFzaD1UVk0jVFZNX0lOXzA="
     }
   ],
   "Variables": {}

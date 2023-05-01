@@ -19,18 +19,30 @@ from ._models import AzureFileShareConfiguration
 from ._models import BatchError
 from ._models import BatchErrorDetail
 from ._models import BatchJob
+from ._models import BatchJobAddParameters
 from ._models import BatchJobDisableParameters
+from ._models import BatchJobPatchParameters
 from ._models import BatchJobSchedule
+from ._models import BatchJobScheduleAddParameters
+from ._models import BatchJobSchedulePatchParameters
+from ._models import BatchJobScheduleUpdateParameters
 from ._models import BatchJobTerminateParameters
+from ._models import BatchJobUpdateParameters
 from ._models import BatchPool
+from ._models import BatchPoolAddParameters
 from ._models import BatchPoolEnableAutoScaleParameters
 from ._models import BatchPoolEvaluateAutoScaleParameters
 from ._models import BatchPoolIdentity
+from ._models import BatchPoolPatchParameters
 from ._models import BatchPoolResizeParameters
+from ._models import BatchPoolUpdatePropertiesParameters
 from ._models import BatchTask
+from ._models import BatchTaskAddParameters
 from ._models import BatchTaskCollection
 from ._models import BatchTaskListSubtasksResult
+from ._models import BatchTaskUpdateParameters
 from ._models import Certificate
+from ._models import CertificateAddParameters
 from ._models import CertificateReference
 from ._models import CifsMountConfiguration
 from ._models import CloudServiceConfiguration
@@ -139,7 +151,6 @@ from ._models import VirtualMachineConfiguration
 from ._models import VirtualMachineInfo
 from ._models import WindowsConfiguration
 from ._models import WindowsUserConfiguration
-from ._models import object
 
 from ._enums import AccessScope
 from ._enums import AllocationState
@@ -209,18 +220,30 @@ __all__ = [
     "BatchError",
     "BatchErrorDetail",
     "BatchJob",
+    "BatchJobAddParameters",
     "BatchJobDisableParameters",
+    "BatchJobPatchParameters",
     "BatchJobSchedule",
+    "BatchJobScheduleAddParameters",
+    "BatchJobSchedulePatchParameters",
+    "BatchJobScheduleUpdateParameters",
     "BatchJobTerminateParameters",
+    "BatchJobUpdateParameters",
     "BatchPool",
+    "BatchPoolAddParameters",
     "BatchPoolEnableAutoScaleParameters",
     "BatchPoolEvaluateAutoScaleParameters",
     "BatchPoolIdentity",
+    "BatchPoolPatchParameters",
     "BatchPoolResizeParameters",
+    "BatchPoolUpdatePropertiesParameters",
     "BatchTask",
+    "BatchTaskAddParameters",
     "BatchTaskCollection",
     "BatchTaskListSubtasksResult",
+    "BatchTaskUpdateParameters",
     "Certificate",
+    "CertificateAddParameters",
     "CertificateReference",
     "CifsMountConfiguration",
     "CloudServiceConfiguration",
@@ -329,7 +352,6 @@ __all__ = [
     "VirtualMachineInfo",
     "WindowsConfiguration",
     "WindowsUserConfiguration",
-    "object",
     "AccessScope",
     "AllocationState",
     "AutoUserScope",
