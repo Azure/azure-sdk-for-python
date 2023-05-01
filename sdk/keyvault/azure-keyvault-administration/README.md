@@ -408,7 +408,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [settings_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations.py
 [settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py
 [storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/README.md
-[storage_explorer]: (https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+[storage_explorer]: (https://learn.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer)
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-administration%2FREADME.png)
