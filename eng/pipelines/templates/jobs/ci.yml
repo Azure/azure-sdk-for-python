@@ -86,7 +86,6 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
