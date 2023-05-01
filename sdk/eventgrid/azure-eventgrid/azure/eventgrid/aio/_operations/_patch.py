@@ -100,19 +100,24 @@ class EventGridClientOperationsMixin(OperationsMixin):
         **kwargs: Any
     ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
+
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :keyword max_events: Max Events count to be received. Default value is None.
+        :keyword max_events: Max Events count to be received. Minimum value is 1, while maximum value
+         is 100 events. If not specified, the default value is 1. Default value is None.
         :paramtype max_events: int
-        :keyword max_wait_time: Timeout value for receive operation in Seconds. Default is 60 seconds.
-         Default value is None.
+        :keyword max_wait_time: Max wait time value for receive operation in Seconds. It is the time in
+         seconds that the server approximately waits for the availability of an event and responds to
+         the request. If an event is available, the broker responds immediately to the client. Minimum
+         value is 10 seconds, while maximum value is 120 seconds. If not specified, the default value is
+         60 seconds. Default value is None.
         :paramtype max_wait_time: int
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: ReceiveResponse. The ReceiveResponse is compatible with MutableMapping
-        :rtype: ~azure.messaging.eventgrid.models.ReceiveResponse
+        :return: ReceiveResult. The ReceiveResult is compatible with MutableMapping
+        :rtype: ~azure.eventgrid.models.ReceiveResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
