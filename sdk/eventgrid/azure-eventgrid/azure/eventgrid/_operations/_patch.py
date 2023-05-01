@@ -9,7 +9,7 @@ import base64
 from typing import List, overload, Union, Any, Optional
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from azure.core.messaging import CloudEvent
-from ..models._models import CloudEventEvent as InternalCloudEvent, ReceiveResult
+from ..models._models import CloudEvent as InternalCloudEvent, ReceiveResult
 from azure.core.tracing.decorator import distributed_trace
 
 

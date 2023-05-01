@@ -32,24 +32,26 @@
     client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 ```
 
-# Publish Samples
+# Publish Cloud Events
 
 ### Async
 ```python
     async def main():
+        cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
+        cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
+        cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", type="example")
 
         # Publish a CloudEvent
         try:
-            cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-            await client.publish(topic_name=TOPIC_NAME, body=cloud_event)
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_reject)
         except HttpResponseError:
             raise
 
 
         # Publish a list of CloudEvents
         try:
-            list_of_cloud_events = [cloud_event, cloud_event]
-            await client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+            list_of_cloud_events = [cloud_event_release, cloud_event_ack]
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
         except HttpResponseError:
             raise
 
@@ -58,103 +60,126 @@
 
 ### Sync
 ```python
+    cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
+    cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
+    cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", type="example")
+
     # Publish a CloudEvent
     try:
-        cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-        client.publish(topic_name=TOPIC_NAME, body=cloud_event)
+        client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_reject)
     except HttpResponseError:
         raise
 
     # Publish a list of CloudEvents
     try:
-        list_of_cloud_events = [cloud_event, cloud_event]
-        client.publish(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+        list_of_cloud_events = [cloud_event_release, cloud_event_ack]
+        client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
     except HttpResponseError:
         raise
 ```
 
-
-
-# Receive Samples
+# Receive Published Cloud Events
 
 ### Async
 ```python
-    async def main():
-
-        # Receive CloudEvents
-        try:
-            receive_response = await client.receive(topic_name=TOPIC_NAME,event_subscription_name=EVENT_SUBSCRIPTION_NAME,max_events=10,timeout=10)
-            print(receive_response)
-        except HttpResponseError:
-            raise
-
-    asyncio.run(main())
-```
-
-### Sync
-```python
-    # Receive CloudEvents
     try:
-        receive_response = client.receive(topic_name=TOPIC_NAME,event_subscription_name=EVENT_SUBSCRIPTION_NAME,max_events=10,timeout=10)
-        print(receive_response)
+        async with client:
+            receive_results = await client.receive_cloud_events(
+                topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+            )
     except HttpResponseError:
         raise
-```
 
-# Release Samples
-
-### Async
-```python
-    async def main():
-
-        # Release a LockToken
-        try: 
-            tokens = [LockToken({'lockToken': 'token'})]
-            release = await client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, tokens=tokens)
-            print(release)
-        except HttpResponseError:
-            raise
-
-    asyncio.run(main())
 ```
 
 ### Sync
 ```python
-    # Release a LockToken
-    try: 
-        tokens = [LockToken({'lockToken': 'token'})]
-        release = client.release_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, tokens=tokens)
-        print(release)
+    try:
+        receive_results = client.receive_cloud_events(
+            topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+        )
+    except HttpResponseError:
+        raise
+```
+
+# Iterate through the results and collect the lock tokens for events we want to release/acknowledge/reject:
+
+### Async and Sync
+```python
+    release_events = []
+    acknowledge_events = []
+    reject_events = []
+
+    for detail in receive_results.get("value"):
+        cloud_event = detail.get("event")
+        broker_properties = detail.get("brokerProperties")
+        if cloud_event.data == "release":
+            release_events.append(broker_properties.get("lockToken"))
+        elif cloud_event.data == "acknowledge"
+            acknowledge_events.append(broker_properties.get("lockToken"))
+        else:
+            reject_events.append(broker_properties.get("lockToken"))
+```
+# Release/Acknowledge/Reject events
+
+### Async
+```python
+
+if len(release_events) > 0:
+    try:
+        release_result = await client.release_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=release_events)
     except HttpResponseError:
         raise
 
-```
+    for succeeded_lock_token in release_result.get("succeeded_lock_tokens"):
+        print(f"Succeeded Lock Token:{succeeded_lock_token}")
 
-# Acknowledge Samples
+if len(acknowledge_events) > 0:
+    try:
+        ack_result = await client.acknowledge_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=acknowledge_events)
+    except HttpResponseError:
+        raise
 
-### Async
+    for succeeded_lock_token in ack_result.get("succeeded_lock_tokens"):
+        print(f"Succeeded Lock Token:{succeeded_lock_token}")
 
-```python
-    async def main():
+if len(reject_events) > 0:
+    try:
+        reject_result = await client.reject_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_events)
+    except HttpResponseError:
+        raise
 
-        # Acknowledge a batch of CloudEvents
-        try: 
-            lock_tokens = LockTokenInput(lock_tokens=["token"])
-            ack = await client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens)
-            print(ack)
-        except HttpResponseError:
-            raise
-
-    asyncio.run(main())
+    for succeeded_lock_token in reject_result.get("succeeded_lock_tokens"):
+        print(f"Succeeded Lock Token:{succeeded_lock_token}")
 ```
 
 ### Sync
 ```python
-    # Acknowledge a batch of CloudEvents
-    try: 
-        lock_tokens = LockTokenInput(lock_tokens=["token"])
-        ack = client.acknowledge_batch_of_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens)
-        print(ack)
+
+if len(release_events) > 0:
+    try:
+        release_result = client.release_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=release_events)
     except HttpResponseError:
         raise
+
+    for succeeded_lock_token in release_result.get("succeeded_lock_tokens"):
+        print(f"Succeeded Lock Token:{succeeded_lock_token}")
+
+if len(acknowledge_events) > 0:
+    try:
+        ack_result = client.acknowledge_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=acknowledge_events)
+    except HttpResponseError:
+        raise
+
+    for succeeded_lock_token in ack_result.get("succeeded_lock_tokens"):
+        print(f"Succeeded Lock Token:{succeeded_lock_token}")
+
+if len(reject_events) > 0:
+    try:
+        reeject_result = client.reject_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_events)
+    except HttpResponseError:
+        raise
+
+    for succeeded_lock_token in reject_result.get("succeeded_lock_tokens"):
+        print(f"Succeeded Lock Token:{succeeded_lock_token}")
 ```
