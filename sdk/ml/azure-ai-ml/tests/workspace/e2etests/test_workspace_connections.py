@@ -4,6 +4,7 @@
 from typing import Callable
 
 import pytest
+from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_workspace_connection
@@ -30,12 +31,19 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         wps_connection.name = wps_connection_name
 
+        now = datetime.now()
+        two_years = timedelta(days=365*2)
+        expiryTime = now + two_years
+
+        wps_connection.expiryTime = expiryTime
+
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
 
         assert wps_connection.name == wps_connection_name
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert wps_connection.metadata is None
+        assert wps_connection.expiryTime == expiryTime
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummy_pat"
 
@@ -51,6 +59,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert wps_connection.metadata is None
+        assert wps_connection.expiryTime = expiryTime
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummpy_pat_update"
 
@@ -95,6 +104,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.GIT)
         assert wps_connection.metadata is None
+        assert wps_connection.expiryTime is not None
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummpy_pat_update"
 

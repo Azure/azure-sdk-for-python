@@ -152,6 +152,9 @@
     "online_store_connection_target" : {
         "value": ""
     },
+    "workspace_connection_secret_expiry_time": {
+        "value": ""
+    },
     "enable_data_isolation": {
         "value": "false"
     }

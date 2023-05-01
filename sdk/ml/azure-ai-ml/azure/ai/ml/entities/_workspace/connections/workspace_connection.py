@@ -50,6 +50,8 @@ class WorkspaceConnection(Resource):
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
+    :param expiryTime: The expiry time of the workspace connection secret
+    :type expiryTime: str
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
@@ -77,11 +79,13 @@ class WorkspaceConnection(Resource):
             ServicePrincipalConfiguration,
             AccessKeyConfiguration,
         ],
+        expiryTime: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.type = type
         self._target = target
+        self._expiryTime = expiryTime
         self._credentials = credentials
         self._metadata = json.loads(json.dumps(metadata))
         super().__init__(**kwargs)
@@ -100,6 +104,15 @@ class WorkspaceConnection(Resource):
         if not value:
             return
         self._type = camel_to_snake(value)
+    
+    @property
+    def expiryTime(self) -> str:
+        """Secret expiry time for workspace connection.
+
+        :return: Secret expiry time for workspace connection.
+        :rtype: str
+        """
+        return self._expiryTime
 
     @property
     def target(self) -> str:
@@ -208,6 +221,7 @@ class WorkspaceConnection(Resource):
             id=rest_obj.id,
             name=rest_obj.name,
             target=properties.target,
+            expiryTime=properties.expiryTime,
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
@@ -242,6 +256,7 @@ class WorkspaceConnection(Resource):
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.metadata,
+            expiryTime=self.expiryTime,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )
