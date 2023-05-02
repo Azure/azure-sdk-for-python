@@ -12,7 +12,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
-from azure.ai.ml.entities._hub.hub import WorkspaceHub
+from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace.networking import (

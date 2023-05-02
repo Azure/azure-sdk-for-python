@@ -15,7 +15,6 @@ from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
-from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
