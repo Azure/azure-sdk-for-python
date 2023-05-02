@@ -104,14 +104,6 @@ class Workspace(Resource):
         :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
             The flag can only be set at the creation phase, it can't be updated.
         :type enable_data_isolation: bool
-        :param storage_accounts: List of storage accounts used by Hub
-        :type storage_accounts: List[str]
-        :param key_vaults: List of key vaults used by Hub
-        :type key_vaults: List[str]
-        :param container_registries: List of container registries used by Hub
-        :type container_registries: List[str]
-        :param existing_workspaces: List of existing workspaces used by Hub to do convert
-        :type existing_workspaces: List[str]
         :param workspace_hub: workspace hub object use to help create lean workspace
         :type workspace_hub: Workspace
         :param kwargs: A dictionary of additional configuration parameters.
@@ -290,10 +282,6 @@ class Workspace(Resource):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
-            storage_accounts=rest_obj.storage_accounts,
-            key_vaults=rest_obj.key_vaults,
-            container_registries=rest_obj.container_registries,
-            existing_workspaces=rest_obj.existing_workspaces,
             hub_resource_id=rest_obj.hub_resource_id,
         )
 
@@ -325,9 +313,5 @@ class Workspace(Resource):
             else None,  # pylint: disable=protected-access
             feature_store_Settings=feature_store_Settings,
             enable_data_isolation=self.enable_data_isolation,
-            storage_accounts=self.storage_accounts,
-            container_registries=self.container_registries,
-            key_vaults=self.key_vaults,
-            existing_workspaces=self.existing_workspaces,
             hub_resource_id=self.hub_resource_id,
         )

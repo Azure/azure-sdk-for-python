@@ -15,6 +15,7 @@ from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
@@ -96,12 +97,12 @@ class WorkspaceHub(Workspace):
             identity=identity,
             primary_user_assigned_identity=primary_user_assigned_identity,
             managed_network=managed_network,
-            storage_accounts=storage_accounts,
-            container_registries=container_registries,
-            key_vaults=key_vaults,
-            existing_workspaces=existing_workspaces,
             **kwargs,
         )
+        self.storage_accounts = storage_accounts
+        self.key_vaults = key_vaults
+        self.container_registries = container_registries
+        self.existing_workspaces = existing_workspaces
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "WorkspaceHub":
@@ -109,7 +110,6 @@ class WorkspaceHub(Workspace):
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
-
         return WorkspaceHub(
             name=workspace_object.name,
             description=workspace_object.description,
@@ -122,10 +122,10 @@ class WorkspaceHub(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            storage_accounts=workspace_object.storage_accounts,
-            key_vaults=workspace_object.key_vaults,
-            container_registries=workspace_object.container_registries,
-            existing_workspaces=workspace_object.existing_workspaces,
+            storage_accounts=rest_obj.storage_accounts,
+            key_vaults=rest_obj.key_vaults,
+            container_registries=rest_obj.container_registries,
+            existing_workspaces=rest_obj.existing_workspaces,
             workspace_id=rest_obj.workspace_id,
             id=rest_obj.id,
         )
@@ -150,3 +150,11 @@ class WorkspaceHub(Workspace):
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return WorkspaceHubSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+    def _to_rest_object(self) -> RestWorkspace:
+        restWorkspace = super()._to_rest_object()
+        restWorkspace.storage_accounts = (self.storage_accounts,)
+        restWorkspace.container_registries = (self.container_registries,)
+        restWorkspace.key_vaults = (self.key_vaults,)
+        restWorkspace.existing_workspaces = (self.existing_workspaces,)
+        return restWorkspace
