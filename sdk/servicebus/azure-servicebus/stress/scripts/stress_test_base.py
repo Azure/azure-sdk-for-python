@@ -94,6 +94,7 @@ class StressTestRunner:
         fail_on_exception=True,
         azure_monitor_metric=None,
         process_monitor=None,
+        logging_level=logging.ERROR,
     ):
         self.senders = senders
         self.receivers = receivers
@@ -112,6 +113,7 @@ class StressTestRunner:
         self.azure_monitor_metric = azure_monitor_metric or AbstractMonitorMetric(
             "fake_test_name"
         )
+        self.logging_level = logging_level
         self.process_monitor = process_monitor or ProcessMonitor(
             "monitor_{}".format(LOGFILE_NAME),
             "test_stress_queues",
@@ -363,6 +365,7 @@ class StressTestRunnerAsync(StressTestRunner):
         fail_on_exception=True,
         azure_monitor_metric=None,
         process_monitor=None,
+        logging_level=logging.ERROR,
     ):
         super(StressTestRunnerAsync, self).__init__(
             senders,
@@ -381,6 +384,7 @@ class StressTestRunnerAsync(StressTestRunner):
             fail_on_exception=fail_on_exception,
             azure_monitor_metric=azure_monitor_metric,
             process_monitor=process_monitor,
+            logging_level=logging_level
         )
 
     async def _send_async(self, sender, end_time):
@@ -419,7 +423,6 @@ class StressTestRunnerAsync(StressTestRunner):
             raise
 
     async def _receive_handle_message(self, message, receiver, end_time):
-        # _logger = get_logger(LOGFILE_NAME, "stress_test_receive", level=logging.ERROR)
         self.on_receive(self._state, message, receiver)
         try:
             if self.should_complete_messages:
