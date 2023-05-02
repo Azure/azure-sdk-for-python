@@ -500,7 +500,7 @@ class ContinuousDtmfRecognitionToneReceived(ContinuousDtmfRecognitionToneReceive
 
 
 class ContinuousDtmfRecognitionToneFailed(ContinuousDtmfRecognitionToneFailedRest):
-    """Event sent when failed to start continuous Dtmf recognition.
+    """Event sent when failed to recognize continuous Dtmf tone.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str

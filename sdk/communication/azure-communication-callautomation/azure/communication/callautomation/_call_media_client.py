@@ -169,15 +169,15 @@ class CallMediaClient(object):
 
     def start_continuous_dtmf_recognition(
         self,
-        target: CommunicationIdentifier,
+        target_participant: CommunicationIdentifier,
         operation_context: str = None,
         **kwargs
     ) -> None:
         """
         Start continuous Dtmf recognition by subscribing to tones.
 
-        :param target: Target participant of continuous DTMF tone recognition. Required.
-        :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
+        :param target_participant: Target participant. Required.
+        :type target_participant: ~azure.communication.callautomation.models.CommunicationIdentifier
         :param operation_context: The value to identify context of the operation. Optional.
         :type operation_context: str
 
@@ -186,11 +186,11 @@ class CallMediaClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if not target:
-            raise ValueError('target cannot be None.')
+        if not target_participant:
+            raise ValueError('target_participant cannot be None.')
 
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target),
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
         self._call_media_operations.start_continuous_dtmf_recognition(
@@ -200,15 +200,15 @@ class CallMediaClient(object):
 
     def stop_continuous_dtmf_recognition(
         self,
-        target: CommunicationIdentifier,
+        target_participant: CommunicationIdentifier,
         operation_context: str = None,
         **kwargs
     ) -> None:
         """
         Stop continuous Dtmf recognition by unsubscribing to tones.
 
-        :param target: Target participant of continuous DTMF tone recognition. Required.
-        :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
+        :param target_participant: Target participant. Required.
+        :type target_participant: ~azure.communication.callautomation.models.CommunicationIdentifier
         :param operation_context: The value to identify context of the operation. Optional.
         :type operation_context: str
 
@@ -217,11 +217,11 @@ class CallMediaClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if not target:
-            raise ValueError('target cannot be None.')
+        if not target_participant:
+            raise ValueError('target_participant cannot be None.')
 
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target),
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
         self._call_media_operations.stop_continuous_dtmf_recognition(
@@ -231,17 +231,17 @@ class CallMediaClient(object):
 
     def send_dtmf(
         self,
-        target: CommunicationIdentifier,
+        target_participant: CommunicationIdentifier,
         tones: List[Union[str, Tone]],
         operation_context: str = None,
         **kwargs
     ) -> None:
         """
-        Send dtmf tones.
+        Send Dtmf tones.
 
-        :param target: Target participant of Send DTMF tone. Required.
-        :type target: ~azure.communication.callautomation.models.CommunicationIdentifier
-        :param tones: The captured tones. Required.
+        :param target_participant: Target participant. Required.
+        :type target_participant: ~azure.communication.callautomation.models.CommunicationIdentifier
+        :param tones: List of tones to be sent to target participant. Required.
         :type tones: list[str or ~azure.communication.callautomation.models.Tone]
         :param operation_context: The value to identify context of the operation. Optional.
         :type operation_context: str
@@ -251,11 +251,14 @@ class CallMediaClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if not target:
-            raise ValueError('target cannot be None.')
+        if not target_participant:
+            raise ValueError('target_participant cannot be None.')
+
+        if not tones:
+            raise ValueError('tones cannot be None.')
 
         send_dtmf_request = SendDtmfRequest(
-            target_participant=serialize_identifier(target),
+            target_participant=serialize_identifier(target_participant),
             tones=tones,
             operation_context=operation_context)
 
