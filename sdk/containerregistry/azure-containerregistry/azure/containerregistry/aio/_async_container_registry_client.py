@@ -943,7 +943,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: GetManifestResult
         :rtype: ~azure.containerregistry.GetManifestResult
         :raises ~azure.containerregistry.ManifestDigestValidationException:
-            If the requested digest does not match the digest of the received manifest, or
+            If the content of retrieved manifest digest does not match the requested digest, or
             the server-computed digest does not match the client-computed digest when tag is passing.
         """
         response = cast(
@@ -963,7 +963,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             digest = tag_or_digest
             if not _validate_digest(manifest_bytes, digest):
                 raise ManifestDigestValidationException(
-                    "The requested digest does not match the digest of the received manifest."
+                    "The content of retrieved manifest digest does not match the requested digest."
                 )
         else:
             digest = response.http_response.headers['Docker-Content-Digest']
@@ -1050,7 +1050,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: AsyncDownloadBlobStream
         :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
         :raises ManifestDigestValidationException:
-            If the requested digest does not match the digest of the received blob.
+            If the content of retrieved blob digest does not match the requested digest.
         """
         end_range = DEFAULT_CHUNK_SIZE - 1
         first_chunk, headers = cast(

@@ -72,7 +72,7 @@ class AsyncDownloadBlobStream(
                 computed_digest = "sha256:" + self._hasher.hexdigest()
                 if computed_digest != self._digest:
                     raise ManifestDigestValidationException(
-                        "The requested digest does not match the digest of the received blob."
+                        "The content of retrieved blob digest does not match the requested digest."
                     )
                 raise
             self._response = await self._download_chunk()
