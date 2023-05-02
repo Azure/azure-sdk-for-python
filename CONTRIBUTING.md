@@ -72,7 +72,7 @@ breaking         -> Runs the breaking changes checker against a package
 Basic usage of `tox` within this monorepo is:
 
 1. `pip install tox<5`
-2. Run `tox -c path/to/tox.ini --root path/to/python_package`
+2. Run `tox run -e ENV_NAME -c path/to/tox.ini --root path/to/python_package`
   * **Note**: You can use environment variables to provide defaults for tox config values
     * With `TOX_CONFIG_FILE` set to the absolute path of `tox.ini`, you can avoid needing `-c path/to/tox.ini` in your tox invocations
     * With `TOX_ROOT_DIR` set to the absolute path to your python package, you can avoid needing `--root path/to/python_package`
@@ -83,11 +83,11 @@ If at any time you want to blow away the tox created virtual environments and st
 
 #### Example `azure-core` mypy
 
-1. Run `tox -e mypy -c ../../../eng/tox/tox.ini --root sdk/core/azure-core`
+1. Run `tox run -e mypy -c ../../../eng/tox/tox.ini --root sdk/core/azure-core`
 
 #### Example `azure-storage-blob` tests
 
-2. Execute `tox -c ../../../eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
+2. Execute `tox run -c ../../../eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
 
 Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
 
@@ -97,7 +97,7 @@ Used for test execution across the spectrum of all the platforms we want to supp
 * Installs the wheel, runs tests using the wheel
 
 ```
-\> tox -e whl -c <path to tox.ini> --root <path to python package>
+\> tox run -e whl -c <path to tox.ini> --root <path to python package>
 
 ```
 
@@ -109,7 +109,7 @@ Used for the local dev loop.
 
 ```
 
-\> tox -e sdist -c <path to tox.ini> --root <path to python package>
+\> tox run -e sdist -c <path to tox.ini> --root <path to python package>
 
 ```
 
@@ -117,7 +117,7 @@ Used for the local dev loop.
 Pylint install and run.
 
 ```
-\> tox -e pylint -c <path to tox.ini> --root <path to python package>
+\> tox run -e pylint -c <path to tox.ini> --root <path to python package>
 ```
 
 
@@ -125,14 +125,14 @@ Pylint install and run.
 Mypy install and run.
 
 ```
-\> tox -e mypy -c <path to tox.ini> --root <path to python package>
+\> tox run -e mypy -c <path to tox.ini> --root <path to python package>
 ```
 
 #### `sphinx` environment
 Generate sphinx doc for this package.
 
 ```
-\> tox -e sphinx -c <path to tox.ini> --root <path to python package>
+\> tox run -e sphinx -c <path to tox.ini> --root <path to python package>
 ```
 
 ### Custom Pytest Arguments
@@ -142,7 +142,7 @@ Generate sphinx doc for this package.
 [Tox Documentation on Positional Arguments](https://tox.wiki/en/latest/config.html#substitutions-for-positional-arguments-in-commands)
 
 **Example: Invoke tox, breaking into the debugger on failure**
-`tox -e whl -c <path to tox.ini> --root <path to python package> -- --pdb`
+`tox run -e whl -c <path to tox.ini> --root <path to python package> -- --pdb`
 
 ### Performance Testing
 
@@ -172,7 +172,7 @@ a. cd to package root folder
 b. run tox environment devtest
 
 ```
-\> tox -e devtest -c <path to tox.ini> --root <path to python package>
+\> tox run -e devtest -c <path to tox.ini> --root <path to python package>
 ```
 
 This tox test( devtest) will fail if installed dependent packages are not dev build version.

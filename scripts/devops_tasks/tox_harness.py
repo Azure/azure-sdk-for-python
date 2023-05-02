@@ -241,7 +241,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     :param parsed_args: An argparse namespace object from setup_execute_tests.py. Not including it will effectively disable "customizations"
         of the tox invocation.
     :param options_array: When invoking tox, these additional options will be passed to the underlying tox invocations as arguments.
-        When invoking of "tox -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
+        When invoking of "tox run -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
         passed directly to the pytest invocation.
     """
     if parsed_args.wheel_dir:

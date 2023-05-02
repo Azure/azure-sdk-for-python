@@ -17,7 +17,7 @@ Add your package name to the `RUN_BREAKING_CHANGES_PACKAGES` found [here](https:
 
 Here we run the breaking changes tool against azure-storage-blob, for example:
 
-`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox -c ../../../eng/tox/tox.ini --root . -e breaking`
+`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking`
 
 
 ## Ignore a reported breaking change

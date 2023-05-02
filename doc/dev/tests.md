@@ -128,15 +128,15 @@ The Python SDK uses the [tox project](https://tox.wiki/en/latest/) to automate r
 
 To run a tox command from your directory use the following commands:
 ```cmd
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e sphinx
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e pylint
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e mypy
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e pyright
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e verifytypes
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e whl
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e sdist
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e samples
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini --root . -e apistub
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sphinx -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pylint -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e mypy -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pyright -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e verifytypes -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e whl -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sdist -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
