@@ -1,28 +1,18 @@
 # Release History
 
-## 1.2.0 (2023-05-09)
-Add support for computing the claims digest from Azure Confidential Ledger application claims in the `azure.confidentialledger.receipt` module.
-
-### Features Added
-- Add `compute_claims_digest` function to compute the claims digest from a list of application claims JSON objects. 
-- Add optional argument in `verify_receipt` function to accept a list of application claims and compare the claims digest in the receipt with the computed digest from the plain claims.
-- Modify sample code to get and verify a write receipt from a running Confidential Ledger instance, with the option to pass application claims in the verification function.
-- Update README with examples and documentation for application claims.
-
-### Other Changes
-- Add tests for application claims models and digest computation public method.
-
 ## 1.1.0 (2023-05-09)
 Add `azure.confidentialledger.receipt` module for Azure Confidential Ledger write transaction receipt verification.
 
 ### Features Added
-- Add `verify_receipt` function to verify write transaction receipts from a receipt JSON object.
+- Add `verify_receipt` function to verify write transaction receipts from a receipt JSON object. The function accepts an optional list of application claims, which can be used to compute the claims digest. The computed claims digest is then compared to the `claimsDigest` value present in the receipt.
+- Add `compute_claims_digest` function to compute the claims digest from a list of application claims JSON objects. 
 - Add sample code to get and verify a write receipt from a running Confidential Ledger instance.
 - Update README with examples and documentation for receipt verification.
 
 ### Other Changes
 - Add dependency on Python `cryptography` library (`>= 2.1.4`)
 - Add tests for receipt verification models and receipt verification public method.
+- Add tests for application claims models and digest computation public method.
 
 ## 1.0.0 (2022-07-19)
 
