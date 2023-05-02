@@ -125,9 +125,7 @@ class TestFeatureSetOperations:
 
     def test_archive_version(self, mock_feature_set_operations: FeatureSetOperations):
         name = "random_name"
-        featureset_version = Mock(
-            FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"])))
-        )
+        featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"]))))
         featureset_version.properties.stage = "Development"
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
