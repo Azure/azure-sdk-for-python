@@ -33,7 +33,7 @@ no-namespace-folders: true
 python: true
 openapi-type: data-plane
 version-tolerant: true
-package-version: 1.1.0b4
+package-version: 1.1.0
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
@@ -45,26 +45,26 @@ modelerfour:
 
 ```yaml
 batch:
-  - tag: release_runtime_1_1_preview
-  - tag: release_authoring_1_1_preview
+  - tag: release_runtime_1_1
+  - tag: release_authoring_1_1
 ```
 
 ## Runtime
 
-These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
+These settings apply only when `--tag=release_runtime_1_1` is specified on the command line.
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
+```yaml $(tag) == 'release_runtime_1_1'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2491b616cde43277fae339604f03f59412e016aa/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
 
 ## Authoring
 
-These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
+These settings apply only when `--tag=release_authoring_1_1` is specified on the command line.
 
-```yaml $(tag) == 'release_authoring_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
+```yaml $(tag) == 'release_authoring_1_1'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2491b616cde43277fae339604f03f59412e016aa/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
@@ -184,7 +184,7 @@ directive:
 
 ### Runtime API Directives
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Give analyze job LRO a return type
 directive:
   - where-operation: AnalyzeConversation_SubmitJob
@@ -197,7 +197,7 @@ directive:
       };
 ```
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Rename Runtime client operation
 directive:
   - rename-operation:
@@ -205,7 +205,7 @@ directive:
       to: AnalyzeConversation
 ```
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Rename Runtime client async operation
 directive:
   - rename-operation:
@@ -213,7 +213,7 @@ directive:
       to: ConversationAnalysis
 ```
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Rename analyze_conversation `body` to `tasks`
 directive:
     - from: swagger-document
@@ -222,7 +222,7 @@ directive:
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Rename begin_conversation_analysis `body` to `tasks`
 directive:
     - from: swagger-document
@@ -231,7 +231,7 @@ directive:
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Remove async GET operation status
 directive:
     - from: swagger-document
@@ -240,7 +240,7 @@ directive:
           delete $["/analyze-conversations/jobs/{jobId}"];
 ```
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
+```yaml $(tag) == 'release_runtime_1_1'
 # Remove async cancel operation
 directive:
     - from: swagger-document
@@ -251,7 +251,7 @@ directive:
 
 ### Authoring API Directives
 
-```yaml $(tag) == 'release_authoring_1_1_preview'
+```yaml $(tag) == 'release_authoring_1_1'
 # Give LROs return types
 directive:
   - where-operation: ConversationalAnalysisAuthoring_CancelTrainingJob
@@ -344,7 +344,7 @@ directive:
       };
 ```
 
-```yaml $(tag) == 'release_authoring_1_1_preview'
+```yaml $(tag) == 'release_authoring_1_1'
 # Rename `body` param for operations
 directive:
   - where-operation: ConversationalAnalysisAuthoring_DeployProject
@@ -364,7 +364,7 @@ directive:
         $.parameters[1]["x-ms-client-name"] = "project";
 ```
 
-```yaml $(tag) == 'release_authoring_1_1_preview'
+```yaml $(tag) == 'release_authoring_1_1'
 # Rename Authoring client operations
 directive:
   - rename-operation:
