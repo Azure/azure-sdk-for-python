@@ -258,7 +258,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
-        tox_execution_array = [sys.executable, "-m", "tox"]
+        tox_execution_array = [sys.executable, "-m", "tox", "run"]
         # Tox command is run in package root, make tox set package root as {toxinidir}
         tox_execution_array.append(["--root", "."])
         local_options_array = options_array[:]
