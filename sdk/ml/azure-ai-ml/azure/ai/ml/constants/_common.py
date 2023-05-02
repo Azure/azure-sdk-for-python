@@ -457,6 +457,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
     WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
+
 class YAMLRefDocSchemaNames:
     """YAML reference document schema names.
 
