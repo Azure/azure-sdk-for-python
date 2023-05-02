@@ -119,7 +119,7 @@ class AsyncLROBasePolling(
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    async def _sleep(self, delay: float):
+    async def _sleep(self, delay: float) -> None:
         await self._transport.sleep(delay)
 
     async def _delay(self):
