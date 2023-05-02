@@ -51,6 +51,15 @@ class AzurePowerShellCredential:
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     :keyword int process_timeout: Seconds to wait for the Azure PowerShell process to respond. Defaults to 10 seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_azure_power_shell_credential]
+            :end-before: [END create_azure_power_shell_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an AzurePowerShellCredential.
     """
     def __init__(
         self,

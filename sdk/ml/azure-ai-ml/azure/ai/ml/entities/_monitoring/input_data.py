@@ -21,7 +21,7 @@ class MonitorInputData(RestTranslatableMixin):
         target_column_name: str = None,
         pre_processing_component: str = None,
     ):
-        self.input_dataset = input_dataset
+        self.input_dataset = input_dataset if isinstance(input_dataset, Input) else Input(**input_dataset)
         self.dataset_context = dataset_context
         self.target_column_name = target_column_name
         self.pre_processing_component = pre_processing_component

@@ -10,7 +10,7 @@ trigger:
       - 20
     minutes:
       - 0
-      - 0
+      - 30
     week_days:
       - monday
       - tuesday
@@ -18,7 +18,7 @@ trigger:
       - thursday
       - friday
 create_monitor:
-  compute: azureml:mycompute
+  compute: azureml:cpu-cluster
   monitoring_target:
     endpoint_deployment_id: fake_endpoint_id
   monitoring_signals:

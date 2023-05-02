@@ -101,7 +101,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
+        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         self._client = AzureCommunicationJobRouterService(
             self._endpoint,
             api_version=self._api_version,
@@ -747,7 +747,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
 
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
-        job escalation rules.
+          job escalation rules.
 
         :return: JobQueue
         :rtype: ~azure.communication.jobrouter.JobQueue

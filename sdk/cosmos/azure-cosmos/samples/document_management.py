@@ -118,7 +118,7 @@ def patch_item(container, doc_id):
     print('Patched Item\'s Id is {0}, new path favorite color={1}, removed path ttl={2}, replaced path tax_amount={3},'
           ' set path for item at index 0 of discount={4}, increase in path total_due, new total_due={5}, move from path freight={6}'
           ' to path service_addition={7}'.format(response["id"], response["favorite_color"], response.get("ttl"),
-                                                 response["tax_amount"], response["items"].get(0).get("discount"),
+                                                 response["tax_amount"], response["items"][0].get("discount"),
                                                  response["total_due"], response.get("freight"), response["service_addition"]))
 
 def delete_item(container, doc_id):
