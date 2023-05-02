@@ -114,7 +114,7 @@ class RoomsSample(object):
 
     async def list_participants(self, room_id):
         try:
-            list_participants_response = await self.rooms_client.list_participants(room_id=room_id)
+            list_participants_response = self.rooms_client.list_participants(room_id=room_id)
             print("participants: \n", self.convert_participant_list_to_string(list_participants_response))
         except HttpResponseError as ex:
             print(ex)
@@ -123,7 +123,7 @@ class RoomsSample(object):
         participants = [self.participant_1.communication_identifier]
 
         try:
-            await self.rooms_client.remove_participants(room_id=room_id, participant_identifiers=participants)
+            await self.rooms_client.remove_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
