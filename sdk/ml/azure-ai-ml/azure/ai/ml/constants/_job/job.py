@@ -108,7 +108,7 @@ class JobServiceTypeNames:
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
 
     NAMES_ALLOWED_FOR_PUBLIC = [EntityNames.JUPYTER_LAB, EntityNames.SSH, EntityNames.STUDIO, EntityNames.VS_CODE]
-    INERNAL_NAMES = [EntityNames.CUSTOM, EntityNames.TRACKING, EntityNames.STUDIO]
+    INTERNAL_NAMES = [EntityNames.CUSTOM, EntityNames.TRACKING, EntityNames.STUDIO]
 
 
 class JobTierNames:

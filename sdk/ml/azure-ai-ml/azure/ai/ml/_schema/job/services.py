@@ -37,7 +37,7 @@ class JobServiceSchema(JobServiceBaseSchema):
     type = UnionField(
         [
             StringTransformedEnum(
-                allowed_values=JobServiceTypeNames.INERNAL_NAMES,
+                allowed_values=JobServiceTypeNames.INTERNAL_NAMES,
                 pass_original=True,
             ),
         ],
