@@ -8,4 +8,11 @@ trigger:
   expression: "15 10 * * 1"
   time_zone: "Pacific Standard Time" # optional - default will be UTC
 
-import_data: ./data_import_database.yaml
+import_data:
+  type: mltable
+  name: my_azuresqldb_asset
+  path: azureml://datastores/workspaceblobstore/paths/{name}
+  source:
+    type: database
+    query: select * from region
+    connection: azureml:my_azuresqldb_connection
