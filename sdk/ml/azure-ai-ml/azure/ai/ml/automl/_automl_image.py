@@ -30,10 +30,6 @@ def _create_image_job(
     **kwargs,
 ):
     """Helper function to create objects for AutoML Image jobs."""
-
-    # Temporary fix for https://msdata.visualstudio.com/Vienna/_workitems/edit/2385143
-    kwargs["log_training_metrics"] = False
-
     image_job = job_cls(primary_metric=primary_metric, **kwargs)
     image_job.set_data(
         training_data=training_data,
