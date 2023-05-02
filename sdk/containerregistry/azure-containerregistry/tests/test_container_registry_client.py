@@ -19,7 +19,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     ArtifactTagOrder,
     ContainerRegistryClient,
-    ManifestDigestValidationException,
+    ManifestDigestValidationError,
 )
 from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
@@ -920,7 +920,7 @@ class TestContainerRegistryClientUnitTests:
         with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_set_manifest)
         ) as client:
-            with pytest.raises(ManifestDigestValidationException) as exp:
+            with pytest.raises(ManifestDigestValidationError) as exp:
                 manifest = {"hello": "world"}
                 client.set_manifest("test-repo", manifest)
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
@@ -929,12 +929,12 @@ class TestContainerRegistryClientUnitTests:
             endpoint=self.containerregistry_endpoint,
             transport = MagicMock(send=send_in_get_manifest)
         ) as client:
-            with pytest.raises(ManifestDigestValidationException) as exp:
+            with pytest.raises(ManifestDigestValidationError) as exp:
                 digest = hashlib.sha256(b"hello world").hexdigest()
                 client.get_manifest("test-repo", f"sha256:{digest}")
             assert str(exp.value) == "The content of retrieved manifest digest does not match the requested digest."
                 
-            with pytest.raises(ManifestDigestValidationException) as exp:
+            with pytest.raises(ManifestDigestValidationError) as exp:
                 client.get_manifest("test-repo", "test-tag")
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
 
@@ -971,7 +971,7 @@ class TestContainerRegistryClientUnitTests:
         with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_upload_blob)
         ) as client:
-            with pytest.raises(ManifestDigestValidationException) as exp:
+            with pytest.raises(ManifestDigestValidationError) as exp:
                 client.upload_blob("test-repo", BytesIO(b'{"hello": "world"}'))
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
             
@@ -980,7 +980,7 @@ class TestContainerRegistryClientUnitTests:
         ) as client:
             digest = hashlib.sha256(b"hello world").hexdigest()
             stream = client.download_blob("test-repo", f"sha256:{digest}")
-            with pytest.raises(ManifestDigestValidationException) as exp:
+            with pytest.raises(ManifestDigestValidationError) as exp:
                 for chunk in stream:
                     pass
             assert str(exp.value) == "The content of retrieved blob digest does not match the requested digest."
