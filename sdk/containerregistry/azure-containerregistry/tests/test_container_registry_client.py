@@ -883,7 +883,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                     pass
 
 
-class TestContainerRegistryClientUnitTests():
+class TestContainerRegistryClientUnitTests:
     containerregistry_endpoint="https://fake_url.azurecr.io"
     
     def text(self, encoding: Optional[str] = None) -> str:

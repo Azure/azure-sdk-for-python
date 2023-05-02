@@ -891,27 +891,34 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                     pass
 
 
-class TestContainerRegistryClientAsyncUnitTests():
+class MyMagicMock(MagicMock):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    async def __aenter__(self):
+        return self
+    
+    async def __aexit__(self, *args):
+        return self
+
+
+class TestContainerRegistryClientAsyncUnitTests:
     containerregistry_endpoint="https://fake_url.azurecr.io"
     
     def text(self, encoding: Optional[str] = None) -> str:
             return '{"hello": "world"}'
 
-    async def __aenter__(self):
-        return self
-
     @pytest.mark.asyncio
     async def test_manifest_digest_validation(self):
         JSON = MutableMapping[str, Any]
             
-        async def send_in_set_manifest(request: PipelineRequest, **kwargs) -> MagicMock:
+        async def send_in_set_manifest(request: PipelineRequest, **kwargs) -> MyMagicMock:
             content_digest = hashlib.sha256(b"hello world").hexdigest()
-            return MagicMock(
+            return MyMagicMock(
                 status_code=201,
                 headers={"Docker-Content-Digest": content_digest},
                 content_type="application/json; charset=utf-8",
-                text=self.text,
-                __aenter__=self.__aenter__
+                text=self.text
         )
         
         async def read() -> bytes:
@@ -920,19 +927,18 @@ class TestContainerRegistryClientAsyncUnitTests():
         def json() -> JSON:
             return {"hello": "world"}
         
-        async def send_in_get_manifest(request: PipelineRequest, **kwargs) -> MagicMock:
+        async def send_in_get_manifest(request: PipelineRequest, **kwargs) -> MyMagicMock:
             content_digest = hashlib.sha256(b"hello world").hexdigest()
             content_type = "application/vnd.oci.image.manifest.v1+json"
-            return MagicMock(
+            return MyMagicMock(
                 status_code=200,
                 headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type},
                 read=read,
-                json=json,
-                __aenter__=self.__aenter__
+                json=json
         )
             
         async with ContainerRegistryClient(
-            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_set_manifest)
+            endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_set_manifest)
         ) as client:
             with pytest.raises(ManifestDigestValidationException) as exp:
                 manifest = {"hello": "world"}
@@ -940,8 +946,7 @@ class TestContainerRegistryClientAsyncUnitTests():
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
             
         async with ContainerRegistryClient(
-            endpoint=self.containerregistry_endpoint,
-            transport = MagicMock(send=send_in_get_manifest)
+            endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_get_manifest)
         ) as client:
             with pytest.raises(ManifestDigestValidationException) as exp:
                 digest = hashlib.sha256(b"hello world").hexdigest()
@@ -954,30 +959,28 @@ class TestContainerRegistryClientAsyncUnitTests():
 
     @pytest.mark.asyncio
     async def test_blob_digest_validation(self):
-        async def send_in_upload_blob(request: PipelineRequest, **kwargs) -> MagicMock:
+        async def send_in_upload_blob(request: PipelineRequest, **kwargs) -> MyMagicMock:
             if request.method == "PUT":
                 content_digest = hashlib.sha256(b"hello world").hexdigest()
-                return MagicMock(
+                return MyMagicMock(
                     status_code=201,
                     headers={"Docker-Content-Digest": content_digest},
                     content_type="application/json; charset=utf-8",
-                    text=self.text,
-                    __aenter__=self.__aenter__
+                    text=self.text
                 )
             else:
-                return MagicMock(
+                return MyMagicMock(
                     status_code=202,
                     headers={"Location": "/v2/test-repo/blobs/uploads/fake_location"},
                     content_type="application/json; charset=utf-8",
-                    text=self.text,
-                    __aenter__=self.__aenter__
+                    text=self.text
                 )
         
         async def iter_bytes() -> AsyncIterator[bytes]:
             yield b'{"hello": "world"}'
         
-        async def send_in_download_blob(request: PipelineRequest, **kwargs) -> MagicMock:
-            return MagicMock(
+        async def send_in_download_blob(request: PipelineRequest, **kwargs) -> MyMagicMock:
+            return MyMagicMock(
                 status_code=206,
                 headers={"Content-Range": "bytes 0-27/28", "Content-Length": "28"},
                 content_type="application/octet-stream",
@@ -986,14 +989,14 @@ class TestContainerRegistryClientAsyncUnitTests():
             )
             
         async with ContainerRegistryClient(
-            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_upload_blob)
+            endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_upload_blob)
         ) as client:
             with pytest.raises(ManifestDigestValidationException) as exp:
                 await client.upload_blob("test-repo", BytesIO(b'{"hello": "world"}'))
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
             
         async with ContainerRegistryClient(
-            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_download_blob)
+            endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_download_blob)
         ) as client:
             digest = hashlib.sha256(b"hello world").hexdigest()
             stream = await client.download_blob("test-repo", f"sha256:{digest}")
