@@ -53,7 +53,8 @@ if TYPE_CHECKING:
         CallRejectReason,
         RecordingContent,
         RecordingChannel,
-        RecordingFormat
+        RecordingFormat,
+        RecordingStorage
     )
     from azure.core.exceptions import HttpResponseError
 
@@ -416,7 +417,7 @@ class CallAutomationClient(object):
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
-        recording_storage_type: Optional[str] = None,
+        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
         external_storage_location: Optional[str] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -445,7 +446,7 @@ class CallAutomationClient(object):
         :paramtype recording_storage_type: str
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage
         :return: RecordingProperties
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:

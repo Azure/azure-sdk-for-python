@@ -26,20 +26,15 @@ if TYPE_CHECKING:
         MediaStreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
-        CallConnectionState,
-        DtmfTone
+        CallConnectionState
     )
     from ._generated.models  import (
         CallParticipant as CallParticipantRest,
         CallConnectionProperties as CallConnectionPropertiesRest,
-        ResultInformation as ResultInformationRest,
         AddParticipantResponse as AddParticipantResultRest,
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
-        CollectTonesResult as CollectTonesResultRest,
-        ChoiceResult as ChoiceResultRest,
-        ToneInfo as ToneInfoRest,
     )
 
 class CallInvite(object):
@@ -308,38 +303,6 @@ class RecordingProperties(object):
             recording_id=recording_state_result.recording_id,
             recording_state=recording_state_result.recording_state)
 
-class ResultInformation(object):
-    """ Result Information of the call.
-    Contains detailed information of the call result,
-    such as the reason why the call recognition failed.
-
-    :ivar code: Generic Error code of the failure.
-    :vartype code: int
-    :ivar sub_code: Detailed Error code of the failure.
-    :vartype sub_code: int
-    :ivar message: Detailed message of the error result.
-    :vartype message: str
-    """
-    def __init__(
-        self,
-        *,
-        code: Optional[int] = None,
-        sub_code: Optional[int] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super().__init__(**kwargs)
-        self.code = code
-        self.sub_code = sub_code
-        self.message = message
-
-    @classmethod
-    def _from_generated(cls, result_information_rest: 'ResultInformationRest'):
-        return cls(
-            code=result_information_rest.code,
-            sub_code=result_information_rest.sub_code,
-            message=result_information_rest.message)
-
 class CallParticipant(object):
     """Details of an Azure Communication Service call participant.
 
@@ -425,81 +388,3 @@ class TransferCallResult(object):
     @classmethod
     def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
         return cls(operation_context=transfer_result_generated.operation_context)
-
-class CollectTonesResult(object):
-    """CollectTonesResult.
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar tones:
-    :vartype tones: list[str or ~azure.communication.callautomation.DtmfTone]
-    """
-    def __init__(
-        self,
-        *,
-        tones: Optional[List['DtmfTone']] = None,
-        **kwargs: Any
-    ) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.tones = tones
-
-    @classmethod
-    def _from_generated(cls, collect_tones_generated: 'CollectTonesResultRest'):
-        return cls(tones=collect_tones_generated.tones)
-
-class ChoiceResult(object):
-    """Result detail for choice recognition.
-    This result is returned on Recognition of choice.
-
-    :ivar label: Label is the primary identifier for the choice detected.
-    :vartype label: str
-    :ivar recognized_phrase: Phrases are set to the value if choice is selected via phrase detection.
-     If Dtmf input is recognized, then Label will be the identifier
-     for the choice detected and phrases will be set to null.
-    :vartype recognized_phrase: str
-    """
-    def __init__(
-        self,
-        *,
-        label: Optional[str] = None,
-        recognized_phrase: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        super().__init__(**kwargs)
-        self.label = label
-        self.recognized_phrase = recognized_phrase
-
-    @classmethod
-    def _from_generated(cls, choice_result_generated: 'ChoiceResultRest'):
-        return cls(label=choice_result_generated.label,
-                   recognized_phrase=choice_result_generated.recognized_phrase)
-
-class ToneInfo(object):
-    """The information about the tone detection.
-
-    :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
-     multiple times or if any tones were missed. Required.
-    :vartype sequence_id: int
-    :ivar tone: Details of the tone detection.
-    :vartype tone: str or ~azure.communication.callautomation.DtmfTone
-    :ivar participant_id: The id of participant.
-    :vartype participant_id: str
-    """
-    def __init__(
-        self,
-        *,
-        sequence_id: int,
-        tone: Union[str, 'DtmfTone'],
-        participant_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        super().__init__(**kwargs)
-        self.sequence_id = sequence_id
-        self.tone = tone
-        self.participant_id = participant_id
-
-    @classmethod
-    def _from_generated(cls, tone_info_generated: 'ToneInfoRest'):
-        return cls(sequence_id=tone_info_generated.sequence_id,
-                   tone=tone_info_generated.tone,
-                   participant_id=tone_info_generated.participant_id)

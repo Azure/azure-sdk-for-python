@@ -8,7 +8,6 @@ from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
 from ._models import (
     CallConnectionProperties,
-    ResultInformation,
     CallInvite,
     ServerCallLocator,
     GroupCallLocator,
@@ -18,9 +17,7 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    ChoiceResult,
-    CollectTonesResult,
-    ToneInfo
+    MediaStreamingConfiguration
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -30,7 +27,7 @@ from ._shared.models import (
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
     MicrosoftBotIdentifier,
-    UnknownIdentifier
+    UnknownIdentifier,
 )
 from ._generated.models._enums import (
     CallRejectReason,
@@ -43,8 +40,7 @@ from ._generated.models._enums import (
     MediaStreamingContentType,
     MediaStreamingTransportType,
     DtmfTone,
-    CallConnectionState,
-    RecognitionType
+    CallConnectionState
 )
 __all__ = [
     # clients and parser
@@ -59,15 +55,12 @@ __all__ = [
 
     # models for output
     "CallConnectionProperties",
-    "ResultInformation",
     "CallParticipant",
     "RecordingProperties",
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "ChoiceResult",
-    "CollectTonesResult",
-    "ToneInfo",
+    "MediaStreamingConfiguration",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -91,6 +84,5 @@ __all__ = [
     "MediaStreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
-    "RecognitionType"
 ]
 __version__ = VERSION
