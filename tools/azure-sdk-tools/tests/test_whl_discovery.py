@@ -71,3 +71,15 @@ def test_find_whl_fails_on_incompatible_interpreter(test_patch):
     assert found is None
 
     tmp_dir.cleanup()
+
+
+
+@patch("ci_tools.functions.get_interpreter_compatible_tags")
+def test_find_whl_discovers_specific_wheels(test_patch):
+    tmp_dir = create_temp_directory(
+        [
+            os.path.join("azure-common", "azure_common-1.1.29-py3-none-any.whl"),
+        ]
+    )
+    test_patch.return_value = []
+    tmp_dir.cleanup()
