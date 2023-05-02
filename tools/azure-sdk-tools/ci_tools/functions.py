@@ -443,6 +443,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
+    """This function attempts to look within a directory (and all subdirs therein) and find a source distribution for the targeted package and version."""
     # This function will find a sdist for given package name
     if not os.path.exists(dist_dir):
         logging.error("dist_dir is incorrect")
@@ -453,6 +454,9 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
         return
 
     pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
+    pkg_name_format_alt = "${0}-{1}.tar.gz"
+
+    # todo: replace with glob, we aren't using py2 anymore!
     packages = []
     for root, dirnames, filenames in os.walk(dist_dir):
         for filename in fnmatch.filter(filenames, pkg_name_format):
@@ -466,8 +470,26 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     return packages[0]
 
 
+def get_interpreter_compatible_tags() -> List[str]:
+    """
+    This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
+    """
+
+    commands = [
+        sys.executable,
+        "-m",
+        "pip",
+        "debug",
+        "--verbose"
+    ]
+
+    return []
+
+
+
 def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
-    # This function will find a whl for given package name
+    """This function attempts to look within a directory (and all subdirs therein) and find a wheel that matches our targeted name and version AND 
+    whose compilation is compatible with the invoking interpreter."""
     if not os.path.exists(whl_dir):
         logging.error("whl_dir is incorrect")
         return
@@ -478,6 +500,8 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
 
     pkg_name_format = "{0}-{1}*.whl".format(pkg_name.replace("-", "_"), pkg_version)
     whls = []
+
+    # todo: replace with glob, we aren't using py2 anymore!
     for root, dirnames, filenames in os.walk(whl_dir):
         for filename in fnmatch.filter(filenames, pkg_name_format):
             whls.append(os.path.join(root, filename))
