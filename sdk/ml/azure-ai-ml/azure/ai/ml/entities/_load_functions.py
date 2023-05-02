@@ -38,6 +38,7 @@ from azure.ai.ml.entities._workspace.connections.workspace_connection import Wor
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
 
@@ -819,6 +820,7 @@ def _load_feature_store_entity(
     return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
 
 
+@experimental
 def load_model_package(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
