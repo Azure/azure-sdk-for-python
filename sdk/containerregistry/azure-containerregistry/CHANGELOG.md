@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- Changed the digest validation exception type to `ManifestDigestValidationException` in `set/get manifest` and `upload/download blob` operations.
 
 ### Bugs Fixed
 
