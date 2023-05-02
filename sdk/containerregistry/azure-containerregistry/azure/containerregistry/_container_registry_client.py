@@ -909,7 +909,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
             digest = response_headers['Docker-Content-Digest']
             if not _validate_digest(data, digest):
-                raise ManifestDigestValidationException("The server-computed digest does not match the client-computed digest.")
+                raise ManifestDigestValidationException(
+                    "The server-computed digest does not match the client-computed digest."
+                )
         except Exception as e:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.") from e
@@ -946,11 +948,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
             if not _validate_digest(manifest_bytes, digest):
-                raise ManifestDigestValidationException("The requested digest does not match the digest of the received manifest.")
+                raise ManifestDigestValidationException(
+                    "The requested digest does not match the digest of the received manifest."
+                )
         else:
             digest = response.http_response.headers['Docker-Content-Digest']
             if not _validate_digest(manifest_bytes, digest):
-                raise ManifestDigestValidationException("The server-computed digest does not match the client-computed digest.")
+                raise ManifestDigestValidationException(
+                    "The server-computed digest does not match the client-computed digest."
+                )
 
         return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 
