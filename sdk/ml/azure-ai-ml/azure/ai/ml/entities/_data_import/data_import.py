@@ -116,7 +116,7 @@ class DataImport(Data):
             )
             data_type = AssetTypes.URI_FOLDER
 
-        data_import = DataImport(
+        data_import = cls(
             name=data_rest_object.asset_name,
             path=data_rest_object.data_uri,
             source=source,
