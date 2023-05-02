@@ -183,6 +183,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     async def __aexit__(self, *args):
         await self.close()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_shutdown'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_shutdown'] = asyncio.Event()
+        self.__dict__.update(state)
+
     async def _handle_exception(self, exception):
         # pylint: disable=protected-access
         error = self._amqp_transport.create_servicebus_exception(

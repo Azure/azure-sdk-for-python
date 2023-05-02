@@ -85,6 +85,15 @@ class AutoLockRenewer:
     async def __aexit__(self, *args: Iterable[Any]) -> None:
         await self.close()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_shutdown'] = None
+        return state
+
+    def __setstate__(self, state):
+        state['_shutdown'] = asyncio.Event()
+        self.__dict__.update(state)
+
     def _renewable(
         self, renewable: Union[ServiceBusReceivedMessage, ServiceBusSession]
     ) -> bool:

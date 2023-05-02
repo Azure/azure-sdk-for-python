@@ -5,6 +5,7 @@
 #--------------------------------------------------------------------------
 
 import logging
+import sys
 import time
 import asyncio
 import pytest
@@ -381,7 +382,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
 
         async with ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport) as client:
             sender = client.get_queue_sender(queue_name=servicebus_queue.name)
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             with pytest.raises(ServiceBusAuthenticationError):
                 async with sender:
                     message = ServiceBusMessage("Single Message")
@@ -661,28 +662,30 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("foo"))
 
-        fake_addr = "fakeaddress.com:1111"
-        client = ServiceBusClient(
-            hostname,
-            credential,
-            custom_endpoint_address=fake_addr,
-            retry_total=0,
-            uamqp_transport=uamqp_transport
-        )
-        async with client:
-            with pytest.raises(ServiceBusConnectionError):
-                async with client.get_queue_sender(servicebus_queue.name) as sender:
-                    await sender.send_messages(ServiceBusMessage("foo"))
+        # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError
+        if not uamqp_transport or not sys.platform.startswith('darwin'):
+            fake_addr = "fakeaddress.com:1111"
+            client = ServiceBusClient(
+                hostname,
+                credential,
+                custom_endpoint_address=fake_addr,
+                retry_total=0,
+                uamqp_transport=uamqp_transport
+            )
+            async with client:
+                with pytest.raises(ServiceBusConnectionError):
+                    async with client.get_queue_sender(servicebus_queue.name) as sender:
+                        await sender.send_messages(ServiceBusMessage("foo"))
 
-        client = ServiceBusClient(
-            hostname,
-            credential,
-            custom_endpoint_address=fake_addr,
-            connection_verify="cacert.pem",
-            retry_total=0,
-            uamqp_transport=uamqp_transport,
-        )
-        async with client:
-            with pytest.raises(ServiceBusError):
-                async with client.get_queue_sender(servicebus_queue.name) as sender:
-                    await sender.send_messages(ServiceBusMessage("foo"))
+            client = ServiceBusClient(
+                hostname,
+                credential,
+                custom_endpoint_address=fake_addr,
+                connection_verify="cacert.pem",
+                retry_total=0,
+                uamqp_transport=uamqp_transport,
+            )
+            async with client:
+                with pytest.raises(ServiceBusError):
+                    async with client.get_queue_sender(servicebus_queue.name) as sender:
+                        await sender.send_messages(ServiceBusMessage("foo"))

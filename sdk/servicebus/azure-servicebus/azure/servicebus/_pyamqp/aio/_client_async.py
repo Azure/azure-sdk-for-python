@@ -187,10 +187,12 @@ class AMQPClientAsync(AMQPClientSync):
         state = self.__dict__.copy()
         # remove inherited threading.Lock()
         state['_mgmt_link_lock'] = None
+        state['_mgmt_link_lock_async'] = None
         state['_keep_alive_thread'] = None
         return state
 
     def __setstate__(self, state):
+        state['_mgmt_link_lock_async'] = asyncio.Lock()
         state['_keep_alive_thread'] = asyncio.ensure_future(self._keep_alive_async())
         self.__dict__.update(state)
 
@@ -497,10 +499,12 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         state = self.__dict__.copy()
         # remove inherited threading.Lock()
         state['_mgmt_link_lock'] = None
+        state['_mgmt_link_lock_async'] = None
         state['_keep_alive_thread'] = None
         return state
 
     def __setstate__(self, state):
+        state['_mgmt_link_lock_async'] = asyncio.Lock()
         state['_keep_alive_thread'] = asyncio.ensure_future(self._keep_alive_async())
         self.__dict__.update(state)
 
@@ -748,12 +752,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     def __getstate__(self):
         state = self.__dict__.copy()
         # remove inherited threading.Lock()
+        state['_mgmt_link_lock_async'] = None
         state['_mgmt_link_lock'] = None
         state['_received_messages'] = None
         state['_keep_alive_thread'] = None
         return state
 
     def __setstate__(self, state):
+        state['_mgmt_link_lock_async'] = asyncio.Lock()
         state['_received_messages'] = queue.Queue()
         state['_keep_alive_thread'] = asyncio.ensure_future(self._keep_alive_async())
         self.__dict__.update(state)
