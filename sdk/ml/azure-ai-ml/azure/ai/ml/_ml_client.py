@@ -684,6 +684,8 @@ class MLClient:
         """
         return self._workspace_hubs
 
+    @property
+    @experimental
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
         :return: FeatureStoreEntity operations

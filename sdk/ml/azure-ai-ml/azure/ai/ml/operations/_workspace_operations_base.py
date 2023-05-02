@@ -294,7 +294,7 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            
+
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
