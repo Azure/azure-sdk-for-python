@@ -59,7 +59,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert wps_connection.metadata is None
-        assert wps_connection.expiryTime = expiryTime
+        assert wps_connection.expiryTime == expiryTime
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummpy_pat_update"
 

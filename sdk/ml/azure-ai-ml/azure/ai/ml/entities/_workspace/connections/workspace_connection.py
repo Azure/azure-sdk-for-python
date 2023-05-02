@@ -104,7 +104,7 @@ class WorkspaceConnection(Resource):
         if not value:
             return
         self._type = camel_to_snake(value)
-    
+
     @property
     def expiryTime(self) -> str:
         """Secret expiry time for workspace connection.

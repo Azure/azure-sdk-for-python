@@ -19,8 +19,8 @@ class TestWorkspaceConnectionEntity:
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
-            expiryTime="2025-05-01 00:00:00"
-            metadata=None,
+            expiryTime="2025-05-01 00:00:00",
+            metadata=None
         )
 
         assert ws_connection.name == "dummy_connection"
