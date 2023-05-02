@@ -166,8 +166,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         if is_for_everyone:
             await self._call_connection_client.terminate_call(
                 self._call_connection_id,
-                repeatability_first_sent=get_repeatability_guid(),
-                repeatability_request_id=get_repeatability_timestamp(),
+                repeatability_first_sent=get_repeatability_timestamp(),
+                repeatability_request_id=get_repeatability_guid(),
                 **kwargs)
         else:
             await self._call_connection_client.hangup_call(
@@ -231,8 +231,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         return await self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
-            repeatability_first_sent=get_repeatability_guid(),
-            repeatability_request_id=get_repeatability_timestamp(),
+            repeatability_first_sent=get_repeatability_timestamp(),
+            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
     @distributed_trace_async
@@ -271,8 +271,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
-            repeatability_first_sent=get_repeatability_guid(),
-            repeatability_request_id=get_repeatability_timestamp(),
+            repeatability_first_sent=get_repeatability_timestamp(),
+            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
@@ -302,8 +302,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
             remove_participant_request,
-            repeatability_first_sent=get_repeatability_guid(),
-            repeatability_request_id=get_repeatability_timestamp(),
+            repeatability_first_sent=get_repeatability_timestamp(),
+            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
