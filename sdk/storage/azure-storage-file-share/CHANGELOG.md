@@ -3,6 +3,8 @@
 ## 12.13.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2023-01-03.
+- Added `access_rights` property to `Handle`.
 
 ## 12.12.0 (2023-04-12)
 

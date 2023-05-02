@@ -3,6 +3,8 @@
 ## 12.17.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2023-01-03.
+- Content length limit increased from 4 MiB to 100 MiB for `append_block` and `append_block_from_url` APIs and their async equivalents.
 
 ## 12.16.0 (2023-04-12)
 
