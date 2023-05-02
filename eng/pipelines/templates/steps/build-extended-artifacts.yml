@@ -83,6 +83,11 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'packages_extended'
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'

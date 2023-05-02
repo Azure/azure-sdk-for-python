@@ -113,7 +113,7 @@ steps:
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()
     inputs:
-      artifactName: 'packages'
+      artifactName: 'packages_extended'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_bandit.yml
