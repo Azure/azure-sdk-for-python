@@ -6,7 +6,9 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+import sys
 from enum import Enum
+from typing import Dict, List, TYPE_CHECKING
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -22,6 +24,23 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
+
+if sys.version_info >= (3, 11):
+    from typing import Self # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Self # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.storage.blob import (
+        BlobType,
+        ContentSettings,
+        CopyProperties,
+        ImmutabilityPolicy,
+        LeaseProperties,
+        ObjectReplicationPolicy,
+        StandardBlobTier
+    )
 
 
 def parse_page_list(page_list):
@@ -516,11 +535,11 @@ class BlobProperties(DictMixin):
     """The container in which the blob resides."""
     snapshot: str
     """Datetime value that uniquely identifies the blob snapshot."""
-    blob_type: ~azure.blob.storage.BlobType
+    blob_type: "BlobType"
     """String indicating this blob's type."""
     metadata: Dict[str, str]
     """Name-value pairs associated with the blob as metadata."""
-    last_modified: ~datetime.datetime
+    last_modified: "datetime"
     """A datetime object representing the last time the blob was modified."""
     etag: str
     """The ETag contains a value that you can use to perform operations
@@ -543,13 +562,13 @@ class BlobProperties(DictMixin):
         concurrent writes."""
     server_encrypted: bool
     """Set to true if the blob is encrypted on the server."""
-    copy: ~azure.storage.blob.CopyProperties
+    copy: "CopyProperties"
     """Stores all the copy properties for the blob."""
-    content_settings: ~azure.storage.blob.ContentSettings
+    content_settings: "ContentSettings"
     """Stores all the content settings for the blob."""
-    lease: ~azure.storage.blob.LeaseProperties
+    lease: "LeaseProperties"
     """Stores all the lease information for the blob."""
-    blob_tier: ~azure.storage.blob.StandardBlobTier
+    blob_tier: "StandardBlobTier"
     """Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
@@ -558,18 +577,18 @@ class BlobProperties(DictMixin):
         with flexible latency requirements."""
     rehydrate_priority: str
     """Indicates the priority with which to rehydrate an archived blob"""
-    blob_tier_change_time: ~datetime.datetime
+    blob_tier_change_time: "datetime"
     """Indicates when the access tier was last changed."""
     blob_tier_inferred: bool
     """Indicates whether the access tier was inferred by the service.
         If false, it indicates that the tier was set explicitly."""
     deleted: bool
     """Whether this blob was deleted."""
-    deleted_time: ~datetime.datetime
+    deleted_time: "datetime"
     """A datetime object representing the time at which the blob was deleted."""
     remaining_retention_days: int
     """The number of days that the blob will be retained before being permanently deleted by the service."""
-    creation_time: ~datetime.datetime
+    creation_time: "datetime"
     """Indicates when the blob was created, in UTC."""
     archive_status: str
     """Archive status of blob."""
@@ -582,7 +601,7 @@ class BlobProperties(DictMixin):
         container-level scope is configured to allow overrides. Otherwise an error will be raised."""
     request_server_encrypted: bool
     """Whether this blob is encrypted."""
-    object_replication_source_properties: List[~azure.storage.blob.ObjectReplicationPolicy]
+    object_replication_source_properties: List["ObjectReplicationPolicy"]
     """Only present for blobs that have policy ids and rule ids applied to them.
 
         .. versionadded:: 12.4.0"""
@@ -590,7 +609,7 @@ class BlobProperties(DictMixin):
     """Represents the Object Replication Policy Id that created this blob.
 
         .. versionadded:: 12.4.0"""
-    last_accessed_on: ~datetime.datetime
+    last_accessed_on: "datetime"
     """Indicates when the last Read/Write operation was performed on a Blob.
 
         .. versionadded:: 12.6.0"""
@@ -606,7 +625,7 @@ class BlobProperties(DictMixin):
     """A true value indicates the root blob is deleted
 
         .. versionadded:: 12.10.0"""
-    immutability_policy: ~azure.storage.blob.ImmutabilityPolicy
+    immutability_policy: "ImmutabilityPolicy"
     """Specifies the immutability policy of a blob, blob snapshot or blob version.
 
         .. versionadded:: 12.10.0
