@@ -61,11 +61,11 @@
         }
     ],
     "outputs": {
-        "AZURE_HEALTH_INSIGHTS_API_KEY": {
+        "HEALTHINSIGHTS_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')), '2017-04-18').key1]"
         },
-        "AZURE_HEALTH_INSIGHTS_ENDPOINT": {
+        "HEALTHINSIGHTS_ENDPOINT": {
             "type": "string",
             "value": "[variables('endpointValue')]"
         }
