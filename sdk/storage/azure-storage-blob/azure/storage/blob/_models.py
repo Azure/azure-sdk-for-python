@@ -508,125 +508,115 @@ class ImmutabilityPolicy(DictMixin):
 
 
 class BlobProperties(DictMixin):
-    """
-    Blob Properties.
+    """Blob Properties."""
 
-    :ivar str name:
-        The name of the blob.
-    :ivar str container:
-        The container in which the blob resides.
-    :ivar str snapshot:
-        Datetime value that uniquely identifies the blob snapshot.
-    :ivar ~azure.blob.storage.BlobType blob_type:
-        String indicating this blob's type.
-    :ivar dict metadata:
-        Name-value pairs associated with the blob as metadata.
-    :ivar ~datetime.datetime last_modified:
-        A datetime object representing the last time the blob was modified.
-    :ivar str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :ivar int size:
-        The size of the content returned. If the entire blob was requested,
+    name: str
+    """The name of the blob."""
+    container: str
+    """The container in which the blob resides."""
+    snapshot: str
+    """Datetime value that uniquely identifies the blob snapshot."""
+    blob_type: ~azure.blob.storage.BlobType
+    """String indicating this blob's type."""
+    metadata: Dict[str, str]
+    """Name-value pairs associated with the blob as metadata."""
+    last_modified: ~datetime.datetime
+    """A datetime object representing the last time the blob was modified."""
+    etag: str
+    """The ETag contains a value that you can use to perform operations
+        conditionally."""
+    size: int
+    """The size of the content returned. If the entire blob was requested,
         the length of blob in bytes. If a subset of the blob was requested, the
-        length of the returned subset.
-    :ivar str content_range:
-        Indicates the range of bytes returned in the event that the client
-        requested a subset of the blob.
-    :ivar int append_blob_committed_block_count:
-        (For Append Blobs) Number of committed blocks in the blob.
-    :ivar bool is_append_blob_sealed:
-        Indicate if the append blob is sealed or not.
+        length of the returned subset."""
+    content_range: str
+    """Indicates the range of bytes returned in the event that the client
+        requested a subset of the blob."""
+    append_blob_committed_block_count: int
+    """(For Append Blobs) Number of committed blocks in the blob."""
+    is_append_blob_sealed: bool
+    """Indicate if the append blob is sealed or not.
 
-        .. versionadded:: 12.4.0
-
-    :ivar int page_blob_sequence_number:
-        (For Page Blobs) Sequence number for page blob used for coordinating
-        concurrent writes.
-    :ivar bool server_encrypted:
-        Set to true if the blob is encrypted on the server.
-    :ivar ~azure.storage.blob.CopyProperties copy:
-        Stores all the copy properties for the blob.
-    :ivar ~azure.storage.blob.ContentSettings content_settings:
-        Stores all the content settings for the blob.
-    :ivar ~azure.storage.blob.LeaseProperties lease:
-        Stores all the lease information for the blob.
-    :ivar ~azure.storage.blob.StandardBlobTier blob_tier:
-        Indicates the access tier of the blob. The hot tier is optimized
+        .. versionadded:: 12.4.0"""
+    page_blob_sequence_number: int
+    """(For Page Blobs) Sequence number for page blob used for coordinating
+        concurrent writes."""
+    server_encrypted: bool
+    """Set to true if the blob is encrypted on the server."""
+    copy: ~azure.storage.blob.CopyProperties
+    """Stores all the copy properties for the blob."""
+    content_settings: ~azure.storage.blob.ContentSettings
+    """Stores all the content settings for the blob."""
+    lease: ~azure.storage.blob.LeaseProperties
+    """Stores all the lease information for the blob."""
+    blob_tier: ~azure.storage.blob.StandardBlobTier
+    """Indicates the access tier of the blob. The hot tier is optimized
         for storing data that is accessed frequently. The cool storage tier
         is optimized for storing data that is infrequently accessed and stored
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
-        with flexible latency requirements.
-    :ivar str rehydrate_priority:
-        Indicates the priority with which to rehydrate an archived blob
-    :ivar ~datetime.datetime blob_tier_change_time:
-        Indicates when the access tier was last changed.
-    :ivar bool blob_tier_inferred:
-        Indicates whether the access tier was inferred by the service.
-        If false, it indicates that the tier was set explicitly.
-    :ivar bool deleted:
-        Whether this blob was deleted.
-    :ivar ~datetime.datetime deleted_time:
-        A datetime object representing the time at which the blob was deleted.
-    :ivar int remaining_retention_days:
-        The number of days that the blob will be retained before being permanently deleted by the service.
-    :ivar ~datetime.datetime creation_time:
-        Indicates when the blob was created, in UTC.
-    :ivar str archive_status:
-        Archive status of blob.
-    :ivar str encryption_key_sha256:
-        The SHA-256 hash of the provided encryption key.
-    :ivar str encryption_scope:
-        A predefined encryption scope used to encrypt the data on the service. An encryption
+        with flexible latency requirements."""
+    rehydrate_priority: str
+    """Indicates the priority with which to rehydrate an archived blob"""
+    blob_tier_change_time: ~datetime.datetime
+    """Indicates when the access tier was last changed."""
+    blob_tier_inferred: bool
+    """Indicates whether the access tier was inferred by the service.
+        If false, it indicates that the tier was set explicitly."""
+    deleted: bool
+    """Whether this blob was deleted."""
+    deleted_time: ~datetime.datetime
+    """A datetime object representing the time at which the blob was deleted."""
+    remaining_retention_days: int
+    """The number of days that the blob will be retained before being permanently deleted by the service."""
+    creation_time: ~datetime.datetime
+    """Indicates when the blob was created, in UTC."""
+    archive_status: str
+    """Archive status of blob."""
+    encryption_key_sha256: str
+    """The SHA-256 hash of the provided encryption key."""
+    encryption_scope: str
+    """A predefined encryption scope used to encrypt the data on the service. An encryption
         scope can be created using the Management API and referenced here by name. If a default
         encryption scope has been defined at the container, this value will override it if the
-        container-level scope is configured to allow overrides. Otherwise an error will be raised.
-    :ivar bool request_server_encrypted:
-        Whether this blob is encrypted.
-    :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
-        Only present for blobs that have policy ids and rule ids applied to them.
+        container-level scope is configured to allow overrides. Otherwise an error will be raised."""
+    request_server_encrypted: bool
+    """Whether this blob is encrypted."""
+    object_replication_source_properties: List[~azure.storage.blob.ObjectReplicationPolicy]
+    """Only present for blobs that have policy ids and rule ids applied to them.
 
-        .. versionadded:: 12.4.0
+        .. versionadded:: 12.4.0"""
+    object_replication_destination_policy: str
+    """Represents the Object Replication Policy Id that created this blob.
 
-    :ivar str object_replication_destination_policy:
-        Represents the Object Replication Policy Id that created this blob.
+        .. versionadded:: 12.4.0"""
+    last_accessed_on: ~datetime.datetime
+    """Indicates when the last Read/Write operation was performed on a Blob.
 
-        .. versionadded:: 12.4.0
+        .. versionadded:: 12.6.0"""
+    tag_count: int
+    """Tags count on this blob.
 
-    :ivar ~datetime.datetime last_accessed_on:
-        Indicates when the last Read/Write operation was performed on a Blob.
+        .. versionadded:: 12.4.0"""
+    tags: Dict[str, str]
+    """Key value pair of tags on this blob.
 
-        .. versionadded:: 12.6.0
+        .. versionadded:: 12.4.0"""
+    has_versions_only: bool
+    """A true value indicates the root blob is deleted
 
-    :ivar int tag_count:
-        Tags count on this blob.
-
-        .. versionadded:: 12.4.0
-
-    :ivar dict(str, str) tags:
-        Key value pair of tags on this blob.
-
-        .. versionadded:: 12.4.0
-    :ivar bool has_versions_only:
-        A true value indicates the root blob is deleted
-
-        .. versionadded:: 12.10.0
-
-    :ivar ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-        Specifies the immutability policy of a blob, blob snapshot or blob version.
+        .. versionadded:: 12.10.0"""
+    immutability_policy: ~azure.storage.blob.ImmutabilityPolicy
+    """Specifies the immutability policy of a blob, blob snapshot or blob version.
 
         .. versionadded:: 12.10.0
-            This was introduced in API version '2020-10-02'.
-
-    :ivar bool has_legal_hold:
-        Specified if a legal hold should be set on the blob.
+            This was introduced in API version '2020-10-02'."""
+    has_legal_hold: bool
+    """Specified if a legal hold should be set on the blob.
         Currently this parameter of upload_blob() API is for BlockBlob only.
 
         .. versionadded:: 12.10.0
-            This was introduced in API version '2020-10-02'.
-
-    """
+            This was introduced in API version '2020-10-02'."""
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
