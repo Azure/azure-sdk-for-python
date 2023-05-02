@@ -10,7 +10,7 @@ from typing import List
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._client import EventGridClient as ServiceClientGenerated
-from ._legacy import EventGridPublisherClient
+from ._legacy import EventGridPublisherClient, SystemEventNames, EventGridEvent, generate_sas
 
 
 class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
@@ -56,4 +56,7 @@ def patch_sdk():
 __all__: List[str] = [
     "EventGridClient",
     "EventGridPublisherClient",
+    "SystemEventNames",
+    "EventGridEvent",
+    "generate_sas",
 ]  # Add all objects you want publicly available to users at this package level
