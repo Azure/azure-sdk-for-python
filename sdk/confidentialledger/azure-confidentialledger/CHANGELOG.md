@@ -12,7 +12,7 @@ Add support for computing the claims digest from Azure Confidential Ledger appli
 ### Other Changes
 - Add tests for application claims models and digest computation public method.
 
-## 1.1.0 (2022-12-21)
+## 1.1.0 (2023-05-09)
 Add `azure.confidentialledger.receipt` module for Azure Confidential Ledger write transaction receipt verification.
 
 ### Features Added
