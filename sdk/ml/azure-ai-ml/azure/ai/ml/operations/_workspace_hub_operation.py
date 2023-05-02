@@ -17,8 +17,9 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
+from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 
-from azure.ai.ml.constants._common import Scope
+from azure.ai.ml.constants._common import Scope, ArmConstants
 from azure.ai.ml.entities._workspace_hub._constants import WORKSPACE_HUB_KIND
 from ._workspace_operations_base import WorkspaceOperationsBase
 
@@ -181,5 +182,29 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
+        if rest_workspace_obj.storage_accounts is not None:
+            for storageaccount in rest_workspace_obj.storage_accounts:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    storageaccount,
+                    ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
+                )
+        if rest_workspace_obj.key_vaults is not None:
+            for keyvault in rest_workspace_obj.key_vaults:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    keyvault,
+                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
+                )
+        if rest_workspace_obj.container_registries is not None:
+            for containerregistry in rest_workspace_obj.container_registries:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    containerregistry,
+                    ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
+                )
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)

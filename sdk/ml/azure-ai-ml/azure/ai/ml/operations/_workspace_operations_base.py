@@ -262,7 +262,7 @@ class WorkspaceOperationsBase:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         # prevent dependent resource delete for lean workspace, only delete appinsight
-        if workspace._kind == LEAN_WORKSPACE_KIND:
+        if workspace._kind == LEAN_WORKSPACE_KIND and delete_dependent_resources:
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -294,32 +294,7 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            if workspace._kind == LEAN_WORKSPACE_KIND:
-                if workspace.storage_accounts is not None:
-                    for storageaccount in workspace.storage_accounts:
-                        delete_resource_by_arm_id(
-                            self._credentials,
-                            self._subscription_id,
-                            storageaccount,
-                            ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
-                        )
-                if workspace.key_vaults is not None:
-                    for keyvault in workspace.key_vaults:
-                        delete_resource_by_arm_id(
-                            self._credentials,
-                            self._subscription_id,
-                            keyvault,
-                            ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
-                        )
-                if workspace.container_registries is not None:
-                    for containerregistry in workspace.container_registries:
-                        delete_resource_by_arm_id(
-                            self._credentials,
-                            self._subscription_id,
-                            containerregistry,
-                            ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
-                        )
-
+            
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
