@@ -135,6 +135,11 @@ jobs:
       vmImage: MMSUbuntu20.04
 
     steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages'
+        targetPath: $(Build.ArtifactStagingDirectory)
+
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
