@@ -8,6 +8,7 @@ from typing import List
 
 from ci_tools.functions import find_whl
 
+
 def create_temp_directory(fake_creation_paths: List[str]) -> TemporaryDirectory:
     tmp_dir = TemporaryDirectory()
 
@@ -16,14 +17,14 @@ def create_temp_directory(fake_creation_paths: List[str]) -> TemporaryDirectory:
         dirname = os.path.join(tmp_dir.name, os.path.dirname(file))
 
         if not os.path.exists(dirname):
-            os.mkdir(dirname)    
-      
-        with open(target_path, 'w'):
+            os.mkdir(dirname)
+
+        with open(target_path, "w"):
             pass
-   
+
     return tmp_dir
 
-   
+
 def create_basic_temp_dir() -> TemporaryDirectory:
     tmp_dir = create_temp_directory(
         [
@@ -31,9 +32,13 @@ def create_basic_temp_dir() -> TemporaryDirectory:
             os.path.join("azure-core", "azure_core-1.26.5-py3-none-any.whl"),
             os.path.join("azure-core-experimental", "azure_core_experimental-1.0.0b3-py3-none-any.whl"),
             os.path.join("azure-tracing-opencensus", "azure_core_tracing_opencensus-1.0.0b9-py3-none-any.whl"),
-            os.path.join("azure-core-tracing-opentelemetry", "azure_core_tracing_opentelemetry-1.0.0b10-py3-none-any.whl"),
+            os.path.join(
+                "azure-core-tracing-opentelemetry", "azure_core_tracing_opentelemetry-1.0.0b10-py3-none-any.whl"
+            ),
             os.path.join("azure-mgmt-core", "azure_mgmt_core-1.4.0-py3-none-any.whl"),
-            os.path.join("azure-servicemanagement-legacy", "azure_servicemanagement_legacy-0.20.7-py2.py3-none-any.whl")
+            os.path.join(
+                "azure-servicemanagement-legacy", "azure_servicemanagement_legacy-0.20.7-py2.py3-none-any.whl"
+            ),
         ]
     )
     return tmp_dir
@@ -66,4 +71,3 @@ def test_find_whl_fails_on_incompatible_interpreter(test_patch):
     assert found is None
 
     tmp_dir.cleanup()
-
