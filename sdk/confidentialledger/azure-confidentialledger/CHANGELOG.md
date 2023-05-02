@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (2023-04-26)
+## 1.2.0 (2023-05-09)
 Add support for computing the claims digest from Azure Confidential Ledger application claims in the `azure.confidentialledger.receipt` module.
 
 ### Features Added
