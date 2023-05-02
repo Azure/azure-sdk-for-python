@@ -126,9 +126,9 @@ class TestFeatureSetOperations:
     def test_archive_version(self, mock_feature_set_operations: FeatureSetOperations):
         name = "random_name"
         featureset_version = Mock(
-            FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"], is_archived=False)))
+            FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"])))
         )
-        featureset_version.properties.is_archived = False
+        featureset_version.properties.stage = "Development"
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.archive(name=name, version=version)
@@ -143,6 +143,7 @@ class TestFeatureSetOperations:
     def test_restore_version(self, mock_feature_set_operations: FeatureSetOperations):
         name = "random_name"
         featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"]))))
+        featureset_version.properties.stage = "Archived"
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.restore(name=name, version=version)
