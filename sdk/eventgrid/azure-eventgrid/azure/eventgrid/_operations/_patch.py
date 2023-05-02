@@ -156,7 +156,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         for detail_item in received_result.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
             detail_item["event"] = deserialized_cloud_event
-            detail_items.append(ReceiveDetails(event=detail_item.event, broker_properties=detail_item.broker_properties))
+            detail_items.append(ReceiveDetails(event=detail_item.get("event"), broker_properties=detail_item.get("brokerProperties")))
         receive_result_deserialized["value"] = detail_items
         return receive_result_deserialized
 
