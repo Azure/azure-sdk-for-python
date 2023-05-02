@@ -964,6 +964,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: The digest and size in bytes of the uploaded blob.
         :rtype: Tuple[str, int]
         :raises ValueError: If the parameter repository or data is None.
+        :raises ~azure.containerregistry.ManifestDigestValidationException:
+            If the server-computed digest does not match the client-computed digest.
         """
         try:
             start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
@@ -981,6 +983,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
+            if digest != complete_upload_response_headers["Docker-Content-Digest"]:
+                raise ManifestDigestValidationException(
+                    "The server-computed digest does not match the client-computed digest."
+                )
         except Exception as e:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.") from e
@@ -1012,7 +1018,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str digest: The digest of the blob to download.
         :returns: DownloadBlobStream
         :rtype: ~azure.containerregistry.DownloadBlobStream
-        :raises ValueError: If the requested digest does not match the digest of the received blob.
+        :raises ManifestDigestValidationException:
+            If the requested digest does not match the digest of the received blob.
         """
         end_range = DEFAULT_CHUNK_SIZE - 1
         first_chunk, headers = cast(
