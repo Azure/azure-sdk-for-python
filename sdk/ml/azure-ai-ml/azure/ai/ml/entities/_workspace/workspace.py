@@ -48,10 +48,6 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
-        storage_accounts: Optional[List[str]] = None,
-        key_vaults: Optional[List[str]] = None,
-        container_registries: Optional[List[str]] = None,
-        existing_workspaces: Optional[List[str]] = None,
         workspace_hub: Optional["Workspace"] = None,
         hub_resource_id: Optional[str] = None,
         **kwargs,
@@ -130,10 +126,6 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
-        self.storage_accounts = storage_accounts
-        self.key_vaults = key_vaults
-        self.container_registries = container_registries
-        self.existing_workspaces = existing_workspaces
         self.hub_resource_id = hub_resource_id
 
         if workspace_hub:
@@ -148,10 +140,6 @@ class Workspace(Resource):
                     key_vault,
                     public_network_access,
                     managed_network,
-                    storage_accounts,
-                    key_vaults,
-                    container_registries,
-                    existing_workspaces,
                     customer_managed_key,
                 ]
             ):

@@ -826,8 +826,8 @@ def load_workspace_hub(
     relative_origin: Optional[str] = None,
     **kwargs,
 ) -> WorkspaceHub:
-    """Load a feature store object from a yaml file.
-    :param source: The local yaml source of a feature store. Must be either a
+    """Load a WorkspaceHub object from a yaml file.
+    :param source: The local yaml source of a WorkspaceHub. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
         An exception is raised if the file does not exist.
@@ -842,8 +842,8 @@ def load_workspace_hub(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :return: Loaded feature store object.
-    :rtype: _FeatureStore
+    :return: Loaded WorkspaceHub object.
+    :rtype: WorkspaceHub
     """
     return load_common(WorkspaceHub, source, relative_origin, **kwargs)
 
