@@ -156,7 +156,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_start_continuous_dtmf_recognition(self):
         mock_start_continuous_dtmf_recognition = Mock()
         self.call_media_operations.start_continuous_dtmf_recognition = mock_start_continuous_dtmf_recognition
-        self.call_media_client.start_continuous_dtmf_recognition(target=self.target_user)
+        self.call_media_client.start_continuous_dtmf_recognition(target_participant=self.target_user)
 
         expected_continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=_communication_identifier_serializer.serialize_identifier(self.target_user))
@@ -174,7 +174,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_stop_continuous_dtmf_recognition(self):
         mock_stop_continuous_dtmf_recognition = Mock()
         self.call_media_operations.stop_continuous_dtmf_recognition = mock_stop_continuous_dtmf_recognition
-        self.call_media_client.stop_continuous_dtmf_recognition(target=self.target_user)
+        self.call_media_client.stop_continuous_dtmf_recognition(target_participant=self.target_user)
 
         expected_continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=_communication_identifier_serializer.serialize_identifier(self.target_user))
@@ -192,7 +192,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_send_dtmf(self):
         mock_send_dtmf = Mock()
         self.call_media_operations.send_dtmf = mock_send_dtmf
-        self.call_media_client.send_dtmf(target=self.target_user,
+        self.call_media_client.send_dtmf(target_participant=self.target_user,
                                          tones=self.tones,
                                          operation_context=self.operation_context)
 
