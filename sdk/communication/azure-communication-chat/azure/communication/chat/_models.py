@@ -297,10 +297,7 @@ class ChatRetentionPolicy(object):
     :vartype kind: str or ~azure.communication.chat.models.RetentionPolicyKind
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.kind: Optional[str] = None
 
 
