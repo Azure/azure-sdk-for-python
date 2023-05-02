@@ -39,7 +39,7 @@ async def run_sample():
     # First, let's fetch the settings that apply to our Managed HSM
     # Each setting has a name, value, and type (for example, KeyVaultSettingType.BOOLEAN)
     print("\n.. List Key Vault settings")
-    settings = await client.list_settings()
+    settings = client.list_settings()
     boolean_setting = None
     async for setting in settings:
         if setting.setting_type == KeyVaultSettingType.BOOLEAN:
