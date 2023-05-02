@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel"]  # Requires 61.0.0 for dynamic version
-# build-backend = "setuptools.build_meta:__legacy__"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "azure-keyvault-keys"
