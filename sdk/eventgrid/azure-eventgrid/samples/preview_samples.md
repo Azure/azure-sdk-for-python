@@ -176,7 +176,7 @@ if len(acknowledge_events) > 0:
 
 if len(reject_events) > 0:
     try:
-        reeject_result = client.reject_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_events)
+        reject_result = client.reject_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_events)
     except HttpResponseError:
         raise
 
