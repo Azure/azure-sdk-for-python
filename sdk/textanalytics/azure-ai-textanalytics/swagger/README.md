@@ -36,7 +36,7 @@ batch:
   - tag: release_3_0
   - tag: release_3_1
   - tag: release_2022_05_01
-  - tag: release_2022_10_01_preview
+  - tag: release_2023_04_01
   - multiapiscript: true
 ```
 
@@ -79,14 +79,14 @@ namespace: azure.ai.textanalytics.v2022_05_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_05_01
 ```
 
-## Release v2022_10_01_preview
+## Release v2023_04_01
 
-These settings apply only when `--tag=release_2022_10_01_preview` is specified on the command line.
+These settings apply only when `--tag=release_2023_04_01` is specified on the command line.
 
-```yaml $(tag) == 'release_2022_10_01_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/72664c83300dfaf6782e22822a5aae0b0df92735/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
-namespace: azure.ai.textanalytics.v2022_10_01_preview
-output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_10_01_preview
+```yaml $(tag) == 'release_2023_04_01'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/b3866e06a1d2df621133b413dee00289e6a2bad2/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzetext.json
+namespace: azure.ai.textanalytics.v2023_04_01
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2023_04_01
 ```
 
 ### Override Analyze's pager poller for v3.1
@@ -117,7 +117,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override Analyze's pager poller for 2022_05_01 and 2022_10_01_preview
+### Override Analyze's pager poller for 2022_05_01 and 2023_04_01
 
 ```yaml
 directive:
@@ -190,20 +190,4 @@ directive:
   - from: swagger-document
     where: $.definitions.JobState
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
-```
-
-
-### Remove unsupported BooleanResolution
-
-``` yaml
-directive:
-- from: swagger-document
-  where: $.definitions
-  transform: >
-    delete $["BooleanResolution"]
-- from: swagger-document
-  where: $.definitions.BaseResolution.properties.resolutionKind.enum
-  transform: >
-    $.splice($.indexOf("BooleanResolution"), 1);
-    return $;
 ```
