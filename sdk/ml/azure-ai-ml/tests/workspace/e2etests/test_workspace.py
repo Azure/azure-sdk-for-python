@@ -415,7 +415,7 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace_hub_obj = WorkspaceHub(
             name=hub_name, description=hub_description, display_name=hub_display_name, location=location
         )
-        workspace_hub = client.hubs.begin_create(workspace_hub=workspace_hub_obj).result()
+        workspace_hub = client.workspace_hubs.begin_create(workspace_hub=workspace_hub_obj).result()
 
         wps_name = f"e2etest_{randstr('wsp_name_hub')}"
         wps_description = f"{wps_name} description"
@@ -439,4 +439,4 @@ class TestWorkspace(AzureRecordedTestCase):
         assert poller
         assert isinstance(poller, LROPoller)
         poller.result()
-        client.hubs.begin_delete(hub_name, delete_dependent_resources=True).result()
+        client.workspace_hubs.begin_delete(hub_name, delete_dependent_resources=True).result()

@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, List, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity

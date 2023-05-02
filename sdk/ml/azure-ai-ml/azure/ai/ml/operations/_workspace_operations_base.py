@@ -37,7 +37,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace_hub._constants import LEAN_WORKSPACE_KIND
+from azure.ai.ml.entities._workspace_hub._constants import LEAN_WORKSPACE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -294,30 +294,31 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            if workspace.storage_accounts is not None:
-                for storageaccount in workspace.storage_accounts:
-                    delete_resource_by_arm_id(
-                        self._credentials,
-                        self._subscription_id,
-                        storageaccount,
-                        ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
-                    )
-            if workspace.key_vaults is not None:
-                for keyvault in workspace.key_vaults:
-                    delete_resource_by_arm_id(
-                        self._credentials,
-                        self._subscription_id,
-                        keyvault,
-                        ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
-                    )
-            if workspace.container_registries is not None:
-                for containerregistry in workspace.container_registries:
-                    delete_resource_by_arm_id(
-                        self._credentials,
-                        self._subscription_id,
-                        containerregistry,
-                        ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
-                    )
+            if workspace._kind == LEAN_WORKSPACE_KIND:
+                if workspace.storage_accounts is not None:
+                    for storageaccount in workspace.storage_accounts:
+                        delete_resource_by_arm_id(
+                            self._credentials,
+                            self._subscription_id,
+                            storageaccount,
+                            ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
+                        )
+                if workspace.key_vaults is not None:
+                    for keyvault in workspace.key_vaults:
+                        delete_resource_by_arm_id(
+                            self._credentials,
+                            self._subscription_id,
+                            keyvault,
+                            ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
+                        )
+                if workspace.container_registries is not None:
+                    for containerregistry in workspace.container_registries:
+                        delete_resource_by_arm_id(
+                            self._credentials,
+                            self._subscription_id,
+                            containerregistry,
+                            ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
+                        )
 
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
@@ -502,18 +503,20 @@ class WorkspaceOperationsBase:
             _set_val(param["enable_data_isolation"], "true")
 
         # Hub related param
-        if workspace.storage_accounts:
-            _set_val(param["storage_accounts"], workspace.storage_accounts)
-        if workspace.key_vaults:
-            _set_val(param["key_vaults"], workspace.key_vaults)
-        if workspace.container_registries:
-            _set_val(param["container_registies"], workspace.container_registries)
-        if workspace.existing_workspaces:
-            _set_val(param["existing_workspaces"], workspace.existing_workspaces)
+        if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
+            if workspace.storage_accounts:
+                _set_val(param["storage_accounts"], workspace.storage_accounts)
+            if workspace.key_vaults:
+                _set_val(param["key_vaults"], workspace.key_vaults)
+            if workspace.container_registries:
+                _set_val(param["container_registies"], workspace.container_registries)
+            if workspace.existing_workspaces:
+                _set_val(param["existing_workspaces"], workspace.existing_workspaces)
 
         # Lean related param
-        if workspace.hub_resource_id:
-            _set_val(param["hub_resource_id"], workspace.hub_resource_id)
+        if workspace._kind and workspace._kind.lower() == LEAN_WORKSPACE_KIND:
+            if workspace.hub_resource_id:
+                _set_val(param["hub_resource_id"], workspace.hub_resource_id)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed
