@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, Optional, Any, TypeVar
+from typing import TYPE_CHECKING, Dict, Optional, TypeVar
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
