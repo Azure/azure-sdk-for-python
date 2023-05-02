@@ -6,7 +6,6 @@
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
-from ._call_automation_event_parser import CallAutomationEventParser
 from ._models import (
     CallConnectionProperties,
     ResultInformation,
@@ -15,7 +14,7 @@ from ._models import (
     GroupCallLocator,
     FileSource,
     CallParticipant,
-    RecordingStateResult,
+    RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
@@ -27,7 +26,11 @@ from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
-    CommunicationUserIdentifier
+    CommunicationUserIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationCloudEnvironment,
+    MicrosoftBotIdentifier,
+    UnknownIdentifier
 )
 from ._generated.models._enums import (
     CallRejectReason,
@@ -40,36 +43,13 @@ from ._generated.models._enums import (
     MediaStreamingContentType,
     MediaStreamingTransportType,
     DtmfTone,
-    CallConnectionState
-)
-from ._events import (
-    AddParticipantSucceededEventData,
-    AddParticipantFailedEventData,
-    CallConnectedEventData,
-    CallDisconnectedEventData,
-    CallTransferAcceptedEventData,
-    CallTransferFailedEventData,
-    ParticipantsUpdatedEventData,
-    RecordingStateChangedEventData,
-    PlayCompletedEventData,
-    PlayFailedEventData,
-    PlayCanceledEventData,
-    RecognizeCompletedEventData,
-    RecognizeCanceledEventData,
-    RecognizeFailedEventData,
-    RemoveParticipantSucceededEventData,
-    RemoveParticipantFailedEventData,
-    ContinuousDtmfRecognitionToneReceivedEventData,
-    ContinuousDtmfRecognitionToneFailedEventData,
-    ContinuousDtmfRecognitionStoppedEventData,
-    SendDtmfCompletedEventData,
-    SendDtmfFailedEventData
+    CallConnectionState,
+    RecognitionType
 )
 __all__ = [
     # clients and parser
     "CallAutomationClient",
     "CallConnectionClient",
-    "CallAutomationEventParser",
 
     # models for input
     "CallInvite",
@@ -81,7 +61,7 @@ __all__ = [
     "CallConnectionProperties",
     "ResultInformation",
     "CallParticipant",
-    "RecordingStateResult",
+    "RecordingProperties",
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
@@ -94,6 +74,10 @@ __all__ = [
     "PhoneNumberIdentifier",
     "MicrosoftTeamsUserIdentifier",
     "CommunicationUserIdentifier",
+    "CommunicationIdentifierKind",
+    "CommunicationCloudEnvironment",
+    "MicrosoftBotIdentifier",
+    "UnknownIdentifier",
 
     # enums
     "CallRejectReason",
@@ -107,28 +91,6 @@ __all__ = [
     "MediaStreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
-
-    # callback events model
-    "AddParticipantSucceededEventData",
-    "AddParticipantFailedEventData",
-    "CallConnectedEventData",
-    "CallDisconnectedEventData",
-    "CallTransferAcceptedEventData",
-    "CallTransferFailedEventData",
-    "ParticipantsUpdatedEventData",
-    "RecordingStateChangedEventData",
-    "PlayCompletedEventData",
-    "PlayFailedEventData",
-    "PlayCanceledEventData",
-    "RecognizeCompletedEventData",
-    "RecognizeCanceledEventData",
-    "RecognizeFailedEventData",
-    "RemoveParticipantSucceededEventData",
-    "RemoveParticipantFailedEventData",
-    "ContinuousDtmfRecognitionToneReceivedEventData",
-    "ContinuousDtmfRecognitionToneFailedEventData",
-    "ContinuousDtmfRecognitionStoppedEventData",
-    "SendDtmfCompletedEventData",
-    "SendDtmfFailedEventData"
+    "RecognitionType"
 ]
 __version__ = VERSION

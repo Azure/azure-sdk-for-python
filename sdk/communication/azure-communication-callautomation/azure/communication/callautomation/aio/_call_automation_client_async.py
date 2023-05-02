@@ -3,13 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, Dict
 from urllib.parse import urlparse
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
-from .._call_connection_client import CallConnectionClient
-from .._generated._client import AzureCommunicationCallAutomationService
+from ._call_connection_client_async import CallConnectionClient
+from .._generated.aio import AzureCommunicationCallAutomationService
 from .._shared.utils import (
     get_authentication_policy,
     parse_connection_str
@@ -24,9 +24,9 @@ from .._generated.models import (
 )
 from .._models import (
     CallConnectionProperties,
-    RecordingStateResult
+    RecordingProperties
 )
-from .._content_downloader import ContentDownloader
+from ._content_downloader_async import ContentDownloader
 from .._utils import (
     get_repeatability_guid,
     get_repeatability_timestamp,
@@ -57,6 +57,7 @@ if TYPE_CHECKING:
         RecordingChannel,
         RecordingFormat
     )
+    from azure.core.exceptions import HttpResponseError
 
 class CallAutomationClient(object):
     """A client to interact with the AzureCommunicationService CallAutomation service.
@@ -66,7 +67,8 @@ class CallAutomationClient(object):
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
     :param credential: The access key we use to authenticate against the service.
-    :type credential:AsyncTokenCredential or AzureKeyCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+     or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
     :keyword source_identity: ACS User Identity to be used when the call is created or answered.
@@ -171,7 +173,7 @@ class CallAutomationClient(object):
         :paramtype azure_cognitive_services_endpoint_url: str
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not target_participant:
             raise ValueError('target_participant cannot be None.')
@@ -246,7 +248,7 @@ class CallAutomationClient(object):
         :paramtype voip_headers: Dict[str, str]
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not target_participants:
             raise ValueError('target_participants cannot be None.')
@@ -305,7 +307,7 @@ class CallAutomationClient(object):
          :paramtype azure_cognitive_services_endpoint_url: str
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not incoming_call_context:
             raise ValueError('incoming_call_context cannot be None.')
@@ -347,7 +349,7 @@ class CallAutomationClient(object):
         :type target_participant: ~azure.communication.callautomation.CallInvite
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not incoming_call_context:
             raise ValueError('incoming_call_context cannot be None.')
@@ -388,7 +390,7 @@ class CallAutomationClient(object):
         :paramtype call_reject_reason: str or ~azure.communication.callautomation.CallRejectReason
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseErrorr
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not incoming_call_context:
             raise ValueError('incoming_call_context cannot be None.')
@@ -417,7 +419,7 @@ class CallAutomationClient(object):
         recording_storage_type: Optional[str] = None,
         external_storage_location: Optional[str] = None,
         **kwargs
-    ) -> RecordingStateResult:
+    ) -> RecordingProperties:
         """Start recording for a ongoing call. Locate the call with call locator.
 
         :param call_locator: The call locator to locate ongoing call.
@@ -444,8 +446,8 @@ class CallAutomationClient(object):
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'BlobStorage'.
         :paramtype external_storage_location: str
-        :return: RecordingStateResult
-        :rtype: ~azure.communication.callautomation.RecordingStateResult
+        :return: RecordingProperties
+        :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         start_recording_request = StartCallRecordingRequest(
@@ -462,10 +464,10 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_timestamp()
         )
 
-        recording_state_result = self._call_recording_client.start_recording(
+        recording_state_result = await self._call_recording_client.start_recording(
         start_call_recording = start_recording_request, **kwargs)
 
-        return await RecordingStateResult._from_generated(# pylint:disable=protected-access
+        return RecordingProperties._from_generated(# pylint:disable=protected-access
             recording_state_result)
 
     @distributed_trace_async
@@ -521,28 +523,29 @@ class CallAutomationClient(object):
         self,
         recording_id: str,
         **kwargs
-    ) -> RecordingStateResult:
+    ) -> RecordingProperties:
         """Get call recording properties.
 
         :param recording_id: The recording id.
         :type recording_id: str
-        :return: RecordingStateResult
-        :rtype: ~azure.communication.callautomation.RecordingStateResult
+        :return: RecordingProperties
+        :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        recording_state_result = self._call_recording_client.get_recording_properties(
+        recording_state_result = await self._call_recording_client.get_recording_properties(
             recording_id = recording_id, **kwargs)
-        return await RecordingStateResult._from_generated(# pylint:disable=protected-access
+        return RecordingProperties._from_generated(# pylint:disable=protected-access
             recording_state_result)
 
-    def download_recording(
+    @distributed_trace_async
+    async def download_recording(
         self,
         recording_url: str,
         *,
         offset: int = None,
         length: int = None,
         **kwargs
-    ) -> Iterable[bytes]:
+    ) -> AsyncIterable[bytes]:
         """Download a stream of the call recording.
 
         :param recording_url: Recording's url to be downloaded
@@ -553,10 +556,11 @@ class CallAutomationClient(object):
         :param length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
         :type length: int
-        :return: Iterable[bytes]
-        :rtype: Iterable[bytes]
+        :return: AsyncIterable[bytes]
+        :rtype: AsyncIterable[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        stream = self._downloader.download_streaming(
+        stream = await self._downloader.download_streaming(
             source_location = recording_url,
             offset = offset,
             length = length,
@@ -564,7 +568,8 @@ class CallAutomationClient(object):
         )
         return stream
 
-    def delete_recording(
+    @distributed_trace_async
+    async def delete_recording(
         self,
         recording_url: str,
         **kwargs
@@ -575,15 +580,16 @@ class CallAutomationClient(object):
         :type recording_url: str
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._downloader.delete_recording(recording_location = recording_url, **kwargs)
+        await self._downloader.delete_recording(recording_location = recording_url, **kwargs)
 
-    async def __enter__(self) -> "CallAutomationClient":
-        await self._client.__enter__()
+    async def __aenter__(self) -> "CallAutomationClient":
+        await self._client.__aenter__()
         return self
 
-    async def __exit__(self, *args) -> None:
+    async def __aexit__(self, *args) -> None:
         await self.close()
 
     async def close(self) -> None:
-        await self._client.__exit__()
+        await self._client.__aexit__()

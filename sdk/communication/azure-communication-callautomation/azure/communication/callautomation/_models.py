@@ -224,7 +224,7 @@ class CallConnectionProperties():
     :ivar targets: The targets of the call when the call was originally initiated.
     :vartype targets: list[~azure.communication.callautomation.CommunicationIdentifier]
     :ivar call_connection_state: The state of the call.
-    :vartype call_connection_state: str or CallConnectionState
+    :vartype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :ivar callback_url: The callback URL.
     :vartype callback_url: str
     :ivar media_subscription_id: SubscriptionId for media streaming.
@@ -287,6 +287,27 @@ class CallConnectionProperties():
             if call_connection_properties_generated.source_identity
             else None)
 
+class RecordingProperties(object):
+    """Detailed recording properties of the call.
+
+    :ivar recording_id: Id of this recording operation.
+    :vartype recording_id: str
+    :ivar recording_state: state of ongoing recording.
+    :vartype recording_state: str or ~azure.communication.callautomation.RecordingProperties
+    """
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.recording_id = kwargs['recording_id']
+        self.recording_state = kwargs['recording_state']
+
+    @classmethod
+    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
+        return cls(
+            recording_id=recording_state_result.recording_id,
+            recording_state=recording_state_result.recording_state)
+
 class ResultInformation(object):
     """ Result Information of the call.
     Contains detailed information of the call result,
@@ -343,27 +364,6 @@ class CallParticipant(object):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier),
             is_muted=call_participant_generated.is_muted)
-
-class RecordingStateResult(object):
-    """State result of ongoing recording.
-
-    :ivar recording_id: Id of this recording operation.
-    :vartype recording_id: str
-    :ivar recording_state: state of ongoing recording.
-    :vartype recording_state: str or ~azure.communication.callautomation.RecordingState
-    """
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.recording_id = kwargs['recording_id']
-        self.recording_state = kwargs['recording_state']
-
-    @classmethod
-    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
-        return cls(
-            recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state)
 
 class AddParticipantResult(object):
     """ The result payload for adding participants to the call.

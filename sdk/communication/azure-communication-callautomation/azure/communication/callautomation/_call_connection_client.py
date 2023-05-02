@@ -57,6 +57,7 @@ if TYPE_CHECKING:
         DtmfTone,
         RecognizeInputType
     )
+    from azure.core.exceptions import HttpResponseError
 
 class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with ongoing call. This client can be used to do mid-call actions,
@@ -66,6 +67,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     :type endpoint: str
     :param credential: The credentials with which to authenticate.
     :type credential: ~azure.core.credentials.TokenCredential
+     or ~azure.core.credentials.AzureKeyCredential
     :param call_connection_id: Call Connection ID of ongoing call.
     :type call_connection_id: str
     :keyword api_version: Azure Communication Call Automation API version.
@@ -133,11 +135,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
     def get_call_properties(self, **kwargs) -> CallConnectionProperties:
-        """Get the latest properties of the call.
+        """Get the latest properties of this call.
 
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
@@ -146,13 +148,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
     @distributed_trace
     def hang_up(self, is_for_everyone: bool, **kwargs) -> None:
-        """Hangup the call.
+        """Hangup this call.
 
-        :param is_for_everyone: Determine if the call should be ended for all participants.
+        :param is_for_everyone: Determine if this call should be ended for all participants.
         :type is_for_everyone: bool
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if is_for_everyone:
@@ -171,13 +173,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         **kwargs
     ) -> 'CallParticipant':
-        """Get details of a participant in a call.
+        """Get details of a participant in this call.
 
         :param target_participant: The participant to retrieve.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :return: CallParticipant
         :rtype: ~azure.communication.callautomation.CallParticipant
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         participant = self._call_connection_client.get_participant(
@@ -187,11 +189,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
     @distributed_trace
     def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
-        """List all participants from a call.
+        """List all participants in this call.
 
         :return: List of CallParticipant
         :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
 
@@ -203,15 +205,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> TransferCallResult:
-        """Transfer the call to a participant.
+        """Transfer this call to another participant.
 
         :param target_participant: The transfer target.
         :type target_participant: CallInvite
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
@@ -236,18 +238,18 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
-        """Add a participant to the call.
+        """Add a participant to this call.
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CallInvite
         :keyword invitation_timeout: Timeout to wait for the invited participant to pickup.
          The maximum value of this is 180 seconds.
         :paramtype invitation_timeout: int
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
@@ -277,15 +279,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
-        """Remove a participant from the call.
+        """Remove a participant from this call.
 
         :param  target_participant: The participant being removed.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
@@ -309,7 +311,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         loop: Optional[bool] = False,
         **kwargs
     ) -> None:
-        """Play media to specific participant(s) in the call.
+        """Play media to specific participant(s) in this call.
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource
@@ -319,7 +321,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype loop: bool
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not play_source:
@@ -342,7 +344,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         loop: Optional[bool] = False,
         **kwargs
     ) -> None:
-        """Play media to all participants in the call.
+        """Play media to all participants in this call.
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource
@@ -350,7 +352,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype loop: bool
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not play_source:
             raise ValueError('play_source cannot be None.')
@@ -373,7 +375,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         **kwargs
     ) -> None:
-        """Recognize tones from specific participant in the call.
+        """Recognize tones from specific participant in this call.
 
         :param input_type: Determines the type of the recognition.
         :type input_type: str or ~azure.communication.callautomation.RecognizeInputType
@@ -386,7 +388,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :keyword interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
         :paramtype interrupt_prompt: bool
@@ -395,10 +397,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected.
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
-        :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.Tone]
+        :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not input_type:
@@ -435,11 +437,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         self,
         **kwargs
     ) -> None:
-        """ Cancels all the queued media operations.
+        """Cancels all the ongoing and queued media operations for this call.
 
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
@@ -452,15 +454,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """ Start continuous Dtmf recognition by subscribing to tones.
+        """Start continuous Dtmf recognition by subscribing to tones.
 
         :param target: Target participant of continuous DTMF tone recognition.
         :type target: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not target:
@@ -487,11 +489,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target: Target participant of continuous DTMF tone recognition.
         :type target: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not target:
@@ -515,17 +517,17 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Send dtmf tones to the call.
+        """Send dtmf tones to this call.
 
         :param target: Target participant of Send DTMF tone.
         :type target: ~azure.communication.callautomation.CommunicationIdentifier
         :param tones: The captured tones.
         :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not target:
             raise ValueError('target cannot be None.')

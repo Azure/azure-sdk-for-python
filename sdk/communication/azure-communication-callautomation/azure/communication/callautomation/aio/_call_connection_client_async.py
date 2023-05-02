@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING, Optional, List, Union, cast
 from urllib.parse import urlparse
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -22,7 +23,7 @@ from .._models import (
     RemoveParticipantResult,
     TransferCallResult
 )
-from .._generated._client import AzureCommunicationCallAutomationService
+from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
     AddParticipantRequest,
     RemoveParticipantRequest,
@@ -41,7 +42,7 @@ from .._shared.utils import (
     parse_connection_str
 )
 if TYPE_CHECKING:
-    from .._call_automation_client import CallAutomationClient
+    from ._call_automation_client_async import CallAutomationClient
     from .._models  import (
         FileSource,
         CallInvite
@@ -59,6 +60,7 @@ if TYPE_CHECKING:
         DtmfTone,
         RecognizeInputType
     )
+    from azure.core.exceptions import HttpResponseError
 
 class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with ongoing call. This client can be used to do mid-call actions,
@@ -66,8 +68,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
-    :param credential: The credentials with which to authenticate.
-    :type credential: ~azure.core.credentials.AsyncTokenCredential
+    :param credential: The access key we use to authenticate against the service.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+     or ~azure.core.credentials.AzureKeyCredential
     :param call_connection_id: Call Connection ID of ongoing call.
     :type call_connection_id: str
     :keyword api_version: Azure Communication Call Automation API version.
@@ -134,15 +137,18 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Internal constructor for sharing the pipeline with CallAutomationClient."""
         return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
-    def get_call_properties(self, **kwargs) -> CallConnectionProperties:
+    @distributed_trace_async
+    async def get_call_properties(self, **kwargs) -> CallConnectionProperties:
         """Get the latest properties of the call.
 
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
+        call_properties = await self._call_connection_client.get_call(
+            call_connection_id=self._call_connection_id,
+            **kwargs)
 
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
@@ -154,7 +160,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type is_for_everyone: bool
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if is_for_everyone:
@@ -179,23 +185,23 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :return: CallParticipant
         :rtype: ~azure.communication.callautomation.CallParticipant
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        participant = self._call_connection_client.get_participant(
+        participant = await self._call_connection_client.get_participant(
             self._call_connection_id, target_participant.raw_id, **kwargs)
 
-        return await CallParticipant._from_generated(participant) # pylint:disable=protected-access
+        return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
-    @distributed_trace_async
-    async def list_participants(self, **kwargs) -> AsyncItemPaged[CallParticipant]:
+    @distributed_trace
+    def list_participants(self, **kwargs) -> AsyncItemPaged[CallParticipant]:
         """List all participants from a call.
 
         :return: List of CallParticipant
         :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
+        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
 
     @distributed_trace_async
     async def transfer_call_to_participant(
@@ -213,7 +219,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype operation_context: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
@@ -249,7 +255,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype operation_context: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
@@ -262,14 +268,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             invitation_timeout=invitation_timeout,
             operation_context=operation_context)
 
-        response = self._call_connection_client.add_participant(
+        response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
             repeatability_first_sent=get_repeatability_guid(),
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return await AddParticipantResult._from_generated(response) # pylint:disable=protected-access
+        return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def remove_participant(
@@ -287,20 +293,20 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype operation_context: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
             operation_context=operation_context)
 
-        response = self._call_connection_client.remove_participant(
+        response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
             remove_participant_request,
             repeatability_first_sent=get_repeatability_guid(),
             repeatability_request_id=get_repeatability_timestamp(),
             **kwargs)
 
-        return await RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
+        return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
 
     @distributed_trace_async
     async def play_media(
@@ -321,7 +327,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype loop: bool
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not play_source:
@@ -352,7 +358,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype loop: bool
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not play_source:
             raise ValueError('play_source cannot be None.')
@@ -397,10 +403,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected.
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
-        :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.Tone]
+        :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not input_type:
@@ -441,7 +447,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
@@ -462,7 +468,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype operation_context: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not target:
@@ -493,7 +499,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype operation_context: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not target:
@@ -527,7 +533,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype operation_context: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not target:
             raise ValueError('target cannot be None.')
@@ -542,12 +548,12 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             send_dtmf_request,
             **kwargs)
 
-    async def __enter__(self) -> "CallConnectionClient":
-        await self._client.__enter__()
+    async def __aenter__(self) -> "CallConnectionClient":
+        await self._client.__aenter__()
         return self
 
-    async def __exit__(self, *args) -> None:
+    async def __aexit__(self, *args) -> None:
         await self.close()
 
     async def close(self) -> None:
-        await self._client.__exit__()
+        await self._client.__aexit__()
