@@ -120,7 +120,7 @@ class RoomsSample(object):
         participants = [self.participant_1.communication_identifier]
 
         try:
-            self.rooms_client.remove_participants(room_id=room_id, participant_identifiers=participants)
+            self.rooms_client.remove_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
