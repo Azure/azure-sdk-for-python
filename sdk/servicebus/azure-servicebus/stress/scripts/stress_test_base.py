@@ -390,7 +390,6 @@ class StressTestRunnerAsync(StressTestRunner):
     async def _send_async(self, sender, end_time):
         self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
-            _logger.critical("STARTING SENDER")
             async with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     try:
@@ -441,7 +440,6 @@ class StressTestRunnerAsync(StressTestRunner):
     async def _receive_async(self, receiver, end_time):
         self._schedule_interval_logger(end_time, "Receiver " + str(self))
         try:
-            _logger.critical("STARTING RECEIVER")
             async with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     try:
