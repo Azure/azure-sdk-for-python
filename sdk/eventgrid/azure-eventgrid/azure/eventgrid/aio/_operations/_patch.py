@@ -7,7 +7,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
-from ...models._models import ReceiveResult, ReceiveDetails
+from ...models._patch import ReceiveResult, ReceiveDetails
 from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
@@ -121,14 +121,16 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+        detail_items = []
         receive_result_deserialized = ReceiveResult()
         receive_result = await self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
         )
-        for detail_item in receive_result.get("value"):
-            deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
-            detail_item["event"] = deserialized_cloud_event
-            receive_result_deserialized.value.append(ReceiveDetails(**detail_item))
+        for detail_item in receive_result.value:
+            deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
+            detail_item.event = deserialized_cloud_event
+            detail_items.append(ReceiveDetails(event=detail_item.event, broker_properties=detail_item.broker_properties))
+        receive_result_deserialized["value"] = detail_items
         return receive_result_deserialized
 
 

@@ -17,21 +17,20 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
 async def run():
-    # Publish a CloudEvent
-    try:
-        async with client:
+    async with client:
+        # Publish a CloudEvent
+        try:
             cloud_event = CloudEvent(data="HI", source="https://example.com", type="example")
             await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
-    except HttpResponseError:
-        raise
+        except HttpResponseError:
+            raise
 
-    # Publish a list of CloudEvents
-    try:
-        async with client:
+        # Publish a list of CloudEvents
+        try:
             list_of_cloud_events = [cloud_event, cloud_event]
             await client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
-    except HttpResponseError:
-        raise
+        except HttpResponseError:
+            raise
 
 
 if __name__ == '__main__':

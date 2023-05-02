@@ -9,7 +9,8 @@ import base64
 from typing import List, overload, Union, Any, Optional
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from azure.core.messaging import CloudEvent
-from ..models._models import CloudEvent as InternalCloudEvent, ReceiveResult
+from ..models._models import CloudEvent as InternalCloudEvent
+from ..models._patch import ReceiveResult, ReceiveDetails
 from azure.core.tracing.decorator import distributed_trace
 
 
@@ -148,16 +149,16 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         detail_items = []
-        receive_result = ReceiveResult()
-        received_response = self._receive_cloud_events(
+        receive_result_deserialized = ReceiveResult()
+        received_result = self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
         )
-        for detail_item in received_response.get("value"):
+        for detail_item in received_result.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
             detail_item["event"] = deserialized_cloud_event
-            detail_items.append(detail_item)
-        receive_result["value"] = detail_items
-        return receive_result
+            detail_items.append(ReceiveDetails(event=detail_item.event, broker_properties=detail_item.broker_properties))
+        receive_result_deserialized["value"] = detail_items
+        return receive_result_deserialized
 
 
 __all__: List[str] = [
