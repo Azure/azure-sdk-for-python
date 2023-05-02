@@ -52,7 +52,7 @@ for detail in receive_results.get("value"):
     broker_properties = detail.get("brokerProperties")
     if cloud_event.data == "release":
         release_events.append(broker_properties.get("lockToken"))
-    elif cloud_event.data == "acknowledge"
+    elif cloud_event.data == "acknowledge":
         acknowledge_events.append(broker_properties.get("lockToken"))
     else:
         reject_events.append(broker_properties.get("lockToken"))
@@ -61,7 +61,7 @@ for detail in receive_results.get("value"):
 
 if len(release_events) > 0:
     try:
-        release_result = client.release_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=release_events)
+        release_result = client.release_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=release_events)
     except HttpResponseError:
         raise
 
@@ -70,7 +70,7 @@ if len(release_events) > 0:
 
 if len(acknowledge_events) > 0:
     try:
-        ack_result = client.acknowledge_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=acknowledge_events)
+        ack_result = client.acknowledge_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=acknowledge_events)
     except HttpResponseError:
         raise
 
@@ -79,7 +79,7 @@ if len(acknowledge_events) > 0:
 
 if len(reject_events) > 0:
     try:
-        reject_result = client.reject_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_events)
+        reject_result = client.reject_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_events)
     except HttpResponseError:
         raise
 
