@@ -42,7 +42,6 @@ from ._lro import (
     AnalyzeActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
 )
-from ._generated.models import HealthcareDocumentType
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -637,7 +636,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="v3.1",
         args_mapping={
-            "2022-10-01-preview": ["fhir_version", "document_type"],
             "2022-05-01": ["display_name"]
         }
     )
@@ -648,8 +646,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
-        document_type: Optional[Union[str, HealthcareDocumentType]] = None,
-        fhir_version: Optional[str] = None,
         language: Optional[str] = None,
         model_version: Optional[str] = None,
         polling_interval: Optional[int] = None,
@@ -679,8 +675,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword str display_name: An optional display name to set for the requested analysis.
@@ -701,14 +696,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
-            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
-            The only acceptable values to pass in are None and "4.0.1". The default value is None.
-        :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
-            have fhir_version provided when used. Behavior of using None enum is the same as not using the
-            document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
-            "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
-        :paramtype document_type: str or ~azure.ai.textanalytics.HealthcareDocumentType
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
@@ -722,8 +709,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The *begin_analyze_healthcare_entities* client method.
         .. versionadded:: 2022-05-01
             The *display_name* keyword argument.
-        .. versionadded:: 2022-10-01-preview
-            The *fhir_version* and *document_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -787,8 +772,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
                                         string_index_type=string_index_type_compatibility(string_index_type_arg),
-                                        fhir_version=fhir_version,
-                                        document_type=document_type,
                                     )
                                 )
                             ]
@@ -1168,8 +1151,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1205,7 +1187,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             *MultiLabelClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
-        .. versionadded:: 2022-10-01-preview
+        .. versionadded:: 2023-04-01
             The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
             *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
 
@@ -1385,8 +1367,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1512,8 +1493,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1633,8 +1613,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1722,7 +1701,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     @distributed_trace
     @validate_multiapi_args(
-        version_method_added="2022-10-01-preview"
+        version_method_added="2023-04-01"
     )
     def begin_extract_summary(
         self,
@@ -1754,8 +1733,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1787,7 +1765,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2022-10-01-preview
+        .. versionadded:: 2023-04-01
             The *begin_extract_summary* client method.
 
         .. admonition:: Example:
@@ -1850,7 +1828,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     @distributed_trace
     @validate_multiapi_args(
-        version_method_added="2022-10-01-preview"
+        version_method_added="2023-04-01"
     )
     def begin_abstractive_summary(
         self,
@@ -1884,8 +1862,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1916,7 +1893,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AbstractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2022-10-01-preview
+        .. versionadded:: 2023-04-01
             The *begin_abstractive_summary* client method.
 
         .. admonition:: Example:

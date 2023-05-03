@@ -84,7 +84,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2023_04_01` is specified on the command line.
 
 ```yaml $(tag) == 'release_2023_04_01'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/b3866e06a1d2df621133b413dee00289e6a2bad2/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzetext.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/6998006d568863f8cb6efbd7314ddedf42f5d4a3/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzetext.json
 namespace: azure.ai.textanalytics.v2023_04_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2023_04_01
 ```
