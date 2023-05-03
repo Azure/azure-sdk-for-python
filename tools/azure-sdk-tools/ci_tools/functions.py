@@ -382,7 +382,7 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
-def find_whl(package_name: str, version: str, whl_directory: str) -> str:
+def build_temp_whl(package_name: str, version: str, whl_directory: str) -> str:
     """Helper function to find where the built whl resides.
 
     :param str package_name: the name of the package, e.g. azure-core
@@ -437,7 +437,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
         logging.info("Building wheel for package {}".format(parsed.name))
         create_package(req_pkg_path, temp_dir, enable_sdist=False)
 
-        whl_path = os.path.join(temp_dir, find_whl(parsed.name, parsed.version, temp_dir))
+        whl_path = os.path.join(temp_dir, build_temp_whl(parsed.name, parsed.version, temp_dir))
         logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))
         logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
         return whl_path
