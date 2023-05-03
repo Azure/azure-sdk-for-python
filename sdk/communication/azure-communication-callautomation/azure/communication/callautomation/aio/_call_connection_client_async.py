@@ -222,7 +222,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
+            voip_headers=target_participant.voip_headers,
+            sip_headers=target_participant.sip_headers
+            ) if target_participant.sip_headers or target_participant.voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant.target),
             transferee_caller_id=serialize_identifier(
@@ -258,7 +260,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
+            voip_headers=target_participant.voip_headers,
+            sip_headers=target_participant.sip_headers
+            ) if target_participant.sip_headers or target_participant.voip_headers else None
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant.target),
             source_caller_id_number=serialize_phone_identifier(
@@ -315,6 +319,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in the call.
@@ -325,19 +330,18 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not play_source:
-            raise ValueError('play_source cannot be None.')
-
         play_request = PlayRequest(
             play_source_info=play_source._to_generated(),#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
+            operation_context=operation_context
             **kwargs
         )
         await self._call_media_client.play(self._call_connection_id, play_request)
@@ -348,6 +352,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         play_source: 'FileSource',
         *,
         loop: Optional[bool] = False,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in the call.
@@ -356,14 +361,16 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type play_source: ~azure.communication.callautomation.FileSource
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not play_source:
-            raise ValueError('play_source cannot be None.')
-
-        await self.play_media(play_source=play_source, play_to=[], loop=loop, **kwargs)
+        await self.play_media(play_source=play_source, play_to=[],
+                              loop=loop,
+                              operation_context=operation_context,
+                              **kwargs)
 
     @distributed_trace_async
     async def start_recognizing_media(
@@ -408,13 +415,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not input_type:
-            raise ValueError('input_type cannot be None.')
-
-        if not target_participant:
-            raise ValueError('target_participant cannot be None.')
-
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
@@ -449,7 +449,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_media_client.cancel_all_media_operations(
+        await self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
 
     @distributed_trace_async
@@ -470,10 +470,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not target:
-            raise ValueError('target cannot be None.')
-
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target),
             operation_context=operation_context)
@@ -501,10 +497,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not target:
-            raise ValueError('target cannot be None.')
-
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target),
             operation_context=operation_context)
@@ -535,9 +527,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not target:
-            raise ValueError('target cannot be None.')
-
         send_dtmf_request = SendDtmfRequest(
             target_participant=serialize_identifier(target),
             tones=tones,

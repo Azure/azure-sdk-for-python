@@ -216,7 +216,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
+            voip_headers=target_participant.voip_headers,
+            sip_headers=target_participant.sip_headers
+            ) if target_participant.sip_headers or target_participant.voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant.target),
             transferee_caller_id=serialize_identifier(
@@ -252,7 +254,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers, sip_headers=target_participant.sip_headers)
+            voip_headers=target_participant.voip_headers,
+            sip_headers=target_participant.sip_headers
+            ) if target_participant.sip_headers or target_participant.voip_headers else None
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant.target),
             source_caller_id_number=serialize_phone_identifier(
@@ -309,6 +313,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
@@ -319,6 +324,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -328,6 +335,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
+            operation_context=operation_context
             **kwargs
         )
         self._call_media_client.play(self._call_connection_id, play_request)
@@ -338,6 +346,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         play_source: 'FileSource',
         *,
         loop: Optional[bool] = False,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in this call.
@@ -346,11 +355,17 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type play_source: ~azure.communication.callautomation.FileSource
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self.play_media(play_source=play_source, play_to=[], loop=loop, **kwargs)
+        self.play_media(play_source=play_source,
+                        play_to=[],
+                        loop=loop,
+                        operation_context=operation_context,
+                        **kwargs)
 
     @distributed_trace
     def start_recognizing_media(
