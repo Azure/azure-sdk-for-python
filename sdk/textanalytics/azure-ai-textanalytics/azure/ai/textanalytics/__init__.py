@@ -43,12 +43,6 @@ from ._models import (
     HealthcareRelationRole,
     HealthcareEntityAssertion,
     AnalyzeSentimentAction,
-    PiiEntityCategory,
-    HealthcareEntityRelation,
-    EntityConditionality,
-    EntityCertainty,
-    EntityAssociation,
-    HealthcareEntityCategory,
     RecognizeCustomEntitiesAction,
     RecognizeCustomEntitiesResult,
     SingleLabelClassifyAction,
@@ -64,6 +58,14 @@ from ._models import (
     AbstractiveSummary,
     SummaryContext,
     AbstractiveSummaryAction,
+)
+from ._generated.models import (
+    HealthcareEntityCategory,
+    EntityAssociation,
+    EntityCertainty,
+    EntityConditionality,
+    HealthcareEntityRelation,
+    PiiEntityCategory,
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 

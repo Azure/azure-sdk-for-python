@@ -3774,13 +3774,13 @@ class HealthcareAssertion(_serialization.Model):
 
     :ivar conditionality: Describes any conditionality on the entity. Known values are:
      "hypothetical" and "conditional".
-    :vartype conditionality: str or ~azure.ai.textanalytics.v2023_04_01.models.Conditionality
+    :vartype conditionality: str or ~azure.ai.textanalytics.v2023_04_01.models.EntityConditionality
     :ivar certainty: Describes the entities certainty and polarity. Known values are: "positive",
      "positivePossible", "neutralPossible", "negativePossible", and "negative".
-    :vartype certainty: str or ~azure.ai.textanalytics.v2023_04_01.models.Certainty
+    :vartype certainty: str or ~azure.ai.textanalytics.v2023_04_01.models.EntityCertainty
     :ivar association: Describes if the entity is the subject of the text or if it describes
      someone else. Known values are: "subject" and "other".
-    :vartype association: str or ~azure.ai.textanalytics.v2023_04_01.models.Association
+    :vartype association: str or ~azure.ai.textanalytics.v2023_04_01.models.EntityAssociation
     """
 
     _attribute_map = {
@@ -3792,21 +3792,22 @@ class HealthcareAssertion(_serialization.Model):
     def __init__(
         self,
         *,
-        conditionality: Optional[Union[str, "_models.Conditionality"]] = None,
-        certainty: Optional[Union[str, "_models.Certainty"]] = None,
-        association: Optional[Union[str, "_models.Association"]] = None,
+        conditionality: Optional[Union[str, "_models.EntityConditionality"]] = None,
+        certainty: Optional[Union[str, "_models.EntityCertainty"]] = None,
+        association: Optional[Union[str, "_models.EntityAssociation"]] = None,
         **kwargs
     ):
         """
         :keyword conditionality: Describes any conditionality on the entity. Known values are:
          "hypothetical" and "conditional".
-        :paramtype conditionality: str or ~azure.ai.textanalytics.v2023_04_01.models.Conditionality
+        :paramtype conditionality: str or
+         ~azure.ai.textanalytics.v2023_04_01.models.EntityConditionality
         :keyword certainty: Describes the entities certainty and polarity. Known values are:
          "positive", "positivePossible", "neutralPossible", "negativePossible", and "negative".
-        :paramtype certainty: str or ~azure.ai.textanalytics.v2023_04_01.models.Certainty
+        :paramtype certainty: str or ~azure.ai.textanalytics.v2023_04_01.models.EntityCertainty
         :keyword association: Describes if the entity is the subject of the text or if it describes
          someone else. Known values are: "subject" and "other".
-        :paramtype association: str or ~azure.ai.textanalytics.v2023_04_01.models.Association
+        :paramtype association: str or ~azure.ai.textanalytics.v2023_04_01.models.EntityAssociation
         """
         super().__init__(**kwargs)
         self.conditionality = conditionality
@@ -4149,7 +4150,8 @@ class HealthcareRelation(_serialization.Model):
      "ScaleOfCondition", "TimeOfCondition", "TimeOfEvent", "TimeOfExamination", "TimeOfMedication",
      "TimeOfTreatment", "UnitOfCondition", "UnitOfExamination", "ValueOfCondition",
      "ValueOfExamination", and "VariantOfGene".
-    :vartype relation_type: str or ~azure.ai.textanalytics.v2023_04_01.models.RelationType
+    :vartype relation_type: str or
+     ~azure.ai.textanalytics.v2023_04_01.models.HealthcareEntityRelation
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted relation.
     :vartype confidence_score: float
     :ivar entities: The entities in the relation. Required.
@@ -4170,7 +4172,7 @@ class HealthcareRelation(_serialization.Model):
     def __init__(
         self,
         *,
-        relation_type: Union[str, "_models.RelationType"],
+        relation_type: Union[str, "_models.HealthcareEntityRelation"],
         entities: List["_models.HealthcareRelationEntity"],
         confidence_score: Optional[float] = None,
         **kwargs
@@ -4187,7 +4189,8 @@ class HealthcareRelation(_serialization.Model):
          "ScaleOfCondition", "TimeOfCondition", "TimeOfEvent", "TimeOfExamination", "TimeOfMedication",
          "TimeOfTreatment", "UnitOfCondition", "UnitOfExamination", "ValueOfCondition",
          "ValueOfExamination", and "VariantOfGene".
-        :paramtype relation_type: str or ~azure.ai.textanalytics.v2023_04_01.models.RelationType
+        :paramtype relation_type: str or
+         ~azure.ai.textanalytics.v2023_04_01.models.HealthcareEntityRelation
         :keyword confidence_score: Confidence score between 0 and 1 of the extracted relation.
         :paramtype confidence_score: float
         :keyword entities: The entities in the relation. Required.
@@ -5612,7 +5615,8 @@ class PiiTaskParameters(PreBuiltTaskParameters):
      "none".
     :vartype domain: str or ~azure.ai.textanalytics.v2023_04_01.models.PiiDomain
     :ivar pii_categories: (Optional) describes the PII categories to return.
-    :vartype pii_categories: list[str or ~azure.ai.textanalytics.v2023_04_01.models.PiiCategory]
+    :vartype pii_categories: list[str or
+     ~azure.ai.textanalytics.v2023_04_01.models.PiiEntityCategory]
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
      https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
@@ -5638,7 +5642,7 @@ class PiiTaskParameters(PreBuiltTaskParameters):
         logging_opt_out: bool = False,
         model_version: str = "latest",
         domain: Union[str, "_models.PiiDomain"] = "none",
-        pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
+        pii_categories: Optional[List[Union[str, "_models.PiiEntityCategory"]]] = None,
         string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
         **kwargs
     ):
@@ -5651,7 +5655,8 @@ class PiiTaskParameters(PreBuiltTaskParameters):
          "none".
         :paramtype domain: str or ~azure.ai.textanalytics.v2023_04_01.models.PiiDomain
         :keyword pii_categories: (Optional) describes the PII categories to return.
-        :paramtype pii_categories: list[str or ~azure.ai.textanalytics.v2023_04_01.models.PiiCategory]
+        :paramtype pii_categories: list[str or
+         ~azure.ai.textanalytics.v2023_04_01.models.PiiEntityCategory]
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
          https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
