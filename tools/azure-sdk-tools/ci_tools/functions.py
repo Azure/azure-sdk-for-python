@@ -532,9 +532,9 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
 
     compatible_tags = get_interpreter_compatible_tags()
 
-    print("Dumping visible tags and whls")
-    print(compatible_tags)
-    print(whls)
+    logging.info("Dumping visible tags and whls")
+    logging.info(compatible_tags)
+    logging.info(whls)
 
     if whls:
         # grab the first whl that matches a tag from our compatible_tags list
