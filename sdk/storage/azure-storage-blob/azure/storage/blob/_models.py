@@ -25,11 +25,6 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 
-if sys.version_info >= (3, 11):
-    from typing import Self # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Self # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     from datetime import datetime
 
