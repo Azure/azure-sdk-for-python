@@ -137,6 +137,7 @@ steps:
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:
