@@ -6,7 +6,7 @@ import abc
 import time
 from typing import TYPE_CHECKING
 
-import dateutil
+import isodate
 import six
 from msal import TokenCache
 
@@ -82,7 +82,7 @@ class ManagedIdentityClientBase(ABC):
         if "expires_in" in content or "expires_on" in content:
             expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         else:
-            expires_on = int(dateutil.parser.parse(content["expiresOn"]).timestamp())
+            expires_on = int(isodate.parse_datetime(content["expiresOn"]).timestamp())
         content["expires_on"] = expires_on
 
         access_token = content.get("access_token") or content["token"]
