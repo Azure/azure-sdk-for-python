@@ -11,3 +11,5 @@ match_dir = "^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restcli
 [tool.mypy]
 exclude = ["setup.py", "tests", "scripts", "azure/ai/ml/_restclient"]
 
+[tool.isort]
+profile = "black"

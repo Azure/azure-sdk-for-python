@@ -653,7 +653,7 @@ class MLClient:
 
     @property
     @experimental
-    def _feature_stores(self) -> _FeatureStoreOperations:
+    def feature_stores(self) -> FeatureStoreOperations:
         """Return a collection of feature-store related operations.
 
         :raises Exception: Raises Exception if private preview not enabled since property is experimental
@@ -664,7 +664,7 @@ class MLClient:
 
     @property
     @experimental
-    def _feature_sets(self) -> _FeatureSetOperations:
+    def feature_sets(self) -> FeatureSetOperations:
         """Return a collection of feature set related operations.
 
         :raises Exception: Raises Exception if private preview not enabled since property is experimental
@@ -675,7 +675,7 @@ class MLClient:
 
     @property
     @experimental
-    def _feature_store_entities(self) -> _FeatureStoreEntityOperations:
+    def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """Return a collection of feature store entity related operations.
 
         :raises Exception: Raises Exception if private preview not enabled since property is experimental
