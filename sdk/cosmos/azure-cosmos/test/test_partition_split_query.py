@@ -51,6 +51,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             partition_key=PartitionKey(path="/id"))
 
 
+    @pytest.mark.skip # skipping test while staging account issue gets resolved
     def test_partition_split_query(self):
         for i in range(100):
             body = self.get_test_item()
