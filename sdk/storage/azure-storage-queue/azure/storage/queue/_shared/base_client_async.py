@@ -39,7 +39,6 @@ from .policies_async import AsyncStorageResponseHook
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
@@ -67,7 +66,7 @@ class AsyncStorageAccountHostsMixin(object):
         await self._client.close()
 
     def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
+        # type: (Any, **Any) -> Tuple[Configuration, AsyncPipeline]
         self._credential_policy = None
         if hasattr(credential, 'get_token'):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
