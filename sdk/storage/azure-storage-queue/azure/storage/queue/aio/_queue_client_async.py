@@ -96,8 +96,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         )
         # Null out sync client in favor of async client below
         self._client = None  # type: ignore[assignment]
-        self._client_async = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client_async._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -139,7 +139,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client_async.queue.create(
+            return await self._client.queue.create(
                 metadata=metadata, timeout=timeout, headers=headers, cls=deserialize_queue_creation, **kwargs
             )
         except HttpResponseError as error:
@@ -176,7 +176,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            await self._client_async.queue.delete(timeout=timeout, **kwargs)
+            await self._client.queue.delete(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -202,7 +202,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = cast("QueueProperties", await (self._client_async.queue.get_properties(
+            response = cast("QueueProperties", await (self._client.queue.get_properties(
                 timeout=timeout, cls=deserialize_queue_properties, **kwargs
             )))
         except HttpResponseError as error:
@@ -243,7 +243,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
-            await self._client_async.queue.set_metadata(
+            await self._client.queue.set_metadata(
                 timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
             )
         except HttpResponseError as error:
@@ -265,7 +265,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            _, identifiers = cast(Tuple[Dict, List], await self._client_async.queue.get_access_policy(
+            _, identifiers = cast(Tuple[Dict, List], await self._client.queue.get_access_policy(
                 timeout=timeout, cls=return_headers_and_deserialized, **kwargs
             ))
         except HttpResponseError as error:
@@ -325,7 +325,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
         try:
-            await self._client_async.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
+            await self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -408,7 +408,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
-            enqueued = await self._client_async.messages.enqueue(
+            enqueued = await self._client.messages.enqueue(
                 queue_message=new_message,
                 visibilitytimeout=visibility_timeout,
                 message_time_to_live=time_to_live,
@@ -474,7 +474,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function)
         try:
-            message = await self._client_async.messages.dequeue(
+            message = await self._client.messages.dequeue(
                 number_of_messages=1,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
@@ -551,7 +551,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         )
         try:
             command = functools.partial(
-                self._client_async.messages.dequeue,
+                self._client.messages.dequeue,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
                 cls=self.message_decode_policy,
@@ -669,7 +669,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         else:
             updated = None
         try:
-            response = cast(QueueMessage, await self._client_async.message_id.update(
+            response = cast(QueueMessage, await self._client.message_id.update(
                 queue_message=updated,
                 visibilitytimeout=visibility_timeout or 0,
                 timeout=timeout,
@@ -742,7 +742,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             resolver=self.key_resolver_function
         )
         try:
-            messages = await self._client_async.messages.peek(
+            messages = await self._client.messages.peek(
                 number_of_messages=max_messages, timeout=timeout, cls=self.message_decode_policy, **kwargs
             )
             wrapped_messages = []
@@ -774,7 +774,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            await self._client_async.messages.clear(timeout=timeout, **kwargs)
+            await self._client.messages.clear(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -831,7 +831,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         try:
-            await self._client_async.message_id.delete(
+            await self._client.message_id.delete(
                 pop_receipt=receipt, timeout=timeout, queue_message_id=message_id, **kwargs
             )
         except HttpResponseError as error:

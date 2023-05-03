@@ -53,17 +53,17 @@ class AsyncStorageAccountHostsMixin(object):
         pass
 
     async def __aenter__(self):
-        await self._client_async.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        await self._client_async.__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        await self._client_async.close()
+        await self._client.close()
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, AsyncPipeline]
@@ -118,7 +118,7 @@ class AsyncStorageAccountHostsMixin(object):
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client_async._client.post(  # pylint: disable=protected-access
+        request = self._client._client.post(  # pylint: disable=protected-access
             url=(
                 f'{self.scheme}://{self.primary_hostname}/'
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
