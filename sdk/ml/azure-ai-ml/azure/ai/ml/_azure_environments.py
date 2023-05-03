@@ -71,7 +71,7 @@ _environments = {
 }
 
 
-def _get_cloud_environment_info(cloud: Optional(str)) -> Dict[EndpointURLS, str]:
+def _get_cloud_environment_info(cloud: Optional[str]) -> Dict[EndpointURLS, str]:
     """Retrieve cloud environment information.
 
     :param cloud: Azure Cloud type name. Should be a member of AzureEnvironments or a cloud type retrievable from
