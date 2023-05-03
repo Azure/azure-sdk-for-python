@@ -97,8 +97,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             credential=credential,
             loop=loop,
             **kwargs)
-        # Null out sync client in favor of async client below
-        self._client = None  # type: ignore[assignment]
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
