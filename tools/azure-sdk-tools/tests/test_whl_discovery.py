@@ -72,6 +72,7 @@ def test_find_whl_fails_on_incompatible_interpreter(test_patch):
 
     tmp_dir.cleanup()
 
+
 @patch("ci_tools.functions.get_interpreter_compatible_tags")
 def test_find_whl_discovers_specific_wheels(test_patch):
     tmp_dir = create_temp_directory(
@@ -100,7 +101,7 @@ def test_find_whl_discovers_specific_wheels(test_patch):
             "azure_storage_extensions-1.0.0b1-cp38-cp38-win_amd64.whl",
             "azure_storage_extensions-1.0.0b1-cp38-cp38-win32.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win_amd64.whl",
-            "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl"
+            "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl",
         ]
     )
     test_patch.return_value = ["cp39-cp39-win_amd64"]

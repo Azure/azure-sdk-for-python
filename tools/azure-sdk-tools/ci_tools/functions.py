@@ -59,6 +59,7 @@ omit_function_dict = {
     "Omit_management": omit_mgmt,
 }
 
+
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
@@ -414,6 +415,7 @@ def find_whl(package_name: str, version: str, whl_directory: str) -> str:
 
     return whls[0]
 
+
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -422,6 +424,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
     from ci_tools.build import create_package
+
     if ".." in req:
         # Create temp path if it doesn't exist
         temp_dir = os.path.join(package_path, ".tmp_whl_dir")
@@ -475,19 +478,13 @@ def get_interpreter_compatible_tags() -> List[str]:
     This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
     """
 
-    commands = [
-        sys.executable,
-        "-m",
-        "pip",
-        "debug",
-        "--verbose"
-    ]
+    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
 
     output = subprocess.run(
         commands,
         check=True,
         capture_output=True,
-    ).stdout.decode(encoding='utf-8')
+    ).stdout.decode(encoding="utf-8")
 
     tag_strings = output.split(os.linesep)
 
@@ -495,9 +492,10 @@ def get_interpreter_compatible_tags() -> List[str]:
         if "Compatible tags" in value:
             break
 
-    tags = tag_strings[index+1:]
+    tags = tag_strings[index + 1 :]
 
     return [tag.strip() for tag in tags if tag]
+
 
 def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
     for tag in tags:
@@ -507,7 +505,7 @@ def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
 
 
 def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
-    """This function attempts to look within a directory (and all subdirs therein) and find a wheel that matches our targeted name and version AND 
+    """This function attempts to look within a directory (and all subdirs therein) and find a wheel that matches our targeted name and version AND
     whose compilation is compatible with the invoking interpreter."""
     if not os.path.exists(whl_dir):
         logging.error("whl_dir is incorrect")
@@ -545,17 +543,14 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
         if len(whls) > 1:
             # if we have reached here, that means we have whl specific to platform as well.
             # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
-            logging.error(
-                f"We were unable to locate a compatible wheel for {pkg_name}"
-            )
+            logging.error(f"We were unable to locate a compatible wheel for {pkg_name}")
             sys.exit(1)
 
     return None
 
 
 def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:
-    """Discovers a prebuild wheel or sdist for a given setup path. 
-    """
+    """Discovers a prebuild wheel or sdist for a given setup path."""
     packages = []
     pkg = ParsedSetup.from_path(setup_path)
     if package_type == "wheel":
