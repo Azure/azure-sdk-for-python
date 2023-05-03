@@ -12,7 +12,7 @@ import sys
 from typing import Callable, cast, List, Any, Awaitable, Optional, Union, IO
 
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
-from ..._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
+from ..._helpers import _create_gzip_chunks, GZIP_MAGIC_NUMBER
 from ..._models import LogsUploadError
 
 if sys.version_info >= (3, 9):
@@ -67,7 +67,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
             await super().upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
 
-        for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
+        for gzip_data, log_chunk in _create_gzip_chunks(cast(List[JSON], logs)):
             try:
                 await super().upload(
                     rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs  # type: ignore
