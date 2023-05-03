@@ -44,7 +44,7 @@ steps:
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
-  - template: ../steps/set-dev-build.yml
+  - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
@@ -71,7 +71,7 @@ steps:
     displayName: 'Verify Readme'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
+    - template: auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
