@@ -141,7 +141,7 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    conf = dict()
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),

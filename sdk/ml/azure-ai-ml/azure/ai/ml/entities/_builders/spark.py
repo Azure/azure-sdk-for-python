@@ -306,7 +306,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if "conf" in obj and obj["conf"]:
             identify_schema = UnionField(
                 [
-                    NestedField(SparkConfSchema, unknown=INCLUDE),
+                    dict(),
                 ]
             )
             obj["conf"] = identify_schema._deserialize(value=obj["conf"], attr=None, data=None)
@@ -335,7 +335,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         rest_spark_job: RestSparkJob = obj.properties
         identify_schema = UnionField(
             [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
+                dict(),
             ]
         )
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}

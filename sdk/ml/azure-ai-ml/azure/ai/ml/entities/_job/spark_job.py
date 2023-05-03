@@ -252,7 +252,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         rest_spark_job: RestSparkJob = obj.properties
         conf_schema = UnionField(
             [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
+                dict(),
             ]
         )
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
