@@ -72,14 +72,37 @@ def test_find_whl_fails_on_incompatible_interpreter(test_patch):
 
     tmp_dir.cleanup()
 
-
-
 @patch("ci_tools.functions.get_interpreter_compatible_tags")
 def test_find_whl_discovers_specific_wheels(test_patch):
     tmp_dir = create_temp_directory(
         [
-            os.path.join("azure-common", "azure_common-1.1.29-py3-none-any.whl"),
+            "azure_storage_extensions-1.0.0b1-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl",
+            "azure_storage_extensions-1.0.0b1-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl",
+            "azure_storage_extensions-1.0.0b1-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl",
+            "azure_storage_extensions-1.0.0b1-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl",
+            "azure_storage_extensions-1.0.0b1-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl",
+            "azure_storage_extensions-1.0.0b1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp310-cp310-macosx_10_9_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp311-cp311-macosx_10_9_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp37-cp37m-macosx_10_9_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp38-cp38-macosx_10_9_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp39-cp39-macosx_10_9_x86_64.whl",
+            "azure_storage_extensions-1.0.0b1-cp310-cp310-win_amd64.whl",
+            "azure_storage_extensions-1.0.0b1-cp310-cp310-win32.whl",
+            "azure_storage_extensions-1.0.0b1-cp311-cp311-win_amd64.whl",
+            "azure_storage_extensions-1.0.0b1-cp311-cp311-win32.whl",
+            "azure_storage_extensions-1.0.0b1-cp37-cp37m-win_amd64.whl",
+            "azure_storage_extensions-1.0.0b1-cp37-cp37m-win32.whl",
+            "azure_storage_extensions-1.0.0b1-cp38-cp38-win_amd64.whl",
+            "azure_storage_extensions-1.0.0b1-cp38-cp38-win32.whl",
+            "azure_storage_extensions-1.0.0b1-cp39-cp39-win_amd64.whl",
+            "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl"
         ]
     )
-    test_patch.return_value = []
+    test_patch.return_value = ["cp39-cp39-win_amd64"]
+    found = find_whl(tmp_dir.name, "azure-storage-extensions", "1.0.0b1")
     tmp_dir.cleanup()

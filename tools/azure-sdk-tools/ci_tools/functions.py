@@ -483,8 +483,27 @@ def get_interpreter_compatible_tags() -> List[str]:
         "--verbose"
     ]
 
-    return []
+    output = subprocess.run(
+        commands,
+        check=True,
+        capture_output=True,
+    ).stdout.decode(encoding='utf-8')
 
+    tag_strings = output.split(os.linesep)
+
+    for index, value in enumerate(tag_strings):
+        if "Compatible tags" in value:
+            break
+
+    tags = tag_strings[index+1:]
+
+    return [tag.strip() for tag in tags if tag]
+
+def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
+    for tag in tags:
+        if tag in whl_name:
+            return True
+    return False
 
 
 def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
@@ -513,30 +532,25 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
         logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
         return
 
-    if len(whls) > 1:
-        # So we have whls specific to py version or platform since we are here
-        py_version = "py{0}".format(sys.version_info.major)
-        # filter whl for py version and check if we found just one whl
-        whls = [w for w in whls if py_version in w]
+    compatible_tags = get_interpreter_compatible_tags()
+
+    if whls:
+        # grab the first whl that matches a tag from our compatible_tags list
+        for whl in whls:
+            if check_whl_against_tags(whl, compatible_tags):
+                logging.info("Found whl {}".format(whl))
+                return whl
 
         # if whl is platform independent then there should only be one whl in filtered list
         if len(whls) > 1:
             # if we have reached here, that means we have whl specific to platform as well.
             # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
             logging.error(
-                "More than one whl is found in wheel directory for package {}. Platform specific whl discovery is not supported now".format(
-                    pkg_name
-                )
+                f"We were unable to locate a compatible wheel for {pkg_name}"
             )
             sys.exit(1)
 
-    # Additional filtering based on arch type willbe required in future if that need arises.
-    # for now assumption is that no arch specific whl is generated
-    if len(whls) == 1:
-        logging.info("Found whl {}".format(whls[0]))
-        return whls[0]
-    else:
-        return None
+    return None
 
 
 def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:
