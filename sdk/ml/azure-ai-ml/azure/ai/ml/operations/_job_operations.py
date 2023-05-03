@@ -143,6 +143,19 @@ class JobOperations(_ScopeDependentOperations):
         credential: TokenCredential,
         **kwargs: Any,
     ):
+        """Initiates an instance of JobOperations
+    
+        :param operation_scope: Scope variables for the operations classes of an MLClient object.
+        :type operation_scope: azure.ai.ml._scope_dependent_operations.OperationScope
+        :param operation_config: Common configuration for operations classes of an MLClient object.
+        :type operation_config: azure.ai.ml._scope_dependent_operations.OperationConfig
+        :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
+        :type service_client_02_2023_preview: azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
+        :param all_operations: All operations classes of an MLClient object.
+        :type all_operations: azure.ai.ml._scope_dependent_operations.OperationsContainer
+        :param credential: Credential to use for authentication.
+        :type credential: azure.core.credentials.TokenCredential
+        """
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
@@ -166,28 +179,53 @@ class JobOperations(_ScopeDependentOperations):
 
     @property
     def _component_operations(self) -> ComponentOperations:
+        """All operations for Component objects
+
+        :return: Component operations
+        :rtype: azure.ai.ml.operations.ComponentOperations
+        """
         return self._all_operations.get_operation(
             AzureMLResourceType.COMPONENT, lambda x: isinstance(x, ComponentOperations)
         )
 
     @property
     def _compute_operations(self) -> ComputeOperations:
+        """All operations for Compute objects
+        
+        :return: Compute operations
+        :rtype: azure.ai.ml.operations.ComputeOperations
+        """
         return self._all_operations.get_operation(
             AzureMLResourceType.COMPUTE, lambda x: isinstance(x, ComputeOperations)
         )
 
     @property
     def _virtual_cluster_operations(self) -> VirtualClusterOperations:
+        """All operations for Virtual Cluster objects
+    
+        :return: Virtual cluster operations
+        :rtype: azure.ai.ml.operations.VirtualClusterOperations
+        """
         return self._all_operations.get_operation(
             AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
         )
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
+        """All operations for Datastore objects
+    
+        :return: Datastore operations
+        :rtype: azure.ai.ml.operations.DatastoreOperations
+        """
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @property
     def _runs_operations(self) -> RunOperations:
+       """All operations for Run objects
+
+        :return: Run operations
+        :rtype: azure.ai.ml.operations.RunOperations
+        """
         if not self._runs_operations_client:
             service_client_run_history = ServiceClientRunHistory(
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
@@ -199,6 +237,11 @@ class JobOperations(_ScopeDependentOperations):
 
     @property
     def _dataset_dataplane_operations(self) -> DatasetDataplaneOperations:
+        """All operations for DatasetDataplane objects
+
+        :return: DatasetDataplane operations
+        :rtype: azure.ai.ml.operations.DatasetDataplaneOperations
+        """
         if not self._dataset_dataplane_operations_client:
             service_client_dataset_dataplane = ServiceClientDatasetDataplane(
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
@@ -212,6 +255,11 @@ class JobOperations(_ScopeDependentOperations):
 
     @property
     def _model_dataplane_operations(self) -> ModelDataplaneOperations:
+       """All operations for ModelDataplane objects
+
+        :return: ModelDataplane operations
+        :rtype: azure.ai.ml.operations.ModelDataplaneOperations
+        """
         if not self._model_dataplane_operations_client:
             service_client_model_dataplane = ServiceClientModelDataplane(
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
@@ -225,6 +273,11 @@ class JobOperations(_ScopeDependentOperations):
 
     @property
     def _api_url(self):
+        """Base url for workspace API.
+
+        :return: Base url for workspace API.
+        :rtype: str
+        """
         if not self._api_base_url:
             self._api_base_url = self._get_workspace_url(url_key=API_URL_KEY)
         return self._api_base_url
