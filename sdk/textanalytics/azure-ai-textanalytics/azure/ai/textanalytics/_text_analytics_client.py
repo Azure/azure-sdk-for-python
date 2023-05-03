@@ -69,9 +69,9 @@ from ._models import (
     ExtractSummaryResult,
     AbstractiveSummaryAction,
     AbstractiveSummaryResult,
-    PiiEntityDomain,
-    PiiEntityCategory,
+    PiiEntityDomain
 )
+from ._generated.models import PiiEntityCategory
 from ._check import is_language_api, string_index_type_compatibility
 
 

@@ -86,17 +86,16 @@ from ._models_py3 import TextAnalyticsError
 from ._models_py3 import TextAnalyticsWarning
 
 
+from ._text_analytics_client_enums import Association
+from ._text_analytics_client_enums import Certainty
+from ._text_analytics_client_enums import Conditionality
 from ._text_analytics_client_enums import DocumentSentimentValue
-from ._text_analytics_client_enums import EntityAssociation
-from ._text_analytics_client_enums import EntityCertainty
-from ._text_analytics_client_enums import EntityConditionality
 from ._text_analytics_client_enums import ErrorCodeValue
 from ._text_analytics_client_enums import HealthcareEntityCategory
-from ._text_analytics_client_enums import HealthcareEntityRelation
 from ._text_analytics_client_enums import InnerErrorCodeValue
 from ._text_analytics_client_enums import PiiCategory
-from ._text_analytics_client_enums import PiiEntityCategory
 from ._text_analytics_client_enums import PiiTaskParametersDomain
+from ._text_analytics_client_enums import RelationType
 from ._text_analytics_client_enums import SentenceSentimentValue
 from ._text_analytics_client_enums import State
 from ._text_analytics_client_enums import StringIndexType
@@ -185,17 +184,16 @@ __all__ = [
     'TasksStateTasksSentimentAnalysisTasksItem',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
+    'Association',
+    'Certainty',
+    'Conditionality',
     'DocumentSentimentValue',
-    'EntityAssociation',
-    'EntityCertainty',
-    'EntityConditionality',
     'ErrorCodeValue',
     'HealthcareEntityCategory',
-    'HealthcareEntityRelation',
     'InnerErrorCodeValue',
     'PiiCategory',
-    'PiiEntityCategory',
     'PiiTaskParametersDomain',
+    'RelationType',
     'SentenceSentimentValue',
     'State',
     'StringIndexType',

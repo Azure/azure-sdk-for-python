@@ -192,7 +192,7 @@ directive:
 ### Rename enums so we can expose generated types
 
 
-```yaml
+```yaml $(tag) != 'release_3_1'
 directive:
   - from: swagger-document
     where: $["definitions"]

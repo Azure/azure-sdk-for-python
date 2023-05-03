@@ -56,8 +56,8 @@ from .._models import (
     AbstractiveSummaryAction,
     AbstractiveSummaryResult,
     PiiEntityDomain,
-    PiiEntityCategory,
 )
+from .._generated.models import PiiEntityCategory
 from .._check import is_language_api, string_index_type_compatibility
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
