@@ -766,7 +766,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
+        polling: AsyncLROBasePolling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -824,7 +824,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
+        polling: AsyncLROBasePolling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions

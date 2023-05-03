@@ -135,7 +135,7 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 class DocumentModelAdministrationPolling(OperationResourcePolling):
     """Polling method overrides for training endpoints."""
 
-    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> None:
+    def get_final_get_url(self, pipeline_response: Any) -> None:
         """If a final GET is needed, returns the URL.
 
         :rtype: None
