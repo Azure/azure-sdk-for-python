@@ -29,6 +29,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 from azure.core.exceptions import ServiceRequestError
 
+pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")

@@ -31,6 +31,7 @@
 # from azure.cosmos.partition_key import PartitionKey
 #
 #
+# pytestmark = pytest.mark.cosmosEmulator
 #
 #
 # # IMPORTANT NOTES:

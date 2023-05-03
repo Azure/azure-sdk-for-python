@@ -31,6 +31,7 @@ from azure.cosmos import exceptions, PartitionKey
 from azure.core.credentials import AccessToken
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
 
 
 def _remove_padding(encoded_string):

@@ -27,6 +27,13 @@ import unittest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 
+try:
+    from unittest.mock import Mock
+except ImportError:  # python < 3.3
+    from mock import Mock  # type: ignore
+
+pytestmark = pytest.mark.cosmosEmulator
+
 
 class MockHandler(logging.Handler):
 
