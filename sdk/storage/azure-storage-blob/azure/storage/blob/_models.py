@@ -6,7 +6,6 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
-import sys
 from enum import Enum
 from typing import Dict, List, TYPE_CHECKING
 
