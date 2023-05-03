@@ -2,6 +2,7 @@ import unittest
 import pytest
 import azure.cosmos._base as base
 
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class BaseUnitTests(unittest.TestCase):

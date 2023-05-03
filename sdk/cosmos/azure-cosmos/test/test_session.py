@@ -12,6 +12,7 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos._synchronized_request as synchronized_request
 from azure.cosmos import _retry_utility
 
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class SessionTests(unittest.TestCase):

@@ -25,6 +25,7 @@ from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing import routing_range as routing_range
 
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class RoutingMapProviderTests(unittest.TestCase):

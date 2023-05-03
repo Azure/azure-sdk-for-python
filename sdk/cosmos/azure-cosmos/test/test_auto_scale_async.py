@@ -25,6 +25,7 @@ from azure.cosmos import ThroughputProperties, PartitionKey, http_constants
 import pytest
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")
