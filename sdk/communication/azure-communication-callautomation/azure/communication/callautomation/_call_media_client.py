@@ -183,7 +183,6 @@ class CallMediaClient(object):
 
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         if not target_participant:
@@ -214,7 +213,6 @@ class CallMediaClient(object):
 
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         if not target_participant:
@@ -248,7 +246,6 @@ class CallMediaClient(object):
 
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         if not target_participant:
