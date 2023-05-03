@@ -21,16 +21,16 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import (
     RequestsTransport,
 )  # pylint: disable=no-name-in-module
+from .operations import (
+    DeviceRegistrationStateOperations,
+    EnrollmentGroupOperations,
+    IndividualEnrollmentOperations,
+)
 
 from ._api_version import DEFAULT_VERSION, ApiVersion
 from ._auth import SasCredentialPolicy, SharedKeyCredentialPolicy
 from ._generated import ProvisioningServiceClient as GeneratedProvisioningServiceClient
 from ._generated._version import VERSION
-from ._generated.operations import (
-    DeviceRegistrationStateOperations,
-    EnrollmentGroupOperations,
-    IndividualEnrollmentOperations,
-)
 from ._util import parse_connection_string
 
 if TYPE_CHECKING:
@@ -54,6 +54,15 @@ class ProvisioningServiceClient(
         recent service version that is compatible with the current SDK. Setting to an older version may result
         in reduced feature compatibility.
     :paramtype api_version: str or ApiVersion
+    :ivar individual_enrollment: IndividualEnrollmentOperations operations
+    :vartype individual_enrollment:
+    azure.iot.deviceprovisioningservice.operations.IndividualEnrollmentOperations
+    :ivar enrollment_group: EnrollmentGroupOperations operations
+    :vartype enrollment_group:
+    azure.iot.deviceprovisioningservice.operations.EnrollmentGroupOperations
+    :ivar device_registration_state: DeviceRegistrationStateOperations operations
+    :vartype device_registration_state:
+    azure.iot.deviceprovisioningservice.operations.DeviceRegistrationStateOperations
     """
 
     def __init__(

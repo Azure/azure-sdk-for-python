@@ -26,7 +26,7 @@ from .._generated._version import VERSION
 from .._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
-from .._generated.aio.operations import (
+from .operations import (
     DeviceRegistrationStateOperations,
     EnrollmentGroupOperations,
     IndividualEnrollmentOperations,
@@ -54,6 +54,15 @@ class ProvisioningServiceClient(
         recent service version that is compatible with the current SDK. Setting to an older version may result
         in reduced feature compatibility.
     :paramtype api_version: str or ApiVersion
+    :ivar individual_enrollment: IndividualEnrollmentOperations operations
+    :vartype individual_enrollment:
+    azure.iot.deviceprovisioningservice.aio.operations.IndividualEnrollmentOperations
+    :ivar enrollment_group: EnrollmentGroupOperations operations
+    :vartype enrollment_group:
+    azure.iot.deviceprovisioningservice.aio.operations.EnrollmentGroupOperations
+    :ivar device_registration_state: DeviceRegistrationStateOperations operations
+    :vartype device_registration_state:
+    azure.iot.deviceprovisioningservice.aio.operations.DeviceRegistrationStateOperations
     """
 
     def __init__(
