@@ -32,7 +32,7 @@ from git_helper import (
     clone_repo,
 )
 
-from ci_tools.functions import discover_targeted_packages, str_to_bool, find_whl
+from ci_tools.functions import discover_targeted_packages, str_to_bool, build_temp_whl
 from ci_tools.parsing import ParsedSetup
 
 AZURE_GLOB_STRING = "azure*"
@@ -125,7 +125,7 @@ class RegressionTest:
 
             self.whl_path = os.path.join(
                 self.context.whl_directory,
-                find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory),
+                build_temp_whl(pkg_name, self.context.pkg_version, self.context.whl_directory),
             )
             if find_packages_missing_on_pypi(self.whl_path):
                 logging.error("Required packages are not available on PyPI. Skipping regression test")
