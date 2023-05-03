@@ -24,7 +24,6 @@
 # # This class tests the integrated cache, which only works against accounts with the dedicated gateway configured
 # # This class tests a PREVIEW FEATURE
 #
-# pytestmark = pytest.mark.cosmosEmulator
 #
 #
 # @pytest.mark.usefixtures("teardown")

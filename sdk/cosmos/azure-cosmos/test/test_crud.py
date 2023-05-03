@@ -49,7 +49,6 @@ from azure.cosmos import _retry_utility
 import requests
 from urllib3.util.retry import Retry
 
-pytestmark = pytest.mark.cosmosEmulator
 
 # IMPORTANT NOTES:
 #  	Most test cases in this file create collections in your Azure Cosmos account.

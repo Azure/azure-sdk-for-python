@@ -13,7 +13,6 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos import _retry_utility
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
 
 
 class RefreshThread(threading.Thread):

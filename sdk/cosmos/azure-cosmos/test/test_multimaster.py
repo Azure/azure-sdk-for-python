@@ -8,7 +8,6 @@ from azure.cosmos import _retry_utility
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class MultiMasterTests(unittest.TestCase):

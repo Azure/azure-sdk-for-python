@@ -45,7 +45,6 @@ from azure.cosmos.partition_key import PartitionKey
 import requests
 from urllib3.util.retry import Retry
 
-pytestmark = pytest.mark.cosmosEmulator
 
 
 # IMPORTANT NOTES:

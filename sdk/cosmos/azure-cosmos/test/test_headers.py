@@ -28,7 +28,6 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")

@@ -27,7 +27,6 @@ import test_config
 import os
 import uuid
 
-pytestmark = pytest.mark.cosmosEmulator
 
 #IMPORTANT NOTES:
   

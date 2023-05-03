@@ -31,7 +31,6 @@ from azure.cosmos import _endpoint_discovery_retry_policy, _retry_utility, Parti
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import test_config
 
-pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.globaldb]
 
 # IMPORTANT NOTES:
   
