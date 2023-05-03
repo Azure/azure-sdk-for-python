@@ -7,7 +7,7 @@
 
 import datetime
 import json
-from typing import Callable, Mapping, Union, TypeVar, Any, Optional
+from typing import Callable, Mapping, TypeVar, Any, Optional
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
@@ -26,10 +26,6 @@ from azure.core.polling.base_polling import (
 )
 
 PollingReturnType = TypeVar("PollingReturnType")
-
-
-ResponseType = Union[HttpResponse, AsyncHttpResponse]
-PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
 def raise_error(response, errors, message):
