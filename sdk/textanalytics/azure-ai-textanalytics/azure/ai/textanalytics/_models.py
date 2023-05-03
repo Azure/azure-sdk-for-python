@@ -12,6 +12,12 @@ from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
+    HealthcareEntityCategory,
+    EntityAssociation,
+    EntityCertainty,
+    EntityConditionality,
+    HealthcareEntityRelation,
+    PiiEntityCategory,
 )
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
