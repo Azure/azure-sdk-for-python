@@ -174,11 +174,6 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not target_participant:
-            raise ValueError('target_participant cannot be None.')
-        if not callback_url:
-            raise ValueError('callback_url cannot be None.')
-
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers,
             sip_headers=target_participant.sip_headers
@@ -250,11 +245,6 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not target_participants:
-            raise ValueError('target_participants cannot be None.')
-        if not callback_url:
-            raise ValueError('callback_url cannot be None.')
-
         user_custom_context = CustomContext(
             voip_headers=voip_headers, sip_headers=sip_headers) if sip_headers or voip_headers else None
 
@@ -310,11 +300,6 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not incoming_call_context:
-            raise ValueError('incoming_call_context cannot be None.')
-        if not callback_url:
-            raise ValueError('callback_url cannot be None.')
-
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
@@ -352,11 +337,6 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not incoming_call_context:
-            raise ValueError('incoming_call_context cannot be None.')
-        if not target_participant:
-            raise ValueError('target_participant cannot be None.')
-
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers,
             sip_headers=target_participant.sip_headers
@@ -393,9 +373,6 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseErrorr:
         """
-        if not incoming_call_context:
-            raise ValueError('incoming_call_context cannot be None.')
-
         reject_call_request = RejectCallRequest(
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason

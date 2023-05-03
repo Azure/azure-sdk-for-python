@@ -323,10 +323,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not play_source:
-            raise ValueError('play_source cannot be None.')
-
         play_request = PlayRequest(
             play_source_info=play_source._to_generated(),#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
@@ -354,9 +350,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not play_source:
-            raise ValueError('play_source cannot be None.')
-
         self.play_media(play_source=play_source, play_to=[], loop=loop, **kwargs)
 
     @distributed_trace
@@ -402,13 +395,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not input_type:
-            raise ValueError('input_type cannot be None.')
-
-        if not target_participant:
-            raise ValueError('target_participant cannot be None.')
-
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
@@ -464,10 +450,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not target:
-            raise ValueError('target cannot be None.')
-
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target),
             operation_context=operation_context)
@@ -495,10 +477,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        if not target:
-            raise ValueError('target cannot be None.')
-
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target),
             operation_context=operation_context)
@@ -529,9 +507,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not target:
-            raise ValueError('target cannot be None.')
-
         send_dtmf_request = SendDtmfRequest(
             target_participant=serialize_identifier(target),
             tones=tones,
