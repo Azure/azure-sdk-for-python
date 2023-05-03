@@ -1,14 +1,10 @@
 # Release History
 
-## 4.8.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 4.9.0b1 (2023-05-10)
 
 ### Bugs Fixed
-
-### Other Changes
+- Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
 
 ## 4.8.0 (2023-03-16)
 
