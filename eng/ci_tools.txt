@@ -35,7 +35,6 @@ pytest==4.6.9; python_version == '2.7'
 pytest==5.4.2; python_version >= '3.5' and python_version <= '3.9'
 pytest==6.2.4; python_version >= '3.10'
 pytest-cov==2.8.1
-urllib3<2[build]
 
 # local dev packages
 ./tools/azure-devtools
