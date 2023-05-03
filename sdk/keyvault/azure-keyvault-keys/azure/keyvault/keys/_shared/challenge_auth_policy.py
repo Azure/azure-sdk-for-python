@@ -112,7 +112,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
-        if challenge.tenant_id.lower().endswith("adfs"):
+        if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
             self.authorize_request(request, scope)
         else:
             self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
