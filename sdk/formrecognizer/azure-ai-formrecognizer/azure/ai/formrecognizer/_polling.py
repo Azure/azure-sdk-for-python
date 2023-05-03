@@ -11,11 +11,6 @@ from typing import Callable, Mapping, TypeVar, Any, Optional
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import (
-    HttpResponse,
-    AsyncHttpResponse,
-    HttpRequest,
-)
 from azure.core.polling import LROPoller, PollingMethod
 from azure.core.polling.base_polling import (
     LocationPolling,
