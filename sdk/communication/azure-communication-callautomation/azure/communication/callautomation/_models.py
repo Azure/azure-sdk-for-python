@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, List, Optional, Union, TYPE_CHECKING, Dict
+from typing import List, Optional, Union, TYPE_CHECKING, Dict
 from ._generated.models import (
     CallLocator,
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
@@ -26,7 +26,8 @@ if TYPE_CHECKING:
         MediaStreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
-        CallConnectionState
+        CallConnectionState,
+        RecordingState
     )
     from ._generated.models  import (
         CallParticipant as CallParticipantRest,
@@ -288,14 +289,18 @@ class RecordingProperties(object):
     :ivar recording_id: Id of this recording operation.
     :vartype recording_id: str
     :ivar recording_state: state of ongoing recording.
-    :vartype recording_state: str or ~azure.communication.callautomation.RecordingProperties
+    :vartype recording_state: str or ~azure.communication.callautomation.RecordingState
     """
     def __init__(
         self,
+        *,
+        recording_id: Optional[str] = None,
+        recording_state: Optional['RecordingState'] = None,
         **kwargs
     ):
-        self.recording_id = kwargs['recording_id']
-        self.recording_state = kwargs['recording_state']
+        super().__init__(**kwargs)
+        self.recording_id = recording_id
+        self.recording_state = recording_state
 
     @classmethod
     def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
@@ -313,8 +318,8 @@ class CallParticipant(object):
     """
     def __init__(
         self,
-        identifier: CommunicationIdentifier,
         *,
+        identifier: Optional[CommunicationIdentifier] = None,
         is_muted: Optional[bool] = False,
         **kwargs
     ):
@@ -331,13 +336,15 @@ class CallParticipant(object):
 class AddParticipantResult(object):
     """ The result payload for adding participants to the call.
 
+    :ivar participant: Participant that was added with this request.
+    :vartype participant: ~azure.communication.callautomation.CallParticipant
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
     """
     def __init__(
         self,
-        participant: CallParticipant,
         *,
+        participant: Optional[CallParticipant] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ):
@@ -361,7 +368,7 @@ class RemoveParticipantResult(object):
         self,
         *,
         operation_context: Optional[str] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         super().__init__(**kwargs)
         self.operation_context = operation_context
@@ -380,7 +387,7 @@ class TransferCallResult(object):
         self,
         *,
         operation_context: Optional[str] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         super().__init__(**kwargs)
         self.operation_context = operation_context

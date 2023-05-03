@@ -40,7 +40,8 @@ from ._generated.models._enums import (
     MediaStreamingContentType,
     MediaStreamingTransportType,
     DtmfTone,
-    CallConnectionState
+    CallConnectionState,
+    RecordingState
 )
 __all__ = [
     # clients and parser
@@ -84,5 +85,6 @@ __all__ = [
     "MediaStreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
+    "RecordingState"
 ]
 __version__ = VERSION
