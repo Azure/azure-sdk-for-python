@@ -48,49 +48,55 @@ See [azure-identity][azure_identity] documentation for more information about ot
 
 #### Create a KeyVaultAccessControlClient
 After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create an access control client (replacing the value of `vault_url` with your Managed HSM's URL):
+
+<!-- SNIPPET:access_control_operations.create_an_access_control_client -->
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient
 
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 credential = DefaultAzureCredential()
-
-client = KeyVaultAccessControlClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
+client = KeyVaultAccessControlClient(vault_url=MANAGED_HSM_URL, credential=credential)
 ```
+
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultAccessControlClient` instead.
 
 #### Create a KeyVaultBackupClient
 After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a backup client (replacing the value of `vault_url` with your Managed HSM's URL):
+
+<!-- SNIPPET:backup_restore_operations.create_a_backup_restore_client -->
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultBackupClient
 
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 credential = DefaultAzureCredential()
-
-client = KeyVaultBackupClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
+client = KeyVaultBackupClient(vault_url=MANAGED_HSM_URL, credential=credential)
 ```
+
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultBackupClient` instead.
 
 #### Create a KeyVaultSettingsClient
 After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a settings client (replacing the value of `vault_url` with your Managed HSM's URL):
+
+<!-- SNIPPET:settings_operations.create_a_settings_client -->
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultSettingsClient
 
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 credential = DefaultAzureCredential()
-
-client = KeyVaultSettingsClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
+client = KeyVaultSettingsClient(vault_url=MANAGED_HSM_URL, credential=credential)
 ```
+
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultSettingsClient` instead.
 
@@ -124,182 +130,186 @@ This section contains code snippets covering common tasks:
 * Backup and restore
     * [Perform a full key backup](#perform-a-full-key-backup)
     * [Perform a full key restore](#perform-a-full-key-restore)
+    * [Perform a selective key restore](#perform-a-selective-key-restore)
 
 ### List all role definitions
-List the role definitions available for assignment.
+`list_role_definitions` can be used by a `KeyVaultAccessControlClient` to list the role definitions available for
+assignment.
+
+<!-- SNIPPET:access_control_operations.list_role_definitions -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
+from azure.keyvault.administration import KeyVaultRoleScope
 
-credential = DefaultAzureCredential()
-
-client = KeyVaultAccessControlClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
-
-# this will list all role definitions available for assignment
-role_definitions = client.list_role_definitions(KeyVaultRoleScope.GLOBAL)
-
+role_definitions = client.list_role_definitions(scope=KeyVaultRoleScope.GLOBAL)
 for definition in role_definitions:
-    print(definition.id)
-    print(definition.role_name)
-    print(definition.description)
+    print(f"Role name: {definition.role_name}; Role definition name: {definition.name}")
 ```
+
+<!-- END SNIPPET -->
 
 ### Set, get, and delete a role definition
 
-`set_role_definition` can be used to either create a custom role definition or update an existing definition with the specified name.
+`set_role_definition` can be used by a `KeyVaultAccessControlClient` to either create a custom role definition or update
+an existing definition with the specified unique `name` (a UUID).
+
+<!-- SNIPPET:access_control_operations.create_a_role_definition -->
 
 ```python
-import uuid
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import (
-    KeyVaultAccessControlClient,
-    KeyVaultDataAction,
-    KeyVaultPermission,
-    KeyVaultRoleScope
-)
+from azure.keyvault.administration import KeyVaultDataAction, KeyVaultPermission, KeyVaultRoleScope
 
-credential = DefaultAzureCredential()
-
-client = KeyVaultAccessControlClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
-
-# create a custom role definition
-permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
-created_definition = client.set_role_definition(KeyVaultRoleScope.GLOBAL, permissions=permissions)
-
-# update the custom role definition
-permissions = [
-    KeyVaultPermission(allowed_data_actions=[], denied_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
-]
-updated_definition = client.set_role_definition(
-    KeyVaultRoleScope.GLOBAL, permissions=permissions, role_name=created_definition.name
-)
-
-# get the custom role definition
-definition = client.get_role_definition(KeyVaultRoleScope.GLOBAL, role_name=definition_name)
-
-# delete the custom role definition
-deleted_definition = client.delete_role_definition(KeyVaultRoleScope.GLOBAL, role_name=definition_name)
+role_name = "customRole"
+scope = KeyVaultRoleScope.GLOBAL
+permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
+role_definition = client.set_role_definition(scope=scope, role_name=role_name, permissions=permissions)
 ```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:access_control_operations.update_a_role_definition -->
+
+```python
+new_permissions = [
+    KeyVaultPermission(
+        data_actions=[KeyVaultDataAction.READ_HSM_KEY],
+        not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
+    )
+]
+unique_definition_name = role_definition.name
+updated_definition = client.set_role_definition(
+    scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
+)
+```
+
+<!-- END SNIPPET -->
+
+`get_role_definition` can be used by a `KeyVaultAccessControlClient` to fetch a role definition with the specified scope
+and unique name.
+
+<!-- SNIPPET:access_control_operations.get_a_role_definition -->
+
+```python
+fetched_definition = client.get_role_definition(scope=scope, name=unique_definition_name)
+```
+
+<!-- END SNIPPET -->
+
+`delete_role_definition` can be used by a `KeyVaultAccessControlClient` to delete a role definition with the specified
+scope and unique name.
+
+<!-- SNIPPET:access_control_operations.delete_a_role_definition -->
+
+```python
+client.delete_role_definition(scope=scope, name=unique_definition_name)
+```
+
+<!-- END SNIPPET -->
 
 ### List all role assignments
-Before creating a new role assignment in the [next snippet](#create-get-and-delete-a-role-assignment), list all of the current role assignments:
+`list_role_assignments` can be used by a `KeyVaultAccessControlClient` to list all of the current role assignments.
+
+<!-- SNIPPET:access_control_operations.list_role_assignments -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
+from azure.keyvault.administration import KeyVaultRoleScope
 
-credential = DefaultAzureCredential()
-
-client = KeyVaultAccessControlClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
-
-# this will list all role assignments
 role_assignments = client.list_role_assignments(KeyVaultRoleScope.GLOBAL)
-
 for assignment in role_assignments:
-    print(assignment.name)
-    print(assignment.principal_id)
-    print(assignment.role_definition_id)
+    print(f"Role assignment name: {assignment.name}")
+    print(f"Principal ID associated with this assignment: {assignment.properties.principal_id}")
 ```
+
+<!-- END SNIPPET -->
 
 ### Create, get, and delete a role assignment
-Assign a role to a service principal. This will require a role definition ID and service principal object ID. You can use an ID from the retrieved [list of role definitions](#list-all-role-definitions) for the former, and an assignment's `principal_id` from the list retrieved in the [above snippet](#list-all-role-assignments) for the latter.
+Role assignments assign a role to a service principal. This will require a role definition ID and service principal
+object ID. You can use an ID from the retrieved [list of role definitions](#list-all-role-definitions) for the former,
+and an assignment's `principal_id` from the list retrieved in the [above snippet](#list-all-role-assignments) for the
+latter. Provide these values, and a scope, to a `KeyVaultAccessControlClient`'s `create_role_assignment` method.
+
+<!-- SNIPPET:access_control_operations.create_a_role_assignment -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
+from azure.keyvault.administration import KeyVaultRoleScope
 
-credential = DefaultAzureCredential()
-
-client = KeyVaultAccessControlClient(
-    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
-    credential=credential
-)
-
-# Replace <role-definition-id> with the id of a definition from the fetched list from an earlier example
-role_definition_id = "<role-definition-id>"
-# Replace <service-principal-object-id> with the principal_id of an assignment returned from the previous example
-principal_id = "<service-principal-object-id>"
-
-# first, let's create the role assignment
-role_assignment = client.create_role_assignment(KeyVaultRoleScope.GLOBAL, role_definition_id, principal_id)
-print(role_assignment.name)
-print(role_assignment.principal_id)
-print(role_assignment.role_definition_id)
-
-# now, we get it
-role_assignment = client.get_role_assignment(KeyVaultRoleScope.GLOBAL, role_assignment.name)
-print(role_assignment.name)
-print(role_assignment.principal_id)
-print(role_assignment.role_definition_id)
-
-# finally, we delete this role assignment
-role_assignment = client.delete_role_assignment(KeyVaultRoleScope.GLOBAL, role_assignment.name)
-print(role_assignment.name)
-print(role_assignment.principal_id)
-print(role_assignment.role_definition_id)
+scope = KeyVaultRoleScope.GLOBAL
+role_assignment = client.create_role_assignment(scope=scope, definition_id=definition_id, principal_id=principal_id)
+print(f"Role assignment {role_assignment.name} created successfully.")
 ```
+
+<!-- END SNIPPET -->
+
+`get_role_assignment` can be used by a `KeyVaultAccessControlClient` to fetch an existing role assignment with the
+specified scope and unique name.
+
+<!-- SNIPPET:access_control_operations.get_a_role_assignment -->
+
+```python
+fetched_assignment = client.get_role_assignment(scope=scope, name=role_assignment.name)
+print(f"Role assignment for principal {fetched_assignment.properties.principal_id} fetched successfully.")
+```
+
+<!-- END SNIPPET -->
+
+`delete_role_assignment` can be used by a `KeyVaultAccessControlClient` to delete a role assignment with the specified
+scope and unique name.
+
+<!-- SNIPPET:access_control_operations.delete_a_role_assignment -->
+
+```python
+client.delete_role_assignment(scope=scope, name=role_assignment.name)
+```
+
+<!-- END SNIPPET -->
 
 ### Perform a full key backup
-Back up your entire collection of keys. The backing store for full key backups is a blob storage container using Shared Access Signature authentication.
+The `KeyVaultBackupClient` can be used to back up your entire collection of keys. The backing store for full key
+backups is a blob storage container using Shared Access Signature (SAS) authentication.
 
-For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
-Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+For more details on creating a SAS token using a `BlobServiceClient` from [`azure-storage-blob`][storage_blob], refer
+to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
+[generate a SAS token in Storage Explorer][storage_explorer].
+
+<!-- SNIPPET:backup_restore_operations.begin_backup -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultBackupClient
+CONTAINER_URL = os.environ["CONTAINER_URL"]
+SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-credential = DefaultAzureCredential()
-client = KeyVaultBackupClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
-
-# blob storage container URL, for example https://<account name>.blob.core.windows.net/backup
-blob_storage_url = "<your-blob-storage-url>"
-sas_token = "<your-sas-token>"  # replace with a sas token to your storage account
-
-# Backup is a long-running operation. The client returns a poller object whose result() method
-# blocks until the backup is complete, then returns an object representing the backup operation.
-backup_poller = client.begin_backup(blob_storage_url, sas_token)
-backup_operation = backup_poller.result()
-
-# this is the Azure Storage Blob URL of the backup
-print(backup_operation.folder_url)
+backup_result = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 ```
 
+<!-- END SNIPPET -->
+
+Note that the `begin_backup` method returns a poller. Calling `result()` on this poller returns a
+`KeyVaultBackupResult` containing information about the backup. Calling `wait()` on the poller will instead block until
+the operation is complete without returning an object.
 
 ### Perform a full key restore
-Restore your entire collection of keys from a backup. The data source for a full key restore is a storage blob accessed using Shared Access Signature authentication.
-You will also need the `azure_storage_blob_container_uri` from the [above snippet](#perform-a-full-key-backup).
+The `KeyVaultBackupClient` can be used to restore your entire collection of keys from a backup. The data source for a
+full key restore is a storage blob accessed using Shared Access Signature authentication. You will also need the URL of
+the backup (`KeyVaultBackupResult.folder_url`) from the [above snippet](#perform-a-full-key-backup).
 
-For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
-Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+For more details on creating a SAS token using a `BlobServiceClient` from [`azure-storage-blob`][storage_blob], refer
+to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
+[generate a SAS token in Storage Explorer][storage_explorer].
+
+<!-- SNIPPET:backup_restore_operations.begin_backup -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultBackupClient
-
-credential = DefaultAzureCredential()
-client = KeyVaultBackupClient(vault_url="https://my-managed-hsm-name.managedhsm.azure.net/", credential=credential)
-
-sas_token = "<your-sas-token>"  # replace with a sas token to your storage account
-
-# URL to a storage blob, for example https://<account name>.blob.core.windows.net/backup/mhsm-account-2020090117323313
-blob_url = "<your-blob-url>"
-
-# Restore is a long-running operation. The client returns a poller object whose wait() method
-# blocks until the restore is complete.
-restore_poller = client.begin_restore(blob_url, sas_token)
-restore_poller.wait()
+client.begin_restore(backup_result.folder_url, SAS_TOKEN).wait()
 ```
+
+<!-- END SNIPPET -->
+
+Note that the `begin_restore` method returns a poller. Unlike the poller returned by `begin_backup`, this poller's
+`result` method returns `None`; therefore, calling `wait()` is functionally the same.
+
+### Perform a selective key restore
+
+To restore a single key from a backed up vault instead of all keys, provide the key name as a `key_name` argument to the
+`begin_restore` method [shown above](#perform-a-full-key-restore).
 
 ## Troubleshooting
 
@@ -394,8 +404,11 @@ contact opencode@microsoft.com with any additional questions or comments.
 
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 
+[sas_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/README.md#types-of-credentials
 [settings_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations.py
 [settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py
+[storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/README.md
+[storage_explorer]: https://learn.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-administration%2FREADME.png)
