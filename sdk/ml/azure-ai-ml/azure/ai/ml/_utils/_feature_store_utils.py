@@ -73,7 +73,7 @@ def _archive_or_restore(
         workspace_name=workspace_name,
     )
 
-    if version_resource.properties.is_archived and is_archived:
+    if version_resource.properties.stage == "Archived" and is_archived:
         raise ValidationException(
             message="Asset version is already archived: {}:{}".format(name, version),
             no_personal_data_message="Asset version is already archived",
@@ -82,7 +82,7 @@ def _archive_or_restore(
             error_type=ValidationErrorType.INVALID_VALUE,
         )
 
-    if not version_resource.properties.is_archived and not is_archived:
+    if version_resource.properties.stage != "Archived" and not is_archived:
         raise ValidationException(
             message="Cannot restore non-archived asset version: {}:{}".format(name, version),
             no_personal_data_message="Asset version is not archived",
