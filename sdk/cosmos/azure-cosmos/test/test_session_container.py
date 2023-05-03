@@ -27,7 +27,6 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class Test_session_container(unittest.TestCase):

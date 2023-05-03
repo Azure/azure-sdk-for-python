@@ -28,7 +28,6 @@ from unittest.mock import MagicMock
 # This class tests the backwards compatibility of features being deprecated to ensure users are not broken before
 # properly removing the methods marked for deprecation.
 
-pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")

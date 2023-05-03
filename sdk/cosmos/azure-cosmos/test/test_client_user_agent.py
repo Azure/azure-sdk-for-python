@@ -31,7 +31,6 @@ from test_config import _test_config
 # properly set and saved into the different object instances that use these
 # user-configurable settings.
 
-pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")

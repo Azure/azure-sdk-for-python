@@ -30,7 +30,6 @@ from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos._routing import routing_range as routing_range
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
 
 #IMPORTANT NOTES:
   

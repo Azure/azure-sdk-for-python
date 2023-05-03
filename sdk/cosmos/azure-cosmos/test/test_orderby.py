@@ -29,7 +29,6 @@ from azure.cosmos import _query_iterable as query_iterable
 import azure.cosmos._base as base
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
 
 #IMPORTANT NOTES:
   

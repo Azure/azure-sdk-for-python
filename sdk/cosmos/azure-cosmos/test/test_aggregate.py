@@ -31,7 +31,6 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
 class _config:
     host = test_config._test_config.host

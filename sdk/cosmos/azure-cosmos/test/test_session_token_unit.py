@@ -3,7 +3,6 @@ import pytest
 from azure.cosmos._vector_session_token import VectorSessionToken
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class SessionTokenUnitTest(unittest.TestCase):

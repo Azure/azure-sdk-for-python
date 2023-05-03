@@ -14,7 +14,6 @@ from azure.cosmos._request_object import RequestObject
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
 
-pytestmark = pytest.mark.cosmosEmulator
 
 # TODO: Whole test class needs to be pretty much re-done.
 

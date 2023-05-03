@@ -32,7 +32,6 @@ import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 from azure.cosmos import _retry_utility
 import test_config
 
-pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.globaldb]
 
 location_changed = False
 

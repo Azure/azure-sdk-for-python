@@ -28,7 +28,6 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos import _retry_utility, PartitionKey
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
 
 # IMPORTANT NOTES:
 
