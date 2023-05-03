@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainerf74a32ad?restype=container\u0026se=end\u0026sp=rwdl\u0026sv=2022-11-02\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainerf74a32ad?restype=container\u0026se=end\u0026sp=rwdl\u0026sv=2023-01-03\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -27,7 +27,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainerf74a32ad/blockblob?se=end\u0026sp=rwdl\u0026sv=2022-11-02\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainerf74a32ad/blockblob?se=end\u0026sp=rwdl\u0026sv=2023-01-03\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -65,7 +65,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
-        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainerf74a32ad/blockblob?se=end\u0026sp=rwdl\u0026sv=2022-11-02\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
+        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainerf74a32ad/blockblob?se=end\u0026sp=rwdl\u0026sv=2023-01-03\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
         "x-ms-date": "Mon, 29 Aug 2022 22:34:38 GMT",
         "x-ms-encryption-scope": "testscope1",
         "x-ms-requires-sync": "True",
@@ -122,7 +122,7 @@
         "x-ms-copy-completion-time": "Mon, 29 Aug 2022 22:34:38 GMT",
         "x-ms-copy-id": "0d184fd0-abac-4cdf-a945-61a659e06991",
         "x-ms-copy-progress": "9/9",
-        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainerf74a32ad/blockblob?se=2022-08-29T23%3A34%3A37Z\u0026sp=rwdl\u0026sv=2022-11-02\u0026ss=b\u0026srt=co",
+        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainerf74a32ad/blockblob?se=2022-08-29T23%3A34%3A37Z\u0026sp=rwdl\u0026sv=2023-01-03\u0026ss=b\u0026srt=co",
         "x-ms-copy-status": "success",
         "x-ms-creation-time": "Mon, 29 Aug 2022 22:34:38 GMT",
         "x-ms-encryption-scope": "testscope1",
