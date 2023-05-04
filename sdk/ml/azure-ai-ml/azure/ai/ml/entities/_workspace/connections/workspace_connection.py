@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -17,7 +17,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -221,7 +221,7 @@ class WorkspaceConnection(Resource):
             id=rest_obj.id,
             name=rest_obj.name,
             target=properties.target,
-            expiryTime=properties.expiryTime,
+            expiryTime=properties.expiry_time,
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
@@ -256,7 +256,7 @@ class WorkspaceConnection(Resource):
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.metadata,
-            expiryTime=self.expiryTime,
+            expiry_time=self.expiryTime,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )

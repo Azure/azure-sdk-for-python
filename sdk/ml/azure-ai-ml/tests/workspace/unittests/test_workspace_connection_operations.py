@@ -52,7 +52,7 @@ class TestWorkspaceConnectionsOperation:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
             type=ConnectionCategory.PYTHON_FEED,
-            expiryTime="2025-05-01 17:15:27",
+            expiryTime="01/05/2025 00:00:00",
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
         )
@@ -68,7 +68,7 @@ class TestWorkspaceConnectionsOperation:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
-            expiryTime="2025-05-01 17:15:27",
+            expiryTime="01/05/2025 00:00:00",
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
             metadata=None,
