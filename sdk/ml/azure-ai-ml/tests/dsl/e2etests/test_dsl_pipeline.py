@@ -3273,7 +3273,5 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline_job: PipelineJob = pipeline_func(input=Input(path=path))
         pipeline_job.settings.default_compute = "cpu-cluster"
-        job_res = client.jobs.create_or_update(
-            job=pipeline_job, experiment_name="test_unknown_field"
-        )
-        assert job_res.jobs['node'].unknown_field == '${{parent.inputs.input}}'
+        job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
+        assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
