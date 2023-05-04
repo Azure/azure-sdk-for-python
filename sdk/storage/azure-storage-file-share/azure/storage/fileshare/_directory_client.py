@@ -562,7 +562,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> ItemPaged
+        # type: (bool, Any) -> ItemPaged[Handle]
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:

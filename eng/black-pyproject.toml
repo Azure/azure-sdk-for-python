@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 120
-extend-exclude = '''
+force-exclude = '''
 # Exclude some directories from formatting (note the slashes surrounding the pattern)
 /(
   azure/ai/ml/_restclient

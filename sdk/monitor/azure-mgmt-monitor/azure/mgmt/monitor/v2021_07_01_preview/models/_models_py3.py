@@ -26,18 +26,17 @@ class AccessModeSettings(_serialization.Model):
      private endpoints in scope. If not specified default value is 'Open'. You can override this
      default setting for a specific private endpoint connection by adding an exclusion in the
      'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
-    :vartype query_access_mode: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+    :vartype query_access_mode: str or ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
     :ivar ingestion_access_mode: Specifies the default access mode of ingestion through associated
      private endpoints in scope. If not specified default value is 'Open'. You can override this
      default setting for a specific private endpoint connection by adding an exclusion in the
      'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
     :vartype ingestion_access_mode: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
     :ivar exclusions: List of exclusions that override the default access mode settings for
      specific private endpoint connections.
     :vartype exclusions:
-     list[~$(python-base-namespace).v2021_07_01_preview.models.AccessModeSettingsExclusion]
+     list[~azure.mgmt.monitor.v2021_07_01_preview.models.AccessModeSettingsExclusion]
     """
 
     _validation = {
@@ -64,18 +63,17 @@ class AccessModeSettings(_serialization.Model):
          private endpoints in scope. If not specified default value is 'Open'. You can override this
          default setting for a specific private endpoint connection by adding an exclusion in the
          'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
-        :paramtype query_access_mode: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+        :paramtype query_access_mode: str or ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
         :keyword ingestion_access_mode: Specifies the default access mode of ingestion through
          associated private endpoints in scope. If not specified default value is 'Open'. You can
          override this default setting for a specific private endpoint connection by adding an exclusion
          in the 'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
         :paramtype ingestion_access_mode: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+         ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
         :keyword exclusions: List of exclusions that override the default access mode settings for
          specific private endpoint connections.
         :paramtype exclusions:
-         list[~$(python-base-namespace).v2021_07_01_preview.models.AccessModeSettingsExclusion]
+         list[~azure.mgmt.monitor.v2021_07_01_preview.models.AccessModeSettingsExclusion]
         """
         super().__init__(**kwargs)
         self.query_access_mode = query_access_mode
@@ -93,12 +91,11 @@ class AccessModeSettingsExclusion(_serialization.Model):
     :vartype private_endpoint_connection_name: str
     :ivar query_access_mode: Specifies the access mode of queries through the specified private
      endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
-    :vartype query_access_mode: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+    :vartype query_access_mode: str or ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
     :ivar ingestion_access_mode: Specifies the access mode of ingestion through the specified
      private endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
     :vartype ingestion_access_mode: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
     """
 
     _attribute_map = {
@@ -121,12 +118,11 @@ class AccessModeSettingsExclusion(_serialization.Model):
         :paramtype private_endpoint_connection_name: str
         :keyword query_access_mode: Specifies the access mode of queries through the specified private
          endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
-        :paramtype query_access_mode: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+        :paramtype query_access_mode: str or ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
         :keyword ingestion_access_mode: Specifies the access mode of ingestion through the specified
          private endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
         :paramtype ingestion_access_mode: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.AccessMode
+         ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessMode
         """
         super().__init__(**kwargs)
         self.private_endpoint_connection_name = private_endpoint_connection_name
@@ -238,17 +234,17 @@ class AzureMonitorPrivateLinkScope(TrackedResource):
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: System data.
-    :vartype system_data: ~$(python-base-namespace).v2021_07_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_07_01_preview.models.SystemData
     :ivar provisioning_state: Current state of this PrivateLinkScope: whether or not is has been
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
     :vartype provisioning_state: str
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
-     list[~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpointConnection]
     :ivar access_mode_settings: Access mode settings. Required.
     :vartype access_mode_settings:
-     ~$(python-base-namespace).v2021_07_01_preview.models.AccessModeSettings
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessModeSettings
     """
 
     _validation = {
@@ -292,7 +288,7 @@ class AzureMonitorPrivateLinkScope(TrackedResource):
         :paramtype location: str
         :keyword access_mode_settings: Access mode settings. Required.
         :paramtype access_mode_settings:
-         ~$(python-base-namespace).v2021_07_01_preview.models.AccessModeSettings
+         ~azure.mgmt.monitor.v2021_07_01_preview.models.AccessModeSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
@@ -308,7 +304,7 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
 
     :ivar value: List of Azure Monitor PrivateLinkScope definitions. Required.
     :vartype value:
-     list[~$(python-base-namespace).v2021_07_01_preview.models.AzureMonitorPrivateLinkScope]
+     list[~azure.mgmt.monitor.v2021_07_01_preview.models.AzureMonitorPrivateLinkScope]
     :ivar next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions if
      too many PrivateLinkScopes where returned in the result set.
     :vartype next_link: str
@@ -329,7 +325,7 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
         """
         :keyword value: List of Azure Monitor PrivateLinkScope definitions. Required.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_07_01_preview.models.AzureMonitorPrivateLinkScope]
+         list[~azure.mgmt.monitor.v2021_07_01_preview.models.AzureMonitorPrivateLinkScope]
         :keyword next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions
          if too many PrivateLinkScopes where returned in the result set.
         :paramtype next_link: str
@@ -344,7 +340,7 @@ class DefaultErrorResponse(_serialization.Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~$(python-base-namespace).v2021_07_01_preview.models.ErrorDetail
+    :vartype error: ~azure.mgmt.monitor.v2021_07_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -354,7 +350,7 @@ class DefaultErrorResponse(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~$(python-base-namespace).v2021_07_01_preview.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.monitor.v2021_07_01_preview.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -400,10 +396,10 @@ class ErrorDetail(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~$(python-base-namespace).v2021_07_01_preview.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.monitor.v2021_07_01_preview.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~$(python-base-namespace).v2021_07_01_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.monitor.v2021_07_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -446,7 +442,7 @@ class OperationStatus(_serialization.Model):
     :ivar status: The status of the operation.
     :vartype status: str
     :ivar error: The error detail of the operation if any.
-    :vartype error: ~$(python-base-namespace).v2021_07_01_preview.models.ErrorDetail
+    :vartype error: ~azure.mgmt.monitor.v2021_07_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -481,7 +477,7 @@ class OperationStatus(_serialization.Model):
         :keyword status: The status of the operation.
         :paramtype status: str
         :keyword error: The error detail of the operation if any.
-        :paramtype error: ~$(python-base-namespace).v2021_07_01_preview.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.monitor.v2021_07_01_preview.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.id = id
@@ -529,15 +525,15 @@ class PrivateEndpointConnection(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar private_endpoint: The resource of private end point.
-    :vartype private_endpoint: ~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpoint
+    :vartype private_endpoint: ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
      connection between service consumer and provider.
     :vartype private_link_service_connection_state:
-     ~$(python-base-namespace).v2021_07_01_preview.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
      Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpointConnectionProvisioningState
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
@@ -568,12 +564,11 @@ class PrivateEndpointConnection(Resource):
     ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
-        :paramtype private_endpoint:
-         ~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpoint
+        :paramtype private_endpoint: ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpoint
         :keyword private_link_service_connection_state: A collection of information about the state of
          the connection between service consumer and provider.
         :paramtype private_link_service_connection_state:
-         ~$(python-base-namespace).v2021_07_01_preview.models.PrivateLinkServiceConnectionState
+         ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
@@ -585,8 +580,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     """List of private endpoint connection associated with the specified storage account.
 
     :ivar value: Array of private endpoint connections.
-    :vartype value:
-     list[~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpointConnection]
+    :vartype value: list[~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpointConnection]
     """
 
     _attribute_map = {
@@ -597,7 +591,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpointConnection]
+         list[~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpointConnection]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -656,7 +650,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
-    :vartype value: list[~$(python-base-namespace).v2021_07_01_preview.models.PrivateLinkResource]
+    :vartype value: list[~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateLinkResource]
     """
 
     _attribute_map = {
@@ -666,8 +660,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
     def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
-        :paramtype value:
-         list[~$(python-base-namespace).v2021_07_01_preview.models.PrivateLinkResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateLinkResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -680,7 +673,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
     :vartype status: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpointServiceConnectionStatus
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
     :ivar actions_required: A message indicating if changes on the service provider require any
@@ -706,7 +699,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
         :paramtype status: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.PrivateEndpointServiceConnectionStatus
+         ~azure.mgmt.monitor.v2021_07_01_preview.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval/rejection of the connection.
         :paramtype description: str
         :keyword actions_required: A message indicating if changes on the service provider require any
@@ -766,7 +759,7 @@ class ScopedResource(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: System data.
-    :vartype system_data: ~$(python-base-namespace).v2021_07_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_07_01_preview.models.SystemData
     :ivar linked_resource_id: The resource id of the scoped Azure monitor resource.
     :vartype linked_resource_id: str
     :ivar provisioning_state: State of the private endpoint connection.
@@ -807,7 +800,7 @@ class ScopedResourceListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2021_07_01_preview.models.ScopedResource]
+    :vartype value: list[~azure.mgmt.monitor.v2021_07_01_preview.models.ScopedResource]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -836,8 +829,7 @@ class SystemData(_serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.monitor.v2021_07_01_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
@@ -845,7 +837,7 @@ class SystemData(_serialization.Model):
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
-     ~$(python-base-namespace).v2021_07_01_preview.models.CreatedByType
+     ~azure.mgmt.monitor.v2021_07_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -875,8 +867,7 @@ class SystemData(_serialization.Model):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
          "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.monitor.v2021_07_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
@@ -884,7 +875,7 @@ class SystemData(_serialization.Model):
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
-         ~$(python-base-namespace).v2021_07_01_preview.models.CreatedByType
+         ~azure.mgmt.monitor.v2021_07_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """

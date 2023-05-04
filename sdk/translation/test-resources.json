@@ -136,7 +136,7 @@
         }
     },
     "variables": {
-        "txtUniqueSubDomainName": "[format('{0}', parameters('baseName'))]",
+        "txtUniqueSubDomainName": "[concat('text', parameters('baseName'))]",
         "txtEndpointValue": "[format('https://api.cognitive.microsofttranslator.com')]",
         "txtCustomEndpointValue": "[format('https://{0}.cognitiveservices.azure.com', parameters('baseName'))]",
         "txtRegionValue": "[format('{0}', parameters('location'))]",

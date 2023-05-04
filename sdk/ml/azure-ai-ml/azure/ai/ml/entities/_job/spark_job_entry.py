@@ -5,8 +5,8 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

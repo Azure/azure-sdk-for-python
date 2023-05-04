@@ -6,7 +6,9 @@ import json
 import logging
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobResourceConfiguration as RestJobResourceConfiguration,
+)
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -92,6 +94,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     :vartype locations: List[str]
     :param instance_type: Optional type of VM used as supported by the compute target.
     :type instance_type: str
+    :param max_instance_count: Optional maximum number of instances or nodes used by the compute target.
+    :type max_instance_count: int
     :param properties: Additional properties bag.
     :type properties: Dict[str, Any]
     :param docker_args: Extra arguments to pass to the Docker run command. This would override any
@@ -113,12 +117,14 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         properties: Optional[Dict[str, Any]] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
+        max_instance_count: Optional[int] = None,
         **kwargs
     ):  # pylint: disable=unused-argument
         self.locations = locations
         self.instance_count = instance_count
         self.instance_type = instance_type
         self.shm_size = shm_size
+        self.max_instance_count = max_instance_count
         self.docker_args = docker_args
         self._properties = None
         self.properties = properties
@@ -141,6 +147,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             locations=self.locations,
             instance_count=self.instance_count,
             instance_type=self.instance_type,
+            max_instance_count=self.max_instance_count,
             properties=self.properties.as_dict(),
             docker_args=self.docker_args,
             shm_size=self.shm_size,
@@ -156,6 +163,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             locations=obj.locations,
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
+            max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
             properties=obj.properties,
             docker_args=obj.docker_args,
             shm_size=obj.shm_size,
@@ -169,6 +177,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             self.locations == other.locations
             and self.instance_count == other.instance_count
             and self.instance_type == other.instance_type
+            and self.max_instance_count == other.max_instance_count
             and self.docker_args == other.docker_args
             and self.shm_size == other.shm_size
         )
@@ -186,6 +195,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
                 self.instance_count = other.instance_count
             if other.instance_type:
                 self.instance_type = other.instance_type
+            if other.max_instance_count:
+                self.max_instance_count = other.max_instance_count
             if other.properties:
                 self.properties = other.properties
             if other.docker_args:
