@@ -20,7 +20,7 @@ class TestWorkspaceConnectionEntity:
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
             expiryTime="01/05/2025 00:00:00",
-            metadata=None
+            metadata=None,
         )
 
         assert ws_connection.name == "dummy_connection"
