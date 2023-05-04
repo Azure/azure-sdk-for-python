@@ -32,6 +32,7 @@ from azure.confidentialledger.receipt._claims_digest_computation import (
 def verify_receipt(
     receipt: Dict[str, Any],
     service_cert: str,
+    *,
     application_claims: Optional[List[Dict[str, Any]]] = None,
 ) -> None:
     """Verify that a given Azure Confidential Ledger write transaction receipt
