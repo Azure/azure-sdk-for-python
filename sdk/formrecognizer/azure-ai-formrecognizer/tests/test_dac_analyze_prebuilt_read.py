@@ -32,7 +32,7 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         assert len(result.pages) > 0
         assert len(result.pages[0].formulas) == 2
         assert result.pages[0].formulas[0].kind == "inline"
-        assert result.pages[0].formulas[0].value == "a + b = c ."
+        assert result.pages[0].formulas[0].value == "a + b = c"
         assert result.pages[0].formulas[0].polygon
         assert result.pages[0].formulas[0].span
         assert result.pages[0].formulas[0].confidence > 0.8
