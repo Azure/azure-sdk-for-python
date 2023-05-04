@@ -53,6 +53,7 @@ class TestMonitorSchedule:
 
         validate_to_from_rest_translation(json_path, yaml_path)
 
+    @pytest.mark.skip(reason="model performance not supported in PuP")
     def test_model_performance_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/model_performance_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/model_performance.yaml"

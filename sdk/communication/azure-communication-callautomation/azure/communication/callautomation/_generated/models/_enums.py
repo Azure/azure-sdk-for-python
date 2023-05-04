@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CallConnectionStateModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the call connection."""
 
     UNKNOWN = "unknown"
@@ -52,6 +52,27 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+
+
+class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DtmfTone."""
+
+    ZERO = "zero"
+    ONE = "one"
+    TWO = "two"
+    THREE = "three"
+    FOUR = "four"
+    FIVE = "five"
+    SIX = "six"
+    SEVEN = "seven"
+    EIGHT = "eight"
+    NINE = "nine"
+    A = "a"
+    B = "b"
+    C = "c"
+    D = "d"
+    POUND = "pound"
+    ASTERISK = "asterisk"
 
 
 class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -108,21 +129,21 @@ class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHOICES = "choices"
 
 
-class RecordingChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The channel type of call recording."""
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
 
 
-class RecordingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RecordingContent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The content type of call recording."""
 
     AUDIO = "audio"
     AUDIO_VIDEO = "audioVideo"
 
 
-class RecordingFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format type of call recording."""
 
     WAV = "wav"
@@ -137,29 +158,8 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "inactive"
 
 
-class RecordingStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of external storage."""
 
     ACS = "acs"
     BLOB_STORAGE = "blobStorage"
-
-
-class Tone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Tone."""
-
-    ZERO = "zero"
-    ONE = "one"
-    TWO = "two"
-    THREE = "three"
-    FOUR = "four"
-    FIVE = "five"
-    SIX = "six"
-    SEVEN = "seven"
-    EIGHT = "eight"
-    NINE = "nine"
-    A = "a"
-    B = "b"
-    C = "c"
-    D = "d"
-    POUND = "pound"
-    ASTERISK = "asterisk"

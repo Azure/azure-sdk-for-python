@@ -3,18 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, Dict
 from urllib.parse import urlparse
-from azure.core.tracing.decorator import distributed_trace
-from ._version import SDK_MONIKER
-from ._api_versions import DEFAULT_VERSION
-from ._call_connection_client import CallConnectionClient
-from ._generated._client import AzureCommunicationCallAutomationService
-from ._shared.utils import (
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._version import SDK_MONIKER
+from .._api_versions import DEFAULT_VERSION
+from ._call_connection_client_async import CallConnectionClient
+from .._generated.aio import AzureCommunicationCallAutomationService
+from .._shared.utils import (
     get_authentication_policy,
     parse_connection_str
 )
-from ._generated.models import (
+from .._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
     RedirectCallRequest,
@@ -22,34 +22,36 @@ from ._generated.models import (
     StartCallRecordingRequest,
     CustomContext
 )
-from ._models import (
+from .._models import (
     CallConnectionProperties,
     RecordingProperties
 )
-from ._content_downloader import ContentDownloader
-from ._utils import (
+from ._content_downloader_async import ContentDownloader
+from .._utils import (
     get_repeatability_guid,
     get_repeatability_timestamp,
     serialize_phone_identifier,
     serialize_identifier
 )
 if TYPE_CHECKING:
-    from ._models  import (
+    from .._models  import (
         CallInvite,
         ServerCallLocator,
         GroupCallLocator,
         MediaStreamingConfiguration
     )
+    from azure.core.credentials_async import (
+        AsyncTokenCredential,
+    )
     from azure.core.credentials import (
-        TokenCredential,
         AzureKeyCredential
     )
-    from ._shared.models import (
+    from .._shared.models import (
         CommunicationIdentifier,
         CommunicationUserIdentifier,
         PhoneNumberIdentifier
     )
-    from ._generated.models._enums import (
+    from .._generated.models._enums import (
         CallRejectReason,
         RecordingContent,
         RecordingChannel,
@@ -66,7 +68,7 @@ class CallAutomationClient(object):
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
     :param credential: The access key we use to authenticate against the service.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
      or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
@@ -77,7 +79,7 @@ class CallAutomationClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: Union['TokenCredential', 'AzureKeyCredential'],
+            credential: Union['AsyncTokenCredential', 'AzureKeyCredential'],
             *,
             api_version: Optional[str] = None,
             source_identity: Optional['CommunicationUserIdentifier'] = None,
@@ -100,7 +102,7 @@ class CallAutomationClient(object):
             endpoint,
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(
-                endpoint, credential),
+                endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
@@ -146,8 +148,8 @@ class CallAutomationClient(object):
             call_connection_id=call_connection_id,
             **kwargs)
 
-    @distributed_trace
-    def create_call(
+    @distributed_trace_async
+    async def create_call(
         self,
         target_participant: 'CallInvite',
         callback_url: str,
@@ -193,7 +195,7 @@ class CallAutomationClient(object):
             custom_context=user_custom_context
         )
 
-        result = self._client.create_call(
+        result = await self._client.create_call(
             create_call_request=create_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
@@ -202,8 +204,8 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
             result)
 
-    @distributed_trace
-    def create_group_call(
+    @distributed_trace_async
+    async def create_group_call(
         self,
         target_participants: List['CommunicationIdentifier'],
         callback_url: str,
@@ -217,8 +219,7 @@ class CallAutomationClient(object):
         voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> CallConnectionProperties:
-        """Create a call connection request to a list of multiple target identities.
-        This will call all targets simultaneously, and whoever answers the call will join the call.
+        """ Create a call connection request to a list of multiple target identities.
 
         :param target_participants: A list of targets.
         :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
@@ -264,7 +265,7 @@ class CallAutomationClient(object):
             custom_context=user_custom_context,
         )
 
-        result = self._client.create_call(
+        result = await self._client.create_call(
             create_call_request=create_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
@@ -273,8 +274,8 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
             result)
 
-    @distributed_trace
-    def answer_call(
+    @distributed_trace_async
+    async def answer_call(
         self,
         incoming_call_context: str,
         callback_url: str,
@@ -284,7 +285,6 @@ class CallAutomationClient(object):
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
-        Retrieving IncomingCall event can be set on Azure Communication Service's Azure Portal.
 
         :param incoming_call_context: This can be read from body of IncomingCall event.
          Use this value to answer incoming call.
@@ -310,7 +310,7 @@ class CallAutomationClient(object):
                 self.source_identity) if self.source_identity else None
         )
 
-        result = self._client.answer_call(
+        result = await self._client.answer_call(
             answer_call_request=answer_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
@@ -319,8 +319,8 @@ class CallAutomationClient(object):
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
             result)
 
-    @distributed_trace
-    def redirect_call(
+    @distributed_trace_async
+    async def redirect_call(
         self,
         incoming_call_context: str,
         target_participant: 'CallInvite',
@@ -348,14 +348,14 @@ class CallAutomationClient(object):
             custom_context=user_custom_context
         )
 
-        self._client.redirect_call(
+        await self._client.redirect_call(
             redirect_call_request=redirect_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
-    @distributed_trace
-    def reject_call(
+    @distributed_trace_async
+    async def reject_call(
         self,
         incoming_call_context: str,
         *,
@@ -371,21 +371,21 @@ class CallAutomationClient(object):
         :paramtype call_reject_reason: str or ~azure.communication.callautomation.CallRejectReason
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseErrorr:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         reject_call_request = RejectCallRequest(
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason
         )
 
-        self._client.reject_call(
+        await self._client.reject_call(
             reject_call_request=reject_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
-    @distributed_trace
-    def start_recording(
+    @distributed_trace_async
+    async def start_recording(
         self,
         call_locator: Union['ServerCallLocator', 'GroupCallLocator'],
         *,
@@ -442,14 +442,14 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_guid()
         )
 
-        recording_state_result = self._call_recording_client.start_recording(
+        recording_state_result = await self._call_recording_client.start_recording(
         start_call_recording = start_recording_request, **kwargs)
 
         return RecordingProperties._from_generated(# pylint:disable=protected-access
             recording_state_result)
 
-    @distributed_trace
-    def stop_recording(
+    @distributed_trace_async
+    async def stop_recording(
         self,
         recording_id: str,
         **kwargs
@@ -462,10 +462,10 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
+        await self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
 
-    @distributed_trace
-    def pause_recording(
+    @distributed_trace_async
+    async def pause_recording(
         self,
         recording_id: str,
         **kwargs
@@ -478,10 +478,10 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
+        await self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
 
-    @distributed_trace
-    def resume_recording(
+    @distributed_trace_async
+    async def resume_recording(
         self,
         recording_id: str,
         **kwargs
@@ -494,15 +494,15 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
+        await self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
 
-    @distributed_trace
-    def get_recording_properties(
+    @distributed_trace_async
+    async def get_recording_properties(
         self,
         recording_id: str,
         **kwargs
     ) -> RecordingProperties:
-        """Get call recording properties and its state.
+        """Get call recording properties.
 
         :param recording_id: The recording id.
         :type recording_id: str
@@ -510,20 +510,20 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        recording_state_result = self._call_recording_client.get_recording_properties(
+        recording_state_result = await self._call_recording_client.get_recording_properties(
             recording_id = recording_id, **kwargs)
         return RecordingProperties._from_generated(# pylint:disable=protected-access
             recording_state_result)
 
-    @distributed_trace
-    def download_recording(
+    @distributed_trace_async
+    async def download_recording(
         self,
         recording_url: str,
         *,
         offset: int = None,
         length: int = None,
         **kwargs
-    ) -> Iterable[bytes]:
+    ) -> AsyncIterable[bytes]:
         """Download a stream of the call recording.
 
         :param recording_url: Recording's url to be downloaded
@@ -534,11 +534,11 @@ class CallAutomationClient(object):
         :param length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
         :type length: int
-        :return: Iterable[bytes]
-        :rtype: Iterable[bytes]
+        :return: AsyncIterable[bytes]
+        :rtype: AsyncIterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        stream = self._downloader.download_streaming(
+        stream = await self._downloader.download_streaming(
             source_location = recording_url,
             offset = offset,
             length = length,
@@ -546,8 +546,8 @@ class CallAutomationClient(object):
         )
         return stream
 
-    @distributed_trace
-    def delete_recording(
+    @distributed_trace_async
+    async def delete_recording(
         self,
         recording_url: str,
         **kwargs
@@ -560,4 +560,14 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._downloader.delete_recording(recording_location = recording_url, **kwargs)
+        await self._downloader.delete_recording(recording_location = recording_url, **kwargs)
+
+    async def __aenter__(self) -> "CallAutomationClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
+
+    async def close(self) -> None:
+        await self._client.__aexit__()
