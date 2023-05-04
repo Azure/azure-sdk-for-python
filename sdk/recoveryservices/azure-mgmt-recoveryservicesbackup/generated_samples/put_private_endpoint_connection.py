@@ -35,6 +35,7 @@ def main():
         private_endpoint_connection_name="gaallatestpe2.5704c932-249a-490b-a142-1396838cd3b",
         parameters={
             "properties": {
+                "groupIds": ["AzureBackup_secondary"],
                 "privateEndpoint": {
                     "id": "/subscriptions/04cf684a-d41f-4550-9f70-7708a3a2283b/resourceGroups/gaallaRG/providers/Microsoft.Network/privateEndpoints/gaallatestpe3"
                 },
