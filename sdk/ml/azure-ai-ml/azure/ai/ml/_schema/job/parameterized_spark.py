@@ -102,7 +102,8 @@ class ParameterizedSparkSchema(PathAwareSchema):
     jars = fields.List(fields.Str(required=True))
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
+    properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
@@ -129,6 +130,34 @@ class ParameterizedSparkSchema(PathAwareSchema):
     def no_duplicate_archives(self, value):
         no_duplicates("archives", value)
 
+    @pre_load
+    def deserialize_field_names(self, data, **kwargs):
+        conf = data["conf"] if "conf" in data else None
+        if conf is not None:
+            for field_key, dict_key in CONF_KEY_MAP.items():
+                value = conf.get(dict_key, None)
+                if dict_key in conf and value is not None:
+                    del conf[dict_key]
+                    conf[field_key] = value
+            data["conf"] = conf
+        return data
+
+    @post_dump(pass_original=True)
+    def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
+        # pass original data here to dump conf fields which are not defined in SparkConfSchema
+        conf = data["conf"] if "conf" in data else None
+        if conf is not None and original_data.conf is not None:
+            for field_name, _ in original_data.conf.items():
+                if field_name not in conf:
+                    conf[field_name] = original_data[field_name]
+            for field_name, dict_name in CONF_KEY_MAP.items():
+                val = conf.get(field_name, None)
+                if field_name in conf and val is not None:
+                    del conf[field_name]
+                    conf[dict_name] = val
+            data["conf"] = conf
+        return data
+    
     @post_load
     def demote_conf_fields(self, data, **kwargs):
         conf = data["conf"] if "conf" in data else None
