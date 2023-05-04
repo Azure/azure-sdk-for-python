@@ -156,6 +156,28 @@ from ._assets._artifacts._package.model_package import (
     PackageInputPathUrl,
     PackageInputPathVersion,
 )
+from ._monitoring.alert_notification import AlertNotification
+from ._monitoring.definition import MonitorDefinition
+from ._monitoring.input_data import MonitorInputData
+from ._monitoring.schedule import MonitorSchedule
+from ._monitoring.signals import (
+    DataDriftSignal,
+    DataQualitySignal,
+    PredictionDriftSignal,
+    FeatureAttributionDriftSignal,
+    CustomMonitoringSignal,
+    TargetDataset,
+    MonitorFeatureFilter,
+    DataSegment,
+)
+from ._monitoring.target import MonitoringTarget
+from ._monitoring.thresholds import (
+    DataDriftMetricThreshold,
+    DataQualityMetricThreshold,
+    PredictionDriftMetricThreshold,
+    FeatureAttributionDriftMetricThreshold,
+    CustomMonitoringMetricThreshold
+)
 
 
 from ._assets._artifacts.feature_set import FeatureSet
@@ -360,4 +382,21 @@ __all__ = [
     "PackageInputPathVersion",
     "Route",
     "AccessKeyConfiguration",
+    "AlertNotification",
+    "MonitorDefinition",
+    "MonitorInputData",
+    "MonitorSchedule",
+    "DataDriftSignal",
+    "DataQualitySignal",
+    "PredictionDriftSignal",
+    "FeatureAttributionDriftSignal",
+    "CustomMonitoringSignal",
+    "TargetDataset",
+    "MonitorFeatureFilter",
+    "DataSegment",
+    "DataDriftMetricThreshold",
+    "DataQualityMetricThreshold",
+    "PredictionDriftMetricThreshold",
+    "FeatureAttributionDriftMetricThreshold",
+    "CustomMonitoringMetricThreshold",
 ]
