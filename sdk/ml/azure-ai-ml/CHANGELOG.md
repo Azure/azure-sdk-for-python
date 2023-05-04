@@ -3,6 +3,7 @@
 ## 1.7.0 (Unreleased)
 
 ### Features Added
+- Added data import schedule. The class added is `ImportDataSchedule`.
 
 ### Bugs Fixed
 

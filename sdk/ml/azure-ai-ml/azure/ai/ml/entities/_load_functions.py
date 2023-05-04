@@ -730,7 +730,7 @@ def load_schedule(
     return load_common(Schedule, source, relative_origin, **kwargs)
 
 
-def _load_feature_store(
+def load_feature_store(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
@@ -758,7 +758,7 @@ def _load_feature_store(
     return load_common(FeatureStore, source, relative_origin, **kwargs)
 
 
-def _load_feature_set(
+def load_feature_set(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
@@ -789,7 +789,7 @@ def _load_feature_set(
     return load_common(FeatureSet, source, relative_origin, **kwargs)
 
 
-def _load_feature_store_entity(
+def load_feature_store_entity(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,

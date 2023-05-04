@@ -10,7 +10,7 @@ from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities._load_functions import _load_feature_store_entity
+from azure.ai.ml.entities._load_functions import load_feature_store_entity
 
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.core.paging import ItemPaged
@@ -43,7 +43,7 @@ class TestFeatureStoreEntity(AzureRecordedTestCase):
             assert fs_entity.description == fs_entity_description
 
         featureStoreEntity = verify_entity_load_and_dump(
-            _load_feature_store_entity,
+            load_feature_store_entity,
             feature_store_entitiy_validation,
             "./tests/test_configs/feature_store_entity/feature_store_entity_full.yaml",
             params_override=params_override,
