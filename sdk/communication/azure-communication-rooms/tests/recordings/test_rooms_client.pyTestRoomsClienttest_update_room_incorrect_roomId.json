@@ -11,25 +11,26 @@
         "Content-Length": "89",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "409c3c41-ea13-11ed-b743-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:12 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-05-06T17:33:12.761248Z",
-        "validUntil": "2023-05-10T17:33:12.761248Z"
+        "validFrom": "2023-05-06T17:42:08.909009Z",
+        "validUntil": "2023-05-10T17:42:08.909009Z"
       },
       "StatusCode": 404,
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:12 GMT",
-        "MS-CV": "99sHEIHPskaSlrJ6VailmA.0",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0SP1SZAAAAAALzGar5xW2RpPJXC2T/trgWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "NotFound"
       },

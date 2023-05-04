@@ -9,12 +9,12 @@
         "Authorization": "Sanitized",
         "Content-Length": "39",
         "Content-Type": "application/json",
-        "Repeatability-First-Sent": "Thu, 04 May 2023 00:33:37 GMT",
-        "Repeatability-Request-ID": "4f4c9813-ea13-11ed-9b3a-e45e37e24f59",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:42:27 GMT",
+        "Repeatability-Request-ID": "8b6d5512-ea14-11ed-8751-e45e37e24f59",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "4f4cc206-ea13-11ed-9db8-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:37 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -25,25 +25,26 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:37 GMT",
-        "Location": "99423642955003604",
-        "MS-CV": "DC1wE\u002BLBGEKCzO2iecs/NQ.0",
+        "Date": "sanitized",
+        "Location": "99482649521895527",
+        "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0Yf1SZAAAAABWvAhdzMyVSbppC\u002B8K5vUqWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "someId",
-        "createdAt": "2023-05-04T00:33:37.9635164\u002B00:00",
-        "validFrom": "2023-05-04T00:33:37.6521828\u002B00:00",
-        "validUntil": "2023-10-31T00:33:37.6521828\u002B00:00"
+        "createdAt": "2023-05-04T00:42:28.0822489\u002B00:00",
+        "validFrom": "2023-05-04T00:42:28.0232618\u002B00:00",
+        "validUntil": "2023-10-31T00:42:28.0232618\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99423642955003604/participants?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99482649521895527/participants?api-version=2023-03-31-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -52,9 +53,9 @@
         "Content-Length": "152",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "4fab059d-ea13-11ed-b71d-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:38 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -62,19 +63,20 @@
           "chris": {
             "role": "kafka"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-840f-67f6-1788-0948220037c6": {
+          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-7fc4-1985-094822003bc8": {
             "role": "Presenter"
           }
         }
       },
       "StatusCode": 400,
       "ResponseHeaders": {
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:37 GMT",
-        "MS-CV": "2FdmRVFPEUiLbTzRZHoEhA.0",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0Yv1SZAAAAAAkPou8F9NITZYKLxGtQTAJWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "BadRequest"
       },

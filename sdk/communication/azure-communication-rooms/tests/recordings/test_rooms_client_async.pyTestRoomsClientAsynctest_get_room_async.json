@@ -9,19 +9,19 @@
         "Authorization": "Sanitized",
         "Content-Length": "213",
         "Content-Type": "application/json",
-        "Repeatability-First-Sent": "Thu, 04 May 2023 00:33:22 GMT",
-        "Repeatability-Request-ID": "4668e3cb-ea13-11ed-9484-e45e37e24f59",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:42:16 GMT",
+        "Repeatability-Request-ID": "84ff632f-ea14-11ed-abe0-e45e37e24f59",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "46690b80-ea13-11ed-b2bc-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:22 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-05-06T17:33:22.491079Z",
-        "validUntil": "2023-05-20T17:33:22.491079Z",
+        "validFrom": "2023-05-06T17:42:16.992849Z",
+        "validUntil": "2023-05-20T17:42:16.992849Z",
         "participants": {
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-840f-2dbf-1985-094822003ad4": {
+          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-55a8-f38d-094822003987": {
             "role": "Presenter"
           }
         }
@@ -30,25 +30,26 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:22 GMT",
-        "Location": "99451478697411462",
-        "MS-CV": "J4dUFShpwkiBesdmMVLCaA.0",
+        "Date": "sanitized",
+        "Location": "99441397145781380",
+        "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0Uv1SZAAAAAB5kIyUFJRlQKnJlUCUK0yFWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "someId",
-        "createdAt": "2023-05-04T00:33:23.0138447\u002B00:00",
-        "validFrom": "2023-05-06T17:33:22.491079\u002B00:00",
-        "validUntil": "2023-05-20T17:33:22.491079\u002B00:00"
+        "createdAt": "2023-05-04T00:42:17.2846611\u002B00:00",
+        "validFrom": "2023-05-06T17:42:16.992849\u002B00:00",
+        "validUntil": "2023-05-20T17:42:16.992849\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99451478697411462?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99441397145781380?api-version=2023-03-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -56,9 +57,9 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "46c46fa5-ea13-11ed-b0df-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:23 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -66,23 +67,24 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:22 GMT",
-        "MS-CV": "eSnSnpvMWECNPkMBishuNg.0",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0U/1SZAAAAABLw9mrwrcSQ4ARDq8gZrz/WVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "someId",
-        "createdAt": "2023-05-04T00:33:23.0138447\u002B00:00",
-        "validFrom": "2023-05-06T17:33:22.491079\u002B00:00",
-        "validUntil": "2023-05-20T17:33:22.491079\u002B00:00"
+        "createdAt": "2023-05-04T00:42:17.2846611\u002B00:00",
+        "validFrom": "2023-05-06T17:42:16.992849\u002B00:00",
+        "validUntil": "2023-05-20T17:42:16.992849\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99451478697411462?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99441397145781380?api-version=2023-03-31-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -90,9 +92,9 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "46ee364b-ea13-11ed-a059-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:23 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -100,10 +102,11 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Date": "Thu, 04 May 2023 00:33:23 GMT",
-        "MS-CV": "wSvD93nZUEirShe31sxWew.0",
+        "Connection": "keep-alive",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Request-Context": "appId=",
-        "X-Azure-Ref": "0U/1SZAAAAABrpeiKGZeWTI2P7WSkx25RWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

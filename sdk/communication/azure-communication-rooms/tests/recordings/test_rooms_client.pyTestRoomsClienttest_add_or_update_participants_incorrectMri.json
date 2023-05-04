@@ -10,12 +10,12 @@
         "Connection": "keep-alive",
         "Content-Length": "39",
         "Content-Type": "application/json",
-        "Repeatability-First-Sent": "Thu, 04 May 2023 00:33:10 GMT",
-        "Repeatability-Request-ID": "3f402840-ea13-11ed-baf8-e45e37e24f59",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:42:07 GMT",
+        "Repeatability-Request-ID": "7f1a40be-ea14-11ed-b44d-e45e37e24f59",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "3f404f55-ea13-11ed-92b0-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:10 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -26,25 +26,26 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:10 GMT",
-        "Location": "99423427993917564",
-        "MS-CV": "qewvuoxTOUyWoFoYjeQtaQ.0",
+        "Date": "sanitized",
+        "Location": "99461044508129365",
+        "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0Rv1SZAAAAABjVU\u002B11P4mTZ41fzZ2mLeXWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "someId",
-        "createdAt": "2023-05-04T00:33:11.0028645\u002B00:00",
-        "validFrom": "2023-05-04T00:33:10.7472277\u002B00:00",
-        "validUntil": "2023-10-31T00:33:10.7472277\u002B00:00"
+        "createdAt": "2023-05-04T00:42:07.4040876\u002B00:00",
+        "validFrom": "2023-05-04T00:42:07.3720091\u002B00:00",
+        "validUntil": "2023-10-31T00:42:07.3720091\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99423427993917564/participants?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99461044508129365/participants?api-version=2023-03-31-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -54,9 +55,9 @@
         "Content-Length": "159",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "3f9a7562-ea13-11ed-b8d7-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:11 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -64,7 +65,7 @@
           "wrong_mri": {
             "role": "Attendee"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-840e-fec7-1788-0948220037b8": {
+          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-2ee7-1985-094822003b9b": {
             "role": "Presenter"
           }
         }
@@ -72,12 +73,13 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:10 GMT",
-        "MS-CV": "h5j\u002BIlR/HEWSeaX1TGABlA.0",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0R/1SZAAAAAC2Zl0SDA/OTqiGKpI\u002BgZDaWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "BadRequest"
       },

@@ -9,12 +9,12 @@
         "Authorization": "Sanitized",
         "Content-Length": "198",
         "Content-Type": "application/json",
-        "Repeatability-First-Sent": "Thu, 04 May 2023 00:33:20 GMT",
-        "Repeatability-Request-ID": "45402efd-ea13-11ed-a527-e45e37e24f59",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:42:15 GMT",
+        "Repeatability-Request-ID": "8418db02-ea14-11ed-8666-e45e37e24f59",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "4540577f-ea13-11ed-9c9f-e45e37e24f59",
+        "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 04 May 2023 00:33:20 GMT",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -24,7 +24,7 @@
           "wrong_mri": {
             "role": "Attendee"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-840f-2610-b688-094822003a1a": {
+          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-4fa8-1788-09482200389c": {
             "role": "Presenter"
           }
         }
@@ -33,12 +33,13 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 04 May 2023 00:33:20 GMT",
-        "MS-CV": "4ayU6z22rUijGjRzY1PSTw.0",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0UP1SZAAAAABJ3pjJCeZSTK86zpXle6DXWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "BadRequest"
       },
