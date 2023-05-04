@@ -95,8 +95,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         *,
-        max_events: Optional[int] = None,
-        max_wait_time: Optional[int] = None,
+        max_events: Optional[int] = 1,
+        max_wait_time: Optional[int] = 60,
         **kwargs: Any
     ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
