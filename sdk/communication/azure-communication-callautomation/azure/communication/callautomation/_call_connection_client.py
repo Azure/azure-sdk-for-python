@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union
+from typing import TYPE_CHECKING, Optional, List, Union, Dict
 from urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -198,15 +198,21 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def transfer_call_to_participant(
         self,
-        target_participant: 'CallInvite',
+        target_participant: 'CommunicationIdentifier',
         *,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer this call to another participant.
 
         :param target_participant: The transfer target.
-        :type target_participant: CallInvite
+        :type target_participant: CommunicationIdentifier
+        :keyword sip_headers: Custom context for PSTN
+        :paramtype sip_headers: dict[str, str]
+        :keyword voip_headers: Custom context for VOIP
+        :paramtype voip_headers: dict[str, str]
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: TransferCallResult
@@ -214,13 +220,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+            voip_headers=voip_headers,
+            sip_headers=sip_headers
+            ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
-            target_participant=serialize_identifier(target_participant.target),
-            transferee_caller_id=serialize_identifier(
-                target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
+            target_participant=serialize_identifier(target_participant),
             custom_context=user_custom_context, operation_context=operation_context)
 
         return self._call_connection_client.transfer_to_participant(
