@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
@@ -29,7 +28,6 @@ REPLICATION_LOCATIONS = "replication_locations"
 INTELLECTUAL_PROPERTY = "intellectual_property"
 
 
-@experimental
 class Registry(Resource):
     def __init__(
         self,
@@ -150,7 +148,7 @@ class Registry(Resource):
 
         # Convert from api name region_details to user-shown name "replication locations"
         replication_locations = []
-        if real_registry.region_details:
+        if real_registry and real_registry.region_details:
             replication_locations = [
                 RegistryRegionDetails._from_rest_object(details)
                 for details in real_registry.region_details  # pylint: disable=protected-access

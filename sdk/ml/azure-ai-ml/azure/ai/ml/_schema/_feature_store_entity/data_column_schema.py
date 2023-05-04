@@ -22,6 +22,6 @@ class DataColumnSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_store_entity.data_column import _DataColumn
+        from azure.ai.ml.entities._feature_store_entity.data_column import DataColumn
 
-        return _DataColumn(**data)
+        return DataColumn(**data)

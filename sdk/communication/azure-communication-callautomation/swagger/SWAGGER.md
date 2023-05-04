@@ -17,7 +17,7 @@ autorest SWAGGER.md
 
 ```yaml
 tag: package-2023-01-15-preview
-require: https://raw.githubusercontent.com/williamzhao87/azure-rest-api-specs/0d0cd5af40aa17af76ce0307ac5512351c38e3bc/specification/communication/data-plane/CallAutomation/readme.md
+require: https://github.com/williamzhao87/azure-rest-api-specs/blob/33883b827facd6567cbe03e3853634d59633b970/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
@@ -31,4 +31,33 @@ v3: true
 no-async: false
 add-credential: false
 title: Azure Communication Call Automation Service
+```
+
+### Rename response to result
+```yaml
+directive:
+- from: swagger-document
+  where: $.definitions.RecordingContentType.x-ms-enum
+  transform: >
+    $["name"] = "RecordingContent";
+- from: swagger-document
+  where: $.definitions.RecordingChannelType.x-ms-enum
+  transform: >
+    $["name"] = "RecordingChannel";
+- from: swagger-document
+  where: $.definitions.RecordingFormatType.x-ms-enum
+  transform: >
+    $["name"] = "RecordingFormat";
+- from: swagger-document
+  where: $.definitions.RecordingStorageType.x-ms-enum
+  transform: >
+    $["name"] = "RecordingStorage";
+- from: swagger-document
+  where: $.definitions.Tone.x-ms-enum
+  transform: >
+    $["name"] = "DtmfTone";
+- from: swagger-document
+  where: $.definitions.CallConnectionStateModel.x-ms-enum
+  transform: >
+    $["name"] = "CallConnectionState";
 ```

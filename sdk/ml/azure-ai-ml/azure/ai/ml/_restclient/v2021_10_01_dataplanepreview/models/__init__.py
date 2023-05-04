@@ -11,6 +11,7 @@ try:
     from ._models_py3 import AccountKeyDatastoreSecrets
     from ._models_py3 import AcrDetail
     from ._models_py3 import AmlToken
+    from ._models_py3 import AnonymousAccessCredentialDto
     from ._models_py3 import AssetBase
     from ._models_py3 import AssetContainer
     from ._models_py3 import AssetReferenceBase
@@ -46,6 +47,7 @@ try:
     from ._models_py3 import DataContainerDetails
     from ._models_py3 import DataContainerResourceArmPaginatedResult
     from ._models_py3 import DataPathAssetReference
+    from ._models_py3 import DataReferenceCredentialDto
     from ._models_py3 import DataVersionBaseData
     from ._models_py3 import DataVersionBaseDetails
     from ._models_py3 import DataVersionBaseResourceArmPaginatedResult
@@ -53,6 +55,7 @@ try:
     from ._models_py3 import DatastoreCredentials
     from ._models_py3 import DatastoreSecrets
     from ._models_py3 import DistributionConfiguration
+    from ._models_py3 import DockerCredentialDto
     from ._models_py3 import EarlyTerminationPolicy
     from ._models_py3 import EnvironmentContainerData
     from ._models_py3 import EnvironmentContainerDetails
@@ -68,6 +71,7 @@ try:
     from ._models_py3 import IdentityConfiguration
     from ._models_py3 import ImageReferenceForConsumptionDto
     from ._models_py3 import InferenceContainerProperties
+    from ._models_py3 import IntellectualProperty
     from ._models_py3 import Job
     from ._models_py3 import JobBase
     from ._models_py3 import JobInput
@@ -81,6 +85,7 @@ try:
     from ._models_py3 import JobService
     from ._models_py3 import MLTableData
     from ._models_py3 import ManagedIdentity
+    from ._models_py3 import ManagedIdentityCredentialDto
     from ._models_py3 import MedianStoppingPolicy
     from ._models_py3 import ModelContainerData
     from ._models_py3 import ModelContainerDetails
@@ -100,6 +105,7 @@ try:
     from ._models_py3 import ResourceManagementAssetReferenceData
     from ._models_py3 import ResourceManagementAssetReferenceDetails
     from ._models_py3 import Route
+    from ._models_py3 import SASCredentialDto
     from ._models_py3 import SasDatastoreCredentials
     from ._models_py3 import SasDatastoreSecrets
     from ._models_py3 import ServicePrincipalDatastoreCredentials
@@ -120,6 +126,7 @@ except (SyntaxError, ImportError):
     from ._models import AccountKeyDatastoreSecrets  # type: ignore
     from ._models import AcrDetail  # type: ignore
     from ._models import AmlToken  # type: ignore
+    from ._models import AnonymousAccessCredentialDto  # type: ignore
     from ._models import AssetBase  # type: ignore
     from ._models import AssetContainer  # type: ignore
     from ._models import AssetReferenceBase  # type: ignore
@@ -155,6 +162,7 @@ except (SyntaxError, ImportError):
     from ._models import DataContainerDetails  # type: ignore
     from ._models import DataContainerResourceArmPaginatedResult  # type: ignore
     from ._models import DataPathAssetReference  # type: ignore
+    from ._models import DataReferenceCredentialDto  # type: ignore
     from ._models import DataVersionBaseData  # type: ignore
     from ._models import DataVersionBaseDetails  # type: ignore
     from ._models import DataVersionBaseResourceArmPaginatedResult  # type: ignore
@@ -162,6 +170,7 @@ except (SyntaxError, ImportError):
     from ._models import DatastoreCredentials  # type: ignore
     from ._models import DatastoreSecrets  # type: ignore
     from ._models import DistributionConfiguration  # type: ignore
+    from ._models import DockerCredentialDto  # type: ignore
     from ._models import EarlyTerminationPolicy  # type: ignore
     from ._models import EnvironmentContainerData  # type: ignore
     from ._models import EnvironmentContainerDetails  # type: ignore
@@ -177,6 +186,7 @@ except (SyntaxError, ImportError):
     from ._models import IdentityConfiguration  # type: ignore
     from ._models import ImageReferenceForConsumptionDto  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
+    from ._models import IntellectualProperty  # type: ignore
     from ._models import Job  # type: ignore
     from ._models import JobBase  # type: ignore
     from ._models import JobInput  # type: ignore
@@ -190,6 +200,7 @@ except (SyntaxError, ImportError):
     from ._models import JobService  # type: ignore
     from ._models import MLTableData  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
+    from ._models import ManagedIdentityCredentialDto  # type: ignore
     from ._models import MedianStoppingPolicy  # type: ignore
     from ._models import ModelContainerData  # type: ignore
     from ._models import ModelContainerDetails  # type: ignore
@@ -209,6 +220,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourceManagementAssetReferenceData  # type: ignore
     from ._models import ResourceManagementAssetReferenceDetails  # type: ignore
     from ._models import Route  # type: ignore
+    from ._models import SASCredentialDto  # type: ignore
     from ._models import SasDatastoreCredentials  # type: ignore
     from ._models import SasDatastoreSecrets  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
@@ -229,6 +241,7 @@ from ._azure_machine_learning_workspaces_enums import (
     BindingType,
     CreatedByType,
     CredentialsType,
+    DataReferenceCredentialType,
     DataType,
     DatastoreType,
     DistributionType,
@@ -245,6 +258,7 @@ from ._azure_machine_learning_workspaces_enums import (
     ListViewType,
     OperatingSystemType,
     OutputDataDeliveryMode,
+    ProtectionLevel,
     ReferenceType,
     SamplingAlgorithm,
     SecretsType,
@@ -256,6 +270,7 @@ __all__ = [
     'AccountKeyDatastoreSecrets',
     'AcrDetail',
     'AmlToken',
+    'AnonymousAccessCredentialDto',
     'AssetBase',
     'AssetContainer',
     'AssetReferenceBase',
@@ -291,6 +306,7 @@ __all__ = [
     'DataContainerDetails',
     'DataContainerResourceArmPaginatedResult',
     'DataPathAssetReference',
+    'DataReferenceCredentialDto',
     'DataVersionBaseData',
     'DataVersionBaseDetails',
     'DataVersionBaseResourceArmPaginatedResult',
@@ -298,6 +314,7 @@ __all__ = [
     'DatastoreCredentials',
     'DatastoreSecrets',
     'DistributionConfiguration',
+    'DockerCredentialDto',
     'EarlyTerminationPolicy',
     'EnvironmentContainerData',
     'EnvironmentContainerDetails',
@@ -313,6 +330,7 @@ __all__ = [
     'IdentityConfiguration',
     'ImageReferenceForConsumptionDto',
     'InferenceContainerProperties',
+    'IntellectualProperty',
     'Job',
     'JobBase',
     'JobInput',
@@ -326,6 +344,7 @@ __all__ = [
     'JobService',
     'MLTableData',
     'ManagedIdentity',
+    'ManagedIdentityCredentialDto',
     'MedianStoppingPolicy',
     'ModelContainerData',
     'ModelContainerDetails',
@@ -345,6 +364,7 @@ __all__ = [
     'ResourceManagementAssetReferenceData',
     'ResourceManagementAssetReferenceDetails',
     'Route',
+    'SASCredentialDto',
     'SasDatastoreCredentials',
     'SasDatastoreSecrets',
     'ServicePrincipalDatastoreCredentials',
@@ -363,6 +383,7 @@ __all__ = [
     'BindingType',
     'CreatedByType',
     'CredentialsType',
+    'DataReferenceCredentialType',
     'DataType',
     'DatastoreType',
     'DistributionType',
@@ -379,6 +400,7 @@ __all__ = [
     'ListViewType',
     'OperatingSystemType',
     'OutputDataDeliveryMode',
+    'ProtectionLevel',
     'ReferenceType',
     'SamplingAlgorithm',
     'SecretsType',

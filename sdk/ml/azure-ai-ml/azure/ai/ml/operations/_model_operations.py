@@ -27,8 +27,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ModelVersion
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationScope,
@@ -54,7 +54,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model, ModelPackage
+from azure.ai.ml.entities._assets import Model, ModelPackage, Environment
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
@@ -84,7 +84,7 @@ class ModelOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         all_operations: OperationsContainer = None,
         **kwargs: Dict,
@@ -234,7 +234,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
             return (
                 self._model_versions_operation.get(
@@ -317,7 +317,7 @@ class ModelOperations(_ScopeDependentOperations):
         model_uri = self.get(name=name, version=version).path
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
-            sas_uri = get_storage_details_for_registry_assets(
+            sas_uri, auth_type = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
                 asset_name=name,
                 asset_version=version,
@@ -326,7 +326,15 @@ class ModelOperations(_ScopeDependentOperations):
                 rg_name=self._resource_group_name,
                 uri=model_uri,
             )
-            storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            if auth_type == "SAS":
+                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            else:
+                parts = sas_uri.split("/")
+                storage_account = parts[2].split(".")[0]
+                container_name = parts[3]
+                storage_client = get_storage_client(
+                    credential=None, storage_account=storage_account, container_name=container_name
+                )
 
         else:
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
@@ -542,8 +550,22 @@ class ModelOperations(_ScopeDependentOperations):
             self._service_client = client_
             self._model_versions_operation = model_versions_operation_
 
+    @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
+    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> Environment:
+        """Package a model asset
+
+        :param name: Name of model asset.
+        :type name: str
+        :param version: Version of model asset.
+        :type version: str
+        :param package_request: Model package request.
+        :type package_request: ~azure.ai.ml.entities.ModelPackage
+        :return: Environment object
+        :rtype: ~azure.ai.ml.entities.Environment
+
+        """
+
         if not kwargs.get("skip_to_rest", False):
             orchestrators = OperationOrchestrator(
                 operation_container=self._all_operations,
@@ -592,8 +614,8 @@ class ModelOperations(_ScopeDependentOperations):
         module_logger.info("Creating package with name: %s", package_request.target_environment_name)
 
         package_out = self._model_versions_operation.begin_package(
-            name=model_name,
-            version=model_version,
+            name=name,
+            version=version,
             workspace_name=self._workspace_name,
             body=package_request,
             **self._scope_kwargs,

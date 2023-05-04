@@ -15,12 +15,7 @@ from ._models_py3 import (
 
 
 class AzureBlobFileListSource(GeneratedAzureBlobFileListSource):
-    """File list in Azure Blob Storage.
-
-    :keyword str container_url: Required. Azure Blob Storage container URL.
-    :keyword str file_list: Required. Path to a JSONL file within the container specifying a subset of
-     documents for training.
-    """
+    """File list in Azure Blob Storage."""
 
     container_url: str
     """Required. Azure Blob Storage container URL."""
@@ -72,11 +67,7 @@ class AzureBlobFileListSource(GeneratedAzureBlobFileListSource):
 
 
 class AzureBlobContentSource(GeneratedAzureBlobContentSource):
-    """Azure Blob Storage content.
-
-    :keyword str container_url: Required. Azure Blob Storage container URL.
-    :keyword str prefix: Blob name prefix.
-    """
+    """Azure Blob Storage content."""
 
     container_url: str
     """Required. Azure Blob Storage container URL."""
@@ -128,14 +119,7 @@ class AzureBlobContentSource(GeneratedAzureBlobContentSource):
 
 
 class ClassifierDocumentTypeDetails(GeneratedClassifierDocumentTypeDetails):
-    """Training data source. Pass either `azure_blob_source` or `azure_blob_file_list_source`.
-
-    :keyword azure_blob_source: Azure Blob Storage location containing the training data.
-    :paramtype azure_blob_source: ~azure.ai.formrecognizer.AzureBlobContentSource
-    :keyword azure_blob_file_list_source: Azure Blob Storage file list specifying the training
-     data.
-    :paramtype azure_blob_file_list_source: ~azure.ai.formrecognizer.AzureBlobFileListSource
-    """
+    """Training data source. Pass either `azure_blob_source` or `azure_blob_file_list_source`."""
 
     azure_blob_source: Optional[AzureBlobContentSource]
     """Azure Blob Storage location containing the training data."""
