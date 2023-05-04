@@ -258,7 +258,13 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
-        tox_execution_array = [sys.executable, "-m", "tox", "run"]
+        tox_execution_array = [sys.executable, "-m", "tox"]
+
+        if parsed_args.tenvparallel:
+            tox_execution_array.extend(["run-parallel", "-p", "all"])
+        else:
+            tox_execution_array.append("run")
+
         # Tox command is run in package root, make tox set package root as {toxinidir}
         tox_execution_array += ["--root", "."]
         local_options_array = options_array[:]
@@ -325,8 +331,6 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
             tox_execution_array.extend(["-e", filtered_tox_environment_set])
 
-        if parsed_args.tenvparallel:
-            tox_execution_array.extend(["-p", "all"])
 
         if parsed_args.tox_env == "apistub":
             local_options_array = []
