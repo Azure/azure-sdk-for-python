@@ -144,15 +144,18 @@ class ParameterizedSparkSchema(PathAwareSchema):
 
     @post_dump(pass_original=True)
     def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
-        # pass original data here to dump conf fields which are not defined in SparkConfSchema
-        conf = data["conf"] if "conf" in data else None
-        if conf is not None and original_data.conf is not None:
-            for field_name, _ in original_data.conf.items():
+        conf = data["conf"] if "conf" in data else {}
+        if conf is not None or original_data.conf is not None:
+            for field_name, value in original_data.conf.items():
                 if field_name not in conf:
-                    conf[field_name] = original_data[field_name]
+                    if isinstance(value, str) and value.isdigit():
+                        value = int(value)
+                    conf[field_name] = value
             for field_name, dict_name in CONF_KEY_MAP.items():
                 val = conf.get(field_name, None)
                 if field_name in conf and val is not None:
+                    if isinstance(val, str) and val.isdigit():
+                        val = int(val)
                     del conf[field_name]
                     conf[dict_name] = val
             data["conf"] = conf
