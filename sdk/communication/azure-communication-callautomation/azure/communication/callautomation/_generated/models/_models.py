@@ -422,7 +422,7 @@ class CallConnectionProperties(_serialization.Model):
      "connecting", "connected", "transferring", "transferAccepted", "disconnecting", and
      "disconnected".
     :vartype call_connection_state: str or
-     ~azure.communication.callautomation.models.CallConnectionStateModel
+     ~azure.communication.callautomation.models.CallConnectionState
     :ivar callback_uri: The callback URI.
     :vartype callback_uri: str
     :ivar media_subscription_id: SubscriptionId for media streaming.
@@ -457,7 +457,7 @@ class CallConnectionProperties(_serialization.Model):
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         targets: Optional[List["_models.CommunicationIdentifierModel"]] = None,
-        call_connection_state: Optional[Union[str, "_models.CallConnectionStateModel"]] = None,
+        call_connection_state: Optional[Union[str, "_models.CallConnectionState"]] = None,
         callback_uri: Optional[str] = None,
         media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
@@ -477,7 +477,7 @@ class CallConnectionProperties(_serialization.Model):
          "connecting", "connected", "transferring", "transferAccepted", "disconnecting", and
          "disconnected".
         :paramtype call_connection_state: str or
-         ~azure.communication.callautomation.models.CallConnectionStateModel
+         ~azure.communication.callautomation.models.CallConnectionState
         :keyword callback_uri: The callback URI.
         :paramtype callback_uri: str
         :keyword media_subscription_id: SubscriptionId for media streaming.
@@ -757,7 +757,7 @@ class Choice(_serialization.Model):
     :vartype phrases: list[str]
     :ivar tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
      "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.Tone
+    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
     """
 
     _validation = {
@@ -772,7 +772,7 @@ class Choice(_serialization.Model):
     }
 
     def __init__(
-        self, *, label: str, phrases: List[str], tone: Optional[Union[str, "_models.Tone"]] = None, **kwargs: Any
+        self, *, label: str, phrases: List[str], tone: Optional[Union[str, "_models.DtmfTone"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword label: Identifier for a given choice. Required.
@@ -781,7 +781,7 @@ class Choice(_serialization.Model):
         :paramtype phrases: list[str]
         :keyword tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
          "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-        :paramtype tone: str or ~azure.communication.callautomation.models.Tone
+        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
         """
         super().__init__(**kwargs)
         self.label = label
@@ -827,7 +827,7 @@ class CollectTonesResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tones:
-    :vartype tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     """
 
     _validation = {
@@ -1357,7 +1357,7 @@ class DtmfOptions(_serialization.Model):
     :ivar max_tones_to_collect: Maximum number of DTMF tones to be collected.
     :vartype max_tones_to_collect: int
     :ivar stop_tones: List of tones that will stop recognizing.
-    :vartype stop_tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype stop_tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     """
 
     _validation = {
@@ -1375,7 +1375,7 @@ class DtmfOptions(_serialization.Model):
         *,
         inter_tone_timeout_in_seconds: Optional[int] = None,
         max_tones_to_collect: Optional[int] = None,
-        stop_tones: Optional[List[Union[str, "_models.Tone"]]] = None,
+        stop_tones: Optional[List[Union[str, "_models.DtmfTone"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1384,7 +1384,7 @@ class DtmfOptions(_serialization.Model):
         :keyword max_tones_to_collect: Maximum number of DTMF tones to be collected.
         :paramtype max_tones_to_collect: int
         :keyword stop_tones: List of tones that will stop recognizing.
-        :paramtype stop_tones: list[str or ~azure.communication.callautomation.models.Tone]
+        :paramtype stop_tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
         """
         super().__init__(**kwargs)
         self.inter_tone_timeout_in_seconds = inter_tone_timeout_in_seconds
@@ -1398,7 +1398,7 @@ class DtmfResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tones:
-    :vartype tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     """
 
     _validation = {
@@ -1422,7 +1422,7 @@ class ExternalStorage(_serialization.Model):
 
     :ivar storage_type: Defines the type of external storage. Required. Known values are: "acs" and
      "blobStorage".
-    :vartype storage_type: str or ~azure.communication.callautomation.models.RecordingStorageType
+    :vartype storage_type: str or ~azure.communication.callautomation.models.RecordingStorage
     :ivar blob_storage: Defines the blob storage location where the recording will be stored.
     :vartype blob_storage: ~azure.communication.callautomation.models.BlobStorage
     """
@@ -1439,14 +1439,14 @@ class ExternalStorage(_serialization.Model):
     def __init__(
         self,
         *,
-        storage_type: Union[str, "_models.RecordingStorageType"],
+        storage_type: Union[str, "_models.RecordingStorage"],
         blob_storage: Optional["_models.BlobStorage"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword storage_type: Defines the type of external storage. Required. Known values are: "acs"
          and "blobStorage".
-        :paramtype storage_type: str or ~azure.communication.callautomation.models.RecordingStorageType
+        :paramtype storage_type: str or ~azure.communication.callautomation.models.RecordingStorage
         :keyword blob_storage: Defines the blob storage location where the recording will be stored.
         :paramtype blob_storage: ~azure.communication.callautomation.models.BlobStorage
         """
@@ -2976,7 +2976,7 @@ class SendDtmfRequest(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar tones: List of tones to be sent to target participant. Required.
-    :vartype tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     :ivar target_participant: Target participant of send DTMF. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
@@ -2998,14 +2998,14 @@ class SendDtmfRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        tones: List[Union[str, "_models.Tone"]],
+        tones: List[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tones: List of tones to be sent to target participant. Required.
-        :paramtype tones: list[str or ~azure.communication.callautomation.models.Tone]
+        :paramtype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
         :keyword target_participant: Target participant of send DTMF. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
@@ -3098,15 +3098,15 @@ class StartCallRecordingRequest(_serialization.Model):
     :ivar recording_content_type: The content type of call recording. Known values are: "audio" and
      "audioVideo".
     :vartype recording_content_type: str or
-     ~azure.communication.callautomation.models.RecordingContentType
+     ~azure.communication.callautomation.models.RecordingContent
     :ivar recording_channel_type: The channel type of call recording. Known values are: "mixed" and
      "unmixed".
     :vartype recording_channel_type: str or
-     ~azure.communication.callautomation.models.RecordingChannelType
+     ~azure.communication.callautomation.models.RecordingChannel
     :ivar recording_format_type: The format type of call recording. Known values are: "wav", "mp3",
      and "mp4".
     :vartype recording_format_type: str or
-     ~azure.communication.callautomation.models.RecordingFormatType
+     ~azure.communication.callautomation.models.RecordingFormat
     :ivar audio_channel_participant_ordering: The sequential order in which audio channels are
      assigned to participants in the unmixed recording.
      When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not
@@ -3143,9 +3143,9 @@ class StartCallRecordingRequest(_serialization.Model):
         *,
         call_locator: "_models.CallLocator",
         recording_state_callback_uri: Optional[str] = None,
-        recording_content_type: Optional[Union[str, "_models.RecordingContentType"]] = None,
-        recording_channel_type: Optional[Union[str, "_models.RecordingChannelType"]] = None,
-        recording_format_type: Optional[Union[str, "_models.RecordingFormatType"]] = None,
+        recording_content_type: Optional[Union[str, "_models.RecordingContent"]] = None,
+        recording_channel_type: Optional[Union[str, "_models.RecordingChannel"]] = None,
+        recording_format_type: Optional[Union[str, "_models.RecordingFormat"]] = None,
         audio_channel_participant_ordering: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         external_storage: Optional["_models.ExternalStorage"] = None,
         **kwargs: Any
@@ -3158,15 +3158,15 @@ class StartCallRecordingRequest(_serialization.Model):
         :keyword recording_content_type: The content type of call recording. Known values are: "audio"
          and "audioVideo".
         :paramtype recording_content_type: str or
-         ~azure.communication.callautomation.models.RecordingContentType
+         ~azure.communication.callautomation.models.RecordingContent
         :keyword recording_channel_type: The channel type of call recording. Known values are: "mixed"
          and "unmixed".
         :paramtype recording_channel_type: str or
-         ~azure.communication.callautomation.models.RecordingChannelType
+         ~azure.communication.callautomation.models.RecordingChannel
         :keyword recording_format_type: The format type of call recording. Known values are: "wav",
          "mp3", and "mp4".
         :paramtype recording_format_type: str or
-         ~azure.communication.callautomation.models.RecordingFormatType
+         ~azure.communication.callautomation.models.RecordingFormat
         :keyword audio_channel_participant_ordering: The sequential order in which audio channels are
          assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not
@@ -3265,7 +3265,7 @@ class ToneInfo(_serialization.Model):
     :vartype sequence_id: int
     :ivar tone: Required. Known values are: "zero", "one", "two", "three", "four", "five", "six",
      "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.Tone
+    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
     :ivar participant_id: The id of participant.
     :vartype participant_id: str
     """
@@ -3282,7 +3282,12 @@ class ToneInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, sequence_id: int, tone: Union[str, "_models.Tone"], participant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        sequence_id: int,
+        tone: Union[str, "_models.DtmfTone"],
+        participant_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword sequence_id: The sequence id which can be used to determine if the same tone was
@@ -3290,7 +3295,7 @@ class ToneInfo(_serialization.Model):
         :paramtype sequence_id: int
         :keyword tone: Required. Known values are: "zero", "one", "two", "three", "four", "five",
          "six", "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-        :paramtype tone: str or ~azure.communication.callautomation.models.Tone
+        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
         :keyword participant_id: The id of participant.
         :paramtype participant_id: str
         """

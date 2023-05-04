@@ -200,7 +200,7 @@ def stream_logs_until_completion(
         url_format = (
             "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
             "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
-            "Microsoft.MachineLearningServices/workspaces/{fs_name}&flight=featurestoresprpr"  # cspell:disable-line
+            "Microsoft.MachineLearningServices/workspaces/{fs_name}"
         )
         studio_endpoint = url_format.format(
             fs_name=job_resource.properties.properties["FeatureStoreName"],

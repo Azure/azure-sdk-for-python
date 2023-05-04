@@ -5,25 +5,26 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Optional, List, Union
 from urllib.parse import urlparse
-from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._version import SDK_MONIKER
-from ._api_versions import DEFAULT_VERSION
-from ._utils import (
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._version import SDK_MONIKER
+from .._api_versions import DEFAULT_VERSION
+from .._utils import (
     get_repeatability_guid,
     get_repeatability_timestamp,
     serialize_phone_identifier,
     serialize_identifier
 )
-from ._models import (
+from .._models import (
     CallParticipant,
     CallConnectionProperties,
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult
 )
-from ._generated._client import AzureCommunicationCallAutomationService
-from ._generated.models import (
+from .._generated.aio import AzureCommunicationCallAutomationService
+from .._generated.models import (
     AddParticipantRequest,
     RemoveParticipantRequest,
     TransferToParticipantRequest,
@@ -36,24 +37,26 @@ from ._generated.models import (
     PlayOptions,
     RecognizeOptions,
 )
-from ._shared.utils import (
+from .._shared.utils import (
     get_authentication_policy,
     parse_connection_str
 )
 if TYPE_CHECKING:
-    from ._call_automation_client import CallAutomationClient
-    from ._models  import (
+    from ._call_automation_client_async import CallAutomationClient
+    from .._models  import (
         FileSource,
         CallInvite
     )
+    from azure.core.credentials_async import (
+        AsyncTokenCredential
+    )
     from azure.core.credentials import (
-        TokenCredential,
         AzureKeyCredential
     )
-    from ._shared.models import (
+    from .._shared.models import (
         CommunicationIdentifier,
     )
-    from ._generated.models._enums import (
+    from .._generated.models._enums import (
         DtmfTone,
         RecognizeInputType
     )
@@ -65,8 +68,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
-    :param credential: The credentials with which to authenticate.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :param credential: The access key we use to authenticate against the service.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
      or ~azure.core.credentials.AzureKeyCredential
     :param call_connection_id: Call Connection ID of ongoing call.
     :type call_connection_id: str
@@ -76,7 +79,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self,
         endpoint: str,
-        credential: Union['TokenCredential', 'AzureKeyCredential'],
+        credential: Union['AsyncTokenCredential', 'AzureKeyCredential'],
         call_connection_id: str,
         *,
         api_version: Optional[str] = None,
@@ -96,10 +99,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             endpoint,
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(
-                endpoint, credential),
+            endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
-
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
         self._call_media_client = self._client.call_media
@@ -132,23 +134,26 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Internal constructor for sharing the pipeline with CallAutomationClient."""
         return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
-    def get_call_properties(self, **kwargs) -> CallConnectionProperties:
-        """Get the latest properties of this call.
+    @distributed_trace_async
+    async def get_call_properties(self, **kwargs) -> CallConnectionProperties:
+        """Get the latest properties of the call.
 
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
+        call_properties = await self._call_connection_client.get_call(
+            call_connection_id=self._call_connection_id,
+            **kwargs)
 
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
-    @distributed_trace
-    def hang_up(self, is_for_everyone: bool, **kwargs) -> None:
-        """Hangup this call.
+    @distributed_trace_async
+    async def hang_up(self, is_for_everyone: bool, **kwargs) -> None:
+        """Hangup the call.
 
-        :param is_for_everyone: Determine if this call should be ended for all participants.
+        :param is_for_everyone: Determine if the call should be ended for all participants.
         :type is_for_everyone: bool
         :return: None
         :rtype: None
@@ -156,22 +161,22 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
 
         if is_for_everyone:
-            self._call_connection_client.terminate_call(
+            await self._call_connection_client.terminate_call(
                 self._call_connection_id,
                 repeatability_first_sent=get_repeatability_timestamp(),
                 repeatability_request_id=get_repeatability_guid(),
                 **kwargs)
         else:
-            self._call_connection_client.hangup_call(
+            await self._call_connection_client.hangup_call(
                 self._call_connection_id, **kwargs)
 
-    @distributed_trace
-    def get_participant(
+    @distributed_trace_async
+    async def get_participant(
         self,
         target_participant: 'CommunicationIdentifier',
         **kwargs
     ) -> 'CallParticipant':
-        """Get details of a participant in this call.
+        """Get details of a participant in a call.
 
         :param target_participant: The participant to retrieve.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
@@ -180,14 +185,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        participant = self._call_connection_client.get_participant(
+        participant = await self._call_connection_client.get_participant(
             self._call_connection_id, target_participant.raw_id, **kwargs)
 
         return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
     @distributed_trace
-    def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
-        """List all participants in this call.
+    def list_participants(self, **kwargs) -> AsyncItemPaged[CallParticipant]:
+        """List all participants from a call.
 
         :return: List of CallParticipant
         :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
@@ -195,19 +200,19 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
 
-    @distributed_trace
-    def transfer_call_to_participant(
+    @distributed_trace_async
+    async def transfer_call_to_participant(
         self,
         target_participant: 'CallInvite',
         *,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> TransferCallResult:
-        """Transfer this call to another participant.
+        """Transfer the call to a participant.
 
         :param target_participant: The transfer target.
         :type target_participant: CallInvite
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
@@ -223,14 +228,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             custom_context=user_custom_context, operation_context=operation_context)
 
-        return self._call_connection_client.transfer_to_participant(
+        return await self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
-    @distributed_trace
-    def add_participant(
+    @distributed_trace_async
+    async def add_participant(
         self,
         target_participant: 'CallInvite',
         *,
@@ -238,14 +243,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
-        """Add a participant to this call.
+        """Add a participant to the call.
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CallInvite
         :keyword invitation_timeout: Timeout to wait for the invited participant to pickup.
          The maximum value of this is 180 seconds.
         :paramtype invitation_timeout: int
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
@@ -264,7 +269,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             invitation_timeout=invitation_timeout,
             operation_context=operation_context)
 
-        response = self._call_connection_client.add_participant(
+        response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
             repeatability_first_sent=get_repeatability_timestamp(),
@@ -273,19 +278,19 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
 
-    @distributed_trace
-    def remove_participant(
+    @distributed_trace_async
+    async def remove_participant(
         self,
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
-        """Remove a participant from this call.
+        """Remove a participant from the call.
 
         :param  target_participant: The participant being removed.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
@@ -295,7 +300,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             participant_to_remove=serialize_identifier(target_participant),
             operation_context=operation_context)
 
-        response = self._call_connection_client.remove_participant(
+        response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
             remove_participant_request,
             repeatability_first_sent=get_repeatability_timestamp(),
@@ -304,8 +309,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
 
-    @distributed_trace
-    def play_media(
+    @distributed_trace_async
+    async def play_media(
         self,
         play_source: 'FileSource',
         play_to: List['CommunicationIdentifier'],
@@ -314,7 +319,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Play media to specific participant(s) in this call.
+        """Play media to specific participant(s) in the call.
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource
@@ -336,10 +341,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             operation_context=operation_context,
             **kwargs
         )
-        self._call_media_client.play(self._call_connection_id, play_request)
+        await self._call_media_client.play(self._call_connection_id, play_request)
 
-    @distributed_trace
-    def play_media_to_all(
+    @distributed_trace_async
+    async def play_media_to_all(
         self,
         play_source: 'FileSource',
         *,
@@ -347,7 +352,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Play media to all participants in this call.
+        """Play media to all participants in the call.
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource
@@ -359,14 +364,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self.play_media(play_source=play_source,
-                        play_to=[],
-                        loop=loop,
-                        operation_context=operation_context,
-                        **kwargs)
+        await self.play_media(play_source=play_source, play_to=[],
+                              loop=loop,
+                              operation_context=operation_context,
+                              **kwargs)
 
-    @distributed_trace
-    def start_recognizing_media(
+    @distributed_trace_async
+    async def start_recognizing_media(
         self,
         input_type : Union[str, 'RecognizeInputType'],
         target_participant: 'CommunicationIdentifier',
@@ -381,7 +385,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         **kwargs
     ) -> None:
-        """Recognize tones from specific participant in this call.
+        """Recognize tones from specific participant in the call.
 
         :param input_type: Determines the type of the recognition.
         :type input_type: str or ~azure.communication.callautomation.RecognizeInputType
@@ -394,7 +398,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :keyword interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
         :paramtype interrupt_prompt: bool
@@ -428,36 +432,36 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             **kwargs
         )
 
-        self._call_media_client.recognize(
+        await self._call_media_client.recognize(
             self._call_connection_id, recognize_request)
 
-    @distributed_trace
-    def cancel_all_media_operations(
+    @distributed_trace_async
+    async def cancel_all_media_operations(
         self,
         **kwargs
     ) -> None:
-        """Cancels all the ongoing and queued media operations for this call.
+        """ Cancels all the queued media operations.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_media_client.cancel_all_media_operations(
+        await self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
 
-    @distributed_trace
-    def start_continuous_dtmf_recognition(
+    @distributed_trace_async
+    async def start_continuous_dtmf_recognition(
         self,
         target: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Start continuous Dtmf recognition by subscribing to tones.
+        """ Start continuous Dtmf recognition by subscribing to tones.
 
         :param target: Target participant of continuous DTMF tone recognition.
         :type target: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: None
         :rtype: None
@@ -467,13 +471,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target),
             operation_context=operation_context)
 
-        self._call_media_client.start_continuous_dtmf_recognition(
+        await self._call_media_client.start_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
             **kwargs)
 
-    @distributed_trace
-    def stop_continuous_dtmf_recognition(
+    @distributed_trace_async
+    async def stop_continuous_dtmf_recognition(
         self,
         target: 'CommunicationIdentifier',
         *,
@@ -484,7 +488,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target: Target participant of continuous DTMF tone recognition.
         :type target: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: None
         :rtype: None
@@ -494,13 +498,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target),
             operation_context=operation_context)
 
-        self._call_media_client.stop_continuous_dtmf_recognition(
+        await self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
             **kwargs)
 
-    @distributed_trace
-    def send_dtmf(
+    @distributed_trace_async
+    async def send_dtmf(
         self,
         target: 'CommunicationIdentifier',
         tones: List[Union[str, 'DtmfTone']],
@@ -508,13 +512,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Send dtmf tones to this call.
+        """Send dtmf tones to the call.
 
         :param target: Target participant of Send DTMF tone.
         :type target: ~azure.communication.callautomation.CommunicationIdentifier
         :param tones: The captured tones.
         :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: None
         :rtype: None
@@ -525,7 +529,17 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             tones=tones,
             operation_context=operation_context)
 
-        self._call_media_client.send_dtmf(
+        await self._call_media_client.send_dtmf(
             self._call_connection_id,
             send_dtmf_request,
             **kwargs)
+
+    async def __aenter__(self) -> "CallConnectionClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
+
+    async def close(self) -> None:
+        await self._client.__aexit__()
