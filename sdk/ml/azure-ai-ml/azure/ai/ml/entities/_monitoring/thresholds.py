@@ -38,6 +38,24 @@ class MetricThreshold(RestTranslatableMixin):
 
 @experimental
 class DataDriftMetricThreshold(MetricThreshold):
+    """Data drift metric threshold
+
+    :param applicable_feature_type: The feature type of the metric threshold
+    :type applicable_feature_type: Literal[
+        ~azure.ai.ml.constants.MonitorFeatureType.CATEGORICAL
+        , ~azure.ai.ml.constants.MonitorFeatureType.MonitorFeatureType.NUMERICAL]
+    :param metric_name: The metric to calculate
+    :type metric_name: Literal[
+        MonitorMetricName.JENSEN_SHANNON_DISTANCE
+        , ~azure.ai.ml.constants.MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE
+        , ~azure.ai.ml.constants.MonitorMetricName.POPULATION_STABILITY_INDEX
+        , ~azure.ai.ml.constants.MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST
+        , ~azure.ai.ml.constants.MonitorMetricName.PEARSONS_CHI_SQUARED_TEST]
+    :param threshold: The threshold value. If None, a default value will be set
+        depending on the selected metric.
+    :type threshold: float
+    """
+
     def __init__(
         self,
         *,
@@ -81,6 +99,24 @@ class DataDriftMetricThreshold(MetricThreshold):
 
 @experimental
 class PredictionDriftMetricThreshold(MetricThreshold):
+    """Prediction drift metric threshold
+
+    :param applicable_feature_type: The feature type of the metric threshold
+    :type applicable_feature_type: Literal[
+        ~azure.ai.ml.constants.MonitorFeatureType.CATEGORICAL
+        , ~azure.ai.ml.constants.MonitorFeatureType.MonitorFeatureType.NUMERICAL]
+    :param metric_name: The metric to calculate
+    :type metric_name: Literal[
+        ~azure.ai.ml.constants.MonitorMetricName.JENSEN_SHANNON_DISTANCE
+        , ~azure.ai.ml.constants.MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE
+        , ~azure.ai.ml.constants.MonitorMetricName.POPULATION_STABILITY_INDEX
+        , ~azure.ai.ml.constants.MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST
+        , ~azure.ai.ml.constants.MonitorMetricName.PEARSONS_CHI_SQUARED_TEST]
+    :param threshold: The threshold value. If None, a default value will be set
+        depending on the selected metric.
+    :type threshold: float
+    """
+
     def __init__(
         self,
         *,
@@ -124,6 +160,23 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 
 @experimental
 class DataQualityMetricThreshold(MetricThreshold):
+    """Data quality metric threshold
+
+    :param applicable_feature_type: The feature type of the metric threshold
+    :type applicable_feature_type: Literal[
+        ~azure.ai.ml.constants.MonitorFeatureType.CATEGORICAL
+        , ~azure.ai.ml.constants.MonitorFeatureType.MonitorFeatureType.NUMERICAL]
+    :param metric_name: The metric to calculate
+    :type metric_name: Literal[
+        ~azure.ai.ml.constants.MonitorMetricName.JENSEN_SHANNON_DISTANCE
+        , ~azure.ai.ml.constants.MonitorMetricName.NULL_VALUE_RATE
+        , ~azure.ai.ml.constants.MonitorMetricName.DATA_TYPE_ERROR_RATE
+        , ~azure.ai.ml.constants.MonitorMetricName.OUT_OF_BOUND_RATE]
+    :param threshold: The threshold value. If None, a default value will be set
+        depending on the selected metric.
+    :type threshold: float
+    """
+
     def __init__(
         self,
         *,
@@ -165,6 +218,19 @@ class DataQualityMetricThreshold(MetricThreshold):
 
 @experimental
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
+    """Feature attribution drift metric threshold
+
+    :ivar applicable_feature_type: The feature type of the metric threshold
+    :vartype applicable_feature_type: Literal[
+        ~azure.ai.ml.constants.MonitorFeatureType.ALL_FEATURE_TYPES]
+    :ivar metric_name: The metric to calculate
+    :vartype metric_name: Literal[
+        ~azure.ai.ml.constants.MonitorMetricName.NORMALIZED_DISCOUNTED_CUMULATIVE_GAIN]
+    :param threshold: The threshold value. If None, a default value will be set
+        depending on the selected metric.
+    :type threshold: float
+    """
+
     def __init__(self, *, threshold: float = None):
         super().__init__(threshold=threshold)
         self.applicable_feature_type = MonitorFeatureType.ALL_FEATURE_TYPES
@@ -238,6 +304,15 @@ class ModelPerformanceMetricThreshold(MetricThreshold):
 
 @experimental
 class CustomMonitoringMetricThreshold(MetricThreshold):
+    """Feature attribution drift metric threshold
+
+    :param metric_name: The metric to calculate
+    :type metric_name: str
+    :param threshold: The threshold value. If None, a default value will be set
+        depending on the selected metric.
+    :type threshold: float
+    """
+
     def __init__(
         self,
         *,
