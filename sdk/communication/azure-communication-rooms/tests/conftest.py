@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from devtools_testutils import add_general_regex_sanitizer, add_header_regex_sanitizer, add_body_key_sanitizer, set_default_session_settings
+from devtools_testutils import add_general_string_sanitizer, add_header_regex_sanitizer, add_body_key_sanitizer, set_default_session_settings
 from azure.communication.rooms._shared.utils import parse_connection_str
 
 @pytest.fixture(scope="session", autouse=True)
@@ -34,10 +34,10 @@ def add_sanitizers(test_proxy):
 
     communication_connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_ROOMS", "endpoint=https://sanitized.communication.azure.com/;accesskey=fake===")
 
-    add_general_regex_sanitizer(regex=communication_connection_string, value="endpoint=https://sanitized.communication.azure.com/;accesskey=fake===")
+    add_general_string_sanitizer(target=communication_connection_string, value="endpoint=https://sanitized.communication.azure.com/;accesskey=fake===")
     add_body_key_sanitizer(json_path="$.id", value="someId")
     endpoint, _ = parse_connection_str(communication_connection_string)
-    add_general_regex_sanitizer(regex=endpoint, value="sanitized.communication.azure.com")
+    add_general_string_sanitizer(target=endpoint, value="sanitized.communication.azure.com")
     add_header_regex_sanitizer(key="x-ms-content-sha256", value="sanitized")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")
     add_header_regex_sanitizer(key="Date", value="sanitized")
@@ -48,7 +48,6 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="x-ms-content-sha256", value="sanitized")
     add_header_regex_sanitizer(key="x-ms-client-request-id", value="sanitized")
     add_header_regex_sanitizer(key="x-ms-date", value="sanitized")
-    add_header_regex_sanitizer(key="x-ms-ests-server", value="sanitized")
     add_header_regex_sanitizer(key="x-ms-request-id", value="sanitized")
     add_header_regex_sanitizer(
         key="Content-Security-Policy-Report-Only", value="sanitized")
