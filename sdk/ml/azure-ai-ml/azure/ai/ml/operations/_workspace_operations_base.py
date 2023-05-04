@@ -128,9 +128,7 @@ class WorkspaceOperationsBase:
                     workspace.customer_managed_key,
                 ]
             ):
-                msg = (
-                    "To use workspaceHub, only specify location, application insight, encryption and identity."
-                )
+                msg = "To use workspaceHub, only specify location, application insight, encryption and identity."
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.WORKSPACE,
