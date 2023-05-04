@@ -420,9 +420,17 @@ class TestWorkspace(AzureRecordedTestCase):
         wps_name = f"e2etest_{randstr('wsp_name_hub')}"
         wps_description = f"{wps_name} description"
         wps_display_name = f"{wps_name} display name"
-        workspace_obj = Workspace(
-            name=wps_name, description=wps_description, display_name=wps_display_name, workspace_hub=workspace_hub
+        params_override = [
+            {"name": wps_name},
+            {"location": location},
+            {"description": wps_description},
+            {"display_name": wps_display_name},
+            {"workspace_hub": workspace_hub.id},
+        ]
+        workspace_obj = load_workspace(
+            "./tests/test_configs/workspace/workspace_with_hub.yaml", params_override=params_override
         )
+
         workspace_poller = client.workspaces.begin_create(workspace=workspace_obj)
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()

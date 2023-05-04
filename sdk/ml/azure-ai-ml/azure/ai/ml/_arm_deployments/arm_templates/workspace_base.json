@@ -515,7 +515,7 @@
                 "description": "A list of existing workspaces used by Hub to perform convert."
             }
         },
-        "hub_resource_id" : {
+        "workspace_hub" : {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -750,7 +750,7 @@
                 "keyVaults": "[if(equals(length(parameters('key_vaults')), 0), variables('keyVaultList'), parameters('key_vaults'))]",
                 "containerRegistries": "[if(equals(length(parameters('container_registies')), 0), variables('containerRegistryList'), parameters('container_registies'))]",
                 "existingWorkspaces": "[parameters('existing_workspaces')]",
-                "hubResourceId": "[parameters('hub_resource_id')]"
+                "hubResourceId": "[parameters('workspace_hub')]"
             }
         },
         {

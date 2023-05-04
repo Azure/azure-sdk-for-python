@@ -115,6 +115,28 @@ class WorkspaceOperationsBase:
 
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        # check if create with workspace hub request is valid
+        if workspace._kind == LEAN_WORKSPACE_KIND and workspace.workspace_hub:
+            if not all(
+                x is None
+                for x in [
+                    workspace.storage_account,
+                    workspace.container_registry,
+                    workspace.key_vault,
+                    workspace.public_network_access,
+                    workspace.managed_network,
+                    workspace.customer_managed_key,
+                ]
+            ):
+                msg = (
+                    "To use workspaceHub, only specify location, application insight, encryption and identity."
+                )
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.WORKSPACE,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -490,8 +512,8 @@ class WorkspaceOperationsBase:
 
         # Lean related param
         if workspace._kind and workspace._kind.lower() == LEAN_WORKSPACE_KIND:
-            if workspace.hub_resource_id:
-                _set_val(param["hub_resource_id"], workspace.hub_resource_id)
+            if workspace.workspace_hub:
+                _set_val(param["workspace_hub"], workspace.workspace_hub)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

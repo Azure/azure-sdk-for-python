@@ -48,8 +48,7 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
-        workspace_hub: Optional["Workspace"] = None,
-        hub_resource_id: Optional[str] = None,
+        workspace_hub: Optional[str] = None,
         **kwargs,
     ):
         """Azure ML workspace.
@@ -100,8 +99,8 @@ class Workspace(Resource):
         :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
             The flag can only be set at the creation phase, it can't be updated.
         :type enable_data_isolation: bool
-        :param workspace_hub: workspace hub object use to help create lean workspace
-        :type workspace_hub: Workspace
+        :param workspace_hub: The resource ID of an existing workspace hub to help create lean workspace
+        :type workspace_hub: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -126,28 +125,9 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
-        self.hub_resource_id = hub_resource_id
-
         if workspace_hub:
-            if workspace_hub._kind.lower() != WORKSPACE_HUB_KIND:
-                raise ValidationError("workspace_hub should be a workspaceHub")
-            if all(
-                x is None
-                for x in [
-                    storage_account,
-                    location,
-                    container_registry,
-                    key_vault,
-                    public_network_access,
-                    managed_network,
-                    customer_managed_key,
-                ]
-            ):
                 self._kind = LEAN_WORKSPACE_KIND
-                self.hub_resource_id = workspace_hub.id
-                self.location = workspace_hub.location
-            else:
-                raise ValidationError("To use workspaceHub, only specify application insight, encryption and identity.")
+                self.workspace_hub = workspace_hub
 
     @property
     def discovery_url(self) -> str:
@@ -270,7 +250,7 @@ class Workspace(Resource):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
-            hub_resource_id=rest_obj.hub_resource_id,
+            workspace_hub=rest_obj.hub_resource_id,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -301,5 +281,5 @@ class Workspace(Resource):
             else None,  # pylint: disable=protected-access
             feature_store_Settings=feature_store_Settings,
             enable_data_isolation=self.enable_data_isolation,
-            hub_resource_id=self.hub_resource_id,
+            hub_resource_id=self.workspace_hub,
         )

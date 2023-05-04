@@ -164,7 +164,7 @@
     "existing_workspaces" : {
         "value": []
     },
-    "hub_resource_id" : {
+    "workspace_hub" : {
         "value": ""
     },
     "enable_data_isolation": {
