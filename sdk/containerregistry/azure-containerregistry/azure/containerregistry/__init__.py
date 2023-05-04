@@ -18,6 +18,7 @@ from ._models import (
     RepositoryProperties,
     ArtifactTagProperties,
     GetManifestResult,
+    ManifestDigestValidationError,
 )
 from ._download_stream import DownloadBlobStream
 from ._version import VERSION
@@ -35,4 +36,5 @@ __all__ = [
     "ArtifactTagProperties",
     "GetManifestResult",
     "DownloadBlobStream",
+    "ManifestDigestValidationError",
 ]

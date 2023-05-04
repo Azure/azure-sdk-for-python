@@ -630,6 +630,11 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
         , defaults to None
     :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+    :keyword scoring_script_path: Equivalent to code_configuration.scoring_script, will be ignored if
+        code_configuration is present, defaults to None
+    :paramtype scoring_script_path: typing.Optional[typing.Union[str, os.PathLike]]
+    :keyword data_collector: Data collector, defaults to None
+    :paramtype data_collectors: typing.Optional[typing.List[~azure.ai.ml.entities.DataCollector]]
     """
 
     def __init__(
@@ -656,6 +661,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         scoring_script: Optional[
             Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
+        data_collector: Optional[DataCollector] = None,
         **kwargs,
     ):
         """Managed Online endpoint deployment entity.
@@ -724,6 +730,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             instance_type=instance_type,
             code_path=code_path,
             scoring_script=scoring_script,
+            data_collector=data_collector,
             **kwargs,
         )
 
@@ -815,7 +822,9 @@ class ManagedOnlineDeployment(OnlineDeployment):
             if hasattr(deployment, "private_network_connection")
             else None,
             egress_public_network_access=deployment.egress_public_network_access,
-            data_collector=DataCollector._from_rest_object(deployment.data_collector),
+            data_collector=DataCollector._from_rest_object(deployment.data_collector)
+            if deployment.data_collector
+            else None,
         )
 
     def _merge_with(self, other: "ManagedOnlineDeployment") -> None:

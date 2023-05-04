@@ -27,7 +27,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera28335fc/blockblob?se=end\u0026sp=rwdl\u0026sv=2022-11-02\u0026sr=c\u0026ses=testscope1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera28335fc/blockblob?se=end\u0026sp=rwdl\u0026sv=2023-01-03\u0026sr=c\u0026ses=testscope1\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -59,7 +59,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera28335fc/cpka28335fc?se=end\u0026sp=rwdl\u0026sv=2022-11-02\u0026sr=c\u0026ses=testscope1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera28335fc/cpka28335fc?se=end\u0026sp=rwdl\u0026sv=2023-01-03\u0026sr=c\u0026ses=testscope1\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -88,7 +88,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera28335fc?restype=container\u0026comp=list\u0026include=metadata\u0026se=end\u0026sp=rwdl\u0026sv=2022-11-02\u0026sr=c\u0026ses=testscope2\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera28335fc?restype=container\u0026comp=list\u0026include=metadata\u0026se=end\u0026sp=rwdl\u0026sv=2023-01-03\u0026sr=c\u0026ses=testscope2\u0026sig=fake_token_value",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
