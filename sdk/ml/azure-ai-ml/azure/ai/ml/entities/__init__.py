@@ -394,6 +394,7 @@ __all__ = [
     "TargetDataset",
     "MonitorFeatureFilter",
     "DataSegment",
+    "MonitoringTarget",
     "DataDriftMetricThreshold",
     "DataQualityMetricThreshold",
     "PredictionDriftMetricThreshold",

@@ -13,7 +13,6 @@ from azure.ai.ml._schema.monitoring.signals import (
     DataQualitySignalSchema,
     PredictionDriftSignalSchema,
     FeatureAttributionDriftSignalSchema,
-    ModelPerformanceSignalSchema,
     CustomMonitoringSignalSchema,
 )
 from azure.ai.ml._schema.monitoring.alert_notification import AlertNotificationSchema

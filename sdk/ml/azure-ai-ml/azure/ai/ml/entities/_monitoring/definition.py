@@ -16,7 +16,6 @@ from azure.ai.ml.entities._monitoring.signals import (
     DataQualitySignal,
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
-    ModelPerformanceSignal,
     CustomMonitoringSignal,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
