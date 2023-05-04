@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Union
-
+import uuid
+from datetime import datetime
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -13,14 +14,20 @@ from ._shared.models import (
     UnknownIdentifier,
     CommunicationIdentifierKind
 )
-
 from ._generated.models import (
     CommunicationIdentifierModel,
     PhoneNumberIdentifierModel
 )
 
-def serialize_identifier(identifier):
-    # type: (CommunicationIdentifier) -> Dict[str, Any]
+def get_repeatability_guid():
+    return uuid.uuid4()
+
+def get_repeatability_timestamp():
+    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+
+def serialize_identifier(
+        identifier:CommunicationIdentifier
+        ) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -37,8 +44,9 @@ def serialize_identifier(identifier):
         raise TypeError("Unsupported identifier type " +
                         identifier.__class__.__name__)
 
-def serialize_phone_identifier(identifier):
-    # type: (PhoneNumberIdentifier) -> PhoneNumberIdentifierModel
+def serialize_phone_identifier(
+        identifier:PhoneNumberIdentifier
+        ) -> PhoneNumberIdentifierModel:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: PhoneNumberIdentifier
@@ -54,8 +62,9 @@ def serialize_phone_identifier(identifier):
         raise TypeError("Unsupported identifier type " +
                         identifier.__class__.__name__)
 
-def deserialize_identifier(identifier_model):
-    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
+def deserialize_identifier(
+        identifier_model:CommunicationIdentifierModel
+        )->CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -78,7 +87,9 @@ def deserialize_identifier(identifier_model):
         )
     return UnknownIdentifier(raw_id)
 
-def deserialize_phone_identifier(identifier_model) -> Union[PhoneNumberIdentifier, None]:
+def deserialize_phone_identifier(
+        identifier_model:PhoneNumberIdentifierModel
+        ) -> Union[PhoneNumberIdentifier, None]:
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
 
