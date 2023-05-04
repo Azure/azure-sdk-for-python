@@ -3276,9 +3276,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             assert is_singularity_id_for_resource(node_compute)
             assert node_compute.endswith(singularity_vc.name)
 
-    def test_assign_value_to_unknow_filed(self, client: MLClient):
+    def test_assign_value_to_unknown_filed(self, client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func = load_component(source=path)
+        # Due to it will block ci with the tags of yaml when generating records, remove the tags here.
         component_func.tags = {}
 
         @dsl.pipeline()
