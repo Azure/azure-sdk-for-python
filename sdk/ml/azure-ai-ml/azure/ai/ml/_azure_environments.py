@@ -6,7 +6,7 @@
 
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Union, Dict, List, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
@@ -304,11 +304,11 @@ def _get_cloud_environment_infos_by_metadata_url(metadata_url: str) -> Dict[str,
         return {}
 
 
-def _convert_arm_to_cli(arm_cloud_metadata: Any[List[Dict[str, str]], Dict[str, str]]) -> Dict[str, str]:
+def _convert_arm_to_cli(arm_cloud_metadata: Union[List[Dict[str, str]], Dict[str, str]]) -> Dict[str, str]:
     """Convert JSON ARM cloud metadata responses to CLI-friendly strings.
 
     :param arm_cloud_metadata: ARM cloud metadata responses
-    :type arm_cloud_metadata: Any[List[Dict[str, str]], Dict[str, str]]
+    :type arm_cloud_metadata: Union[List[Dict[str, str]], Dict[str, str]]
     :return: Cloud metadata
     :rtype: Dict[str, str]
     """
