@@ -6,6 +6,15 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
+from test_utilities.utils import (
+    _PYTEST_TIMEOUT_METHOD,
+    assert_job_cancel,
+    omit_with_wildcard,
+    sleep_if_live,
+)
+
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -20,12 +29,15 @@ from azure.ai.ml import (
     dsl,
     load_component,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_singularity_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    is_singularity_id_for_resource,
+)
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
+    SINGULARITY_ID_FORMAT,
     AssetTypes,
     InputOutputModes,
-    SINGULARITY_ID_FORMAT,
 )
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
@@ -33,12 +45,14 @@ from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
+from azure.ai.ml.entities import (
+    Data,
+    JobResourceConfiguration,
+    PipelineJob,
+    QueueSettings,
+)
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
-from devtools_testutils import AzureRecordedTestCase, is_live
-from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -3265,6 +3279,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
     def test_assign_value_to_unknow_filed(self, client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func = load_component(source=path)
+        component_func.tags = {}
 
         @dsl.pipeline()
         def pipeline_func(input):
