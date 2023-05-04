@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, cast
+from typing import TYPE_CHECKING, Optional, List, Union
 from urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -82,26 +82,24 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         api_version: Optional[str] = None,
         **kwargs
     ) -> None:
-        if '_callautomation_client' in kwargs:
-            self._client = cast(AzureCommunicationCallAutomationService, kwargs.pop('_call_automation_client'))
-        else:
-            if not credential:
-                raise ValueError("credential can not be None")
-            try:
-                if not endpoint.lower().startswith('http'):
-                    endpoint = "https://" + endpoint
-            except AttributeError:
-                raise ValueError("Host URL must be a string")
-            parsed_url = urlparse(endpoint.rstrip('/'))
-            if not parsed_url.netloc:
-                raise ValueError(f"Invalid URL: {format(endpoint)}")
-            self._client = AzureCommunicationCallAutomationService(
-                endpoint,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_authentication_policy(
-                    endpoint, credential),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
+        if not credential:
+            raise ValueError("credential can not be None")
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Host URL must be a string")
+        parsed_url = urlparse(endpoint.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError(f"Invalid URL: {format(endpoint)}")
+        self._client = AzureCommunicationCallAutomationService(
+            endpoint,
+            api_version=api_version or DEFAULT_VERSION,
+            authentication_policy=get_authentication_policy(
+                endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs)
+
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
         self._call_media_client = self._client.call_media
