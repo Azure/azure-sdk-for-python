@@ -33,21 +33,20 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     """Monitor Management Client.
 
     :ivar activity_logs: ActivityLogsOperations operations
-    :vartype activity_logs:
-     $(python-base-namespace).v2015_04_01.aio.operations.ActivityLogsOperations
+    :vartype activity_logs: azure.mgmt.monitor.v2015_04_01.aio.operations.ActivityLogsOperations
     :ivar autoscale_settings: AutoscaleSettingsOperations operations
     :vartype autoscale_settings:
-     $(python-base-namespace).v2015_04_01.aio.operations.AutoscaleSettingsOperations
+     azure.mgmt.monitor.v2015_04_01.aio.operations.AutoscaleSettingsOperations
     :ivar event_categories: EventCategoriesOperations operations
     :vartype event_categories:
-     $(python-base-namespace).v2015_04_01.aio.operations.EventCategoriesOperations
+     azure.mgmt.monitor.v2015_04_01.aio.operations.EventCategoriesOperations
     :ivar operations: Operations operations
-    :vartype operations: $(python-base-namespace).v2015_04_01.aio.operations.Operations
+    :vartype operations: azure.mgmt.monitor.v2015_04_01.aio.operations.Operations
     :ivar tenant_activity_logs: TenantActivityLogsOperations operations
     :vartype tenant_activity_logs:
-     $(python-base-namespace).v2015_04_01.aio.operations.TenantActivityLogsOperations
+     azure.mgmt.monitor.v2015_04_01.aio.operations.TenantActivityLogsOperations
     :ivar alert_rules: AlertRulesOperations operations
-    :vartype alert_rules: $(python-base-namespace).v2015_04_01.aio.operations.AlertRulesOperations
+    :vartype alert_rules: azure.mgmt.monitor.v2015_04_01.aio.operations.AlertRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.

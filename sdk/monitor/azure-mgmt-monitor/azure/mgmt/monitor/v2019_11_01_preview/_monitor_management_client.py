@@ -27,10 +27,10 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar data_collection_rule_associations: DataCollectionRuleAssociationsOperations operations
     :vartype data_collection_rule_associations:
-     $(python-base-namespace).v2019_11_01_preview.operations.DataCollectionRuleAssociationsOperations
+     azure.mgmt.monitor.v2019_11_01_preview.operations.DataCollectionRuleAssociationsOperations
     :ivar data_collection_rules: DataCollectionRulesOperations operations
     :vartype data_collection_rules:
-     $(python-base-namespace).v2019_11_01_preview.operations.DataCollectionRulesOperations
+     azure.mgmt.monitor.v2019_11_01_preview.operations.DataCollectionRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.

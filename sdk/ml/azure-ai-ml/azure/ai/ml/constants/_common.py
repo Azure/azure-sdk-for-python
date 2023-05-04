@@ -864,6 +864,7 @@ class AzureDevopsArtifactsType:
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
+    DATA_IMPORT = "data_import"
 
 
 class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
