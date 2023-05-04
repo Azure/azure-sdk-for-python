@@ -122,8 +122,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         event_subscription_name: str,
         *,
-        max_events: Optional[int] = 1,
-        max_wait_time: Optional[int] = 60,
+        max_events: Optional[int] = None,
+        max_wait_time: Optional[int] = None,
         **kwargs: Any
     ) -> ReceiveResult:
         """Receive Batch of Cloud Events from the Event Subscription.
@@ -151,7 +151,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         detail_items = []
         receive_result_deserialized = ReceiveResult()
         received_result = self._receive_cloud_events(
-            topic_name, event_subscription_name, max_events=max_events, timeout=max_wait_time, **kwargs
+            topic_name, event_subscription_name, max_events=max_events, max_wait_time=max_wait_time, **kwargs
         )
         for detail_item in received_result.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
