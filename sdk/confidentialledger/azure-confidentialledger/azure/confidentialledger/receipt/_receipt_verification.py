@@ -47,7 +47,7 @@ def verify_receipt(
      certificate of the Confidential Ledger service identity.
     :type service_cert: str
 
-    :param application_claims: List of application claims to be verified against the receipt.
+    :keyword application_claims: List of application claims to be verified against the receipt.
     :type application_claims: Optional[List[Dict[str, Any]]], optional
 
     :raises ValueError: If the receipt verification has failed.
