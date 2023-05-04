@@ -105,6 +105,8 @@
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
     "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
@@ -174,6 +176,7 @@
     "dont",
     "dotenv",
     "dowhile",
+    "DPAPI",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -403,6 +406,12 @@
   ],
   "overrides": [
     {
+      "filename": "doc/sphinx/generate_doc.py",
+      "words": [
+        "undoc"
+      ]
+    },
+    {
       "filename": "doc/dev/test_proxy_migration_guide.md",
       "words": [
         "pytestmarkparametrize"
@@ -605,7 +614,10 @@
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
-        "udpated"
+        "udpated",
+        "cncf",
+        "oras",
+        "rootfs"
       ]
     },
     {
@@ -1074,7 +1086,8 @@
         "reprcrash",
         "etests",
         "RMSE",
-        "azmonitoring"
+        "azmonitoring",
+        "smirnov"
       ]
     },
     {
@@ -1453,6 +1466,12 @@
         "unflattened",
         "wday",
         "deseralize"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "words": [
+        "awps"
       ]
     }
   ],

@@ -65,6 +65,9 @@ from ._deployment.online_deployment import (
     ManagedOnlineDeployment,
     OnlineDeployment,
 )
+from ._deployment.model_batch_deployment import ModelBatchDeployment
+from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
+from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings, OnlineScaleSettings
 from ._endpoint.batch_endpoint import BatchEndpoint
@@ -166,19 +169,15 @@ from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
-from ._feature_set.feature_set_backfill_response import FeatureSetBackfillResponse
-from ._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
+from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
+from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
 from ._notification.notification import Notification
 
-# TODO: enable in PuP
-# from ._job.import_job import ImportJob
-# from ._component.import_component import ImportComponent
+from ._data_import.schedule import ImportDataSchedule
 
 __all__ = [
-    # "ImportJob",
-    # "ImportComponent",
     "Resource",
     "Job",
     "CommandJob",
@@ -227,6 +226,8 @@ __all__ = [
     "Environment",
     "BuildContext",
     "Model",
+    "ModelBatchDeployment",
+    "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
@@ -259,6 +260,7 @@ __all__ = [
     "NetworkSettings",
     "Component",
     "PipelineJobSettings",
+    "PipelineComponentBatchDeployment",
     "ParallelComponent",
     "CommandComponent",
     "SparkComponent",
@@ -284,6 +286,7 @@ __all__ = [
     "RecurrenceTrigger",
     "RecurrencePattern",
     "JobSchedule",
+    "ImportDataSchedule",
     "Schedule",
     "ComputePowerAction",
     "ComputeSchedules",
@@ -323,8 +326,8 @@ __all__ = [
     "FeatureStore",
     "MaterializationStore",
     "Notification",
-    "FeatureSetBackfillResponse",
-    "FeatureSetMaterializationResponse",
+    "FeatureSetBackfillMetadata",
+    "FeatureSetMaterializationMetadata",
     # builders
     "Command",
     "Parallel",
