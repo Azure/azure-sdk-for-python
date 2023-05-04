@@ -6,7 +6,7 @@ import datetime
 import pytest
 import uuid
 from msrest.serialization import UTC
-from azure.eventgrid._messaging_shared import _get_json_content
+from azure.eventgrid._legacy._messaging_shared import _get_json_content
 from azure.eventgrid import EventGridEvent
 
 class MockQueueMessage(object):
