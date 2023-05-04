@@ -20,9 +20,9 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 
-from ._generated import models as _models
-from ._generated._serialization import Serializer
-from ._generated.operations import CallRecordingOperations
+from .._generated import models as _models
+from .._generated._serialization import Serializer
+from .._generated.aio.operations import CallRecordingOperations
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -36,7 +36,7 @@ class ContentDownloader(object):
 
         self._call_recording_client = call_recording_client
 
-    def download_streaming(  # pylint: disable=inconsistent-return-statements
+    async def download_streaming(  # pylint: disable=inconsistent-return-statements
         self, source_location: str, offset: int, length: int, **kwargs: Any
     ) -> HttpResponse:
         """Download a stream of the call recording.
@@ -79,7 +79,7 @@ class ContentDownloader(object):
             host = parsedEndpoint.hostname
         )
 
-        pipeline_response: PipelineResponse = self._call_recording_client._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._call_recording_client._client._pipeline.run(  # pylint: disable=protected-access
             request, stream = True, **kwargs
         )
         response = pipeline_response.http_response
@@ -93,7 +93,7 @@ class ContentDownloader(object):
         )
         raise HttpResponseError(response = response, model = error)
 
-    def delete_recording(  # pylint: disable=inconsistent-return-statements
+    async def delete_recording(  # pylint: disable=inconsistent-return-statements
         self, recording_location: str, **kwargs: Any
     ) -> None:
         """Delete a call recording.
@@ -123,7 +123,7 @@ class ContentDownloader(object):
             host = parsed_endpoint.hostname
         )
 
-        pipeline_response: PipelineResponse = self._call_recording_client._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._call_recording_client.await_client._pipeline.run(  # pylint: disable=protected-access
             request, stream = False, **kwargs
         )
 
