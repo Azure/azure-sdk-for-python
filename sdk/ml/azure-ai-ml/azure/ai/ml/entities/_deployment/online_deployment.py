@@ -822,7 +822,9 @@ class ManagedOnlineDeployment(OnlineDeployment):
             if hasattr(deployment, "private_network_connection")
             else None,
             egress_public_network_access=deployment.egress_public_network_access,
-            data_collector=DataCollector._from_rest_object(deployment.data_collector),
+            data_collector=DataCollector._from_rest_object(deployment.data_collector)
+            if deployment.data_collector
+            else None,
         )
 
     def _merge_with(self, other: "ManagedOnlineDeployment") -> None:
