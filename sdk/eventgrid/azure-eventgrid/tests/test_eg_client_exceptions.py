@@ -52,7 +52,6 @@ class TestEGClientExceptions():
         with pytest.raises(HttpResponseError):
             client.receive_cloud_events(topic_name, event_subscription_name, max_events=-20)
 
-
     def test_receive_cloud_event_timeout_negative(self):
         eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
         topic_name = os.environ['TOPIC_NAME']
@@ -60,9 +59,28 @@ class TestEGClientExceptions():
 
         client = self.create_eg_client(eventgrid_endpoint)
 
-        with pytest.raises(ServiceResponseTimeoutError):
+        with pytest.raises(HttpResponseError):
             client.receive_cloud_events(topic_name, event_subscription_name, max_wait_time=-20)
 
+    def test_receive_cloud_event_timeout_max_value(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        topic_name = os.environ['TOPIC_NAME']
+        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+
+        client = self.create_eg_client(eventgrid_endpoint)
+
+        with pytest.raises(HttpResponseError):
+            client.receive_cloud_events(topic_name, event_subscription_name, max_wait_time=121)
+
+    def test_receive_cloud_event_timeout_min_value(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        topic_name = os.environ['TOPIC_NAME']
+        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+
+        client = self.create_eg_client(eventgrid_endpoint)
+
+        with pytest.raises(HttpResponseError):
+            client.receive_cloud_events(topic_name, event_subscription_name, max_wait_time=9)
 
     def test_acknowledge_cloud_event_not_found(self):
         eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
@@ -134,3 +152,23 @@ class TestEGClientExceptions():
     #     assert reject.succeeded_lock_tokens == []
     #     assert type(reject.failed_lock_tokens[0]) == FailedLockToken
     #     assert reject.failed_lock_tokens[0].lock_token == "faketoken"
+
+    def test_release_cloud_event_event_delivery_time(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        topic_name = os.environ['TOPIC_NAME']
+        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+
+        client = self.create_eg_client(eventgrid_endpoint)
+
+        with pytest.raises(HttpResponseError):
+            client.release_cloud_events(topic_name, event_subscription_name, event_delivery_delay_in_seconds=-20)
+
+    def test_release_cloud_event_event_delivery_time(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        topic_name = os.environ['TOPIC_NAME']
+        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+
+        client = self.create_eg_client(eventgrid_endpoint)
+
+        with pytest.raises(HttpResponseError):
+            client.acknowledge_cloud_events(topic_name, event_subscription_name, event_delivery_delay_in_seconds=-20)
