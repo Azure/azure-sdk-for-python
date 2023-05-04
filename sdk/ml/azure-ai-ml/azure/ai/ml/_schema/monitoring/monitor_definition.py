@@ -32,7 +32,6 @@ class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
                 NestedField(DataQualitySignalSchema),
                 NestedField(PredictionDriftSignalSchema),
                 NestedField(FeatureAttributionDriftSignalSchema),
-                NestedField(ModelPerformanceSignalSchema),
                 NestedField(CustomMonitoringSignalSchema),
             ]
         ),

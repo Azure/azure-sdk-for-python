@@ -13,6 +13,21 @@ from azure.ai.ml.entities._inputs_outputs import Input
 
 @experimental
 class MonitorInputData(RestTranslatableMixin):
+    """Monitor input data
+
+    :param input_dataset: Input data used by the monitor
+    :type input_dataset: ~azure.ai.ml.entities.Input
+    :param dataset_context: The context of the input dataset. Possible values
+        include: model_inputs, model_outputs, training, test, validation,
+        ground_truth
+    :type dataset_context: str or ~azure.ai.ml.constants.MonitorDatasetContext
+    :param target_column_name: The target column in the given input dataset to leverage
+    :type target_column_name: str
+    :param pre_processing_component: ARM resource ID of the component resource used to
+        preprocess the data.
+    :type pre_processing_component: str
+    """
+
     def __init__(
         self,
         *,
