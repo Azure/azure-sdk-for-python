@@ -1,5 +1,14 @@
 # Release History
 
+## 1.1.0b2 (2023-04-20)
+
+### Features Added
+
+  - Added operation group OrganizationsOperations
+  - Model DeploymentInfoResponse has a new parameter deployment_url
+  - Model DeploymentInfoResponse has a new parameter marketplace_saas_info
+  - Model ElasticMonitorResource has a new parameter generate_api_key
+
 ## 1.1.0b1 (2022-11-08)
 
 ### Features Added

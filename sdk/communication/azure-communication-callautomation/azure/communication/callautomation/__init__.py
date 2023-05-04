@@ -1,115 +1,90 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 from ._version import VERSION
+from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
-from ._call_media_client import CallMediaClient
-from ._call_recording_client import CallRecordingClient
-from ._call_automation_client import (
-    CallAutomationClient,
-    AnswerCallResult,
-    CreateCallResult
-)
-from ._call_automation_event_parser import CallAutomationEventParser
 from ._models import (
-    RecordingStateResponse,
-    StartRecordingOptions,
+    CallConnectionProperties,
+    CallInvite,
     ServerCallLocator,
     GroupCallLocator,
-    CallInvite,
-    RecordingFormat,
-    RecordingContent,
-    RecordingStorage,
-    RecordingChannel,
-    PlaySource,
     FileSource,
-    CallMediaRecognizeOptions,
-    CallConnectionProperties,
     CallParticipant,
-    CallMediaRecognizeDtmfOptions,
-    Gender,
-    DtmfTone,
-    CallRejectReason
+    RecordingProperties,
+    AddParticipantResult,
+    RemoveParticipantResult,
+    TransferCallResult,
+    MediaStreamingConfiguration
 )
 from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
-    CommunicationUserIdentifier
+    CommunicationUserIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationCloudEnvironment,
+    MicrosoftBotIdentifier,
+    UnknownIdentifier,
 )
-from ._events import (
-    AddParticipantSucceeded,
-    AddParticipantFailed,
-    CallConnected,
-    CallDisconnected,
-    CallTransferAccepted,
-    CallTransferFailed,
-    ParticipantsUpdated,
-    RecordingStateChanged,
-    PlayCompleted,
-    PlayFailed,
-    PlayCanceled,
-    RecognizeCompleted,
-    RecognizeCanceled,
-    RecognizeFailed,
-    RemoveParticipantSucceeded,
-    RemoveParticipantFailed,
+from ._generated.models._enums import (
+    CallRejectReason,
+    RecordingContent,
+    RecordingChannel,
+    RecordingFormat,
+    RecordingStorage,
+    RecognizeInputType,
+    MediaStreamingAudioChannelType,
+    MediaStreamingContentType,
+    MediaStreamingTransportType,
+    DtmfTone,
+    CallConnectionState,
+    RecordingState
 )
-from ._generated.models import (
-    GetParticipantsResponse,
-    TransferCallResponse,
-    AddParticipantResponse,
-    CustomContext,
-    RemoveParticipantResponse
-)
-
 __all__ = [
-    'CallAutomationClient',
-    'RecordingFormat',
-    'RecordingContent',
-    'RecordingStorage',
-    'RecordingChannel',
-    'CallConnectionClient',
-    'CallMediaClient',
-    'CallRecordingClient',
-    "StartRecordingOptions",
-    "RecordingStateResponse",
+    # clients and parser
+    "CallAutomationClient",
+    "CallConnectionClient",
+
+    # models for input
+    "CallInvite",
     "ServerCallLocator",
     "GroupCallLocator",
-    "CallAutomationEventParser",
-    "AddParticipantSucceeded",
-    "AddParticipantFailed",
-    "CallConnected",
-    "CallDisconnected",
-    "CallTransferAccepted",
-    "CallTransferFailed",
-    "ParticipantsUpdated",
-    "RecordingStateChanged",
-    "PlayCompleted",
-    "PlayFailed",
-    "PlayCanceled",
-    "RecognizeCompleted",
-    "RecognizeCanceled",
-    "RecognizeFailed",
-    "CallInvite",
-    "CommunicationIdentifier",
-    "CommunicationUserIdentifier",
-    "PhoneNumberIdentifier",
-    "MicrosoftTeamsUserIdentifier",
-    "PlaySource",
     "FileSource",
-    "CallMediaRecognizeOptions",
-    "CallMediaRecognizeDtmfOptions",
-    "AnswerCallResult",
-    "CreateCallResult",
+
+    # models for output
     "CallConnectionProperties",
     "CallParticipant",
-    "GetParticipantsResponse",
-    "TransferCallResponse",
-    "AddParticipantResponse",
-    "CustomContext",
-    "RemoveParticipantResponse",
-    "Gender",
-    "DtmfTone",
+    "RecordingProperties",
+    "AddParticipantResult",
+    "RemoveParticipantResult",
+    "TransferCallResult",
+    "MediaStreamingConfiguration",
+
+    # common ACS communication identifier
+    "CommunicationIdentifier",
+    "PhoneNumberIdentifier",
+    "MicrosoftTeamsUserIdentifier",
+    "CommunicationUserIdentifier",
+    "CommunicationIdentifierKind",
+    "CommunicationCloudEnvironment",
+    "MicrosoftBotIdentifier",
+    "UnknownIdentifier",
+
+    # enums
     "CallRejectReason",
-    "RemoveParticipantSucceeded",
-    "RemoveParticipantFailed"
+    "RecordingContent",
+    "RecordingChannel",
+    "RecordingFormat",
+    "RecordingStorage",
+    "RecognizeInputType",
+    "MediaStreamingAudioChannelType",
+    "MediaStreamingContentType",
+    "MediaStreamingTransportType",
+    "DtmfTone",
+    "CallConnectionState",
+    "RecordingState"
 ]
 __version__ = VERSION

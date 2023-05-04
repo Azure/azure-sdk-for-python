@@ -188,6 +188,7 @@ class TestDataOperations:
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -253,6 +254,7 @@ class TestDataOperations:
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -562,41 +564,5 @@ class TestDataOperations:
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
-
-    def test_promote_data_from_workspace(
-        self, mock_data_operations_in_registry: DataOperations, mock_data_operations: DataOperations, tmp_path: Path
-    ) -> None:
-        data_asset_name = f"data_random_string"
-        p = tmp_path / "data_full.yml"
-        data_path = tmp_path / "data.pkl"
-        data_path.write_text("hello world")
-        p.write_text(
-            f"""
-    name: {data_asset_name}
-    path: ./data.pkl
-    version: 3"""
-        )
-
-        with patch(
-            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
-            return_value=ArtifactStorageInfo(
-                name=data_asset_name,
-                version="3",
-                relative_path="path",
-                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
-                container_name="containerName",
-            ),
-        ) as mock_upload, patch(
-            "azure.ai.ml.operations._data_operations.Data._from_rest_object",
-            return_value=Data(),
-        ):
-            data = load_data(source=p)
-            data_to_promote = mock_data_operations._prepare_to_copy(data, "new_name", "new_version")
-            assert data_to_promote.name == "new_name"
-            assert data_to_promote.version == "new_version"
-            mock_data_operations_in_registry._operation.get.side_effect = Mock(
-                side_effect=ResourceNotFoundError("Test")
-            )
-            mock_data_operations_in_registry.create_or_update(data_to_promote)
-            mock_data_operations_in_registry._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()

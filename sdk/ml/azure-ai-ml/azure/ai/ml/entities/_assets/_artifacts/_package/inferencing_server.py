@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,redefined-builtin
+# pylint: disable=protected-access,redefined-builtin,unused-argument
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
@@ -21,14 +21,13 @@ from ...._deployment.code_configuration import CodeConfiguration
 class AzureMLOnlineInferencingServer:
     """Azure ML online inferencing configurations.
 
-    :param type: The type of the inferencing server.
-    :type type: str
     :param code_configuration: The code configuration of the inferencing server.
     :type code_configuration: str
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, type: str = None, code_configuration: CodeConfiguration = None):
-        self.type = type
+    def __init__(self, *, code_configuration: CodeConfiguration = None, **kwargs):
+        self.type = "azureml_online"
         self.code_configuration = code_configuration
 
     @classmethod
@@ -43,14 +42,13 @@ class AzureMLOnlineInferencingServer:
 class AzureMLBatchInferencingServer:
     """Azure ML batch inferencing configurations.
 
-    :param type: The type of the inferencing server.
-    :type type: str
     :param code_configuration: The code configuration of the inferencing server.
     :type code_configuration: azure.ai.ml.entities.CodeConfiguration
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, type: str = None, code_configuration: CodeConfiguration = None):
-        self.type = type
+    def __init__(self, *, code_configuration: CodeConfiguration = None, **kwargs):
+        self.type = "azureml_batch"
         self.code_configuration = code_configuration
 
     @classmethod
@@ -65,14 +63,13 @@ class AzureMLBatchInferencingServer:
 class TritonInferencingServer:
     """Azure ML triton inferencing configurations.
 
-    :param type: The type of the inferencing server.
-    :type type: str
     :param inference_configuration: The inference configuration of the inferencing server.
     :type inference_configuration: azure.ai.ml.entities.CodeConfiguration
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, type: str = None, inference_configuration: CodeConfiguration = None):
-        self.type = type
+    def __init__(self, *, inference_configuration: CodeConfiguration = None, **kwargs):
+        self.type = "triton"
         self.inference_configuration = inference_configuration
 
     @classmethod
@@ -95,7 +92,7 @@ class Route:
     :type path: str
     """
 
-    def __init__(self, port: str = None, path: str = None):
+    def __init__(self, *, port: str = None, path: str = None):
         self.port = port
         self.path = path
 
@@ -161,14 +158,13 @@ class OnlineInferenceConfiguration:
 class CustomInferencingServer:
     """Custom inferencing configurations.
 
-    :param type: The type of the inferencing server.
-    :type type: str
     :param inference_configuration: The inference configuration of the inferencing server.
     :type inference_configuration: OnlineInferenceConfiguration
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
-        self.type = type
+    def __init__(self, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
+        self.type = "custom"
         self.inference_configuration = inference_configuration
 
     @classmethod

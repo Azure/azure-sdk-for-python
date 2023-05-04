@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,31 +24,30 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.servers.begin_create(
-        resource_group_name="TestGroup",
-        server_name="pgtestsvc4",
+        resource_group_name="testrg",
+        server_name="mysqltestsvc4",
         parameters={
             "location": "westus",
             "properties": {
                 "administratorLogin": "cloudsa",
                 "administratorLoginPassword": "<administratorLoginPassword>",
                 "createMode": "Default",
-                "minimalTlsVersion": "TLS1_2",
                 "sslEnforcement": "Enabled",
-                "storageProfile": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled", "storageMB": 128000},
+                "storageProfile": {"backupRetentionDays": 7, "geoRedundantBackup": "Enabled", "storageMB": 128000},
             },
-            "sku": {"capacity": 2, "family": "Gen5", "name": "B_Gen5_2", "tier": "Basic"},
+            "sku": {"capacity": 2, "family": "Gen5", "name": "GP_Gen5_2", "tier": "GeneralPurpose"},
             "tags": {"ElasticServer": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerCreate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/stable/2017-12-01/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

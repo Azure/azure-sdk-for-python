@@ -14,9 +14,9 @@ from azure.ai.ml._schema._feature_set.featureset_spec_properties_schema import F
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._feature_store_entity.data_column import _DataColumn
+from azure.ai.ml.entities._feature_store_entity.data_column import DataColumn
 
-from .feature import _Feature
+from .feature import Feature
 from .source_metadata import SourceMetadata
 from .delay_metadata import DelayMetadata
 from .feature_transformation_code_metadata import FeatureTransformationCodeMetadata
@@ -30,8 +30,8 @@ class FeaturesetSpecMetadata(object):
         *,
         source: SourceMetadata,
         feature_transformation_code: Optional[FeatureTransformationCodeMetadata] = None,
-        features: List[_Feature],
-        index_columns: List[_DataColumn],
+        features: List[Feature],
+        index_columns: List[DataColumn],
         source_lookback: Optional[DelayMetadata] = None,
         temporal_join_lookback: Optional[DelayMetadata] = None,
         **_kwargs,

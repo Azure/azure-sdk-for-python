@@ -1146,7 +1146,7 @@ class TestDSLPipelineWithSpecificNodes:
             args="--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
             compute=synapse_compute_name,
             # For HOBO spark, provide 'resources'
-            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
         )
 
         @dsl.pipeline(experiment_name="test_pipeline_with_spark_function")
@@ -1376,7 +1376,7 @@ class TestDSLPipelineWithSpecificNodes:
             args="--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
             compute=synapse_compute_name,
             # For HOBO spark, provide 'resources'
-            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
         )
 
         @dsl.pipeline(experiment_name="test_pipeline_with_spark_function")
