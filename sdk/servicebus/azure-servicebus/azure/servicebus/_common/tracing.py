@@ -70,6 +70,7 @@ SPAN_NAME_MESSAGE = "ServiceBus.message"
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class TraceAttributes:
     TRACE_NAMESPACE_ATTRIBUTE = "az.namespace"
     TRACE_NAMESPACE = "Microsoft.ServiceBus"
@@ -79,7 +80,6 @@ class TraceAttributes:
 
     TRACE_NET_PEER_NAME_ATTRIBUTE = "net.peer.name"
     TRACE_MESSAGING_DESTINATION_ATTRIBUTE = "messaging.destination.name"
-    TRACE_MESSAGING_SOURCE_ATTRIBUTE = "messaging.source.name"
     TRACE_MESSAGING_OPERATION_ATTRIBUTE = "messaging.operation"
     TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE = "messaging.batch.message_count"
 
@@ -291,19 +291,12 @@ def add_span_attributes(
     if message_count > 1:
         span.add_attribute(TraceAttributes.TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE, message_count)
 
-    if operation_type == TraceOperationTypes.PUBLISH:
+    if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.RECEIVE):
         # Maintain legacy attributes for backwards compatibility.
         span.add_attribute(TraceAttributes.LEGACY_TRACE_COMPONENT_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
         span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
         span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, handler.fully_qualified_namespace)
 
-    elif operation_type == TraceOperationTypes.RECEIVE:
-        # Maintain legacy attributes for backwards compatibility.
-        span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, handler.fully_qualified_namespace)
-        span.add_attribute(TraceAttributes.LEGACY_TRACE_COMPONENT_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
-
-        span.add_attribute(TraceAttributes.TRACE_MESSAGING_SOURCE_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
-
     elif operation_type == TraceOperationTypes.SETTLE:
         span.add_attribute(TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, handler.fully_qualified_namespace)
-        span.add_attribute(TraceAttributes.TRACE_MESSAGING_SOURCE_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
+        span.add_attribute(TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
