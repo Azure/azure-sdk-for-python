@@ -10,6 +10,8 @@
   - Model ThroughputSettingsGetPropertiesResource has a new parameter soft_allowed_maximum_throughput
   - Model ThroughputSettingsResource has a new parameter instant_maximum_throughput
   - Model ThroughputSettingsResource has a new parameter soft_allowed_maximum_throughput
+  - Added new enum type `ContinuousTier`
+  - Enum `PublicNetworkAccess` has a new value `SECURED_BY_PERIMETER`
 
 ## 9.1.0 (2023-04-21)
 
