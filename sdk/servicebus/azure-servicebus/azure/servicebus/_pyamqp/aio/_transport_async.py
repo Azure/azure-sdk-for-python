@@ -257,19 +257,6 @@ class AsyncTransport(
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
 
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        state['socket_lock'] = None
-        state['sock'] = None
-        state['reader'] = None
-        state['writer'] = None
-        state['sslopts'] = None
-        return state
-
-    def __setstate__(self, state):
-        state['socket_lock'] = asyncio.Lock()
-        self.__dict__.update(state)
-
     async def connect(self):
         try:
             # are we already connected?
@@ -503,18 +490,6 @@ class WebSocketTransportAsync(
         self.connected = False
         self.network_trace_params = kwargs.get('network_trace_params')
 
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        state['socket_lock'] = None
-        state['sslopts'] = None
-        state['ws'] = None
-        state['session'] = None
-        return state
-
-    def __setstate__(self, state):
-        state['socket_lock'] = asyncio.Lock()
-        self.__dict__.update(state)
-
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)
         username, password = None, None
@@ -600,8 +575,6 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[toread:])
                     toread = 0
             return view
-        except AttributeError:
-            raise IOError("Websocket connection has already been closed.")
         except:
             self._read_buffer = BytesIO(view[:length])
             raise
@@ -619,7 +592,4 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        try:
-            await self.ws.send_bytes(s)
-        except AttributeError:
-            raise IOError("Websocket connection has already been closed.")
+        await self.ws.send_bytes(s)

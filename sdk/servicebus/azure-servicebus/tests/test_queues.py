@@ -470,10 +470,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             with sender, receiver:
-                if not uamqp_transport:
-                    sender = pickle.loads(pickle.dumps(sender))
-                    receiver = pickle.loads(pickle.dumps(receiver))
-
                 # send previously unpicklable message
                 msg = {
                     "body":"W1tdLCB7ImlucHV0X2lkIjogNH0sIHsiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgImNoYWluIjogbnVsbCwgImNob3JkIjogbnVsbH1d",
@@ -517,13 +513,13 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 }
                 sender.send_messages(ServiceBusMessage(json.dumps(msg)))
                 messages = receiver.receive_messages(max_wait_time=10, max_message_count=1)
+                receiver.complete_message(messages[0])
                 if not uamqp_transport:
                     pickled = pickle.loads(pickle.dumps(messages[0]))
                     assert json.loads(str(pickled)) == json.loads(str(messages[0]))
                 else:
                     with pytest.raises(TypeError):
                         pickled = pickle.loads(pickle.dumps(messages[0]))
-                receiver.complete_message(messages[0])
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1830,12 +1826,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     finally:
                         for message in messages:
                             receiver.complete_message(message)
-
-                    if not uamqp_transport:
-                        pickled_sender = pickle.loads(pickle.dumps(sender))
-                        assert pickled_sender
-                        pickled_receiver = pickle.loads(pickle.dumps(receiver))
-                        assert pickled_receiver
                 else:
                     raise Exception("Failed to receive schdeduled message.")
 
@@ -1956,8 +1946,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
         receiver = MockReceiver()
         auto_lock_renew = AutoLockRenewer()
-        pickled_alr = pickle.loads(pickle.dumps(auto_lock_renew))
-        assert pickled_alr
         with pytest.raises(TypeError):
             auto_lock_renew.register(Exception())  # an arbitrary invalid type.
 
@@ -2365,14 +2353,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender.send_messages(message)
                 expected_count = 2
                 if not uamqp_transport:
-                    sender = pickle.loads(pickle.dumps(sender))
                     pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
                     sender.send_messages(pickled_recvd)
                     expected_count = 3
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
-                    if not uamqp_transport:
-                        receiver = pickle.loads(pickle.dumps(receiver))
                     for message in receiver:
                         messages.append(message)
                         receiver.complete_message(message)

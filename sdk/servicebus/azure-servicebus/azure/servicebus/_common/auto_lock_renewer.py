@@ -120,23 +120,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    # TODO: check if we want to make this picklable
-    # since we can't save the exact executor, it might be misleading
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        state['_shutdown'] = None
-        state['_running_dispatcher'] = None
-        state['_renew_tasks'] = None
-        state['_executor'] = None
-        return state
-
-    def __setstate__(self, state):
-        state['_shutdown'] = threading.Event()
-        state['_running_dispatcher'] = threading.Event()
-        state['_renew_tasks'] = queue.Queue()
-        state['_executor'] = ThreadPoolExecutor()
-        self.__dict__.update(state)
-
     def _init_workers(self):
         if not self._running_dispatcher.is_set():
             self._infer_max_workers_greater_than_one_if_needed()

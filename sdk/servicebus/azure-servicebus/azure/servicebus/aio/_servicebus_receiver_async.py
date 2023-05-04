@@ -247,17 +247,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         finally:
             self._receive_context.clear()
 
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        state['_receive_context'] = None
-        state['_shutdown'] = None
-        return state
-
-    def __setstate__(self, state):
-        state['_receive_context'] = asyncio.Event()
-        state['_shutdown'] = asyncio.Event()
-        self.__dict__.update(state)
-
     @classmethod
     def _from_connection_string(
         cls, conn_str: str, **kwargs: Any

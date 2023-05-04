@@ -371,10 +371,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             async with sender, receiver:
-                if not uamqp_transport:
-                    sender = pickle.loads(pickle.dumps(sender))
-                    receiver = pickle.loads(pickle.dumps(receiver))
-
                 # send previously unpicklable message
                 msg = {
                     "body":"W1tdLCB7ImlucHV0X2lkIjogNH0sIHsiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgImNoYWluIjogbnVsbCwgImNob3JkIjogbnVsbH1d",
@@ -1555,53 +1551,46 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             messages = []
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20, max_wait_time=5)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            content = str(uuid.uuid4())
-            message_id_a = uuid.uuid4()
-            message_a = ServiceBusMessage(content)
-            message_a.message_id = message_id_a
-            message_id_b = uuid.uuid4()
-            message_b = ServiceBusMessage(content)
-            message_b.message_id = message_id_b
+            async with sender, receiver:
+                content = str(uuid.uuid4())
+                message_id_a = uuid.uuid4()
+                message_a = ServiceBusMessage(content)
+                message_a.message_id = message_id_a
+                message_id_b = uuid.uuid4()
+                message_b = ServiceBusMessage(content)
+                message_b.message_id = message_id_b
 
-            await sender.send_messages([message_a, message_b])
+                await sender.send_messages([message_a, message_b])
 
-            received_messages = []
-            async for message in receiver:
-                received_messages.append(message)
-                await receiver.complete_message(message)
+                received_messages = []
+                async for message in receiver:
+                    received_messages.append(message)
+                    await receiver.complete_message(message)
 
-            tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time, timeout=5)
-            assert len(tokens) == 2
+                tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time, timeout=5)
+                assert len(tokens) == 2
 
-            messages = await receiver.receive_messages(max_wait_time=120)
-            recv = await receiver.receive_messages(max_wait_time=5)
-            messages.extend(recv)
-            if messages:
-                try:
-                    data = str(messages[0])
-                    assert data == content
-                    assert messages[0].message_id in (message_id_a, message_id_b)
-                    assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
-                    assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
-                    assert len(messages) == 2
-                finally:
-                    for message in messages:
-                        await receiver.complete_message(message)
-                    if not uamqp_transport:
-                        pickled = pickle.loads(pickle.dumps(messages[0]))
-                        assert pickled.message_id == messages[0].message_id
-                        assert pickled.scheduled_enqueue_time_utc == messages[0].scheduled_enqueue_time_utc
-                        assert pickled.scheduled_enqueue_time_utc <= pickled.enqueued_time_utc.replace(microsecond=0)
-
-                if not uamqp_transport:
-                    pickled_sender = pickle.loads(pickle.dumps(sender))
-                    assert pickled_sender
-                    pickled_receiver = pickle.loads(pickle.dumps(receiver))
-                    assert pickled_receiver
-            else:
-                raise Exception("Failed to receive scheduled message.")
-            await sender.close()
-            await receiver.close()
+                messages = await receiver.receive_messages(max_wait_time=120)
+                recv = await receiver.receive_messages(max_wait_time=5)
+                messages.extend(recv)
+                if messages:
+                    try:
+                        data = str(messages[0])
+                        assert data == content
+                        assert messages[0].message_id in (message_id_a, message_id_b)
+                        assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
+                        assert len(messages) == 2
+                    finally:
+                        for message in messages:
+                            await receiver.complete_message(message)
+                        if not uamqp_transport:
+                            pickled = pickle.loads(pickle.dumps(messages[0]))
+                            assert pickled.message_id == messages[0].message_id
+                            assert pickled.scheduled_enqueue_time_utc == messages[0].scheduled_enqueue_time_utc
+                            assert pickled.scheduled_enqueue_time_utc <= pickled.enqueued_time_utc.replace(microsecond=0)
+                else:
+                    raise Exception("Failed to receive scheduled message.")
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
@@ -2000,36 +1989,32 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             servicebus_namespace_connection_string, logging_enable=False,
             transport_type=transport_type, uamqp_transport=uamqp_transport) as sb_client:
 
-            sender = sb_client.get_queue_sender(servicebus_queue.name)
-            message = ServiceBusMessage("ServiceBusMessage")
-            message2 = ServiceBusMessage("Message2")
-            # first test batch message resending.
-            batch_message = await sender.create_message_batch()
-            batch_message._from_list([message, message2])  # pylint: disable=protected-access
-            await sender.send_messages(batch_message)
-            await sender.send_messages(batch_message)
-            messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
-                async for message in receiver:
-                    messages.append(message)
-                    await receiver.complete_message(message)
-                assert len(messages) == 4
-            # then normal message resending
-            await sender.send_messages(message)
-            await sender.send_messages(message)
-            expected_count = 2
-            if not uamqp_transport:
-                # pyamqp receiver should be sender
-                sender = pickle.loads(pickle.dumps(sender))
-                pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
-                await sender.send_messages(pickled_recvd)
-                expected_count = 3
-            await sender.close()
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = ServiceBusMessage("ServiceBusMessage")
+                message2 = ServiceBusMessage("Message2")
+                # first test batch message resending.
+                batch_message = await sender.create_message_batch()
+                batch_message._from_list([message, message2])  # pylint: disable=protected-access
+                await sender.send_messages(batch_message)
+                await sender.send_messages(batch_message)
+                messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
+                    async for message in receiver:
+                        messages.append(message)
+                        await receiver.complete_message(message)
+                    assert len(messages) == 4
+                # then normal message resending
+                await sender.send_messages(message)
+                await sender.send_messages(message)
+                expected_count = 2
+                if not uamqp_transport:
+                    # pyamqp re-send received pickled message
+                    pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
+                    await sender.send_messages(pickled_recvd)
+                    expected_count = 3
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                 # pyamqp receiver should be picklable
-                if not uamqp_transport:
-                    receiver = pickle.loads(pickle.dumps(receiver))
                 async for message in receiver:
                     messages.append(message)
                     await receiver.complete_message(message)

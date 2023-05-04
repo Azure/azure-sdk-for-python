@@ -705,8 +705,6 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                 results.append(renewable)
 
             renewer = AutoLockRenewer()
-            if not uamqp_transport:
-                renewer = pickle.loads(pickle.dumps(renewer))
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=10, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=10) as receiver:
                 renewer.register(receiver,

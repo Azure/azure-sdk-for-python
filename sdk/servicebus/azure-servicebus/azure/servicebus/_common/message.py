@@ -831,6 +831,14 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             )
         self._expiry: Optional[datetime.datetime] = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state['_receiver'] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+
     @property
     def _lock_expired(self) -> bool:
         """
