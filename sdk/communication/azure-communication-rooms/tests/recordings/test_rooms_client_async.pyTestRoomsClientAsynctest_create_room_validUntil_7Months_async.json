@@ -1,0 +1,51 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "89",
+        "Content-Type": "application/json",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:33:18 GMT",
+        "Repeatability-Request-ID": "43c83ab0-ea13-11ed-a36b-e45e37e24f59",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "43c861c0-ea13-11ed-bafc-e45e37e24f59",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Thu, 04 May 2023 00:33:18 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "validFrom": "2023-05-06T17:33:18.082731Z",
+        "validUntil": "2023-11-25T17:33:18.082731Z"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 May 2023 00:33:17 GMT",
+        "MS-CV": "O08g5XeajEqXwaZnStVKXg.0",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "0Tv1SZAAAAADEHw6fusZESqXgA1uGL31vWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-error-code": "BadRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "The request could not be understood by the server due to malformed syntax.",
+          "details": [
+            {
+              "code": "BadArgument",
+              "message": "The time range is incorrect, or larger than 180 days.",
+              "target": "ValidUntil"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

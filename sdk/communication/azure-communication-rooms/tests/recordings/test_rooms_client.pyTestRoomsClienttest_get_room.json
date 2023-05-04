@@ -1,0 +1,115 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "213",
+        "Content-Type": "application/json",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:32:58 GMT",
+        "Repeatability-Request-ID": "37f26c44-ea13-11ed-a8f0-e45e37e24f59",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "37f26c45-ea13-11ed-b44d-e45e37e24f59",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Thu, 04 May 2023 00:32:58 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "validFrom": "2023-05-06T17:32:58.226592Z",
+        "validUntil": "2023-05-20T17:32:58.226592Z",
+        "participants": {
+          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-840e-cefa-a381-0948220038c9": {
+            "role": "Presenter"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 May 2023 00:32:58 GMT",
+        "Location": "99471688942225963",
+        "MS-CV": "r\u002Bqiqek3jUWcp7m/GljhNA.0",
+        "Repeatability-Result": "accepted",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "0Ov1SZAAAAADU9e\u002BXvPe1Qr5HakwbQw4HWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "someId",
+        "createdAt": "2023-05-04T00:32:58.7510805\u002B00:00",
+        "validFrom": "2023-05-06T17:32:58.226592\u002B00:00",
+        "validUntil": "2023-05-20T17:32:58.226592\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99471688942225963?api-version=2023-03-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "38583876-ea13-11ed-b840-e45e37e24f59",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Thu, 04 May 2023 00:32:58 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 May 2023 00:32:58 GMT",
+        "MS-CV": "fH3R3Szm2k29jGYfof2q7w.0",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "0O/1SZAAAAACvw5hjcYIbSaUjQubIWDrJWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "someId",
+        "createdAt": "2023-05-04T00:32:58.7510805\u002B00:00",
+        "validFrom": "2023-05-06T17:32:58.226592\u002B00:00",
+        "validUntil": "2023-05-20T17:32:58.226592\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99471688942225963?api-version=2023-03-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "3877058e-ea13-11ed-8819-e45e37e24f59",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Thu, 04 May 2023 00:32:59 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Date": "Thu, 04 May 2023 00:32:58 GMT",
+        "MS-CV": "BSspoksjsEaMdEHBB39WFg.0",
+        "Request-Context": "appId=",
+        "X-Azure-Ref": "0O/1SZAAAAACAR4UiaF2PR6cR6Ege/CbJWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

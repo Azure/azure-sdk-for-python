@@ -1,0 +1,76 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "39",
+        "Content-Type": "application/json",
+        "Repeatability-First-Sent": "Thu, 04 May 2023 00:32:51 GMT",
+        "Repeatability-Request-ID": "33d2b77a-ea13-11ed-9bae-e45e37e24f59",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "33d2eb15-ea13-11ed-a3a2-e45e37e24f59",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Thu, 04 May 2023 00:32:51 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "validFrom": null,
+        "validUntil": null
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 May 2023 00:32:51 GMT",
+        "Location": "99444577881878963",
+        "MS-CV": "3SN1NbIpjEaorkHspSQdvg.0",
+        "Repeatability-Result": "accepted",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "0M/1SZAAAAACRPNU3y4\u002BdTYYmfeGsxsrLWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "someId",
+        "createdAt": "2023-05-04T00:32:52.2070584\u002B00:00",
+        "validFrom": "2023-05-04T00:32:51.9287606\u002B00:00",
+        "validUntil": "2023-10-31T00:32:51.9287606\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99444577881878963?api-version=2023-03-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "3465f852-ea13-11ed-8aef-e45e37e24f59",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Thu, 04 May 2023 00:32:52 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Date": "Thu, 04 May 2023 00:32:52 GMT",
+        "MS-CV": "sII6sJdRR06TrsMF9ho4nA.0",
+        "Request-Context": "appId=",
+        "X-Azure-Ref": "0NP1SZAAAAABXUC83JnVrSpWHI2DDHYOfWVZSMzExMDAwMTE1MDI1AGYwOWE0YzEzLTIxZjEtNDhlYy05Y2Y3LTY2NTQ1Njg0YjY0Mg==",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

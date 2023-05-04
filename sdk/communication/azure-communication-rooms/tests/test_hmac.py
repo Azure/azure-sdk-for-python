@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
 from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
 from devtools_testutils import AzureTestCase
 
