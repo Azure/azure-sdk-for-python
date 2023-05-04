@@ -102,7 +102,7 @@ class TargetDataset:
     :param dataset: Target dataset definition for monitor
     :type dataset: ~azure.ai.ml.entities.MonitorInputData
     :param lookback_period: The number of days a single monitor looks back over the target
-    :type lookback_period: int 
+    :type lookback_period: int
     """
 
     def __init__(

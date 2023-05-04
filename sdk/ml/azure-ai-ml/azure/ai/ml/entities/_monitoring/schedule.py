@@ -46,6 +46,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
     """
+
     def __init__(
         self,
         *,

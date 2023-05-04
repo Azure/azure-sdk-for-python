@@ -176,7 +176,7 @@ from ._monitoring.thresholds import (
     DataQualityMetricThreshold,
     PredictionDriftMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
-    CustomMonitoringMetricThreshold
+    CustomMonitoringMetricThreshold,
 )
 
 

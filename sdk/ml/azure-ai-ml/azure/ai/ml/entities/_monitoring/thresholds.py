@@ -312,6 +312,7 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
         depending on the selected metric.
     :type threshold: float
     """
+
     def __init__(
         self,
         *,

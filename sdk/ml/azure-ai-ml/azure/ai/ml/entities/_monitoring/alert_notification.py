@@ -18,7 +18,7 @@ class AlertNotification(RestTranslatableMixin):
 
     :param emails: A list of emails that will receive notifications for monitoring alerts
     :type emails: List[str]
-    """ 
+    """
 
     def __init__(
         self,
