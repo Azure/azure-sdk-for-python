@@ -48,7 +48,7 @@ def verify_receipt(
     :type service_cert: str
 
     :keyword application_claims: List of application claims to be verified against the receipt.
-    :type application_claims: Optional[List[Dict[str, Any]]], optional
+    :paramtype application_claims: Optional[List[Dict[str, Any]]]
 
     :raises ValueError: If the receipt verification has failed.
     """
