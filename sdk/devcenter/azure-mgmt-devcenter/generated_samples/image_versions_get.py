@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python project_environment_types_create_or_update.py
+    python image_versions_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,31 +29,16 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.project_environment_types.create_or_update(
+    response = client.image_versions.get(
         resource_group_name="rg1",
-        project_name="ContosoProj",
-        environment_type_name="DevTest",
-        body={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/identityGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testidentity1": {}
-                },
-            },
-            "properties": {
-                "creatorRoleAssignment": {"roles": {"4cbf0b6c-e750-441c-98a7-10da8387e4d6": {}}},
-                "deploymentTargetId": "/subscriptions/00000000-0000-0000-0000-000000000000",
-                "status": "Enabled",
-                "userRoleAssignments": {
-                    "e45e3m7c-176e-416a-b466-0c5ec8298f8a": {"roles": {"4cbf0b6c-e750-441c-98a7-10da8387e4d6": {}}}
-                },
-            },
-            "tags": {"CostCenter": "RnD"},
-        },
+        dev_center_name="Contoso",
+        gallery_name="DefaultDevGallery",
+        image_name="Win11",
+        version_name="1.0.0",
     )
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/ProjectEnvironmentTypes_Put.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/ImageVersions_Get.json
 if __name__ == "__main__":
     main()

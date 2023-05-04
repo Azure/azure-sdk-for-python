@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python environment_types_list_by_dev_center.py
+    python network_connections_patch.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.environment_types.list_by_dev_center(
+    response = client.network_connections.begin_update(
         resource_group_name="rg1",
-        dev_center_name="Contoso",
-    )
-    for item in response:
-        print(item)
+        network_connection_name="uswest3network",
+        body={"properties": {"domainPassword": "New Password value for user"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/EnvironmentTypes_List.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/NetworkConnections_Patch.json
 if __name__ == "__main__":
     main()
