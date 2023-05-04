@@ -10,7 +10,7 @@
 * Fixed bug with non english locales causing an error with the RFC 1123 Date Format. See [PR 30125](https://github.com/Azure/azure-sdk-for-python/pull/30125).
 
 #### Other Changes
-* Refactorings to our client config settings - `connection_timeout` and `request_timeout` are now considered for different configurations. See [PR 30171](https://github.com/Azure/azure-sdk-for-python/pull/30171).
+* Refactoring of our client config settings - `connection_timeout` and `request_timeout` are now considered for different configurations. See [PR 30171](https://github.com/Azure/azure-sdk-for-python/pull/30171).
 
 ### 4.4.0b1 (2023-04-11)
 
