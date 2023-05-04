@@ -188,6 +188,10 @@ More information about analyzing documents, including supported features, locale
 - Managing models created in your account.
 - Listing operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
+<<<<<<< HEAD
+=======
+- Build and manage a custom classification model to classify the documents you process within your application.
+>>>>>>> main
 
 Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 

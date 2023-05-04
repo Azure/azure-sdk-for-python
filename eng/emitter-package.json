@@ -1,6 +1,10 @@
 {
   "main": "dist/src/index.js",
   "dependencies": {
+<<<<<<< HEAD
     "@azure-tools/typespec-python": "0.7.0"
+=======
+    "@azure-tools/typespec-python": "0.8.4"
+>>>>>>> main
   }
 }

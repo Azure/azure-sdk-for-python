@@ -30,6 +30,12 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml._utils.utils import snake_to_pascal, dump_yaml_to_file
 from azure.ai.ml._utils._experimental import experimental
+<<<<<<< HEAD
+=======
+from .model_configuration import ModelConfiguration
+from .inferencing_server import AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer
+from .base_environment_source import BaseEnvironment
+>>>>>>> main
 
 
 @experimental
@@ -76,11 +82,11 @@ class PackageInputPathVersion:
 
     def __init__(
         self,
+        *,
         input_path_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
     ):
-
         self.input_path_type = input_path_type
         self.resource_name = resource_name
         self.resource_version = resource_version
@@ -114,7 +120,7 @@ class PackageInputPathUrl:
     :type url: str
     """
 
-    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None):
+    def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None):
         self.input_path_type = input_path_type
         self.url = url
 
@@ -149,6 +155,7 @@ class ModelPackageInput:
 
     def __init__(
         self,
+        *,
         type: Optional[str] = None,
         path: Optional[Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]] = None,
         mode: Optional[str] = None,
@@ -181,14 +188,24 @@ class ModelPackageInput:
 class ModelPackage(Resource, PackageRequest):
     """Model package.
 
+<<<<<<< HEAD
     :param name: The name of the model package.
     :type name: str
     :param version: The version of the model package.
     :type version: str
+=======
+    :param target_environment_name: The name of the model package.
+    :type target_environment_name: str
+>>>>>>> main
     :param inferencing_server: The inferencing server of the model package.
     :type inferencing_server: azure.ai.ml.entities.InferencingServer
     :param base_environment_source: The base environment source of the model package.
     :type base_environment_source: azure.ai.ml.entities.BaseEnvironmentSource
+<<<<<<< HEAD
+=======
+    :param target_environment_version: The version of the model package.
+    :type target_environment_version: str
+>>>>>>> main
     :param environment_variables: The environment variables of the model package.
     :type environment_variables: dict
     :param inputs: The inputs of the model package.
@@ -202,29 +219,37 @@ class ModelPackage(Resource, PackageRequest):
     def __init__(
         self,
         *,
+<<<<<<< HEAD
         name: Optional[str] = None,
         version: Optional[str] = None,
         inferencing_server: Optional[InferencingServer] = None,
         base_environment_source: Optional[BaseEnvironmentSource] = None,
+=======
+        target_environment_name: str,
+        inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
+        base_environment_source: BaseEnvironment = None,
+        target_environment_version: Optional[str] = None,
+>>>>>>> main
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
     ):
+<<<<<<< HEAD
         name = kwargs.pop("target_environment_name", None)
 
+=======
+>>>>>>> main
         super().__init__(
-            name=name,
-            target_environment_name=name,
-            target_environment_version=version,
+            name=target_environment_name,
+            target_environment_name=target_environment_name,
+            target_environment_version=target_environment_version,
             base_environment_source=base_environment_source,
             inferencing_server=inferencing_server,
             model_configuration=model_configuration,
             inputs=inputs,
             tags=tags,
             environment_variables=environment_variables,
-            **kwargs,
         )
 
     @classmethod

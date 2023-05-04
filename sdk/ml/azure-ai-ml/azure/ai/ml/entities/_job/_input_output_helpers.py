@@ -6,24 +6,24 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants

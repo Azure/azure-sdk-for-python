@@ -7,7 +7,11 @@ import platform
 import threading
 import time
 
-import pkg_resources
+try:
+    from importlib.metadata import version
+except ImportError:
+    # fallback for python 3.7
+    from importlib_metadata import version
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -18,9 +22,7 @@ from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BI
 
 
 # Workaround for missing version file
-opentelemetry_version = pkg_resources.get_distribution(
-    "opentelemetry-sdk"
-).version
+opentelemetry_version = version("opentelemetry-sdk")
 
 
 def _get_sdk_version_prefix():

@@ -4,7 +4,9 @@
 
 ### Other Changes
 
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Python 2.7 is no longer supported. Please use Python version 3.7 or later.
+- Nested internal spans are now suppressed with just the outermost internal span being recorded. Nested client spans will be children of the outermost span. ([#29616](https://github.com/Azure/azure-sdk-for-python/pull/29616))
+- When client spans are created, a flag is set to indicate that automatic HTTP instrumentation should be suppressed. Since azure-core already instruments HTTP calls, this prevents duplicate spans from being produced. ([#29616](https://github.com/Azure/azure-sdk-for-python/pull/29616))
 
 ## 1.0.0b9 (2021-04-06)
 
@@ -44,7 +46,7 @@
 
 - Pinned opentelemetry-api to version 0.4a0
 
-## 1.0.0b1 
+## 1.0.0b1
 
 ### Features
 

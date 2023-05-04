@@ -50,7 +50,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_workload_identity_credential: Whether to exclude the workload identity from the credential.
         Defaults to **False**.
-    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI
+    :keyword bool exclude_developer_cli_credential: Whether to exclude the Azure Developer CLI
         from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
@@ -76,6 +76,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_default_credential_async]
+            :end-before: [END create_default_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a DefaultAzureCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -115,7 +124,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
-        exclude_azd_cli_credential = kwargs.pop("exclude_azd_cli_credential", False)
+        exclude_developer_cli_credential = kwargs.pop("exclude_developer_cli_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
@@ -141,7 +150,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     **kwargs
                 )
             )
-        if not exclude_azd_cli_credential:
+        if not exclude_developer_cli_credential:
             credentials.append(AzureDeveloperCliCredential(process_timeout=developer_credential_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:

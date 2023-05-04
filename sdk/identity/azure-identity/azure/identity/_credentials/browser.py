@@ -39,7 +39,22 @@ class InteractiveBrowserCredential(InteractiveCredential):
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+<<<<<<< HEAD
+=======
+    :keyword bool disable_authority_validation_and_instance_discovery: Determines whether or not instance discovery
+        is performed when attempting to authenticate. Setting this to true will completely disable instance discovery
+        and authority validation.
+>>>>>>> main
     :raises ValueError: invalid **redirect_uri**
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_interactive_browser_credential]
+            :end-before: [END create_interactive_browser_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an InteractiveBrowserCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:

@@ -10,6 +10,8 @@ inputs:
 outputs:
   pipeline_sample_output_data:
     mode: upload
+    # without specifying output type in YAML, the output type will be default to uri_folder
+    type: uri_file
 
 compute: azureml:cpu-cluster
 

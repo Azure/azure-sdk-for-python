@@ -7,7 +7,28 @@ from typing import Dict, List, Optional
 from ....entities._job.job_resource_configuration import BaseProperty
 
 
+<<<<<<< HEAD
 class AISuperComputerStorageReferenceConfiguration(BaseProperty):
+=======
+class PascalCaseProperty(BaseProperty):
+    _KEY_MAPPING = {}
+
+    def items(self):
+        result = []
+        for key, value in super().items():
+            if key.lower() in self._KEY_MAPPING:
+                key = self._KEY_MAPPING[key.lower()]
+            result.append((key, value))
+        return result
+
+
+class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):
+    _KEY_MAPPING = {
+        "container_name": "ContainerName",
+        "relative_path": "RelativePath",
+    }
+
+>>>>>>> main
     def __init__(
         self,
         container_name: str,
@@ -25,7 +46,18 @@ class AISuperComputerStorageReferenceConfiguration(BaseProperty):
         self.relative_path = relative_path
 
 
+<<<<<<< HEAD
 class AISuperComputerScalePolicy(BaseProperty):
+=======
+class AISuperComputerScalePolicy(PascalCaseProperty):
+    _KEY_MAPPING = {
+        "auto_scale_instance_type_count_set": "AutoScaleInstanceTypeCountSet",
+        "auto_scale_interval_in_sec": "AutoScaleIntervalInSec",
+        "max_instance_type_count": "MaxInstanceTypeCount",
+        "min_instance_type_count": "MinInstanceTypeCount",
+    }
+
+>>>>>>> main
     def __init__(
         self,
         auto_scale_instance_type_count_set: Optional[List[int]] = None,

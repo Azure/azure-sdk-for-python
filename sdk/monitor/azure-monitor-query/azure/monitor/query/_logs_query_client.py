@@ -23,7 +23,7 @@ from ._models import LogsBatchQuery, LogsQueryResult, LogsQueryPartialResult
 from ._exceptions import LogsQueryError
 
 
-class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
+class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """LogsQueryClient. Use this client to collect and organize log and performance data from
     monitored resources. Data from different sources such as platform logs from Azure services,
     log and performance data from virtual machines agents, and usage and performance data from
@@ -55,9 +55,15 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
+<<<<<<< HEAD
             authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
             endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
+=======
+            authentication_policy=auth_policy or get_authentication_policy(credential, audience),
+            endpoint=self._endpoint,
+            **kwargs,
+>>>>>>> main
         )
         self._query_op = self._client.query
 
@@ -67,11 +73,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Optional[Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
-        ],
-        **kwargs: Any
-        ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        **kwargs: Any,
+    ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query.
 
         Executes a Kusto query for data.
@@ -115,41 +119,29 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = process_prefer(
-            server_timeout, include_statistics, include_visualization
-        )
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
-        body = {
-            "query": query,
-            "timespan": timespan_iso,
-            "workspaces": additional_workspaces
-        }
+        body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
         try:
-            generated_response = (
-                self._query_op.execute(  # pylint: disable=protected-access
-                    workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
-                )
+            generated_response = self._query_op.execute(  # pylint: disable=protected-access
+                workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
 
         response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
-            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
-                generated_response
-            )
+            response = LogsQueryResult._from_generated(generated_response)  # pylint: disable=protected-access
         else:
-            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+            response = LogsQueryPartialResult._from_generated(  # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
         return response
 
     @distributed_trace
     def query_batch(
-        self,
-        queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
-        **kwargs: Any
+        self, queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]], **kwargs: Any
     ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
         """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
@@ -179,9 +171,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             queries = [LogsBatchQuery(**cast(Dict, q)) for q in queries]
         except (KeyError, TypeError):
             pass
-        queries = [
-            cast(LogsBatchQuery, q)._to_generated() for q in queries # pylint: disable=protected-access
-        ]
+        queries = [cast(LogsBatchQuery, q)._to_generated() for q in queries]  # pylint: disable=protected-access
         request_order = [req["id"] for req in queries]
         batch = {"requests": queries}
         generated = self._query_op.batch(batch, **kwargs)
@@ -201,11 +191,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         resource_id: str,
         query: str,
         *,
-        timespan: Optional[Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
-        ],
-        **kwargs: Any
-        ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        **kwargs: Any,
+    ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query on a resource.
 
         Returns all the Azure Monitor logs matching the given Kusto query for an Azure resource.
@@ -249,32 +237,22 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = process_prefer(
-            server_timeout, include_statistics, include_visualization
-        )
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
-        body = {
-            "query": query,
-            "timespan": timespan_iso,
-            "workspaces": additional_workspaces
-        }
+        body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
         try:
-            generated_response = (
-                self._query_op.resource_execute(  # pylint: disable=protected-access
-                    resource_id=resource_id, body=body, prefer=prefer, **kwargs
-                )
+            generated_response = self._query_op.resource_execute(  # pylint: disable=protected-access
+                resource_id=resource_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
 
         response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
-            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
-                generated_response
-            )
+            response = LogsQueryResult._from_generated(generated_response)  # pylint: disable=protected-access
         else:
-            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+            response = LogsQueryPartialResult._from_generated(  # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
         return response

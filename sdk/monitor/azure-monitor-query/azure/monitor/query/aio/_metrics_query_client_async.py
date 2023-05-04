@@ -20,7 +20,7 @@ from ._helpers_async import get_metrics_authentication_policy
 from .._helpers import construct_iso8601
 
 
-class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
+class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient
 
     :param credential: The credential to authenticate the client
@@ -47,9 +47,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace_async
-    async def query_resource(
-        self, resource_uri: str, metric_names: List[str], **kwargs: Any
-    ) -> MetricsQueryResult:
+    async def query_resource(self, resource_uri: str, metric_names: List[str], **kwargs: Any) -> MetricsQueryResult:
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -107,17 +105,11 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         aggregations = kwargs.pop("aggregations", None)
         if aggregations:
             kwargs.setdefault("aggregation", ",".join(aggregations))
-        generated = await self._metrics_op.list(
-            resource_uri, connection_verify=False, **kwargs
-        )
-        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
-            generated
-        )
+        generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        return MetricsQueryResult._from_generated(generated)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_metric_namespaces(
-        self, resource_uri: str, **kwargs: Any
-    ) -> AsyncItemPaged[MetricNamespace]:
+    def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -137,19 +129,14 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             start_time=start_time,
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
-                    for x in objs
-                ],
+                lambda objs: [MetricNamespace._from_generated(x) for x in objs],  # pylint: disable=protected-access
             ),
             **kwargs
         )
         return cast(AsyncItemPaged[MetricNamespace], res)
 
     @distributed_trace
-    def list_metric_definitions(
-        self, resource_uri: str, **kwargs: Any
-    ) -> AsyncItemPaged[MetricDefinition]:
+    def list_metric_definitions(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -166,10 +153,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             metricnamespace=metric_namespace,
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [
-                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
-                    for x in objs
-                ],
+                lambda objs: [MetricDefinition._from_generated(x) for x in objs],  # pylint: disable=protected-access
             ),
             **kwargs
         )
