@@ -341,7 +341,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
-            operation_context=operation_context
+            operation_context=operation_context,
             **kwargs
         )
         await self._call_media_client.play(self._call_connection_id, play_request)
