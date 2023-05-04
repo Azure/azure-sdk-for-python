@@ -72,9 +72,8 @@ class _TimeoutFailoverRetryPolicy(object):
         self.request.clear_route_to_location()
 
         # set location-based routing directive based on retry count
-        # simulating single master writes by ensuring usePreferredLocations
-        # is set to false
-        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, False)
+        # ensuring usePreferredLocations is set to True for retry
+        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
 
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
