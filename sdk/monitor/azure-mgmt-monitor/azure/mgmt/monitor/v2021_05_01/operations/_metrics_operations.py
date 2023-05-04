@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
@@ -29,10 +28,6 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -60,7 +55,7 @@ def build_list_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +98,7 @@ def build_list_at_subscription_scope_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_at_subscription_scope_post_request(
+def build_list_at_subscription_scope_post_request(  # pylint: disable=name-too-long
     subscription_id: str,
     *,
     region: str,
@@ -123,7 +118,7 @@ def build_list_at_subscription_scope_post_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -188,7 +183,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +231,7 @@ class MetricsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2021_05_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2021_05_01.MonitorManagementClient`'s
         :attr:`metrics` attribute.
     """
 
@@ -302,7 +297,7 @@ class MetricsOperations:
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2021_05_01.models.MetricResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricResultType
         :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :type metricnamespace: str
@@ -317,7 +312,7 @@ class MetricsOperations:
         :type validate_dimensions: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionScopeMetricResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricResponse
+        :rtype: ~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -331,7 +326,7 @@ class MetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
         cls: ClsType[_models.SubscriptionScopeMetricResponse] = kwargs.pop("cls", None)
 
         request = build_list_at_subscription_scope_request(
@@ -436,7 +431,7 @@ class MetricsOperations:
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2021_05_01.models.MetricResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricResultType
         :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :type metricnamespace: str
@@ -451,13 +446,13 @@ class MetricsOperations:
         :type validate_dimensions: bool
         :param body: Parameters serialized in the body. Default value is None.
         :type body:
-         ~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricsRequestBodyParameters
+         ~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricsRequestBodyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionScopeMetricResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricResponse
+        :rtype: ~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -518,7 +513,7 @@ class MetricsOperations:
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2021_05_01.models.MetricResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricResultType
         :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :type metricnamespace: str
@@ -538,7 +533,7 @@ class MetricsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionScopeMetricResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricResponse
+        :rtype: ~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -597,7 +592,7 @@ class MetricsOperations:
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2021_05_01.models.MetricResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricResultType
         :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :type metricnamespace: str
@@ -613,14 +608,13 @@ class MetricsOperations:
         :param body: Parameters serialized in the body. Is either a
          SubscriptionScopeMetricsRequestBodyParameters type or a IO type. Default value is None.
         :type body:
-         ~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricsRequestBodyParameters or
-         IO
+         ~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricsRequestBodyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionScopeMetricResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricResponse
+        :rtype: ~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -634,7 +628,7 @@ class MetricsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SubscriptionScopeMetricResponse] = kwargs.pop("cls", None)
 
@@ -750,7 +744,7 @@ class MetricsOperations:
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2021_05_01.models.ResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.ResultType
         :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
          None.
         :type metricnamespace: str
@@ -765,7 +759,7 @@ class MetricsOperations:
         :type validate_dimensions: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Response or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01.models.Response
+        :rtype: ~azure.mgmt.monitor.v2021_05_01.models.Response
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -779,7 +773,7 @@ class MetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01"))
         cls: ClsType[_models.Response] = kwargs.pop("cls", None)
 
         request = build_list_request(
