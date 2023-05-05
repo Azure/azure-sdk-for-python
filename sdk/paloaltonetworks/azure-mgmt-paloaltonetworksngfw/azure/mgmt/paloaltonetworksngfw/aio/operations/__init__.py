@@ -15,6 +15,7 @@ from ._pre_rules_operations import PreRulesOperations
 from ._operations import Operations
 from ._firewalls_operations import FirewallsOperations
 from ._local_rulestacks_operations import LocalRulestacksOperations
+from ._firewall_status_operations import FirewallStatusOperations
 from ._certificate_object_local_rulestack_operations import CertificateObjectLocalRulestackOperations
 from ._fqdn_list_local_rulestack_operations import FqdnListLocalRulestackOperations
 from ._local_rules_operations import LocalRulesOperations
@@ -34,6 +35,7 @@ __all__ = [
     "Operations",
     "FirewallsOperations",
     "LocalRulestacksOperations",
+    "FirewallStatusOperations",
     "CertificateObjectLocalRulestackOperations",
     "FqdnListLocalRulestackOperations",
     "LocalRulesOperations",

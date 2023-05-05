@@ -23,7 +23,7 @@ class AdvSecurityObjectListResponse(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: response value. Required.
-    :vartype value: ~azure.mgmt.paloaltonetworks.models.AdvSecurityObjectModel
+    :vartype value: ~azure.mgmt.paloaltonetworksngfw.models.AdvSecurityObjectModel
     :ivar next_link: next link.
     :vartype next_link: str
     """
@@ -42,7 +42,7 @@ class AdvSecurityObjectListResponse(_serialization.Model):
     ) -> None:
         """
         :keyword value: response value. Required.
-        :paramtype value: ~azure.mgmt.paloaltonetworks.models.AdvSecurityObjectModel
+        :paramtype value: ~azure.mgmt.paloaltonetworksngfw.models.AdvSecurityObjectModel
         :keyword next_link: next link.
         :paramtype next_link: str
         """
@@ -59,7 +59,7 @@ class AdvSecurityObjectModel(_serialization.Model):
     :ivar type: type of object.
     :vartype type: str
     :ivar entry: URL entry. Required.
-    :vartype entry: list[~azure.mgmt.paloaltonetworks.models.NameDescriptionObject]
+    :vartype entry: list[~azure.mgmt.paloaltonetworksngfw.models.NameDescriptionObject]
     """
 
     _validation = {
@@ -78,7 +78,7 @@ class AdvSecurityObjectModel(_serialization.Model):
         :keyword type: type of object.
         :paramtype type: str
         :keyword entry: URL entry. Required.
-        :paramtype entry: list[~azure.mgmt.paloaltonetworks.models.NameDescriptionObject]
+        :paramtype entry: list[~azure.mgmt.paloaltonetworksngfw.models.NameDescriptionObject]
         """
         super().__init__(**kwargs)
         self.type = type
@@ -121,7 +121,7 @@ class AppSeenData(_serialization.Model):
     :ivar count: number of rows. Required.
     :vartype count: int
     :ivar app_seen_list: array of appSeen. Required.
-    :vartype app_seen_list: list[~azure.mgmt.paloaltonetworks.models.AppSeenInfo]
+    :vartype app_seen_list: list[~azure.mgmt.paloaltonetworksngfw.models.AppSeenInfo]
     """
 
     _validation = {
@@ -139,7 +139,7 @@ class AppSeenData(_serialization.Model):
         :keyword count: number of rows. Required.
         :paramtype count: int
         :keyword app_seen_list: array of appSeen. Required.
-        :paramtype app_seen_list: list[~azure.mgmt.paloaltonetworks.models.AppSeenInfo]
+        :paramtype app_seen_list: list[~azure.mgmt.paloaltonetworksngfw.models.AppSeenInfo]
         """
         super().__init__(**kwargs)
         self.count = count
@@ -238,10 +238,10 @@ class AzureResourceManagerManagedIdentityProperties(_serialization.Model):
     :vartype principal_id: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
-    :vartype type: str or ~azure.mgmt.paloaltonetworks.models.ManagedIdentityType
+    :vartype type: str or ~azure.mgmt.paloaltonetworksngfw.models.ManagedIdentityType
     :ivar user_assigned_identities: The identities assigned to this resource by the user.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerUserAssignedIdentity]
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerUserAssignedIdentity]
     """
 
     _validation = {
@@ -270,10 +270,10 @@ class AzureResourceManagerManagedIdentityProperties(_serialization.Model):
         """
         :keyword type: The type of managed identity assigned to this resource. Required. Known values
          are: "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
-        :paramtype type: str or ~azure.mgmt.paloaltonetworks.models.ManagedIdentityType
+        :paramtype type: str or ~azure.mgmt.paloaltonetworksngfw.models.ManagedIdentityType
         :keyword user_assigned_identities: The identities assigned to this resource by the user.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerUserAssignedIdentity]
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerUserAssignedIdentity]
         """
         super().__init__(**kwargs)
         self.tenant_id = None
@@ -356,7 +356,7 @@ class Resource(_serialization.Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     """
 
     _validation = {
@@ -398,7 +398,7 @@ class ProxyResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     """
 
     _validation = {
@@ -437,13 +437,13 @@ class CertificateObjectGlobalRulestackResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar certificate_signer_resource_id: Resource Id of certificate signer, to be populated only
      when certificateSelfSigned is false.
     :vartype certificate_signer_resource_id: str
     :ivar certificate_self_signed: use certificate self signed. Required. Known values are: "TRUE"
      and "FALSE".
-    :vartype certificate_self_signed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype certificate_self_signed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar audit_comment: comment for this object.
     :vartype audit_comment: str
     :ivar description: user description for this object.
@@ -453,7 +453,7 @@ class CertificateObjectGlobalRulestackResource(ProxyResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -494,7 +494,7 @@ class CertificateObjectGlobalRulestackResource(ProxyResource):
         :paramtype certificate_signer_resource_id: str
         :keyword certificate_self_signed: use certificate self signed. Required. Known values are:
          "TRUE" and "FALSE".
-        :paramtype certificate_self_signed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype certificate_self_signed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword audit_comment: comment for this object.
         :paramtype audit_comment: str
         :keyword description: user description for this object.
@@ -518,7 +518,7 @@ class CertificateObjectGlobalRulestackResourceListResult(_serialization.Model):
 
     :ivar value: The items on this page. Required.
     :vartype value:
-     list[~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource]
+     list[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -542,7 +542,7 @@ class CertificateObjectGlobalRulestackResourceListResult(_serialization.Model):
         """
         :keyword value: The items on this page. Required.
         :paramtype value:
-         list[~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource]
+         list[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -568,13 +568,13 @@ class CertificateObjectLocalRulestackResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar certificate_signer_resource_id: Resource Id of certificate signer, to be populated only
      when certificateSelfSigned is false.
     :vartype certificate_signer_resource_id: str
     :ivar certificate_self_signed: use certificate self signed. Required. Known values are: "TRUE"
      and "FALSE".
-    :vartype certificate_self_signed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype certificate_self_signed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar audit_comment: comment for this object.
     :vartype audit_comment: str
     :ivar description: user description for this object.
@@ -584,7 +584,7 @@ class CertificateObjectLocalRulestackResource(ProxyResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -625,7 +625,7 @@ class CertificateObjectLocalRulestackResource(ProxyResource):
         :paramtype certificate_signer_resource_id: str
         :keyword certificate_self_signed: use certificate self signed. Required. Known values are:
          "TRUE" and "FALSE".
-        :paramtype certificate_self_signed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype certificate_self_signed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword audit_comment: comment for this object.
         :paramtype audit_comment: str
         :keyword description: user description for this object.
@@ -649,7 +649,7 @@ class CertificateObjectLocalRulestackResourceListResult(_serialization.Model):
 
     :ivar value: The items on this page. Required.
     :vartype value:
-     list[~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource]
+     list[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -673,7 +673,7 @@ class CertificateObjectLocalRulestackResourceListResult(_serialization.Model):
         """
         :keyword value: The items on this page. Required.
         :paramtype value:
-         list[~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource]
+         list[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -733,7 +733,7 @@ class CountriesResponse(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: List of countries. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.Country]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.Country]
     :ivar next_link: next link.
     :vartype next_link: str
     """
@@ -750,7 +750,7 @@ class CountriesResponse(_serialization.Model):
     def __init__(self, *, value: List["_models.Country"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of countries. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.Country]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.Country]
         :keyword next_link: next link.
         :paramtype next_link: str
         """
@@ -849,12 +849,12 @@ class DNSSettings(_serialization.Model):
 
     :ivar enable_dns_proxy: Enable DNS proxy, disabled by default. Known values are: "DISABLED" and
      "ENABLED".
-    :vartype enable_dns_proxy: str or ~azure.mgmt.paloaltonetworks.models.DNSProxy
+    :vartype enable_dns_proxy: str or ~azure.mgmt.paloaltonetworksngfw.models.DNSProxy
     :ivar enabled_dns_type: Enabled DNS proxy type, disabled by default. Known values are: "CUSTOM"
      and "AZURE".
-    :vartype enabled_dns_type: str or ~azure.mgmt.paloaltonetworks.models.EnabledDNSType
+    :vartype enabled_dns_type: str or ~azure.mgmt.paloaltonetworksngfw.models.EnabledDNSType
     :ivar dns_servers: List of IPs associated with the Firewall.
-    :vartype dns_servers: list[~azure.mgmt.paloaltonetworks.models.IPAddress]
+    :vartype dns_servers: list[~azure.mgmt.paloaltonetworksngfw.models.IPAddress]
     """
 
     _attribute_map = {
@@ -874,12 +874,12 @@ class DNSSettings(_serialization.Model):
         """
         :keyword enable_dns_proxy: Enable DNS proxy, disabled by default. Known values are: "DISABLED"
          and "ENABLED".
-        :paramtype enable_dns_proxy: str or ~azure.mgmt.paloaltonetworks.models.DNSProxy
+        :paramtype enable_dns_proxy: str or ~azure.mgmt.paloaltonetworksngfw.models.DNSProxy
         :keyword enabled_dns_type: Enabled DNS proxy type, disabled by default. Known values are:
          "CUSTOM" and "AZURE".
-        :paramtype enabled_dns_type: str or ~azure.mgmt.paloaltonetworks.models.EnabledDNSType
+        :paramtype enabled_dns_type: str or ~azure.mgmt.paloaltonetworksngfw.models.EnabledDNSType
         :keyword dns_servers: List of IPs associated with the Firewall.
-        :paramtype dns_servers: list[~azure.mgmt.paloaltonetworks.models.IPAddress]
+        :paramtype dns_servers: list[~azure.mgmt.paloaltonetworksngfw.models.IPAddress]
         """
         super().__init__(**kwargs)
         self.enable_dns_proxy = enable_dns_proxy
@@ -895,7 +895,7 @@ class EndpointConfiguration(_serialization.Model):
     :ivar port: port ID. Required.
     :vartype port: str
     :ivar address: Address Space. Required.
-    :vartype address: ~azure.mgmt.paloaltonetworks.models.IPAddress
+    :vartype address: ~azure.mgmt.paloaltonetworksngfw.models.IPAddress
     """
 
     _validation = {
@@ -913,7 +913,7 @@ class EndpointConfiguration(_serialization.Model):
         :keyword port: port ID. Required.
         :paramtype port: str
         :keyword address: Address Space. Required.
-        :paramtype address: ~azure.mgmt.paloaltonetworks.models.IPAddress
+        :paramtype address: ~azure.mgmt.paloaltonetworksngfw.models.IPAddress
         """
         super().__init__(**kwargs)
         self.port = port
@@ -960,9 +960,9 @@ class ErrorDetail(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.paloaltonetworks.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.paloaltonetworksngfw.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.paloaltonetworks.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.paloaltonetworksngfw.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -996,7 +996,7 @@ class ErrorResponse(_serialization.Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~azure.mgmt.paloaltonetworks.models.ErrorDetail
+    :vartype error: ~azure.mgmt.paloaltonetworksngfw.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -1006,7 +1006,7 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.paloaltonetworks.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.paloaltonetworksngfw.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -1083,7 +1083,7 @@ class TrackedResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1136,37 +1136,37 @@ class FirewallResource(TrackedResource):  # pylint: disable=too-many-instance-at
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity:
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
     :ivar pan_etag: panEtag info.
     :vartype pan_etag: str
     :ivar network_profile: Network settings. Required.
-    :vartype network_profile: ~azure.mgmt.paloaltonetworks.models.NetworkProfile
+    :vartype network_profile: ~azure.mgmt.paloaltonetworksngfw.models.NetworkProfile
     :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
      managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_panorama_managed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype is_panorama_managed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar panorama_config: Panorama Configuration.
-    :vartype panorama_config: ~azure.mgmt.paloaltonetworks.models.PanoramaConfig
+    :vartype panorama_config: ~azure.mgmt.paloaltonetworksngfw.models.PanoramaConfig
     :ivar associated_rulestack: Associated Rulestack.
-    :vartype associated_rulestack: ~azure.mgmt.paloaltonetworks.models.RulestackDetails
+    :vartype associated_rulestack: ~azure.mgmt.paloaltonetworksngfw.models.RulestackDetails
     :ivar dns_settings: DNS settings for Firewall. Required.
-    :vartype dns_settings: ~azure.mgmt.paloaltonetworks.models.DNSSettings
+    :vartype dns_settings: ~azure.mgmt.paloaltonetworksngfw.models.DNSSettings
     :ivar front_end_settings: Frontend settings for Firewall.
-    :vartype front_end_settings: list[~azure.mgmt.paloaltonetworks.models.FrontendSetting]
+    :vartype front_end_settings: list[~azure.mgmt.paloaltonetworksngfw.models.FrontendSetting]
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     :ivar plan_data: Billing plan information. Required.
-    :vartype plan_data: ~azure.mgmt.paloaltonetworks.models.PlanData
+    :vartype plan_data: ~azure.mgmt.paloaltonetworksngfw.models.PlanData
     :ivar marketplace_details: Marketplace details. Required.
-    :vartype marketplace_details: ~azure.mgmt.paloaltonetworks.models.MarketplaceDetails
+    :vartype marketplace_details: ~azure.mgmt.paloaltonetworksngfw.models.MarketplaceDetails
     """
 
     _validation = {
@@ -1226,26 +1226,26 @@ class FirewallResource(TrackedResource):  # pylint: disable=too-many-instance-at
         :paramtype location: str
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity:
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
         :keyword pan_etag: panEtag info.
         :paramtype pan_etag: str
         :keyword network_profile: Network settings. Required.
-        :paramtype network_profile: ~azure.mgmt.paloaltonetworks.models.NetworkProfile
+        :paramtype network_profile: ~azure.mgmt.paloaltonetworksngfw.models.NetworkProfile
         :keyword is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
          managed. Known values are: "TRUE" and "FALSE".
-        :paramtype is_panorama_managed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype is_panorama_managed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword panorama_config: Panorama Configuration.
-        :paramtype panorama_config: ~azure.mgmt.paloaltonetworks.models.PanoramaConfig
+        :paramtype panorama_config: ~azure.mgmt.paloaltonetworksngfw.models.PanoramaConfig
         :keyword associated_rulestack: Associated Rulestack.
-        :paramtype associated_rulestack: ~azure.mgmt.paloaltonetworks.models.RulestackDetails
+        :paramtype associated_rulestack: ~azure.mgmt.paloaltonetworksngfw.models.RulestackDetails
         :keyword dns_settings: DNS settings for Firewall. Required.
-        :paramtype dns_settings: ~azure.mgmt.paloaltonetworks.models.DNSSettings
+        :paramtype dns_settings: ~azure.mgmt.paloaltonetworksngfw.models.DNSSettings
         :keyword front_end_settings: Frontend settings for Firewall.
-        :paramtype front_end_settings: list[~azure.mgmt.paloaltonetworks.models.FrontendSetting]
+        :paramtype front_end_settings: list[~azure.mgmt.paloaltonetworksngfw.models.FrontendSetting]
         :keyword plan_data: Billing plan information. Required.
-        :paramtype plan_data: ~azure.mgmt.paloaltonetworks.models.PlanData
+        :paramtype plan_data: ~azure.mgmt.paloaltonetworksngfw.models.PlanData
         :keyword marketplace_details: Marketplace details. Required.
-        :paramtype marketplace_details: ~azure.mgmt.paloaltonetworks.models.MarketplaceDetails
+        :paramtype marketplace_details: ~azure.mgmt.paloaltonetworksngfw.models.MarketplaceDetails
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
@@ -1267,7 +1267,7 @@ class FirewallResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -1286,7 +1286,7 @@ class FirewallResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -1300,11 +1300,11 @@ class FirewallResourceUpdate(_serialization.Model):
 
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity:
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The updatable properties of the FirewallResource.
-    :vartype properties: ~azure.mgmt.paloaltonetworks.models.FirewallResourceUpdateProperties
+    :vartype properties: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResourceUpdateProperties
     """
 
     _attribute_map = {
@@ -1324,11 +1324,11 @@ class FirewallResourceUpdate(_serialization.Model):
         """
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity:
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword properties: The updatable properties of the FirewallResource.
-        :paramtype properties: ~azure.mgmt.paloaltonetworks.models.FirewallResourceUpdateProperties
+        :paramtype properties: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResourceUpdateProperties
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -1342,22 +1342,22 @@ class FirewallResourceUpdateProperties(_serialization.Model):
     :ivar pan_etag: panEtag info.
     :vartype pan_etag: str
     :ivar network_profile: Network settings.
-    :vartype network_profile: ~azure.mgmt.paloaltonetworks.models.NetworkProfile
+    :vartype network_profile: ~azure.mgmt.paloaltonetworksngfw.models.NetworkProfile
     :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
      managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_panorama_managed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype is_panorama_managed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar panorama_config: Panorama Configuration.
-    :vartype panorama_config: ~azure.mgmt.paloaltonetworks.models.PanoramaConfig
+    :vartype panorama_config: ~azure.mgmt.paloaltonetworksngfw.models.PanoramaConfig
     :ivar associated_rulestack: Associated Rulestack.
-    :vartype associated_rulestack: ~azure.mgmt.paloaltonetworks.models.RulestackDetails
+    :vartype associated_rulestack: ~azure.mgmt.paloaltonetworksngfw.models.RulestackDetails
     :ivar dns_settings: DNS settings for Firewall.
-    :vartype dns_settings: ~azure.mgmt.paloaltonetworks.models.DNSSettings
+    :vartype dns_settings: ~azure.mgmt.paloaltonetworksngfw.models.DNSSettings
     :ivar front_end_settings: Frontend settings for Firewall.
-    :vartype front_end_settings: list[~azure.mgmt.paloaltonetworks.models.FrontendSetting]
+    :vartype front_end_settings: list[~azure.mgmt.paloaltonetworksngfw.models.FrontendSetting]
     :ivar plan_data: Billing plan information.
-    :vartype plan_data: ~azure.mgmt.paloaltonetworks.models.PlanData
+    :vartype plan_data: ~azure.mgmt.paloaltonetworksngfw.models.PlanData
     :ivar marketplace_details: Marketplace details.
-    :vartype marketplace_details: ~azure.mgmt.paloaltonetworks.models.MarketplaceDetails
+    :vartype marketplace_details: ~azure.mgmt.paloaltonetworksngfw.models.MarketplaceDetails
     """
 
     _attribute_map = {
@@ -1390,22 +1390,22 @@ class FirewallResourceUpdateProperties(_serialization.Model):
         :keyword pan_etag: panEtag info.
         :paramtype pan_etag: str
         :keyword network_profile: Network settings.
-        :paramtype network_profile: ~azure.mgmt.paloaltonetworks.models.NetworkProfile
+        :paramtype network_profile: ~azure.mgmt.paloaltonetworksngfw.models.NetworkProfile
         :keyword is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
          managed. Known values are: "TRUE" and "FALSE".
-        :paramtype is_panorama_managed: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype is_panorama_managed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword panorama_config: Panorama Configuration.
-        :paramtype panorama_config: ~azure.mgmt.paloaltonetworks.models.PanoramaConfig
+        :paramtype panorama_config: ~azure.mgmt.paloaltonetworksngfw.models.PanoramaConfig
         :keyword associated_rulestack: Associated Rulestack.
-        :paramtype associated_rulestack: ~azure.mgmt.paloaltonetworks.models.RulestackDetails
+        :paramtype associated_rulestack: ~azure.mgmt.paloaltonetworksngfw.models.RulestackDetails
         :keyword dns_settings: DNS settings for Firewall.
-        :paramtype dns_settings: ~azure.mgmt.paloaltonetworks.models.DNSSettings
+        :paramtype dns_settings: ~azure.mgmt.paloaltonetworksngfw.models.DNSSettings
         :keyword front_end_settings: Frontend settings for Firewall.
-        :paramtype front_end_settings: list[~azure.mgmt.paloaltonetworks.models.FrontendSetting]
+        :paramtype front_end_settings: list[~azure.mgmt.paloaltonetworksngfw.models.FrontendSetting]
         :keyword plan_data: Billing plan information.
-        :paramtype plan_data: ~azure.mgmt.paloaltonetworks.models.PlanData
+        :paramtype plan_data: ~azure.mgmt.paloaltonetworksngfw.models.PlanData
         :keyword marketplace_details: Marketplace details.
-        :paramtype marketplace_details: ~azure.mgmt.paloaltonetworks.models.MarketplaceDetails
+        :paramtype marketplace_details: ~azure.mgmt.paloaltonetworksngfw.models.MarketplaceDetails
         """
         super().__init__(**kwargs)
         self.pan_etag = pan_etag
@@ -1417,6 +1417,106 @@ class FirewallResourceUpdateProperties(_serialization.Model):
         self.front_end_settings = front_end_settings
         self.plan_data = plan_data
         self.marketplace_details = marketplace_details
+
+
+class FirewallStatusResource(ProxyResource):
+    """Firewall Status.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
+    :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
+     managed. Known values are: "TRUE" and "FALSE".
+    :vartype is_panorama_managed: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
+    :ivar health_status: Current status of the Firewall. Known values are: "GREEN", "YELLOW",
+     "RED", and "INITIALIZING".
+    :vartype health_status: str or ~azure.mgmt.paloaltonetworksngfw.models.HealthStatus
+    :ivar health_reason: Detail description of current health of the Firewall.
+    :vartype health_reason: str
+    :ivar panorama_status: Panorama Status.
+    :vartype panorama_status: ~azure.mgmt.paloaltonetworksngfw.models.PanoramaStatus
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Deleted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.paloaltonetworksngfw.models.ReadOnlyProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "is_panorama_managed": {"readonly": True},
+        "health_status": {"readonly": True},
+        "health_reason": {"readonly": True},
+        "panorama_status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "is_panorama_managed": {"key": "properties.isPanoramaManaged", "type": "str"},
+        "health_status": {"key": "properties.healthStatus", "type": "str"},
+        "health_reason": {"key": "properties.healthReason", "type": "str"},
+        "panorama_status": {"key": "properties.panoramaStatus", "type": "PanoramaStatus"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.is_panorama_managed = None
+        self.health_status = None
+        self.health_reason = None
+        self.panorama_status = None
+        self.provisioning_state = None
+
+
+class FirewallStatusResourceListResult(_serialization.Model):
+    """The response of a FirewallStatusResource list operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The items on this page. Required.
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.FirewallStatusResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[FirewallStatusResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.FirewallStatusResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The items on this page. Required.
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.FirewallStatusResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class FqdnListGlobalRulestackResource(ProxyResource):
@@ -1436,7 +1536,7 @@ class FqdnListGlobalRulestackResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar description: fqdn object description.
     :vartype description: str
     :ivar fqdn_list: fqdn list. Required.
@@ -1448,7 +1548,7 @@ class FqdnListGlobalRulestackResource(ProxyResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -1505,7 +1605,7 @@ class FqdnListGlobalRulestackResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.FqdnListGlobalRulestackResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.FqdnListGlobalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -1524,7 +1624,7 @@ class FqdnListGlobalRulestackResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.FqdnListGlobalRulestackResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.FqdnListGlobalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -1550,7 +1650,7 @@ class FqdnListLocalRulestackResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar description: fqdn object description.
     :vartype description: str
     :ivar fqdn_list: fqdn list. Required.
@@ -1562,7 +1662,7 @@ class FqdnListLocalRulestackResource(ProxyResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -1619,7 +1719,7 @@ class FqdnListLocalRulestackResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -1638,7 +1738,7 @@ class FqdnListLocalRulestackResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -1655,11 +1755,11 @@ class FrontendSetting(_serialization.Model):
     :ivar name: Settings name. Required.
     :vartype name: str
     :ivar protocol: Protocol Type. Required. Known values are: "TCP" and "UDP".
-    :vartype protocol: str or ~azure.mgmt.paloaltonetworks.models.ProtocolType
+    :vartype protocol: str or ~azure.mgmt.paloaltonetworksngfw.models.ProtocolType
     :ivar frontend_configuration: Frontend configurations. Required.
-    :vartype frontend_configuration: ~azure.mgmt.paloaltonetworks.models.EndpointConfiguration
+    :vartype frontend_configuration: ~azure.mgmt.paloaltonetworksngfw.models.EndpointConfiguration
     :ivar backend_configuration: Backend configurations. Required.
-    :vartype backend_configuration: ~azure.mgmt.paloaltonetworks.models.EndpointConfiguration
+    :vartype backend_configuration: ~azure.mgmt.paloaltonetworksngfw.models.EndpointConfiguration
     """
 
     _validation = {
@@ -1689,11 +1789,12 @@ class FrontendSetting(_serialization.Model):
         :keyword name: Settings name. Required.
         :paramtype name: str
         :keyword protocol: Protocol Type. Required. Known values are: "TCP" and "UDP".
-        :paramtype protocol: str or ~azure.mgmt.paloaltonetworks.models.ProtocolType
+        :paramtype protocol: str or ~azure.mgmt.paloaltonetworksngfw.models.ProtocolType
         :keyword frontend_configuration: Frontend configurations. Required.
-        :paramtype frontend_configuration: ~azure.mgmt.paloaltonetworks.models.EndpointConfiguration
+        :paramtype frontend_configuration:
+         ~azure.mgmt.paloaltonetworksngfw.models.EndpointConfiguration
         :keyword backend_configuration: Backend configurations. Required.
-        :paramtype backend_configuration: ~azure.mgmt.paloaltonetworks.models.EndpointConfiguration
+        :paramtype backend_configuration: ~azure.mgmt.paloaltonetworksngfw.models.EndpointConfiguration
         """
         super().__init__(**kwargs)
         self.name = name
@@ -1745,33 +1846,33 @@ class GlobalRulestackResource(ProxyResource):  # pylint: disable=too-many-instan
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar location: Global Location. Required.
     :vartype location: str
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity:
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
     :ivar pan_etag: PanEtag info.
     :vartype pan_etag: str
     :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
     :vartype pan_location: str
-    :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-    :vartype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+    :ivar scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+    :vartype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
     :ivar associated_subscriptions: subscription scope of global rulestack.
     :vartype associated_subscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
     :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+    :vartype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
     :ivar min_app_id_version: minimum version.
     :vartype min_app_id_version: str
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     :ivar security_services: Security Profile.
-    :vartype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+    :vartype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
     """
 
     _validation = {
@@ -1821,25 +1922,25 @@ class GlobalRulestackResource(ProxyResource):  # pylint: disable=too-many-instan
         :paramtype location: str
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity:
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
         :keyword pan_etag: PanEtag info.
         :paramtype pan_etag: str
         :keyword pan_location: Rulestack Location, Required for GlobalRulestacks, Not for
          LocalRulestacks.
         :paramtype pan_location: str
-        :keyword scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-        :paramtype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+        :keyword scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+        :paramtype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
         :keyword associated_subscriptions: subscription scope of global rulestack.
         :paramtype associated_subscriptions: list[str]
         :keyword description: rulestack description.
         :paramtype description: str
         :keyword default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL",
          and "NONE".
-        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
         :keyword min_app_id_version: minimum version.
         :paramtype min_app_id_version: str
         :keyword security_services: Security Profile.
-        :paramtype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+        :paramtype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
         """
         super().__init__(**kwargs)
         self.location = location
@@ -1861,7 +1962,7 @@ class GlobalRulestackResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.GlobalRulestackResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.GlobalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -1880,7 +1981,7 @@ class GlobalRulestackResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.GlobalRulestackResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.GlobalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -1896,10 +1997,10 @@ class GlobalRulestackResourceUpdate(_serialization.Model):
     :vartype location: str
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity:
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
     :ivar properties: The updatable properties of the GlobalRulestackResource.
     :vartype properties:
-     ~azure.mgmt.paloaltonetworks.models.GlobalRulestackResourceUpdateProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.GlobalRulestackResourceUpdateProperties
     """
 
     _attribute_map = {
@@ -1921,10 +2022,10 @@ class GlobalRulestackResourceUpdate(_serialization.Model):
         :paramtype location: str
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity:
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
         :keyword properties: The updatable properties of the GlobalRulestackResource.
         :paramtype properties:
-         ~azure.mgmt.paloaltonetworks.models.GlobalRulestackResourceUpdateProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.GlobalRulestackResourceUpdateProperties
         """
         super().__init__(**kwargs)
         self.location = location
@@ -1939,19 +2040,19 @@ class GlobalRulestackResourceUpdateProperties(_serialization.Model):
     :vartype pan_etag: str
     :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
     :vartype pan_location: str
-    :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-    :vartype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+    :ivar scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+    :vartype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
     :ivar associated_subscriptions: subscription scope of global rulestack.
     :vartype associated_subscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
     :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+    :vartype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
     :ivar min_app_id_version: minimum version.
     :vartype min_app_id_version: str
     :ivar security_services: Security Profile.
-    :vartype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+    :vartype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
     """
 
     _attribute_map = {
@@ -1984,19 +2085,19 @@ class GlobalRulestackResourceUpdateProperties(_serialization.Model):
         :keyword pan_location: Rulestack Location, Required for GlobalRulestacks, Not for
          LocalRulestacks.
         :paramtype pan_location: str
-        :keyword scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-        :paramtype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+        :keyword scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+        :paramtype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
         :keyword associated_subscriptions: subscription scope of global rulestack.
         :paramtype associated_subscriptions: list[str]
         :keyword description: rulestack description.
         :paramtype description: str
         :keyword default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL",
          and "NONE".
-        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
         :keyword min_app_id_version: minimum version.
         :paramtype min_app_id_version: str
         :keyword security_services: Security Profile.
-        :paramtype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+        :paramtype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
         """
         super().__init__(**kwargs)
         self.pan_etag = pan_etag
@@ -2144,7 +2245,7 @@ class LocalRulesResource(ProxyResource):  # pylint: disable=too-many-instance-at
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar etag: etag info.
     :vartype etag: str
     :ivar rule_name: rule name. Required.
@@ -2154,19 +2255,19 @@ class LocalRulesResource(ProxyResource):  # pylint: disable=too-many-instance-at
     :ivar description: rule description.
     :vartype description: str
     :ivar rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-    :vartype rule_state: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+    :vartype rule_state: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
     :ivar source: source address.
-    :vartype source: ~azure.mgmt.paloaltonetworks.models.SourceAddr
+    :vartype source: ~azure.mgmt.paloaltonetworksngfw.models.SourceAddr
     :ivar negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_source: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype negate_source: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar destination: destination address.
-    :vartype destination: ~azure.mgmt.paloaltonetworks.models.DestinationAddr
+    :vartype destination: ~azure.mgmt.paloaltonetworksngfw.models.DestinationAddr
     :ivar negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_destination: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype negate_destination: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar applications: array of rule applications.
     :vartype applications: list[str]
     :ivar category: rule category.
-    :vartype category: ~azure.mgmt.paloaltonetworks.models.Category
+    :vartype category: ~azure.mgmt.paloaltonetworksngfw.models.Category
     :ivar protocol: any, application-default, TCP:number, UDP:number.
     :vartype protocol: str
     :ivar protocol_port_list: prot port list.
@@ -2177,19 +2278,19 @@ class LocalRulesResource(ProxyResource):  # pylint: disable=too-many-instance-at
     :vartype audit_comment: str
     :ivar action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer", and
      "DenyResetBoth".
-    :vartype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionEnum
+    :vartype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionEnum
     :ivar enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-    :vartype enable_logging: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+    :vartype enable_logging: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
     :ivar decryption_rule_type: enable or disable decryption. Known values are:
      "SSLOutboundInspection", "SSLInboundInspection", and "None".
     :vartype decryption_rule_type: str or
-     ~azure.mgmt.paloaltonetworks.models.DecryptionRuleTypeEnum
+     ~azure.mgmt.paloaltonetworksngfw.models.DecryptionRuleTypeEnum
     :ivar tags: tag for rule.
-    :vartype tags: list[~azure.mgmt.paloaltonetworks.models.TagInfo]
+    :vartype tags: list[~azure.mgmt.paloaltonetworksngfw.models.TagInfo]
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -2260,19 +2361,19 @@ class LocalRulesResource(ProxyResource):  # pylint: disable=too-many-instance-at
         :keyword description: rule description.
         :paramtype description: str
         :keyword rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-        :paramtype rule_state: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+        :paramtype rule_state: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
         :keyword source: source address.
-        :paramtype source: ~azure.mgmt.paloaltonetworks.models.SourceAddr
+        :paramtype source: ~azure.mgmt.paloaltonetworksngfw.models.SourceAddr
         :keyword negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-        :paramtype negate_source: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype negate_source: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword destination: destination address.
-        :paramtype destination: ~azure.mgmt.paloaltonetworks.models.DestinationAddr
+        :paramtype destination: ~azure.mgmt.paloaltonetworksngfw.models.DestinationAddr
         :keyword negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-        :paramtype negate_destination: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype negate_destination: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword applications: array of rule applications.
         :paramtype applications: list[str]
         :keyword category: rule category.
-        :paramtype category: ~azure.mgmt.paloaltonetworks.models.Category
+        :paramtype category: ~azure.mgmt.paloaltonetworksngfw.models.Category
         :keyword protocol: any, application-default, TCP:number, UDP:number.
         :paramtype protocol: str
         :keyword protocol_port_list: prot port list.
@@ -2283,15 +2384,15 @@ class LocalRulesResource(ProxyResource):  # pylint: disable=too-many-instance-at
         :paramtype audit_comment: str
         :keyword action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer",
          and "DenyResetBoth".
-        :paramtype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionEnum
+        :paramtype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionEnum
         :keyword enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-        :paramtype enable_logging: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+        :paramtype enable_logging: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
         :keyword decryption_rule_type: enable or disable decryption. Known values are:
          "SSLOutboundInspection", "SSLInboundInspection", and "None".
         :paramtype decryption_rule_type: str or
-         ~azure.mgmt.paloaltonetworks.models.DecryptionRuleTypeEnum
+         ~azure.mgmt.paloaltonetworksngfw.models.DecryptionRuleTypeEnum
         :keyword tags: tag for rule.
-        :paramtype tags: list[~azure.mgmt.paloaltonetworks.models.TagInfo]
+        :paramtype tags: list[~azure.mgmt.paloaltonetworksngfw.models.TagInfo]
         """
         super().__init__(**kwargs)
         self.etag = etag
@@ -2322,7 +2423,7 @@ class LocalRulesResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.LocalRulesResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -2341,7 +2442,7 @@ class LocalRulesResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.LocalRulesResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -2367,35 +2468,35 @@ class LocalRulestackResource(TrackedResource):  # pylint: disable=too-many-insta
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity:
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
     :ivar pan_etag: PanEtag info.
     :vartype pan_etag: str
     :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
     :vartype pan_location: str
-    :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-    :vartype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+    :ivar scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+    :vartype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
     :ivar associated_subscriptions: subscription scope of global rulestack.
     :vartype associated_subscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
     :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+    :vartype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
     :ivar min_app_id_version: minimum version.
     :vartype min_app_id_version: str
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     :ivar security_services: Security Profile.
-    :vartype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+    :vartype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
     """
 
     _validation = {
@@ -2449,25 +2550,25 @@ class LocalRulestackResource(TrackedResource):  # pylint: disable=too-many-insta
         :paramtype location: str
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity:
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
         :keyword pan_etag: PanEtag info.
         :paramtype pan_etag: str
         :keyword pan_location: Rulestack Location, Required for GlobalRulestacks, Not for
          LocalRulestacks.
         :paramtype pan_location: str
-        :keyword scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-        :paramtype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+        :keyword scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+        :paramtype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
         :keyword associated_subscriptions: subscription scope of global rulestack.
         :paramtype associated_subscriptions: list[str]
         :keyword description: rulestack description.
         :paramtype description: str
         :keyword default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL",
          and "NONE".
-        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
         :keyword min_app_id_version: minimum version.
         :paramtype min_app_id_version: str
         :keyword security_services: Security Profile.
-        :paramtype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+        :paramtype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
@@ -2488,7 +2589,7 @@ class LocalRulestackResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -2507,7 +2608,7 @@ class LocalRulestackResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -2521,11 +2622,12 @@ class LocalRulestackResourceUpdate(_serialization.Model):
 
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity:
-     ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+     ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The updatable properties of the LocalRulestackResource.
-    :vartype properties: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResourceUpdateProperties
+    :vartype properties:
+     ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResourceUpdateProperties
     """
 
     _attribute_map = {
@@ -2545,12 +2647,12 @@ class LocalRulestackResourceUpdate(_serialization.Model):
         """
         :keyword identity: The managed service identities assigned to this resource.
         :paramtype identity:
-         ~azure.mgmt.paloaltonetworks.models.AzureResourceManagerManagedIdentityProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.AzureResourceManagerManagedIdentityProperties
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword properties: The updatable properties of the LocalRulestackResource.
         :paramtype properties:
-         ~azure.mgmt.paloaltonetworks.models.LocalRulestackResourceUpdateProperties
+         ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResourceUpdateProperties
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -2565,19 +2667,19 @@ class LocalRulestackResourceUpdateProperties(_serialization.Model):
     :vartype pan_etag: str
     :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
     :vartype pan_location: str
-    :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-    :vartype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+    :ivar scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+    :vartype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
     :ivar associated_subscriptions: subscription scope of global rulestack.
     :vartype associated_subscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
     :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+    :vartype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
     :ivar min_app_id_version: minimum version.
     :vartype min_app_id_version: str
     :ivar security_services: Security Profile.
-    :vartype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+    :vartype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
     """
 
     _attribute_map = {
@@ -2610,19 +2712,19 @@ class LocalRulestackResourceUpdateProperties(_serialization.Model):
         :keyword pan_location: Rulestack Location, Required for GlobalRulestacks, Not for
          LocalRulestacks.
         :paramtype pan_location: str
-        :keyword scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
-        :paramtype scope: str or ~azure.mgmt.paloaltonetworks.models.ScopeType
+        :keyword scope: Rulestack Type. Known values are: "LOCAL", "GLOBAL", and "GLOBAL".
+        :paramtype scope: str or ~azure.mgmt.paloaltonetworksngfw.models.ScopeType
         :keyword associated_subscriptions: subscription scope of global rulestack.
         :paramtype associated_subscriptions: list[str]
         :keyword description: rulestack description.
         :paramtype description: str
         :keyword default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL",
          and "NONE".
-        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworks.models.DefaultMode
+        :paramtype default_mode: str or ~azure.mgmt.paloaltonetworksngfw.models.DefaultMode
         :keyword min_app_id_version: minimum version.
         :paramtype min_app_id_version: str
         :keyword security_services: Security Profile.
-        :paramtype security_services: ~azure.mgmt.paloaltonetworks.models.SecurityServices
+        :paramtype security_services: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServices
         """
         super().__init__(**kwargs)
         self.pan_etag = pan_etag
@@ -2639,11 +2741,11 @@ class LogDestination(_serialization.Model):
     """Log Destination.
 
     :ivar storage_configurations: Storage account configurations.
-    :vartype storage_configurations: ~azure.mgmt.paloaltonetworks.models.StorageAccount
+    :vartype storage_configurations: ~azure.mgmt.paloaltonetworksngfw.models.StorageAccount
     :ivar event_hub_configurations: Event Hub configurations.
-    :vartype event_hub_configurations: ~azure.mgmt.paloaltonetworks.models.EventHub
+    :vartype event_hub_configurations: ~azure.mgmt.paloaltonetworksngfw.models.EventHub
     :ivar monitor_configurations: Monitor Log configurations.
-    :vartype monitor_configurations: ~azure.mgmt.paloaltonetworks.models.MonitorLog
+    :vartype monitor_configurations: ~azure.mgmt.paloaltonetworksngfw.models.MonitorLog
     """
 
     _attribute_map = {
@@ -2662,11 +2764,11 @@ class LogDestination(_serialization.Model):
     ) -> None:
         """
         :keyword storage_configurations: Storage account configurations.
-        :paramtype storage_configurations: ~azure.mgmt.paloaltonetworks.models.StorageAccount
+        :paramtype storage_configurations: ~azure.mgmt.paloaltonetworksngfw.models.StorageAccount
         :keyword event_hub_configurations: Event Hub configurations.
-        :paramtype event_hub_configurations: ~azure.mgmt.paloaltonetworks.models.EventHub
+        :paramtype event_hub_configurations: ~azure.mgmt.paloaltonetworksngfw.models.EventHub
         :keyword monitor_configurations: Monitor Log configurations.
-        :paramtype monitor_configurations: ~azure.mgmt.paloaltonetworks.models.MonitorLog
+        :paramtype monitor_configurations: ~azure.mgmt.paloaltonetworksngfw.models.MonitorLog
         """
         super().__init__(**kwargs)
         self.storage_configurations = storage_configurations
@@ -2679,20 +2781,20 @@ class LogSettings(_serialization.Model):
 
     :ivar log_type: One of possible log type. Known values are: "TRAFFIC", "THREAT", "DECRYPTION",
      "WILDFIRE", "DLP", and "AUDIT".
-    :vartype log_type: str or ~azure.mgmt.paloaltonetworks.models.LogType
+    :vartype log_type: str or ~azure.mgmt.paloaltonetworksngfw.models.LogType
     :ivar log_option: Log option SAME/INDIVIDUAL. Known values are: "SAME_DESTINATION" and
      "INDIVIDUAL_DESTINATION".
-    :vartype log_option: str or ~azure.mgmt.paloaltonetworks.models.LogOption
+    :vartype log_option: str or ~azure.mgmt.paloaltonetworksngfw.models.LogOption
     :ivar application_insights: Application Insight details.
-    :vartype application_insights: ~azure.mgmt.paloaltonetworks.models.ApplicationInsights
+    :vartype application_insights: ~azure.mgmt.paloaltonetworksngfw.models.ApplicationInsights
     :ivar common_destination: Common destination configurations.
-    :vartype common_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+    :vartype common_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
     :ivar traffic_log_destination: Traffic destination configurations.
-    :vartype traffic_log_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+    :vartype traffic_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
     :ivar threat_log_destination: Threat destination configurations.
-    :vartype threat_log_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+    :vartype threat_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
     :ivar decrypt_log_destination: Decrypt destination configurations.
-    :vartype decrypt_log_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+    :vartype decrypt_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
     """
 
     _attribute_map = {
@@ -2720,20 +2822,20 @@ class LogSettings(_serialization.Model):
         """
         :keyword log_type: One of possible log type. Known values are: "TRAFFIC", "THREAT",
          "DECRYPTION", "WILDFIRE", "DLP", and "AUDIT".
-        :paramtype log_type: str or ~azure.mgmt.paloaltonetworks.models.LogType
+        :paramtype log_type: str or ~azure.mgmt.paloaltonetworksngfw.models.LogType
         :keyword log_option: Log option SAME/INDIVIDUAL. Known values are: "SAME_DESTINATION" and
          "INDIVIDUAL_DESTINATION".
-        :paramtype log_option: str or ~azure.mgmt.paloaltonetworks.models.LogOption
+        :paramtype log_option: str or ~azure.mgmt.paloaltonetworksngfw.models.LogOption
         :keyword application_insights: Application Insight details.
-        :paramtype application_insights: ~azure.mgmt.paloaltonetworks.models.ApplicationInsights
+        :paramtype application_insights: ~azure.mgmt.paloaltonetworksngfw.models.ApplicationInsights
         :keyword common_destination: Common destination configurations.
-        :paramtype common_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+        :paramtype common_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
         :keyword traffic_log_destination: Traffic destination configurations.
-        :paramtype traffic_log_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+        :paramtype traffic_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
         :keyword threat_log_destination: Threat destination configurations.
-        :paramtype threat_log_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+        :paramtype threat_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
         :keyword decrypt_log_destination: Decrypt destination configurations.
-        :paramtype decrypt_log_destination: ~azure.mgmt.paloaltonetworks.models.LogDestination
+        :paramtype decrypt_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestination
         """
         super().__init__(**kwargs)
         self.log_type = log_type
@@ -2762,7 +2864,7 @@ class MarketplaceDetails(_serialization.Model):
      "PendingFulfillmentStart", "Subscribed", "Suspended", "Unsubscribed", "NotStarted", and
      "FulfillmentRequested".
     :vartype marketplace_subscription_status: str or
-     ~azure.mgmt.paloaltonetworks.models.MarketplaceSubscriptionStatus
+     ~azure.mgmt.paloaltonetworksngfw.models.MarketplaceSubscriptionStatus
     """
 
     _validation = {
@@ -2795,7 +2897,7 @@ class MarketplaceDetails(_serialization.Model):
          "PendingFulfillmentStart", "Subscribed", "Suspended", "Unsubscribed", "NotStarted", and
          "FulfillmentRequested".
         :paramtype marketplace_subscription_status: str or
-         ~azure.mgmt.paloaltonetworks.models.MarketplaceSubscriptionStatus
+         ~azure.mgmt.paloaltonetworksngfw.models.MarketplaceSubscriptionStatus
         """
         super().__init__(**kwargs)
         self.marketplace_subscription_id = None
@@ -2895,19 +2997,19 @@ class NetworkProfile(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar vnet_configuration: Vnet configurations.
-    :vartype vnet_configuration: ~azure.mgmt.paloaltonetworks.models.VnetConfiguration
+    :vartype vnet_configuration: ~azure.mgmt.paloaltonetworksngfw.models.VnetConfiguration
     :ivar vwan_configuration: Vwan configurations.
-    :vartype vwan_configuration: ~azure.mgmt.paloaltonetworks.models.VwanConfiguration
+    :vartype vwan_configuration: ~azure.mgmt.paloaltonetworksngfw.models.VwanConfiguration
     :ivar network_type: vnet or vwan, cannot be updated. Required. Known values are: "VNET" and
      "VWAN".
-    :vartype network_type: str or ~azure.mgmt.paloaltonetworks.models.NetworkType
+    :vartype network_type: str or ~azure.mgmt.paloaltonetworksngfw.models.NetworkType
     :ivar public_ips: List of IPs associated with the Firewall. Required.
-    :vartype public_ips: list[~azure.mgmt.paloaltonetworks.models.IPAddress]
+    :vartype public_ips: list[~azure.mgmt.paloaltonetworksngfw.models.IPAddress]
     :ivar enable_egress_nat: Enable egress NAT, enabled by default. Required. Known values are:
      "DISABLED" and "ENABLED".
-    :vartype enable_egress_nat: str or ~azure.mgmt.paloaltonetworks.models.EgressNat
+    :vartype enable_egress_nat: str or ~azure.mgmt.paloaltonetworksngfw.models.EgressNat
     :ivar egress_nat_ip: Egress nat IP to use.
-    :vartype egress_nat_ip: list[~azure.mgmt.paloaltonetworks.models.IPAddress]
+    :vartype egress_nat_ip: list[~azure.mgmt.paloaltonetworksngfw.models.IPAddress]
     """
 
     _validation = {
@@ -2938,19 +3040,19 @@ class NetworkProfile(_serialization.Model):
     ) -> None:
         """
         :keyword vnet_configuration: Vnet configurations.
-        :paramtype vnet_configuration: ~azure.mgmt.paloaltonetworks.models.VnetConfiguration
+        :paramtype vnet_configuration: ~azure.mgmt.paloaltonetworksngfw.models.VnetConfiguration
         :keyword vwan_configuration: Vwan configurations.
-        :paramtype vwan_configuration: ~azure.mgmt.paloaltonetworks.models.VwanConfiguration
+        :paramtype vwan_configuration: ~azure.mgmt.paloaltonetworksngfw.models.VwanConfiguration
         :keyword network_type: vnet or vwan, cannot be updated. Required. Known values are: "VNET" and
          "VWAN".
-        :paramtype network_type: str or ~azure.mgmt.paloaltonetworks.models.NetworkType
+        :paramtype network_type: str or ~azure.mgmt.paloaltonetworksngfw.models.NetworkType
         :keyword public_ips: List of IPs associated with the Firewall. Required.
-        :paramtype public_ips: list[~azure.mgmt.paloaltonetworks.models.IPAddress]
+        :paramtype public_ips: list[~azure.mgmt.paloaltonetworksngfw.models.IPAddress]
         :keyword enable_egress_nat: Enable egress NAT, enabled by default. Required. Known values are:
          "DISABLED" and "ENABLED".
-        :paramtype enable_egress_nat: str or ~azure.mgmt.paloaltonetworks.models.EgressNat
+        :paramtype enable_egress_nat: str or ~azure.mgmt.paloaltonetworksngfw.models.EgressNat
         :keyword egress_nat_ip: Egress nat IP to use.
-        :paramtype egress_nat_ip: list[~azure.mgmt.paloaltonetworks.models.IPAddress]
+        :paramtype egress_nat_ip: list[~azure.mgmt.paloaltonetworksngfw.models.IPAddress]
         """
         super().__init__(**kwargs)
         self.vnet_configuration = vnet_configuration
@@ -2973,14 +3075,14 @@ class Operation(_serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :ivar display: Localized display information for this particular operation.
-    :vartype display: ~azure.mgmt.paloaltonetworks.models.OperationDisplay
+    :vartype display: ~azure.mgmt.paloaltonetworksngfw.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
      and "user,system".
-    :vartype origin: str or ~azure.mgmt.paloaltonetworks.models.Origin
+    :vartype origin: str or ~azure.mgmt.paloaltonetworksngfw.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. "Internal"
-    :vartype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionType
     """
 
     _validation = {
@@ -3001,7 +3103,7 @@ class Operation(_serialization.Model):
     def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~azure.mgmt.paloaltonetworks.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.paloaltonetworksngfw.models.OperationDisplay
         """
         super().__init__(**kwargs)
         self.name = None
@@ -3060,7 +3162,7 @@ class OperationListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.Operation]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -3149,6 +3251,36 @@ class PanoramaConfig(_serialization.Model):
         self.host_name = None
 
 
+class PanoramaStatus(_serialization.Model):
+    """Panorama connectivity information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar panorama_server_status: Primary Panorama connection status. Known values are: "UP" and
+     "DOWN".
+    :vartype panorama_server_status: str or ~azure.mgmt.paloaltonetworksngfw.models.ServerStatus
+    :ivar panorama_server2_status: Secondary Panorama connection status. Known values are: "UP" and
+     "DOWN".
+    :vartype panorama_server2_status: str or ~azure.mgmt.paloaltonetworksngfw.models.ServerStatus
+    """
+
+    _validation = {
+        "panorama_server_status": {"readonly": True},
+        "panorama_server2_status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "panorama_server_status": {"key": "panoramaServerStatus", "type": "str"},
+        "panorama_server2_status": {"key": "panoramaServer2Status", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.panorama_server_status = None
+        self.panorama_server2_status = None
+
+
 class PlanData(_serialization.Model):
     """Billing plan information.
 
@@ -3158,10 +3290,10 @@ class PlanData(_serialization.Model):
 
     :ivar usage_type: different usage type like PAYG/COMMITTED. Known values are: "PAYG" and
      "COMMITTED".
-    :vartype usage_type: str or ~azure.mgmt.paloaltonetworks.models.UsageType
+    :vartype usage_type: str or ~azure.mgmt.paloaltonetworksngfw.models.UsageType
     :ivar billing_cycle: different billing cycles like MONTHLY/WEEKLY. Required. Known values are:
      "WEEKLY" and "MONTHLY".
-    :vartype billing_cycle: str or ~azure.mgmt.paloaltonetworks.models.BillingCycle
+    :vartype billing_cycle: str or ~azure.mgmt.paloaltonetworksngfw.models.BillingCycle
     :ivar plan_id: plan id as published by Liftr.PAN. Required.
     :vartype plan_id: str
     :ivar effective_date: date when plan was applied.
@@ -3192,10 +3324,10 @@ class PlanData(_serialization.Model):
         """
         :keyword usage_type: different usage type like PAYG/COMMITTED. Known values are: "PAYG" and
          "COMMITTED".
-        :paramtype usage_type: str or ~azure.mgmt.paloaltonetworks.models.UsageType
+        :paramtype usage_type: str or ~azure.mgmt.paloaltonetworksngfw.models.UsageType
         :keyword billing_cycle: different billing cycles like MONTHLY/WEEKLY. Required. Known values
          are: "WEEKLY" and "MONTHLY".
-        :paramtype billing_cycle: str or ~azure.mgmt.paloaltonetworks.models.BillingCycle
+        :paramtype billing_cycle: str or ~azure.mgmt.paloaltonetworksngfw.models.BillingCycle
         :keyword plan_id: plan id as published by Liftr.PAN. Required.
         :paramtype plan_id: str
         """
@@ -3223,7 +3355,7 @@ class PostRulesResource(ProxyResource):  # pylint: disable=too-many-instance-att
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar etag: etag info.
     :vartype etag: str
     :ivar rule_name: rule name. Required.
@@ -3233,19 +3365,19 @@ class PostRulesResource(ProxyResource):  # pylint: disable=too-many-instance-att
     :ivar description: rule description.
     :vartype description: str
     :ivar rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-    :vartype rule_state: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+    :vartype rule_state: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
     :ivar source: source address.
-    :vartype source: ~azure.mgmt.paloaltonetworks.models.SourceAddr
+    :vartype source: ~azure.mgmt.paloaltonetworksngfw.models.SourceAddr
     :ivar negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_source: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype negate_source: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar destination: destination address.
-    :vartype destination: ~azure.mgmt.paloaltonetworks.models.DestinationAddr
+    :vartype destination: ~azure.mgmt.paloaltonetworksngfw.models.DestinationAddr
     :ivar negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_destination: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype negate_destination: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar applications: array of rule applications.
     :vartype applications: list[str]
     :ivar category: rule category.
-    :vartype category: ~azure.mgmt.paloaltonetworks.models.Category
+    :vartype category: ~azure.mgmt.paloaltonetworksngfw.models.Category
     :ivar protocol: any, application-default, TCP:number, UDP:number.
     :vartype protocol: str
     :ivar protocol_port_list: prot port list.
@@ -3256,19 +3388,19 @@ class PostRulesResource(ProxyResource):  # pylint: disable=too-many-instance-att
     :vartype audit_comment: str
     :ivar action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer", and
      "DenyResetBoth".
-    :vartype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionEnum
+    :vartype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionEnum
     :ivar enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-    :vartype enable_logging: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+    :vartype enable_logging: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
     :ivar decryption_rule_type: enable or disable decryption. Known values are:
      "SSLOutboundInspection", "SSLInboundInspection", and "None".
     :vartype decryption_rule_type: str or
-     ~azure.mgmt.paloaltonetworks.models.DecryptionRuleTypeEnum
+     ~azure.mgmt.paloaltonetworksngfw.models.DecryptionRuleTypeEnum
     :ivar tags: tag for rule.
-    :vartype tags: list[~azure.mgmt.paloaltonetworks.models.TagInfo]
+    :vartype tags: list[~azure.mgmt.paloaltonetworksngfw.models.TagInfo]
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -3339,19 +3471,19 @@ class PostRulesResource(ProxyResource):  # pylint: disable=too-many-instance-att
         :keyword description: rule description.
         :paramtype description: str
         :keyword rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-        :paramtype rule_state: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+        :paramtype rule_state: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
         :keyword source: source address.
-        :paramtype source: ~azure.mgmt.paloaltonetworks.models.SourceAddr
+        :paramtype source: ~azure.mgmt.paloaltonetworksngfw.models.SourceAddr
         :keyword negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-        :paramtype negate_source: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype negate_source: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword destination: destination address.
-        :paramtype destination: ~azure.mgmt.paloaltonetworks.models.DestinationAddr
+        :paramtype destination: ~azure.mgmt.paloaltonetworksngfw.models.DestinationAddr
         :keyword negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-        :paramtype negate_destination: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype negate_destination: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword applications: array of rule applications.
         :paramtype applications: list[str]
         :keyword category: rule category.
-        :paramtype category: ~azure.mgmt.paloaltonetworks.models.Category
+        :paramtype category: ~azure.mgmt.paloaltonetworksngfw.models.Category
         :keyword protocol: any, application-default, TCP:number, UDP:number.
         :paramtype protocol: str
         :keyword protocol_port_list: prot port list.
@@ -3362,15 +3494,15 @@ class PostRulesResource(ProxyResource):  # pylint: disable=too-many-instance-att
         :paramtype audit_comment: str
         :keyword action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer",
          and "DenyResetBoth".
-        :paramtype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionEnum
+        :paramtype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionEnum
         :keyword enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-        :paramtype enable_logging: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+        :paramtype enable_logging: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
         :keyword decryption_rule_type: enable or disable decryption. Known values are:
          "SSLOutboundInspection", "SSLInboundInspection", and "None".
         :paramtype decryption_rule_type: str or
-         ~azure.mgmt.paloaltonetworks.models.DecryptionRuleTypeEnum
+         ~azure.mgmt.paloaltonetworksngfw.models.DecryptionRuleTypeEnum
         :keyword tags: tag for rule.
-        :paramtype tags: list[~azure.mgmt.paloaltonetworks.models.TagInfo]
+        :paramtype tags: list[~azure.mgmt.paloaltonetworksngfw.models.TagInfo]
         """
         super().__init__(**kwargs)
         self.etag = etag
@@ -3401,7 +3533,7 @@ class PostRulesResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.PostRulesResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -3420,7 +3552,7 @@ class PostRulesResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.PostRulesResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -3435,7 +3567,7 @@ class PredefinedUrlCategoriesResponse(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: predefined url categories. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.PredefinedUrlCategory]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.PredefinedUrlCategory]
     :ivar next_link: next link.
     :vartype next_link: str
     """
@@ -3454,7 +3586,7 @@ class PredefinedUrlCategoriesResponse(_serialization.Model):
     ) -> None:
         """
         :keyword value: predefined url categories. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.PredefinedUrlCategory]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.PredefinedUrlCategory]
         :keyword next_link: next link.
         :paramtype next_link: str
         """
@@ -3513,7 +3645,7 @@ class PrefixListGlobalRulestackResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar description: prefix description.
     :vartype description: str
     :ivar prefix_list: prefix list. Required.
@@ -3525,7 +3657,7 @@ class PrefixListGlobalRulestackResource(ProxyResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -3582,7 +3714,7 @@ class PrefixListGlobalRulestackResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -3605,7 +3737,8 @@ class PrefixListGlobalRulestackResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource]
+        :paramtype value:
+         list[~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -3631,7 +3764,7 @@ class PrefixListResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar description: prefix description.
     :vartype description: str
     :ivar prefix_list: prefix list. Required.
@@ -3643,7 +3776,7 @@ class PrefixListResource(ProxyResource):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -3700,7 +3833,7 @@ class PrefixListResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.PrefixListResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.PrefixListResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -3719,7 +3852,7 @@ class PrefixListResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.PrefixListResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.PrefixListResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -3745,7 +3878,7 @@ class PreRulesResource(ProxyResource):  # pylint: disable=too-many-instance-attr
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.paloaltonetworks.models.SystemData
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
     :ivar etag: etag info.
     :vartype etag: str
     :ivar rule_name: rule name. Required.
@@ -3755,19 +3888,19 @@ class PreRulesResource(ProxyResource):  # pylint: disable=too-many-instance-attr
     :ivar description: rule description.
     :vartype description: str
     :ivar rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-    :vartype rule_state: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+    :vartype rule_state: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
     :ivar source: source address.
-    :vartype source: ~azure.mgmt.paloaltonetworks.models.SourceAddr
+    :vartype source: ~azure.mgmt.paloaltonetworksngfw.models.SourceAddr
     :ivar negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_source: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype negate_source: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar destination: destination address.
-    :vartype destination: ~azure.mgmt.paloaltonetworks.models.DestinationAddr
+    :vartype destination: ~azure.mgmt.paloaltonetworksngfw.models.DestinationAddr
     :ivar negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_destination: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype negate_destination: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar applications: array of rule applications.
     :vartype applications: list[str]
     :ivar category: rule category.
-    :vartype category: ~azure.mgmt.paloaltonetworks.models.Category
+    :vartype category: ~azure.mgmt.paloaltonetworksngfw.models.Category
     :ivar protocol: any, application-default, TCP:number, UDP:number.
     :vartype protocol: str
     :ivar protocol_port_list: prot port list.
@@ -3778,19 +3911,19 @@ class PreRulesResource(ProxyResource):  # pylint: disable=too-many-instance-attr
     :vartype audit_comment: str
     :ivar action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer", and
      "DenyResetBoth".
-    :vartype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionEnum
+    :vartype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionEnum
     :ivar enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-    :vartype enable_logging: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+    :vartype enable_logging: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
     :ivar decryption_rule_type: enable or disable decryption. Known values are:
      "SSLOutboundInspection", "SSLInboundInspection", and "None".
     :vartype decryption_rule_type: str or
-     ~azure.mgmt.paloaltonetworks.models.DecryptionRuleTypeEnum
+     ~azure.mgmt.paloaltonetworksngfw.models.DecryptionRuleTypeEnum
     :ivar tags: tag for rule.
-    :vartype tags: list[~azure.mgmt.paloaltonetworks.models.TagInfo]
+    :vartype tags: list[~azure.mgmt.paloaltonetworksngfw.models.TagInfo]
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworks.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.paloaltonetworksngfw.models.ProvisioningState
     """
 
     _validation = {
@@ -3861,19 +3994,19 @@ class PreRulesResource(ProxyResource):  # pylint: disable=too-many-instance-attr
         :keyword description: rule description.
         :paramtype description: str
         :keyword rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-        :paramtype rule_state: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+        :paramtype rule_state: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
         :keyword source: source address.
-        :paramtype source: ~azure.mgmt.paloaltonetworks.models.SourceAddr
+        :paramtype source: ~azure.mgmt.paloaltonetworksngfw.models.SourceAddr
         :keyword negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-        :paramtype negate_source: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype negate_source: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword destination: destination address.
-        :paramtype destination: ~azure.mgmt.paloaltonetworks.models.DestinationAddr
+        :paramtype destination: ~azure.mgmt.paloaltonetworksngfw.models.DestinationAddr
         :keyword negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-        :paramtype negate_destination: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype negate_destination: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword applications: array of rule applications.
         :paramtype applications: list[str]
         :keyword category: rule category.
-        :paramtype category: ~azure.mgmt.paloaltonetworks.models.Category
+        :paramtype category: ~azure.mgmt.paloaltonetworksngfw.models.Category
         :keyword protocol: any, application-default, TCP:number, UDP:number.
         :paramtype protocol: str
         :keyword protocol_port_list: prot port list.
@@ -3884,15 +4017,15 @@ class PreRulesResource(ProxyResource):  # pylint: disable=too-many-instance-attr
         :paramtype audit_comment: str
         :keyword action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer",
          and "DenyResetBoth".
-        :paramtype action_type: str or ~azure.mgmt.paloaltonetworks.models.ActionEnum
+        :paramtype action_type: str or ~azure.mgmt.paloaltonetworksngfw.models.ActionEnum
         :keyword enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-        :paramtype enable_logging: str or ~azure.mgmt.paloaltonetworks.models.StateEnum
+        :paramtype enable_logging: str or ~azure.mgmt.paloaltonetworksngfw.models.StateEnum
         :keyword decryption_rule_type: enable or disable decryption. Known values are:
          "SSLOutboundInspection", "SSLInboundInspection", and "None".
         :paramtype decryption_rule_type: str or
-         ~azure.mgmt.paloaltonetworks.models.DecryptionRuleTypeEnum
+         ~azure.mgmt.paloaltonetworksngfw.models.DecryptionRuleTypeEnum
         :keyword tags: tag for rule.
-        :paramtype tags: list[~azure.mgmt.paloaltonetworks.models.TagInfo]
+        :paramtype tags: list[~azure.mgmt.paloaltonetworksngfw.models.TagInfo]
         """
         super().__init__(**kwargs)
         self.etag = etag
@@ -3923,7 +4056,7 @@ class PreRulesResourceListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The items on this page. Required.
-    :vartype value: list[~azure.mgmt.paloaltonetworks.models.PreRulesResource]
+    :vartype value: list[~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource]
     :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
@@ -3942,7 +4075,7 @@ class PreRulesResourceListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: The items on this page. Required.
-        :paramtype value: list[~azure.mgmt.paloaltonetworks.models.PreRulesResource]
+        :paramtype value: list[~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource]
         :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
@@ -3969,7 +4102,7 @@ class RuleCounter(_serialization.Model):
     :ivar hit_count: hit count.
     :vartype hit_count: int
     :ivar app_seen: apps seen.
-    :vartype app_seen: ~azure.mgmt.paloaltonetworks.models.AppSeenData
+    :vartype app_seen: ~azure.mgmt.paloaltonetworksngfw.models.AppSeenData
     :ivar timestamp: timestamp of response.
     :vartype timestamp: ~datetime.datetime
     :ivar request_timestamp: timestamp of request.
@@ -4025,7 +4158,7 @@ class RuleCounter(_serialization.Model):
         :keyword hit_count: hit count.
         :paramtype hit_count: int
         :keyword app_seen: apps seen.
-        :paramtype app_seen: ~azure.mgmt.paloaltonetworks.models.AppSeenData
+        :paramtype app_seen: ~azure.mgmt.paloaltonetworksngfw.models.AppSeenData
         :keyword timestamp: timestamp of response.
         :paramtype timestamp: ~datetime.datetime
         :keyword request_timestamp: timestamp of request.
@@ -4221,7 +4354,7 @@ class SecurityServicesResponse(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: response value. Required.
-    :vartype value: ~azure.mgmt.paloaltonetworks.models.SecurityServicesTypeList
+    :vartype value: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServicesTypeList
     :ivar next_link: next link.
     :vartype next_link: str
     """
@@ -4240,7 +4373,7 @@ class SecurityServicesResponse(_serialization.Model):
     ) -> None:
         """
         :keyword value: response value. Required.
-        :paramtype value: ~azure.mgmt.paloaltonetworks.models.SecurityServicesTypeList
+        :paramtype value: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServicesTypeList
         :keyword next_link: next link.
         :paramtype next_link: str
         """
@@ -4257,7 +4390,7 @@ class SecurityServicesTypeList(_serialization.Model):
     :ivar type: security services type.
     :vartype type: str
     :ivar entry: list. Required.
-    :vartype entry: list[~azure.mgmt.paloaltonetworks.models.NameDescriptionObject]
+    :vartype entry: list[~azure.mgmt.paloaltonetworksngfw.models.NameDescriptionObject]
     """
 
     _validation = {
@@ -4276,7 +4409,7 @@ class SecurityServicesTypeList(_serialization.Model):
         :keyword type: security services type.
         :paramtype type: str
         :keyword entry: list. Required.
-        :paramtype entry: list[~azure.mgmt.paloaltonetworks.models.NameDescriptionObject]
+        :paramtype entry: list[~azure.mgmt.paloaltonetworksngfw.models.NameDescriptionObject]
         """
         super().__init__(**kwargs)
         self.type = type
@@ -4377,17 +4510,17 @@ class SupportInfo(_serialization.Model):  # pylint: disable=too-many-instance-at
     :vartype product_serial: str
     :ivar account_registered: account registered in Customer Support Portal. Known values are:
      "TRUE" and "FALSE".
-    :vartype account_registered: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype account_registered: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar account_id: Support account associated with given resource.
     :vartype account_id: str
     :ivar user_domain_supported: user domain is supported in Customer Support Portal. Known values
      are: "TRUE" and "FALSE".
-    :vartype user_domain_supported: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype user_domain_supported: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar user_registered: user registered in Customer Support Portal. Known values are: "TRUE" and
      "FALSE".
-    :vartype user_registered: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype user_registered: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar free_trial: Product usage is in free trial period. Known values are: "TRUE" and "FALSE".
-    :vartype free_trial: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+    :vartype free_trial: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
     :ivar free_trial_days_left: Free trial days remaining.
     :vartype free_trial_days_left: int
     :ivar free_trial_credit_left: Free trial credit remaining.
@@ -4439,18 +4572,18 @@ class SupportInfo(_serialization.Model):  # pylint: disable=too-many-instance-at
         :paramtype product_serial: str
         :keyword account_registered: account registered in Customer Support Portal. Known values are:
          "TRUE" and "FALSE".
-        :paramtype account_registered: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype account_registered: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword account_id: Support account associated with given resource.
         :paramtype account_id: str
         :keyword user_domain_supported: user domain is supported in Customer Support Portal. Known
          values are: "TRUE" and "FALSE".
-        :paramtype user_domain_supported: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype user_domain_supported: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword user_registered: user registered in Customer Support Portal. Known values are: "TRUE"
          and "FALSE".
-        :paramtype user_registered: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype user_registered: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword free_trial: Product usage is in free trial period. Known values are: "TRUE" and
          "FALSE".
-        :paramtype free_trial: str or ~azure.mgmt.paloaltonetworks.models.BooleanEnum
+        :paramtype free_trial: str or ~azure.mgmt.paloaltonetworksngfw.models.BooleanEnum
         :keyword free_trial_days_left: Free trial days remaining.
         :paramtype free_trial_days_left: int
         :keyword free_trial_credit_left: Free trial credit remaining.
@@ -4484,14 +4617,14 @@ class SystemData(_serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.paloaltonetworks.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.paloaltonetworksngfw.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.paloaltonetworks.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.paloaltonetworksngfw.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -4521,14 +4654,14 @@ class SystemData(_serialization.Model):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
          "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or ~azure.mgmt.paloaltonetworks.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.paloaltonetworksngfw.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype last_modified_by_type: str or ~azure.mgmt.paloaltonetworks.models.CreatedByType
+        :paramtype last_modified_by_type: str or ~azure.mgmt.paloaltonetworksngfw.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
@@ -4580,13 +4713,13 @@ class VnetConfiguration(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar vnet: Azure Virtual Network. Required.
-    :vartype vnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+    :vartype vnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
     :ivar trust_subnet: Trust Subnet. Required.
-    :vartype trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+    :vartype trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
     :ivar un_trust_subnet: Untrust Subnet. Required.
-    :vartype un_trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+    :vartype un_trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
     :ivar ip_of_trust_subnet_for_udr: IP of trust subnet for UDR.
-    :vartype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworks.models.IPAddress
+    :vartype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworksngfw.models.IPAddress
     """
 
     _validation = {
@@ -4613,13 +4746,13 @@ class VnetConfiguration(_serialization.Model):
     ) -> None:
         """
         :keyword vnet: Azure Virtual Network. Required.
-        :paramtype vnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+        :paramtype vnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
         :keyword trust_subnet: Trust Subnet. Required.
-        :paramtype trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+        :paramtype trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
         :keyword un_trust_subnet: Untrust Subnet. Required.
-        :paramtype un_trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+        :paramtype un_trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
         :keyword ip_of_trust_subnet_for_udr: IP of trust subnet for UDR.
-        :paramtype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworks.models.IPAddress
+        :paramtype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworksngfw.models.IPAddress
         """
         super().__init__(**kwargs)
         self.vnet = vnet
@@ -4636,13 +4769,13 @@ class VwanConfiguration(_serialization.Model):
     :ivar network_virtual_appliance_id: Network Virtual Appliance resource ID.
     :vartype network_virtual_appliance_id: str
     :ivar v_hub: vHub Address. Required.
-    :vartype v_hub: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+    :vartype v_hub: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
     :ivar trust_subnet: Trust Subnet.
-    :vartype trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+    :vartype trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
     :ivar un_trust_subnet: Untrust Subnet.
-    :vartype un_trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+    :vartype un_trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
     :ivar ip_of_trust_subnet_for_udr: IP of trust subnet for UDR.
-    :vartype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworks.models.IPAddress
+    :vartype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworksngfw.models.IPAddress
     """
 
     _validation = {
@@ -4671,13 +4804,13 @@ class VwanConfiguration(_serialization.Model):
         :keyword network_virtual_appliance_id: Network Virtual Appliance resource ID.
         :paramtype network_virtual_appliance_id: str
         :keyword v_hub: vHub Address. Required.
-        :paramtype v_hub: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+        :paramtype v_hub: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
         :keyword trust_subnet: Trust Subnet.
-        :paramtype trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+        :paramtype trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
         :keyword un_trust_subnet: Untrust Subnet.
-        :paramtype un_trust_subnet: ~azure.mgmt.paloaltonetworks.models.IPAddressSpace
+        :paramtype un_trust_subnet: ~azure.mgmt.paloaltonetworksngfw.models.IPAddressSpace
         :keyword ip_of_trust_subnet_for_udr: IP of trust subnet for UDR.
-        :paramtype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworks.models.IPAddress
+        :paramtype ip_of_trust_subnet_for_udr: ~azure.mgmt.paloaltonetworksngfw.models.IPAddress
         """
         super().__init__(**kwargs)
         self.network_virtual_appliance_id = network_virtual_appliance_id

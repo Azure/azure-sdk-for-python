@@ -182,7 +182,7 @@ class FqdnListLocalRulestackOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`fqdn_list_local_rulestack` attribute.
     """
 
@@ -210,7 +210,7 @@ class FqdnListLocalRulestackOperations:
         :return: An iterator like instance of either FqdnListLocalRulestackResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -304,7 +304,7 @@ class FqdnListLocalRulestackOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FqdnListLocalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -452,7 +452,7 @@ class FqdnListLocalRulestackOperations:
         :param name: fqdn list name. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -467,7 +467,7 @@ class FqdnListLocalRulestackOperations:
         :return: An instance of LROPoller that returns either FqdnListLocalRulestackResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource]
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -507,7 +507,7 @@ class FqdnListLocalRulestackOperations:
         :return: An instance of LROPoller that returns either FqdnListLocalRulestackResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource]
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -531,7 +531,7 @@ class FqdnListLocalRulestackOperations:
         :type name: str
         :param resource: Resource create parameters. Is either a FqdnListLocalRulestackResource type or
          a IO type. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -546,7 +546,7 @@ class FqdnListLocalRulestackOperations:
         :return: An instance of LROPoller that returns either FqdnListLocalRulestackResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.FqdnListLocalRulestackResource]
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.FqdnListLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

@@ -47,7 +47,7 @@ class PaloAltoNetworksNgfwMgmtClientConfiguration(Configuration):  # pylint: dis
         self.subscription_id = subscription_id
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "mgmt-paloaltonetworks/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "mgmt-paloaltonetworksngfw/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

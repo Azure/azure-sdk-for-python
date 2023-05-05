@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.paloaltonetworks import PaloAltoNetworksNgfwMgmtClient
+from azure.mgmt.paloaltonetworksngfw import PaloAltoNetworksNgfwMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-paloaltonetworks
+    pip install azure-mgmt-paloaltonetworksngfw
 # USAGE
     python post_rules_refresh_counters_minimum_set_gen.py
 

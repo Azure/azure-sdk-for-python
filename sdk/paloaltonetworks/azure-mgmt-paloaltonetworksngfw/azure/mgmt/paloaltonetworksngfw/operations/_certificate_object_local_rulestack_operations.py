@@ -182,7 +182,7 @@ class CertificateObjectLocalRulestackOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`certificate_object_local_rulestack` attribute.
     """
 
@@ -210,7 +210,7 @@ class CertificateObjectLocalRulestackOperations:
         :return: An iterator like instance of either CertificateObjectLocalRulestackResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -304,7 +304,7 @@ class CertificateObjectLocalRulestackOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateObjectLocalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -452,7 +452,7 @@ class CertificateObjectLocalRulestackOperations:
         :param name: certificate name. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -467,7 +467,7 @@ class CertificateObjectLocalRulestackOperations:
         :return: An instance of LROPoller that returns either CertificateObjectLocalRulestackResource
          or the result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource]
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -507,7 +507,7 @@ class CertificateObjectLocalRulestackOperations:
         :return: An instance of LROPoller that returns either CertificateObjectLocalRulestackResource
          or the result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource]
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -531,8 +531,8 @@ class CertificateObjectLocalRulestackOperations:
         :type name: str
         :param resource: Resource create parameters. Is either a
          CertificateObjectLocalRulestackResource type or a IO type. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource or
-         IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource
+         or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -547,7 +547,7 @@ class CertificateObjectLocalRulestackOperations:
         :return: An instance of LROPoller that returns either CertificateObjectLocalRulestackResource
          or the result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.CertificateObjectLocalRulestackResource]
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectLocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
