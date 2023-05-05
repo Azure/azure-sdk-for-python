@@ -78,9 +78,8 @@ class TestCallConnectionClient(unittest.TestCase):
             call_connection_id=self.call_connection_id,
             transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
-        call_invite = CallInvite(target=user)
         try:
-            response = call_connection.transfer_call_to_participant(call_invite)
+            response = call_connection.transfer_call_to_participant(user)
         except:
             raised = True
             raise
