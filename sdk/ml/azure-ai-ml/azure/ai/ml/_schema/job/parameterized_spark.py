@@ -129,7 +129,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     @validates("archives")
     def no_duplicate_archives(self, value):
         no_duplicates("archives", value)
-    
+
     @post_load
     def demote_conf_fields(self, data, **kwargs):
         conf = data["conf"] if "conf" in data else None
