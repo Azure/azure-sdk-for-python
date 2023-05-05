@@ -16,6 +16,7 @@ from ._base_handler import (
 )
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
+from ._servicebus_rule_manager import ServiceBusRuleManager
 from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._configuration import Configuration
 from ._common.utils import (
@@ -593,5 +594,52 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 connection_verify=self._connection_verify,
                 **kwargs
             )
+        self._handlers.add(handler)
+        return handler
+    
+    def get_rule_manager(self, topic_name: str, subscription_name: str, **kwargs) -> ServiceBusRuleManager:
+        """Get ServiceBusRuleManager for the specific topic.
+
+        :param str topic_name: The path of specific Service Bus Topic the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
+        :rtype: ~azure.servicebus.ServiceBusSender
+        UPDATE EXAMPLE
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_topic_sender_from_sb_client_sync]
+                :end-before: [END create_topic_sender_from_sb_client_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
+
+        """
+
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
+        handler = ServiceBusRuleManager(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
+            retry_total=self._config.retry_total,
+            retry_backoff_factor=self._config.retry_backoff_factor,
+            retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
+            **kwargs
+        )
         self._handlers.add(handler)
         return handler

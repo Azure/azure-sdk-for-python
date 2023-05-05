@@ -12,6 +12,7 @@ __version__ = VERSION
 from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
+from ._servicebus_rule_manager import ServiceBusRuleManager
 from ._servicebus_session import ServiceBusSession
 from ._common.message import (
     ServiceBusMessage,
@@ -46,6 +47,7 @@ __all__ = [
     "ServiceBusReceiver",
     "ServiceBusSession",
     "ServiceBusSender",
+    "ServiceBusRuleManager",
     "TransportType",
     "AutoLockRenewer",
     "parse_connection_string",
