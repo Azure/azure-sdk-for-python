@@ -234,7 +234,7 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
 
             tracestate = message.application_properties.get(TRACE_STATE_PROPERTY, b"")
             if hasattr(tracestate, "decode"):
-                    tracestate = tracestate.decode(TRACE_PROPERTY_ENCODING)
+                tracestate = tracestate.decode(TRACE_PROPERTY_ENCODING)
             if tracestate:
                 headers["tracestate"] = tracestate
     except AttributeError:
