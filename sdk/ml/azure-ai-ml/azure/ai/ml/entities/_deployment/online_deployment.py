@@ -585,7 +585,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             instance_count=resource.sku.capacity if resource.sku else None,
             instance_type=deployment.instance_type,
             data_collector=DataCollector._from_rest_object(deployment.data_collector)
-            if hasattr(deployment, "data_collector") and deployment.data_collector 
+            if hasattr(deployment, "data_collector") and deployment.data_collector
             else None,
         )
 
