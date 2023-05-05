@@ -17,7 +17,7 @@ class ModelConfiguration:
     :type mount_path: str
     """
 
-    def __init__(self, mode: str = None, mount_path: str = None):
+    def __init__(self, *, mode: str = None, mount_path: str = None):
         self.mode = mode
         self.mount_path = mount_path
 

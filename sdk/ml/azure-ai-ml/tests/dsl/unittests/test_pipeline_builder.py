@@ -158,3 +158,30 @@ class TestPipelineBuilder:
             ValueError, match="Provided input input_path is not a single output node, cannot be used as a node input."
         ):
             pipeline_func(Input(path="./tests/test_configs/data"), 0.5)
+
+    def test_with_global_condition(self):
+        single_output_component_func = load_component(components_dir / "helloworld_component.yml")
+
+        is_true = True
+
+        @dsl.pipeline
+        def sub_components(input_path: Input):
+            if is_true:
+                node = single_output_component_func(component_in_path=input_path, component_in_number=0.2)
+                return {"component_out_path": node.outputs["component_out_path"]}
+            else:
+                node = single_output_component_func(component_in_path=input_path, component_in_number=0.7)
+                return {"component_out_path": node.outputs["component_out_path"]}
+
+        @dsl.pipeline
+        def pipeline_func(input_path: Input):
+            sub_components(input_path=input_path)
+
+        pipeline_job = pipeline_func(Input(path="./tests/test_configs/data"))
+        assert len(pipeline_job.jobs) == 1
+        assert pipeline_job.jobs["sub_components"].component.jobs["node"].inputs["component_in_number"]._data == 0.2
+
+        is_true = False
+        pipeline_job = pipeline_func(Input(path="./tests/test_configs/data"))
+        assert len(pipeline_job.jobs) == 1
+        assert pipeline_job.jobs["sub_components"].component.jobs["node"].inputs["component_in_number"]._data == 0.7

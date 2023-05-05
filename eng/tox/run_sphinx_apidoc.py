@@ -66,15 +66,15 @@ def sphinx_apidoc(working_directory):
         )
         exit(1)
 
-def mgmt_apidoc(working_directory, namespace):
+def mgmt_apidoc(working_directory: str, target_folder: str):
     command_array = [
         sys.executable,
         generate_mgmt_script,
         "-p",
-        namespace,
+        target_folder,
         "-o",
         working_directory,
-        "--verbose"
+        "--verbose",
         ]
 
     try:
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     if should_build_docs(pkg_details.name):
         if is_mgmt_package(pkg_details.name):
-            mgmt_apidoc(output_directory, pkg_details.namespace)
+            mgmt_apidoc(output_directory, pkg_details.folder)
         else:
             sphinx_apidoc(args.working_directory)
     else:

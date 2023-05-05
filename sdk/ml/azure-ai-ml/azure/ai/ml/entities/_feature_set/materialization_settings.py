@@ -84,7 +84,7 @@ class MaterializationSettings(RestTranslatableMixin):
             resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,
             offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE
-            or MaterializationStoreType.ONLINE_AND_OFFLINE,
+            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
             online_enabled=obj.store_type == MaterializationStoreType.ONLINE
-            or MaterializationStoreType.ONLINE_AND_OFFLINE,
+            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
         )

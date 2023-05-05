@@ -26,8 +26,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     """Monitor Management Client.
 
     :ivar action_groups: ActionGroupsOperations operations
-    :vartype action_groups:
-     $(python-base-namespace).v2022_04_01.aio.operations.ActionGroupsOperations
+    :vartype action_groups: azure.mgmt.monitor.v2022_04_01.aio.operations.ActionGroupsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.

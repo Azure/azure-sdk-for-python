@@ -86,6 +86,7 @@ setup(
         "msrest>=0.6.10",
         "opentelemetry-api==1.17.0",
         "opentelemetry-sdk==1.17.0",
+        "importlib-metadata>=6.0.0; python_version < '3.8'"
     ],
     entry_points={
         "opentelemetry_traces_exporter": [

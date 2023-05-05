@@ -10,4 +10,4 @@ annotations:
 dependencies:
 - name: stress-test-addons
   version: ~0.2.0
-  repository: https://stresstestcharts.blob.core.windows.net/helm/
+  repository: "@stress-test-charts"
