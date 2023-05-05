@@ -20,7 +20,7 @@ class BaseEnvironmentId:
 
     :param type: The type of the base environment.
     :type type: str
-    :param resource_id: The resource id of the base environment.
+    :param resource_id: The resource id of the base environment. e.g. azureml:<name>:<version>
     :type resource_id: str
 
     """

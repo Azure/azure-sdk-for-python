@@ -2,6 +2,8 @@
 
 ## 3.3.0b1 (Unreleased)
 
+This version of the client library defaults to the service API version `2023-02-28-preview`.
+
 ### Features Added
 
 - Added `features` keyword argument on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
@@ -22,12 +24,6 @@
 - Added "boolean" `value_type` and `bool` `value` to `DocumentField`.
 - Added properties `annotations`, `images`, `formulas`, and `barcodes` to `DocumentPage`. 
 - Added models `DocumentAnnotation`, `DocumentImage`, `DocumentFormula`, and `DocumentBarcode`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 3.2.1 (2023-03-07)
 

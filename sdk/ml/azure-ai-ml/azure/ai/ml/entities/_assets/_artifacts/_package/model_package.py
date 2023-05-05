@@ -12,15 +12,13 @@ from typing import IO, AnyStr, List, Dict, Optional, Union
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     PackageRequest,
     PackageResponse,
-    InferencingServer,
     ModelPackageInput as RestModelPackageInput,
     PackageInputPathId as RestPackageInputPathId,
     PackageInputPathVersion as RestPackageInputPathVersion,
     PackageInputPathUrl as RestPackageInputPathUrl,
-    BaseEnvironmentSource,
-    ModelConfiguration,
     CodeConfiguration,
 )
+
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml.entities._util import load_from_dict
@@ -30,6 +28,9 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml._utils.utils import snake_to_pascal, dump_yaml_to_file
 from azure.ai.ml._utils._experimental import experimental
+from .model_configuration import ModelConfiguration
+from .inferencing_server import AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer
+from .base_environment_source import BaseEnvironmentId
 
 
 @experimental
@@ -183,12 +184,12 @@ class ModelPackage(Resource, PackageRequest):
 
     :param name: The name of the model package.
     :type name: str
-    :param version: The version of the model package.
-    :type version: str
     :param inferencing_server: The inferencing server of the model package.
     :type inferencing_server: azure.ai.ml.entities.InferencingServer
     :param base_environment_source: The base environment source of the model package.
     :type base_environment_source: azure.ai.ml.entities.BaseEnvironmentSource
+    :param version: The version of the model package.
+    :type version: str
     :param environment_variables: The environment variables of the model package.
     :type environment_variables: dict
     :param inputs: The inputs of the model package.
@@ -202,17 +203,17 @@ class ModelPackage(Resource, PackageRequest):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
+        name: str,
+        inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
+        base_environment_source: BaseEnvironmentId,
         version: Optional[str] = None,
-        inferencing_server: Optional[InferencingServer] = None,
-        base_environment_source: Optional[BaseEnvironmentSource] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
-        name = kwargs.pop("target_environment_name", None)
+        name = kwargs.pop("target_environment_name", name)
 
         super().__init__(
             name=name,
