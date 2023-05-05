@@ -8,10 +8,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "373",
+        "Content-Length": "184",
         "Content-Type": "application/json",
-        "Repeatability-First-Sent": "Thu, 04 May 2023 00:42:03 GMT",
-        "Repeatability-Request-ID": "7d231a8b-ea14-11ed-bda6-e45e37e24f59",
+        "Repeatability-First-Sent": "sanitized",
+        "Repeatability-Request-ID": "sanitized",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
@@ -22,13 +22,13 @@
         "validFrom": null,
         "validUntil": null,
         "participants": {
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-221a-1788-094822003883": {
+          "8:acs:sanitized1": {
             "role": "Attendee"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-2257-1788-094822003884": {
+          "8:acs:sanitized2": {
             "role": "Attendee"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-229d-1788-094822003885": {
+          "8:acs:sanitized3": {
             "role": "Presenter"
           }
         }
@@ -37,26 +37,25 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99466657629269481",
+        "Location": "99435072472731143",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "someId",
-        "createdAt": "2023-05-04T00:42:04.1057314\u002B00:00",
-        "validFrom": "2023-05-04T00:42:04.0647745\u002B00:00",
-        "validUntil": "2023-10-31T00:42:04.0647745\u002B00:00"
+        "id": "99435072472731143",
+        "createdAt": "2023-05-05T21:09:11.269997\u002B00:00",
+        "validFrom": "2023-05-05T21:09:11.2194967\u002B00:00",
+        "validUntil": "2023-11-01T21:09:11.2194967\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99466657629269481/participants?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99435072472731143/participants?api-version=2023-03-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -73,41 +72,40 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "value": [
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-221a-1788-094822003883",
+            "rawId": "8:acs:sanitized1",
             "role": "Attendee"
           },
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-2257-1788-094822003884",
+            "rawId": "8:acs:sanitized2",
             "role": "Attendee"
           },
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-229d-1788-094822003885",
+            "rawId": "8:acs:sanitized3",
             "role": "Presenter"
           }
         ]
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99466657629269481/participants?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99435072472731143/participants?api-version=2023-03-31-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "438",
+        "Content-Length": "186",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
@@ -117,16 +115,16 @@
       },
       "RequestBody": {
         "participants": {
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-221a-1788-094822003883": {
+          "8:acs:sanitized1": {
             "role": "Attendee"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-2257-1788-094822003884": {
+          "8:acs:sanitized2": {
             "role": "Consumer"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-229d-1788-094822003885": {
+          "8:acs:sanitized3": {
             "role": "Attendee"
           },
-          "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-22e1-1788-094822003886": {
+          "8:acs:sanitized4": {
             "role": "Attendee"
           }
         }
@@ -134,19 +132,18 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {}
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99466657629269481/participants?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99435072472731143/participants?api-version=2023-03-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -163,38 +160,37 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "value": [
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-221a-1788-094822003883",
+            "rawId": "8:acs:sanitized1",
             "role": "Attendee"
           },
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-2257-1788-094822003884",
+            "rawId": "8:acs:sanitized2",
             "role": "Consumer"
           },
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-229d-1788-094822003885",
+            "rawId": "8:acs:sanitized3",
             "role": "Attendee"
           },
           {
-            "rawId": "8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000018-8417-22e1-1788-094822003886",
+            "rawId": "8:acs:sanitized4",
             "role": "Attendee"
           }
         ]
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99466657629269481?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99435072472731143?api-version=2023-03-31-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -213,11 +209,10 @@
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Connection": "keep-alive",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

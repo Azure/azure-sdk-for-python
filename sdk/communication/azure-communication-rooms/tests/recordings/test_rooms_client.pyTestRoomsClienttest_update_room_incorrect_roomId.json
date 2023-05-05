@@ -17,20 +17,19 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-05-06T17:42:08.909009Z",
-        "validUntil": "2023-05-10T17:42:08.909009Z"
+        "validFrom": "2023-05-08T14:09:16.902595Z",
+        "validUntil": "2023-05-12T14:09:16.902595Z"
       },
       "StatusCode": 404,
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
         "api-supported-versions": "2022-02-01, 2023-03-31-preview",
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "NotFound"
       },
