@@ -513,6 +513,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 }
                 sender.send_messages(ServiceBusMessage(json.dumps(msg)))
                 messages = receiver.receive_messages(max_wait_time=10, max_message_count=1)
+                # complete first then pickle
                 receiver.complete_message(messages[0])
                 if not uamqp_transport:
                     pickled = pickle.loads(pickle.dumps(messages[0]))
@@ -1645,15 +1646,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @ArgPasser()
     def test_queue_message_batch(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
 
-        # test edge case: manually setting batch to opposite AmqpTransport still sends
-        if uamqp:
-            if uamqp_transport:
-                amqp_transport = PyamqpTransport
-            else:
-                amqp_transport = UamqpTransport
-        else:
-            amqp_transport = PyamqpTransport
-
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                             
@@ -1673,7 +1665,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     yield message
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = ServiceBusMessageBatch(amqp_transport=amqp_transport)
+                # sending manually created message batch (with default pyamqp) should work for both uamqp/pyamqp
+                message = ServiceBusMessageBatch()
                 for each in message_content():
                     message.add_message(each)
                 sender.send_messages(message)

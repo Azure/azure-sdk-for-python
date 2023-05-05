@@ -417,10 +417,11 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 if not uamqp_transport:
                     pickled = pickle.loads(pickle.dumps(messages[0]))
                     assert json.loads(str(pickled)) == json.loads(str(messages[0]))
+                    await receiver.complete_message(pickled)
                 else:
                     with pytest.raises(TypeError):
                         pickled = pickle.loads(pickle.dumps(messages[0]))
-                await receiver.complete_message(messages[0])
+                    await receiver.complete_message(messages[0])
     
     @pytest.mark.asyncio
     @pytest.mark.liveTest
@@ -1439,15 +1440,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_async_queue_message_batch(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        # test edge case: manually setting batch to opposite AmqpTransport still sends
-        if uamqp:
-            if uamqp_transport:
-                amqp_transport = PyamqpTransportAsync
-            else:
-                amqp_transport = UamqpTransportAsync
-        else:
-            amqp_transport = PyamqpTransportAsync
-
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
@@ -1467,7 +1459,8 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     yield message
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = ServiceBusMessageBatch(amqp_transport=amqp_transport)
+                # sending manually created message batch (with default pyamqp) should work for both uamqp/pyamqp
+                message = ServiceBusMessageBatch()
                 for each in message_content():
                     message.add_message(each)
                 await sender.send_messages(message)
