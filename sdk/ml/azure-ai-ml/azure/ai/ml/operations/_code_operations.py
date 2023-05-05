@@ -5,10 +5,10 @@
 # pylint: disable=protected-access
 
 from typing import Dict, Union
-
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.core.exceptions import HttpResponseError
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path, _get_snapshot_path_info
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -19,9 +19,14 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._asset_utils import (
+    _get_existing_asset_name_and_version,
+    get_content_hash_version,
+    get_storage_info_for_non_registry_asset,
+)
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
 from azure.ai.ml.entities._assets import Code
@@ -33,7 +38,6 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import HttpResponseError
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -50,7 +54,7 @@ class CodeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane, ServiceClient042023],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -82,6 +86,7 @@ class CodeOperations(_ScopeDependentOperations):
             name = code.name
             version = code.version
             sas_uri = None
+            blob_uri = None
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -92,12 +97,41 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
+            else:
+                snapshot_path_info = _get_snapshot_path_info(code)
+                if snapshot_path_info:
+                    _, _, asset_hash = snapshot_path_info
+                    existing_assets = list(
+                        self._version_operation.list(
+                            resource_group_name=self._resource_group_name,
+                            workspace_name=self._workspace_name,
+                            name=name,
+                            hash=asset_hash,
+                            hash_version=str(get_content_hash_version()),
+                        )
+                    )
+
+                    if len(existing_assets) > 0:
+                        existing_asset = existing_assets[0]
+                        name, version = _get_existing_asset_name_and_version(existing_asset)
+                        return self.get(name=name, version=version)
+                    sas_info = get_storage_info_for_non_registry_asset(
+                        service_client=self._service_client,
+                        workspace_name=self._workspace_name,
+                        name=name,
+                        version=version,
+                        resource_group=self._resource_group_name,
+                    )
+                    sas_uri = sas_info["sas_uri"]
+                    blob_uri = sas_info["blob_uri"]
+
             code, _ = _check_and_upload_path(
                 artifact=code,
                 asset_operations=self,
                 sas_uri=sas_uri,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._show_progress,
+                blob_uri=blob_uri,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,

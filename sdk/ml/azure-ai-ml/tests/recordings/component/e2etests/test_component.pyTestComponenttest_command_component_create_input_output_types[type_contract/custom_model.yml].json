@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_124939784159/versions/1?api-version=2022-10-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_555992904778/versions/1?api-version=2022-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1110",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.10 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
       },
       "RequestBody": {
         "properties": {
@@ -24,7 +24,7 @@
           "componentSpec": {
             "command": "python -c \u0022\n  import pickle\n  with open(\u0027${{inputs.component_in_custom_model}}/model.pkl\u0027, \u0027rb\u0027) as f:\n      model = pickle.load(f)\n\u0022\n",
             "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-            "name": "test_124939784159",
+            "name": "test_555992904778",
             "description": "This is the command component with input/output types of custom model",
             "tags": {
               "tag": "tagvalue",
@@ -58,25 +58,25 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2116",
+        "Content-Length": "2008",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 27 Mar 2023 02:54:37 GMT",
+        "Date": "Thu, 20 Apr 2023 21:39:35 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_124939784159/versions/1?api-version=2022-10-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_555992904778/versions/1?api-version=2022-10-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-ee94d9e347e984d8528d25ce9089e97b-25eab890be817024-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-c5c3939313e95bad953f207bab6846a9-551b6302698c5ae9-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "int-02",
+        "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1efc136e-28d3-4275-9eeb-f7e4ea2555b5",
-        "x-ms-ratelimit-remaining-subscription-writes": "1195",
+        "x-ms-correlation-request-id": "bdc760e2-70e0-4aaa-a664-6c13bb65f6b1",
+        "x-ms-ratelimit-remaining-subscription-writes": "1180",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230327T025437Z:1efc136e-28d3-4275-9eeb-f7e4ea2555b5",
-        "x-request-time": "0.432"
+        "x-ms-routing-request-id": "WESTUS2:20230420T213935Z:bdc760e2-70e0-4aaa-a664-6c13bb65f6b1",
+        "x-request-time": "3.292"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_124939784159/versions/1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_555992904778/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
@@ -90,7 +90,7 @@
           "isAnonymous": false,
           "componentSpec": {
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
-            "name": "test_124939784159",
+            "name": "test_555992904778",
             "version": "1",
             "display_name": "CommandComponentCustomInputOutputs",
             "is_deterministic": "True",
@@ -118,7 +118,7 @@
                 "type": "triton_model"
               }
             },
-            "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
+            "environment": "azureml://registries/azureml-dev/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
             "resources": {
               "instance_count": "1"
             },
@@ -126,17 +126,17 @@
           }
         },
         "systemData": {
-          "createdAt": "2023-03-27T02:54:37.6898797\u002B00:00",
-          "createdBy": "Xingzhi Zhang",
+          "createdAt": "2023-04-20T21:39:34.9410212\u002B00:00",
+          "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-03-27T02:54:37.752401\u002B00:00",
-          "lastModifiedBy": "Xingzhi Zhang",
+          "lastModifiedAt": "2023-04-20T21:39:35.474647\u002B00:00",
+          "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
       }
     }
   ],
   "Variables": {
-    "component_name": "test_124939784159"
+    "component_name": "test_555992904778"
   }
 }

@@ -652,6 +652,8 @@ class HandleItem(_serialization.Model):
     :vartype open_time: ~datetime.datetime
     :ivar last_reconnect_time: Time handle was last connected to (UTC).
     :vartype last_reconnect_time: ~datetime.datetime
+    :ivar access_right_list:
+    :vartype access_right_list: list[str or ~azure.storage.fileshare.models.AccessRight]
     """
 
     _validation = {
@@ -672,6 +674,7 @@ class HandleItem(_serialization.Model):
         "client_ip": {"key": "ClientIp", "type": "str"},
         "open_time": {"key": "OpenTime", "type": "rfc-1123"},
         "last_reconnect_time": {"key": "LastReconnectTime", "type": "rfc-1123"},
+        "access_right_list": {"key": "AccessRightList", "type": "[str]", "xml": {"wrapped": True}},
     }
     _xml_map = {"name": "Handle"}
 
@@ -686,6 +689,7 @@ class HandleItem(_serialization.Model):
         open_time: datetime.datetime,
         parent_id: Optional[str] = None,
         last_reconnect_time: Optional[datetime.datetime] = None,
+        access_right_list: Optional[List[Union[str, "_models.AccessRight"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -706,6 +710,8 @@ class HandleItem(_serialization.Model):
         :paramtype open_time: ~datetime.datetime
         :keyword last_reconnect_time: Time handle was last connected to (UTC).
         :paramtype last_reconnect_time: ~datetime.datetime
+        :keyword access_right_list:
+        :paramtype access_right_list: list[str or ~azure.storage.fileshare.models.AccessRight]
         """
         super().__init__(**kwargs)
         self.handle_id = handle_id
@@ -716,6 +722,7 @@ class HandleItem(_serialization.Model):
         self.client_ip = client_ip
         self.open_time = open_time
         self.last_reconnect_time = last_reconnect_time
+        self.access_right_list = access_right_list
 
 
 class LeaseAccessConditions(_serialization.Model):

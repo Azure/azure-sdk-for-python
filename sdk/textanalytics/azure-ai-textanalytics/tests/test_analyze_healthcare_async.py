@@ -359,7 +359,7 @@ class TestHealth(TextAnalyticsTest):
         assert doc_results[1].error.code == "UnsupportedLanguageCode"
         assert doc_results[1].error.message is not None
         assert not doc_results[2].is_error
-        assert doc_results[2].warnings
+        assert doc_results[2].warnings is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

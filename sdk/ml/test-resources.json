@@ -403,6 +403,13 @@
     "provisionGPUCluster": {
       "type": "bool",
       "defaultValue": "[bool('false')]"
+    },
+    "featureStoreName": {
+      "type": "string",
+      "defaultValue": "sdk_vnext_cli_fs",
+      "metadata": {
+        "description": "Specifies the name of the Azure Machine Learning feature store."
+      }
     }
   },
   "variables": {
@@ -897,6 +904,52 @@
           ]
         }
       }
+    },
+    {
+      "type": "Microsoft.MachineLearningServices/workspaces",
+      "apiVersion": "2020-09-01-preview",
+      "name": "[parameters('featureStoreName')]",
+      "kind": "featurestore",
+      "location": "[parameters('location')]",
+      "sku": {
+        "tier": "[parameters('sku')]",
+        "name": "[parameters('sku')]"
+      },
+      "identity": {
+        "type": "[parameters('identityType')]",
+        "userAssignedIdentities": "[if(equals(parameters('identityType'), 'userAssigned'), variables('userAssignedIdentities'), json('null'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
+        "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
+      ],
+      "tags": "[parameters('tagValues')]",
+      "properties": {
+        "friendlyName": "[parameters('featureStoreName')]",
+        "storageAccount": "[variables('storageAccount')]",
+        "keyVault": "[variables('keyVault')]",
+        "applicationInsights": "[variables('applicationInsights')]",
+        "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
+        "adbWorkspace": "[if(empty(parameters('adbWorkspace')), json('null'), parameters('adbWorkspace'))]",
+        "primaryUserAssignedIdentity": "[if(equals(parameters('identityType'), 'userAssigned'), variables('primaryUserAssignedIdentity'), json('null'))]",
+        "encryption": {
+          "status": "[parameters('encryption_status')]",
+          "keyVaultProperties": {
+            "keyVaultArmId": "[parameters('cmk_keyvault')]",
+            "keyIdentifier": "[parameters('resource_cmk_uri')]"
+          }
+        },
+        "hbiWorkspace": "[parameters('confidential_data')]",
+        "featureStoreSettings": {
+          "computeruntime": {
+            "SparkRuntimeVersion": "3.2.0"
+            },
+            "offlinestoreconnectionname": "",
+            "onlinestoreconnectionname": ""
+          }
+      }
     }
   ],
   "outputs": {
@@ -915,6 +968,10 @@
     "ML_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": {
       "type": "string",
       "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), variables('storageAccountApiVersion')).keys[1].value]"
+    },
+    "ML_FEATURE_STORE_NAME": {
+      "type": "string",
+      "value": "[parameters('featureStoreName')]"
     }
   }
 }

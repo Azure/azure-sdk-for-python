@@ -13,7 +13,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from .._restclient.v2023_02_01_preview.models import JobInputType as JobInputType10
+from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (
@@ -33,7 +33,7 @@ from .._schema.compute.compute_instance import ComputeInstanceSchema
 from .._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
 from .._schema.job import CommandJobSchema, ParallelJobSchema
 from .._schema.pipeline.pipeline_job import PipelineJobSchema
-from .._schema.schedule.schedule import ScheduleSchema
+from .._schema.schedule.schedule import JobScheduleSchema
 from .._schema.workspace import WorkspaceSchema
 from .._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from ..constants._common import (
@@ -109,8 +109,8 @@ REF_DOC_ERROR_MESSAGE_MAP = {
     PipelineJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.PIPELINE_JOB, YAMLRefDocLinks.PIPELINE_JOB
     ),
-    ScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
-        YAMLRefDocSchemaNames.SCHEDULE, YAMLRefDocLinks.SCHEDULE
+    JobScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
+        YAMLRefDocSchemaNames.JOB_SCHEDULE, YAMLRefDocLinks.JOB_SCHEDULE
     ),
     SweepJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.SWEEP_JOB, YAMLRefDocLinks.SWEEP_JOB
@@ -478,3 +478,6 @@ def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutp
         return
     if source._data:
         target._data = copy.deepcopy(source._data)
+    # copy pipeline component output's node output to subgraph builder
+    if source._binding_output is not None:
+        target._binding_output = source._binding_output

@@ -16,6 +16,7 @@ from typing import Optional
 import zipfile
 
 import certifi
+from dotenv import load_dotenv, find_dotenv
 import pytest
 import subprocess
 from urllib3 import PoolManager, Retry
@@ -27,6 +28,8 @@ from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
 from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
+
+load_dotenv(find_dotenv())
 
 _LOGGER = logging.getLogger()
 

@@ -8,8 +8,7 @@ import os
 import pytest
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
-from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
+from azure.containerregistry._helpers import _is_tag
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
@@ -68,42 +67,25 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         assert properties.can_write == value
         assert properties.can_list == value
 
-    def assert_manifest(self, manifest, expected):
-        assert manifest is not None
-        assert manifest.schema_version == expected.schema_version
-        assert manifest.config is not None
-        assert_manifest_config_or_layer_properties(manifest.config, expected.config)
-        assert manifest.layers is not None
-        assert len(manifest.layers) == len(expected.layers)
-        count = 0
-        for layer in manifest.layers:
-            assert_manifest_config_or_layer_properties(layer, expected.layers[count])
-            count += 1
-
     def create_fully_qualified_reference(self, registry, repository, digest):
         return f"{registry}/{repository}{':' if _is_tag(digest) else '@'}{digest.split(':')[-1]}"
 
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
     
-    def create_oci_manifest(self):
-        config1 = Descriptor(
-            media_type="application/vnd.acme.rocket.config",
-            digest="sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
-            size=171
-        )
-        config2 = Descriptor(
-            media_type="application/vnd.oci.image.layer.v1.tar",
-            digest="sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
-            size=28,
-            annotations=Annotations(name="artifact.txt")
-        )
-        return OCIManifest(config=config1, schema_version=2, layers=[config2])
-    
-    def upload_manifest_prerequisites(self, repo, client):
+    def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"
         base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        # upload config
+        client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
+        # upload layers
+        client.upload_blob(repo, open(os.path.join(base_path, layer), "rb"))
+    
+    def upload_docker_manifest_prerequisites(self, repo, client):
+        layer = "2db29710123e3e53a794f2694094b9b4338aa9ee5c40b930cb8063a1be392c54"
+        config = "config.json"
+        base_path = os.path.join(self.get_test_directory(), "data", "docker_artifact")
         # upload config
         client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
         # upload layers
@@ -128,7 +110,7 @@ def get_authority(endpoint: str) -> str:
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public cloud auth audience")
-        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+        return "https://management.azure.com"
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China cloud auth audience")
         return "https://management.chinacloudapi.cn"
@@ -198,8 +180,3 @@ def load_registry():
             import_image(authority_anon, repo, tag, is_anonymous=True)
         except Exception as e:
             print(e)
-
-def assert_manifest_config_or_layer_properties(value, expected):
-    assert value.media_type == expected.media_type
-    assert value.digest == expected.digest
-    assert value.size == expected.size

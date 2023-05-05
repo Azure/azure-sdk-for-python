@@ -13,11 +13,13 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
     - [Test collection failure](#test-collection-failure)
     - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
     - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+    - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
     - [Recordings not being produced](#recordings-not-being-produced)
     - [ConnectionError during tests](#connectionerror-during-tests)
     - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
     - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
     - [Fixture not found error](#fixture-not-found-error)
+    - [PermissionError during startup](#permissionerror-during-startup)
 
 ## Test collection failure
 
@@ -45,6 +47,23 @@ Body matching can be turned off with the test proxy by calling the `set_bodiless
 [devtools_testutils/sanitizers.py][py_sanitizers] at the very start of a test method. This matcher applies only to the
 test method that `set_bodiless_matcher` is called from, so other tests in the `pytest` session will still have body
 matching enabled by default.
+
+## Playback failures from inconsistent line breaks
+
+Some tests require recording content to completely match, including line breaks (for example, when sending the content of
+a test file in a request body). Line breaks can vary between OSes and cause tests to fail on certain platforms, in which
+case it can help to specify a particular format for test files by using [`.gitattributes`][gitattributes].
+
+A `.gitattributes` file can be placed at the root of a directory to apply git settings to each file under that directory.
+If a test directory contains files that need to have consistent line breaks, for example LF breaks instead of CRLF ones,
+you can create a `.gitattributes` file in the directory with the following content:
+```
+# Force git to checkout text files with LF (line feed) as the ending (vs CRLF)
+# This allows us to consistently run tests that depend on the exact contents of a file
+* text=auto eol=lf
+```
+
+For a real example, refer to https://github.com/Azure/azure-sdk-for-python/pull/29955.
 
 ## Recordings not being produced
 
@@ -118,11 +137,26 @@ As noted in the [Fetch environment variables][env_var_section] section of the [m
 reading expected variables from an accepted `**kwargs` parameter is recommended instead so that tests will run as
 expected in either case.
 
+## PermissionError during startup
+
+While the test proxy is being invoked during the start of a test run, you may see an error such as
+```
+PermissionError: [Errno 13] Permission denied: '.../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy'
+```
+
+This means that the test proxy tool was successfully installed at the location in the error message, but we don't have
+sufficient permissions to run it with the tool startup script. We can set the correct permissions on the file by using
+`chmod`. Using the tool path that was provided in the `PermissionError` message, run the following command:
+```
+chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
+```
+
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/initial-investigation.md
+[gitattributes]: https://git-scm.com/docs/gitattributes
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [proxy_pipelines]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#enable-the-test-proxy-in-pipelines
