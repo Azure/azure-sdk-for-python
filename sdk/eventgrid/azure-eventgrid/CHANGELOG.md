@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new enum values to `SystemEventNames` related to Storage Tasks, Azure Communication Services and health care APIs.
+- Added new enum values to `SystemEventNames` related to Storage Tasks, Azure Communication Services and Azure HealthcareApis.
 
 ## 4.10.0 (2023-04-11)
 
