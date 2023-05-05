@@ -72,3 +72,9 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEST = "test"
     VALIDATION = "validation"
     GROUND_TRUTH_DATA = "ground_truth"
+
+
+class DefaultMonitorSignalNames(str, Enum):
+    DATA_DRIFT_SIGNAL = "data-drift-signal"
+    PREDICTION_DRIFT_SIGNAL = "prediction-drift-signal"
+    DATA_QUALITY_SIGNAL = "data-quality-signal"

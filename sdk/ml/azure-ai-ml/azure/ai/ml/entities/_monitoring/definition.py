@@ -8,7 +8,7 @@ from typing import Optional, Dict, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml.constants._monitoring import AZMONITORING
+from azure.ai.ml.constants._monitoring import AZMONITORING, DefaultMonitorSignalNames
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.signals import (
     MonitoringSignal,
@@ -102,10 +102,18 @@ class MonitorDefinition(RestTranslatableMixin):
     def _populate_default_signal_information(
         self,
         model_inputs_arm_id: str,
+        model_inputs_type: str,
         model_outputs_arm_id: str,
+        model_outputs_type: str,
     ):
         self.monitoring_signals = {
-            "data-drift-signal": DataDriftSignal._get_default_data_drift_signal(model_inputs_arm_id),
-            "prediction-drift-signal": PredictionDriftSignal._get_default_prediction_drift_signal(model_outputs_arm_id),
-            "data-quality-signal": DataQualitySignal._get_default_data_quality_signal(model_inputs_arm_id),
+            DefaultMonitorSignalNames.DATA_DRIFT_SIGNAL: DataDriftSignal._get_default_data_drift_signal(
+                model_inputs_arm_id, model_inputs_type
+            ),
+            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal(
+                model_outputs_arm_id, model_outputs_type
+            ),
+            DefaultMonitorSignalNames.DATA_QUALITY_SIGNAL: DataQualitySignal._get_default_data_quality_signal(
+                model_inputs_arm_id, model_inputs_type
+            ),
         }

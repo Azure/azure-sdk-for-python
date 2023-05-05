@@ -35,7 +35,6 @@ from ..constants._common import (
     LROConfigurations,
     NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
     AZUREML_RESOURCE_PROVIDER,
-    de,
 )
 from ..constants._monitoring import (
     MonitorSignalType,
@@ -44,7 +43,7 @@ from ..constants._monitoring import (
     DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
 )
-from . import JobOperations, OnlineDeploymentOperations
+from . import JobOperations, OnlineDeploymentOperations, DataOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -97,6 +96,10 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(
             AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
         )
+
+    @property
+    def _data_operations(self) -> DataOperations:
+        return self._all_operations.get_operation(AzureMLResourceType.DATA, lambda x: isinstance(x, DataOperations))
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
@@ -327,6 +330,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                     register_asset=False,
                 )
 
+                # call data operations here to get type of the data assets and pass
+                # to default creation
+                model_inputs_type = self._data_operations.get(model_inputs_name, model_inputs_version).type
+                model_outputs_type = self._data_operations.get(model_outputs_name, model_outputs_version).type
                 schedule._create_default_monitor_definition(
                     model_inputs_arm_id,
                     model_outputs_arm_id,
