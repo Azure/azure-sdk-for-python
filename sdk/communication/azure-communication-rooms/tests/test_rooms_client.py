@@ -23,24 +23,33 @@ from devtools_testutils import is_live, add_general_regex_sanitizer, recorded_by
 class TestRoomsClient(ACSRoomsTestCase):
     def setup_method(self):
         super().setUp()
-        # create multiple users users
+        sanitizedId1 = "8:acs:sanitized1"
+        sanitizedId2 = "8:acs:sanitized2"
+        sanitizedId3 = "8:acs:sanitized3"
+        sanitizedId4 = "8:acs:sanitized4"
         if is_live():
             self.identity_client = CommunicationIdentityClient.from_connection_string(
                 self.connection_str)
+
 
             self.id1 = self.identity_client.create_user().properties["id"]
             self.id2 = self.identity_client.create_user().properties["id"]
             self.id3 = self.identity_client.create_user().properties["id"]
             self.id4 = self.identity_client.create_user().properties["id"]
-            add_general_regex_sanitizer(regex=self.id1, value='8:acs:sanitized1')
-            add_general_regex_sanitizer(regex=self.id2, value='8:acs:sanitized2')
-            add_general_regex_sanitizer(regex=self.id3, value='8:acs:sanitized3')
-            add_general_regex_sanitizer(regex=self.id4, value='8:acs:sanitized4')
+            add_general_regex_sanitizer(regex=self.id1, value=sanitizedId1)
+            add_general_regex_sanitizer(regex=self.id2, value=sanitizedId2)
+            add_general_regex_sanitizer(regex=self.id3, value=sanitizedId3)
+            add_general_regex_sanitizer(regex=self.id4, value=sanitizedId4)
         else:
-            self.id1 = "8:acs:sanitized1"
-            self.id2 = "8:acs:sanitized2"
-            self.id3 = "8:acs:sanitized3"
-            self.id4 = "8:acs:sanitized4"
+            self.id1 = sanitizedId1
+            self.id2 = sanitizedId2
+            self.id3 = sanitizedId3
+            self.id4 = sanitizedId4
+
+        self.rooms_client = RoomsClient.from_connection_string(
+            self.connection_str,
+            http_logging_policy=get_http_logging_policy()
+        )
 
         self.users = {
             "john" : RoomParticipant(
