@@ -347,6 +347,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
 
+    StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
+
+    StorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
+
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 
     SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'

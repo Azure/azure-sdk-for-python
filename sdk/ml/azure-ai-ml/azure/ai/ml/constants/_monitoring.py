@@ -6,6 +6,8 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
+from azure.ai.ml._utils._experimental import experimental
+
 
 ALL_FEATURES = "all_features"
 
@@ -18,6 +20,7 @@ DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY = "data_collector.collections.model_outputs.da
 DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = "data_collector.collections.model_outputs.data.version"
 
 
+@experimental
 class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_DRIFT = "data_drift"
     DATA_QUALITY = "data_quality"
@@ -27,6 +30,7 @@ class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "custom"
 
 
+@experimental
 class MonitorMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JENSEN_SHANNON_DISTANCE = "jensen_shannon_distance"
     NORMALIZED_WASSERSTEIN_DISTANCE = "normalized_wasserstein_distance"
@@ -46,11 +50,13 @@ class MonitorMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RMSE = "RMSE"
 
 
+@experimental
 class MonitorModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLASSIFICATION = "classification"
     REGRESSION = "regression"
 
 
+@experimental
 class MonitorFeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NUMERICAL = "numerical"
     CATEGORICAL = "categorical"
@@ -58,6 +64,7 @@ class MonitorFeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL_FEATURE_TYPES = "all_feature_types"
 
 
+@experimental
 class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MODEL_INPUTS = "model_inputs"
     MODEL_OUTPUTS = "model_outputs"

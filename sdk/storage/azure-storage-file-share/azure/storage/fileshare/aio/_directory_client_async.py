@@ -442,7 +442,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace
     def list_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> AsyncItemPaged
+        # type: (bool, Any) -> AsyncItemPaged[Handle]
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
