@@ -8,8 +8,6 @@ Version 7.10.0 is our first stable release of the Azure Service Bus client libra
 
 - A new boolean keyword argument `uamqp_transport` has been added to sync and async `ServiceBusClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed a bug where sync and async `ServiceBusAdministrationClient` expected `credential` with `get_token` method returning `AccessToken.token` of type `bytes` and not `str`, now matching the documentation.
