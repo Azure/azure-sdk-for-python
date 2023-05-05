@@ -59,7 +59,7 @@ class LocalRulestacksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.aio.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.aio.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`local_rulestacks` attribute.
     """
 
@@ -80,7 +80,7 @@ class LocalRulestacksOperations:
         :return: An iterator like instance of either LocalRulestackResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -170,7 +170,7 @@ class LocalRulestacksOperations:
         :return: An iterator like instance of either LocalRulestackResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -261,7 +261,7 @@ class LocalRulestacksOperations:
         :type local_rulestack_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -403,7 +403,7 @@ class LocalRulestacksOperations:
         :param local_rulestack_name: LocalRulestack resource name. Required.
         :type local_rulestack_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -418,7 +418,7 @@ class LocalRulestacksOperations:
         :return: An instance of AsyncLROPoller that returns either LocalRulestackResource or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -455,7 +455,7 @@ class LocalRulestacksOperations:
         :return: An instance of AsyncLROPoller that returns either LocalRulestackResource or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -476,7 +476,7 @@ class LocalRulestacksOperations:
         :type local_rulestack_name: str
         :param resource: Resource create parameters. Is either a LocalRulestackResource type or a IO
          type. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -491,7 +491,7 @@ class LocalRulestacksOperations:
         :return: An instance of AsyncLROPoller that returns either LocalRulestackResource or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.LocalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -563,13 +563,13 @@ class LocalRulestacksOperations:
         :param local_rulestack_name: LocalRulestack resource name. Required.
         :type local_rulestack_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResourceUpdate
+        :type properties: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -597,7 +597,7 @@ class LocalRulestacksOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -618,13 +618,13 @@ class LocalRulestacksOperations:
         :type local_rulestack_name: str
         :param properties: The resource properties to be updated. Is either a
          LocalRulestackResourceUpdate type or a IO type. Required.
-        :type properties: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResourceUpdate or IO
+        :type properties: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResourceUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.LocalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -934,7 +934,7 @@ class LocalRulestacksOperations:
         :type local_rulestack_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Changelog or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.Changelog
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.Changelog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1001,7 +1001,7 @@ class LocalRulestacksOperations:
         :type email: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportInfo or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.SupportInfo
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.SupportInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1072,14 +1072,14 @@ class LocalRulestacksOperations:
         :param local_rulestack_name: LocalRulestack resource name. Required.
         :type local_rulestack_name: str
         :param type: Known values are: "urlCustom" and "feeds". Required.
-        :type type: str or ~azure.mgmt.paloaltonetworks.models.AdvSecurityObjectTypeEnum
+        :type type: str or ~azure.mgmt.paloaltonetworksngfw.models.AdvSecurityObjectTypeEnum
         :param skip: Default value is None.
         :type skip: str
         :param top: Default value is None.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdvSecurityObjectListResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.AdvSecurityObjectListResponse
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.AdvSecurityObjectListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1162,7 +1162,7 @@ class LocalRulestacksOperations:
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListAppIdResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.ListAppIdResponse
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.ListAppIdResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1240,7 +1240,7 @@ class LocalRulestacksOperations:
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CountriesResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.CountriesResponse
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CountriesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1307,7 +1307,7 @@ class LocalRulestacksOperations:
         :type local_rulestack_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListFirewallsResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.ListFirewallsResponse
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.ListFirewallsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1381,7 +1381,7 @@ class LocalRulestacksOperations:
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PredefinedUrlCategoriesResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.PredefinedUrlCategoriesResponse
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.PredefinedUrlCategoriesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1454,14 +1454,14 @@ class LocalRulestacksOperations:
         :type local_rulestack_name: str
         :param type: Known values are: "antiSpyware", "antiVirus", "ipsVulnerability", "urlFiltering",
          "fileBlocking", and "dnsSubscription". Required.
-        :type type: str or ~azure.mgmt.paloaltonetworks.models.SecurityServicesTypeEnum
+        :type type: str or ~azure.mgmt.paloaltonetworksngfw.models.SecurityServicesTypeEnum
         :param skip: Default value is None.
         :type skip: str
         :param top: Default value is None.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityServicesResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.SecurityServicesResponse
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.SecurityServicesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {

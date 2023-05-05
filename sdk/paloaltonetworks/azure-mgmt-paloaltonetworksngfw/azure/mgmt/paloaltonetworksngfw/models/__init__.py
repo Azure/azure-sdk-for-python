@@ -32,6 +32,8 @@ from ._models_py3 import FirewallResource
 from ._models_py3 import FirewallResourceListResult
 from ._models_py3 import FirewallResourceUpdate
 from ._models_py3 import FirewallResourceUpdateProperties
+from ._models_py3 import FirewallStatusResource
+from ._models_py3 import FirewallStatusResourceListResult
 from ._models_py3 import FqdnListGlobalRulestackResource
 from ._models_py3 import FqdnListGlobalRulestackResourceListResult
 from ._models_py3 import FqdnListLocalRulestackResource
@@ -62,6 +64,7 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import PanoramaConfig
+from ._models_py3 import PanoramaStatus
 from ._models_py3 import PlanData
 from ._models_py3 import PostRulesResource
 from ._models_py3 import PostRulesResourceListResult
@@ -101,6 +104,7 @@ from ._palo_alto_networks_ngfw_mgmt_client_enums import DecryptionRuleTypeEnum
 from ._palo_alto_networks_ngfw_mgmt_client_enums import DefaultMode
 from ._palo_alto_networks_ngfw_mgmt_client_enums import EgressNat
 from ._palo_alto_networks_ngfw_mgmt_client_enums import EnabledDNSType
+from ._palo_alto_networks_ngfw_mgmt_client_enums import HealthStatus
 from ._palo_alto_networks_ngfw_mgmt_client_enums import LogOption
 from ._palo_alto_networks_ngfw_mgmt_client_enums import LogType
 from ._palo_alto_networks_ngfw_mgmt_client_enums import ManagedIdentityType
@@ -109,8 +113,10 @@ from ._palo_alto_networks_ngfw_mgmt_client_enums import NetworkType
 from ._palo_alto_networks_ngfw_mgmt_client_enums import Origin
 from ._palo_alto_networks_ngfw_mgmt_client_enums import ProtocolType
 from ._palo_alto_networks_ngfw_mgmt_client_enums import ProvisioningState
+from ._palo_alto_networks_ngfw_mgmt_client_enums import ReadOnlyProvisioningState
 from ._palo_alto_networks_ngfw_mgmt_client_enums import ScopeType
 from ._palo_alto_networks_ngfw_mgmt_client_enums import SecurityServicesTypeEnum
+from ._palo_alto_networks_ngfw_mgmt_client_enums import ServerStatus
 from ._palo_alto_networks_ngfw_mgmt_client_enums import StateEnum
 from ._palo_alto_networks_ngfw_mgmt_client_enums import UsageType
 from ._patch import __all__ as _patch_all
@@ -144,6 +150,8 @@ __all__ = [
     "FirewallResourceListResult",
     "FirewallResourceUpdate",
     "FirewallResourceUpdateProperties",
+    "FirewallStatusResource",
+    "FirewallStatusResourceListResult",
     "FqdnListGlobalRulestackResource",
     "FqdnListGlobalRulestackResourceListResult",
     "FqdnListLocalRulestackResource",
@@ -174,6 +182,7 @@ __all__ = [
     "OperationDisplay",
     "OperationListResult",
     "PanoramaConfig",
+    "PanoramaStatus",
     "PlanData",
     "PostRulesResource",
     "PostRulesResourceListResult",
@@ -212,6 +221,7 @@ __all__ = [
     "DefaultMode",
     "EgressNat",
     "EnabledDNSType",
+    "HealthStatus",
     "LogOption",
     "LogType",
     "ManagedIdentityType",
@@ -220,8 +230,10 @@ __all__ = [
     "Origin",
     "ProtocolType",
     "ProvisioningState",
+    "ReadOnlyProvisioningState",
     "ScopeType",
     "SecurityServicesTypeEnum",
+    "ServerStatus",
     "StateEnum",
     "UsageType",
 ]
