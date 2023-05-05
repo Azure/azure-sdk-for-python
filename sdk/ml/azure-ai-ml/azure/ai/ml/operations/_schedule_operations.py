@@ -336,7 +336,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                 model_outputs_type = self._data_operations.get(model_outputs_name, model_outputs_version).type
                 schedule._create_default_monitor_definition(
                     model_inputs_arm_id,
+                    model_inputs_type,
                     model_outputs_arm_id,
+                    model_outputs_type,
                 )
 
         # resolve input paths and preprocessing component ids
