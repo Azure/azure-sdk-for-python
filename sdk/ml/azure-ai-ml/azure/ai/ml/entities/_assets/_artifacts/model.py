@@ -55,7 +55,7 @@ class Model(Artifact):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param stage: The stage of the resource.
-    :type stage: str   
+    :type stage: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -74,7 +74,7 @@ class Model(Artifact):
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
         **kwargs,
-    ):
+    ): # pylint: disable=too-many-arguments
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(
