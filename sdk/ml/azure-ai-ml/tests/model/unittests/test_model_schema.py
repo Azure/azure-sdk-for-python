@@ -31,6 +31,11 @@ class TestModelSchema:
         assert model.version is None
         assert model._auto_increment_version
         assert model.type == AssetTypes.CUSTOM_MODEL  # assert the default model type
+    
+    def test_deserialize_with_stage(self) -> None:
+        path = Path("./tests/test_configs/model/model_with_stage.yml")
+        model = load_model(path)
+        assert model.stage
 
     def test_ipp_model(self) -> None:
         rest_ipp_model = {

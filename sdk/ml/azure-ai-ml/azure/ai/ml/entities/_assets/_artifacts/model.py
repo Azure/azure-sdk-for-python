@@ -54,6 +54,8 @@ class Model(Artifact):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param stage: The stage of the resource.
+    :type stage: str   
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -70,6 +72,7 @@ class Model(Artifact):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
+        stage: Optional[str] = None,
         **kwargs,
     ):
         self.job_name = kwargs.pop("job_name", None)
@@ -87,6 +90,7 @@ class Model(Artifact):
         self.flavors = dict(flavors) if flavors else None
         self._arm_type = ArmConstants.MODEL_VERSION_TYPE
         self.type = type or AssetTypes.CUSTOM_MODEL
+        self.stage = str(stage) if stage else None
         if self._is_anonymous and self.path:
             _ignore_file = get_ignore_file(self.path)
             _upload_hash = get_object_hash(self.path, _ignore_file)
@@ -126,6 +130,7 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
+            stage = rest_model_version.stage,
             # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
@@ -162,6 +167,7 @@ class Model(Artifact):
             else None,  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
+            stage = self.stage,
             is_anonymous=self._is_anonymous,
         )
         model_version_resource = ModelVersion(properties=model_version)
