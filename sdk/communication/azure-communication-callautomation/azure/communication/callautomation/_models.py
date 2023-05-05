@@ -49,9 +49,9 @@ class CallInvite(object):
     :ivar source_display_name: Set display name for caller
     :vartype source_display_name: str
     :ivar sip_headers: Custom context for PSTN
-    :vartype sip_headers: str
+    :vartype sip_headers: dict[str, str]
     :ivar voip_headers: Custom context for VOIP
-    :vartype voip_headers: str
+    :vartype voip_headers: dict[str, str]
     """
     def __init__(
         self,
