@@ -1822,7 +1822,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                             assert pickled.reply_to == messages[0].reply_to
                             assert pickled.sequence_number
                             assert pickled.enqueued_time_utc
-                            assert pickled.message.delivery_tag is not None
                     finally:
                         for message in messages:
                             receiver.complete_message(message)
