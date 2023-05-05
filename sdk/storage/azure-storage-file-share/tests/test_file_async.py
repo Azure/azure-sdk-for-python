@@ -305,15 +305,16 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         await self._setup_share(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential
+        )
 
         # Assert
-        with pytest.raises(ValueError):
-            file_client = ShareFileClient(
-                self.account_url(storage_account_name, "file"),
-                share_name=self.share_name,
-                file_path=file_name,
-                credential=token_credential
-            )
+        with pytest.raises(HttpResponseError):
+            await file_client.create_file(1024)
 
     @FileSharePreparer()
     @recorded_by_proxy_async
