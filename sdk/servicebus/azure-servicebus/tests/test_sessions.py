@@ -11,6 +11,7 @@ import os
 import pytest
 import time
 import uuid
+import pickle
 from datetime import timedelta
 
 from azure.servicebus import (
@@ -50,7 +51,6 @@ _logger = get_logger(logging.DEBUG)
 
 class TestServiceBusSession(AzureMgmtRecordedTestCase):
 
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer()
@@ -176,6 +176,10 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                 assert received_cnt_dic['0'] == 2 and received_cnt_dic['1'] == 2 and received_cnt_dic['2'] == 2
                 assert count == 6
 
+            with pytest.raises(ServiceBusError):
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=1)
+                with receiver:
+                    pass
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

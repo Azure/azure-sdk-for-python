@@ -7,6 +7,7 @@
 import logging
 import sys
 import os
+import json
 from concurrent.futures import ThreadPoolExecutor
 import types
 import pytest
@@ -15,6 +16,7 @@ import uuid
 from datetime import datetime, timedelta
 import calendar
 import unittest
+import pickle
 
 try:
     import uamqp
@@ -224,7 +226,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             assert count == 10
 
-    # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -466,6 +467,60 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             with pytest.raises(ValueError):
                 receiver.peek_messages()
 
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            with sender, receiver:
+                # send previously unpicklable message
+                msg = {
+                    "body":"W1tdLCB7ImlucHV0X2lkIjogNH0sIHsiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgImNoYWluIjogbnVsbCwgImNob3JkIjogbnVsbH1d",
+                    "content-encoding":"utf-8",
+                    "content-type":"application/json",
+                    "headers":{
+                        "lang":"py",
+                        "task":"tasks.example_task",
+                        "id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "shadow":None,
+                        "eta":"2021-10-07T02:30:23.764066+00:00",
+                        "expires":None,
+                        "group":None,
+                        "group_index":None,
+                        "retries":1,
+                        "timelimit":[
+                            None,
+                            None
+                        ],
+                        "root_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "parent_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "argsrepr":"()",
+                        "kwargsrepr":"{'input_id': 4}",
+                        "origin":"gen36@94713e01a9c0",
+                        "ignore_result":1,
+                        "x_correlator":"44a1978d-c869-4173-afe4-da741f0edfb9"
+                    },
+                    "properties":{
+                        "correlation_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "reply_to":"7b9a3672-2fed-3e9b-8bfd-23ae2397d9ad",
+                        "origin":"gen68@c33d4eef123a",
+                        "delivery_mode":2,
+                        "delivery_info":{
+                            "exchange":"",
+                            "routing_key":"celery_task_queue"
+                        },
+                        "priority":0,
+                        "body_encoding":"base64",
+                        "delivery_tag":"dc83ddb6-8cdc-4413-b88a-06c56cbde90d"
+                    }
+                }
+                sender.send_messages(ServiceBusMessage(json.dumps(msg)))
+                messages = receiver.receive_messages(max_wait_time=10, max_message_count=1)
+                # complete first then pickle
+                receiver.complete_message(messages[0])
+                if not uamqp_transport:
+                    pickled = pickle.loads(pickle.dumps(messages[0]))
+                    assert json.loads(str(pickled)) == json.loads(str(messages[0]))
+                else:
+                    with pytest.raises(TypeError):
+                        pickled = pickle.loads(pickle.dumps(messages[0]))
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1043,7 +1098,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     with pytest.raises(ValueError):
                         receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -1542,9 +1596,16 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_message_receive_and_delete(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.Amqp
+        else:
+            transport_type = TransportType.Amqp
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            servicebus_namespace_connection_string,
+            logging_enable=False,
+            transport_time=transport_type,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
                 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("Receive and delete test")
@@ -1604,6 +1665,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     yield message
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # sending manually created message batch (with default pyamqp) should work for both uamqp/pyamqp
                 message = ServiceBusMessageBatch()
                 for each in message_content():
                     message.add_message(each)
@@ -1673,7 +1735,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 else:
                     raise Exception("Failed to receive schdeduled message.")
             
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -1738,6 +1799,22 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         assert messages[0].enqueued_time_utc
                         assert messages[0].message.delivery_tag is not None
                         assert len(messages) == 2
+
+                        if not uamqp_transport:
+                            pickled = pickle.loads(pickle.dumps(messages[0]))
+                            assert pickled.message_id == messages[0].message_id
+                            assert pickled.scheduled_enqueue_time_utc == messages[0].scheduled_enqueue_time_utc
+                            assert pickled.scheduled_enqueue_time_utc <= pickled.enqueued_time_utc.replace(microsecond=0)
+                            assert pickled.delivery_count == messages[0].delivery_count
+                            assert pickled.application_properties == messages[0].application_properties
+                            assert pickled.application_properties[b'key'] == messages[0].application_properties[b'key']
+                            assert pickled.subject == messages[0].subject
+                            assert pickled.content_type == messages[0].content_type
+                            assert pickled.correlation_id == messages[0].correlation_id
+                            assert pickled.to == messages[0].to
+                            assert pickled.reply_to == messages[0].reply_to
+                            assert pickled.sequence_number
+                            assert pickled.enqueued_time_utc
                     finally:
                         for message in messages:
                             receiver.complete_message(message)
@@ -2043,7 +2120,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
         assert message.scheduled_enqueue_time_utc is None
 
-    # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
@@ -2241,8 +2317,14 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_send_twice(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+        else:
+            transport_type = TransportType.AmqpOverWebsocket
+
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False,
+            transport_type=transport_type, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("ServiceBusMessage")
@@ -2261,12 +2343,17 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 # then normal message resending
                 sender.send_messages(message)
                 sender.send_messages(message)
+                expected_count = 2
+                if not uamqp_transport:
+                    pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
+                    sender.send_messages(pickled_recvd)
+                    expected_count = 3
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
                         receiver.complete_message(message)
-                    assert len(messages) == 2
+                    assert len(messages) == expected_count
 
 
     @pytest.mark.liveTest
@@ -2629,6 +2716,18 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         received_messages.append(message)
                 assert len(received_messages) == 6
 
+                batch_message = sender.create_message_batch(max_size_in_bytes=73)
+                for _ in range(2):
+                    try:
+                        batch_message.add_message(message_dict)
+                    except ValueError:
+                        break
+                sender.send_messages(batch_message)
+                received_messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    for message in receiver:
+                        received_messages.append(message)
+                assert len(received_messages) == 1
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
