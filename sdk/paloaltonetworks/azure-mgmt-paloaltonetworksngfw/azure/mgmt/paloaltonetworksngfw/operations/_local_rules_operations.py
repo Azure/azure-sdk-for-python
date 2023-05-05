@@ -308,7 +308,7 @@ class LocalRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`local_rules` attribute.
     """
 
@@ -334,7 +334,8 @@ class LocalRulesOperations:
         :type local_rulestack_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LocalRulesResource or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworks.models.LocalRulesResource]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -428,7 +429,7 @@ class LocalRulesOperations:
         :type priority: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalRulesResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.LocalRulesResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -576,7 +577,7 @@ class LocalRulesOperations:
         :param priority: Local Rule priority. Required.
         :type priority: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.LocalRulesResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -590,7 +591,8 @@ class LocalRulesOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either LocalRulesResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.LocalRulesResource]
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -629,7 +631,8 @@ class LocalRulesOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either LocalRulesResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.LocalRulesResource]
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -653,7 +656,7 @@ class LocalRulesOperations:
         :type priority: str
         :param resource: Resource create parameters. Is either a LocalRulesResource type or a IO type.
          Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.LocalRulesResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -667,7 +670,8 @@ class LocalRulesOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either LocalRulesResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.LocalRulesResource]
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.LocalRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -863,7 +867,7 @@ class LocalRulesOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCounter or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.RuleCounter
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.RuleCounter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1011,7 +1015,7 @@ class LocalRulesOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCounterReset or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.RuleCounterReset
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.RuleCounterReset
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {

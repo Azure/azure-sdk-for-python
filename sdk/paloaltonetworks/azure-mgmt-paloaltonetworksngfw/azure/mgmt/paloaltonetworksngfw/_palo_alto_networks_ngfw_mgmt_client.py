@@ -18,6 +18,7 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     CertificateObjectGlobalRulestackOperations,
     CertificateObjectLocalRulestackOperations,
+    FirewallStatusOperations,
     FirewallsOperations,
     FqdnListGlobalRulestackOperations,
     FqdnListLocalRulestackOperations,
@@ -40,38 +41,40 @@ class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=client-accepts-api-vers
     """PaloAltoNetworksNgfwMgmtClient.
 
     :ivar global_rulestack: GlobalRulestackOperations operations
-    :vartype global_rulestack: azure.mgmt.paloaltonetworks.operations.GlobalRulestackOperations
+    :vartype global_rulestack: azure.mgmt.paloaltonetworksngfw.operations.GlobalRulestackOperations
     :ivar certificate_object_global_rulestack: CertificateObjectGlobalRulestackOperations
      operations
     :vartype certificate_object_global_rulestack:
-     azure.mgmt.paloaltonetworks.operations.CertificateObjectGlobalRulestackOperations
+     azure.mgmt.paloaltonetworksngfw.operations.CertificateObjectGlobalRulestackOperations
     :ivar fqdn_list_global_rulestack: FqdnListGlobalRulestackOperations operations
     :vartype fqdn_list_global_rulestack:
-     azure.mgmt.paloaltonetworks.operations.FqdnListGlobalRulestackOperations
+     azure.mgmt.paloaltonetworksngfw.operations.FqdnListGlobalRulestackOperations
     :ivar post_rules: PostRulesOperations operations
-    :vartype post_rules: azure.mgmt.paloaltonetworks.operations.PostRulesOperations
+    :vartype post_rules: azure.mgmt.paloaltonetworksngfw.operations.PostRulesOperations
     :ivar prefix_list_global_rulestack: PrefixListGlobalRulestackOperations operations
     :vartype prefix_list_global_rulestack:
-     azure.mgmt.paloaltonetworks.operations.PrefixListGlobalRulestackOperations
+     azure.mgmt.paloaltonetworksngfw.operations.PrefixListGlobalRulestackOperations
     :ivar pre_rules: PreRulesOperations operations
-    :vartype pre_rules: azure.mgmt.paloaltonetworks.operations.PreRulesOperations
+    :vartype pre_rules: azure.mgmt.paloaltonetworksngfw.operations.PreRulesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.paloaltonetworks.operations.Operations
+    :vartype operations: azure.mgmt.paloaltonetworksngfw.operations.Operations
     :ivar firewalls: FirewallsOperations operations
-    :vartype firewalls: azure.mgmt.paloaltonetworks.operations.FirewallsOperations
+    :vartype firewalls: azure.mgmt.paloaltonetworksngfw.operations.FirewallsOperations
     :ivar local_rulestacks: LocalRulestacksOperations operations
-    :vartype local_rulestacks: azure.mgmt.paloaltonetworks.operations.LocalRulestacksOperations
+    :vartype local_rulestacks: azure.mgmt.paloaltonetworksngfw.operations.LocalRulestacksOperations
+    :ivar firewall_status: FirewallStatusOperations operations
+    :vartype firewall_status: azure.mgmt.paloaltonetworksngfw.operations.FirewallStatusOperations
     :ivar certificate_object_local_rulestack: CertificateObjectLocalRulestackOperations operations
     :vartype certificate_object_local_rulestack:
-     azure.mgmt.paloaltonetworks.operations.CertificateObjectLocalRulestackOperations
+     azure.mgmt.paloaltonetworksngfw.operations.CertificateObjectLocalRulestackOperations
     :ivar fqdn_list_local_rulestack: FqdnListLocalRulestackOperations operations
     :vartype fqdn_list_local_rulestack:
-     azure.mgmt.paloaltonetworks.operations.FqdnListLocalRulestackOperations
+     azure.mgmt.paloaltonetworksngfw.operations.FqdnListLocalRulestackOperations
     :ivar local_rules: LocalRulesOperations operations
-    :vartype local_rules: azure.mgmt.paloaltonetworks.operations.LocalRulesOperations
+    :vartype local_rules: azure.mgmt.paloaltonetworksngfw.operations.LocalRulesOperations
     :ivar prefix_list_local_rulestack: PrefixListLocalRulestackOperations operations
     :vartype prefix_list_local_rulestack:
-     azure.mgmt.paloaltonetworks.operations.PrefixListLocalRulestackOperations
+     azure.mgmt.paloaltonetworksngfw.operations.PrefixListLocalRulestackOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -120,6 +123,7 @@ class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=client-accepts-api-vers
         self.local_rulestacks = LocalRulestacksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.firewall_status = FirewallStatusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.certificate_object_local_rulestack = CertificateObjectLocalRulestackOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

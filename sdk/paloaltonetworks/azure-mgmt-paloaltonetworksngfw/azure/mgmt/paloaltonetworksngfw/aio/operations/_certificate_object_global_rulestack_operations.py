@@ -47,7 +47,7 @@ class CertificateObjectGlobalRulestackOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.aio.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.aio.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`certificate_object_global_rulestack` attribute.
     """
 
@@ -72,7 +72,7 @@ class CertificateObjectGlobalRulestackOperations:
         :return: An iterator like instance of either CertificateObjectGlobalRulestackResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -159,7 +159,7 @@ class CertificateObjectGlobalRulestackOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateObjectGlobalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -298,7 +298,8 @@ class CertificateObjectGlobalRulestackOperations:
         :param name: certificate name. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource
+        :type resource:
+         ~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -313,7 +314,7 @@ class CertificateObjectGlobalRulestackOperations:
         :return: An instance of AsyncLROPoller that returns either
          CertificateObjectGlobalRulestackResource or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -349,7 +350,7 @@ class CertificateObjectGlobalRulestackOperations:
         :return: An instance of AsyncLROPoller that returns either
          CertificateObjectGlobalRulestackResource or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -369,8 +370,8 @@ class CertificateObjectGlobalRulestackOperations:
         :type name: str
         :param resource: Resource create parameters. Is either a
          CertificateObjectGlobalRulestackResource type or a IO type. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource or
-         IO
+        :type resource:
+         ~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -385,7 +386,7 @@ class CertificateObjectGlobalRulestackOperations:
         :return: An instance of AsyncLROPoller that returns either
          CertificateObjectGlobalRulestackResource or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.CertificateObjectGlobalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.CertificateObjectGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

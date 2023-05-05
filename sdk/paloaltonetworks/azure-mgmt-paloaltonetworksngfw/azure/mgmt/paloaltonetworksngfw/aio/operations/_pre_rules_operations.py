@@ -50,7 +50,7 @@ class PreRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.aio.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.aio.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`pre_rules` attribute.
     """
 
@@ -72,7 +72,7 @@ class PreRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PreRulesResource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.PreRulesResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -157,7 +157,7 @@ class PreRulesOperations:
         :type priority: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PreRulesResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.PreRulesResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -292,7 +292,7 @@ class PreRulesOperations:
         :param priority: Pre Rule priority. Required.
         :type priority: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.PreRulesResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -307,7 +307,7 @@ class PreRulesOperations:
         :return: An instance of AsyncLROPoller that returns either PreRulesResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.PreRulesResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -343,7 +343,7 @@ class PreRulesOperations:
         :return: An instance of AsyncLROPoller that returns either PreRulesResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.PreRulesResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -359,7 +359,7 @@ class PreRulesOperations:
         :type priority: str
         :param resource: Resource create parameters. Is either a PreRulesResource type or a IO type.
          Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.PreRulesResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -374,7 +374,7 @@ class PreRulesOperations:
         :return: An instance of AsyncLROPoller that returns either PreRulesResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.PreRulesResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.PreRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -555,7 +555,7 @@ class PreRulesOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCounter or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.RuleCounter
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.RuleCounter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -683,7 +683,7 @@ class PreRulesOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCounterReset or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.RuleCounterReset
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.RuleCounterReset
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {

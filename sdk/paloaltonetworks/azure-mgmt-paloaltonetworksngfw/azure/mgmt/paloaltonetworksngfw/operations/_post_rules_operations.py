@@ -253,7 +253,7 @@ class PostRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`post_rules` attribute.
     """
 
@@ -274,7 +274,7 @@ class PostRulesOperations:
         :type global_rulestack_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PostRulesResource or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworks.models.PostRulesResource]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -359,7 +359,7 @@ class PostRulesOperations:
         :type priority: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PostRulesResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.PostRulesResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -494,7 +494,7 @@ class PostRulesOperations:
         :param priority: Post Rule priority. Required.
         :type priority: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.PostRulesResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -508,7 +508,8 @@ class PostRulesOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either PostRulesResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.PostRulesResource]
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -543,7 +544,8 @@ class PostRulesOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either PostRulesResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.PostRulesResource]
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -559,7 +561,7 @@ class PostRulesOperations:
         :type priority: str
         :param resource: Resource create parameters. Is either a PostRulesResource type or a IO type.
          Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.PostRulesResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -573,7 +575,8 @@ class PostRulesOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either PostRulesResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworks.models.PostRulesResource]
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.paloaltonetworksngfw.models.PostRulesResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -752,7 +755,7 @@ class PostRulesOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCounter or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.RuleCounter
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.RuleCounter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -880,7 +883,7 @@ class PostRulesOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCounterReset or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.RuleCounterReset
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.RuleCounterReset
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
