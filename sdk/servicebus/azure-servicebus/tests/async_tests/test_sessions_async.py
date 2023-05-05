@@ -11,6 +11,7 @@ import os
 import pytest
 import time
 import uuid
+import pickle
 from datetime import datetime, timedelta
 
 from azure.servicebus import (
@@ -104,6 +105,10 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
 
             assert count == 3
 
+            with pytest.raises(ServiceBusError):
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=1)
+                async with receiver:
+                    pass
     
     @pytest.mark.asyncio
     @pytest.mark.liveTest

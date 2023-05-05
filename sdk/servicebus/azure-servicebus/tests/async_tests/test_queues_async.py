@@ -5,6 +5,7 @@
 #--------------------------------------------------------------------------
 
 import asyncio
+import json
 import logging
 import sys
 import os
@@ -12,6 +13,7 @@ import types
 import pytest
 import time
 import uuid
+import pickle
 from datetime import datetime, timedelta
 
 try:
@@ -366,6 +368,60 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with sender, receiver:
+                # send previously unpicklable message
+                msg = {
+                    "body":"W1tdLCB7ImlucHV0X2lkIjogNH0sIHsiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgImNoYWluIjogbnVsbCwgImNob3JkIjogbnVsbH1d",
+                    "content-encoding":"utf-8",
+                    "content-type":"application/json",
+                    "headers":{
+                        "lang":"py",
+                        "task":"tasks.example_task",
+                        "id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "shadow":None,
+                        "eta":"2021-10-07T02:30:23.764066+00:00",
+                        "expires":None,
+                        "group":None,
+                        "group_index":None,
+                        "retries":1,
+                        "timelimit":[
+                            None,
+                            None
+                        ],
+                        "root_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "parent_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "argsrepr":"()",
+                        "kwargsrepr":"{'input_id': 4}",
+                        "origin":"gen36@94713e01a9c0",
+                        "ignore_result":1,
+                        "x_correlator":"44a1978d-c869-4173-afe4-da741f0edfb9"
+                    },
+                    "properties":{
+                        "correlation_id":"7c66557d-e4bc-437f-b021-b66dcc39dfdf",
+                        "reply_to":"7b9a3672-2fed-3e9b-8bfd-23ae2397d9ad",
+                        "origin":"gen68@c33d4eef123a",
+                        "delivery_mode":2,
+                        "delivery_info":{
+                            "exchange":"",
+                            "routing_key":"celery_task_queue"
+                        },
+                        "priority":0,
+                        "body_encoding":"base64",
+                        "delivery_tag":"dc83ddb6-8cdc-4413-b88a-06c56cbde90d"
+                    }
+                }
+                await sender.send_messages(ServiceBusMessage(json.dumps(msg)))
+                messages = await receiver.receive_messages(max_wait_time=10, max_message_count=1)
+                if not uamqp_transport:
+                    pickled = pickle.loads(pickle.dumps(messages[0]))
+                    assert json.loads(str(pickled)) == json.loads(str(messages[0]))
+                    await receiver.complete_message(pickled)
+                else:
+                    with pytest.raises(TypeError):
+                        pickled = pickle.loads(pickle.dumps(messages[0]))
+                    await receiver.complete_message(messages[0])
     
     @pytest.mark.asyncio
     @pytest.mark.liveTest
@@ -1337,8 +1393,16 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_async_queue_message_receive_and_delete(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.Amqp
+        else:
+            transport_type = TransportType.Amqp
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            servicebus_namespace_connection_string,
+            transport_type=transport_type,
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("Receive and delete test")
@@ -1395,6 +1459,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     yield message
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # sending manually created message batch (with default pyamqp) should work for both uamqp/pyamqp
                 message = ServiceBusMessageBatch()
                 for each in message_content():
                     message.add_message(each)
@@ -1512,6 +1577,11 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     finally:
                         for message in messages:
                             await receiver.complete_message(message)
+                        if not uamqp_transport:
+                            pickled = pickle.loads(pickle.dumps(messages[0]))
+                            assert pickled.message_id == messages[0].message_id
+                            assert pickled.scheduled_enqueue_time_utc == messages[0].scheduled_enqueue_time_utc
+                            assert pickled.scheduled_enqueue_time_utc <= pickled.enqueued_time_utc.replace(microsecond=0)
                 else:
                     raise Exception("Failed to receive scheduled message.")
 
@@ -1904,8 +1974,13 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_async_queue_send_twice(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+        else:
+            transport_type = TransportType.AmqpOverWebsocket
         async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False,
+            transport_type=transport_type, uamqp_transport=uamqp_transport) as sb_client:
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("ServiceBusMessage")
@@ -1924,12 +1999,19 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 # then normal message resending
                 await sender.send_messages(message)
                 await sender.send_messages(message)
-                messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
-                    async for message in receiver:
-                        messages.append(message)
-                        await receiver.complete_message(message)
-                    assert len(messages) == 2
+                expected_count = 2
+                if not uamqp_transport:
+                    # pyamqp re-send received pickled message
+                    pickled_recvd = pickle.loads(pickle.dumps(messages[0]))
+                    await sender.send_messages(pickled_recvd)
+                    expected_count = 3
+            messages = []
+            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
+                # pyamqp receiver should be picklable
+                async for message in receiver:
+                    messages.append(message)
+                    await receiver.complete_message(message)
+                assert len(messages) == expected_count
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
@@ -2202,6 +2284,19 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     async for message in receiver:
                         received_messages.append(message)
                 assert len(received_messages) == 6
+
+                batch_message = await sender.create_message_batch(max_size_in_bytes=73)
+                for _ in range(2):
+                    try:
+                        batch_message.add_message(message_dict)
+                    except ValueError:
+                        break
+                await sender.send_messages(batch_message)
+                received_messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    async for message in receiver:
+                        received_messages.append(message)
+                assert len(received_messages) == 1
 
     
     @pytest.mark.asyncio

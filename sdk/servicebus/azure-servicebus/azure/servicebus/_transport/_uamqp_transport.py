@@ -777,7 +777,10 @@ try:
         ) -> "ServiceBusReceivedMessage":
             # pylint: disable=protected-access
             message = message_type(
-                message=received, receive_mode=receiver._receive_mode, receiver=receiver
+                message=received,
+                receive_mode=receiver._receive_mode,
+                receiver=receiver,
+                amqp_transport=receiver._amqp_transport
             )
             message._uamqp_message = received
             receiver._last_received_sequenced_number = message.sequence_number
@@ -1064,7 +1067,10 @@ try:
 
         @staticmethod
         def create_servicebus_exception(
-            logger: "Logger", exception: Exception
+            logger: "Logger",
+            exception: Exception,
+            *,
+            custom_endpoint_address: Optional[str] = None   # pylint: disable=unused-argument
         ) -> "ServiceBusError":
             if isinstance(exception, AMQPError):
                 try:

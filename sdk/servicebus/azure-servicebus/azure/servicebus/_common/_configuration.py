@@ -42,7 +42,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.keep_alive = kwargs.get("keep_alive", 30)
         self.timeout: float = kwargs.get("timeout", 60)
 
-        if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
+        if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
             if amqp_transport.KIND == "pyamqp":

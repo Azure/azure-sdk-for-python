@@ -1,15 +1,25 @@
 # Release History
 
-## 7.10.0b2 (Unreleased)
+## 7.10.0 (2023-05-09)
+
+Version 7.10.0 is our first stable release of the Azure Service Bus client library based on a pure Python implemented AMQP stack.
 
 ### Features Added
 
-### Breaking Changes
+- A new boolean keyword argument `uamqp_transport` has been added to sync and async `ServiceBusClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
 
 ### Bugs Fixed
 
+- Fixed a bug where sync and async `ServiceBusAdministrationClient` expected `credential` with `get_token` method returning `AccessToken.token` of type `bytes` and not `str`, now matching the documentation.
+- Fixed a bug where `raw_amqp_message.header` and `message.header` properties on `ServiceReceivedBusMessage` were returned with `durable`, `first_acquirer`, and `priority` properties set by default, rather than the values returned by the service.
+- Fixed a bug where `ServiceBusReceivedMessage` was not picklable (Issue #27947).
+
 ### Other Changes
 
+- The `message` attribute on `ServiceBus`/`ServiceBusMessageBatch`/`ServiceBusReceivedMessage`, which previously exposed the `uamqp.Message`/`uamqp.BatchMessage`, has been deprecated.
+  - `LegacyMessage`/`LegacyBatchMessage` objects returned by the `message` attribute on `ServiceBus`/`ServiceBusMessageBatch` have been introduced to help facilitate the transition.
+- Removed uAMQP from required dependencies.
+- Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
  - Updated tracing ([#29995](https://github.com/Azure/azure-sdk-for-python/pull/29995)):
    - Additional attributes added to existing spans:
      - `messaging.system` - messaging system (i.e., `servicebus`)
