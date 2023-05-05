@@ -153,7 +153,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -180,7 +180,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

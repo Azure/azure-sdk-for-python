@@ -153,7 +153,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools/sdk-default-pool?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools/sdk-default-pool?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -203,7 +203,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -257,7 +257,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools/sdk-default-pool/schedules/default?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools/sdk-default-pool/schedules/default?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -287,7 +287,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools/sdk-default-pool/schedules?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/pools/sdk-default-pool/schedules?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -321,7 +321,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/PythonDevBox?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/PythonDevBox?api-version=2023-04-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -449,7 +449,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/PythonDevBox?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/PythonDevBox?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -506,7 +506,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions/schedule-default?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions/schedule-default?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -539,7 +539,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/PythonDevBox/actions?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/PythonDevBox/actions?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -576,7 +576,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions:delay?api-version=2023-01-01-preview\u0026until=2023-05-06T05%3A00%3A00.000Z",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions:delay?api-version=2023-04-01\u0026until=2023-05-06T05%3A00%3A00.000Z",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -618,7 +618,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions/schedule-default:delay?api-version=2023-01-01-preview\u0026until=2023-05-06T06%3A00%3A00.000Z",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions/schedule-default:delay?api-version=2023-04-01\u0026until=2023-05-06T06%3A00%3A00.000Z",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -652,7 +652,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions/schedule-default:skip?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/actions/schedule-default:skip?api-version=2023-04-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -675,7 +675,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -732,7 +732,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -793,7 +793,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/devboxes?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/devboxes?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -854,7 +854,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/users/me/devboxes?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/users/me/devboxes?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -915,7 +915,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/remoteConnection?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox/remoteConnection?api-version=2023-04-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -943,7 +943,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox:restart?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox:restart?api-version=2023-04-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1036,7 +1036,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox:stop?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox:stop?api-version=2023-04-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1289,7 +1289,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox:start?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox:start?api-version=2023-04-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1574,7 +1574,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox?api-version=2023-01-01-preview",
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com/projects/proj-sdk-tests/users/me/devboxes/PythonDevBox?api-version=2023-04-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
