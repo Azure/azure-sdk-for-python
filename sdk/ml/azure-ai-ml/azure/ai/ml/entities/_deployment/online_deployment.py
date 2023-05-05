@@ -584,7 +584,9 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             endpoint_name=_parse_endpoint_name_from_deployment_id(resource.id),
             instance_count=resource.sku.capacity if resource.sku else None,
             instance_type=deployment.instance_type,
-            data_collector=DataCollector._from_rest_object(deployment.data_collector),
+            data_collector=DataCollector._from_rest_object(deployment.data_collector)
+            if hasattr(deployment, "data_collector") and deployment.data_collector 
+            else None,
         )
 
 
@@ -823,7 +825,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             else None,
             egress_public_network_access=deployment.egress_public_network_access,
             data_collector=DataCollector._from_rest_object(deployment.data_collector)
-            if deployment.data_collector
+            if hasattr(deployment, "data_collector") and deployment.data_collector
             else None,
         )
 
