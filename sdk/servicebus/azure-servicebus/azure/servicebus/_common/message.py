@@ -809,7 +809,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
-        if not issubclass(self._amqp_transport, PyamqpTransport):
+        if self._amqp_transport.KIND == "uamqp":
             self._uamqp_message = message
         self._message = message
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
