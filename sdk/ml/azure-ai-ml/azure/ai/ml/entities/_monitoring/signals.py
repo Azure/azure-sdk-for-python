@@ -244,24 +244,18 @@ class DataDriftSignal(DataSignal):
         )
 
     @classmethod
-    def _get_default_data_drift_signal(cls, target_data_id: str, baseline_data_id: str) -> "DataDriftSignal":
+    def _get_default_data_drift_signal(cls, production_data_id: str) -> "DataDriftSignal":
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData(
-                    input_dataset=Input(
-                        path=target_data_id,
-                        type="mltable"
-                    ),
+                    input_dataset=Input(path=production_data_id, type="mltable"),
                     dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                     input_dataset=None,
                 ),
                 lookback_period=60,
             ),
             baseline_dataset=MonitorInputData(
-                input_dataset=Input(
-                    path=baseline_data_id,
-                    type="mltable"
-                ),
+                input_dataset=Input(path=production_data_id, type="mltable"),
                 dataset_context=MonitorDatasetContext.MODEL_INPUTS,
             ),
             features=ALL_FEATURES,
@@ -332,12 +326,12 @@ class PredictionDriftSignal(MonitoringSignal):
         )
 
     @classmethod
-    def _get_default_prediction_drift_signal(cls, target_data_id: str, baseline_data_id: str) -> "PredictionDriftSignal":
+    def _get_default_prediction_drift_signal(cls, production_data_id: str) -> "PredictionDriftSignal":
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData(
                     input_dataset=Input(
-                        path=target_data_id,
+                        path=production_data_id,
                         type="uri_folder",
                     ),
                     dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
@@ -347,7 +341,7 @@ class PredictionDriftSignal(MonitoringSignal):
             ),
             baseline_dataset=MonitorInputData(
                 input_dataset=Input(
-                    path=baseline_data_id,
+                    path=production_data_id,
                     type="mltable",
                 ),
                 dataset_context=MonitorDatasetContext.MODEL_INPUTS,
@@ -426,12 +420,12 @@ class DataQualitySignal(DataSignal):
         )
 
     @classmethod
-    def _get_default_data_quality_signal(cls, target_data_id: str, baseline_data_id: str) -> "DataQualitySignal":
+    def _get_default_data_quality_signal(cls, production_data_id: str) -> "DataQualitySignal":
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData(
                     input_dataset=Input(
-                        path=target_data_id,
+                        path=production_data_id,
                         type="mltable",
                     ),
                     dataset_context=MonitorDatasetContext.MODEL_INPUTS,
@@ -441,7 +435,7 @@ class DataQualitySignal(DataSignal):
             ),
             baseline_dataset=MonitorInputData(
                 input_dataset=Input(
-                    path=baseline_data_id,
+                    path=production_data_id,
                     type="mltable",
                 ),
                 dataset_context=MonitorDatasetContext.MODEL_INPUTS,

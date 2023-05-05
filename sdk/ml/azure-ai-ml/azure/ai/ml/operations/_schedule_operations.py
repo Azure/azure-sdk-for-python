@@ -35,7 +35,7 @@ from ..constants._common import (
     LROConfigurations,
     NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
     AZUREML_RESOURCE_PROVIDER,
-    de
+    de,
 )
 from ..constants._monitoring import (
     MonitorSignalType,
@@ -94,7 +94,9 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     @property
     def _online_deployment_operations(self) -> OnlineDeploymentOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations))
+        return self._all_operations.get_operation(
+            AzureMLResourceType.ONLINE_DEPLOYMENT, lambda x: isinstance(x, OnlineDeploymentOperations)
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
@@ -306,7 +308,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                 AzureMLResourceType.MODEL,
                 register_asset=False,
             )
-        
+
         if not schedule.create_monitor.monitoring_signals:
             if target and target.endpoint_deployment_id:
                 online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
@@ -325,18 +327,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     register_asset=False,
                 )
 
-                # attempt to get user's email from token
-                default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
-                decode = jwt.decode(
-                    self._credential.get_token(*default_scopes).token,
-                    options={"verify_signature": False, "verify_aud": False},
-                )
-                user_email_address = decode.get("unique_name", None)
-
                 schedule._create_default_monitor_definition(
                     model_inputs_arm_id,
                     model_outputs_arm_id,
-                    user_email_address=user_email_address,
                 )
 
         # resolve input paths and preprocessing component ids
