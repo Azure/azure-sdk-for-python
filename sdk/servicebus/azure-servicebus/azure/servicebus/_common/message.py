@@ -238,7 +238,6 @@ class ServiceBusMessage(
         else:
             self._raw_amqp_message.annotations[key] = value
 
-    # TODO: test these
     @property
     def message(self) -> Union["Message", LegacyMessage]:
         """DEPRECATED: Get the underlying uamqp.Message or LegacyMessage.
@@ -954,7 +953,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
     @property # type: ignore[misc]  # TODO: ignoring error to copy over setter, since it's inherited
-    def message(self) -> LegacyMessage:
+    def message(self) -> Union["Message", LegacyMessage]:
         """DEPRECATED: Get the underlying LegacyMessage.
          This is deprecated and will be removed in a later release.
 
