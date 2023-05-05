@@ -451,13 +451,6 @@
                 "description": "Feature store online store connection target"
             }
         },
-        "workspace_connection_secret_expiry_time": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Secret expiry time for workspace connection, default to be 2 years from now if not set"
-            }
-        },
         "materialization_identity_client_id": {
             "type": "string",
             "defaultValue": "",
@@ -773,7 +766,7 @@
                             {
                                 "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), '')))]",
                                 "type": "connections",
-                                "apiVersion": "2023-04-01-preview",
+                                "apiVersion": "2022-05-01",
                                 "name": "[variables('offlineStoreConnectionName')]",
                                 "location": "[parameters('location')]",
                                 "dependsOn": [
@@ -786,7 +779,6 @@
                                     "category": "AzureDataLakeGen2",
                                     "target": "[parameters('offline_store_connection_target')]",
                                     "authType": "ManagedIdentity",
-                                    "expiryTime": "[parameters('workspace_connection_secret_expiry_time')]",
                                     "credentials": {
                                         "clientid": "[parameters('materialization_identity_client_id')]",
                                         "resourceid": "[parameters('materialization_identity_resource_id')]"
@@ -857,7 +849,7 @@
                             {
                                 "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), '')))]",
                                 "type": "connections",
-                                "apiVersion": "2023-04-01-preview",
+                                "apiVersion": "2022-05-01",
                                 "name": "[variables('onlineStoreConnectionName')]",
                                 "location": "[parameters('location')]",
                                 "dependsOn": [
@@ -870,7 +862,6 @@
                                     "category": "Redis",
                                     "target": "[parameters('online_store_connection_target')]",
                                     "authType": "ManagedIdentity",
-                                    "expiryTime": "[parameters('workspace_connection_secret_expiry_time')]",
                                     "credentials": {
                                         "clientid": "[parameters('materialization_identity_client_id')]",
                                         "resourceid": "[parameters('materialization_identity_resource_id')]"
