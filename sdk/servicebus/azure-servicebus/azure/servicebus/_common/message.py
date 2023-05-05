@@ -46,9 +46,9 @@ from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
     utc_now,
-    trace_message,
     transform_outbound_messages,
 )
+from .tracing import trace_message
 
 if TYPE_CHECKING:
     try:
@@ -60,7 +60,6 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from .._pyamqp.performatives import TransferFrame
-    from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )
@@ -659,6 +658,7 @@ class ServiceBusMessageBatch(object):
         **kwargs: Any
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
+        self._tracing_attributes: Dict[str, Union[str, int]] = kwargs.pop("tracing_attributes", {})
 
         self._max_size_in_bytes = max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
         self._message = self._amqp_transport.build_batch_message([])
@@ -676,15 +676,11 @@ class ServiceBusMessageBatch(object):
     def __len__(self) -> int:
         return self._count
 
-    def _from_list(self, messages: Iterable[ServiceBusMessage], parent_span: Optional["AbstractSpan"] = None) -> None:
+    def _from_list(self, messages: Iterable[ServiceBusMessage]) -> None:
         for message in messages:
-            self._add(message, parent_span)
+            self._add(message)
 
-    def _add(
-        self,
-        add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
-        parent_span: Optional["AbstractSpan"] = None
-    ) -> None:
+    def _add(self, add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage]) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         outgoing_sb_message = transform_outbound_messages(
             add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
@@ -694,8 +690,8 @@ class ServiceBusMessageBatch(object):
         outgoing_sb_message._message = trace_message(
             outgoing_sb_message._message,
             amqp_transport=self._amqp_transport,
-            parent_span=parent_span
-        )  # parent_span is e.g. if built as part of a send operation.
+            additional_attributes=self._tracing_attributes
+        )
         message_size = self._amqp_transport.get_message_encoded_size(
             outgoing_sb_message._message  # pylint: disable=protected-access
         )
