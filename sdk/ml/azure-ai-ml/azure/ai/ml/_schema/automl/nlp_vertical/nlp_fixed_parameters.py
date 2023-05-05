@@ -20,10 +20,7 @@ class NlpFixedParametersSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[obj.value for obj in NlpLearningRateScheduler],
         casing_transform=camel_to_snake,
     )
-    model_name = StringTransformedEnum(
-        allowed_values=[obj.value for obj in NlpModels],
-        casing_transform=snake_to_kebab,
-    )
+    model_name = fields.Str()
     number_of_epochs = fields.Int()
     training_batch_size = fields.Int()
     validation_batch_size = fields.Int()
