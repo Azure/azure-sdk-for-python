@@ -357,6 +357,11 @@ class AsyncTransport(
                     # http://bugs.python.org/issue10272
                     if isinstance(exc, SSLError) and "timed out" in str(exc):
                         raise socket.timeout()
+                    # errno 110 is equivalent to ETIMEDOUT on linux non blocking sockets, when a keep alive is set,
+                    # and is set when the connection to the server doesnt succeed
+                    # https://man7.org/linux/man-pages/man7/tcp.7.html.
+                    # This behavior is linux specific and only on async. sync Linux & async/sync Windows & Mac raised
+                    # ConnectionAborted or ConnectionReset errors which properly end up in a retry loop.
                     if exc.errno in [110]:
                         raise ConnectionAbortedError('The connection was closed abruptly.')
                     # ssl.sock.read may cause ENOENT if the
