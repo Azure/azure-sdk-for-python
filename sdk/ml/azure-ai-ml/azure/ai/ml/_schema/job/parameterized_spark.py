@@ -103,6 +103,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
     conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
@@ -128,7 +129,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     @validates("archives")
     def no_duplicate_archives(self, value):
         no_duplicates("archives", value)
-
+    
     @post_load
     def demote_conf_fields(self, data, **kwargs):
         conf = data["conf"] if "conf" in data else None
