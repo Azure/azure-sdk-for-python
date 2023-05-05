@@ -42,6 +42,14 @@ from azure.ai.ml.entities._monitoring.thresholds import (
 
 @experimental
 class DataSegment(RestTranslatableMixin):
+    """Monitor data segment
+
+    :param feature_name: The feature to segment the data on
+    :type feature_name: str
+    :param feature_values: A list of values the given segmented feature to filter on
+    :param feature_values: List[str]
+    """
+
     def __init__(
         self,
         *,
@@ -64,6 +72,12 @@ class DataSegment(RestTranslatableMixin):
 
 @experimental
 class MonitorFeatureFilter(RestTranslatableMixin):
+    """Monitor feature filter
+
+    :param top_n_feature_importance: The number of top features to include
+    :type top_n_feature_importance: int
+    """
+
     def __init__(
         self,
         *,
@@ -83,6 +97,14 @@ class MonitorFeatureFilter(RestTranslatableMixin):
 
 @experimental
 class TargetDataset:
+    """Monitor target dataset
+
+    :param dataset: Target dataset definition for monitor
+    :type dataset: ~azure.ai.ml.entities.MonitorInputData
+    :param lookback_period: The number of days a single monitor looks back over the target
+    :type lookback_period: int
+    """
+
     def __init__(
         self,
         *,
@@ -146,6 +168,28 @@ class DataSignal(MonitoringSignal):
 
 @experimental
 class DataDriftSignal(DataSignal):
+    """Data drift signal
+
+    :ivar type: The type of the signal
+    :vartype type: str
+    :param target_dataset: The data for which drift will be calculated
+    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :param baseline_dataset: The data to calculate drift against
+    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :param metric_thresholds :A list of metrics to calculate and their
+        associated thresholds
+    :type metric_thresholds: List[~azure.ai.ml.entities.DataDriftMetricThreshold]
+    :param alert_enabled: The current notification mode for this signal
+    :type alert_enabled: bool
+    :param data_segment: The data segment used for scoping on a subset of the
+        data population
+    :type data_segment: ~azure.ai.ml.entities.DataSegment
+    :param features: The feature filter identifying which feature(s) to
+        calculate drift over
+    :type features: Union[List[str], ~azure.ai.ml.entities.MonitorFeatureFilter
+        , Literal['all_features']]
+    """
+
     def __init__(
         self,
         *,
@@ -201,6 +245,21 @@ class DataDriftSignal(DataSignal):
 
 @experimental
 class PredictionDriftSignal(MonitoringSignal):
+    """Prediction drift signal
+
+    :ivar type: The type of the signal
+    :vartype type: str
+    :param target_dataset: The data for which drift will be calculated
+    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :param baseline_dataset: The data to calculate drift against
+    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :param metric_thresholds :A list of metrics to calculate and their
+        associated thresholds
+    :type metric_thresholds: List[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
+    :param alert_enabled: The current notification mode for this signal
+    :type alert_enabled: bool
+    """
+
     def __init__(
         self,
         *,
@@ -249,6 +308,25 @@ class PredictionDriftSignal(MonitoringSignal):
 
 @experimental
 class DataQualitySignal(DataSignal):
+    """Data quality signal
+
+    :ivar type: The type of the signal
+    :vartype type: str
+    :param target_dataset: The data for which quality will be calculated
+    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :param baseline_dataset: The data to calculate quality against
+    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :param metric_thresholds :A list of metrics to calculate and their
+        associated thresholds
+    :type metric_thresholds: List[~azure.ai.ml.entities.DataQualityMetricThreshold]
+    :param alert_enabled: The current notification mode for this signal
+    :type alert_enabled: bool
+    :param features: The feature filter identifying which feature(s) to
+        calculate quality over
+    :type features: Union[List[str], ~azure.ai.ml.entities.MonitorFeatureFilter
+        , Literal['all_features']]
+    """
+
     def __init__(
         self,
         *,
@@ -320,6 +398,24 @@ class ModelSignal(MonitoringSignal):
 
 @experimental
 class FeatureAttributionDriftSignal(ModelSignal):
+    """Feature attribution drift signal
+
+    :ivar type: The type of the signal
+    :vartype type: str
+    :param target_dataset: The data for which quality will be calculated
+    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :param baseline_dataset: The data to calculate quality against
+    :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :param metric_thresholds :A list of metrics to calculate and their
+        associated thresholds
+    :type metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
+    :param alert_enabled: The current notification mode for this signal
+    :type alert_enabled: bool
+    :param model_type: The type of task the model performs. Possible values
+        include: "classification", "regression"
+    :type model_type: str or ~azure.ai.ml.constants.MonitorModelType
+    """
+
     def __init__(
         self,
         *,
@@ -419,6 +515,23 @@ class ModelPerformanceSignal(ModelSignal):
 
 @experimental
 class CustomMonitoringSignal(RestTranslatableMixin):
+    """Feature attribution drift signal
+
+    :ivar type: The type of the signal
+    :vartype type: str
+    :param input_datasets: Diction of input datasets for monitoring.
+        Key is the component input port name, value is the data asset.
+    :type input_datasets: Dict[str, ~azure.ai.ml.entities.MonitorInputData]
+    :param metric_thresholds :A list of metrics to calculate and their
+        associated thresholds
+    :type metric_thresholds: List[~azure.ai.ml.entities.CustomMonitoringMetricThreshold]
+    :param alert_enabled: The current notification mode for this signal
+    :type alert_enabled: bool
+    :param component_id: ARM ID of the component resource used to
+        calculate the custom metrics.
+    :type component_id: str
+    """
+
     def __init__(
         self,
         *,
