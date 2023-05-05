@@ -34,12 +34,8 @@ from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
-from .._common.utils import (
-    utc_from_timestamp,
-    utc_now,
-    get_receive_links,
-    receive_trace_context_manager
-)
+from .._common.utils import utc_from_timestamp, utc_now
+from .._common.tracing import get_receive_links, receive_trace_context_manager
 from .._common.constants import (
     PYAMQP_LIBRARY,
     DATETIMEOFFSET_EPOCH,

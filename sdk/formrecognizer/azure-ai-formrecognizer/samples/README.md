@@ -41,6 +41,11 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_get_words_on_document_line.py][sample_get_words_on_document_line] and [sample_get_words_on_document_line_async.py][sample_get_words_on_document_line_async]|Get the words in a DocumentLine|
 |[sample_convert_to_and_from_dict.py][sample_convert_to_and_from_dict_v3_2] and [sample_convert_to_and_from_dict_async.py][sample_convert_to_and_from_dict_async_v3_2]|Convert model types to a dictionary that can be used to create JSON content, then convert the same dictionary back to the original model type|
 |[sample_get_elements_with_spans.py][sample_get_elements_with_spans] and [sample_get_elements_with_spans_async.py][sample_get_elements_with_spans_async]|Get elements, such as words, lines, and styles, in the result of an analyze operation by searching with spans|
+|[sample_classify_document.py][sample_classify_document] and [sample_classify_document_async.py][sample_classify_document_async]|Classify documents with a custom classification model.|
+|[sample_classify_document_from_url.py][sample_classify_document_from_url] and [sample_classify_document_from_url_async.py][sample_classify_document_from_url_async]|Classify documents from URL with a custom classification model.|
+|[sample_build_classifier.py][sample_build_classifier] and [sample_build_classifier_async.py][sample_build_classifier_async]|Build a custom document classifier.|
+|[sample_manage_classifiers.py][sample_manage_classifiers] and [sample_manage_classifiers_async.py][sample_manage_classifiers_async]|Manage custom document classification models.|
+
 
 ## Samples for client library versions 3.1.X
 
@@ -79,7 +84,7 @@ Please see the samples [here][v3.0.0-samples-tag].
 1. Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer
+pip install azure-ai-formrecognizer --pre
 ```
 
 2. Clone or download this sample repository
@@ -148,6 +153,15 @@ what you can do with the Azure Form Recognizer client library.
 [sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_tax_us_w2_async.py
 [sample_get_elements_with_spans]: https://aka.ms/azsdk/python/formrecognizer/spansamplesync
 [sample_get_elements_with_spans_async]: https://aka.ms/azsdk/python/formrecognizer/spansampleasync
+[sample_classify_document]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document.py
+[sample_classify_document_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_classify_document_async.py
+[sample_classify_document_from_url]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document_from_url.py
+[sample_classify_document_from_url_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_classify_document_from_url_async.py
+[sample_build_classifier]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_build_classifier.py
+[sample_build_classifier_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_build_classifier_async.py
+[sample_manage_classifiers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_manage_classifiers.py
+[sample_manage_classifiers_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_manage_classifiers_async.py
+
 
 <!-- V3.1 links -->
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_authentication_v3_1.py

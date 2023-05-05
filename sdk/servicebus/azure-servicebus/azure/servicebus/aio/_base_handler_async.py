@@ -388,11 +388,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    def _add_span_request_attributes(self, span):
-        return BaseHandlerSync._add_span_request_attributes(  # pylint: disable=protected-access
-            self, span
-        )
-
     async def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")
 

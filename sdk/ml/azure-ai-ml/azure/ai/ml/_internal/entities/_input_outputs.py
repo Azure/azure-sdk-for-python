@@ -114,6 +114,7 @@ class InternalInput(Input):
 
 def _map_v1_io_type(output_type: str) -> str:
     """Map v1 IO type to v2."""
+
     # TODO: put it in a common place
     def _map_primitive_type(_type):
         """Convert double and float to number type."""

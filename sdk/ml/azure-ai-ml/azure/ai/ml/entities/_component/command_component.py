@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
+from contextlib import contextmanager
 
 from marshmallow import Schema
 
@@ -16,11 +17,16 @@ from azure.ai.ml.entities._job.distribution import (
     MpiDistribution,
     PyTorchDistribution,
     TensorFlowDistribution,
+    RayDistribution,
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
+from .code import ComponentIgnoreFile
+from ._additional_includes import AdditionalIncludes
+
+from ...entities._assets import Code
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
@@ -51,7 +57,7 @@ class CommandComponent(Component, ParameterizedCommand):
     :param environment: Environment that component will run in.
     :type environment: Union[Environment, str]
     :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
+    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
     :param resources: Compute Resource configuration for the component.
     :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param inputs: Inputs of the component.
@@ -62,6 +68,8 @@ class CommandComponent(Component, ParameterizedCommand):
     :type instance_count: int
     :param is_deterministic: Whether the command component is deterministic.
     :type is_deterministic: bool
+    :param additional_includes: A list of shared additional files to be included in the component.
+    :type additional_includes: list
     :param properties: Properties of the component. Contents inside will pass through to backend as a dictionary.
     :type properties: dict
 
@@ -80,12 +88,15 @@ class CommandComponent(Component, ParameterizedCommand):
         command: Optional[str] = None,
         code: Optional[str] = None,
         environment: Optional[Union[str, Environment]] = None,
-        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
+        distribution: Optional[
+            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+        ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
+        additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
         **kwargs,
     ):
@@ -133,6 +144,22 @@ class CommandComponent(Component, ParameterizedCommand):
                 error_category=ErrorCategory.USER_ERROR,
             )
         self.instance_count = instance_count
+        self.additional_includes = additional_includes or []
+        self.__additional_includes_obj = None
+
+    @property
+    def _additional_includes_obj(self):
+        if (
+            self.__additional_includes_obj is None
+            and self.additional_includes
+            and isinstance(self.additional_includes, list)
+        ):
+            # use property as `self._source_path` is set after __init__ now
+            # `self._source_path` is not None when enter this function
+            self.__additional_includes_obj = AdditionalIncludes(
+                code_path=self.code, yaml_path=self._source_path, additional_includes=self.additional_includes
+            )
+        return self.__additional_includes_obj
 
     @property
     def instance_count(self) -> int:
@@ -187,6 +214,8 @@ class CommandComponent(Component, ParameterizedCommand):
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
+        if self._additional_includes_obj and self._additional_includes_obj.with_includes:
+            validation_result.merge_with(self._additional_includes_obj._validate())
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
@@ -236,3 +265,46 @@ class CommandComponent(Component, ParameterizedCommand):
             return self._to_yaml()
         except BaseException:  # pylint: disable=broad-except
             return super(CommandComponent, self).__str__()
+
+    @contextmanager
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
+        """
+        # if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
+
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            yield code
+            return
+
+        if self._additional_includes_obj is not None:
+            self._additional_includes_obj.resolve()
+
+            # use absolute path in case temp folder & work dir are in different drive
+            tmp_code_dir = (
+                self._additional_includes_obj.code.absolute()
+                if self._additional_includes_obj.code
+                else self._additional_includes_obj.yaml_path.absolute()
+            )
+            rebased_ignore_file = ComponentIgnoreFile(
+                tmp_code_dir,
+            )
+
+            yield Code(
+                base_path=self._base_path,
+                path=tmp_code_dir,
+                ignore_file=rebased_ignore_file,
+            )
+
+            self._additional_includes_obj.cleanup()
+        elif self.code is not None:
+            yield code
+        else:
+            yield None

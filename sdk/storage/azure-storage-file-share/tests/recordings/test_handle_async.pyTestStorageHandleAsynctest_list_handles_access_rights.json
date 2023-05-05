@@ -1,0 +1,25 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/testshare/testdir/testfile.txt?comp=listhandles",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-file-share/12.13.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 24 Mar 2023 22:32:30 GMT",
+        "x-ms-version": "2023-01-03"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Fri, 24 Mar 2023 22:32:22 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2023-01-03"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults\u003E\u003CEntries\u003E\u003CHandle\u003E\u003CHandleId\u003E262151\u003C/HandleId\u003E\u003CPath\u003Etestdir/testfile.txt\u003C/Path\u003E\u003CFileId\u003E13835093239654252544\u003C/FileId\u003E\u003CParentId\u003E13835128424026341376\u003C/ParentId\u003E\u003CSessionId\u003E9246039582732976141\u003C/SessionId\u003E\u003CAccessRightList\u003E\u003CAccessRight\u003EWrite\u003C/AccessRight\u003E\u003C/AccessRightList\u003E\u003CClientIp\u003E0.0.0.0:0\u003C/ClientIp\u003E\u003COpenTime\u003EFri, 24 Mar 2023 22:22:03 GMT\u003C/OpenTime\u003E\u003C/Handle\u003E\u003C/Entries\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    }
+  ],
+  "Variables": {}
+}

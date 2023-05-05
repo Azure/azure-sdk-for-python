@@ -167,6 +167,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--retry_backoff_max", type=float, default=120)
         self.argument_parser.add_argument("--ignore_send_failure", help="ignore sending failures", action="store_true")
         self.argument_parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
+        self.argument_parser.add_argument("--debug_level", help="Flag for setting a debug level, can be Info, Debug, Warning, Error or Critical", type=str, default="Error")
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
@@ -176,6 +177,7 @@ class StressTestRunner(object):
 
     def create_client(self, client_class, is_async=False):
 
+        self.debug_level = getattr(logging, self.args.debug_level.upper(), None)
         transport_type = TransportType.Amqp if self.args.transport_type == 0 else TransportType.AmqpOverWebsocket
         http_proxy = None
         retry_options = {
@@ -296,7 +298,7 @@ class StressTestRunner(object):
 
             method_name = self.args.method
             logger = get_logger(self.args.log_filename, method_name,
-                                level=logging.INFO, print_console=self.args.print_console)
+                                level=self.debug_level, print_console=self.args.print_console)
             test_method = globals()[method_name]
             self.running = True
 
@@ -397,7 +399,7 @@ class StressTestRunner(object):
 
             method_name = self.args.method
             logger = get_logger(self.args.log_filename, method_name,
-                                level=logging.INFO, print_console=self.args.print_console)
+                                level=self.debug_level, print_console=self.args.print_console)
             test_method = globals()[method_name]
             self.running = True
 

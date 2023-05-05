@@ -18,6 +18,7 @@ from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LR
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
@@ -165,7 +166,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             if deployment.model
             else None
         )
-    if isinstance(deployment, BatchDeployment) and deployment.compute:
+    if isinstance(deployment, (BatchDeployment, ModelBatchDeployment)) and deployment.compute:
         deployment.compute = orchestrators.get_asset_arm_id(
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
         )
@@ -180,7 +181,7 @@ def validate_scoring_script(deployment):
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)
-            except Exception as err:  # pylint: disable=broad-except
+            except SyntaxError as err:
                 err.filename = err.filename.split("/")[-1]
                 msg = (
                     f"Failed to submit deployment {deployment.name} due to syntax errors "  # pylint: disable=no-member
@@ -203,9 +204,7 @@ def validate_scoring_script(deployment):
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.CANNOT_PARSE,
                 )
-    except Exception as err:
-        if isinstance(err, ValidationException):
-            raise err
+    except OSError as err:
         raise MlException(
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",

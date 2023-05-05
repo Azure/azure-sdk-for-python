@@ -5,9 +5,9 @@
 import yaml
 import pytest
 
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 
-from azure.ai.ml.entities._load_functions import _load_feature_store_entity
+from azure.ai.ml.entities._load_functions import load_feature_store_entity
 
 
 @pytest.mark.unittest
@@ -18,7 +18,7 @@ class TestFeatureStoreEntitySchema:
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            feature_store_entity: _FeatureStoreEntity = _load_feature_store_entity(source=test_path)
+            feature_store_entity: FeatureStoreEntity = load_feature_store_entity(source=test_path)
         assert feature_store_entity.name == target["name"]
         assert feature_store_entity.version == target["version"]
         assert feature_store_entity.description == target["description"]

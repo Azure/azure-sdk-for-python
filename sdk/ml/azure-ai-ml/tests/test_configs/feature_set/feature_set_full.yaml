@@ -2,7 +2,7 @@ name: test-featureset
 version: "1"
 entities: ["azureml:test:1", "azureml:test:2"]
 specification:
-  path: local/
+  path: "./tests/test_configs/feature_set"
 stage: registered
 description: Test featureset
 materialization_settings: 
