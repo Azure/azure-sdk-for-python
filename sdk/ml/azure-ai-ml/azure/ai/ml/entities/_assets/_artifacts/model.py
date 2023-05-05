@@ -90,7 +90,7 @@ class Model(Artifact):
         self.flavors = dict(flavors) if flavors else None
         self._arm_type = ArmConstants.MODEL_VERSION_TYPE
         self.type = type or AssetTypes.CUSTOM_MODEL
-        self.stage = str(stage) if stage else None
+        self.stage = stage
         if self._is_anonymous and self.path:
             _ignore_file = get_ignore_file(self.path)
             _upload_hash = get_object_hash(self.path, _ignore_file)
