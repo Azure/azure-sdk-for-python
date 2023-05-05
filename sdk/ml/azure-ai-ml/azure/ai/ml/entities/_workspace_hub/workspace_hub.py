@@ -102,6 +102,7 @@ class WorkspaceHub(Workspace):
         self.key_vaults = key_vaults
         self.container_registries = container_registries
         self.existing_workspaces = existing_workspaces
+        self.associated_workspaces = None
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "WorkspaceHub":
@@ -109,7 +110,7 @@ class WorkspaceHub(Workspace):
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
-        return WorkspaceHub(
+        workspacehub_object =  WorkspaceHub(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
@@ -128,6 +129,8 @@ class WorkspaceHub(Workspace):
             workspace_id=rest_obj.workspace_id,
             id=rest_obj.id,
         )
+        workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)
+        return workspacehub_object
 
     @classmethod
     def _load(
@@ -145,6 +148,9 @@ class WorkspaceHub(Workspace):
         }
         loaded_schema = load_from_dict(WorkspaceHubSchema, data, context, **kwargs)
         return WorkspaceHub(**loaded_schema)
+    
+    def set_associated_workspaces(self, value):
+        self.associated_workspaces = value
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
