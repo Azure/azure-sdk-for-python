@@ -103,6 +103,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
     conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
