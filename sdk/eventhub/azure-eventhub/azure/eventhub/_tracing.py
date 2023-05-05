@@ -41,6 +41,12 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+TRACE_DIAGNOSTIC_ID_PROPERTY = b"Diagnostic-Id"
+TRACE_PARENT_PROPERTY = b"traceparent"
+TRACE_STATE_PROPERTY = b"tracestate"
+TRACE_PROPERTY_ENCODING = "ascii"
+
+
 class TraceAttributes:
     TRACE_NAMESPACE_ATTRIBUTE = "az.namespace"
     TRACE_NAMESPACE = "Microsoft.EventHub"
@@ -50,7 +56,6 @@ class TraceAttributes:
 
     TRACE_NET_PEER_NAME_ATTRIBUTE = "net.peer.name"
     TRACE_MESSAGING_DESTINATION_ATTRIBUTE = "messaging.destination.name"
-    TRACE_MESSAGING_SOURCE_ATTRIBUTE = "messaging.source.name"
     TRACE_MESSAGING_OPERATION_ATTRIBUTE = "messaging.operation"
     TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE = "messaging.batch.message_count"
 
@@ -131,19 +136,19 @@ def trace_message(
                 if "traceparent" in headers:
                     message = amqp_transport.update_message_app_properties(
                         message,
-                        b"Diagnostic-Id",
-                        headers["traceparent"].encode("ascii")
+                        TRACE_DIAGNOSTIC_ID_PROPERTY,
+                        headers["traceparent"]
                     )
                     message = amqp_transport.update_message_app_properties(
                         message,
-                        b"traceparent",
-                        headers["traceparent"].encode("ascii")
+                        TRACE_PARENT_PROPERTY,
+                        headers["traceparent"]
                     )
                 if "tracestate" in headers:
                     message = amqp_transport.update_message_app_properties(
                         message,
-                        b"tracestate",
-                        headers["tracestate"].encode("ascii")
+                        TRACE_STATE_PROPERTY,
+                        headers["tracestate"]
                     )
 
                 message_span.add_attribute(
@@ -175,17 +180,21 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
         for event in trace_events:
             if event.properties:
                 headers = {}
-                traceparent = event.properties.get(b"traceparent", b"").decode("ascii")
-
+                traceparent = (event.properties.get(TRACE_PARENT_PROPERTY, b"") or
+                               event.properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
+                if hasattr(traceparent, "decode"):
+                    traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
                     headers["traceparent"] = traceparent
 
-                tracestate = event.properties.get(b"tracestate", b"").decode("ascii")
+                tracestate = event.properties.get(TRACE_STATE_PROPERTY, b"")
+                if hasattr(tracestate, "decode"):
+                    tracestate = tracestate.decode(TRACE_PROPERTY_ENCODING)
                 if tracestate:
                     headers["tracestate"] = tracestate
 
                 enqueued_time = event.system_properties.get(PROP_TIMESTAMP)
-                attributes = {'enqueued_time': enqueued_time} if enqueued_time else None
+                attributes = {'enqueuedTime': enqueued_time} if enqueued_time else None
                 links.append(Link(headers, attributes=attributes))
     except AttributeError:
         pass
@@ -216,11 +225,16 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
     headers = {}
     try:
         if message.application_properties:
-            traceparent = message.application_properties.get(b"traceparent", b"").decode("ascii")
+            traceparent = (message.application_properties.get(TRACE_PARENT_PROPERTY, b"") or
+                           message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
+            if hasattr(traceparent, "decode"):
+                traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
             if traceparent:
                 headers["traceparent"] = traceparent
 
-            tracestate = message.application_properties.get(b"tracestate", b"").decode("ascii")
+            tracestate = message.application_properties.get(TRACE_STATE_PROPERTY, b"")
+            if hasattr(tracestate, "decode"):
+                    tracestate = tracestate.decode(TRACE_PROPERTY_ENCODING)
             if tracestate:
                 headers["tracestate"] = tracestate
     except AttributeError:
@@ -243,21 +257,14 @@ def add_span_attributes(
     if message_count > 1:
         span.add_attribute(TraceAttributes.TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE, message_count)
 
-    if operation_type == TraceOperationTypes.PUBLISH:
+    if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.PROCESS):
         # Maintain legacy attributes for backwards compatibility.
         span.add_attribute(TraceAttributes.LEGACY_TRACE_COMPONENT_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
         if client:
             span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access
             span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)  # pylint: disable=protected-access
 
-    elif operation_type == TraceOperationTypes.PROCESS:
-        # Maintain legacy attributes for backwards compatibility.
-        span.add_attribute(TraceAttributes.LEGACY_TRACE_COMPONENT_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
-        if client:
-            span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)  # pylint: disable=protected-access
-            span.add_attribute(TraceAttributes.TRACE_MESSAGING_SOURCE_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access
-
     elif operation_type == TraceOperationTypes.RECEIVE:
         if client:
             span.add_attribute(TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, client._address.hostname)  # pylint: disable=protected-access
-            span.add_attribute(TraceAttributes.TRACE_MESSAGING_SOURCE_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access
+            span.add_attribute(TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access

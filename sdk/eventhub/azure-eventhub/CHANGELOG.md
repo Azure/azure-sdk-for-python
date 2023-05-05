@@ -20,8 +20,8 @@
      - `messaging.system` - messaging system (i.e., `eventhubs`)
      - `messaging.operation` - type of operation (i.e., `publish`, `receive`, or `process`)
      - `messaging.batch.message_count` - number of messages sent, received, or processed (if more than one)
-     - `messaging.source.name` added to process spans in place of `message_bus.destination`
    - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
+   - Message application properties will now contain values for `traceparent` (and `tracestate` if applicable)
 
 ## 5.11.2 (2023-03-20)
 
