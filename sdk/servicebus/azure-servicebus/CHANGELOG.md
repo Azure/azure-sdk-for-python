@@ -10,6 +10,16 @@
 
 ### Other Changes
 
+ - Updated tracing ([#29995](https://github.com/Azure/azure-sdk-for-python/pull/29995)):
+   - Additional attributes added to existing spans:
+     - `messaging.system` - messaging system (i.e., `servicebus`)
+     - `messaging.operation` - type of operation (i.e., `publish`, `receive`, or `settle`)
+     - `messaging.batch.message_count` - number of messages sent or received (if more than one)
+   - A span will now be created upon calls to the service that settle messages.
+     - The span name will contain the settlement operation (e.g., `ServiceBus.complete`)
+     - The span will contain `az.namespace`, `messaging.destination.name`, `net.peer.name`, `messaging.system`, and `messaging.operation` attributes.
+   - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
+
 ## 7.10.0b1 (2023-04-13)
 
 ### Features Added
