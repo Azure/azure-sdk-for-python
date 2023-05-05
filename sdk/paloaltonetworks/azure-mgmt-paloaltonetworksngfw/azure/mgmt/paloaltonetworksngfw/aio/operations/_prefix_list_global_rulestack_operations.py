@@ -47,7 +47,7 @@ class PrefixListGlobalRulestackOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.aio.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.aio.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`prefix_list_global_rulestack` attribute.
     """
 
@@ -72,7 +72,7 @@ class PrefixListGlobalRulestackOperations:
         :return: An iterator like instance of either PrefixListGlobalRulestackResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -159,7 +159,7 @@ class PrefixListGlobalRulestackOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrefixListGlobalRulestackResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -298,7 +298,7 @@ class PrefixListGlobalRulestackOperations:
         :param name: Local Rule priority. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -313,7 +313,7 @@ class PrefixListGlobalRulestackOperations:
         :return: An instance of AsyncLROPoller that returns either PrefixListGlobalRulestackResource or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -349,7 +349,7 @@ class PrefixListGlobalRulestackOperations:
         :return: An instance of AsyncLROPoller that returns either PrefixListGlobalRulestackResource or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -369,7 +369,7 @@ class PrefixListGlobalRulestackOperations:
         :type name: str
         :param resource: Resource create parameters. Is either a PrefixListGlobalRulestackResource type
          or a IO type. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -384,7 +384,7 @@ class PrefixListGlobalRulestackOperations:
         :return: An instance of AsyncLROPoller that returns either PrefixListGlobalRulestackResource or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.PrefixListGlobalRulestackResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.PrefixListGlobalRulestackResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

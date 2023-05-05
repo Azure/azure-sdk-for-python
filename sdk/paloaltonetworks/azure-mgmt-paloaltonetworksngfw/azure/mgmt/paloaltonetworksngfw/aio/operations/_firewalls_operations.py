@@ -53,7 +53,7 @@ class FirewallsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.paloaltonetworks.aio.PaloAltoNetworksNgfwMgmtClient`'s
+        :class:`~azure.mgmt.paloaltonetworksngfw.aio.PaloAltoNetworksNgfwMgmtClient`'s
         :attr:`firewalls` attribute.
     """
 
@@ -73,7 +73,7 @@ class FirewallsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FirewallResource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -162,7 +162,7 @@ class FirewallsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FirewallResource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -251,7 +251,7 @@ class FirewallsOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.FirewallResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -389,7 +389,7 @@ class FirewallsOperations:
         :param firewall_name: Firewall resource name. Required.
         :type firewall_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.FirewallResource
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -404,7 +404,7 @@ class FirewallsOperations:
         :return: An instance of AsyncLROPoller that returns either FirewallResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -441,7 +441,7 @@ class FirewallsOperations:
         :return: An instance of AsyncLROPoller that returns either FirewallResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -458,7 +458,7 @@ class FirewallsOperations:
         :type firewall_name: str
         :param resource: Resource create parameters. Is either a FirewallResource type or a IO type.
          Required.
-        :type resource: ~azure.mgmt.paloaltonetworks.models.FirewallResource or IO
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -473,7 +473,7 @@ class FirewallsOperations:
         :return: An instance of AsyncLROPoller that returns either FirewallResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworks.models.FirewallResource]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.paloaltonetworksngfw.models.FirewallResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -545,13 +545,13 @@ class FirewallsOperations:
         :param firewall_name: Firewall resource name. Required.
         :type firewall_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.paloaltonetworks.models.FirewallResourceUpdate
+        :type properties: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.FirewallResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -579,7 +579,7 @@ class FirewallsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.FirewallResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -600,13 +600,13 @@ class FirewallsOperations:
         :type firewall_name: str
         :param properties: The resource properties to be updated. Is either a FirewallResourceUpdate
          type or a IO type. Required.
-        :type properties: ~azure.mgmt.paloaltonetworks.models.FirewallResourceUpdate or IO
+        :type properties: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResourceUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallResource or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.FirewallResource
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.FirewallResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -798,7 +798,7 @@ class FirewallsOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GlobalRulestackInfo or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.GlobalRulestackInfo
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.GlobalRulestackInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -861,7 +861,7 @@ class FirewallsOperations:
         :type firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogSettings or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.LogSettings
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogSettings
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -928,7 +928,7 @@ class FirewallsOperations:
         :type email: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportInfo or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworks.models.SupportInfo
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.SupportInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -999,7 +999,7 @@ class FirewallsOperations:
         :param firewall_name: Firewall resource name. Required.
         :type firewall_name: str
         :param log_settings: Default value is None.
-        :type log_settings: ~azure.mgmt.paloaltonetworks.models.LogSettings
+        :type log_settings: ~azure.mgmt.paloaltonetworksngfw.models.LogSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1053,7 +1053,7 @@ class FirewallsOperations:
         :param firewall_name: Firewall resource name. Required.
         :type firewall_name: str
         :param log_settings: Is either a LogSettings type or a IO type. Default value is None.
-        :type log_settings: ~azure.mgmt.paloaltonetworks.models.LogSettings or IO
+        :type log_settings: ~azure.mgmt.paloaltonetworksngfw.models.LogSettings or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
