@@ -18,38 +18,50 @@ from azure.communication.rooms import (
 from acs_rooms_test_case import ACSRoomsTestCase
 from _shared.utils import get_http_logging_policy
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import is_live, add_general_regex_sanitizer
+
 
 @pytest.mark.asyncio
 class TestRoomsClientAsync(ACSRoomsTestCase):
     def setup_method(self):
         super().setUp()
         # create multiple users users
-        self.identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str)
+        if is_live():
+            self.identity_client = CommunicationIdentityClient.from_connection_string(
+                self.connection_str)
 
-        self.id1 = self.identity_client.create_user().properties["id"]
-        self.id2 = self.identity_client.create_user().properties["id"]
-        self.id3 = self.identity_client.create_user().properties["id"]
-        self.id4 = self.identity_client.create_user().properties["id"]
+            self.id1 = self.identity_client.create_user().properties["id"]
+            self.id2 = self.identity_client.create_user().properties["id"]
+            self.id3 = self.identity_client.create_user().properties["id"]
+            self.id4 = self.identity_client.create_user().properties["id"]
+            add_general_regex_sanitizer(regex=self.id1, value='8:acs:sanitized1')
+            add_general_regex_sanitizer(regex=self.id2, value='8:acs:sanitized2')
+            add_general_regex_sanitizer(regex=self.id3, value='8:acs:sanitized3')
+            add_general_regex_sanitizer(regex=self.id4, value='8:acs:sanitized4')
+        else:
+            self.id1 = "8:acs:sanitized1"
+            self.id2 = "8:acs:sanitized2"
+            self.id3 = "8:acs:sanitized3"
+            self.id4 = "8:acs:sanitized4"
 
-        self.users = {
-            "john" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.PRESENTER
-            ),
-            "fred" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.CONSUMER
-            ),
-            "chris" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
-            )
-        }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
+        self.users = {
+                "john" : RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id1),
+                    role=ParticipantRole.PRESENTER
+                ),
+                "fred" : RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id2),
+                    role=ParticipantRole.CONSUMER
+                ),
+                "chris" : RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier(self.id3),
+                    role=ParticipantRole.ATTENDEE
+                )
+            }
 
     @recorded_by_proxy_async
     async def test_create_room_no_attributes_async(self):

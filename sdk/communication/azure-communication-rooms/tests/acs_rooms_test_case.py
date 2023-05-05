@@ -17,3 +17,5 @@ class ACSRoomsTestCase(AzureRecordedTestCase):
         else:
             self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
             self.endpoint, _ = parse_connection_str(self.connection_str)
+            self._resource_name = self.endpoint.split(".")[0]
+

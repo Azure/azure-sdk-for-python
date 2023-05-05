@@ -18,19 +18,29 @@ from azure.communication.rooms import (
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from _shared.utils import get_http_logging_policy
 from acs_rooms_test_case import ACSRoomsTestCase
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import is_live, add_general_regex_sanitizer, recorded_by_proxy
 
 class TestRoomsClient(ACSRoomsTestCase):
     def setup_method(self):
         super().setUp()
         # create multiple users users
-        self.identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str)
+        if is_live():
+            self.identity_client = CommunicationIdentityClient.from_connection_string(
+                self.connection_str)
 
-        self.id1 = self.identity_client.create_user().properties["id"]
-        self.id2 = self.identity_client.create_user().properties["id"]
-        self.id3 = self.identity_client.create_user().properties["id"]
-        self.id4 = self.identity_client.create_user().properties["id"]
+            self.id1 = self.identity_client.create_user().properties["id"]
+            self.id2 = self.identity_client.create_user().properties["id"]
+            self.id3 = self.identity_client.create_user().properties["id"]
+            self.id4 = self.identity_client.create_user().properties["id"]
+            add_general_regex_sanitizer(regex=self.id1, value='8:acs:sanitized1')
+            add_general_regex_sanitizer(regex=self.id2, value='8:acs:sanitized2')
+            add_general_regex_sanitizer(regex=self.id3, value='8:acs:sanitized3')
+            add_general_regex_sanitizer(regex=self.id4, value='8:acs:sanitized4')
+        else:
+            self.id1 = "8:acs:sanitized1"
+            self.id2 = "8:acs:sanitized2"
+            self.id3 = "8:acs:sanitized3"
+            self.id4 = "8:acs:sanitized4"
 
         self.users = {
             "john" : RoomParticipant(
@@ -50,14 +60,6 @@ class TestRoomsClient(ACSRoomsTestCase):
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-
-    def tearDown(self):
-        super(TestRoomsClient, self).tearDown()
-
-        # delete created users and chat threads
-        if not self.is_playback():
-            for user in self.users.values():
-                self.identity_client.delete_user(user.communication_identifier)
 
     @recorded_by_proxy
     def test_create_room_no_attributes(self):
@@ -158,24 +160,6 @@ class TestRoomsClient(ACSRoomsTestCase):
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
         self.rooms_client.delete_room(room_id=create_response.id)
-
-    @recorded_by_proxy
-    def test_update_room_exceed_max_timerange(self):
-        # room with no attributes
-        create_response = self.rooms_client.create_room()
-
-        # update room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until =  datetime.now() + timedelta(weeks=29)
-
-        with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
-
-        # delete created room
-        self.rooms_client.delete_room(room_id=create_response.id)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
@@ -355,6 +339,23 @@ class TestRoomsClient(ACSRoomsTestCase):
         self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
+    def test_update_room_exceed_max_timerange(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # update room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=29)
+
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+         # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
     def test_add_or_update_participants_incorrectMri(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
@@ -372,6 +373,8 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
     def test_update_room_wrongRoleName(self):
@@ -390,6 +393,8 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
     def test_update_room_incorrect_roomId(self):
