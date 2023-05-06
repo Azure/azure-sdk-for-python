@@ -19,7 +19,7 @@ _BRANCH_ATTENTION = 'base-branch-attention'
 _MultiAPI = 'MultiAPI'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
-_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime"]
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI"]
 
 
 class IssueProcessPython(IssueProcess):
