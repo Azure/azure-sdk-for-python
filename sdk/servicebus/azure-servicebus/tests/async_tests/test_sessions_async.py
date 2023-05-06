@@ -956,6 +956,23 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 assert state == b'first_state'
             assert count == 3
 
+            session_id = str(uuid.uuid4())
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(1):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), session_id=session_id)
+                    await sender.send_messages(message)
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=10) as receiver:
+                assert await receiver.session.get_state(timeout=5) == None
+                await receiver.session.set_state(None, timeout=5)
+                count = 0
+                async for m in receiver:
+                    assert m.session_id == session_id
+                    count += 1
+                state = await receiver.session.get_state()
+                assert state == None
+            assert count == 1
+
     @pytest.mark.skip(reason='Requires list sessions')
     @pytest.mark.asyncio
     @pytest.mark.liveTest
