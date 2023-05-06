@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from unittest.mock import AsyncMock
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -409,3 +410,47 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert props is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_datalake_clients_properly_close(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file_system_client = self.dsc.get_file_system_client(file_system='testfs')
+        dir_client = self.dsc.get_directory_client(file_system='testfs', directory='testdir')
+        file_client = dir_client.get_file_client(file='testfile')
+
+        # Mocks
+        self.dsc._blob_service_client.close = AsyncMock()
+        self.dsc._client.__aexit__ = AsyncMock()
+        file_system_client._client.__aexit__ = AsyncMock()
+        file_system_client._datalake_client_for_blob_operation.close = AsyncMock()
+        dir_client._client.__aexit__ = AsyncMock()
+        dir_client._datalake_client_for_blob_operation.close = AsyncMock()
+        file_client._client.__aexit__ = AsyncMock()
+        file_client._datalake_client_for_blob_operation.close = AsyncMock()
+
+        # Act
+        async with self.dsc as dsc:
+            await dsc.create_file_system(file_system='testfs')
+            await dsc.get_service_properties()
+            async with file_system_client as fsc:
+                await fsc.get_file_system_properties()
+                async with dir_client as dc:
+                    await dc.create_directory()
+                    await dc.get_directory_properties()
+                    async with file_client as fc:
+                        await fc.create_file()
+                        await fc.get_file_properties()
+
+        # Assert
+        self.dsc._blob_service_client.close.assert_called_once()
+        self.dsc._client.__aexit__.assert_called_once()
+        file_system_client._client.__aexit__.assert_called_once()
+        file_system_client._datalake_client_for_blob_operation.close.assert_called_once()
+        dir_client._client.__aexit__.assert_called_once()
+        dir_client._datalake_client_for_blob_operation.close.assert_called_once()
+        file_client._client.__aexit__.assert_called_once()
+        file_client._datalake_client_for_blob_operation.close.assert_called_once()
