@@ -35,11 +35,12 @@ class MdcConfigResolver(object):
         custom_logging_enabled = False
         for k, v in data_collector.collections:
             if v.enabled:
-                if k != "request" and k != "response":
+                lower_k = k.lower()
+                if lower_k not in ('request', 'response'):
                     custom_logging_enabled = True
-                    self.mdc_config["collections"][k] = {}
-                    self.mdc_config["collections"][k]["enabled"] = True
-                    self.mdc_config["collections"][k]["sampling_percentage"] = sampling_percentage
+                    self.mdc_config["collections"][lower_k] = {}
+                    self.mdc_config["collections"][lower_k]["enabled"] = True
+                    self.mdc_config["collections"][lower_k]["sampling_percentage"] = sampling_percentage
 
         self.custom_logging_enabled = custom_logging_enabled
 
