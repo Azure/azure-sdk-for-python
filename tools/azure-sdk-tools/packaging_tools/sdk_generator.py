@@ -30,7 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 @return_origin_path
 def multiapi_combiner(sdk_code_path: str):
     os.chdir(sdk_code_path)
-    check_call(f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} {os.getcwd()}", shell=True)
+    check_call(f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}", shell=True)
 
 
 def del_outdated_folder(readme: str):
