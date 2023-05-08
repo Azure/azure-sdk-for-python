@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from unittest.mock import AsyncMock
+import sys
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -25,6 +25,9 @@ from azure.storage.filedatalake.aio import (
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+
+if sys.version_info >= (3, 8):
+    from unittest.mock import AsyncMock
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -411,6 +414,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert props is not None
 
+    @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock not introduced until 3.8")
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_datalake_clients_properly_close(self, **kwargs):
