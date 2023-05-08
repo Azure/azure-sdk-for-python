@@ -27,7 +27,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
+from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent, ModelBatchDeployment
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
@@ -75,11 +75,11 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
-        deployment: Union[BatchDeployment, PipelineComponentBatchDeployment],
+        deployment: Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment],
         *,
         skip_script_validation: bool = False,
         **kwargs,
-    ) -> LROPoller[BatchDeployment]:
+    ) -> Union[LROPoller[BatchDeployment], LROPoller[PipelineComponentBatchDeployment]]:
         """Create or update a batch deployment.
 
         :param deployment: The deployment entity.
@@ -131,6 +131,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     deployment_name=deployment.name,
                     body=deployment_rest,
                     **self._init_kwargs,
+                    cls=lambda response, deserialized, headers: PipelineComponentBatchDeployment._from_rest_object(deserialized)
                 )
             else:
                 return self._batch_deployment.begin_create_or_update(
