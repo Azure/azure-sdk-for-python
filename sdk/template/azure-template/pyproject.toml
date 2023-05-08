@@ -1,3 +1,3 @@
 [tool.azure-sdk-build]
-pylint=false
+pylint = false
 verifytypes = false
