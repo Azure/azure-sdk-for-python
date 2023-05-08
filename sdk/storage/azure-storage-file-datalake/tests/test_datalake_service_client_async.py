@@ -416,7 +416,6 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock not introduced until 3.8")
     @DataLakePreparer()
-    @recorded_by_proxy_async
     async def test_datalake_clients_properly_close(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -438,16 +437,13 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Act
         async with self.dsc as dsc:
-            await dsc.create_file_system(file_system='testfs')
-            await dsc.get_service_properties()
+            pass
             async with file_system_client as fsc:
-                await fsc.get_file_system_properties()
+                pass
                 async with dir_client as dc:
-                    await dc.create_directory()
-                    await dc.get_directory_properties()
+                    pass
                     async with file_client as fc:
-                        await fc.create_file()
-                        await fc.get_file_properties()
+                        pass
 
         # Assert
         self.dsc._blob_service_client.close.assert_called_once()

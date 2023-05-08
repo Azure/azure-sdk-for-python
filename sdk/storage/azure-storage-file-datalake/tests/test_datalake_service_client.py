@@ -414,7 +414,6 @@ class TestDatalakeService(StorageRecordedTestCase):
         assert props is not None
 
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_datalake_clients_properly_close(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -436,16 +435,13 @@ class TestDatalakeService(StorageRecordedTestCase):
 
         # Act
         with self.dsc as dsc:
-            dsc.create_file_system(file_system='testfs')
-            dsc.get_service_properties()
+            pass
             with file_system_client as fsc:
-                fsc.get_file_system_properties()
+                pass
                 with dir_client as dc:
-                    dc.create_directory()
-                    dc.get_directory_properties()
+                    pass
                     with file_client as fc:
-                        fc.create_file()
-                        fc.get_file_properties()
+                        pass
 
         # Assert
         self.dsc._blob_service_client.close.assert_called_once()
