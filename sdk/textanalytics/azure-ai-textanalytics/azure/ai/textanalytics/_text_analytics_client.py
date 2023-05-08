@@ -65,8 +65,8 @@ from ._models import (
     ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction,
     _AnalyzeActionsType,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
+    ExtractiveSummaryAction,
+    ExtractiveSummaryResult,
     AbstractiveSummaryAction,
     AbstractiveSummaryResult,
     PiiEntityDomain
@@ -87,7 +87,7 @@ AnalyzeActionsResponse = TextAnalysisLROPoller[
                 RecognizeCustomEntitiesResult,
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
-                ExtractSummaryResult,
+                ExtractiveSummaryResult,
                 AbstractiveSummaryResult,
                 DocumentError,
             ]
@@ -1090,7 +1090,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 SingleLabelClassifyAction,
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
-                ExtractSummaryAction,
+                ExtractiveSummaryAction,
                 AbstractiveSummaryAction,
             ]
         ],
@@ -1113,7 +1113,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
-                    ExtractSummaryResult,
+                    ExtractiveSummaryResult,
                     AbstractiveSummaryResult,
                     DocumentError,
                 ]
@@ -1146,7 +1146,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
-            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractSummaryAction
+            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractiveSummaryAction
             or AbstractiveSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -1176,7 +1176,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractiveSummaryResult
             or AbstractiveSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
@@ -1188,8 +1188,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
         .. versionadded:: 2023-04-01
-            The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
-            *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
+            The *ExtractiveSummaryAction* and *AbstractSummaryAction* input options and the corresponding
+            *ExtractiveSummaryResult* and *AbstractSummaryResult* result objects.
 
         .. admonition:: Example:
 
@@ -1718,7 +1718,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         max_sentence_count: Optional[int] = None,
         order_by: Optional[str] = None,
         **kwargs: Any,
-    ) -> TextAnalysisLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]]:
+    ) -> TextAnalysisLROPoller[ItemPaged[Union[ExtractiveSummaryResult, DocumentError]]]:
         """Start a long-running extractive summarization operation.
 
         For a conceptual discussion of extractive summarization, see the service documentation:
@@ -1758,11 +1758,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str display_name: An optional display name to set for the requested analysis.
         :return: An instance of an TextAnalysisLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
-            :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
+            :class:`~azure.ai.textanalytics.ExtractiveSummaryResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+            ~azure.ai.textanalytics.ExtractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-04-01
@@ -1783,7 +1783,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         if continuation_token:
             return cast(
-                TextAnalysisLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]],
+                TextAnalysisLROPoller[ItemPaged[Union[ExtractiveSummaryResult, DocumentError]]],
                 _get_result_from_continuation_token(
                     self._client._client,  # pylint: disable=protected-access
                     continuation_token,
@@ -1801,12 +1801,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             return cast(
                 TextAnalysisLROPoller[
-                    ItemPaged[Union[ExtractSummaryResult, DocumentError]]
+                    ItemPaged[Union[ExtractiveSummaryResult, DocumentError]]
                 ],
                 self.begin_analyze_actions(
                     documents,
                     actions=[
-                        ExtractSummaryAction(
+                        ExtractiveSummaryAction(
                             model_version=model_version,
                             string_index_type=string_index_type_arg,
                             max_sentence_count=max_sentence_count,
@@ -1830,7 +1830,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2023-04-01"
     )
-    def begin_abstractive_summary(
+    def begin_abstract_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -1894,7 +1894,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-04-01
-            The *begin_abstractive_summary* client method.
+            The *begin_abstract_summary* client method.
 
         .. admonition:: Example:
 

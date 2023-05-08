@@ -51,8 +51,8 @@ from .._models import (
     MultiLabelClassifyAction,
     ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
+    ExtractiveSummaryAction,
+    ExtractiveSummaryResult,
     AbstractiveSummaryAction,
     AbstractiveSummaryResult,
     PiiEntityDomain,
@@ -81,7 +81,7 @@ AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
                 RecognizeCustomEntitiesResult,
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
-                ExtractSummaryResult,
+                ExtractiveSummaryResult,
                 AbstractiveSummaryResult,
                 DocumentError,
             ]
@@ -1085,7 +1085,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 SingleLabelClassifyAction,
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
-                ExtractSummaryAction,
+                ExtractiveSummaryAction,
                 AbstractiveSummaryAction,
             ]
         ],
@@ -1108,7 +1108,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
-                    ExtractSummaryResult,
+                    ExtractiveSummaryResult,
                     AbstractiveSummaryResult,
                     DocumentError,
                 ]
@@ -1142,7 +1142,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
             MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or
-            AbstractiveSummaryAction or ExtractSummaryAction]
+            AbstractiveSummaryAction or ExtractiveSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1171,7 +1171,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractiveSummaryResult
             or AbstractiveSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
@@ -1183,8 +1183,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
         .. versionadded:: 2023-04-01
-            The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
-            *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
+            The *ExtractiveSummaryAction* and *AbstractSummaryAction* input options and the corresponding
+            *ExtractiveSummaryResult* and *AbstractSummaryResult* result objects.
 
         .. admonition:: Example:
 
@@ -1714,7 +1714,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         max_sentence_count: Optional[int] = None,
         order_by: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]]:
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractiveSummaryResult, DocumentError]]]:
         """Start a long-running extractive summarization operation.
 
         For a conceptual discussion of extractive summarization, see the service documentation:
@@ -1754,11 +1754,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str display_name: An optional display name to set for the requested analysis.
         :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
-            :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
+            :class:`~azure.ai.textanalytics.ExtractiveSummaryResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+            ~azure.ai.textanalytics.ExtractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-04-01
@@ -1779,7 +1779,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         if continuation_token:
             return cast(
-                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractiveSummaryResult, DocumentError]]],
                 _get_result_from_continuation_token(
                     self._client._client,  # pylint: disable=protected-access
                     continuation_token,
@@ -1797,12 +1797,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         try:
             return cast(
                 AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]
+                    AsyncItemPaged[Union[ExtractiveSummaryResult, DocumentError]]
                 ],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
-                        ExtractSummaryAction(
+                        ExtractiveSummaryAction(
                             model_version=model_version,
                             string_index_type=string_index_type_arg,
                             max_sentence_count=max_sentence_count,
@@ -1826,7 +1826,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2023-04-01"
     )
-    async def begin_abstractive_summary(
+    async def begin_abstract_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -1890,7 +1890,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-04-01
-            The *begin_abstractive_summary* client method.
+            The *begin_abstract_summary* client method.
 
         .. admonition:: Example:
 

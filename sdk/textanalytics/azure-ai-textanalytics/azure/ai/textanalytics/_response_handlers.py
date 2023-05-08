@@ -36,7 +36,7 @@ from ._models import (
     RecognizeCustomEntitiesResult,
     ClassifyDocumentResult,
     ActionPointerKind,
-    ExtractSummaryResult,
+    ExtractiveSummaryResult,
     AbstractiveSummaryResult,
 )
 
@@ -277,7 +277,7 @@ def healthcare_result(
 def summary_result(
     summary, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
+    return ExtractiveSummaryResult._from_generated(  # pylint: disable=protected-access
         summary
     )
 

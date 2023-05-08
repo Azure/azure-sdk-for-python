@@ -883,7 +883,7 @@ class DocumentError(DictMixin):
             + AnalyzeHealthcareEntitiesResult().keys()
             + RecognizeCustomEntitiesResult().keys()
             + ClassifyDocumentResult().keys()
-            + ExtractSummaryResult().keys()
+            + ExtractiveSummaryResult().keys()
             + AbstractiveSummaryResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
@@ -2276,8 +2276,8 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         )
 
 
-class ExtractSummaryAction(DictMixin):
-    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
+class ExtractiveSummaryAction(DictMixin):
+    """ExtractiveSummaryAction encapsulates the parameters for starting a long-running Extractive Text
     Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
     https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
@@ -2298,7 +2298,7 @@ class ExtractSummaryAction(DictMixin):
     :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
 
     .. versionadded:: 2023-04-01
-        The *ExtractSummaryAction* model.
+        The *ExtractiveSummaryAction* model.
     """
 
     model_version: Optional[str] = None
@@ -2340,7 +2340,7 @@ class ExtractSummaryAction(DictMixin):
 
     def __repr__(self) -> str:
         return (
-            f"ExtractSummaryAction(model_version={self.model_version}, "
+            f"ExtractiveSummaryAction(model_version={self.model_version}, "
             f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
             f"max_sentence_count={self.max_sentence_count}, order_by={self.order_by})"[:1024]
         )
@@ -2358,8 +2358,8 @@ class ExtractSummaryAction(DictMixin):
         )
 
 
-class ExtractSummaryResult(DictMixin):
-    """ExtractSummaryResult is a result object which contains
+class ExtractiveSummaryResult(DictMixin):
+    """ExtractiveSummaryResult is a result object which contains
     the extractive text summarization from a particular document.
     """
 
@@ -2374,7 +2374,7 @@ class ExtractSummaryResult(DictMixin):
         field will contain information about the document payload."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
-        results. Always False for an instance of an ExtractSummaryResult."""
+        results. Always False for an instance of an ExtractiveSummaryResult."""
     kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
     """The text analysis kind - "ExtractiveSummarization"."""
 
@@ -2388,7 +2388,7 @@ class ExtractSummaryResult(DictMixin):
 
     def __repr__(self) -> str:
         return (
-            f"ExtractSummaryResult(id={self.id}, sentences={repr(self.sentences)}, "
+            f"ExtractiveSummaryResult(id={self.id}, sentences={repr(self.sentences)}, "
             f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
             f" is_error={self.is_error}, kind={self.kind})"[:1024]
         )
