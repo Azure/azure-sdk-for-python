@@ -131,7 +131,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     deployment_name=deployment.name,
                     body=deployment_rest,
                     **self._init_kwargs,
-                    cls=lambda response, deserialized, headers: PipelineComponentBatchDeployment._from_rest_object(deserialized)
+                    cls=lambda response, deserialized, headers: PipelineComponentBatchDeployment._from_rest_object(
+                        deserialized
+                    ),
                 )
             else:
                 return self._batch_deployment.begin_create_or_update(
