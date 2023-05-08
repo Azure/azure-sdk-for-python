@@ -11,9 +11,9 @@ def is_token_expiration_within_allowed_deviation(
     token_expires_in,
     allowed_deviation = 0.05
 ):
-    # type: (timedelta, int, float) -> bool
+    # type: (timedelta, datetime, float) -> bool
     utc_now = datetime.now(timezone.utc)
-    token_expiration = parser.parse(token_expires_in.__str__())
+    token_expiration = parser.parse(token_expires_in)
     token_expiration_in_seconds = (token_expiration - utc_now).total_seconds()
     expected_seconds = expected_token_expiration.total_seconds()
     time_difference = abs(expected_seconds - token_expiration_in_seconds)

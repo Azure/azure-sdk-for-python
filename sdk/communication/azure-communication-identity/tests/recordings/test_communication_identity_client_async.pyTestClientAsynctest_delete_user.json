@@ -28,7 +28,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "84ms"
+        "X-Processing-Time": "87ms"
       },
       "ResponseBody": {
         "identity": {
@@ -61,7 +61,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "196ms"
+        "X-Processing-Time": "379ms"
       },
       "ResponseBody": null
     }

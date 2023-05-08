@@ -34,7 +34,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "90ms"
+        "X-Processing-Time": "88ms"
       },
       "ResponseBody": {
         "identity": {
@@ -42,7 +42,7 @@
         },
         "accessToken": {
           "token": "sanitized",
-          "expiresOn": "2023-04-11T15:25:54.0469804\u002B00:00"
+          "expiresOn": "2023-05-08T08:36:33.8225475\u002B00:00"
         }
       }
     }

@@ -37,3 +37,13 @@ directive:
     where: $.definitions.CommunicationIdentityTokenScope
     transform: >
       $["x-ms-enum"].name = "CommunicationTokenScope";
+```      
+
+### Removes the "format": "date-time" from property expiresOn
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      delete $["CommunicationIdentityAccessToken"]["properties"]["expiresOn"]["format"];
+```

@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
@@ -127,7 +126,7 @@ class CommunicationIdentityAccessToken(_serialization.Model):
     :ivar token: The access token issued for the identity. Required.
     :vartype token: str
     :ivar expires_on: The expiry time of the token. Required.
-    :vartype expires_on: ~datetime.datetime
+    :vartype expires_on: str
     """
 
     _validation = {
@@ -137,15 +136,15 @@ class CommunicationIdentityAccessToken(_serialization.Model):
 
     _attribute_map = {
         "token": {"key": "token", "type": "str"},
-        "expires_on": {"key": "expiresOn", "type": "iso-8601"},
+        "expires_on": {"key": "expiresOn", "type": "str"},
     }
 
-    def __init__(self, *, token: str, expires_on: datetime.datetime, **kwargs: Any) -> None:
+    def __init__(self, *, token: str, expires_on: str, **kwargs: Any) -> None:
         """
         :keyword token: The access token issued for the identity. Required.
         :paramtype token: str
         :keyword expires_on: The expiry time of the token. Required.
-        :paramtype expires_on: ~datetime.datetime
+        :paramtype expires_on: str
         """
         super().__init__(**kwargs)
         self.token = token
