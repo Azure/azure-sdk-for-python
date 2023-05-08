@@ -7,6 +7,7 @@ import hashlib
 from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any
 from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
+from .._models import ManifestDigestValidationError
 
 
 class AsyncGetNext(Protocol):
@@ -70,7 +71,9 @@ class AsyncDownloadBlobStream(
             if self._downloaded >= self._blob_size:
                 computed_digest = "sha256:" + self._hasher.hexdigest()
                 if computed_digest != self._digest:
-                    raise ValueError("The requested digest does not match the digest of the received blob.")
+                    raise ManifestDigestValidationError(
+                        "The content of retrieved blob digest does not match the requested digest."
+                    )
                 raise
             self._response = await self._download_chunk()
             self._response_bytes = self._response.http_response.iter_bytes()

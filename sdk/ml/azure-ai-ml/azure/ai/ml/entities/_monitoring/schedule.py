@@ -28,6 +28,25 @@ module_logger = logging.getLogger(__name__)
 
 @experimental
 class MonitorSchedule(Schedule, RestTranslatableMixin):
+    """Monitor schedule
+
+    :param name: Name of the schedule.
+    :type name: str
+    :param trigger: Trigger of the schedule.
+    :type trigger: Union[~azure.ai.ml.entities.CronTrigger
+        , ~azure.ai.ml.entities.RecurrenceTrigger]
+    :param create_monitor: The schedule action monitor definition
+    :type create_monitor: ~azure.ai.ml.entities.MonitorDefinition
+    :param display_name: Display name of the schedule.
+    :type display_name: str
+    :param description: Description of the schedule, defaults to None
+    :type description: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param properties: The job property dictionary.
+    :type properties: dict[str, str]
+    """
+
     def __init__(
         self,
         *,

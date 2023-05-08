@@ -49,7 +49,6 @@ from ...constants._common import (
     LOCAL_PATH,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
-    SERVERLESS_COMPUTE,
     AzureMLResourceType,
 )
 from ...entities._job.pipeline._attr_dict import (
@@ -648,7 +647,7 @@ def ComputeField(**kwargs):
     """
     return UnionField(
         [
-            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET, SERVERLESS_COMPUTE]),
+            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET]),
             ArmStr(azureml_type=AzureMLResourceType.COMPUTE),
             # Case for virtual clusters
             fields.Str(),

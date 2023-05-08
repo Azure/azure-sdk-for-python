@@ -13,7 +13,6 @@ from azure.ai.ml._schema.monitoring.signals import (
     DataQualitySignalSchema,
     PredictionDriftSignalSchema,
     FeatureAttributionDriftSignalSchema,
-    ModelPerformanceSignalSchema,
     CustomMonitoringSignalSchema,
 )
 from azure.ai.ml._schema.monitoring.alert_notification import AlertNotificationSchema
@@ -32,7 +31,6 @@ class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
                 NestedField(DataQualitySignalSchema),
                 NestedField(PredictionDriftSignalSchema),
                 NestedField(FeatureAttributionDriftSignalSchema),
-                NestedField(ModelPerformanceSignalSchema),
                 NestedField(CustomMonitoringSignalSchema),
             ]
         ),

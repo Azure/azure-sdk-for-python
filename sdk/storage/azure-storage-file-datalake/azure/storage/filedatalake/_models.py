@@ -138,6 +138,10 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
 class DirectoryProperties(DictMixin):
     """
     :ivar str name: name of the directory
+    :ivar str owner: The owner of the file or directory.
+    :ivar str group: The owning group of the file or directory.
+    :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
+        Each individual permission is in [r,w,x,-]{3} format.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
@@ -170,10 +174,19 @@ class DirectoryProperties(DictMixin):
         self.remaining_retention_days = None
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
 
+        # This is being passed directly not coming from headers
+        self.owner = kwargs.get('owner', None)
+        self.group = kwargs.get('group', None)
+        self.permissions = kwargs.get('permissions', None)
+
 
 class FileProperties(DictMixin):
     """
     :ivar str name: name of the file
+    :ivar str owner: The owner of the file or directory.
+    :ivar str group: The owning group of the file or directory.
+    :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
+        Each individual permission is in [r,w,x,-]{3} format.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
@@ -213,6 +226,9 @@ class FileProperties(DictMixin):
 
         # This is being passed directly not coming from headers
         self.encryption_context = kwargs.get('encryption_context')
+        self.owner = kwargs.get('owner', None)
+        self.group = kwargs.get('group', None)
+        self.permissions = kwargs.get('permissions', None)
 
 
 class PathProperties(DictMixin):
@@ -221,11 +237,8 @@ class PathProperties(DictMixin):
     :ivar str name: The full path for a file or directory.
     :ivar str owner: The owner of the file or directory.
     :ivar str group: The owning group of the file or directory.
-    :ivar str permissions: Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+    :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
+        Each individual permission is in [r,w,x,-]{3} format.
     :ivar datetime last_modified:  A datetime object representing the last time the directory/file was modified.
     :ivar bool is_directory: Is the path a directory or not.
     :ivar str etag: The ETag contains a value that you can use to perform operations

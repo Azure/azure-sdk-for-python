@@ -22,10 +22,10 @@ from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = 'Azure Developer CLI could not be found. '\
                  'Please visit https://aka.ms/azure-dev for installation instructions and then,'\
-                 'once installed, authenticate to your Azure account using \'azd login\'.'
+                 'once installed, authenticate to your Azure account using \'azd auth login\'.'
 COMMAND_LINE = "azd auth token --output json --scope {}"
 EXECUTABLE_NAME = "azd"
-NOT_LOGGED_IN = "Please run 'azd login' from a command prompt to authenticate before using this credential."
+NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
 
 
 class AzureDeveloperCliCredential:
@@ -43,8 +43,8 @@ class AzureDeveloperCliCredential:
     To use this credential, the developer needs to authenticate locally in Azure Developer CLI using one of the
     commands below:
 
-      * Run "azd login" in Azure Developer CLI to authenticate interactively as a user.
-      * Run "azd login --client-id 'client_id' --client-secret 'client_secret' --tenant-id 'tenant_id'"
+      * Run "azd auth login" in Azure Developer CLI to authenticate interactively as a user.
+      * Run "azd auth login --client-id 'client_id' --client-secret 'client_secret' --tenant-id 'tenant_id'"
         to authenticate as a service principal.
 
     You may need to repeat this process after a certain time period, depending on the refresh token validity in your
@@ -194,7 +194,7 @@ def _run_command(command: str, timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'azd' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND)
-        if "not logged in, run `azd login` to login" in ex.stderr:
+        if "not logged in, run `azd auth login` to login" in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
         # return code is from the CLI -> propagate its output

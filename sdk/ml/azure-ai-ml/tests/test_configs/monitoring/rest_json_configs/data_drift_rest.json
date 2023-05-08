@@ -3,7 +3,7 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "computeId": "mycompute",
+                "computeId": "cpu-cluster",
                 "monitoringTarget": "fake_endpoint_id",
                 "signals": {
                     "testSignal": {
@@ -62,7 +62,7 @@
                     22, 20
                 ],
                 "minutes": [
-                    0, 0
+                    0, 30
                 ],
                 "weekDays": [
                     "monday",

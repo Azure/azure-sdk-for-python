@@ -48,7 +48,10 @@ class RouterPreparersAsync(object):
                 except Exception as e:
                     raise e
                 finally:
-                    await first_method()
+                    try:
+                        await first_method()
+                    except:
+                        print("") # Consume exceptions
 
             return wrapper
 
