@@ -459,7 +459,6 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
     pkg_name_format_alt = "${0}-{1}.tar.gz"
 
-    # todo: replace with glob, we aren't using py2 anymore!
     packages = []
     for root, dirnames, filenames in os.walk(dist_dir):
         for filename in fnmatch.filter(filenames, pkg_name_format):
