@@ -163,7 +163,7 @@ class CustomInferencingServer:
     :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
+    def __init__(self, *, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
         self.type = "custom"
         self.inference_configuration = inference_configuration
 
