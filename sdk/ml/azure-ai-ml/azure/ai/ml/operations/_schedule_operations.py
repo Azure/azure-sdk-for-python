@@ -2,13 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-import jwt
+
 from typing import Any, Iterable
 
-from azure.ai.ml._azure_environments import (
-    _get_base_url_from_metadata,
-    _resource_to_scopes,
-)
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -21,6 +17,7 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -339,6 +336,14 @@ class ScheduleOperations(_ScopeDependentOperations):
                     model_inputs_type,
                     model_outputs_arm_id,
                     model_outputs_type,
+                )
+            else:
+                msg = "An ARM id for a deployment with model data collector enabled must be given if monitoring_signals is None"
+                raise ScheduleException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.SCHEDULE,
+                    error_category=ErrorCategory.USER_ERROR,
                 )
 
         # resolve input paths and preprocessing component ids

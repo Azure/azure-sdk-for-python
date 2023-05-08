@@ -110,7 +110,7 @@ class MonitorDefinition(RestTranslatableMixin):
             DefaultMonitorSignalNames.DATA_DRIFT_SIGNAL: DataDriftSignal._get_default_data_drift_signal(
                 model_inputs_arm_id, model_inputs_type
             ),
-            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal( # pylint: disable=line-too-long
+            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal(  # pylint: disable=line-too-long
                 model_outputs_arm_id, model_outputs_type
             ),
             DefaultMonitorSignalNames.DATA_QUALITY_SIGNAL: DataQualitySignal._get_default_data_quality_signal(
