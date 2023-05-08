@@ -29,7 +29,7 @@ from azure.ai.ml.entities._assets.intellectual_property import IntellectualPrope
 from .artifact import ArtifactStorageInfo
 
 
-class Model(Artifact):
+class Model(Artifact): # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
     :param name: Name of the resource.
@@ -74,7 +74,7 @@ class Model(Artifact):
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
         **kwargs,
-    ): # pylint: disable=too-many-instance-attributes
+    ):
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(
