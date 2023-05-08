@@ -587,7 +587,6 @@ def snapshot_hash_sanitizer(test_proxy):
 
 @pytest.fixture
 def mock_anon_component_version(mocker: MockFixture):
-
     fake_uuid = "000000000000000000000"
 
     def generate_name_version(*args, **kwargs):
