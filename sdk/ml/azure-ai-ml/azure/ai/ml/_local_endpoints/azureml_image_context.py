@@ -5,6 +5,7 @@
 
 import logging
 from pathlib import Path
+import os
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
@@ -70,7 +71,8 @@ class AzureMlImageContext(object):
 
         if yaml_code_directory_path:
             local_code_mount_path = str(yaml_code_directory_path)
-            docker_code_folder_name = Path(yaml_code_directory_path).name
+            # Set the directory containing scoring script as AML_APP_ROOT/working directory
+            docker_code_folder_name = Path(yaml_code_directory_path, os.path.dirname(Path(yaml_code_scoring_script_file_name))).name
             docker_code_mount_path = f"{self.docker_azureml_app_path}{docker_code_folder_name}/"
             self._volumes.update(
                 {
