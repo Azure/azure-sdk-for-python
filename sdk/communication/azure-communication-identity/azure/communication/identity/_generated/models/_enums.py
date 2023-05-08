@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CommunicationTokenScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """List of scopes for an access token.
-    """
+class CommunicationTokenScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """List of scopes for an access token."""
 
     CHAT = "chat"
     VOIP = "voip"
