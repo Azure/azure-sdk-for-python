@@ -14,10 +14,10 @@ class MdcConfigResolver(object):
     ):
         self.environment_variables = None
         self.volumes = None
+        self.mdc_config = None
         self._construct(data_collector)
 
     def _construct(self, data_collector: DataCollector) -> None:
-        self.mdc_config = None
         if not data_collector.collections:
             return
 
@@ -29,23 +29,21 @@ class MdcConfigResolver(object):
             sampling_percentage = int(data_collector.sampling_rate * 100)
 
         self.mdc_config = {"collections": {}, "runMode": "local"}
-        custom_logging_enabled = False
         for k, v in data_collector.collections:
             if v.enabled:
                 lower_k = k.lower()
-                if lower_k not in ("request", "response"):
-                    custom_logging_enabled = True
-                    self.mdc_config["collections"][lower_k] = {
-                        "enabled": True,
-                        "sampling_percentage": sampling_percentage,
-                    }
-
-        self.custom_logging_enabled = custom_logging_enabled
+                self.mdc_config["collections"][lower_k] = {
+                    "enabled": True,
+                    "sampling_percentage": sampling_percentage,
+                }
 
         if data_collector.request_logging and data_collector.request_logging.capture_headers:
             self.mdc_config["captureHeaders"] = data_collector.request_logging.capture_headers
 
     def write_file(self, directory_path: str) -> None:
+        if not self.mdc_config:
+            return
+
         mdc_setting_path = str(Path(directory_path, "mdc_config.json").resolve())
         with open(mdc_setting_path, "w") as f:
             d = json.dumps(self.mdc_config)
