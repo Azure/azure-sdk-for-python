@@ -10,7 +10,6 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, Optional, Union
 
-from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._utils.utils import is_url
@@ -43,6 +42,7 @@ from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import Feat
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -257,8 +257,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :return: An iterator like instance of ~azure.ai.ml.entities.FeatureSetMaterializationMetadata objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationMetadata]
         """
-        feature_window_start_time = _datetime_to_str(feature_window_start_time)
-        feature_window_end_time = _datetime_to_str(feature_window_end_time)
+        feature_window_start_time = _datetime_to_str(feature_window_start_time) if feature_window_start_time else None
+        feature_window_end_time = _datetime_to_str(feature_window_end_time) if feature_window_end_time else None
         materialization_jobs = self._operation.list_materialization_jobs(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
