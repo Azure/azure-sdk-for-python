@@ -74,7 +74,7 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GROUND_TRUTH_DATA = "ground_truth"
 
 
-class DefaultMonitorSignalNames(str, Enum):
+class DefaultMonitorSignalNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_DRIFT_SIGNAL = "data-drift-signal"
     PREDICTION_DRIFT_SIGNAL = "prediction-drift-signal"
     DATA_QUALITY_SIGNAL = "data-quality-signal"
