@@ -29,12 +29,12 @@ class MdcConfigResolver(object):
             sampling_percentage = int(data_collector.sampling_rate * 100)
 
         self.mdc_config = {"collections": {}, "runMode": "local"}
-        for k, v in data_collector.collections:
+        for k, v in data_collector.collections.items():
             if v.enabled:
                 lower_k = k.lower()
                 self.mdc_config["collections"][lower_k] = {
                     "enabled": True,
-                    "sampling_percentage": sampling_percentage,
+                    "sampling_percentage": int(v.sampling_rate * 100) if v.sampling_rate else sampling_percentage,
                 }
 
         if data_collector.request_logging and data_collector.request_logging.capture_headers:
