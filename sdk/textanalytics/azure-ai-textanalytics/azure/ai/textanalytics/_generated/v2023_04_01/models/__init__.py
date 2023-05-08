@@ -45,7 +45,6 @@ from ._models_py3 import CustomSingleLabelClassificationLROTask
 from ._models_py3 import CustomSingleLabelClassificationTaskParameters
 from ._models_py3 import CustomTaskParameters
 from ._models_py3 import DetectedLanguage
-from ._models_py3 import DocumentDetectedLanguage
 from ._models_py3 import DocumentError
 from ._models_py3 import DocumentResult
 from ._models_py3 import DocumentStatistics
@@ -67,7 +66,6 @@ from ._models_py3 import EntityRecognitionLROResult
 from ._models_py3 import Error
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtractedSummaryDocumentResult
-from ._models_py3 import ExtractedSummaryDocumentResultWithDetectedLanguage
 from ._models_py3 import ExtractedSummarySentence
 from ._models_py3 import ExtractiveSummarizationLROResult
 from ._models_py3 import ExtractiveSummarizationLROTask
@@ -201,7 +199,6 @@ __all__ = [
     'CustomSingleLabelClassificationTaskParameters',
     'CustomTaskParameters',
     'DetectedLanguage',
-    'DocumentDetectedLanguage',
     'DocumentError',
     'DocumentResult',
     'DocumentStatistics',
@@ -223,7 +220,6 @@ __all__ = [
     'Error',
     'ErrorResponse',
     'ExtractedSummaryDocumentResult',
-    'ExtractedSummaryDocumentResultWithDetectedLanguage',
     'ExtractedSummarySentence',
     'ExtractiveSummarizationLROResult',
     'ExtractiveSummarizationLROTask',

@@ -2378,35 +2378,6 @@ class DetectedLanguage(_serialization.Model):
         self.confidence_score = confidence_score
 
 
-class DocumentDetectedLanguage(_serialization.Model):
-    """DocumentDetectedLanguage.
-
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.textanalytics.v2023_04_01.models.DetectedLanguage
-    """
-
-    _attribute_map = {
-        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
-    }
-
-    def __init__(
-        self,
-        *,
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-        **kwargs
-    ):
-        """
-        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
-         field will contain a 2 letter ISO 639-1 representation of the language detected for this
-         document.
-        :paramtype detected_language: ~azure.ai.textanalytics.v2023_04_01.models.DetectedLanguage
-        """
-        super().__init__(**kwargs)
-        self.detected_language = detected_language
-
-
 class DocumentError(_serialization.Model):
     """Contains details of errors encountered during a job execution.
 
@@ -3417,73 +3388,6 @@ class ExtractedSummaryDocumentResult(DocumentResult):
         self.sentences = sentences
 
 
-class ExtractedSummaryDocumentResultWithDetectedLanguage(ExtractedSummaryDocumentResult, DocumentDetectedLanguage):
-    """ExtractedSummaryDocumentResultWithDetectedLanguage.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.textanalytics.v2023_04_01.models.DetectedLanguage
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2023_04_01.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2023_04_01.models.DocumentStatistics
-    :ivar sentences: A ranked list of sentences representing the extracted summary. Required.
-    :vartype sentences: list[~azure.ai.textanalytics.v2023_04_01.models.ExtractedSummarySentence]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'sentences': {'required': True},
-    }
-
-    _attribute_map = {
-        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "sentences": {"key": "sentences", "type": "[ExtractedSummarySentence]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        sentences: List["_models.ExtractedSummarySentence"],
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
-         field will contain a 2 letter ISO 639-1 representation of the language detected for this
-         document.
-        :paramtype detected_language: ~azure.ai.textanalytics.v2023_04_01.models.DetectedLanguage
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2023_04_01.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2023_04_01.models.DocumentStatistics
-        :keyword sentences: A ranked list of sentences representing the extracted summary. Required.
-        :paramtype sentences: list[~azure.ai.textanalytics.v2023_04_01.models.ExtractedSummarySentence]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, sentences=sentences, detected_language=detected_language, **kwargs)
-        self.detected_language = detected_language
-        self.id = id
-        self.warnings = warnings
-        self.statistics = statistics
-        self.sentences = sentences
-
-
 class ExtractedSummarySentence(_serialization.Model):
     """ExtractedSummarySentence.
 
@@ -3667,7 +3571,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2023_04_01.models.ExtractedSummaryDocumentResultWithDetectedLanguage]
+     list[~azure.ai.textanalytics.v2023_04_01.models.ExtractedSummaryDocumentResult]
     """
 
     _validation = {
@@ -3680,7 +3584,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[DocumentError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[ExtractedSummaryDocumentResultWithDetectedLanguage]"},
+        "documents": {"key": "documents", "type": "[ExtractedSummaryDocumentResult]"},
     }
 
     def __init__(
@@ -3688,7 +3592,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
         *,
         errors: List["_models.DocumentError"],
         model_version: str,
-        documents: List["_models.ExtractedSummaryDocumentResultWithDetectedLanguage"],
+        documents: List["_models.ExtractedSummaryDocumentResult"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -3702,7 +3606,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2023_04_01.models.ExtractedSummaryDocumentResultWithDetectedLanguage]
+         list[~azure.ai.textanalytics.v2023_04_01.models.ExtractedSummaryDocumentResult]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
@@ -5712,9 +5616,6 @@ class RequestStatistics(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
     :ivar documents_count: Number of documents submitted in the request. Required.
     :vartype documents_count: int
     :ivar valid_documents_count: Number of valid documents. This excludes empty, over-size limit or
@@ -5735,7 +5636,6 @@ class RequestStatistics(_serialization.Model):
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
         "documents_count": {"key": "documentsCount", "type": "int"},
         "valid_documents_count": {"key": "validDocumentsCount", "type": "int"},
         "erroneous_documents_count": {"key": "erroneousDocumentsCount", "type": "int"},
@@ -5749,13 +5649,9 @@ class RequestStatistics(_serialization.Model):
         valid_documents_count: int,
         erroneous_documents_count: int,
         transactions_count: int,
-        additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
         :keyword documents_count: Number of documents submitted in the request. Required.
         :paramtype documents_count: int
         :keyword valid_documents_count: Number of valid documents. This excludes empty, over-size limit
@@ -5768,7 +5664,6 @@ class RequestStatistics(_serialization.Model):
         :paramtype transactions_count: int
         """
         super().__init__(**kwargs)
-        self.additional_properties = additional_properties
         self.documents_count = documents_count
         self.valid_documents_count = valid_documents_count
         self.erroneous_documents_count = erroneous_documents_count
