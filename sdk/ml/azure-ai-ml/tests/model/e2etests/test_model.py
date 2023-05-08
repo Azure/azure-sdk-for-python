@@ -92,7 +92,7 @@ class TestModel(AzureRecordedTestCase):
         assert model.name == model_name
         assert model.version == "3"
         assert model.description == "this is my test model with stage"
-        # assert model.stage == "Production" # get not working! check MFE!
+        # assert model.stage == "Production" # Get does not return Stage in the Model
 
         model_list = client.models.list(name=model.name, stage="Production")
         model_stage_list = [m.stage for m in model_list if m is not None]

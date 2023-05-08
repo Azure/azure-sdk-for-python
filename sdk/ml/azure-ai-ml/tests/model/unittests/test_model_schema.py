@@ -49,7 +49,6 @@ class TestModelSchema:
                 "isArchived": False,
                 "isAnonymous": False,
                 "flavors": {},
-                "stage": "",
                 "modelType": "custom_model",
                 "modelUri": "azureml://datastore/fake_datastore/paths/fake_model_uri",
                 "originAssetId": "fake_origin_asset_id",

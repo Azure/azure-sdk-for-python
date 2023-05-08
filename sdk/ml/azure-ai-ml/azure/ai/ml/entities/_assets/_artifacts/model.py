@@ -119,6 +119,7 @@ class Model(Artifact):
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
         rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
+        model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
         model = Model(
@@ -130,7 +131,7 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
-            stage = rest_model_version.stage,
+            stage = model_stage,
             # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
