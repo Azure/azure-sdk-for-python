@@ -574,7 +574,7 @@ class DataOperations(_ScopeDependentOperations):
         share_with_name,
         share_with_version,
         registry_name,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs,
     ) -> Data:
         """Share a data asset from workspace to registry.
 
@@ -594,7 +594,7 @@ class DataOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name, **kwargs
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
