@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import AnyStr, Dict, IO, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.constants._monitoring import DefaultMonitorSignalNames
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._system_data import SystemData
@@ -137,3 +138,18 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             is_enabled=properties.is_enabled,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
+
+    def _create_default_monitor_definition(
+        self, model_inputs_arm_id: str, model_inputs_type: str, model_outputs_arm_id: str, model_outputs_type: str
+    ):
+        self.create_monitor._populate_default_signal_information(
+            model_inputs_arm_id,
+            model_inputs_type,
+            model_outputs_arm_id,
+            model_outputs_type,
+        )
+
+        # add appropriate tags to schedule
+        for signal_name in [name.value for name in DefaultMonitorSignalNames]:
+            self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
+            self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"

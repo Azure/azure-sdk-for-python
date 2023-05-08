@@ -104,13 +104,13 @@ class DataDriftMetricThreshold(MetricThreshold):
             cls(
                 applicable_feature_type=MonitorFeatureType.NUMERICAL,
                 metric_name=MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
-                threshold=0.1
+                threshold=0.1,
             ),
             cls(
                 applicable_feature_type=MonitorFeatureType.CATEGORICAL,
                 metric_name=MonitorMetricName.JENSEN_SHANNON_DISTANCE,
                 threshold=0.1,
-            )
+            ),
         ]
 
 
@@ -180,13 +180,13 @@ class PredictionDriftMetricThreshold(MetricThreshold):
             cls(
                 applicable_feature_type=MonitorFeatureType.NUMERICAL,
                 metric_name=MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
-                threshold=0.1
+                threshold=0.1,
             ),
             cls(
                 applicable_feature_type=MonitorFeatureType.CATEGORICAL,
                 metric_name=MonitorMetricName.JENSEN_SHANNON_DISTANCE,
                 threshold=0.1,
-            )
+            ),
         ]
 
 
@@ -253,7 +253,7 @@ class DataQualityMetricThreshold(MetricThreshold):
             cls(
                 applicable_feature_type=MonitorFeatureType.NUMERICAL,
                 metric_name=MonitorMetricName.NULL_VALUE_RATE,
-                threshold=0
+                threshold=0,
             ),
             cls(
                 applicable_feature_type=MonitorFeatureType.NUMERICAL,
@@ -281,7 +281,6 @@ class DataQualityMetricThreshold(MetricThreshold):
                 threshold=0,
             ),
         ]
-
 
 
 @experimental

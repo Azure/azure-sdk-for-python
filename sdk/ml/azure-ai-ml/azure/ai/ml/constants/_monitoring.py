@@ -14,6 +14,11 @@ ALL_FEATURES = "all_features"
 
 AZMONITORING = "azmonitoring"
 
+DEPLOYMENT_MODEL_INPUTS_NAME_KEY = "data_collector.collections.model_inputs.data.name"
+DEPLOYMENT_MODEL_INPUTS_VERSION_KEY = "data_collector.collections.model_inputs.data.version"
+DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY = "data_collector.collections.model_outputs.data.name"
+DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = "data_collector.collections.model_outputs.data.version"
+
 
 @experimental
 class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -67,3 +72,9 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEST = "test"
     VALIDATION = "validation"
     GROUND_TRUTH_DATA = "ground_truth"
+
+
+class DefaultMonitorSignalNames(str, Enum):
+    DATA_DRIFT_SIGNAL = "data-drift-signal"
+    PREDICTION_DRIFT_SIGNAL = "prediction-drift-signal"
+    DATA_QUALITY_SIGNAL = "data-quality-signal"
