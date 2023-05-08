@@ -415,10 +415,10 @@ class TestDatalakeService(StorageRecordedTestCase):
 
     @DataLakePreparer()
     def test_datalake_clients_properly_close(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        account_name = "adlsstorage"
+        account_key = "adlskey"
 
-        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self._setup(account_name, account_key)
         file_system_client = self.dsc.get_file_system_client(file_system='testfs')
         dir_client = self.dsc.get_directory_client(file_system='testfs', directory='testdir')
         file_client = dir_client.get_file_client(file='testfile')
