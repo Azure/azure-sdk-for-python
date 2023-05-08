@@ -1,0 +1,16 @@
+name: default-momo-schedule
+display_name: Loan Approval model monitoring
+description: Loan approval model monitoring setup with minimal configurations
+
+trigger:
+  type: recurrence
+  frequency: hour
+  interval: 24
+  schedule:
+    hours: 10
+    minutes: 15
+
+create_monitor:
+  compute: azureml:cpu-cluster
+  monitoring_target:
+    endpoint_deployment_id: fake_endpoint_deployment_id
