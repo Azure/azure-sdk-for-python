@@ -68,7 +68,7 @@
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
 # PRLabel: %Batch
-/sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms @NickKouds
+/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico

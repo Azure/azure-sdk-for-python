@@ -38,6 +38,7 @@ from ._models import JobQueueItem
 from ._models import JobRouterError
 from ._models import LongestIdleMode
 from ._models import ManualReclassifyExceptionAction
+from ._models import Oauth2ClientCredential
 from ._models import PassThroughQueueSelectorAttachment
 from ._models import PassThroughWorkerSelectorAttachment
 from ._models import QueueLengthExceptionTrigger
@@ -60,6 +61,7 @@ from ._models import StaticRule
 from ._models import StaticWorkerSelectorAttachment
 from ._models import UnassignJobResult
 from ._models import WaitTimeExceptionTrigger
+from ._models import WebhookRule
 from ._models import WeightedAllocationQueueSelectorAttachment
 from ._models import WeightedAllocationWorkerSelectorAttachment
 from ._models import WorkerAssignment
@@ -75,7 +77,7 @@ from ._enums import ScoringRuleParameterSelector
 from ._enums import WorkerSelectorState
 from ._enums import WorkerStateSelector
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -111,6 +113,7 @@ __all__ = [
     "JobRouterError",
     "LongestIdleMode",
     "ManualReclassifyExceptionAction",
+    "Oauth2ClientCredential",
     "PassThroughQueueSelectorAttachment",
     "PassThroughWorkerSelectorAttachment",
     "QueueLengthExceptionTrigger",
@@ -133,6 +136,7 @@ __all__ = [
     "StaticWorkerSelectorAttachment",
     "UnassignJobResult",
     "WaitTimeExceptionTrigger",
+    "WebhookRule",
     "WeightedAllocationQueueSelectorAttachment",
     "WeightedAllocationWorkerSelectorAttachment",
     "WorkerAssignment",

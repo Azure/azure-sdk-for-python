@@ -24,11 +24,9 @@ pip install azure-communication-callautomation
 ## Key concepts
 | Name                 | Description                                                                                                                                                                                                                                                                                                                              |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CallAutomationClient | `CallAutomationClient` is the primary interface for developers using this client library. It can be used to initiate calls by `createCall` or `answerCall`.                                                                                                                                                                              |
-| CallConnectionClient | `CallConnectionClient` represents a ongoing call. Once the call is established with `createCall` or `answerCall`, further actions can be performed for the call, such as `transfer` or `addParticipant`.                                                                                                                                       |
-| CallMediaClient      | `CallMediaClient` can be used to do media related actions, such as `play`, to play media file. This can be retrieved from established `CallConnectionClient`.                                                                                                                                                                                        |
-| CallRecordingClient  | `CallRecordingClient` can be used to do recording related actions, such as `startRecording`. This can be retrieved from `CallAutomationClient`.                                                                                                                                                                                                |
-| Callback Events      | Callback events are events sent back during duration of the call. It gives information and state of the call, such as `CallConnected`. `CallbackUrl` must be provided during `createCall` and `answerCall`, and callback events will be sent to this url. You can use `callAutomationEventParser` to parse these events when it arrives. |
+| CallAutomationClient | `CallAutomationClient` is the primary interface for developers using this client library. It can be used to initiate calls by `createCall` or `answerCall`. It can also be used to do recording actions such as `startRecording`                                                                                                         |                                                                      |
+| CallConnectionClient | `CallConnectionClient` represents a ongoing call. Once the call is established with `createCall` or `answerCall`, further actions can be performed for the call, such as `transfer` or `play_media`.                                                                                                                                     |                                                                                                                                                               |
+| Callback Events      | Callback events are events sent back during duration of the call. It gives information and state of the call, such as `CallConnected`. `CallbackUrl` must be provided during `createCall` and `answerCall`, and callback events will be sent to this url. |
 | Incoming Call Event  | When incoming call happens (that can be answered with `answerCall`), incoming call eventgrid event will be sent. This is different from Callback events above, and should be setup on Azure portal. See [Incoming Call][incomingcall] for detail.                                                                                        |
 
 ## Examples
@@ -59,14 +57,20 @@ call_invite = CallInvite(target=user)
 callback_url = "https://<MY-EVENT-HANDLER-URL>/events"
 
 # send out the invitation, creating call
-response = client.create_call(call_invite, callback_url)
+result = client.create_call(call_invite, callback_url)
+
+# this id can be used to do further actions in the call
+call_connection_id = result.call_connection_id
 ```
 
 ### Play Media
 ```Python
-# from callconnection of response above, play media of media file
-my_file = FileSource(uri="https://<FILE-SOURCE>/<SOME-FILE>.wav")
-const response = call_connection.get_call_media().play_to_all(my_file)
+# using call connection id, get call connection
+call_connection = client.get_call_connection(call_connection_id)
+
+# from callconnection of result above, play media to all participants
+my_file = FileSource(url="https://<FILE-SOURCE>/<SOME-FILE>.wav")
+call_connection.play_to_all(my_file)
 ```
 
 ## Troubleshooting

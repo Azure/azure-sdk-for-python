@@ -16,7 +16,6 @@ from azure.ai.ml.entities._monitoring.signals import (
     DataQualitySignal,
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
-    ModelPerformanceSignal,
     CustomMonitoringSignal,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -30,6 +29,21 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class MonitorDefinition(RestTranslatableMixin):
+    """Monitor definition
+
+    :param compute: Information on compute resources associated with the monitor
+    :type compute: str
+    :param monitoring_target: Metadata describing the model or deployment that is being monitored
+    :type monitoring_target: ~azure.ai.ml.entities.MonitoringTarget
+    :param monitoring_signals: Dictionary of signals to monitor
+    :type monitoring_signals: Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
+        , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
+        , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
+        , ~azure.ai.ml.entities.CustomMonitoringSignal]]
+    :param alert_notification: Alert configuration for the monitor
+    :type alert_notification: Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]
+    """
+
     def __init__(
         self,
         *,
@@ -42,7 +56,6 @@ class MonitorDefinition(RestTranslatableMixin):
                 DataQualitySignal,
                 PredictionDriftSignal,
                 FeatureAttributionDriftSignal,
-                ModelPerformanceSignal,
                 CustomMonitoringSignal,
             ],
         ] = None,

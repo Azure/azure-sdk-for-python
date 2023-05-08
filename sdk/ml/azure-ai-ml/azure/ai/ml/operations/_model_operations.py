@@ -54,7 +54,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model, ModelPackage
+from azure.ai.ml.entities._assets import Model, ModelPackage, Environment
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
@@ -552,7 +552,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def begin_package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> None:
+    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> Environment:
         """Package a model asset
 
         :param name: Name of model asset.
@@ -561,8 +561,8 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param package_request: Model package request.
         :type package_request: ~azure.ai.ml.entities.ModelPackage
-        :return: None
-        :rtype: None
+        :return: Environment object
+        :rtype: ~azure.ai.ml.entities.Environment
 
         """
 

@@ -88,7 +88,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer4bb427fd?restype=container\u0026se=end\u0026sp=r\u0026sv=2022-11-02\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer4bb427fd?restype=container\u0026se=end\u0026sp=r\u0026sv=2023-01-03\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -122,7 +122,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer4bb427fd/blob4bb427fd?se=end\u0026sp=r\u0026sv=2022-11-02\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer4bb427fd/blob4bb427fd?se=end\u0026sp=r\u0026sv=2023-01-03\u0026ss=b\u0026srt=co\u0026sig=fake_token_value",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
