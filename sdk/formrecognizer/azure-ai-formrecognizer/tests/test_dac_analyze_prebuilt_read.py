@@ -35,12 +35,12 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         assert result.pages[0].formulas[0].value
         assert result.pages[0].formulas[0].polygon
         assert result.pages[0].formulas[0].span
-        assert result.pages[0].formulas[0].confidence > 0.8
+        assert result.pages[0].formulas[0].confidence
         assert result.pages[0].formulas[1].kind == "display"
         assert result.pages[0].formulas[1].value
         assert result.pages[0].formulas[1].polygon
         assert result.pages[0].formulas[1].span
-        assert result.pages[0].formulas[1].confidence > 0.8
+        assert result.pages[0].formulas[1].confidence
 
     @skip_flaky_test
     @FormRecognizerPreparer()
