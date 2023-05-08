@@ -139,19 +139,19 @@ class TestEGClientExceptions():
         assert type(release.failed_lock_tokens[0]) == FailedLockToken
         assert release.failed_lock_tokens[0].lock_token == "faketoken"
 
-    # def test_reject_cloud_event_invalid_token(self):
-    #     eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-    #     topic_name = os.environ['TOPIC_NAME']
-    #     event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+    def test_reject_cloud_event_invalid_token(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        topic_name = os.environ['TOPIC_NAME']
+        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
 
-    #     client = self.create_eg_client(eventgrid_endpoint)
-    #     lock_tokens = RejectOptions(lock_tokens=["faketoken"])
+        client = self.create_eg_client(eventgrid_endpoint)
+        lock_tokens = RejectOptions(lock_tokens=["faketoken"])
 
-    #     reject = client.reject_cloud_events(topic_name, event_subscription_name, lock_tokens=lock_tokens)
-    #     assert type(reject) == RejectResult
-    #     assert reject.succeeded_lock_tokens == []
-    #     assert type(reject.failed_lock_tokens[0]) == FailedLockToken
-    #     assert reject.failed_lock_tokens[0].lock_token == "faketoken"
+        reject = client.reject_cloud_events(topic_name, event_subscription_name, lock_tokens=lock_tokens)
+        assert type(reject) == RejectResult
+        assert reject.succeeded_lock_tokens == []
+        assert type(reject.failed_lock_tokens[0]) == FailedLockToken
+        assert reject.failed_lock_tokens[0].lock_token == "faketoken"
 
     def test_release_cloud_event_event_delivery_time(self):
         eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
@@ -159,16 +159,7 @@ class TestEGClientExceptions():
         event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
 
         client = self.create_eg_client(eventgrid_endpoint)
+        lock_tokens = ReleaseOptions(lock_tokens=["faketoken"])
 
         with pytest.raises(HttpResponseError):
-            client.release_cloud_events(topic_name, event_subscription_name, event_delivery_delay_in_seconds=-20)
-
-    def test_release_cloud_event_event_delivery_time(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
-
-        client = self.create_eg_client(eventgrid_endpoint)
-
-        with pytest.raises(HttpResponseError):
-            client.acknowledge_cloud_events(topic_name, event_subscription_name, event_delivery_delay_in_seconds=-20)
+            client.release_cloud_events(topic_name, event_subscription_name, lock_tokens=lock_tokens, event_delivery_delay_in_seconds=-20)
