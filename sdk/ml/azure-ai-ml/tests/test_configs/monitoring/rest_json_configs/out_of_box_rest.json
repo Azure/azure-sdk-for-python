@@ -8,12 +8,14 @@
         "prediction-drift-signal.baselinedata.datarange.type": "Trailing",
         "prediction-drift-signal.baselinedata.datarange.window_size": "P7D",
         "data-quality-signal.baselinedata.datarange.type": "Trailing",
-        "data-quality-signal.baselinedata.datarange.window_size": "P7D"
+        "data-quality-signal.baselinedata.datarange.window_size": "P7D",
+        "compute.spark.resources.instance_type": "standard_e8s_v3",
+        "compute.spark.resources.runtime_version": "3.2"
       },
       "action": {
         "actionType": "CreateMonitor",
         "monitorDefinition": {
-          "computeId": "cpu-cluster",
+          "computeId": "spark",
           "monitoringTarget": "fake_endpoint_deployment_id",
           "signals": {
             "data-drift-signal": {
