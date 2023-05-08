@@ -35,7 +35,7 @@ class TestModelSchema:
     def test_deserialize_with_stage(self) -> None:
         path = Path("./tests/test_configs/model/model_with_stage.yml")
         model = load_model(path)
-        assert model.stage
+        assert model.stage == "Production"
 
     def test_ipp_model(self) -> None:
         rest_ipp_model = {

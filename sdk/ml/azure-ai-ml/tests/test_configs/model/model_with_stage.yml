@@ -3,7 +3,7 @@ type: mlflow_model
 path: ./lightgbm_mlflow_model
 version: 3
 description: "this is my test model with stage"
-stage: "production"
+stage: "Production"
 tags:
   foo: bar
   abc: 123

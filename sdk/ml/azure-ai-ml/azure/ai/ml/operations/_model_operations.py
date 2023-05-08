@@ -418,6 +418,7 @@ class ModelOperations(_ScopeDependentOperations):
     def list(
         self,
         name: Optional[str] = None,
+        stage: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[Model]:
@@ -444,6 +445,7 @@ class ModelOperations(_ScopeDependentOperations):
                     workspace_name=self._workspace_name,
                     cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
+                    stage=stage,
                     **self._scope_kwargs,
                 )
             )
