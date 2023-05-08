@@ -10,8 +10,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateSc
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_kebab
-from azure.ai.ml.constants import NlpModels
-
 
 class NlpFixedParametersSchema(metaclass=PatchedSchemaMeta):
     gradient_accumulation_steps = fields.Int()

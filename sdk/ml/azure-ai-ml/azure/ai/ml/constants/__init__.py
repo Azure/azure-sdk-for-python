@@ -10,13 +10,9 @@ from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
 from ._job import (
     DistributionType,
-    ImageClassificationModelNames,
-    ImageInstanceSegmentationModelNames,
-    ImageObjectDetectionModelNames,
     ImportSourceType,
     JobType,
     NlpLearningRateScheduler,
-    NlpModels,
     TabularTrainingMode,
 )
 from ._registry import AcrAccountSku, StorageAccountType
@@ -42,12 +38,8 @@ __all__ = [
     "BatchDeploymentOutputAction",
     "ModelType",
     "ManagedServiceIdentityType",
-    "ImageClassificationModelNames",
-    "ImageObjectDetectionModelNames",
-    "ImageInstanceSegmentationModelNames",
     "StorageAccountType",
     "AcrAccountSku",
-    "NlpModels",
     "NlpLearningRateScheduler",
     "Scope",
     "TabularTrainingMode",

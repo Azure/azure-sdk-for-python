@@ -24,8 +24,6 @@ from azure.ai.ml._schema.core.fields import (
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_kebab
-from azure.ai.ml.constants import NlpModels
-
 
 def get_choice_schema_of_type(cls, **kwargs):
     class CustomChoiceSchema(ChoiceSchema):
@@ -72,11 +70,7 @@ class NlpParameterSubspaceSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[obj.value for obj in NlpLearningRateScheduler],
         casing_transform=camel_to_snake,
     )
-    model_name = get_choice_and_single_value_schema_of_type(
-        StringTransformedEnum,
-        allowed_values=[obj.value for obj in NlpModels],
-        casing_transform=snake_to_kebab,
-    )
+    model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
     number_of_epochs = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     training_batch_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     validation_batch_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD

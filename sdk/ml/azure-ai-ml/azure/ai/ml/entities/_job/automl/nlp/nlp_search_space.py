@@ -6,7 +6,6 @@ from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, NlpParameterSubspace
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import NlpModels
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
 from azure.ai.ml.entities._job.sweep.search_space import Choice, SweepDistribution
@@ -30,7 +29,7 @@ class NlpSearchSpace(RestTranslatableMixin):
         weight_decay: Optional[Union[float, SweepDistribution]] = None
     ):
         # Since we want customers to be able to specify enums as well rather than just strings, we need to access
-        # the enum values here before we serialize them ('NlpModels.BERT_BASE_CASED' vs. 'bert-base-cased').
+        # the enum values here before we serialize them
         if isinstance(learning_rate_scheduler, NlpLearningRateScheduler):
             learning_rate_scheduler = camel_to_snake(learning_rate_scheduler.value)
         elif isinstance(learning_rate_scheduler, Choice):
@@ -38,11 +37,6 @@ class NlpSearchSpace(RestTranslatableMixin):
                 camel_to_snake(item.value) if isinstance(item, NlpLearningRateScheduler) else item
                 for item in learning_rate_scheduler.values
             ]
-
-        if isinstance(model_name, NlpModels):
-            model_name = model_name.value
-        elif isinstance(model_name, Choice):
-            model_name.values = [item.value if isinstance(item, NlpModels) else item for item in model_name.values]
 
         self.gradient_accumulation_steps = gradient_accumulation_steps
         self.learning_rate = learning_rate
