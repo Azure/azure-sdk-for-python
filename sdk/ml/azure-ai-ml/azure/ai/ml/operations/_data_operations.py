@@ -566,7 +566,16 @@ class DataOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
     @experimental
-    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Data:
+    def share(
+        self,
+        name,
+        version,
+        *,
+        share_with_name,
+        share_with_version,
+        registry_name,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> Data:
         """Share a data asset from workspace to registry.
 
         :param name: Name of data asset.
