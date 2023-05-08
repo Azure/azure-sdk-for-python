@@ -24,9 +24,7 @@ class MdcConfigResolver(object):
         if len(data_collector.collections) <= 0:
             return
 
-        sampling_percentage = 100
-        if data_collector.sampling_rate:
-            sampling_percentage = int(data_collector.sampling_rate * 100)
+        sampling_percentage = int(data_collector.sampling_rate * 100) if data_collector.sampling_rate else 100
 
         self.mdc_config = {"collections": {}, "runMode": "local"}
         for k, v in data_collector.collections.items():
