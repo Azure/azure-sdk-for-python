@@ -41,6 +41,7 @@ ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 DeploymentType = TypeVar("DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment])
 
+
 class BatchDeploymentOperations(_ScopeDependentOperations):
     """BatchDeploymentOperations.
 
