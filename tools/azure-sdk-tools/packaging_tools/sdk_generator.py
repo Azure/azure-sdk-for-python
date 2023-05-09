@@ -5,6 +5,7 @@ from pathlib import Path
 from subprocess import check_call
 import shutil
 import re
+import os
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -20,10 +21,17 @@ from .generate_utils import (
     dpg_relative_folder,
     gen_typespec,
     update_typespec_location,
+    return_origin_path,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
+
+@return_origin_path
+def multiapi_combiner(sdk_code_path: str):
+    os.chdir(sdk_code_path)
+    check_call(f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}", shell=True)
+    check_call("pip install -e .", shell=True)
 
 def del_outdated_folder(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
@@ -114,6 +122,7 @@ def main(generate_input, generate_output):
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
+        # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
@@ -167,6 +176,11 @@ def main(generate_input, generate_output):
                 f"pip install --ignore-requires-python -e {sdk_code_path}",
                 shell=True,
             )
+
+            # use multiapi combiner to combine multiapi package
+            if package_name in ("azure-mgmt-network"):
+                _LOGGER.info(f"start to combine multiapi package: {package_name}")
+                multiapi_combiner(sdk_code_path)
 
     # remove duplicates
     for value in result.values():
