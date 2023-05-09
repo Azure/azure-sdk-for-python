@@ -42,7 +42,6 @@ class ContainerRegistryBaseClient(object):
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=self._auth_policy,
-            connection_timeout=10,
             **kwargs
         )
 
