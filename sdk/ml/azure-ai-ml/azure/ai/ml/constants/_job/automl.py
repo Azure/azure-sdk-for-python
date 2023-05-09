@@ -54,6 +54,7 @@ class AutoMLTransformerParameterKeys(Enum):
     TF_IDF = "TfIdf"
     HASH_ONE_HOT_ENCODER = "HashOneHotEncoder"
 
+
 class NlpModels(Enum):
     # Model names for NLP tasks.
     BERT_BASE_CASED = "bert-base-cased"

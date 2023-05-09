@@ -16,6 +16,7 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 
+
 class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     ams_gradient = fields.Bool()
     advanced_settings = fields.Str()
