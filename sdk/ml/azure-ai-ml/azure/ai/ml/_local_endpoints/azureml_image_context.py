@@ -71,8 +71,7 @@ class AzureMlImageContext(object):
 
         if yaml_code_directory_path:
             local_code_mount_path = str(yaml_code_directory_path)
-            # Set the directory containing scoring script as AML_APP_ROOT/working directory
-            docker_code_folder_name = Path(yaml_code_directory_path, os.path.dirname(Path(yaml_code_scoring_script_file_name))).name
+            docker_code_folder_name = Path(yaml_code_directory_path).name
             docker_code_mount_path = f"{self.docker_azureml_app_path}{docker_code_folder_name}/"
             self._volumes.update(
                 {
@@ -81,12 +80,13 @@ class AzureMlImageContext(object):
                     }
                 }
             )
+            # Set the directory containing scoring script as AML_APP_ROOT/working directory
             self._environment[
                 LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT
-            ] = docker_code_mount_path  # ie. /var/azureml-app/onlinescoring
+            ] = Path(docker_code_mount_path, os.path.dirname(yaml_code_scoring_script_file_name)).as_posix()  # ie. /var/azureml-app/onlinescoring
             self._environment[
                 LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT
-            ] = yaml_code_scoring_script_file_name  # ie. score.py
+            ] = Path(yaml_code_scoring_script_file_name).name  # ie. score.py
 
         self.ports = {"5001/tcp": 5001}
 
