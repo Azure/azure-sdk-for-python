@@ -139,6 +139,7 @@ from ._workspace.networking import (
     ServiceTagDestination,
     PrivateEndpointDestination,
     IsolationMode,
+    ManagedNetworkProvisionStatus,
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
@@ -268,6 +269,7 @@ __all__ = [
     "ServiceTagDestination",
     "PrivateEndpointDestination",
     "IsolationMode",
+    "ManagedNetworkProvisionStatus",
     "EndpointConnection",
     "CustomerManagedKey",
     "DataImport",
