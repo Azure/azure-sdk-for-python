@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Dict, Union
@@ -101,3 +101,7 @@ def _archive_or_restore(
         body=version_resource,
         **kwargs,
     )
+
+
+def _datetime_to_str(datetime_obj: Union[str, datetime]):
+    return datetime_obj if isinstance(datetime_obj, str) else datetime_obj.isoformat()
