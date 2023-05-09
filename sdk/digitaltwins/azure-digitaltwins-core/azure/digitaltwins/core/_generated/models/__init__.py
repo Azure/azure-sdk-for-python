@@ -35,6 +35,13 @@ try:
     from ._models_py3 import EventRoutesDeleteOptions
     from ._models_py3 import EventRoutesGetByIdOptions
     from ._models_py3 import EventRoutesListOptions
+    from ._models_py3 import ImportJob
+    from ._models_py3 import ImportJobCollection
+    from ._models_py3 import ImportJobsAddOptions
+    from ._models_py3 import ImportJobsCancelOptions
+    from ._models_py3 import ImportJobsDeleteOptions
+    from ._models_py3 import ImportJobsGetByIdOptions
+    from ._models_py3 import ImportJobsListOptions
     from ._models_py3 import IncomingRelationship
     from ._models_py3 import IncomingRelationshipCollection
     from ._models_py3 import InnerError
@@ -72,6 +79,13 @@ except (SyntaxError, ImportError):
     from ._models import EventRoutesDeleteOptions  # type: ignore
     from ._models import EventRoutesGetByIdOptions  # type: ignore
     from ._models import EventRoutesListOptions  # type: ignore
+    from ._models import ImportJob  # type: ignore
+    from ._models import ImportJobCollection  # type: ignore
+    from ._models import ImportJobsAddOptions  # type: ignore
+    from ._models import ImportJobsCancelOptions  # type: ignore
+    from ._models import ImportJobsDeleteOptions  # type: ignore
+    from ._models import ImportJobsGetByIdOptions  # type: ignore
+    from ._models import ImportJobsListOptions  # type: ignore
     from ._models import IncomingRelationship  # type: ignore
     from ._models import IncomingRelationshipCollection  # type: ignore
     from ._models import InnerError  # type: ignore
@@ -81,6 +95,12 @@ except (SyntaxError, ImportError):
     from ._models import QueryTwinsOptions  # type: ignore
     from ._models import RelationshipCollection  # type: ignore
 
+from ._azure_digital_twins_api_enums import (
+    Status,
+)
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'DigitalTwinModelsAddOptions',
     'DigitalTwinModelsDeleteOptions',
@@ -110,6 +130,13 @@ __all__ = [
     'EventRoutesDeleteOptions',
     'EventRoutesGetByIdOptions',
     'EventRoutesListOptions',
+    'ImportJob',
+    'ImportJobCollection',
+    'ImportJobsAddOptions',
+    'ImportJobsCancelOptions',
+    'ImportJobsDeleteOptions',
+    'ImportJobsGetByIdOptions',
+    'ImportJobsListOptions',
     'IncomingRelationship',
     'IncomingRelationshipCollection',
     'InnerError',
@@ -118,4 +145,7 @@ __all__ = [
     'QuerySpecification',
     'QueryTwinsOptions',
     'RelationshipCollection',
+    'Status',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
