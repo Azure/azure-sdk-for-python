@@ -7,7 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, overload, Mapping, Any
-from ._models import LockToken
 from ._models import (
     ReceiveDetails as InternalReceiveDetails,
     ReceiveResult as InternalReceiveResult,
@@ -81,7 +80,7 @@ class BrokerProperties(InternalBrokerProperties):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lock_token: The token used to lock the event. Required.
-    :vartype lock_token: ~azure.eventgrid.models.LockToken
+    :vartype lock_token: str
     :ivar delivery_attempt_count: The attempt count for deliverying the event. Required.
     :vartype delivery_attempt_count: int
     """
@@ -90,7 +89,7 @@ class BrokerProperties(InternalBrokerProperties):
     def __init__(
         self,
         *,
-        lock_token: "LockToken",
+        lock_token: str,
         delivery_attempt_count: int,
     ):
         ...
