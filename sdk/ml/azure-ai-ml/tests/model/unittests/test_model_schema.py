@@ -31,7 +31,7 @@ class TestModelSchema:
         assert model.version is None
         assert model._auto_increment_version
         assert model.type == AssetTypes.CUSTOM_MODEL  # assert the default model type
-    
+
     def test_deserialize_with_stage(self) -> None:
         path = Path("./tests/test_configs/model/model_with_stage.yml")
         model = load_model(path)
@@ -61,7 +61,9 @@ class TestModelSchema:
             "systemData": {},
         }
 
-        from_rest_ipp_model = Model._from_rest_object(ModelVersionData.deserialize(rest_ipp_model))
+        from_rest_ipp_model = Model._from_rest_object(
+            ModelVersionData.deserialize(rest_ipp_model)
+        )
 
         assert from_rest_ipp_model._intellectual_property
         assert from_rest_ipp_model._intellectual_property.protection_level == "All"
