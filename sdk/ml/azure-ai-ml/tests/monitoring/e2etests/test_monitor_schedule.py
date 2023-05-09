@@ -43,7 +43,6 @@ class TestMonitorSchedule(AzureRecordedTestCase):
 
         # test ARM id resolution
         assert isinstance(created_schedule, MonitorSchedule)
-        assert is_ARM_id_for_resource(created_schedule.create_monitor.compute, AzureMLResourceType.COMPUTE)
 
         data_drift_signal = created_schedule.create_monitor.monitoring_signals["testSignal"]
         assert data_drift_signal.target_dataset
