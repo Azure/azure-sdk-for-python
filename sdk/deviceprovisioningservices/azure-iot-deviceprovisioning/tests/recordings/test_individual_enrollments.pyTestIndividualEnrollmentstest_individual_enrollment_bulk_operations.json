@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
+        "Date": "Tue, 09 May 2023 20:31:23 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15175.9 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15357.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -100,7 +100,6 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -111,12 +110,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
+        "Date": "Tue, 09 May 2023 20:31:23 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15175.8 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15357.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,11 +171,10 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "1e551b46-7679-4afa-abd1-3a1e2f7a370b",
+        "client-request-id": "4b0e0303-4701-4839-91da-649f0b4418db",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -190,10 +188,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "1e551b46-7679-4afa-abd1-3a1e2f7a370b",
+        "client-request-id": "4b0e0303-4701-4839-91da-649f0b4418db",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:04 GMT",
+        "Date": "Tue, 09 May 2023 20:31:23 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +199,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15175.9 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15357.5 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,7 +224,7 @@
       "RequestBody": {
         "enrollments": [
           {
-            "registrationId": "ind_enroll_tpm_bcb48bb",
+            "registrationId": "ind_enroll_tpm_56f45ca",
             "attestation": {
               "type": "tpm",
               "tpm": {
@@ -238,14 +236,14 @@
             "reprovisionPolicy": null,
             "customAllocationDefinition": null,
             "provisioningStatus": "enabled",
-            "deviceId": "device_bcb48bb",
+            "deviceId": "device_56f45ca",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
             "initialTwin": null
           },
           {
-            "registrationId": "sym_key_enrollment_bcb48bb",
+            "registrationId": "sym_key_enrollment_56f45ca",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -261,7 +259,7 @@
             },
             "customAllocationDefinition": null,
             "provisioningStatus": null,
-            "deviceId": "sym_key_device_bcb48bb",
+            "deviceId": "sym_key_device_56f45ca",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
@@ -273,7 +271,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:05 GMT",
+        "Date": "Tue, 09 May 2023 20:31:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -296,7 +294,7 @@
       "RequestBody": {
         "enrollments": [
           {
-            "registrationId": "ind_enroll_tpm_bcb48bb",
+            "registrationId": "ind_enroll_tpm_56f45ca",
             "attestation": {
               "type": "tpm",
               "tpm": {
@@ -308,14 +306,14 @@
             "reprovisionPolicy": null,
             "customAllocationDefinition": null,
             "provisioningStatus": "enabled",
-            "deviceId": "device_bcb48bb",
+            "deviceId": "device_56f45ca",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
             "initialTwin": null
           },
           {
-            "registrationId": "sym_key_enrollment_bcb48bb",
+            "registrationId": "sym_key_enrollment_56f45ca",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -331,7 +329,7 @@
             },
             "customAllocationDefinition": null,
             "provisioningStatus": null,
-            "deviceId": "sym_key_device_bcb48bb",
+            "deviceId": "sym_key_device_56f45ca",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
@@ -343,19 +341,19 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:06 GMT",
+        "Date": "Tue, 09 May 2023 20:31:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "errors": [
           {
-            "registrationId": "ind_enroll_tpm_bcb48bb",
+            "registrationId": "ind_enroll_tpm_56f45ca",
             "errorCode": 409201,
             "errorStatus": "Enrollment already exists."
           },
           {
-            "registrationId": "sym_key_enrollment_bcb48bb",
+            "registrationId": "sym_key_enrollment_56f45ca",
             "errorCode": 409201,
             "errorStatus": "Enrollment already exists."
           }
@@ -377,7 +375,7 @@
       "RequestBody": {
         "enrollments": [
           {
-            "registrationId": "ind_enroll_tpm_bcb48bb",
+            "registrationId": "ind_enroll_tpm_56f45ca",
             "attestation": {
               "type": "tpm",
               "tpm": {
@@ -389,14 +387,14 @@
             "reprovisionPolicy": null,
             "customAllocationDefinition": null,
             "provisioningStatus": "enabled",
-            "deviceId": "device_bcb48bb",
+            "deviceId": "device_56f45ca",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
             "initialTwin": null
           },
           {
-            "registrationId": "sym_key_enrollment_bcb48bb",
+            "registrationId": "sym_key_enrollment_56f45ca",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -412,7 +410,7 @@
             },
             "customAllocationDefinition": null,
             "provisioningStatus": null,
-            "deviceId": "sym_key_device_bcb48bb",
+            "deviceId": "sym_key_device_56f45ca",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
@@ -424,7 +422,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:06 GMT",
+        "Date": "Tue, 09 May 2023 20:31:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },

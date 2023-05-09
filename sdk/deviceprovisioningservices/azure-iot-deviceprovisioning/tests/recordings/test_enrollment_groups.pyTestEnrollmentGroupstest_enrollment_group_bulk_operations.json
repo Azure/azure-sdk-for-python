@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:36:57 GMT",
+        "Date": "Tue, 09 May 2023 20:31:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15175.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15357.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -100,7 +100,6 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -111,12 +110,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:36:57 GMT",
+        "Date": "Tue, 09 May 2023 20:31:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15175.9 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15319.9 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,11 +171,10 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "49fdab91-15bb-4f18-b4b3-96f457ab1e84",
+        "client-request-id": "e0c31363-56db-4ebd-a6f8-5a85dedba0cf",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -190,10 +188,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "49fdab91-15bb-4f18-b4b3-96f457ab1e84",
+        "client-request-id": "e0c31363-56db-4ebd-a6f8-5a85dedba0cf",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:36:57 GMT",
+        "Date": "Tue, 09 May 2023 20:31:17 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +199,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15175.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15357.5 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,7 +224,7 @@
       "RequestBody": {
         "enrollmentGroups": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "x509_enroll_grp_18853fd6",
             "attestation": {
               "type": "x509",
               "x509": {
@@ -250,7 +248,7 @@
             "customAllocationDefinition": null
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "sym_key_enroll_grp_18853fd6",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -276,7 +274,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:36:58 GMT",
+        "Date": "Tue, 09 May 2023 20:31:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -299,7 +297,7 @@
       "RequestBody": {
         "enrollmentGroups": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "x509_enroll_grp_18853fd6",
             "attestation": {
               "type": "x509",
               "x509": {
@@ -323,7 +321,7 @@
             "customAllocationDefinition": null
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "sym_key_enroll_grp_18853fd6",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -349,19 +347,19 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:36:58 GMT",
+        "Date": "Tue, 09 May 2023 20:31:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "errors": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "x509_enroll_grp_18853fd6",
             "errorCode": 409202,
             "errorStatus": "EnrollmentGroup already exists."
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "sym_key_enroll_grp_18853fd6",
             "errorCode": 409202,
             "errorStatus": "EnrollmentGroup already exists."
           }
@@ -383,7 +381,7 @@
       "RequestBody": {
         "enrollmentGroups": [
           {
-            "enrollmentGroupId": "x509_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "x509_enroll_grp_18853fd6",
             "attestation": {
               "type": "x509",
               "x509": {
@@ -407,7 +405,7 @@
             "customAllocationDefinition": null
           },
           {
-            "enrollmentGroupId": "sym_key_enroll_grp_f2b342c7",
+            "enrollmentGroupId": "sym_key_enroll_grp_18853fd6",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -433,7 +431,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:36:58 GMT",
+        "Date": "Tue, 09 May 2023 20:31:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },

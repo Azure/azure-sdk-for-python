@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:08 GMT",
+        "Date": "Tue, 09 May 2023 20:31:26 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15175.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15357.5 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -46,7 +46,7 @@
       "RequestBody": {
         "enrollments": [
           {
-            "registrationId": "ind_enroll_tpm_d3244b38",
+            "registrationId": "ind_enroll_tpm_bb224847",
             "attestation": {
               "type": "tpm",
               "tpm": {
@@ -58,14 +58,14 @@
             "reprovisionPolicy": null,
             "customAllocationDefinition": null,
             "provisioningStatus": "enabled",
-            "deviceId": "device_d3244b38",
+            "deviceId": "device_bb224847",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
             "initialTwin": null
           },
           {
-            "registrationId": "sym_key_enrollment_d3244b38",
+            "registrationId": "sym_key_enrollment_bb224847",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -81,7 +81,7 @@
             },
             "customAllocationDefinition": null,
             "provisioningStatus": null,
-            "deviceId": "sym_key_device_d3244b38",
+            "deviceId": "sym_key_device_bb224847",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
@@ -93,7 +93,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:09 GMT",
+        "Date": "Tue, 09 May 2023 20:31:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -115,7 +115,7 @@
       "RequestBody": {
         "enrollments": [
           {
-            "registrationId": "ind_enroll_tpm_d3244b38",
+            "registrationId": "ind_enroll_tpm_bb224847",
             "attestation": {
               "type": "tpm",
               "tpm": {
@@ -127,14 +127,14 @@
             "reprovisionPolicy": null,
             "customAllocationDefinition": null,
             "provisioningStatus": "enabled",
-            "deviceId": "device_d3244b38",
+            "deviceId": "device_bb224847",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
             "initialTwin": null
           },
           {
-            "registrationId": "sym_key_enrollment_d3244b38",
+            "registrationId": "sym_key_enrollment_bb224847",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -150,7 +150,7 @@
             },
             "customAllocationDefinition": null,
             "provisioningStatus": null,
-            "deviceId": "sym_key_device_d3244b38",
+            "deviceId": "sym_key_device_bb224847",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
@@ -162,19 +162,19 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:09 GMT",
+        "Date": "Tue, 09 May 2023 20:31:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "errors": [
           {
-            "registrationId": "ind_enroll_tpm_d3244b38",
+            "registrationId": "ind_enroll_tpm_bb224847",
             "errorCode": 409201,
             "errorStatus": "Enrollment already exists."
           },
           {
-            "registrationId": "sym_key_enrollment_d3244b38",
+            "registrationId": "sym_key_enrollment_bb224847",
             "errorCode": 409201,
             "errorStatus": "Enrollment already exists."
           }
@@ -195,7 +195,7 @@
       "RequestBody": {
         "enrollments": [
           {
-            "registrationId": "ind_enroll_tpm_d3244b38",
+            "registrationId": "ind_enroll_tpm_bb224847",
             "attestation": {
               "type": "tpm",
               "tpm": {
@@ -207,14 +207,14 @@
             "reprovisionPolicy": null,
             "customAllocationDefinition": null,
             "provisioningStatus": "enabled",
-            "deviceId": "device_d3244b38",
+            "deviceId": "device_bb224847",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
             "initialTwin": null
           },
           {
-            "registrationId": "sym_key_enrollment_d3244b38",
+            "registrationId": "sym_key_enrollment_bb224847",
             "attestation": {
               "type": "symmetricKey",
               "symmetricKey": {
@@ -230,7 +230,7 @@
             },
             "customAllocationDefinition": null,
             "provisioningStatus": null,
-            "deviceId": "sym_key_device_d3244b38",
+            "deviceId": "sym_key_device_bb224847",
             "optionalDeviceInformation": null,
             "iotHubs": null,
             "iotHubHostName": null,
@@ -242,7 +242,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 20 Apr 2023 20:37:09 GMT",
+        "Date": "Tue, 09 May 2023 20:31:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
