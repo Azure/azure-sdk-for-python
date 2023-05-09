@@ -140,21 +140,13 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """
         workspace_name = self._check_workspace_name(workspace_name)
-
-        # pylint: disable=unused-argument
-        def callback(_, deserialized, args):
-            provision_response_result = ManagedNetworkProvisionStatus._from_rest_object(deserialized)
-            res = None
-            if provision_response_result:
-                res = provision_response_result
-            return res
-
+        
         poller = self._provision_network_operation.begin_provision_managed_network(
             self._resource_group_name,
             workspace_name,
             ManagedNetworkProvisionOptions(include_spark=include_spark),
             polling=True,
-            cls=callback,
+            cls = lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
         )
         module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
         return poller

@@ -23,7 +23,6 @@ from azure.core.polling import LROPoller
     "recorded_test", "mock_workspace_arm_template_deployment_name", "mock_workspace_dependent_resource_name_generator"
 )
 class TestWorkspaceOutboundRules(AzureRecordedTestCase):
-    """
     @pytest.mark.e2etest
     @pytest.mark.mlc
     @pytest.mark.skipif(
@@ -148,7 +147,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
-        assert isinstance(poller, LROPoller)"""
+        assert isinstance(poller, LROPoller)
 
     @pytest.mark.e2etest
     @pytest.mark.mlc

@@ -212,8 +212,19 @@ class ManagedNetwork:
         )
 
 
+@experimental
 class ManagedNetworkProvisionStatus:
-    """ManagedNetworkProvisionStatus."""
+    """ManagedNetworkProvisionStatus.
+
+    :param status: Status for managed network provision.
+    :type status: str
+    :param spark_ready: Bool value indicating if managed network is spark ready
+    :type spark_ready: str
+    :ivar status: Status for managed network provision.
+    :vartype status: str
+    :ivar spark_ready: Bool value indicating if managed network is spark ready
+    :vartype spark_ready: str
+    """
 
     def __init__(
         self,
