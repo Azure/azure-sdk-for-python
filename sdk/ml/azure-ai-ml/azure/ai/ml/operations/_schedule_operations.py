@@ -274,7 +274,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
         # resolve target ARM ID
         model_inputs_name, model_outputs_name = None, None
-        model_inputs_version, model_inputs_version = None, None
+        model_inputs_version, model_outputs_version = None, None
         mdc_input_enabled, mdc_output_enabled = False, False
         target = schedule.create_monitor.monitoring_target
         if target and target.endpoint_deployment_id:
@@ -342,7 +342,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                             ),
                         )
                     else:
-                        # if target dataset is absent and data collector for input is not enabled, collect exception message
+                        # if target dataset is absent and data collector for input is not enabled,
+                        # collect exception message
                         msg = (
                             f"A target dataset must be provided for signal with name {signal_name}"
                             f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
@@ -363,7 +364,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                         ),
                     )
                 else:
-                    # if target dataset is absent and data collector for output is not enabled, collect exception message
+                    # if target dataset is absent and data collector for output is not enabled,
+                    # collect exception message
                     msg = (
                         f"A target dataset must be provided for signal with name {signal_name}"
                         f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
