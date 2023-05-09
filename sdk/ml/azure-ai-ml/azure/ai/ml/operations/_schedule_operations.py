@@ -333,7 +333,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                     model_outputs_type,
                 )
             else:
-                msg = "An ARM id for a deployment with model data collector enabled must be given if monitoring_signals is None"
+                msg = (
+                    "An ARM id for a deployment with model data collector enabled must be "
+                    "given if monitoring_signals is None"
+                )
                 raise ScheduleException(
                     message=msg,
                     no_personal_data_message=msg,
