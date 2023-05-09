@@ -8,7 +8,6 @@ from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionStatus
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -22,6 +21,7 @@ from azure.ai.ml.entities import (
     DiagnoseWorkspaceParameters,
     Workspace,
     WorkspaceKeys,
+    ManagedNetworkProvisionStatus,
 )
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -137,12 +137,19 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
         :return: An instance of LROPoller.
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """
         workspace_name = self._check_workspace_name(workspace_name)
-        return self._provision_network_operation.begin_provision_managed_network(
-            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=include_spark)
+
+        poller = self._provision_network_operation.begin_provision_managed_network(
+            self._resource_group_name,
+            workspace_name,
+            ManagedNetworkProvisionOptions(include_spark=include_spark),
+            polling=True,
+            cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
         )
+        module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
+        return poller
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
