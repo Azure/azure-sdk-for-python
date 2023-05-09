@@ -31,7 +31,8 @@ from .._utils import (
     get_repeatability_guid,
     get_repeatability_timestamp,
     serialize_phone_identifier,
-    serialize_identifier
+    serialize_identifier,
+    serialize_communication_user_identifier
 )
 if TYPE_CHECKING:
     from .._models  import (
@@ -186,7 +187,7 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_phone_identifier(
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
-            source_identity=serialize_identifier(
+            source_identity=serialize_communication_user_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
@@ -282,6 +283,7 @@ class CallAutomationClient(object):
         *,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -296,6 +298,8 @@ class CallAutomationClient(object):
         :keyword azure_cognitive_services_endpoint_url:
          The endpoint url of the Azure Cognitive Services resource attached.
          :paramtype azure_cognitive_services_endpoint_url: str
+        :keyword operation_context: The operation context.
+        :paramtype operation_context: str
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -306,8 +310,9 @@ class CallAutomationClient(object):
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
-            answered_by_identifier=serialize_identifier(
-                self.source_identity) if self.source_identity else None
+            answered_by_identifier=serialize_communication_user_identifier(
+                self.source_identity) if self.source_identity else None,
+            operation_context=operation_context
         )
 
         result = await self._client.answer_call(

@@ -16,6 +16,7 @@ from ._shared.models import (
 )
 from ._generated.models import (
     CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel
 )
 
@@ -61,6 +62,24 @@ def serialize_phone_identifier(
     except AttributeError:
         raise TypeError("Unsupported identifier type " +
                         identifier.__class__.__name__)
+    
+def serialize_communication_user_identifier(
+        identifier:CommunicationUserIdentifier
+        ) -> CommunicationUserIdentifierModel:
+    """Serialize the CommunicationUserIdentifier into CommunicationUserIdentifierModel
+
+    :param identifier: CommunicationUserIdentifier
+    :type identifier: CommunicationUserIdentifier
+    :return: CommunicationUserIdentifierModel
+    """
+    try:
+        if identifier.kind and identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
+            request_model = CommunicationUserIdentifierModel(id=identifier.properties['id'])
+            return request_model
+        raise AttributeError
+    except AttributeError:
+        raise TypeError("Unsupported identifier type " +
+                        identifier.__class__.__name__)
 
 def deserialize_identifier(
         identifier_model:CommunicationIdentifierModel
@@ -100,3 +119,15 @@ def deserialize_phone_identifier(
     if identifier_model:
         return PhoneNumberIdentifier(identifier_model.value)
     return None
+
+def deserialize_communication_user_identifier(
+        identifier_model:CommunicationUserIdentifierModel
+        ) -> Union[CommunicationUserIdentifierModel, None]:
+    """
+    Deserialize the CommunicationUserIdentifierModel into CommunicationUserIdentifier
+
+    :param identifier_model: CommunicationUserIdentifierModel
+    :type identifier_model: CommunicationUserIdentifierModel
+    :return: CommunicationUserIdentifier
+    """
+    return CommunicationUserIdentifierModel(identifier_model.id) if identifier_model else None

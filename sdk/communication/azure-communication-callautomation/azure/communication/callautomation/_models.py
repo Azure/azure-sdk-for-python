@@ -12,6 +12,7 @@ from ._generated.models import (
 )
 from ._shared.models import (
     CommunicationIdentifier,
+    CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
 from ._generated.models._enums import (
@@ -19,7 +20,8 @@ from ._generated.models._enums import (
 )
 from ._utils import (
     deserialize_phone_identifier,
-    deserialize_identifier
+    deserialize_identifier,
+    deserialize_communication_user_identifier
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
@@ -248,6 +250,8 @@ class CallConnectionProperties():
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source_identity: Optional[CommunicationIdentifier] = None,
+        correlation_id: Optional[str] = None,
+        answered_by_identifier: Optional[CommunicationUserIdentifier] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -260,6 +264,8 @@ class CallConnectionProperties():
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source_identity = source_identity
+        self.correlation_id = correlation_id
+        self.answered_by_identifier = answered_by_identifier
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -281,7 +287,12 @@ class CallConnectionProperties():
             source_display_name=call_connection_properties_generated.source_display_name,
             source_identity=deserialize_identifier(call_connection_properties_generated.source_identity)
             if call_connection_properties_generated.source_identity
-            else None)
+            else None,
+            correlation_id=call_connection_properties_generated.correlation_id,
+            answered_by_identifier=deserialize_communication_user_identifier(call_connection_properties_generated.answered_by_identifier)
+            if call_connection_properties_generated.answered_by_identifier
+            else None
+            )
 
 class RecordingProperties(object):
     """Detailed recording properties of the call.
