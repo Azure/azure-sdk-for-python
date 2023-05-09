@@ -9,7 +9,6 @@
 from ._models import AcknowledgeOptions
 from ._models import AcknowledgeResult
 from ._models import FailedLockToken
-from ._models import LockToken
 from ._models import RejectOptions
 from ._models import RejectResult
 from ._models import ReleaseOptions
@@ -22,7 +21,6 @@ __all__ = [
     "AcknowledgeOptions",
     "AcknowledgeResult",
     "FailedLockToken",
-    "LockToken",
     "RejectOptions",
     "RejectResult",
     "ReleaseOptions",

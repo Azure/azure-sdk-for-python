@@ -95,12 +95,12 @@ class BrokerProperties(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lock_token: The token used to lock the event. Required.
-    :vartype lock_token: ~azure.eventgrid.models.LockToken
+    :vartype lock_token: str
     :ivar delivery_attempt_count: The attempt count for deliverying the event. Required.
     :vartype delivery_attempt_count: int
     """
 
-    lock_token: "_models.LockToken" = rest_field(name="lockToken")
+    lock_token: str = rest_field(name="lockToken")
     """The token used to lock the event. Required."""
     delivery_attempt_count: int = rest_field(name="deliveryAttemptCount")
     """The attempt count for deliverying the event. Required."""
@@ -168,7 +168,7 @@ class FailedLockToken(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar lock_token: LockToken value. Required.
-    :vartype lock_token: ~azure.eventgrid.models.LockToken
+    :vartype lock_token: str
     :ivar error_code: Error code related to the token. Example of such error codes are BadToken:
      which indicates the Token is not formatted correctly, TokenLost: which indicates that token is
      not found, and InternalServerError: For any internal server errors. Required.
@@ -177,7 +177,7 @@ class FailedLockToken(_model_base.Model):
     :vartype error_description: str
     """
 
-    lock_token: "_models.LockToken" = rest_field(name="lockToken")
+    lock_token: str = rest_field(name="lockToken")
     """LockToken value. Required."""
     error_code: str = rest_field(name="errorCode")
     """Error code related to the token. Example of such error codes are BadToken: which indicates the
@@ -190,40 +190,9 @@ class FailedLockToken(_model_base.Model):
     def __init__(
         self,
         *,
-        lock_token: "_models.LockToken",
+        lock_token: str,
         error_code: str,
         error_description: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class LockToken(_model_base.Model):
-    """LockToken information.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lock_token: The token used to lock the event. Required.
-    :vartype lock_token: str
-    """
-
-    lock_token: str = rest_field(name="lockToken")
-    """The token used to lock the event. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        lock_token: str,
     ):
         ...
 
