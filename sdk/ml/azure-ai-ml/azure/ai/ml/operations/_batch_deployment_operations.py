@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, TypeVar
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -39,7 +39,7 @@ from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
-
+DeploymentType = TypeVar("DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment])
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
     """BatchDeploymentOperations.
@@ -79,7 +79,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         *,
         skip_script_validation: bool = False,
         **kwargs,
-    ) -> Union[LROPoller[BatchDeployment], LROPoller[PipelineComponentBatchDeployment]]:
+    ) -> LROPoller[DeploymentType]:
         """Create or update a batch deployment.
 
         :param deployment: The deployment entity.
