@@ -3,16 +3,28 @@ display_name: Loan Approval model monitoring
 description: Loan approval model monitoring setup with minimal configurations
 
 trigger:
+trigger:
   type: recurrence
-  frequency: hour
-  interval: 24
+  frequency: week
+  time_zone: utc
+  interval: 1
   schedule:
-    hours: 10
-    minutes: 15
+    hours:
+      - 22
+      - 20
+    minutes:
+      - 0
+      - 30
+    week_days:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
 
 create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
     runtime_version: "3.2"
   monitoring_target:
-    endpoint_deployment_id: fake_endpoint_deployment_id
+    endpoint_deployment_id: azureml:iris-endpoint:my-iris-deployment

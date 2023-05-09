@@ -17,6 +17,10 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+from azure.ai.ml.entities._monitoring.target import MonitoringTarget
+from azure.ai.ml.entities._monitoring.signals import TargetDataset
+from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
+from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -39,6 +43,9 @@ from ..constants._monitoring import (
     DEPLOYMENT_MODEL_INPUTS_VERSION_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
+    DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
+    DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
+    MonitorDatasetContext,
 )
 from . import JobOperations, OnlineDeploymentOperations, DataOperations
 from ._job_ops_helper import stream_logs_until_completion
@@ -266,37 +273,23 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
         # resolve target ARM ID
-        endpoint_name, deployment_name = None, None
+        model_inputs_name, model_outputs_name = None, None
+        model_inputs_version, model_inputs_version = None, None
+        mdc_input_enabled, mdc_output_enabled = False, False
         target = schedule.create_monitor.monitoring_target
         if target and target.endpoint_deployment_id:
-            target.endpoint_deployment_id = (
-                target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
-                if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
-                else target.endpoint_deployment_id
-            )
-
-            # if it is an ARM ID, don't process it
-            if not is_ARM_id_for_parented_resource(
-                target.endpoint_deployment_id,
-                snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
-                AzureMLResourceType.DEPLOYMENT,
-            ):
-                endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
-                target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
-                    self._subscription_id,
-                    self._resource_group_name,
-                    AZUREML_RESOURCE_PROVIDER,
-                    self._workspace_name,
-                    snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
-                    endpoint_name,
-                    AzureMLResourceType.DEPLOYMENT,
-                    deployment_name,
-                )
-            else:
-                deployment_arm_id_entity = AMLNamedArmId(target.endpoint_deployment_id)
-                endpoint_name = deployment_arm_id_entity.parent_asset_name
-                deployment_name = deployment_arm_id_entity.asset_name
-
+            endpoint_name, deployment_name = self._process_and_get_endpoint_deployment_names_from_id(target)
+            online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
+            model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+            model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+            model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+            model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+            mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
+            mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
+            if mdc_input_enabled_str and mdc_input_enabled_str.lower() == "true":
+                mdc_input_enabled = True
+            if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
+                mdc_output_enabled = True
         elif target and target.model_id:
             target.model_id = self._orchestrators.get_asset_arm_id(
                 target.model_id,
@@ -305,36 +298,16 @@ class ScheduleOperations(_ScopeDependentOperations):
             )
 
         if not schedule.create_monitor.monitoring_signals:
-            if target and target.endpoint_deployment_id:
-                online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
-                model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-                model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-                model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-                model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-                model_inputs_arm_id = self._orchestrators.get_asset_arm_id(
-                    f"{model_inputs_name}:{model_inputs_version}",
-                    AzureMLResourceType.DATA,
-                    register_asset=False,
-                )
-                model_outputs_arm_id = self._orchestrators.get_asset_arm_id(
-                    f"{model_outputs_name}:{model_outputs_version}",
-                    AzureMLResourceType.DATA,
-                    register_asset=False,
-                )
-
-                # call data operations here to get type of the data assets and pass
-                # to default creation
-                model_inputs_type = self._data_operations.get(model_inputs_name, model_inputs_version).type
-                model_outputs_type = self._data_operations.get(model_outputs_name, model_outputs_version).type
+            if mdc_input_enabled and mdc_output_enabled:
                 schedule._create_default_monitor_definition(
-                    model_inputs_arm_id,
-                    model_inputs_type,
-                    model_outputs_arm_id,
-                    model_outputs_type,
+                    f"{model_inputs_name}:{model_inputs_version}",
+                    self._data_operations.get(model_inputs_name, model_inputs_version).type,
+                    f"{model_outputs_name}:{model_outputs_version}",
+                    self._data_operations.get(model_outputs_name, model_outputs_version).type,
                 )
             else:
                 msg = (
-                    "An ARM id for a deployment with model data collector enabled must be "
+                    "An ARM id for a deployment with data collector enabled for model inputs and outputs must be "
                     "given if monitoring_signals is None"
                 )
                 raise ScheduleException(
@@ -344,23 +317,108 @@ class ScheduleOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        # resolve input paths and preprocessing component ids
-        for signal in schedule.create_monitor.monitoring_signals.values():
+        # resolve ARM id for each signal
+        for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
                 for input_value in signal.input_datasets.values():
                     self._job_operations._resolve_job_input(input_value.input_dataset, schedule._base_path)
                     input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(
                         asset=input_value.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
                     )
-            else:
-                self._job_operations._resolve_job_inputs(
-                    [signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset],
-                    schedule._base_path,
+                continue
+            error_messages = []
+            if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
+                if not signal.target_dataset:
+                    if mdc_input_enabled:
+                        # if target dataset is absent and data collector for input is enabled,
+                        # create a default target dataset with production model inputs as target
+                        signal.target_dataset = TargetDataset(
+                            dataset=MonitorInputData(
+                                input_dataset=Input(
+                                    path=f"{model_inputs_name}:{model_inputs_version}",
+                                    type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
+                                ),
+                                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+                            ),
+                        )
+                    else:
+                        # if target dataset is absent and data collector for input is not enabled, collect exception message
+                        msg = (
+                            f"A target dataset must be provided for signal with name {signal_name}"
+                            f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
+                            "or refers to a deployment for which data collection for model inputs is not enabled."
+                        )
+                        error_messages.append(msg)
+            elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
+                if mdc_output_enabled:
+                    # if target dataset is absent and data collector for output is enabled,
+                    # create a default target dataset with production model outputs as target
+                    signal.target_dataset = TargetDataset(
+                        dataset=MonitorInputData(
+                            input_dataset=Input(
+                                path=f"{model_outputs_name}:{model_outputs_version}",
+                                type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                            ),
+                            dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                        ),
+                    )
+                else:
+                    # if target dataset is absent and data collector for output is not enabled, collect exception message
+                    msg = (
+                        f"A target dataset must be provided for signal with name {signal_name}"
+                        f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
+                        "or refers to a deployment for which data collection for model outputs is not enabled."
+                    )
+                    error_messages.append(msg)
+            if error_messages:
+                # if any error messages, raise an exception with all of them so user knows which signals
+                # need to be fixed
+                msg = "\n".join(error_messages)
+                raise ScheduleException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    ErrorTarget=ErrorTarget.SCHEDULE,
+                    ErrorCategory=ErrorCategory.USER_ERROR,
                 )
-                signal.target_dataset.dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                    asset=signal.target_dataset.dataset.pre_processing_component,
-                    azureml_type=AzureMLResourceType.COMPONENT,
-                )
-                signal.baseline_dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                    asset=signal.baseline_dataset.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
-                )
+            self._job_operations._resolve_job_inputs(
+                [signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset],
+                schedule._base_path,
+            )
+            signal.target_dataset.dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                asset=signal.target_dataset.dataset.pre_processing_component,
+                azureml_type=AzureMLResourceType.COMPONENT,
+            )
+            signal.baseline_dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                asset=signal.baseline_dataset.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+            )
+
+    def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget):
+        target.endpoint_deployment_id = (
+            target.endpoint_deployment_id[len(ARM_ID_PREFIX) :]
+            if target.endpoint_deployment_id.startswith(ARM_ID_PREFIX)
+            else target.endpoint_deployment_id
+        )
+
+        # if it is an ARM ID, don't process it
+        if not is_ARM_id_for_parented_resource(
+            target.endpoint_deployment_id,
+            snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
+            AzureMLResourceType.DEPLOYMENT,
+        ):
+            endpoint_name, deployment_name = target.endpoint_deployment_id.split(":")
+            target.endpoint_deployment_id = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
+                self._subscription_id,
+                self._resource_group_name,
+                AZUREML_RESOURCE_PROVIDER,
+                self._workspace_name,
+                snake_to_camel(AzureMLResourceType.ONLINE_ENDPOINT),
+                endpoint_name,
+                AzureMLResourceType.DEPLOYMENT,
+                deployment_name,
+            )
+        else:
+            deployment_arm_id_entity = AMLNamedArmId(target.endpoint_deployment_id)
+            endpoint_name = deployment_arm_id_entity.parent_asset_name
+            deployment_name = deployment_arm_id_entity.asset_name
+
+        return endpoint_name, deployment_name
