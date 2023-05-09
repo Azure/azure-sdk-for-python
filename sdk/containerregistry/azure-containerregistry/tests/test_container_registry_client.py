@@ -790,34 +790,48 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
-            data = b'\x00' * int(blob_size)
-            digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
+            try:
+                blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+                data = b'\x00' * int(blob_size)
+                digest, size = client.upload_blob(repo, BytesIO(data))
+                assert size == blob_size
 
-            stream = client.download_blob(repo, digest)
-            size = 0
-            with open("text1.txt", "wb") as file:
-                for chunk in stream:
-                    size += file.write(chunk)
-            assert size == blob_size
+                stream = client.download_blob(repo, digest)
+                size = 0
+                with open("text1.txt", "wb") as file:
+                    for chunk in stream:
+                        size += file.write(chunk)
+                assert size == blob_size
 
-            client.delete_blob(repo, digest)
+                client.delete_blob(repo, digest)
+            except ResourceNotFoundError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                assert err.status_code == 404
+                assert err.response.request.method == "PATCH"
+                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
             # Test blob upload and download in unequal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
-            data = b'\x00' * int(blob_size)
-            digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
+            try:
+                blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+                data = b'\x00' * int(blob_size)
+                digest, size = client.upload_blob(repo, BytesIO(data))
+                assert size == blob_size
 
-            stream = client.download_blob(repo, digest)
-            size = 0
-            with open("text2.txt", "wb") as file:
-                for chunk in stream:
-                    size += file.write(chunk)
-            assert size == blob_size
+                stream = client.download_blob(repo, digest)
+                size = 0
+                with open("text2.txt", "wb") as file:
+                    for chunk in stream:
+                        size += file.write(chunk)
+                assert size == blob_size
 
-            client.delete_blob(repo, digest)
+                client.delete_blob(repo, digest)
+            except ResourceNotFoundError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                assert err.status_code == 404
+                assert err.response.request.method == "PATCH"
+                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
             # Cleanup
             client.delete_repository(repo)
