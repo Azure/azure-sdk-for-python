@@ -562,25 +562,20 @@ class TestAutoMLImageSchema:
         # Test Model Name
         test_config_copy = deepcopy(test_config)
         test_yaml_path = tmp_path / "job.yml"
-        # test_config_copy["search_space"][0]["model_name"]["values"].append("yolov5")
-        # dump_yaml_to_file(test_yaml_path, test_config_copy)
-        # with pytest.raises(ValidationError, match="Value 'yolov5' passed is not in set"):
-        #     load_job(test_yaml_path)
+        test_config_copy["search_space"][0]["model_name"] = 1
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Invalid input type"):
+            load_job(test_yaml_path)
 
-        # test_config_copy["search_space"][0]["model_name"] = 1
-        # dump_yaml_to_file(test_yaml_path, test_config_copy)
-        # with pytest.raises(ValidationError, match="Value 1 passed is not in set"):
-        #     load_job(test_yaml_path)
+        test_config_copy["search_space"][0]["model_name"] = 100.5
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Invalid input type"):
+            load_job(test_yaml_path)
 
-        # test_config_copy["search_space"][0]["model_name"] = 100.5
-        # dump_yaml_to_file(test_yaml_path, test_config_copy)
-        # with pytest.raises(ValidationError, match="Value 100.5 passed is not in set"):
-        #     load_job(test_yaml_path)
-
-        # test_config_copy["search_space"][0]["model_name"] = True
-        # dump_yaml_to_file(test_yaml_path, test_config_copy)
-        # with pytest.raises(ValidationError, match="Value True passed is not in set"):
-        #     load_job(test_yaml_path)
+        test_config_copy["search_space"][0]["model_name"] = True
+        dump_yaml_to_file(test_yaml_path, test_config_copy)
+        with pytest.raises(ValidationError, match="Invalid input type"):
+            load_job(test_yaml_path)
 
         test_config_copy["search_space"][0]["model_name"] = "vitb16r224"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
@@ -699,10 +694,6 @@ class TestAutoMLImageSchema:
         # Test Model Name
         test_config_copy = deepcopy(test_config)
         test_yaml_path = tmp_path / "job.yml"
-        # test_config_copy["search_space"][0]["model_name"]["values"].append("resnext")
-        # dump_yaml_to_file(test_yaml_path, test_config_copy)
-        # with pytest.raises(ValidationError, match="Value 'resnext' passed is not in set"):
-        #     load_job(test_yaml_path)
 
         test_config_copy["search_space"][0]["model_name"] = "yolov5"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
@@ -738,10 +729,6 @@ class TestAutoMLImageSchema:
         # Test Model Name
         test_config_copy = deepcopy(test_config)
         test_yaml_path = tmp_path / "job.yml"
-        # test_config_copy["search_space"][0]["model_name"]["values"].append("vitb16r224")
-        # dump_yaml_to_file(test_yaml_path, test_config_copy)
-        # with pytest.raises(ValidationError, match="Value 'vitb16r224' passed is not in set"):
-        #     load_job(test_yaml_path)
 
         test_config_copy["search_space"][0]["model_name"] = "maskrcnn_resnet18_fpn"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
