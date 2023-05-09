@@ -265,11 +265,6 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule, **kwargs)
 
     def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
-        # resolve compute ID
-        schedule.create_monitor.compute = self._orchestrators.get_asset_arm_id(
-            schedule.create_monitor.compute, AzureMLResourceType.COMPUTE, register_asset=False
-        )
-
         # resolve target ARM ID
         endpoint_name, deployment_name = None, None
         target = schedule.create_monitor.monitoring_target

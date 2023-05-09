@@ -20,6 +20,10 @@ DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY = "data_collector.collections.model_outputs.da
 DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = "data_collector.collections.model_outputs.data.version"
 
 
+SPARK_INSTANCE_TYPE_KEY = "compute.spark.resources.instance_type"
+SPARK_RUNTIME_VERSION = "compute.spark.resources.runtime_version"
+
+
 @experimental
 class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_DRIFT = "data_drift"

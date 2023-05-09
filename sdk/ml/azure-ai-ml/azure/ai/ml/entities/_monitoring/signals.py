@@ -194,8 +194,8 @@ class DataDriftSignal(DataSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset,
         baseline_dataset: MonitorInputData,
+        target_dataset: TargetDataset = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataDriftMetricThreshold],
         alert_enabled: bool = True,
@@ -282,8 +282,8 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset,
         baseline_dataset: MonitorInputData,
+        target_dataset: TargetDataset = None,
         metric_thresholds: List[PredictionDriftMetricThreshold],
         alert_enabled: bool = True,
     ):
@@ -374,8 +374,8 @@ class DataQualitySignal(DataSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset,
         baseline_dataset: MonitorInputData,
+        target_dataset: TargetDataset = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataQualityMetricThreshold],
         alert_enabled: bool = True,
