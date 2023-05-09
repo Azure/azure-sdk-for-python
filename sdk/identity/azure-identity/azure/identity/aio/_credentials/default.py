@@ -74,7 +74,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :class:`~azure.identity.aio.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's
         user settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
         Directory work or school accounts.
-    :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
+    :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
 
     .. admonition:: Example:
@@ -120,7 +120,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
-        developer_credential_timeout = kwargs.pop("developer_credential_timeout", 10)
+        process_timeout = kwargs.pop("process_timeout", 10)
 
         exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
@@ -151,7 +151,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             )
         if not exclude_developer_cli_credential:
-            credentials.append(AzureDeveloperCliCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -164,9 +164,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
 
         super().__init__(*credentials)
 
