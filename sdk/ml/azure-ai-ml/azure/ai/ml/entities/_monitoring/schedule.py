@@ -93,7 +93,11 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestSchedule:
         tags = {
-            **self.tags, **{SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type, SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version}
+            **self.tags,
+            **{
+                SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type,
+                SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
+            },
         }
         return RestSchedule(
             properties=ScheduleProperties(
@@ -130,7 +134,9 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         properties = obj.properties
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
-            create_monitor=MonitorDefinition._from_rest_object(properties.action.monitor_definition, tags=obj.properties.tags),
+            create_monitor=MonitorDefinition._from_rest_object(
+                properties.action.monitor_definition, tags=obj.properties.tags
+            ),
             name=obj.name,
             id=obj.id,
             display_name=properties.display_name,

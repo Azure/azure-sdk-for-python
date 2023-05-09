@@ -8,7 +8,12 @@ from typing import Optional, Dict, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml.constants._monitoring import AZMONITORING, DefaultMonitorSignalNames, SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
+from azure.ai.ml.constants._monitoring import (
+    AZMONITORING,
+    DefaultMonitorSignalNames,
+    SPARK_INSTANCE_TYPE_KEY,
+    SPARK_RUNTIME_VERSION,
+)
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.signals import (
     MonitoringSignal,
