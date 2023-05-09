@@ -663,17 +663,21 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @classmethod
     def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
-        """Traverse the pipeline component and divide nodes to resolve into layers.
+        """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
+        put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
         B C D
         | |
         E F
+        |
+        G
         return value will be:
         [
-          [("B", B), ("C", C), ("D", D)],
-          [("E", E), ("F", F)],
+          [("B", B), ("C", C)],
+          [("E", E)],
+          [("D", D), ("F", F), ("G", G)],
         ]
 
         :param component: The pipeline component to resolve.
@@ -683,32 +687,35 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
-        # add an empty layer to mark the end of the first layer
-        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
+        nodes_to_process = list(component.jobs.items())
+        layers = []
+        leaf_nodes = []
 
-        while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
-            key, job_instance = layers[cur_layer][cur_layer_head]
-            cur_layer_head += 1
+        while nodes_to_process:
+            layers.append([])
+            new_nodes_to_process = []
+            for key, job_instance in nodes_to_process:
+                cls._resolve_binding_on_supported_fields_for_node(job_instance)
+                if isinstance(job_instance, LoopNode):
+                    job_instance = job_instance.body
 
-            cls._resolve_binding_on_supported_fields_for_node(job_instance)
-            if isinstance(job_instance, LoopNode):
-                job_instance = job_instance.body
+                for extra_operation in extra_operations:
+                    extra_operation(job_instance, key)
 
-            for extra_operation in extra_operations:
-                extra_operation(job_instance, key)
+                if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
+                    # candidates for next layer
+                    new_nodes_to_process.extend(job_instance.component.jobs.items())
+                    # use layers to store pipeline nodes in each layer for now
+                    layers[-1].append((key, job_instance))
+                else:
+                    # note that LoopNode has already been replaced by its body here
+                    leaf_nodes.append((key, job_instance))
+            nodes_to_process = new_nodes_to_process
 
-            if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
-                if cur_layer + 1 == len(layers):
-                    layers.append([])
-                layers[cur_layer + 1].extend(job_instance.component.jobs.items())
-
-            if cur_layer_head == len(layers[cur_layer]):
-                cur_layer += 1
-                cur_layer_head = 0
-
-        # if there is no subgraph, pop the empty layer inserted at the beginning
-        if len(layers[-1]) == 0:
+        # if there is subgraph, the last item in layers will be empty for now as all leaf nodes are stored in leaf_nodes
+        if len(layers) != 0:
             layers.pop()
+            layers.append(leaf_nodes)
 
         return layers
 
@@ -761,9 +768,6 @@ class ComponentOperations(_ScopeDependentOperations):
 
         for layer in reversed(layers):
             for _, job_instance in layer:
-                if isinstance(job_instance, LoopNode):
-                    job_instance = job_instance.body
-
                 if isinstance(job_instance, AutoMLJob):
                     # only compute is resolved here
                     self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)

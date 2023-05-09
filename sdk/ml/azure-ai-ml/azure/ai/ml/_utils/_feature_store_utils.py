@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Dict, Union
@@ -61,6 +61,7 @@ def _archive_or_restore(
     is_archived: bool,
     name: str,
     version: str,
+    **kwargs,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
@@ -72,7 +73,7 @@ def _archive_or_restore(
         workspace_name=workspace_name,
     )
 
-    if version_resource.properties.is_archived and is_archived:
+    if version_resource.properties.stage == "Archived" and is_archived:
         raise ValidationException(
             message="Asset version is already archived: {}:{}".format(name, version),
             no_personal_data_message="Asset version is already archived",
@@ -81,7 +82,7 @@ def _archive_or_restore(
             error_type=ValidationErrorType.INVALID_VALUE,
         )
 
-    if not version_resource.properties.is_archived and not is_archived:
+    if version_resource.properties.stage != "Archived" and not is_archived:
         raise ValidationException(
             message="Cannot restore non-archived asset version: {}:{}".format(name, version),
             no_personal_data_message="Asset version is not archived",
@@ -98,4 +99,9 @@ def _archive_or_restore(
         resource_group_name=resource_group_name,
         workspace_name=workspace_name,
         body=version_resource,
+        **kwargs,
     )
+
+
+def _datetime_to_str(datetime_obj: Union[str, datetime]):
+    return datetime_obj if isinstance(datetime_obj, str) else datetime_obj.isoformat()

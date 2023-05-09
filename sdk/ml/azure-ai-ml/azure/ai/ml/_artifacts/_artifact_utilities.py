@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
 
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
+
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
@@ -27,9 +30,9 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _build_metadata_dict,
     _validate_path,
+    get_content_hash,
     get_ignore_file,
     get_object_hash,
-    get_content_hash,
 )
 from azure.ai.ml._utils._storage_utils import (
     AzureMLDatastorePathUri,
@@ -44,8 +47,6 @@ from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas
-from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 module_logger = logging.getLogger(__name__)
 
@@ -451,7 +452,7 @@ def _check_and_upload_env_build_context(
 
 def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
     """
-    Validate an Artifact's local path and get its resolved path, ignore file, and hash
+    Validate an Artifact's local path and get its resolved path, ignore file, and hash. If no local path, return None.
     :param artifact: Artifact object
     :type artifact: azure.ai.ml.entities._assets._artifacts.artifact.Artifact
     :return: Artifact's path, ignorefile, and hash
@@ -473,6 +474,8 @@ def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
         )
         if not path.is_absolute():
             path = Path(artifact.base_path, path).resolve()
+    else:
+        return None
 
     _validate_path(path, _type=ErrorTarget.CODE)
 

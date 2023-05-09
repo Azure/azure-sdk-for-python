@@ -7,7 +7,7 @@
       "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
       "macos-11": { "OSVmImage": "macos-11", "Pool": "Azure Pipelines" }
     },
-    "PythonVersion": [ "pypy3.7", "3.8", "3.10"],
+    "PythonVersion": [ "pypy3.7", "3.8" ],
     "CoverageArg": "--disablecov"
   },
   "include": [
@@ -28,6 +28,17 @@
       },
       "PythonVersion": "3.7",
       "CoverageArg": "--disablecov"
+    },
+    {
+      "CoverageConfig": {
+        "ubuntu2004_310_coverage": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "PythonVersion": "3.10",
+          "CoverageArg": "",
+          "TestSamples": "false"
+        }
+      }
     },
     {
       "Agent": {
