@@ -16,10 +16,10 @@ class TestMdcConfigResolver:
         resolver = MdcConfigResolver(
             data_collector=DataCollector(
                 collections={
-                    "inputs": DeploymentCollection(enabled=True, sampling_rate=0.8),
-                    "outputs": DeploymentCollection(enabled=True, sampling_rate=0.7),
-                    "request": DeploymentCollection(enabled=True, sampling_rate=0.6),
-                    "Response": DeploymentCollection(enabled=True, sampling_rate=0.5),
+                    "inputs": DeploymentCollection(enabled="true", sampling_rate=0.8),
+                    "outputs": DeploymentCollection(enabled="true", sampling_rate=0.7),
+                    "request": DeploymentCollection(enabled="true", sampling_rate=0.6),
+                    "Response": DeploymentCollection(enabled="true", sampling_rate=0.5),
                 },
                 request_logging=RequestLogging(capture_headers=["aaa", "bbb"]),
             )
@@ -42,10 +42,10 @@ class TestMdcConfigResolver:
         resolver = MdcConfigResolver(
             data_collector=DataCollector(
                 collections={
-                    "inputs": DeploymentCollection(enabled=True),
-                    "outputs": DeploymentCollection(enabled=True),
-                    "request": DeploymentCollection(enabled=True),
-                    "Response": DeploymentCollection(enabled=True),
+                    "inputs": DeploymentCollection(enabled="true"),
+                    "outputs": DeploymentCollection(enabled="true"),
+                    "request": DeploymentCollection(enabled="true"),
+                    "Response": DeploymentCollection(enabled="true"),
                 },
                 request_logging=RequestLogging(capture_headers=["aaa", "bbb"]),
                 sampling_rate=0.9,
