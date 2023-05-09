@@ -29,5 +29,5 @@ extends:
     ServiceDirectory: deviceprovisioningservices
     TestProxy: true
     Artifacts:
-    - name: azure-iot-deviceprovisioningservice
-      safeName: azureiotdeviceprovisioningservice
+    - name: azure-iot-deviceprovisioning
+      safeName: azureiotdeviceprovisioning
