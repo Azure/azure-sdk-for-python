@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import sys
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -24,6 +25,9 @@ from azure.storage.filedatalake.aio import (
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+
+if sys.version_info >= (3, 8):
+    from unittest.mock import AsyncMock
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -409,3 +413,44 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert props is not None
+
+    @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock not introduced until 3.8")
+    @DataLakePreparer()
+    async def test_datalake_clients_properly_close(self, **kwargs):
+        account_name = "adlsstorage"
+        account_key = "adlskey"
+
+        self._setup(account_name, account_key)
+        file_system_client = self.dsc.get_file_system_client(file_system='testfs')
+        dir_client = self.dsc.get_directory_client(file_system='testfs', directory='testdir')
+        file_client = dir_client.get_file_client(file='testfile')
+
+        # Mocks
+        self.dsc._blob_service_client.close = AsyncMock()
+        self.dsc._client.__aexit__ = AsyncMock()
+        file_system_client._client.__aexit__ = AsyncMock()
+        file_system_client._datalake_client_for_blob_operation.close = AsyncMock()
+        dir_client._client.__aexit__ = AsyncMock()
+        dir_client._datalake_client_for_blob_operation.close = AsyncMock()
+        file_client._client.__aexit__ = AsyncMock()
+        file_client._datalake_client_for_blob_operation.close = AsyncMock()
+
+        # Act
+        async with self.dsc as dsc:
+            pass
+            async with file_system_client as fsc:
+                pass
+                async with dir_client as dc:
+                    pass
+                    async with file_client as fc:
+                        pass
+
+        # Assert
+        self.dsc._blob_service_client.close.assert_called_once()
+        self.dsc._client.__aexit__.assert_called_once()
+        file_system_client._client.__aexit__.assert_called_once()
+        file_system_client._datalake_client_for_blob_operation.close.assert_called_once()
+        dir_client._client.__aexit__.assert_called_once()
+        dir_client._datalake_client_for_blob_operation.close.assert_called_once()
+        file_client._client.__aexit__.assert_called_once()
+        file_client._datalake_client_for_blob_operation.close.assert_called_once()
