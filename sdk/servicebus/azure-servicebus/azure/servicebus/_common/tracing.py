@@ -218,8 +218,8 @@ def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessa
         for message in trace_messages:
             if message.application_properties:
                 headers = {}
-
-                traceparent = message.application_properties.get(TRACE_PARENT_PROPERTY, b"")
+                traceparent = (message.application_properties.get(TRACE_PARENT_PROPERTY, b"") or
+                               message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
                 if hasattr(traceparent, "decode"):
                     traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
@@ -260,7 +260,8 @@ def get_span_link_from_message(message: Union[uamqp_Message, pyamqp_Message, Ser
     headers = {}
     try:
         if message.application_properties:
-            traceparent = message.application_properties.get(TRACE_PARENT_PROPERTY, b"")
+            traceparent = (message.application_properties.get(TRACE_PARENT_PROPERTY, b"") or
+                           message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
             if hasattr(traceparent, "decode"):
                 traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
             if traceparent:
