@@ -21,17 +21,17 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import (
     RequestsTransport,
 )  # pylint: disable=no-name-in-module
-from .operations import (
-    DeviceRegistrationStateOperations,
-    EnrollmentGroupOperations,
-    IndividualEnrollmentOperations,
-)
+from azure.core.utils import parse_connection_string
 
 from ._api_version import DEFAULT_VERSION, ApiVersion
 from ._auth import SasCredentialPolicy, SharedKeyCredentialPolicy
 from ._generated import ProvisioningServiceClient as GeneratedProvisioningServiceClient
 from ._generated._version import VERSION
-from ._util import parse_connection_string
+from .operations import (
+    DeviceRegistrationStateOperations,
+    EnrollmentGroupOperations,
+    IndividualEnrollmentOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -135,11 +135,16 @@ class ProvisioningServiceClient(
         :raises: ValueError if connection string is invalid
         """
         cs_args = parse_connection_string(connection_string)
+        for k in ["hostname", "sharedaccesskeyname", "sharedaccesskey"]:
+            if not cs_args.get(k):
+                raise ValueError("IoT DPS connection string has missing property: {k}")
+
         host_name, shared_access_key_name, shared_access_key = (
-            cs_args["HostName"],
-            cs_args["SharedAccessKeyName"],
-            cs_args["SharedAccessKey"],
+            cs_args["hostname"],
+            cs_args["sharedaccesskeyname"],
+            cs_args["sharedaccesskey"],
         )
+
         # Create credential from keys
         credential = AzureNamedKeyCredential(
             name=shared_access_key_name, key=shared_access_key
