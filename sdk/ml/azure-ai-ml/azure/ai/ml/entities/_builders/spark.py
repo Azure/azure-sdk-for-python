@@ -12,8 +12,8 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from ..._restclient.v2023_02_01_preview.models import JobBase as JobBaseData
-from ..._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
+from ..._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
+from ..._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from ..._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema

@@ -23,7 +23,7 @@
 """
 
 import base64
-import datetime
+from email.utils import formatdate
 import json
 import uuid
 import binascii
@@ -224,9 +224,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if cosmos_client_connection.master_key:
-        headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
+        #formatedate guarantees RFC 1123 date format regardless of current locale
+        headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
+        resource_type = _internal_resourcetype(resource_type)
         authorization = auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
@@ -737,3 +739,13 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
             new_throughput_properties["content"]["offerThroughput"] = throughput
         else:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
+
+
+def _internal_resourcetype(resource_type: str) -> str:
+    """Partitionkey is used as the resource type for deleting all items by partition key in
+    other SDKs, but the colls resource type needs to be sent for the feature to work. In order to keep it consistent
+    with other SDKs, we switch it here.
+    """
+    if resource_type.lower() ==  "partitionkey":
+        return "colls"
+    return resource_type

@@ -74,6 +74,14 @@ jobs:
         displayName: Generate ToC for main branch
         condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Verify-RequiredDocsJsonMembers.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+        displayName: Verify Required Docs Json Members
+
       # Push changes to docs repo
       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
         parameters:
@@ -127,6 +135,14 @@ jobs:
             -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
         displayName: Generate ToC for Daily Docs
 
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Verify-RequiredDocsJsonMembers.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+        displayName: Verify Required Docs Json Members
+
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
           BaseRepoBranch: $(DailyDocsBranchName)
@@ -147,5 +163,5 @@ jobs:
             -Organization "apidrop"
             -Project "Content%20CI"
             -DefinitionId 3453
-            -Base64EncodedAuthToken "$(azuresdk-apidrop-devops-queue-build-pat)"
+            -AuthToken "$(azuresdk-apidrop-devops-queue-build-pat)"
             -BuildParametersJson (@{ params = (Get-Content ./eng/dailydocsconfig.json -Raw) -replace '%%DailyDocsBranchName%%', "$(DailyDocsBranchName)" } | ConvertTo-Json)

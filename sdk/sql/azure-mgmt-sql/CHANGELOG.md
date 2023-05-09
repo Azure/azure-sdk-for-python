@@ -1,5 +1,12 @@
 # Release History
 
+## 4.0.0b10 (2023-04-11)
+
+### Features Added
+
+  - Model ManagedDatabase has a new parameter is_ledger_on
+  - Model ManagedDatabaseUpdate has a new parameter is_ledger_on
+
 ## 4.0.0b9 (2023-03-24)
 
 ### Features Added

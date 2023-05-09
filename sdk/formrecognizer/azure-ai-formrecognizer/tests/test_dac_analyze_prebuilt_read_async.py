@@ -9,7 +9,7 @@ import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalyzeResult, AnalysisFeature
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -20,6 +20,28 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
+
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
+    async def test_document_read_url_features_formulas(self, client):
+        async with client:
+            poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.OCR_FORMULA])
+            result = await poller.result()
+        assert len(result.pages) > 0
+        assert len(result.pages[0].formulas) == 2
+        assert result.pages[0].formulas[0].kind == "inline"
+        assert result.pages[0].formulas[0].value
+        assert result.pages[0].formulas[0].polygon
+        assert result.pages[0].formulas[0].span
+        assert result.pages[0].formulas[0].confidence > 0.8
+        assert result.pages[0].formulas[1].kind == "display"
+        assert result.pages[0].formulas[1].value
+        assert result.pages[0].formulas[1].polygon
+        assert result.pages[0].formulas[1].span
+        assert result.pages[0].formulas[1].confidence > 0.8
 
     @skip_flaky_test
     @FormRecognizerPreparer()

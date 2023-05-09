@@ -1,0 +1,76 @@
+files: sdk/ml/
+repos:
+-   repo: https://github.com/psf/black
+    rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
+    hooks:
+    -   id: black
+        args: [--config=eng/black-pyproject.toml]
+- repo: https://github.com/econchick/interrogate
+  rev: 1.5.0 
+  hooks:
+  - id: interrogate
+    types_or: [python]
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
+    # exclude defined here because exclude in pyproject.toml is not being respected
+- repo: https://github.com/streetsidesoftware/cspell-cli
+  rev: v6.31.0
+  hooks:
+  - id: cspell
+    args: ['--config', '.vscode/cspell.json']
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v5.8.0
+  hooks:
+  - id: isort
+    name: isort (python)
+    args: ['--settings-file', 'sdk/ml/azure-ai-ml/pyproject.toml']
+- repo: local
+  hooks:
+    - id: pylint
+      name: pylint
+      entry: python
+      language: system
+      types: [python]
+      args:
+      - "-c"
+      - |
+        import os
+        import sys
+
+        import pkg_resources
+
+        # These are the versions that run in our CI
+        dependencies = [
+            (
+                "azure-pylint-guidelines-checker",
+                "0.0.5",
+                [
+                    "--index-url",
+                    "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                ],
+            ),
+            ("pylint", "2.9.3", []),
+        ]
+
+        # Make sure that correct versions are installed
+        for packagename, required_version, install_args in dependencies:
+            try:
+                version = pkg_resources.get_distribution(packagename).version
+                assert version == required_version
+            except AssertionError:
+                print(
+                    f"Version mismatch: Installed version '{version}' of '{packagename}' does not match required version {required_version}"
+                )
+            except pkg_resources.DistributionNotFound:
+                print(f"Package '{packagename}' is not installed")
+            else:
+                continue
+
+            print(f"Please run the following command to install the correct version of {packagename}")
+            print(f"\tpython -m pip install {packagename}=={required_version} {' '.join(install_args)}")
+            sys.exit(1)
+
+        # Run pylint
+        os.execl(sys.executable, sys.executable, "-m", "pylint", *sys.argv[1:])
+      # cspell:disable-next-line
+      - "--rcfile=pylintrc"
+      - "--output-format=parseable"

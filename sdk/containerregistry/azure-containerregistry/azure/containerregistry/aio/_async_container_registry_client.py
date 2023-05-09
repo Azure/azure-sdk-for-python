@@ -6,8 +6,9 @@
 # pylint: disable=too-many-lines
 import functools
 import hashlib
+import json
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, MutableMapping
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -24,16 +25,32 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from ._async_download_stream import AsyncDownloadBlobStream
-from .._container_registry_client import _return_response_headers, _return_response_and_headers
+from .._container_registry_client import (
+    _return_response_headers,
+    _return_response_and_headers,
+    _return_response,
+)
 from .._generated.models import AcrErrors
 from .._helpers import (
+    _compute_digest,
     _is_tag,
     _parse_next_link,
+    _validate_digest,
     SUPPORTED_API_VERSIONS,
-    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    OCI_IMAGE_MANIFEST,
+    SUPPORTED_MANIFEST_MEDIA_TYPES,
+    DEFAULT_AUDIENCE,
     DEFAULT_CHUNK_SIZE,
 )
-from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
+from .._models import (
+    RepositoryProperties,
+    ArtifactManifestProperties,
+    ArtifactTagProperties,
+    GetManifestResult,
+    ManifestDigestValidationError,
+)
+
+JSON = MutableMapping[str, Any]
 
 
 class _UnclosableBytesIO(BytesIO):
@@ -51,7 +68,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         credential: Optional[AsyncTokenCredential] = None,
         *,
         api_version: Optional[str] = None,
-        audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+        audience: str = DEFAULT_AUDIENCE,
         **kwargs
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
@@ -64,7 +81,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
             "https://management.azure.com", "https://management.chinacloudapi.cn" or
-            "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
+            "https://management.usgovcloudapi.net". The default value is "https://containerregistry.azure.net".
         :paramtype audience: str
         :returns: None
         :rtype: None
@@ -861,6 +878,103 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
+    async def set_manifest(
+        self,
+        repository: str,
+        manifest: Union[JSON, IO[bytes]],
+        *,
+        tag: Optional[str] = None,
+        media_type: str = OCI_IMAGE_MANIFEST,
+        **kwargs
+    ) -> str:
+        """Set a manifest for an artifact.
+
+        :param str repository: Name of the repository
+        :param manifest: The manifest to set. It can be a JSON formatted dict or seekable stream.
+        :type manifest: dict or IO
+        :keyword tag: Tag of the manifest.
+        :paramtype tag: str or None
+        :keyword media_type: The media type of the manifest. If not specified, this value will be set to
+            a default value of "application/vnd.oci.image.manifest.v1+json". Note: the current known media types are:
+            "application/vnd.oci.image.manifest.v1+json", and "application/vnd.docker.distribution.manifest.v2+json".
+        :paramtype media_type: str
+        :returns: The digest of the set manifest, calculated by the registry.
+        :rtype: str
+        :raises ValueError: If the parameter repository or manifest is None.
+        :raises ~azure.containerregistry.ManifestDigestValidationError:
+            If the server-computed digest does not match the client-computed digest.
+        """
+        try:
+            if isinstance(manifest, MutableMapping):
+                data = _UnclosableBytesIO(json.dumps(manifest).encode())
+            else:
+                data = _UnclosableBytesIO(manifest.read())
+            tag_or_digest = tag
+            if tag_or_digest is None:
+                tag_or_digest = _compute_digest(data)
+
+            response_headers = await self._client.container_registry.create_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                payload=data,
+                content_type=media_type,
+                cls=_return_response_headers,
+                **kwargs
+            )
+            digest = response_headers['Docker-Content-Digest']
+            if not _validate_digest(data, digest):
+                raise ManifestDigestValidationError(
+                    "The server-computed digest does not match the client-computed digest."
+                )
+        except Exception as e:
+            if repository is None or manifest is None:
+                raise ValueError("The parameter repository and manifest cannot be None.") from e
+            raise
+        return digest
+
+    @distributed_trace_async
+    async def get_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> GetManifestResult:
+        """Get the manifest for an artifact.
+
+        :param str repository: Name of the repository.
+        :param str tag_or_digest: The tag or digest of the manifest to get.
+            When digest is provided, will use this digest to compare with the one calculated by the response payload.
+            When tag is provided, will use the digest in response headers to compare.
+        :returns: GetManifestResult
+        :rtype: ~azure.containerregistry.GetManifestResult
+        :raises ~azure.containerregistry.ManifestDigestValidationError:
+            If the content of retrieved manifest digest does not match the requested digest, or
+            the server-computed digest does not match the client-computed digest when tag is passing.
+        """
+        response = cast(
+            PipelineResponse,
+            await self._client.container_registry.get_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
+                cls=_return_response,
+                **kwargs
+            )
+        )
+        media_type = response.http_response.headers['Content-Type']
+        manifest_bytes = await response.http_response.read()
+        manifest_json = response.http_response.json()
+        if tag_or_digest.startswith("sha256:"):
+            digest = tag_or_digest
+            if not _validate_digest(manifest_bytes, digest):
+                raise ManifestDigestValidationError(
+                    "The content of retrieved manifest digest does not match the requested digest."
+                )
+        else:
+            digest = response.http_response.headers['Docker-Content-Digest']
+            if not _validate_digest(manifest_bytes, digest):
+                raise ManifestDigestValidationError(
+                    "The server-computed digest does not match the client-computed digest."
+                )
+
+        return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
+
+    @distributed_trace_async
     async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
         """Upload an artifact blob.
 
@@ -870,6 +984,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: The digest and size in bytes of the uploaded blob.
         :rtype: Tuple[str, int]
         :raises ValueError: If the parameter repository or data is None.
+        :raises ~azure.containerregistry.ManifestDigestValidationError:
+            If the server-computed digest does not match the client-computed digest.
         """
         try:
             start_upload_response_headers = cast(
@@ -890,6 +1006,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
+            if digest != complete_upload_response_headers["Docker-Content-Digest"]:
+                raise ManifestDigestValidationError(
+                    "The server-computed digest does not match the client-computed digest."
+                )
         except Exception as e:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.") from e
@@ -898,9 +1018,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
-        blob_size = 0
         buffer = data.read(DEFAULT_CHUNK_SIZE)
-
+        blob_size = len(buffer)
         while len(buffer) > 0:
             try:
                 buffer_stream = _UnclosableBytesIO(buffer)
@@ -914,10 +1033,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         **kwargs
                     )
                 )
-                blob_size += len(buffer)
-                hasher.update(buffer)
                 location = response_headers['Location']
+                hasher.update(buffer)
                 buffer = data.read(DEFAULT_CHUNK_SIZE)
+                blob_size += len(buffer)
             finally:
                 buffer_stream.manual_close()
 
@@ -931,7 +1050,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str digest: The digest of the blob to download.
         :returns: AsyncDownloadBlobStream
         :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
-        :raises ValueError: If the requested digest does not match the digest of the received blob.
+        :raises ManifestDigestValidationError:
+            If the content of retrieved blob digest does not match the requested digest.
         """
         end_range = DEFAULT_CHUNK_SIZE - 1
         first_chunk, headers = cast(

@@ -7,6 +7,8 @@ inputs:
   training_data:
     type: path
     optional: False
+    intellectual_property:
+      protection_level: none
   max_epochs:
     type: integer
     optional: False
@@ -18,6 +20,8 @@ inputs:
     type: string
     optional: False
     default: time-based
+  base_model:
+    type: path
 outputs:
   model_output_not_ipp:
     type: path

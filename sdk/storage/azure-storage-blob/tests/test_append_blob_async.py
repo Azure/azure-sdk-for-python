@@ -193,6 +193,24 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_append_block_high_throughput(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=100 * 1024 * 1024)
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+        data = self.get_random_bytes(5 * 1024)
+
+        # Act
+        for i in range(2):
+            await blob.append_block(data=data)
+
+        # Assert
+        await self.assertBlobEqual(blob, data * 2)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_append_block_unicode(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

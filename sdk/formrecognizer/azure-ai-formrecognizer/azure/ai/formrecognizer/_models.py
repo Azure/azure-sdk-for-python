@@ -10,7 +10,11 @@ from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.v2023_02_28_preview.models import (
+    DocumentModelDetails as ModelDetails,
+    DocumentClassifierDetails as ClassifierDetails,
+    Error
+)
 from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
@@ -2863,8 +2867,287 @@ class DocumentParagraph:
         )
 
 
-class DocumentPage:
-    """Content and layout elements extracted from a page of the input."""
+class DocumentAnnotation:
+    """An annotation object that represents a visual annotation in the document,
+    such as checks ✓ and crosses X.
+    """
+
+    kind: str
+    """Annotation kind. Known values are: "check", "cross"."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the annotation."""
+    confidence: float
+    """Confidence of correctly extracting the annotation."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, annotation):
+        return cls(
+            kind=annotation.kind,
+            polygon=get_polygon(annotation),
+            confidence=annotation.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentAnnotation(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentAnnotation."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentAnnotation":
+        """Converts a dict in the shape of a DocumentAnnotation to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentAnnotation.
+        :return: DocumentAnnotation
+        :rtype: DocumentAnnotation
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+        )
+
+
+class DocumentBarcode:
+    """A barcode object."""
+
+    kind: str
+    """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
+     "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
+     "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
+    value: str
+    """Barcode value."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the barcode."""
+    span: DocumentSpan
+    """Location of the barcode in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the barcode."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.value = kwargs.get("value", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, barcode):
+        return cls(
+            kind=barcode.kind,
+            value=barcode.value,
+            span=DocumentSpan._from_generated(barcode.span)
+            if barcode.span
+            else None,
+            polygon=get_polygon(barcode) if barcode.polygon else [],
+            confidence=barcode.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentBarcode(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"value={self.value}, span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentBarcode."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+            "value": self.value,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentBarcode":
+        """Converts a dict in the shape of a DocumentBarcode to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentBarcode.
+        :return: DocumentBarcode
+        :rtype: DocumentBarcode
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            value=data.get("value", None),
+        )
+
+
+class DocumentFormula:
+    """A formula object."""
+
+    kind: str
+    """Formula kind. Known values are "inline", "display"."""
+    value: str
+    """LaTex expression describing the formula."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the formula."""
+    span: DocumentSpan
+    """Location of the formula in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the formula."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.value = kwargs.get("value", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, formula):
+        return cls(
+            kind=formula.kind,
+            value=formula.value,
+            span=DocumentSpan._from_generated(formula.span)
+            if formula.span
+            else None,
+            polygon=get_polygon(formula) if formula.polygon else [],
+            confidence=formula.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentFormula(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"value={self.value}, span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentFormula."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+            "value": self.value,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentFormula":
+        """Converts a dict in the shape of a DocumentFormula to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentFormula.
+        :return: DocumentFormula
+        :rtype: DocumentFormula
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            value=data.get("value", None),
+        )
+
+
+class DocumentImage:
+    """An image object detected in the page."""
+
+    page_number: int
+    """1-based page number of the page that contains the image."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the image."""
+    span: DocumentSpan
+    """Location of the image in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly identifying the image."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.page_number = kwargs.get("page_number", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, image):
+        return cls(
+            page_number=image.page_number,
+            span=DocumentSpan._from_generated(image.span)
+            if image.span
+            else None,
+            polygon=get_polygon(image) if image.polygon else [],
+            confidence=image.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentImage(page_number={self.page_number}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentImage."""
+        return {
+            "page_number": self.page_number,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentImage":
+        """Converts a dict in the shape of a DocumentImage to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentImage.
+        :return: DocumentImage
+        :rtype: DocumentImage
+        """
+        return cls(
+            page_number=data.get("page_number", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+        )
+
+
+class DocumentPage:  # pylint: disable=too-many-instance-attributes
+    """Content and layout elements extracted from a page of the input.
+
+    .. versionadded:: 2023-02-28-preview
+        The *kind*, *annotations*, *barcodes*, *formulas*, and *images* properties.
+    """
 
     page_number: int
     """1-based page number in the input document."""
@@ -2888,6 +3171,17 @@ class DocumentPage:
     lines: Optional[List[DocumentLine]]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
+    kind: str
+    """Kind of document page. Known values are: "document", "sheet", "slide",
+     "image"."""
+    annotations: List[DocumentAnnotation]
+    """Extracted annotations from the page."""
+    barcodes: List[DocumentBarcode]
+    """Extracted barcodes from the page."""
+    formulas: List[DocumentFormula]
+    """Extracted formulas from the page"""
+    images: List[DocumentImage]
+    """Extracted images from the page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -2899,9 +3193,20 @@ class DocumentPage:
         self.words = kwargs.get("words", None)
         self.selection_marks = kwargs.get("selection_marks", None)
         self.lines = kwargs.get("lines", None)
+        self.kind = kwargs.get("kind", None)
+        self.annotations = kwargs.get("annotations", None)
+        self.barcodes = kwargs.get("barcodes", None)
+        self.formulas = kwargs.get("formulas", None)
+        self.images = kwargs.get("images", None)
 
     @classmethod
     def _from_generated(cls, page):
+        kind = page.kind if hasattr(page, "kind") else None
+        annotations = page.annotations if hasattr(page, "annotations") else None
+        barcodes = page.barcodes if hasattr(page, "barcodes") else None
+        formulas = page.formulas if hasattr(page, "formulas") else None
+        images = page.images if hasattr(page, "images") else None
+
         return cls(
             page_number=page.page_number,
             angle=adjust_text_angle(page.angle)
@@ -2922,6 +3227,31 @@ class DocumentPage:
             if page.selection_marks
             else [],
             spans=prepare_document_spans(page.spans),
+            kind=kind,
+            annotations=[
+                DocumentAnnotation._from_generated(annotation)
+                for annotation in annotations
+            ]
+            if annotations
+            else [],
+            barcodes=[
+                DocumentBarcode._from_generated(barcode)
+                for barcode in barcodes
+            ]
+            if barcodes
+            else [],
+            formulas=[
+                DocumentBarcode._from_generated(formula)
+                for formula in formulas
+            ]
+            if formulas
+            else [],
+            images=[
+                DocumentImage._from_generated(image)
+                for image in images
+            ]
+            if images
+            else [],
         )
 
     def __repr__(self) -> str:
@@ -2929,7 +3259,8 @@ class DocumentPage:
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
-            f"spans={repr(self.spans)})"
+            f"spans={repr(self.spans)}, kind={self.kind}, annotations={repr(self.annotations)}, "
+            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)}, images={repr(self.images)})"
         )
 
     def to_dict(self) -> Dict:
@@ -2951,6 +3282,19 @@ class DocumentPage:
             else [],
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
+            else [],
+            "kind": self.kind,
+            "annotations": [f.to_dict() for f in self.annotations]
+            if self.annotations
+            else [],
+            "barcodes": [f.to_dict() for f in self.barcodes]
+            if self.barcodes
+            else [],
+            "formulas": [f.to_dict() for f in self.formulas]
+            if self.formulas
+            else [],
+            "images": [f.to_dict() for f in self.images]
+            if self.images
             else [],
         }
 
@@ -2979,6 +3323,19 @@ class DocumentPage:
             else [],
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
+            else [],
+            kind=data.get("kind", None),
+            annotations=[DocumentAnnotation.from_dict(v) for v in data.get("annotations")]  # type: ignore
+            if len(data.get("annotations", [])) > 0
+            else [],
+            barcodes=[DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
+            if len(data.get("barcodes", [])) > 0
+            else [],
+            formulas=[DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
+            if len(data.get("formulas", [])) > 0
+            else [],
+            images=[DocumentImage.from_dict(v) for v in data.get("images")]  # type: ignore
+            if len(data.get("images", [])) > 0
             else [],
         )
 
@@ -3700,7 +4057,8 @@ class OperationSummary:
     created, and more.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+    the model can be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
+    :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
 
     .. versionadded:: 2023-02-28-preview
@@ -3800,10 +4158,11 @@ class OperationDetails(OperationSummary):
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+    the model can also be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
+    :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
 
     .. versionadded:: 2023-02-28-preview
-        The `documentClassifierBuild` kind.
+        The `documentClassifierBuild` kind and `DocumentClassifierDetails` result.
     """
     operation_id: str
     """Operation ID."""
@@ -3824,10 +4183,9 @@ class OperationDetails(OperationSummary):
     error: Optional[DocumentAnalysisError]
     """Encountered error, includes the error code, message, and details for why
         the operation failed."""
-    result: Optional[DocumentModelDetails]
-    """Operation result upon success. Returns a DocumentModelDetails which contains
-        all information about the model including the doc types
-        and fields it can analyze from documents."""
+    result: Optional[Union[DocumentModelDetails, DocumentClassifierDetails]]
+    """Operation result upon success. Returns a DocumentModelDetails or DocumentClassifierDetails
+        which contains all the information about the model."""
     api_version: Optional[str]
     """API version used to create this operation."""
     tags: Optional[Dict[str, str]]
@@ -3871,6 +4229,14 @@ class OperationDetails(OperationSummary):
         :return: OperationDetails
         :rtype: OperationDetails
         """
+
+        kind = data.get("kind", None)
+        if kind == "documentClassifierBuild":
+            result = \
+                DocumentClassifierDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
+        else:
+            result = \
+                DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
         return cls(
             operation_id=data.get("operation_id", None),
             status=data.get("status", None),
@@ -3879,7 +4245,7 @@ class OperationDetails(OperationSummary):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
-            result=DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
+            result=result,
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
@@ -3888,6 +4254,12 @@ class OperationDetails(OperationSummary):
     @classmethod
     def _from_generated(cls, op, api_version):  # pylint: disable=arguments-differ
         deserialize = _get_deserialize(api_version)
+        if op.kind == "documentClassifierBuild":
+            result = DocumentClassifierDetails._from_generated(deserialize(ClassifierDetails, op.result)) \
+                if op.result else None
+        else:
+            result = DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result)) \
+                if op.result else None
         return cls(
             operation_id=op.operation_id,
             status=op.status,
@@ -3896,8 +4268,7 @@ class OperationDetails(OperationSummary):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result))
-            if op.result else None,
+            result=result,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
             api_version=op.api_version,

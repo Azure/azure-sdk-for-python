@@ -39,7 +39,6 @@ def build_list_by_subscription_request(
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-    skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -53,8 +52,6 @@ def build_list_by_subscription_request(
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if skip is not None:
-        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -76,7 +73,6 @@ def build_list_request(
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-    skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -91,8 +87,6 @@ def build_list_request(
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if skip is not None:
-        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -122,7 +116,7 @@ def build_delete_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -159,7 +153,7 @@ def build_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -181,7 +175,7 @@ def build_get_request(
     )
 
 
-def build_update_request_initial(
+def build_update_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
@@ -197,7 +191,7 @@ def build_update_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -237,7 +231,7 @@ def build_create_or_update_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -254,6 +248,46 @@ def build_create_or_update_request_initial(
 
     return HttpRequest(
         method="PUT",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_remove_regions_request_initial(
+    subscription_id,  # type: str
+    resource_group_name,  # type: str
+    registry_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/removeRegions")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
         url=_url,
         params=_query_parameters,
         headers=_header_parameters,
@@ -286,7 +320,6 @@ class RegistriesOperations(object):
     @distributed_trace
     def list_by_subscription(
         self,
-        skip=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.RegistryTrackedResourceArmPaginatedResult"]
@@ -294,8 +327,6 @@ class RegistriesOperations(object):
 
         List registries by subscription.
 
-        :param skip: Continuation token for pagination.
-        :type skip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -316,7 +347,6 @@ class RegistriesOperations(object):
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    skip=skip,
                     template_url=self.list_by_subscription.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -327,7 +357,6 @@ class RegistriesOperations(object):
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -369,7 +398,6 @@ class RegistriesOperations(object):
     def list(
         self,
         resource_group_name,  # type: str
-        skip=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.RegistryTrackedResourceArmPaginatedResult"]
@@ -379,8 +407,6 @@ class RegistriesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -402,7 +428,6 @@ class RegistriesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     api_version=api_version,
-                    skip=skip,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -414,7 +439,6 @@ class RegistriesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     api_version=api_version,
-                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -516,7 +540,7 @@ class RegistriesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -581,7 +605,7 @@ class RegistriesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Registry, or the result of cls(response)
@@ -629,7 +653,8 @@ class RegistriesOperations(object):
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
 
-    def _update_initial(
+    @distributed_trace
+    def update(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
@@ -637,6 +662,21 @@ class RegistriesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Registry"
+        """Update tags.
+
+        Update tags.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
+        :type registry_name: str
+        :param body: Details required to create the registry.
+        :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Registry, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.Registry
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -648,14 +688,14 @@ class RegistriesOperations(object):
 
         _json = self._serialize.body(body, 'PartialRegistryPartialTrackedResource')
 
-        request = build_update_request_initial(
+        request = build_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self.update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -667,101 +707,20 @@ class RegistriesOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize('Registry', pipeline_response)
-
-        if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
-            deserialized = self._deserialize('Registry', pipeline_response)
+        deserialized = self._deserialize('Registry', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
+    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
-
-    @distributed_trace
-    def begin_update(
-        self,
-        resource_group_name,  # type: str
-        registry_name,  # type: str
-        body,  # type: "_models.PartialRegistryPartialTrackedResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.Registry"]
-        """Update tags.
-
-        Update tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
-        :type registry_name: str
-        :param body: Details required to create the registry.
-        :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either Registry or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Registry]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._update_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('Registry', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
     def _create_or_update_initial(
         self,
@@ -770,8 +729,8 @@ class RegistriesOperations(object):
         body,  # type: "_models.Registry"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.Registry"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Registry"]]
+        # type: (...) -> "_models.Registry"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -801,11 +760,10 @@ class RegistriesOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Registry', pipeline_response)
 
@@ -835,7 +793,7 @@ class RegistriesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param body: Details required to create the registry.
         :type body: ~azure.mgmt.machinelearningservices.models.Registry
@@ -893,3 +851,138 @@ class RegistriesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
+
+    def _remove_regions_initial(
+        self,
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        body,  # type: "_models.Registry"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Registry"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'Registry')
+
+        request = build_remove_regions_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._remove_regions_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('Registry', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _remove_regions_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/removeRegions"}  # type: ignore
+
+
+    @distributed_trace
+    def begin_remove_regions(
+        self,
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        body,  # type: "_models.Registry"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.Registry"]
+        """Remove regions from registry.
+
+        Remove regions from registry.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
+        :type registry_name: str
+        :param body: Details required to create the registry.
+        :type body: ~azure.mgmt.machinelearningservices.models.Registry
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either Registry or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Registry]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._remove_regions_initial(
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('Registry', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_remove_regions.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/removeRegions"}  # type: ignore

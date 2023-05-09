@@ -18,15 +18,16 @@ from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
 from ...entities import Component
 from ...entities._assets import Code
+from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
 from ...entities._util import convert_ordered_dict_to_dict
 from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
+from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, InternalAdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
-from .code import InternalCode, InternalComponentIgnoreFile
+from .code import InternalCode
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 
@@ -152,7 +153,7 @@ class InternalComponent(Component):
         if self.__additional_includes is None:
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
-            self.__additional_includes = _AdditionalIncludes(
+            self.__additional_includes = InternalAdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
             )
@@ -258,7 +259,7 @@ class InternalComponent(Component):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         tmp_code_dir = self._additional_includes.code.absolute()
-        rebased_ignore_file = InternalComponentIgnoreFile(
+        rebased_ignore_file = ComponentIgnoreFile(
             tmp_code_dir,
             additional_includes_file_name=get_additional_include_file_name(),
         )

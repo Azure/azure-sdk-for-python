@@ -157,11 +157,14 @@ class TestManagement(FormRecognizerTest):
             assert op.kind
             assert op.resource_location
             if op.status == "succeeded":
-                successful_op = op
+                if op.kind != "documentClassifierBuild":
+                    successful_op = op
+                else:
+                    successful_classifier_op = op
             if op.status == "failed":
                 failed_op = op
 
-        # check successful op
+        # check successful document model op
         if successful_op:
             op = client.get_operation(successful_op.operation_id)
             # TODO not seeing this returned at the operation level
@@ -182,7 +185,24 @@ class TestManagement(FormRecognizerTest):
                 for key, field in doc_type.field_schema.items():
                     assert key
                     assert field["type"]
+                    if doc_type.build_mode == "neural":
+                        continue  # neural models don't have field confidence
                     assert doc_type.field_confidence[key] is not None
+
+        # check successful classifier model op
+        if successful_classifier_op:
+            op = client.get_operation(successful_classifier_op.operation_id)
+            # test to/from dict
+            op_dict = op.to_dict()
+            op = OperationDetails.from_dict(op_dict)
+            classifier = op.result
+            assert classifier.api_version
+            assert classifier.classifier_id
+            assert classifier.created_on
+            assert classifier.expires_on
+            for doc_type, source in classifier.doc_types.items():
+                assert doc_type
+                assert source.azure_blob_source or source.azure_blob_file_list_source
 
         # check failed op
         if failed_op:
