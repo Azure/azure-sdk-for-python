@@ -68,15 +68,16 @@ class _TimeoutFailoverRetryPolicy(object):
 
         self.failover_retry_count += 1
 
-        # clear previous location-based routing directive
-        self.request.clear_route_to_location()
+        if self.request:
+            # clear previous location-based routing directive
+            self.request.clear_route_to_location()
 
-        # set location-based routing directive based on retry count
-        # ensuring usePreferredLocations is set to True for retry
-        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
+            # set location-based routing directive based on retry count
+            # ensuring usePreferredLocations is set to True for retry
+            self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
 
-        # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-        # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-        self.request.route_to_location(self.location_endpoint)
+            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
+            # This enables marking the endpoint unavailability on endpoint failover/unreachability
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+            self.request.route_to_location(self.location_endpoint)
         return True
