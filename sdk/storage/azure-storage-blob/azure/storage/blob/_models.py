@@ -1209,7 +1209,7 @@ class BlobProperties(DictMixin):
         container-level scope is configured to allow overrides. Otherwise an error will be raised."""
     request_server_encrypted: Optional[bool]
     """Whether this blob is encrypted."""
-    object_replication_source_properties: List[ObjectReplicationPolicy]
+    object_replication_source_properties: Optional[List[ObjectReplicationPolicy]]
     """Only present for blobs that have policy ids and rule ids applied to them."""
     object_replication_destination_policy: Optional[str]
     """Represents the Object Replication Policy Id that created this blob."""
