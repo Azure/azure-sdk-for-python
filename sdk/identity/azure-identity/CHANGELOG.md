@@ -1,8 +1,6 @@
 # Release History
 
-## 1.13.0 (Unreleased)
-
-### Features Added
+## 1.13.0 (2023-05-09)
 
 ### Breaking Changes
 
@@ -11,11 +9,6 @@
 - Windows Web Account Manager (WAM) Brokered Authentication is still in preview and not available in this release. It will be available in the next beta release.
 - Additional Continuous Access Evaluation (CAE) support for service principal credentials is still in preview and not available in this release. It will be available in the next beta release.
 - Renamed keyword argument `developer_credential_timeout` to `process_timeout` in `DefaultAzureCredential` to remain consistent with the other credentials that launch a subprocess to acquire tokens.
-
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.13.0b4 (2023-04-11)
 

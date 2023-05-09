@@ -18,6 +18,6 @@ class BaseEnvironmentSourceSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import BaseEnvironmentId
+        from azure.ai.ml.entities import BaseEnvironment
 
-        return BaseEnvironmentId(**data)
+        return BaseEnvironment(**data)
