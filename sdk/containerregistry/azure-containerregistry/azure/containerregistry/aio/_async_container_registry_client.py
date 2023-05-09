@@ -910,6 +910,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         location,
                         buffer_stream,
                         cls=_return_response_headers,
+                        retry_on_methods=["PATCH"],
                         **kwargs
                     )
                 )

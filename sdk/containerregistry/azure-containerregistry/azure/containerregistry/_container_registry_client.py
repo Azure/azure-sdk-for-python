@@ -943,6 +943,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 location,
                 BytesIO(buffer),
                 cls=_return_response_headers,
+                retry_on_methods=["PATCH"],
                 **kwargs
             ))
             location = response_headers['Location']
