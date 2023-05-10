@@ -307,7 +307,7 @@ class ArtifactTagProperties(object):
 class GetManifestResult(object):
     """The get manifest result.
 
-    :ivar dict manifest: The manifest JSON.
+    :ivar MutableMapping[str, Any] manifest: The manifest JSON.
     :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
