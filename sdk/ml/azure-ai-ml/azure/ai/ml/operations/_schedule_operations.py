@@ -317,7 +317,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        # resolve ARM id for each signal
+        # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
                 for input_value in signal.input_datasets.values():
@@ -327,8 +327,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     )
                 continue
             error_messages = []
-            if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
-                if not signal.target_dataset:
+            if not signal.target_dataset:
+                # if there is no target dataset, we check the type of signal
+                if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
                     if mdc_input_enabled:
                         # if target dataset is absent and data collector for input is enabled,
                         # create a default target dataset with production model inputs as target
@@ -350,28 +351,28 @@ class ScheduleOperations(_ScopeDependentOperations):
                             "or refers to a deployment for which data collection for model inputs is not enabled."
                         )
                         error_messages.append(msg)
-            elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
-                if mdc_output_enabled:
-                    # if target dataset is absent and data collector for output is enabled,
-                    # create a default target dataset with production model outputs as target
-                    signal.target_dataset = TargetDataset(
-                        dataset=MonitorInputData(
-                            input_dataset=Input(
-                                path=f"{model_outputs_name}:{model_outputs_version}",
-                                type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
+                    if mdc_output_enabled:
+                        # if target dataset is absent and data collector for output is enabled,
+                        # create a default target dataset with production model outputs as target
+                        signal.target_dataset = TargetDataset(
+                            dataset=MonitorInputData(
+                                input_dataset=Input(
+                                    path=f"{model_outputs_name}:{model_outputs_version}",
+                                    type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                                ),
+                                dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
                             ),
-                            dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                        ),
-                    )
-                else:
-                    # if target dataset is absent and data collector for output is not enabled,
-                    # collect exception message
-                    msg = (
-                        f"A target dataset must be provided for signal with name {signal_name}"
-                        f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
-                        "or refers to a deployment for which data collection for model outputs is not enabled."
-                    )
-                    error_messages.append(msg)
+                        )
+                    else:
+                        # if target dataset is absent and data collector for output is not enabled,
+                        # collect exception message
+                        msg = (
+                            f"A target dataset must be provided for signal with name {signal_name}"
+                            f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
+                            "or refers to a deployment for which data collection for model outputs is not enabled."
+                        )
+                        error_messages.append(msg)
             if error_messages:
                 # if any error messages, raise an exception with all of them so user knows which signals
                 # need to be fixed

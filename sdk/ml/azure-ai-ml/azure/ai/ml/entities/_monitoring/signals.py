@@ -194,7 +194,7 @@ class DataDriftSignal(DataSignal):
     def __init__(
         self,
         *,
-        baseline_dataset: MonitorInputData,
+        baseline_dataset: MonitorInputData = None,
         target_dataset: TargetDataset = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataDriftMetricThreshold],
@@ -251,7 +251,7 @@ class DataDriftSignal(DataSignal):
                     input_dataset=Input(path=production_data_id, type=production_data_type),
                     dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                 ),
-                data_window_size=60,
+                data_window_size=7,
             ),
             baseline_dataset=MonitorInputData(
                 input_dataset=Input(path=production_data_id, type=production_data_type),
@@ -282,7 +282,7 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        baseline_dataset: MonitorInputData,
+        baseline_dataset: MonitorInputData = None,
         target_dataset: TargetDataset = None,
         metric_thresholds: List[PredictionDriftMetricThreshold],
         alert_enabled: bool = True,
@@ -337,7 +337,7 @@ class PredictionDriftSignal(MonitoringSignal):
                     ),
                     dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
                 ),
-                data_window_size=60,
+                data_window_size=7,
             ),
             baseline_dataset=MonitorInputData(
                 input_dataset=Input(
@@ -374,7 +374,7 @@ class DataQualitySignal(DataSignal):
     def __init__(
         self,
         *,
-        baseline_dataset: MonitorInputData,
+        baseline_dataset: MonitorInputData = None,
         target_dataset: TargetDataset = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataQualityMetricThreshold],
@@ -432,7 +432,7 @@ class DataQualitySignal(DataSignal):
                     ),
                     dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                 ),
-                data_window_size=60,
+                data_window_size=7,
             ),
             baseline_dataset=MonitorInputData(
                 input_dataset=Input(

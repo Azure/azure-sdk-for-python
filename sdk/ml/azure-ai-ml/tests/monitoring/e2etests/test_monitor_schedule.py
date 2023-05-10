@@ -18,7 +18,22 @@ class TestMonitorSchedule(AzureRecordedTestCase):
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
     ):
         test_path = "tests/test_configs/monitoring/yaml_configs/data_drift.yaml"
+        created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
 
+    def test_prediction_drift_schedule_create(
+        self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
+    ):
+        test_path = "tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml"
+        created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
+
+    def test_data_quality_schedule_create(
+        self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
+    ):
+        test_path = "tests/test_configs/monitoring/yaml_configs/data_quality.yaml"
+        created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
+
+
+def create_and_assert_basic_schedule_fields(client: MLClient, test_path: str, randstr: Callable[[str], str], data_with_2_versions: str):
         schedule_name = randstr("schedule_name")
 
         params_override = [
@@ -51,3 +66,5 @@ class TestMonitorSchedule(AzureRecordedTestCase):
         )
         assert data_drift_signal.baseline_dataset
         assert is_ARM_id_for_resource(data_drift_signal.baseline_dataset.input_dataset.path, AzureMLResourceType.DATA)
+
+        return created_schedule
