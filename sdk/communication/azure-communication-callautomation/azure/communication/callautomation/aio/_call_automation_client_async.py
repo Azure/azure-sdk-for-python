@@ -395,6 +395,7 @@ class CallAutomationClient(object):
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
+        channel_affinity: Optional[List['ChannelAffinity']] = None,
         external_storage_location: Optional[str] = None,
         **kwargs
     ) -> RecordingProperties:
@@ -418,6 +419,12 @@ class CallAutomationClient(object):
          which participant first audio was detected.
          Channel to participant mapping details can be found in the metadata of the recording.
         :paramtype audio_channel_participant_ordering: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+         ///.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
         :keyword recording_storage_type: Recording storage mode.
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str
@@ -428,6 +435,13 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        channel_affinity_internal = []
+
+        if channel_affinity:
+            for channel in channel_affinity:
+                channel_affinity_internal.append(channel._to_generated(# pylint:disable=protected-access
+                    ))
+
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator._to_generated(# pylint:disable=protected-access
             ),
@@ -438,6 +452,7 @@ class CallAutomationClient(object):
             audio_channel_participant_ordering = audio_channel_participant_ordering,
             recording_storage_type = recording_storage_type,
             external_storage_location = external_storage_location,
+            channel_affinity = channel_affinity_internal,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid()
         )

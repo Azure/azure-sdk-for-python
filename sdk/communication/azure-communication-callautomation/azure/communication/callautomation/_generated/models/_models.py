@@ -746,6 +746,46 @@ class CallTransferFailed(_serialization.Model):
         self.result_information = result_information
 
 
+class ChannelAffinity(_serialization.Model):
+    """Channel affinity for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel: Channel number to which bitstream from a particular participant will be written.
+    :vartype channel: int
+    :ivar participant: The identifier for the participant whose bitstream will be written to the
+     channel
+     represented by the channel number. Required.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        "channel": {"maximum": 4, "minimum": 0},
+        "participant": {"required": True},
+    }
+
+    _attribute_map = {
+        "channel": {"key": "channel", "type": "int"},
+        "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+    }
+
+    def __init__(
+        self, *, participant: "_models.CommunicationIdentifierModel", channel: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword channel: Channel number to which bitstream from a particular participant will be
+         written.
+        :paramtype channel: int
+        :keyword participant: The identifier for the participant whose bitstream will be written to the
+         channel
+         represented by the channel number. Required.
+        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        """
+        super().__init__(**kwargs)
+        self.channel = channel
+        self.participant = participant
+
+
 class Choice(_serialization.Model):
     """Choice.
 
@@ -3117,6 +3157,12 @@ class StartCallRecordingRequest(_serialization.Model):
      of the recording.
     :vartype audio_channel_participant_ordering:
      list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
+    :ivar channel_affinity: The channel affinity of call recording
+     When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+     'channel' will be automatically assigned.
+     Channel-Participant mapping details can be found in the metadata of the recording.
+     ///.
+    :vartype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
     :ivar external_storage: Optional property to specify location where recording will be stored.
     :vartype external_storage: ~azure.communication.callautomation.models.ExternalStorage
     """
@@ -3135,6 +3181,7 @@ class StartCallRecordingRequest(_serialization.Model):
             "key": "audioChannelParticipantOrdering",
             "type": "[CommunicationIdentifierModel]",
         },
+        "channel_affinity": {"key": "channelAffinity", "type": "[ChannelAffinity]"},
         "external_storage": {"key": "externalStorage", "type": "ExternalStorage"},
     }
 
@@ -3147,6 +3194,7 @@ class StartCallRecordingRequest(_serialization.Model):
         recording_channel_type: Optional[Union[str, "_models.RecordingChannel"]] = None,
         recording_format_type: Optional[Union[str, "_models.RecordingFormat"]] = None,
         audio_channel_participant_ordering: Optional[List["_models.CommunicationIdentifierModel"]] = None,
+        channel_affinity: Optional[List["_models.ChannelAffinity"]] = None,
         external_storage: Optional["_models.ExternalStorage"] = None,
         **kwargs: Any
     ) -> None:
@@ -3177,6 +3225,12 @@ class StartCallRecordingRequest(_serialization.Model):
          of the recording.
         :paramtype audio_channel_participant_ordering:
          list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+         ///.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
         :keyword external_storage: Optional property to specify location where recording will be
          stored.
         :paramtype external_storage: ~azure.communication.callautomation.models.ExternalStorage
@@ -3188,6 +3242,7 @@ class StartCallRecordingRequest(_serialization.Model):
         self.recording_channel_type = recording_channel_type
         self.recording_format_type = recording_format_type
         self.audio_channel_participant_ordering = audio_channel_participant_ordering
+        self.channel_affinity = channel_affinity
         self.external_storage = external_storage
 
 

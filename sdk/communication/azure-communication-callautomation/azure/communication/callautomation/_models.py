@@ -8,7 +8,8 @@ from ._generated.models import (
     CallLocator,
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
     FileSource as FileSourceInternal,
-    PlaySource as PlaySourceInternal
+    PlaySource as PlaySourceInternal,
+    ChannelAffinity as ChannelAffinityInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -19,7 +20,8 @@ from ._generated.models._enums import (
 )
 from ._utils import (
     deserialize_phone_identifier,
-    deserialize_identifier
+    deserialize_identifier,
+    serialize_identifier
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
@@ -131,6 +133,41 @@ class GroupCallLocator(object):
     def _to_generated(self):
         return CallLocator(kind=self.kind,
                            group_call_id=self.id)
+
+class ChannelAffinity(object):
+    """Channel affinity for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel: Channel number to which bitstream from a particular participant will be written.
+    :vartype channel: int
+    :ivar participant: The identifier for the participant whose bitstream will be written to the
+     channel
+     represented by the channel number. Required.
+    :vartype participant: ~azure.communication.callautomation.CommunicationIdentifier
+    """
+
+    def __init__(
+        self,
+        target_participant: CommunicationIdentifier,
+        channel: int,
+        **kwargs
+    ):
+        """
+        :keyword channel: Channel number to which bitstream from a particular participant will be
+         written.
+        :paramtype channel: int
+        :keyword participant: The identifier for the participant whose bitstream will be written to the
+         channel
+         represented by the channel number. Required.
+        :paramtype participant: ~azure.communication.callautomation.CommunicationIdentifier
+        """
+        super().__init__(**kwargs)
+        self.target_participant = target_participant
+        self.channel = channel
+
+    def _to_generated(self):
+        return ChannelAffinityInternal(participant= serialize_identifier(self.target_participant), channel=self.channel)
 
 class FileSource(object):
     """Media file source of URL to be played in action such as Play media.
