@@ -29,7 +29,7 @@ from azure.ai.ml.entities._assets.intellectual_property import IntellectualPrope
 from .artifact import ArtifactStorageInfo
 
 
-class Model(Artifact): # pylint: disable=too-many-instance-attributes
+class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
     :param name: Name of the resource.
