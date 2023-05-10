@@ -5,6 +5,6 @@
 # --------------------------------------------------------------------------
 
 
-def template_main():
+def template_main() -> bool:
     print("Package code.")
     return True

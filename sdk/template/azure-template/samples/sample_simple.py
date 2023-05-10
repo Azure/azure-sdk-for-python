@@ -20,7 +20,7 @@ USAGE:
 from azure.template import template_main
 
 
-def simple_sample():
+def simple_sample() -> None:
     print("Running simple sample")
     template_main()
     print("Completed running simple sample")
