@@ -27,13 +27,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ListViewType,
-    ModelVersion,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ModelVersion
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationScope,
@@ -56,19 +51,11 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
-from azure.ai.ml._utils._storage_utils import (
-    get_ds_name_and_path_prefix,
-    get_storage_client,
-)
-from azure.ai.ml._utils.utils import (
-    resolve_short_datastore_url,
-    validate_ml_flow_folder,
-)
+from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
+from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, ModelPackage, Environment
-from azure.ai.ml.entities._assets.workspace_asset_reference import (
-    WorkspaceAssetReference,
-)
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -178,9 +165,7 @@ class ModelOperations(_ScopeDependentOperations):
                     ).result()
 
                     if not result:
-                        model_rest_obj = self._get(
-                            name=model.name, version=model.version
-                        )
+                        model_rest_obj = self._get(name=model.name, version=model.version)
                         return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -189,9 +174,7 @@ class ModelOperations(_ScopeDependentOperations):
                     version=model.version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(
-                        self._registry_name, "models", model.name, model.version
-                    ),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
 
             model, indicator_file = _check_and_upload_path(
@@ -242,9 +225,7 @@ class ModelOperations(_ScopeDependentOperations):
             model = Model._from_rest_object(result)
             if auto_increment_version and indicator_file:
                 datastore_info = _get_default_datastore_info(self._datastore_operation)
-                _update_metadata(
-                    model.name, model.version, indicator_file, datastore_info
-                )  # update version in storage
+                _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
 
             return model
         except Exception as ex:  # pylint: disable=broad-except
@@ -253,9 +234,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(
-        self, name: str, version: Optional[str] = None
-    ) -> ModelVersion:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
             return (
                 self._model_versions_operation.get(
@@ -275,9 +254,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
         return (
-            self._model_container_operation.get(
-                name=name, registry_name=self._registry_name, **self._scope_kwargs
-            )
+            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
             if self._registry_name
             else self._model_container_operation.get(
                 name=name, workspace_name=self._workspace_name, **self._scope_kwargs
@@ -285,9 +262,7 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
-    def get(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None
-    ) -> Model:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
@@ -329,9 +304,7 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(model_version_resource)
 
     @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
-    def download(
-        self, name: str, version: str, download_path: Union[PathLike, str] = "."
-    ) -> None:
+    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
         :param str name: Name of the model.
@@ -342,9 +315,7 @@ class ModelOperations(_ScopeDependentOperations):
         """
 
         model_uri = self.get(name=name, version=version).path
-        ds_name, path_prefix = get_ds_name_and_path_prefix(
-            model_uri, self._registry_name
-        )
+        ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
             sas_uri, auth_type = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
@@ -356,17 +327,13 @@ class ModelOperations(_ScopeDependentOperations):
                 uri=model_uri,
             )
             if auth_type == "SAS":
-                storage_client = get_storage_client(
-                    credential=None, storage_account=None, account_url=sas_uri
-                )
+                storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
             else:
                 parts = sas_uri.split("/")
                 storage_account = parts[2].split(".")[0]
                 container_name = parts[3]
                 storage_client = get_storage_client(
-                    credential=None,
-                    storage_account=storage_account,
-                    container_name=container_name,
+                    credential=None, storage_account=storage_account, container_name=container_name
                 )
 
         else:
@@ -403,11 +370,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
     def archive(
-        self,
-        name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs,
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
     ) -> None:  # pylint:disable=unused-argument
         """Archive a model asset.
 
@@ -430,11 +393,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
     def restore(
-        self,
-        name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs,
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
     ) -> None:  # pylint:disable=unused-argument
         """Restore an archived model asset.
 
@@ -494,18 +453,14 @@ class ModelOperations(_ScopeDependentOperations):
         return (
             self._model_container_operation.list(
                 registry_name=self._registry_name,
-                cls=lambda objs: [
-                    Model._from_container_rest_object(obj) for obj in objs
-                ],
+                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
             if self._registry_name
             else self._model_container_operation.list(
                 workspace_name=self._workspace_name,
-                cls=lambda objs: [
-                    Model._from_container_rest_object(obj) for obj in objs
-                ],
+                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
@@ -513,9 +468,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
     @experimental
-    def share(
-        self, name, version, *, share_with_name, share_with_version, registry_name
-    ) -> Model:
+    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Model:
         """Share a model asset from workspace to registry.
 
         :param name: Name of model asset.
@@ -534,8 +487,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
@@ -586,9 +538,7 @@ class ModelOperations(_ScopeDependentOperations):
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub = get_registry_client(
-                self._service_client._config.credential, registry_name
-            )
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
@@ -604,9 +554,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def package(
-        self, name: str, version: str, package_request: ModelPackage, **kwargs
-    ) -> Environment:
+    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> Environment:
         """Package a model asset
 
         :param name: Name of model asset.
@@ -629,20 +577,12 @@ class ModelOperations(_ScopeDependentOperations):
 
             # Create a code asset if code is not already an ARM ID
             if hasattr(package_request.inferencing_server, "code_configuration"):
-                if (
-                    package_request.inferencing_server.code_configuration
-                    and not is_ARM_id_for_resource(
-                        package_request.inferencing_server.code_configuration.code,
-                        AzureMLResourceType.CODE,
-                    )
+                if package_request.inferencing_server.code_configuration and not is_ARM_id_for_resource(
+                    package_request.inferencing_server.code_configuration.code, AzureMLResourceType.CODE
                 ):
-                    if package_request.inferencing_server.code_configuration.code.startswith(
-                        ARM_ID_PREFIX
-                    ):
+                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
                         package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                            package_request.inferencing_server.code_configuration.code[
-                                len(ARM_ID_PREFIX) :
-                            ],
+                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
                             azureml_type=AzureMLResourceType.CODE,
                         )
                     else:
@@ -657,18 +597,14 @@ class ModelOperations(_ScopeDependentOperations):
                     package_request.inferencing_server.code_configuration, "code"
                 ):
                     package_request.inferencing_server.code_configuration.code = (
-                        "azureml:/"
-                        + package_request.inferencing_server.code_configuration.code
+                        "azureml:/" + package_request.inferencing_server.code_configuration.code
                     )
 
             if package_request.base_environment_source and hasattr(
                 package_request.base_environment_source, "resource_id"
             ):
-                package_request.base_environment_source.resource_id = (
-                    orchestrators.get_asset_arm_id(
-                        package_request.base_environment_source.resource_id,
-                        azureml_type=AzureMLResourceType.ENVIRONMENT,
-                    )
+                package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
+                    package_request.base_environment_source.resource_id, azureml_type=AzureMLResourceType.ENVIRONMENT
                 )
 
                 package_request.base_environment_source.resource_id = (
@@ -677,9 +613,7 @@ class ModelOperations(_ScopeDependentOperations):
 
             package_request = package_request._to_rest_object()
 
-        module_logger.info(
-            "Creating package with name: %s", package_request.target_environment_name
-        )
+        module_logger.info("Creating package with name: %s", package_request.target_environment_name)
 
         package_out = self._model_versions_operation.begin_package(
             name=name,
@@ -689,17 +623,11 @@ class ModelOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
         ).result()
 
-        if (
-            package_out is not None
-            and package_out.__class__.__name__ == "PackageResponse"
-        ):
-            environment_operation = self._all_operations.all_operations[
-                AzureMLResourceType.ENVIRONMENT
-            ]
+        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
+            environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
             module_logger.info("\nPackage Created")
             package_out = environment_operation.get(
-                name=package_out.target_environment_name,
-                version=package_out.target_environment_version,
+                name=package_out.target_environment_name, version=package_out.target_environment_version
             )
 
         return package_out
