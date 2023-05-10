@@ -318,7 +318,7 @@ class GetManifestResult(object):
         self.digest = kwargs.get("digest")
 
 
-class ManifestDigestValidationError(ValueError):
+class DigestValidationError(ValueError):
     """Thrown when a manifest digest validation fails.
     :param str message: Message for caller describing the reason for the failure.
     """
@@ -326,5 +326,5 @@ class ManifestDigestValidationError(ValueError):
     def __init__(self, message):
         self.message = message
         super(  # pylint: disable=super-with-arguments
-            ManifestDigestValidationError, self
+            DigestValidationError, self
         ).__init__(self.message)

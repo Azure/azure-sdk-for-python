@@ -47,7 +47,7 @@ from .._models import (
     ArtifactManifestProperties,
     ArtifactTagProperties,
     GetManifestResult,
-    ManifestDigestValidationError,
+    DigestValidationError,
 )
 
 JSON = MutableMapping[str, Any]
@@ -901,7 +901,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: The digest of the set manifest, calculated by the registry.
         :rtype: str
         :raises ValueError: If the parameter repository or manifest is None.
-        :raises ~azure.containerregistry.ManifestDigestValidationError:
+        :raises ~azure.containerregistry.DigestValidationError:
             If the server-computed digest does not match the client-computed digest.
         """
         try:
@@ -923,7 +923,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
             digest = response_headers['Docker-Content-Digest']
             if not _validate_digest(data, digest):
-                raise ManifestDigestValidationError(
+                raise DigestValidationError(
                     "The server-computed digest does not match the client-computed digest."
                 )
         except Exception as e:
@@ -942,7 +942,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             When tag is provided, will use the digest in response headers to compare.
         :returns: GetManifestResult
         :rtype: ~azure.containerregistry.GetManifestResult
-        :raises ~azure.containerregistry.ManifestDigestValidationError:
+        :raises ~azure.containerregistry.DigestValidationError:
             If the content of retrieved manifest digest does not match the requested digest, or
             the server-computed digest does not match the client-computed digest when tag is passing.
         """
@@ -962,13 +962,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
             if not _validate_digest(manifest_bytes, digest):
-                raise ManifestDigestValidationError(
+                raise DigestValidationError(
                     "The content of retrieved manifest digest does not match the requested digest."
                 )
         else:
             digest = response.http_response.headers['Docker-Content-Digest']
             if not _validate_digest(manifest_bytes, digest):
-                raise ManifestDigestValidationError(
+                raise DigestValidationError(
                     "The server-computed digest does not match the client-computed digest."
                 )
 
@@ -984,7 +984,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: The digest and size in bytes of the uploaded blob.
         :rtype: Tuple[str, int]
         :raises ValueError: If the parameter repository or data is None.
-        :raises ~azure.containerregistry.ManifestDigestValidationError:
+        :raises ~azure.containerregistry.DigestValidationError:
             If the server-computed digest does not match the client-computed digest.
         """
         try:
@@ -1007,7 +1007,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             )
             if digest != complete_upload_response_headers["Docker-Content-Digest"]:
-                raise ManifestDigestValidationError(
+                raise DigestValidationError(
                     "The server-computed digest does not match the client-computed digest."
                 )
         except Exception as e:
@@ -1049,7 +1049,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str digest: The digest of the blob to download.
         :returns: AsyncDownloadBlobStream
         :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
-        :raises ManifestDigestValidationError:
+        :raises DigestValidationError:
             If the content of retrieved blob digest does not match the requested digest.
         """
         end_range = DEFAULT_CHUNK_SIZE - 1
