@@ -77,8 +77,8 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
 
-        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"
-        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"
+        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/sdktestconnectionacr"
+        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/sdktestconnect7425646050"
         param_image_build_compute = "compute"
         param_display_name = "Test display name"
         param_description = "Test description"

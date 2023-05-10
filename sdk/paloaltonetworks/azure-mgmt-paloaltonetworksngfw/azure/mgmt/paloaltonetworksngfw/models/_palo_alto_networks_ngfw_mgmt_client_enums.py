@@ -92,6 +92,15 @@ class EnabledDNSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE = "AZURE"
 
 
+class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status Codes for the Firewall."""
+
+    GREEN = "GREEN"
+    YELLOW = "YELLOW"
+    RED = "RED"
+    INITIALIZING = "INITIALIZING"
+
+
 class LogOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Log options possible."""
 
@@ -168,11 +177,20 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_SPECIFIED = "NotSpecified"
 
 
+class ReadOnlyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the firewall resource."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+
+
 class ScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Rulestack Type."""
 
     LOCAL = "LOCAL"
     GLOBAL = "GLOBAL"
+    GLOBAL_ENUM = "GLOBAL"
 
 
 class SecurityServicesTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -184,6 +202,13 @@ class SecurityServicesTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URL_FILTERING = "urlFiltering"
     FILE_BLOCKING = "fileBlocking"
     DNS_SUBSCRIPTION = "dnsSubscription"
+
+
+class ServerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Connectivity Status for Panorama Server."""
+
+    UP = "UP"
+    DOWN = "DOWN"
 
 
 class StateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

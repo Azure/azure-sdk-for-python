@@ -88,6 +88,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
     async def __aexit__(self, *args):
         await self._blob_client.close()
+        await self._datalake_client_for_blob_operation.close()
         await super(PathClient, self).__aexit__(*args)
 
     async def close(self):
@@ -95,7 +96,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        await self._blob_client.close()
         await self.__aexit__()
 
     async def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):

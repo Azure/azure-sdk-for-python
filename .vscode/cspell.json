@@ -928,7 +928,9 @@
         "thead",
         "tbody",
         "racwdlmeop",
-        "newfs"
+        "newfs",
+        "adlsstorage",
+        "adlskey"
       ]
     },
     {

@@ -16,6 +16,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
+from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
@@ -65,6 +66,7 @@ from ._deployment.online_deployment import (
     ManagedOnlineDeployment,
     OnlineDeployment,
 )
+from ._deployment.data_collector import DataCollector
 from ._deployment.model_batch_deployment import ModelBatchDeployment
 from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
@@ -137,6 +139,7 @@ from ._workspace.networking import (
     ServiceTagDestination,
     PrivateEndpointDestination,
     IsolationMode,
+    ManagedNetworkProvisionStatus,
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
@@ -152,6 +155,7 @@ from ._assets._artifacts._package.model_configuration import ModelConfiguration
 from ._assets._artifacts._package.base_environment_source import BaseEnvironment
 from ._assets._artifacts._package.model_package import (
     ModelPackage,
+    ModelPackageInput,
     PackageInputPathId,
     PackageInputPathUrl,
     PackageInputPathVersion,
@@ -265,6 +269,7 @@ __all__ = [
     "ServiceTagDestination",
     "PrivateEndpointDestination",
     "IsolationMode",
+    "ManagedNetworkProvisionStatus",
     "EndpointConnection",
     "CustomerManagedKey",
     "DataImport",
@@ -371,6 +376,7 @@ __all__ = [
     "EndpointAuthKeys",
     "EndpointAuthToken",
     "ModelPackage",
+    "ModelPackageInput",
     "AzureMLOnlineInferencingServer",
     "AzureMLBatchInferencingServer",
     "TritonInferencingServer",
@@ -400,4 +406,6 @@ __all__ = [
     "PredictionDriftMetricThreshold",
     "FeatureAttributionDriftMetricThreshold",
     "CustomMonitoringMetricThreshold",
+    "DataCollector",
+    "IntellectualProperty",
 ]
