@@ -8,7 +8,7 @@ pytest-cov==2.8.1
 pytest-custom-exit-code==0.3.0
 pytest-xdist==1.32.0
 # we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
-coverage==4.5.4
+coverage==7.2.5
 bandit==1.6.2
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
