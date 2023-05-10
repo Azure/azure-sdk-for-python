@@ -13,7 +13,7 @@ from marshmallow import INCLUDE
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
+from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
@@ -252,13 +252,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @classmethod
     def _load_from_rest(cls, obj: JobBase) -> "SparkJob":
         rest_spark_job: RestSparkJob = obj.properties
-        conf_schema = UnionField(
-            [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
-            ]
-        )
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
-        rest_spark_conf = conf_schema._deserialize(value=rest_spark_conf, attr=None, data=None)
         spark_job = SparkJob(
             name=obj.name,
             entry=SparkJobEntry._from_rest_object(rest_spark_job.entry),

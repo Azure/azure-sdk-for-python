@@ -20,7 +20,6 @@ from azure.ai.ml._schema.core.fields import (
 )
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file, merge_dict
 from azure.ai.ml.constants import JobType
@@ -141,7 +140,7 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    conf = {}
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
