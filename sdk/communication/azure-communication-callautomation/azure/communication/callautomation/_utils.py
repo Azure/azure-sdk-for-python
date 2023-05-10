@@ -62,7 +62,7 @@ def serialize_phone_identifier(
     except AttributeError:
         raise TypeError("Unsupported identifier type " +
                         identifier.__class__.__name__)
-    
+
 def serialize_communication_user_identifier(
         identifier:CommunicationUserIdentifier
         ) -> CommunicationUserIdentifierModel:
@@ -120,7 +120,7 @@ def deserialize_phone_identifier(
         return PhoneNumberIdentifier(identifier_model.value)
     return None
 
-def deserialize_communication_user_identifier(
+def deserialize_comm_user_identifier(
         identifier_model:CommunicationUserIdentifierModel
         ) -> Union[CommunicationUserIdentifierModel, None]:
     """
@@ -130,4 +130,4 @@ def deserialize_communication_user_identifier(
     :type identifier_model: CommunicationUserIdentifierModel
     :return: CommunicationUserIdentifier
     """
-    return CommunicationUserIdentifierModel(identifier_model.id) if identifier_model else None
+    return CommunicationUserIdentifierModel(id=identifier_model.id) if identifier_model else None

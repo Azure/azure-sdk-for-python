@@ -21,7 +21,7 @@ from ._generated.models._enums import (
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
-    deserialize_communication_user_identifier
+    deserialize_comm_user_identifier
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
@@ -289,7 +289,8 @@ class CallConnectionProperties():
             if call_connection_properties_generated.source_identity
             else None,
             correlation_id=call_connection_properties_generated.correlation_id,
-            answered_by_identifier=deserialize_communication_user_identifier(call_connection_properties_generated.answered_by_identifier)
+            answered_by_identifier=deserialize_comm_user_identifier(
+                call_connection_properties_generated.answered_by_identifier)
             if call_connection_properties_generated.answered_by_identifier
             else None
             )
