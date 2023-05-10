@@ -412,7 +412,7 @@ class DataQualitySignal(DataSignal):
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             features=_from_rest_features(obj.features),
             metric_thresholds=[
-                DataDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
+                DataQualityMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
             ],
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
+from typing import Any, List
 
 from typing_extensions import Literal
 
@@ -113,6 +113,15 @@ class DataDriftMetricThreshold(MetricThreshold):
             ),
         ]
 
+    def __eq__(self, other: Any):
+        if not isinstance(other, DataDriftMetricThreshold):
+            return NotImplemented
+        return (
+            self.applicable_feature_type == other.applicable_feature_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
+        )
+
 
 @experimental
 class PredictionDriftMetricThreshold(MetricThreshold):
@@ -188,6 +197,15 @@ class PredictionDriftMetricThreshold(MetricThreshold):
                 threshold=0.1,
             ),
         ]
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, PredictionDriftMetricThreshold):
+            return NotImplemented
+        return (
+            self.applicable_feature_type == other.applicable_feature_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
+        )
 
 
 @experimental
@@ -281,6 +299,15 @@ class DataQualityMetricThreshold(MetricThreshold):
                 threshold=0,
             ),
         ]
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, DataQualityMetricThreshold):
+            return NotImplemented
+        return (
+            self.applicable_feature_type == other.applicable_feature_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
+        )
 
 
 @experimental

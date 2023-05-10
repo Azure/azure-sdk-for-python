@@ -19,7 +19,7 @@
           "monitoringTarget": "fake_endpoint_deployment_id",
           "signals": {
             "data-drift-signal": {
-              "lookbackPeriod": "P60D",
+              "lookbackPeriod": "P7D",
               "mode": "Enabled",
               "signalType": "DataDrift",
               "baselineData": {
@@ -57,7 +57,7 @@
               }
             },
             "prediction-drift-signal": {
-              "lookbackPeriod": "P60D",
+              "lookbackPeriod": "P7D",
               "mode": "Enabled",
               "signalType": "PredictionDrift",
               "baselineData": {
@@ -93,7 +93,7 @@
               }
             },
             "data-quality-signal": {
-              "lookbackPeriod": "P60D",
+              "lookbackPeriod": "P7D",
               "mode": "Enabled",
               "signalType": "DataQuality",
               "baselineData": {
@@ -110,42 +110,42 @@
                 {
                   "dataType": "Numerical",
                   "threshold": {
-                    "value": 0
+                    "value": 0.0
                   },
                   "metric": "nullValueRate"
                 },
                 {
                   "dataType": "Numerical",
                   "threshold": {
-                    "value": 0
+                    "value": 0.0
                   },
                   "metric": "dataTypeErrorRate"
                 },
                 {
                   "dataType": "Numerical",
                   "threshold": {
-                    "value": 0
+                    "value": 0.0
                   },
                   "metric": "outOfBoundsRate"
                 },
                 {
                   "dataType": "Categorical",
                   "threshold": {
-                    "value": 0
+                    "value": 0.0
                   },
                   "metric": "nullValueRate"
                 },
                 {
                   "dataType": "Categorical",
                   "threshold": {
-                    "value": 0
+                    "value": 0.0
                   },
                   "metric": "dataTypeErrorRate"
                 },
                 {
                   "dataType": "Categorical",
                   "threshold": {
-                    "value": 0
+                    "value": 0.0
                   },
                   "metric": "outOfBoundsRate"
                 }
@@ -163,17 +163,24 @@
       },
       "displayName": "Loan Approval model monitoring",
       "trigger": {
-        "timeZone": "UTC",
         "triggerType": "Recurrence",
-        "frequency": "hour",
-        "interval": 24,
+        "timeZone": "utc",
+        "frequency": "week",
+        "interval": 1,
         "schedule": {
-          "hours": [
-            10
-          ],
-          "minutes": [
-            15
-          ]
+            "hours": [
+                22, 20
+            ],
+            "minutes": [
+                0, 30
+            ],
+            "weekDays": [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday"
+            ]
         }
       }
     }
