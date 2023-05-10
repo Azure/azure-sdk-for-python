@@ -367,7 +367,7 @@ class ForecastingJob(AutoMLTabular):
             However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
         :paramtype enable_dnn_training: typing.Optional[bool]
         :keyword enable_model_explainability:
-            Whether to enable explaining the best AutoML model at the end of all AutoML training iterations. 
+            Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
             For more information, see `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
@@ -403,7 +403,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword blocked_training_algorithms:
             A list of algorithms to ignore for an experiment, defaults to None
         :paramtype blocked_training_algorithms: typing.Optional[List[str]]
-        :keyword training_mode: 
+        :keyword training_mode:
             [Experimental] The training mode to use.
             The possible values are-
 
