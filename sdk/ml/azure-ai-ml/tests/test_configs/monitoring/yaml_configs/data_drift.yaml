@@ -32,7 +32,7 @@ create_monitor:
             type: mltable
             path: azureml:Direct:1
           dataset_context: test
-        lookback_period: 60
+        data_window_size: 60
       baseline_dataset:
         input_dataset:
           type: mltable
