@@ -131,7 +131,7 @@ class Model(Artifact): # pylint: disable=too-many-instance-attributes
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
-            stage = model_stage,
+            stage=model_stage,
             # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
@@ -168,7 +168,7 @@ class Model(Artifact): # pylint: disable=too-many-instance-attributes
             else None,  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
-            stage = self.stage,
+            stage=self.stage,
             is_anonymous=self._is_anonymous,
         )
         model_version_resource = ModelVersion(properties=model_version)
