@@ -183,11 +183,7 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (
-            model_name,
-            model_version,
-            model_directory_path,
-        ) = get_model_artifacts(
+        (model_name, model_version, model_directory_path,) = get_model_artifacts(
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,
@@ -271,15 +267,13 @@ class _LocalDeploymentHelper(object):
 
         if deployment.data_collector:
             mdc_config = MdcConfigResolver(deployment.data_collector)
+            mdc_config.write_file(deployment_directory_path)
 
-            if mdc_config.custom_logging_enabled:
-                mdc_config.write_file(deployment_directory_path)
+            for k, v in mdc_config.environment_variables.items():
+                environment_variables[k] = v
 
-                for k, v in mdc_config.environment_variables.items():
-                    environment_variables[k] = v
-
-                for k, v in mdc_config.volumes.items():
-                    volumes[k] = v
+            for k, v in mdc_config.volumes.items():
+                volumes[k] = v
 
         # Determine whether we need to use local context or downloaded context
         build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
