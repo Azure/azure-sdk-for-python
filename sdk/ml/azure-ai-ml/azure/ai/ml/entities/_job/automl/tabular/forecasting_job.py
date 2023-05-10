@@ -354,6 +354,68 @@ class ForecastingJob(AutoMLTabular):
         blocked_training_algorithms: Optional[List[str]] = None,
         training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ) -> None:
+        """
+        The method to configure forecast training related settings.
+
+        :keyword enable_onnx_compatible_models:
+            Whether to enable or disable enforcing the ONNX-compatible models.
+            The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
+            Learning,see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
+        :paramtype enable_onnx_compatible_models: typing.Optional[bool]
+        :keyword enable_dnn_training:
+            Whether to include DNN based models during model selection.
+            However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
+        :paramtype enable_dnn_training: typing.Optional[bool]
+        :keyword enable_model_explainability:
+            Whether to enable explaining the best AutoML model at the end of all AutoML training iterations. 
+            For more information, see `Interpretability: model explanations in automated machine learning
+            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            , defaults to None
+        :paramtype enable_model_explainability: typing.Optional[bool]
+        :keyword enable_stack_ensemble:
+            Whether to enable/disable StackEnsemble iteration.
+            If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
+            Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
+            overfitting due to small training set used in fitting the meta learner.
+            For more information about ensembles, see `Ensemble configuration
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            , defaults to None
+        :paramtype enable_stack_ensemble: typing.Optional[bool]
+        :keyword enable_vote_ensemble:
+            Whether to enable/disable VotingEnsemble iteration.
+            For more information about ensembles, see `Ensemble configuration
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            , defaults to None
+        :paramtype enable_vote_ensemble: typing.Optional[bool]
+        :keyword stack_ensemble_settings:
+            Settings for StackEnsemble iteration, defaults to None
+        :paramtype stack_ensemble_settings: typing.Optional[StackEnsembleSettings]
+        :keyword ensemble_model_download_timeout:
+            During VotingEnsemble and StackEnsemble model generation,
+            multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
+            higher value than 300 secs, if more time is needed, defaults to None
+        :paramtype ensemble_model_download_timeout: typing.Optional[int]
+        :keyword allowed_training_algorithms:
+            A list of model names to search for an experiment. If not specified,
+            then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
+            or deprecated TensorFlow models, defaults to None
+        :paramtype allowed_training_algorithms: typing.Optional[List[str]]
+        :keyword blocked_training_algorithms:
+            A list of algorithms to ignore for an experiment, defaults to None
+        :paramtype blocked_training_algorithms: typing.Optional[List[str]]
+        :keyword training_mode: 
+            [Experimental] The training mode to use.
+            The possible values are-
+
+            * distributed- enables distributed training for supported algorithms.
+
+            * non_distributed- disables distributed training.
+
+            * auto- Currently, it is same as non_distributed. In future, this might change.
+
+            Note: This parameter is in public preview and may change in future.
+        :paramtype training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
+        """
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,
             enable_dnn_training=enable_dnn_training,
