@@ -36,12 +36,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
     2. WorkloadIdentityCredential if environment variable configuration is set by the Azure workload
        identity webhook.
     3. An Azure managed identity. See :class:`~azure.identity.aio.ManagedIdentityCredential` for more details.
-    4. The identity currently logged in to the Azure Developer CLI.
-    5. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
+    4. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
-    6. The identity currently logged in to the Azure CLI.
-    7. The identity currently logged in to Azure PowerShell.
+    5. The identity currently logged in to the Azure CLI.
+    6. The identity currently logged in to Azure PowerShell.
+    7. The identity currently logged in to the Azure Developer CLI.
 
     This default behavior is configurable with keyword arguments.
 
