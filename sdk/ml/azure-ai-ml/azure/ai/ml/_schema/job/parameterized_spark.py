@@ -6,7 +6,7 @@
 import re
 from typing import Any, Dict, List
 
-from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validate, validates
+from marshmallow import ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validates
 
 from azure.ai.ml._schema.core.fields import CodeField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -51,39 +51,6 @@ CONF_KEY_MAP = {
     "dynamic_allocation_min_executors": "spark.dynamicAllocation.minExecutors",
     "dynamic_allocation_max_executors": "spark.dynamicAllocation.maxExecutors",
 }
-
-
-class SparkConfSchema(metaclass=PatchedSchemaMeta):
-    driver_cores = fields.Int()
-    driver_memory = fields.Str(validate=validate.Regexp(re_memory_pattern))
-    executor_cores = fields.Int()
-    executor_memory = fields.Str(validate=validate.Regexp(re_memory_pattern))
-    executor_instances = fields.Int()
-    dynamic_allocation_enabled = fields.Bool()
-    dynamic_allocation_min_executors = fields.Int()
-    dynamic_allocation_max_executors = fields.Int()
-
-    @pre_load
-    def deserialize_field_names(self, data, **kwargs):
-        for field_key, dict_key in CONF_KEY_MAP.items():
-            value = data.get(dict_key, None)
-            if dict_key in data and value is not None:
-                del data[dict_key]
-                data[field_key] = value
-        return data
-
-    @post_dump(pass_original=True)
-    def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
-        # pass original data here to dump conf fields which are not defined in SparkConfSchema
-        for field_name, _ in original_data.items():
-            if field_name not in data:
-                data[field_name] = original_data[field_name]
-        for field_name, dict_name in CONF_KEY_MAP.items():
-            val = data.get(field_name, None)
-            if field_name in data and val is not None:
-                del data[field_name]
-                data[dict_name] = val
-        return data
 
 
 def no_duplicates(name: str, value: List):
