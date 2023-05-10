@@ -5,7 +5,7 @@
 import copy
 
 import yaml
-from marshmallow import INCLUDE, ValidationError, post_load, pre_load
+from marshmallow import INCLUDE, fields, ValidationError, post_load, pre_load
 
 from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
@@ -140,7 +140,7 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
-    conf = {}
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
