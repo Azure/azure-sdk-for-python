@@ -150,8 +150,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     **kwargs
                 )
             )
-        if not exclude_developer_cli_credential:
-            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -167,6 +165,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
+        if not exclude_developer_cli_credential:
+            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
 
         super().__init__(*credentials)
 

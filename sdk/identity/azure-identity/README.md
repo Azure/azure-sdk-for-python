@@ -70,9 +70,9 @@ The Azure Identity library focuses on OAuth authentication with Azure AD. It off
 1. **Environment** - `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables "environment variables") and use it to authenticate.
 1. **Workload Identity** - If the application is deployed to Azure Kubernetes Service with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
 1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
-1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd auth login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Azure CLI** - If a user has signed in via the Azure CLI `az login` command, `DefaultAzureCredential` will authenticate as that user.
 1. **Azure PowerShell** - If a user has signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate as that user.
+1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd auth login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This credential type is disabled by default.
 
 #### Note about `VisualStudioCodeCredential`
@@ -254,8 +254,6 @@ Not all credentials require this configuration. Credentials that authenticate th
 |`AzureDeveloperCliCredential`| Authenticates in a development environment with the Azure Developer CLI. | [Azure Developer CLI Reference](https://learn.microsoft.com/azure/developer/azure-developer-cli/reference)
 |[`PowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
 |[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
-
-> __Note:__ `AzureDeveloperCliCredential` is in beta and its name may change before the stable release.
 
 ## Environment variables
 
