@@ -3,262 +3,443 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import pytest
 import unittest
-import datetime
+from datetime import datetime, timedelta
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
+from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms import (
-    RoomsClient,
+    ParticipantRole,
     RoomParticipant,
-    RoomJoinPolicy,
-    RoleType
+    RoomsClient
 )
-from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
-from unittest_helpers import mock_response
+from azure.communication.rooms._shared.models import CommunicationUserIdentifier
+from _shared.utils import get_http_logging_policy
+from acs_rooms_test_case import ACSRoomsTestCase
+from devtools_testutils import is_live, add_general_regex_sanitizer, recorded_by_proxy
 
-from unittest.mock import Mock
+class TestRoomsClient(ACSRoomsTestCase):
+    def setup_method(self):
+        super().setUp()
+        sanitizedId1 = "8:acs:sanitized1"
+        sanitizedId2 = "8:acs:sanitized2"
+        sanitizedId3 = "8:acs:sanitized3"
+        sanitizedId4 = "8:acs:sanitized4"
+        if is_live():
+            self.identity_client = CommunicationIdentityClient.from_connection_string(
+                self.connection_str)
 
-class TestRoomsClient(unittest.TestCase):
-    room_id = "999126454"
-    valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
-    valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
-    raw_id = "8:acs:abcd"
-    room_join_policy = RoomJoinPolicy.INVITE_ONLY
-    room_participant = RoomParticipant(
-        communication_identifier=CommunicationUserIdentifier(
-            id=raw_id
-        ),
-        role=RoleType.PRESENTER
-    )
-    json_participant = {
-        "communicationIdentifier": {
-            "rawId": raw_id,
-            "communicationUser": {"id": raw_id}
-        },
-        "role": "Presenter"
-    }
 
-    def test_create_room(self):
-        raised = False
+            self.id1 = self.identity_client.create_user().properties["id"]
+            self.id2 = self.identity_client.create_user().properties["id"]
+            self.id3 = self.identity_client.create_user().properties["id"]
+            self.id4 = self.identity_client.create_user().properties["id"]
+            add_general_regex_sanitizer(regex=self.id1, value=sanitizedId1)
+            add_general_regex_sanitizer(regex=self.id2, value=sanitizedId2)
+            add_general_regex_sanitizer(regex=self.id3, value=sanitizedId3)
+            add_general_regex_sanitizer(regex=self.id4, value=sanitizedId4)
+        else:
+            self.id1 = sanitizedId1
+            self.id2 = sanitizedId2
+            self.id3 = sanitizedId3
+            self.id4 = sanitizedId4
 
-        def mock_send(*_, **__):
-            return mock_response(status_code=201, json_payload={
-                "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "roomJoinPolicy": self.room_join_policy,
-                "participants": [self.json_participant]
-            })
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-        response = None
-        try:
-            response = rooms_client.create_room(
-                valid_from=self.valid_from,
-                valid_until=self.valid_until,
-                room_join_policy=self.room_join_policy,
-                participants=[self.room_participant])
-        except:
-            raised = True
-            raise
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.room_id, response.id)
-        self.assertEqual(self.valid_from, response.valid_from)
-        self.assertEqual(self.valid_until, response.valid_until)
-        self.assertEqual(self.room_join_policy, response.room_join_policy)
-        self.assertListEqual([self.room_participant], response.participants)
-
-    def test_update_room(self):
-        raised = False
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "roomJoinPolicy": self.room_join_policy,
-                "participants": []
-            })
-
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-        response = None
-        try:
-            response = rooms_client.update_room(
-                room_id=self.room_id,
-                valid_from=self.valid_from,
-                valid_until=self.valid_until,
-                room_join_policy=self.room_join_policy)
-        except:
-            raised = True
-            raise
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.room_id, response.id)
-        self.assertEqual(self.valid_from, response.valid_from)
-        self.assertEqual(self.valid_until, response.valid_until)
-        self.assertEqual(self.room_join_policy, response.room_join_policy)
-        self.assertListEqual(response.participants, [])
-
-    def test_delete_room_raises_error(self):
-        def mock_send(*_, **__):
-            return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-
-        self.assertRaises(HttpResponseError, rooms_client.delete_room, room_id=self.room_id)
-
-    def test_get_room(self):
-        raised = False
-
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "id": self.room_id,
-                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                "roomJoinPolicy": self.room_join_policy,
-                "participants": []
-            })
-
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-
-        response = None
-        try:
-            response = rooms_client.get_room(room_id=self.room_id)
-        except:
-            raised = True
-            raise
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(self.room_id, response.id)
-        self.assertEqual(self.valid_from, response.valid_from)
-        self.assertEqual(self.valid_until, response.valid_until)
-        self.assertEqual(self.room_join_policy, response.room_join_policy)
-        self.assertListEqual(response.participants, [])
-
-    def test_get_room_raises_error(self):
-        def mock_send(*_, **__):
-            return mock_response(status_code=404, json_payload={"msg": "some error"})
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-
-        self.assertRaises(HttpResponseError, rooms_client.get_room, room_id=self.room_id)
-
-    def test_add_participants(self):
-        raised = False
-        additional_id = "8:acs:abcde"
-        additional_participant_json = {
-            "communicationIdentifier": {
-                "rawId": additional_id
-            },
-            "role": ""
-        }
-        additional_participant = RoomParticipant(
-            communication_identifier=UnknownIdentifier(additional_id),
-            role=''
+        self.rooms_client = RoomsClient.from_connection_string(
+            self.connection_str,
+            http_logging_policy=get_http_logging_policy()
         )
 
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "participants": [self.json_participant, additional_participant_json]
-            })
-
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-
-        response = None
-        try:
-            response = rooms_client.add_participants(room_id=self.room_id, participants=[additional_participant])
-        except:
-            raised = True
-            raise
-
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(None, response)
-
-    def test_update_participants(self):
-        raised = False
-        updated_participant_json = {
-            "communicationIdentifier": {
-                "rawId": self.raw_id,
-                "communicationUser": {"id": self.raw_id}
-            },
-            "role": ""
-        }
-        updated_participant = RoomParticipant(
-            communication_identifier=CommunicationUserIdentifier(
-                id=self.raw_id
+        self.users = {
+            "john" : RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.PRESENTER
             ),
-            role=''
+            "fred" : RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
+            ),
+            "chris" : RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            )
+        }
+        self.rooms_client = RoomsClient.from_connection_string(
+            self.connection_str,
+            http_logging_policy=get_http_logging_policy()
         )
 
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "participants": [updated_participant_json]
-            })
+    @recorded_by_proxy
+    def test_create_room_no_attributes(self):
+        response = self.rooms_client.create_room()
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
 
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
-        response = None
+    @recorded_by_proxy
+    def test_create_room_only_participants(self):
+        # add john and chris to room
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
 
-        try:
-            response = rooms_client.update_participants(room_id=self.room_id, participants=[updated_participant])
-        except:
-            raised = True
-            raise
+        response = self.rooms_client.create_room(participants=participants)
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(None, response)
+        self.verify_successful_room_response(response=response)
 
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_create_room_correct_timerange(self):
+        # room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
+
+        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+    @recorded_by_proxy
+    def test_create_room_incorrectMri(self):
+        # room attributes
+        participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
+                role='Attendee'),
+            self.users["john"]
+        ]
+
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.create_room(participants=participants)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_create_room_all_attributes(self):
+        # room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
+        participants = [
+            self.users["john"]
+        ]
+
+        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+        self.verify_successful_room_response(
+            response=response, valid_from=valid_from, valid_until=valid_until)
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_get_room(self):
+        # room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=2)
+        # add john to room
+        participants = [
+            self.users["john"]
+        ]
+
+        # create a room first
+        create_response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+
+        get_response = self.rooms_client.get_room(room_id=create_response.id)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+        self.verify_successful_room_response(
+            response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_get_invalid_room(self):
+        # random room id
+        with pytest.raises(HttpResponseError) as ex:
+            create_response = self.rooms_client.create_room()
+            self.rooms_client.delete_room(room_id=create_response.id)
+            self.rooms_client.get_room(room_id=create_response.id)
+
+        # Resource not found
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_update_room_correct_timerange(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # update room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=4)
+
+        update_response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+        self.verify_successful_room_response(
+            response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_add_or_update_participants(self):
+        # add john and chris to room
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        create_response = self.rooms_client.create_room(participants=create_participants)
+
+        # update join to consumer and add fred to room
+        self.users["john"].role = ParticipantRole.CONSUMER
+        add_or_update_participants = [
+            self.users["john"],
+            self.users["fred"]
+        ]
+
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.CONSUMER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
+            )
+        ]
+
+        self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
+        update_response = self.rooms_client.list_participants(room_id=create_response.id)
+        participants = []
+        for participant in update_response:
+            participants.append(participant)
+        assert len(participants) == 3
+        case = unittest.TestCase()
+        case.assertCountEqual(expected_participants, participants)
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_add_or_update_participants_with_null_role(self):
+        create_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2)
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+
+        # Check participants with null roles were added in created room
+        create_response = self.rooms_client.create_room(participants=create_participants)
+        list_participants_response = self.rooms_client.list_participants(room_id=create_response.id)
+        participants = []
+        for participant in list_participants_response:
+            participants.append(participant)
+        assert len(participants) == 3
+        case = unittest.TestCase()
+        case.assertCountEqual(expected_participants, participants)
+
+        # Check participants were added or updated properly
+        add_or_update_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3)
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id4)
+        )]
+
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id4),
+                role=ParticipantRole.ATTENDEE
+            )
+        ]
+        self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
+        update_response = self.rooms_client.list_participants(room_id=create_response.id)
+        updated_participants = []
+        for participant in update_response:
+            updated_participants.append(participant)
+        assert len(updated_participants) == 4
+        case = unittest.TestCase()
+        case.assertCountEqual(expected_participants, updated_participants)
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
     def test_remove_participants(self):
-        raised = False
-        user_to_remove = CommunicationUserIdentifier(self.raw_id)
+        # add john and chris to room
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        create_response = self.rooms_client.create_room(participants=create_participants)
 
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "participants": []
-            })
+        # participants to be removed
+        removed_participants = [
+            self.users["john"].communication_identifier
+        ]
 
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            )
+        ]
+        self.rooms_client.remove_participants(room_id=create_response.id, participants=removed_participants)
+        update_response = self.rooms_client.list_participants(room_id=create_response.id)
+        participants = []
+        for participant in update_response:
+            participants.append(participant)
+        assert len(participants) == 1
+        case = unittest.TestCase()
+        case.assertCountEqual(expected_participants, participants)
 
-        response = None
-        try:
-            response = rooms_client.remove_participants(room_id=self.room_id, communication_identifiers=[user_to_remove])
-        except:
-            raised = True
-            raise
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(None, response)
+    @recorded_by_proxy
+    def test_update_room_exceed_max_timerange(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
 
-    def test_get_participants(self):
-        raised = False
+        # update room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=29)
 
-        def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={
-                "participants": [self.json_participant]
-            })
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
+         # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
-        response = None
-        try:
-            response = rooms_client.get_participants(room_id=self.room_id)
-        except:
-            raised = True
-            raise
+    @recorded_by_proxy
+    def test_add_or_update_participants_incorrectMri(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertListEqual(response.participants, [self.room_participant])
+        participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
+                role=ParticipantRole.ATTENDEE),
+            self.users["john"]
+        ]
 
-    def test_invalid_datetime_raises_valueError(self):
-        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=None)
+        # update room attributes
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
 
-        # verify value error on create room call
-        self.assertRaises(ValueError, rooms_client.create_room, valid_from="dummy", valid_until=self.valid_until)
-        self.assertRaises(ValueError, rooms_client.create_room, valid_from=self.valid_from, valid_until="dummy")
-        self.assertRaises(ValueError, rooms_client.create_room, valid_from="dummy", valid_until="dummy")
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
-        # verify ValueError on update_room calls
-        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from="dummy", valid_until=self.valid_until)
-        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from=self.valid_from, valid_until="dummy")
-        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from="dummy", valid_until="dummy")
+    @recorded_by_proxy
+    def test_update_room_wrongRoleName(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        participants = [
+            RoomParticipant(
+                communication_identifier=self.users["john"].communication_identifier,
+                role='Kafka'),
+        ]
+
+        # update room attributes
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_update_room_incorrect_roomId(self):
+        # try to update room with random room_id
+        with pytest.raises(HttpResponseError) as ex:
+            valid_from =  datetime.now() + timedelta(days=3)
+            valid_until = valid_from + timedelta(days=4)
+            self.rooms_client.update_room(room_id=78469124725336262, valid_from=valid_from, valid_until=valid_until)
+
+        #  assert error is Resource not found
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_update_room_deleted_room(self):
+        # create a room -> delete it -> try to update it
+        create_response = self.rooms_client.create_room()
+
+        # delete the room
+        self.rooms_client.delete_room(room_id=create_response.id)
+        with pytest.raises(HttpResponseError) as ex:
+            valid_from =  datetime.now() + timedelta(days=3)
+            valid_until = valid_from + timedelta(days=4)
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+
+        #  assert error is Resource not found
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None
+
+    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
+        if room_id is not None:
+            assert room_id == response.id
+        if valid_from is not None:
+            assert valid_from.replace(tzinfo=None) == datetime.strptime(
+                response.valid_from, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+        if valid_until is not None:
+            assert valid_until.replace(tzinfo=None) == datetime.strptime(
+                response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+        assert response.created_at is not None

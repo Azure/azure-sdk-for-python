@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -49,7 +50,7 @@ class AcceptJobOfferResult(_serialization.Model):
         "worker_id": {"key": "workerId", "type": "str"},
     }
 
-    def __init__(self, *, assignment_id: str, job_id: str, worker_id: str, **kwargs):
+    def __init__(self, *, assignment_id: str, job_id: str, worker_id: str, **kwargs: Any) -> None:
         """
         :keyword assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
          job. Required.
@@ -114,8 +115,8 @@ class DistributionMode(_serialization.Model):
         min_concurrent_offers: int,
         max_concurrent_offers: int,
         bypass_selectors: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
          a job can have. Required.
@@ -133,7 +134,7 @@ class DistributionMode(_serialization.Model):
         :paramtype bypass_selectors: bool
         """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.min_concurrent_offers = min_concurrent_offers
         self.max_concurrent_offers = max_concurrent_offers
         self.bypass_selectors = bypass_selectors
@@ -167,6 +168,8 @@ class BestWorkerMode(DistributionMode):
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
      AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     protocol.
     :vartype scoring_rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar scoring_rule_options: Encapsulates all options that can be passed as parameters for
      scoring rule with BestWorkerMode.
@@ -196,8 +199,8 @@ class BestWorkerMode(DistributionMode):
         bypass_selectors: Optional[bool] = None,
         scoring_rule: Optional["_models.RouterRule"] = None,
         scoring_rule_options: Optional["_models.ScoringRuleOptions"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
          a job can have. Required.
@@ -220,6 +223,8 @@ class BestWorkerMode(DistributionMode):
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
          AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         protocol.
         :paramtype scoring_rule: ~azure.communication.jobrouter.models.RouterRule
         :keyword scoring_rule_options: Encapsulates all options that can be passed as parameters for
          scoring rule with BestWorkerMode.
@@ -231,7 +236,7 @@ class BestWorkerMode(DistributionMode):
             bypass_selectors=bypass_selectors,
             **kwargs
         )
-        self.kind = "best-worker"  # type: str
+        self.kind: str = "best-worker"
         self.scoring_rule = scoring_rule
         self.scoring_rule_options = scoring_rule_options
 
@@ -264,10 +269,10 @@ class ExceptionAction(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class CancelExceptionAction(ExceptionAction):
@@ -297,7 +302,7 @@ class CancelExceptionAction(ExceptionAction):
         "disposition_code": {"key": "dispositionCode", "type": "str"},
     }
 
-    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None, **kwargs):
+    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with th
          current timestamp.
@@ -307,7 +312,7 @@ class CancelExceptionAction(ExceptionAction):
         :paramtype disposition_code: str
         """
         super().__init__(**kwargs)
-        self.kind = "cancel"  # type: str
+        self.kind: str = "cancel"
         self.note = note
         self.disposition_code = disposition_code
 
@@ -315,7 +320,7 @@ class CancelExceptionAction(ExceptionAction):
 class CancelJobRequest(_serialization.Model):
     """Request payload for deleting a job.
 
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with th
+    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
      current timestamp.
     :vartype note: str
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
@@ -334,9 +339,9 @@ class CancelJobRequest(_serialization.Model):
         "disposition_code": {"key": "dispositionCode", "type": "str"},
     }
 
-    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None, **kwargs):
+    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with th
+        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp.
         :paramtype note: str
         :keyword disposition_code: Indicates the outcome of the job, populate this field with your own
@@ -357,6 +362,9 @@ class ChannelConfiguration(_serialization.Model):
     :ivar capacity_cost_per_job: The amount of capacity that an instance of a job of this channel
      will consume of the total worker capacity. Required.
     :vartype capacity_cost_per_job: int
+    :ivar max_number_of_jobs: The maximum number of jobs that can be supported concurrently for
+     this channel.
+    :vartype max_number_of_jobs: int
     """
 
     _validation = {
@@ -365,16 +373,21 @@ class ChannelConfiguration(_serialization.Model):
 
     _attribute_map = {
         "capacity_cost_per_job": {"key": "capacityCostPerJob", "type": "int"},
+        "max_number_of_jobs": {"key": "maxNumberOfJobs", "type": "int"},
     }
 
-    def __init__(self, *, capacity_cost_per_job: int, **kwargs):
+    def __init__(self, *, capacity_cost_per_job: int, max_number_of_jobs: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword capacity_cost_per_job: The amount of capacity that an instance of a job of this
          channel will consume of the total worker capacity. Required.
         :paramtype capacity_cost_per_job: int
+        :keyword max_number_of_jobs: The maximum number of jobs that can be supported concurrently for
+         this channel.
+        :paramtype max_number_of_jobs: int
         """
         super().__init__(**kwargs)
         self.capacity_cost_per_job = capacity_cost_per_job
+        self.max_number_of_jobs = max_number_of_jobs
 
 
 class ClassificationPolicy(_serialization.Model):
@@ -398,6 +411,8 @@ class ClassificationPolicy(_serialization.Model):
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
      AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     protocol.
     :vartype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar worker_selectors: The worker label selectors to attach to a given job.
     :vartype worker_selectors: list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
@@ -424,8 +439,8 @@ class ClassificationPolicy(_serialization.Model):
         queue_selectors: Optional[List["_models.QueueSelectorAttachment"]] = None,
         prioritization_rule: Optional["_models.RouterRule"] = None,
         worker_selectors: Optional[List["_models.WorkerSelectorAttachment"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly name of this policy.
         :paramtype name: str
@@ -441,6 +456,8 @@ class ClassificationPolicy(_serialization.Model):
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
          AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         protocol.
         :paramtype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors:
@@ -478,7 +495,7 @@ class ClassificationPolicyCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ClassificationPolicyItem"], **kwargs):
+    def __init__(self, *, value: List["_models.ClassificationPolicyItem"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.jobrouter.models.ClassificationPolicyItem]
@@ -507,8 +524,8 @@ class ClassificationPolicyItem(_serialization.Model):
         *,
         classification_policy: Optional["_models.ClassificationPolicy"] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword classification_policy: A container for the rules that govern how jobs are classified.
         :paramtype classification_policy: ~azure.communication.jobrouter.models.ClassificationPolicy
@@ -535,7 +552,7 @@ class CloseJobRequest(_serialization.Model):
      If provided, worker capacity is released along with a JobClosedEvent notification at a future
      time.
     :vartype close_time: ~datetime.datetime
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with th
+    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
      current timestamp.
     :vartype note: str
     """
@@ -560,8 +577,8 @@ class CloseJobRequest(_serialization.Model):
         disposition_code: Optional[str] = None,
         close_time: Optional[datetime.datetime] = None,
         note: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword assignment_id: The assignment within which the job is to be closed. Required.
         :paramtype assignment_id: str
@@ -573,7 +590,7 @@ class CloseJobRequest(_serialization.Model):
          If provided, worker capacity is released along with a JobClosedEvent notification at a future
          time.
         :paramtype close_time: ~datetime.datetime
-        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with th
+        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp.
         :paramtype note: str
         """
@@ -601,7 +618,7 @@ class CommunicationErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "JobRouterError"},
     }
 
-    def __init__(self, *, error: "_models.JobRouterError", **kwargs):
+    def __init__(self, *, error: "_models.JobRouterError", **kwargs: Any) -> None:
         """
         :keyword error: The Communication Services error. Required.
         :paramtype error: ~azure.communication.jobrouter.models.JobRouterError
@@ -617,7 +634,7 @@ class CompleteJobRequest(_serialization.Model):
 
     :ivar assignment_id: The assignment within the job to complete. Required.
     :vartype assignment_id: str
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with th
+    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
      current timestamp.
     :vartype note: str
     """
@@ -632,11 +649,11 @@ class CompleteJobRequest(_serialization.Model):
         "note": {"key": "note", "type": "str"},
     }
 
-    def __init__(self, *, assignment_id: str, note: Optional[str] = None, **kwargs):
+    def __init__(self, *, assignment_id: str, note: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword assignment_id: The assignment within the job to complete. Required.
         :paramtype assignment_id: str
-        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with th
+        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp.
         :paramtype note: str
         """
@@ -677,14 +694,15 @@ class QueueSelectorAttachment(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
-    """Describes a set of label selectors that will be attached if the given condition resolves to true.
+    """Describes a set of label selectors that will be attached if the given condition resolves to
+    true.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -696,7 +714,9 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     protocol. Required.
     :vartype condition: ~azure.communication.jobrouter.models.RouterRule
     :ivar label_selectors: The label selectors to attach. Required.
     :vartype label_selectors: list[~azure.communication.jobrouter.models.QueueSelector]
@@ -714,7 +734,9 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
         "label_selectors": {"key": "labelSelectors", "type": "[QueueSelector]"},
     }
 
-    def __init__(self, *, condition: "_models.RouterRule", label_selectors: List["_models.QueueSelector"], **kwargs):
+    def __init__(
+        self, *, condition: "_models.RouterRule", label_selectors: List["_models.QueueSelector"], **kwargs: Any
+    ) -> None:
         """
         :keyword condition: A rule of one of the following types:
 
@@ -722,13 +744,15 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         protocol. Required.
         :paramtype condition: ~azure.communication.jobrouter.models.RouterRule
         :keyword label_selectors: The label selectors to attach. Required.
         :paramtype label_selectors: list[~azure.communication.jobrouter.models.QueueSelector]
         """
         super().__init__(**kwargs)
-        self.kind = "conditional"  # type: str
+        self.kind: str = "conditional"
         self.condition = condition
         self.label_selectors = label_selectors
 
@@ -765,14 +789,15 @@ class WorkerSelectorAttachment(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
-    """Describes a set of label selectors that will be attached if the given condition resolves to true.
+    """Describes a set of label selectors that will be attached if the given condition resolves to
+    true.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -784,7 +809,9 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     protocol. Required.
     :vartype condition: ~azure.communication.jobrouter.models.RouterRule
     :ivar label_selectors: The label selectors to attach. Required.
     :vartype label_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
@@ -802,7 +829,9 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
         "label_selectors": {"key": "labelSelectors", "type": "[WorkerSelector]"},
     }
 
-    def __init__(self, *, condition: "_models.RouterRule", label_selectors: List["_models.WorkerSelector"], **kwargs):
+    def __init__(
+        self, *, condition: "_models.RouterRule", label_selectors: List["_models.WorkerSelector"], **kwargs: Any
+    ) -> None:
         """
         :keyword condition: A rule of one of the following types:
 
@@ -810,13 +839,15 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         protocol. Required.
         :paramtype condition: ~azure.communication.jobrouter.models.RouterRule
         :keyword label_selectors: The label selectors to attach. Required.
         :paramtype label_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
         """
         super().__init__(**kwargs)
-        self.kind = "conditional"  # type: str
+        self.kind: str = "conditional"
         self.condition = condition
         self.label_selectors = label_selectors
 
@@ -824,18 +855,21 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
 class RouterRule(_serialization.Model):
     """A rule of one of the following types:
 
-    StaticRule:  A rule providing static rules that always return the same result, regardless of input.
+    StaticRule:  A rule providing static rules that always return the same result, regardless of
+    input.
     DirectMapRule:  A rule that return the same labels as the input labels.
     ExpressionRule: A rule providing inline expression rules.
     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+    WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+    protocol.
 
-        You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-        FunctionRule, DirectMapRule, ExpressionRule, StaticRule
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FunctionRule, DirectMapRule, ExpressionRule, StaticRule, WebhookRule
 
-        All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to Azure.
 
-        :ivar kind: The type discriminator describing a sub-type of Rule. Required.
-        :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
+    :vartype kind: str
     """
 
     _validation = {
@@ -852,13 +886,14 @@ class RouterRule(_serialization.Model):
             "direct-map-rule": "DirectMapRule",
             "expression-rule": "ExpressionRule",
             "static-rule": "StaticRule",
+            "webhook-rule": "WebhookRule",
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class DirectMapRule(RouterRule):
@@ -878,10 +913,10 @@ class DirectMapRule(RouterRule):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = "direct-map-rule"  # type: str
+        self.kind: str = "direct-map-rule"
 
 
 class DistributionPolicy(_serialization.Model):
@@ -917,8 +952,8 @@ class DistributionPolicy(_serialization.Model):
         name: Optional[str] = None,
         offer_ttl_seconds: Optional[float] = None,
         mode: Optional["_models.DistributionMode"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The human readable name of the policy.
         :paramtype name: str
@@ -958,7 +993,7 @@ class DistributionPolicyCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DistributionPolicyItem"], **kwargs):
+    def __init__(self, *, value: List["_models.DistributionPolicyItem"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.jobrouter.models.DistributionPolicyItem]
@@ -987,8 +1022,8 @@ class DistributionPolicyItem(_serialization.Model):
         *,
         distribution_policy: Optional["_models.DistributionPolicy"] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword distribution_policy: Policy governing how jobs are distributed to workers.
         :paramtype distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
@@ -1029,8 +1064,8 @@ class ExceptionPolicy(_serialization.Model):
         *,
         name: Optional[str] = None,
         exception_rules: Optional[Dict[str, "_models.ExceptionRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: (Optional) The name of the exception policy.
         :paramtype name: str
@@ -1067,7 +1102,7 @@ class ExceptionPolicyCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ExceptionPolicyItem"], **kwargs):
+    def __init__(self, *, value: List["_models.ExceptionPolicyItem"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.jobrouter.models.ExceptionPolicyItem]
@@ -1092,8 +1127,8 @@ class ExceptionPolicyItem(_serialization.Model):
     }
 
     def __init__(
-        self, *, exception_policy: Optional["_models.ExceptionPolicy"] = None, etag: Optional[str] = None, **kwargs
-    ):
+        self, *, exception_policy: Optional["_models.ExceptionPolicy"] = None, etag: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword exception_policy: A policy that defines actions to execute when exception are
          triggered.
@@ -1129,8 +1164,8 @@ class ExceptionRule(_serialization.Model):
     }
 
     def __init__(
-        self, *, trigger: "_models.JobExceptionTrigger", actions: Dict[str, "_models.ExceptionAction"], **kwargs
-    ):
+        self, *, trigger: "_models.JobExceptionTrigger", actions: Dict[str, "_models.ExceptionAction"], **kwargs: Any
+    ) -> None:
         """
         :keyword trigger: The trigger for this exception rule. Required.
         :paramtype trigger: ~azure.communication.jobrouter.models.JobExceptionTrigger
@@ -1174,14 +1209,14 @@ class ExpressionRule(RouterRule):
 
     language = "powerFx"
 
-    def __init__(self, *, expression: str, **kwargs):
+    def __init__(self, *, expression: str, **kwargs: Any) -> None:
         """
         :keyword expression: The string containing the expression to evaluate. Should contain return
          statement with calculated values. Required.
         :paramtype expression: str
         """
         super().__init__(**kwargs)
-        self.kind = "expression-rule"  # type: str
+        self.kind: str = "expression-rule"
         self.expression = expression
 
 
@@ -1209,7 +1244,9 @@ class FunctionRule(RouterRule):
         "credential": {"key": "credential", "type": "FunctionRuleCredential"},
     }
 
-    def __init__(self, *, function_uri: str, credential: Optional["_models.FunctionRuleCredential"] = None, **kwargs):
+    def __init__(
+        self, *, function_uri: str, credential: Optional["_models.FunctionRuleCredential"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword function_uri: URL for Azure Function. Required.
         :paramtype function_uri: str
@@ -1217,7 +1254,7 @@ class FunctionRule(RouterRule):
         :paramtype credential: ~azure.communication.jobrouter.models.FunctionRuleCredential
         """
         super().__init__(**kwargs)
-        self.kind = "azure-function-rule"  # type: str
+        self.kind: str = "azure-function-rule"
         self.function_uri = function_uri
         self.credential = credential
 
@@ -1253,8 +1290,8 @@ class FunctionRuleCredential(_serialization.Model):
         function_key: Optional[str] = None,
         app_key: Optional[str] = None,
         client_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword function_key: (Optional) Access key scoped to a particular function.
         :paramtype function_key: str
@@ -1309,8 +1346,8 @@ class JobAssignment(_serialization.Model):
         worker_id: Optional[str] = None,
         complete_time: Optional[datetime.datetime] = None,
         close_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The Id of the job assignment. Required.
         :paramtype id: str
@@ -1354,7 +1391,7 @@ class JobCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RouterJobItem"], **kwargs):
+    def __init__(self, *, value: List["_models.RouterJobItem"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.jobrouter.models.RouterJobItem]
@@ -1386,10 +1423,10 @@ class JobExceptionTrigger(_serialization.Model):
 
     _subtype_map = {"kind": {"queue-length": "QueueLengthExceptionTrigger", "wait-time": "WaitTimeExceptionTrigger"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class JobOffer(_serialization.Model):
@@ -1431,8 +1468,8 @@ class JobOffer(_serialization.Model):
         capacity_cost: int,
         offer_time_utc: Optional[datetime.datetime] = None,
         expiry_time_utc: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The Id of the offer. Required.
         :paramtype id: str
@@ -1495,8 +1532,8 @@ class JobPositionDetails(_serialization.Model):
         queue_id: str,
         queue_length: int,
         estimated_wait_time_minutes: float,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_id: Id of the job these details are about. Required.
         :paramtype job_id: str
@@ -1557,8 +1594,8 @@ class JobQueue(_serialization.Model):
         distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
         exception_policy_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of this queue.
         :paramtype name: str
@@ -1594,7 +1631,9 @@ class JobQueueItem(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, job_queue: Optional["_models.JobQueue"] = None, etag: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, job_queue: Optional["_models.JobQueue"] = None, etag: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword job_queue: A queue that can contain jobs to be routed.
         :paramtype job_queue: ~azure.communication.jobrouter.models.JobQueue
@@ -1641,7 +1680,7 @@ class JobRouterError(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "JobRouterError"},
     }
 
-    def __init__(self, *, code: str, message: str, **kwargs):
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
         """
         :keyword code: The error code. Required.
         :paramtype code: str
@@ -1698,8 +1737,8 @@ class LongestIdleMode(DistributionMode):
         min_concurrent_offers: int,
         max_concurrent_offers: int,
         bypass_selectors: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
          a job can have. Required.
@@ -1722,11 +1761,12 @@ class LongestIdleMode(DistributionMode):
             bypass_selectors=bypass_selectors,
             **kwargs
         )
-        self.kind = "longest-idle"  # type: str
+        self.kind: str = "longest-idle"
 
 
 class ManualReclassifyExceptionAction(ExceptionAction):
-    """An action that manually reclassifies a job by providing the queue, priority and worker selectors.
+    """An action that manually reclassifies a job by providing the queue, priority and worker
+    selectors.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1758,8 +1798,8 @@ class ManualReclassifyExceptionAction(ExceptionAction):
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
         worker_selectors: Optional[List["_models.WorkerSelector"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword queue_id: Updated QueueId.
         :paramtype queue_id: str
@@ -1769,10 +1809,42 @@ class ManualReclassifyExceptionAction(ExceptionAction):
         :paramtype worker_selectors: list[~azure.communication.jobrouter.models.WorkerSelector]
         """
         super().__init__(**kwargs)
-        self.kind = "manual-reclassify"  # type: str
+        self.kind: str = "manual-reclassify"
         self.queue_id = queue_id
         self.priority = priority
         self.worker_selectors = worker_selectors
+
+
+class Oauth2ClientCredential(_serialization.Model):
+    """OAuth2.0 Credentials used to Contoso's Authorization server.
+    Reference: https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
+
+    :ivar client_id: ClientId for Contoso Authorization server.
+    :vartype client_id: str
+    :ivar client_secret: Client secret for Contoso Authorization server.
+    :vartype client_secret: str
+    """
+
+    _validation = {
+        "client_id": {"max_length": 500},
+        "client_secret": {"max_length": 500},
+    }
+
+    _attribute_map = {
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
+    }
+
+    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword client_id: ClientId for Contoso Authorization server.
+        :paramtype client_id: str
+        :keyword client_secret: Client secret for Contoso Authorization server.
+        :paramtype client_secret: str
+        """
+        super().__init__(**kwargs)
+        self.client_id = client_id
+        self.client_secret = client_secret
 
 
 class PassThroughQueueSelectorAttachment(QueueSelectorAttachment):
@@ -1802,7 +1874,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment):
         "label_operator": {"key": "labelOperator", "type": "str"},
     }
 
-    def __init__(self, *, key: str, label_operator: Union[str, "_models.LabelOperator"], **kwargs):
+    def __init__(self, *, key: str, label_operator: Union[str, "_models.LabelOperator"], **kwargs: Any) -> None:
         """
         :keyword key: The label key to query against. Required.
         :paramtype key: str
@@ -1812,7 +1884,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment):
         :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
         """
         super().__init__(**kwargs)
-        self.kind = "pass-through"  # type: str
+        self.kind: str = "pass-through"
         self.key = key
         self.label_operator = label_operator
 
@@ -1853,8 +1925,8 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment):
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
         ttl_seconds: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The label key to query against. Required.
         :paramtype key: str
@@ -1866,7 +1938,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment):
         :paramtype ttl_seconds: float
         """
         super().__init__(**kwargs)
-        self.kind = "pass-through"  # type: str
+        self.kind: str = "pass-through"
         self.key = key
         self.label_operator = label_operator
         self.ttl_seconds = ttl_seconds
@@ -1895,7 +1967,7 @@ class QueueCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.JobQueueItem"], **kwargs):
+    def __init__(self, *, value: List["_models.JobQueueItem"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.jobrouter.models.JobQueueItem]
@@ -1927,14 +1999,14 @@ class QueueLengthExceptionTrigger(JobExceptionTrigger):
         "threshold": {"key": "threshold", "type": "int"},
     }
 
-    def __init__(self, *, threshold: int, **kwargs):
+    def __init__(self, *, threshold: int, **kwargs: Any) -> None:
         """
         :keyword threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
          Required.
         :paramtype threshold: int
         """
         super().__init__(**kwargs)
-        self.kind = "queue-length"  # type: str
+        self.kind: str = "queue-length"
         self.threshold = threshold
 
 
@@ -1965,8 +2037,13 @@ class QueueSelector(_serialization.Model):
     }
 
     def __init__(
-        self, *, key: str, label_operator: Union[str, "_models.LabelOperator"], value: Optional[JSON] = None, **kwargs
-    ):
+        self,
+        *,
+        key: str,
+        label_operator: Union[str, "_models.LabelOperator"],
+        value: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The label key to query against. Required.
         :paramtype key: str
@@ -2019,8 +2096,8 @@ class QueueStatistics(_serialization.Model):
         length: int,
         estimated_wait_time_minutes: Optional[Dict[str, float]] = None,
         longest_job_wait_time_minutes: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword queue_id: Id of the queue these details are about. Required.
         :paramtype queue_id: str
@@ -2041,7 +2118,8 @@ class QueueStatistics(_serialization.Model):
 
 
 class QueueWeightedAllocation(_serialization.Model):
-    """Contains the weight percentage and label selectors to be applied if selected for weighted distributions.
+    """Contains the weight percentage and label selectors to be applied if selected for weighted
+    distributions.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2062,7 +2140,7 @@ class QueueWeightedAllocation(_serialization.Model):
         "label_selectors": {"key": "labelSelectors", "type": "[QueueSelector]"},
     }
 
-    def __init__(self, *, weight: float, label_selectors: List["_models.QueueSelector"], **kwargs):
+    def __init__(self, *, weight: float, label_selectors: List["_models.QueueSelector"], **kwargs: Any) -> None:
         """
         :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
@@ -2106,8 +2184,8 @@ class ReclassifyExceptionAction(ExceptionAction):
         *,
         classification_policy_id: Optional[str] = None,
         labels_to_upsert: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword classification_policy_id: (optional) The new classification policy that will determine
          queue, priority and worker selectors.
@@ -2117,13 +2195,14 @@ class ReclassifyExceptionAction(ExceptionAction):
         :paramtype labels_to_upsert: dict[str, any]
         """
         super().__init__(**kwargs)
-        self.kind = "reclassify"  # type: str
+        self.kind: str = "reclassify"
         self.classification_policy_id = classification_policy_id
         self.labels_to_upsert = labels_to_upsert
 
 
 class RoundRobinMode(DistributionMode):
-    """Jobs are distributed in order to workers, starting with the worker that is after the last worker to receive a job.
+    """Jobs are distributed in order to workers, starting with the worker that is after the last
+    worker to receive a job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2164,8 +2243,8 @@ class RoundRobinMode(DistributionMode):
         min_concurrent_offers: int,
         max_concurrent_offers: int,
         bypass_selectors: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min_concurrent_offers: Governs the minimum desired number of active concurrent offers
          a job can have. Required.
@@ -2188,7 +2267,7 @@ class RoundRobinMode(DistributionMode):
             bypass_selectors=bypass_selectors,
             **kwargs
         )
-        self.kind = "round-robin"  # type: str
+        self.kind: str = "round-robin"
 
 
 class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -2272,8 +2351,8 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
         notes: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: str
@@ -2332,7 +2411,9 @@ class RouterJobItem(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, router_job: Optional["_models.RouterJob"] = None, etag: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, router_job: Optional["_models.RouterJob"] = None, etag: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword router_job: A unit of work to be routed.
         :paramtype router_job: ~azure.communication.jobrouter.models.RouterJob
@@ -2410,8 +2491,8 @@ class RouterWorker(_serialization.Model):  # pylint: disable=too-many-instance-a
         tags: Optional[Dict[str, Any]] = None,
         channel_configurations: Optional[Dict[str, "_models.ChannelConfiguration"]] = None,
         available_for_offers: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: dict[str, JSON]
@@ -2458,7 +2539,9 @@ class RouterWorkerItem(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, router_worker: Optional["_models.RouterWorker"] = None, etag: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, router_worker: Optional["_models.RouterWorker"] = None, etag: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword router_worker: An entity for jobs to be routed to.
         :paramtype router_worker: ~azure.communication.jobrouter.models.RouterWorker
@@ -2483,7 +2566,9 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     protocol. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     """
 
@@ -2497,7 +2582,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
         "rule": {"key": "rule", "type": "RouterRule"},
     }
 
-    def __init__(self, *, rule: "_models.RouterRule", **kwargs):
+    def __init__(self, *, rule: "_models.RouterRule", **kwargs: Any) -> None:
         """
         :keyword rule: A rule of one of the following types:
 
@@ -2505,11 +2590,13 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         protocol. Required.
         :paramtype rule: ~azure.communication.jobrouter.models.RouterRule
         """
         super().__init__(**kwargs)
-        self.kind = "rule-engine"  # type: str
+        self.kind: str = "rule-engine"
         self.rule = rule
 
 
@@ -2526,7 +2613,9 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
      input.
      DirectMapRule:  A rule that return the same labels as the input labels.
      ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     protocol. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     """
 
@@ -2540,7 +2629,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
         "rule": {"key": "rule", "type": "RouterRule"},
     }
 
-    def __init__(self, *, rule: "_models.RouterRule", **kwargs):
+    def __init__(self, *, rule: "_models.RouterRule", **kwargs: Any) -> None:
         """
         :keyword rule: A rule of one of the following types:
 
@@ -2548,11 +2637,13 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
          input.
          DirectMapRule:  A rule that return the same labels as the input labels.
          ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function. Required.
+         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         protocol. Required.
         :paramtype rule: ~azure.communication.jobrouter.models.RouterRule
         """
         super().__init__(**kwargs)
-        self.kind = "rule-engine"  # type: str
+        self.kind: str = "rule-engine"
         self.rule = rule
 
 
@@ -2595,8 +2686,8 @@ class ScoringRuleOptions(_serialization.Model):
         scoring_parameters: Optional[List[Union[str, "_models.ScoringRuleParameterSelector"]]] = None,
         allow_scoring_batch_of_workers: Optional[bool] = None,
         descending_order: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword batch_size: (Optional) Set batch size when AllowScoringBatchOfWorkers is set to true.
         :paramtype batch_size: int
@@ -2648,14 +2739,14 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment):
         "label_selector": {"key": "labelSelector", "type": "QueueSelector"},
     }
 
-    def __init__(self, *, label_selector: "_models.QueueSelector", **kwargs):
+    def __init__(self, *, label_selector: "_models.QueueSelector", **kwargs: Any) -> None:
         """
         :keyword label_selector: Describes a condition that must be met against a set of labels for
          queue selection. Required.
         :paramtype label_selector: ~azure.communication.jobrouter.models.QueueSelector
         """
         super().__init__(**kwargs)
-        self.kind = "static"  # type: str
+        self.kind: str = "static"
         self.label_selector = label_selector
 
 
@@ -2679,13 +2770,13 @@ class StaticRule(RouterRule):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, value: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, value: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword value: The static value this rule always returns.
         :paramtype value: JSON
         """
         super().__init__(**kwargs)
-        self.kind = "static-rule"  # type: str
+        self.kind: str = "static-rule"
         self.value = value
 
 
@@ -2711,14 +2802,14 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment):
         "label_selector": {"key": "labelSelector", "type": "WorkerSelector"},
     }
 
-    def __init__(self, *, label_selector: "_models.WorkerSelector", **kwargs):
+    def __init__(self, *, label_selector: "_models.WorkerSelector", **kwargs: Any) -> None:
         """
         :keyword label_selector: Describes a condition that must be met against a set of labels for
          worker selection. Required.
         :paramtype label_selector: ~azure.communication.jobrouter.models.WorkerSelector
         """
         super().__init__(**kwargs)
-        self.kind = "static"  # type: str
+        self.kind: str = "static"
         self.label_selector = label_selector
 
 
@@ -2743,7 +2834,7 @@ class UnassignJobResult(_serialization.Model):
         "unassignment_count": {"key": "unassignmentCount", "type": "int"},
     }
 
-    def __init__(self, *, job_id: str, unassignment_count: int, **kwargs):
+    def __init__(self, *, job_id: str, unassignment_count: int, **kwargs: Any) -> None:
         """
         :keyword job_id: The Id of the job unassigned. Required.
         :paramtype job_id: str
@@ -2776,18 +2867,70 @@ class WaitTimeExceptionTrigger(JobExceptionTrigger):
         "threshold_seconds": {"key": "thresholdSeconds", "type": "float"},
     }
 
-    def __init__(self, *, threshold_seconds: float, **kwargs):
+    def __init__(self, *, threshold_seconds: float, **kwargs: Any) -> None:
         """
         :keyword threshold_seconds: Threshold for wait time for this trigger. Required.
         :paramtype threshold_seconds: float
         """
         super().__init__(**kwargs)
-        self.kind = "wait-time"  # type: str
+        self.kind: str = "wait-time"
         self.threshold_seconds = threshold_seconds
 
 
+class WebhookRule(RouterRule):
+    """A rule providing a binding to an external web server.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required.
+    :vartype kind: str
+    :ivar authorization_server_uri: Uri for Authorization Server.
+    :vartype authorization_server_uri: str
+    :ivar client_credential: OAuth2.0 Credentials used to Contoso's Authorization server.
+     Reference: https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
+    :vartype client_credential: ~azure.communication.jobrouter.models.Oauth2ClientCredential
+    :ivar webhook_uri: Uri for Contoso's Web Server.
+    :vartype webhook_uri: str
+    """
+
+    _validation = {
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "authorization_server_uri": {"key": "authorizationServerUri", "type": "str"},
+        "client_credential": {"key": "clientCredential", "type": "Oauth2ClientCredential"},
+        "webhook_uri": {"key": "webhookUri", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        authorization_server_uri: Optional[str] = None,
+        client_credential: Optional["_models.Oauth2ClientCredential"] = None,
+        webhook_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword authorization_server_uri: Uri for Authorization Server.
+        :paramtype authorization_server_uri: str
+        :keyword client_credential: OAuth2.0 Credentials used to Contoso's Authorization server.
+         Reference: https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
+        :paramtype client_credential: ~azure.communication.jobrouter.models.Oauth2ClientCredential
+        :keyword webhook_uri: Uri for Contoso's Web Server.
+        :paramtype webhook_uri: str
+        """
+        super().__init__(**kwargs)
+        self.kind: str = "webhook-rule"
+        self.authorization_server_uri = authorization_server_uri
+        self.client_credential = client_credential
+        self.webhook_uri = webhook_uri
+
+
 class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment):
-    """Describes multiple sets of label selectors, of which one will be selected and attached according to a weighting.
+    """Describes multiple sets of label selectors, of which one will be selected and attached
+    according to a weighting.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2807,18 +2950,19 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment):
         "allocations": {"key": "allocations", "type": "[QueueWeightedAllocation]"},
     }
 
-    def __init__(self, *, allocations: List["_models.QueueWeightedAllocation"], **kwargs):
+    def __init__(self, *, allocations: List["_models.QueueWeightedAllocation"], **kwargs: Any) -> None:
         """
         :keyword allocations: A collection of percentage based weighted allocations. Required.
         :paramtype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
         """
         super().__init__(**kwargs)
-        self.kind = "weighted-allocation-queue-selector"  # type: str
+        self.kind: str = "weighted-allocation-queue-selector"
         self.allocations = allocations
 
 
 class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment):
-    """Describes multiple sets of label selectors, of which one will be selected and attached according to a weighting.
+    """Describes multiple sets of label selectors, of which one will be selected and attached
+    according to a weighting.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2838,13 +2982,13 @@ class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment):
         "allocations": {"key": "allocations", "type": "[WorkerWeightedAllocation]"},
     }
 
-    def __init__(self, *, allocations: List["_models.WorkerWeightedAllocation"], **kwargs):
+    def __init__(self, *, allocations: List["_models.WorkerWeightedAllocation"], **kwargs: Any) -> None:
         """
         :keyword allocations: A collection of percentage based weighted allocations. Required.
         :paramtype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
         """
         super().__init__(**kwargs)
-        self.kind = "weighted-allocation-worker-selector"  # type: str
+        self.kind: str = "weighted-allocation-worker-selector"
         self.allocations = allocations
 
 
@@ -2885,8 +3029,8 @@ class WorkerAssignment(_serialization.Model):
         job_id: str,
         capacity_cost: int,
         assign_time: datetime.datetime,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The Id of the assignment. Required.
         :paramtype id: str
@@ -2928,7 +3072,7 @@ class WorkerCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RouterWorkerItem"], **kwargs):
+    def __init__(self, *, value: List["_models.RouterWorkerItem"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
@@ -2988,8 +3132,8 @@ class WorkerSelector(_serialization.Model):
         value: Optional[JSON] = None,
         ttl_seconds: Optional[float] = None,
         expedite: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The label key to query against. Required.
         :paramtype key: str
@@ -3015,7 +3159,8 @@ class WorkerSelector(_serialization.Model):
 
 
 class WorkerWeightedAllocation(_serialization.Model):
-    """Contains the weight percentage and label selectors to be applied if selected for weighted distributions.
+    """Contains the weight percentage and label selectors to be applied if selected for weighted
+    distributions.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3036,7 +3181,7 @@ class WorkerWeightedAllocation(_serialization.Model):
         "label_selectors": {"key": "labelSelectors", "type": "[WorkerSelector]"},
     }
 
-    def __init__(self, *, weight: float, label_selectors: List["_models.WorkerSelector"], **kwargs):
+    def __init__(self, *, weight: float, label_selectors: List["_models.WorkerSelector"], **kwargs: Any) -> None:
         """
         :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float

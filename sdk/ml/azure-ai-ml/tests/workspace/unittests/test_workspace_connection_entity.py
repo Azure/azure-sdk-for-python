@@ -4,7 +4,7 @@ import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_workspace_connection
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
@@ -19,6 +19,7 @@ class TestWorkspaceConnectionEntity:
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
+            expiryTime="01/05/2025 00:00:00",
             metadata=None,
         )
 
@@ -27,6 +28,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.target == "dummy_target"
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
         assert ws_connection.metadata is None
 
     def test_workspace_connection_entity_load_and_dump(self):
@@ -36,6 +38,7 @@ class TestWorkspaceConnectionEntity:
             assert ws_connection.type == camel_to_snake(ConnectionCategory.GIT)
             assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
             assert ws_connection.credentials.pat == "dummy_pat"
+            assert ws_connection.expiryTime == "01/05/2025 00:00:00"
             assert ws_connection.metadata is None
 
         verify_entity_load_and_dump(
@@ -55,6 +58,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_cr_managed"
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
 
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
@@ -65,6 +69,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.name == "test_ws_conn_python_pat"
         assert ws_connection.target == "https://test-feed.com"
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
         assert ws_connection.metadata is None
 
         ws_connection = load_workspace_connection(
@@ -93,6 +98,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_s3"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
 
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
@@ -105,6 +111,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_snowflake"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
 
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_sql_db_user_pwd.yaml"
@@ -117,6 +124,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_azure_sql_db"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
 
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_synapse_analytics_user_pwd.yaml"
@@ -129,6 +137,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_azure_synapse_analytics"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
 
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_my_sql_db_user_pwd.yaml"
@@ -141,6 +150,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_azure_my_sql_db"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"
 
         ws_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/azure_postgres_db_user_pwd.yaml"
@@ -153,3 +163,4 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_azure_postgres_db"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+        assert ws_connection.expiryTime == "01/05/2025 00:00:00"

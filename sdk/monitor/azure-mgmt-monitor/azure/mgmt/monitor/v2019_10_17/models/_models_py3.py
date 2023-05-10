@@ -89,7 +89,7 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
     :vartype provisioning_state: str
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
-     list[~$(python-base-namespace).v2019_10_17.models.PrivateEndpointConnection]
+     list[~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -132,7 +132,7 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: List of Azure Monitor PrivateLinkScope definitions. Required.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
     :ivar next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions if
      too many PrivateLinkScopes where returned in the result set.
     :vartype next_link: str
@@ -152,8 +152,7 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: List of Azure Monitor PrivateLinkScope definitions. Required.
-        :paramtype value:
-         list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+        :paramtype value: list[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
         :keyword next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions
          if too many PrivateLinkScopes where returned in the result set.
         :paramtype next_link: str
@@ -227,10 +226,9 @@ class ErrorResponseCommon(ErrorResponse):
     :ivar message: Error message indicating why the operation failed.
     :vartype message: str
     :ivar details: The error details.
-    :vartype details: list[~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon]
+    :vartype details: list[~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon]
     :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~$(python-base-namespace).v2019_10_17.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.monitor.v2019_10_17.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -271,7 +269,7 @@ class OperationStatus(_serialization.Model):
     :ivar status: The status of the operation.
     :vartype status: str
     :ivar error: The error detail of the operation if any.
-    :vartype error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
+    :vartype error: ~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon
     """
 
     _attribute_map = {
@@ -306,7 +304,7 @@ class OperationStatus(_serialization.Model):
         :keyword status: The status of the operation.
         :paramtype status: str
         :keyword error: The error detail of the operation if any.
-        :paramtype error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
+        :paramtype error: ~azure.mgmt.monitor.v2019_10_17.models.ErrorResponseCommon
         """
         super().__init__(**kwargs)
         self.id = id
@@ -362,11 +360,11 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: Azure resource type.
     :vartype type: str
     :ivar private_endpoint: Private endpoint which the connection belongs to.
-    :vartype private_endpoint: ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
+    :vartype private_endpoint: ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointProperty
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
-     ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+     ~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """
@@ -399,12 +397,11 @@ class PrivateEndpointConnection(ProxyResource):
     ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
-        :paramtype private_endpoint:
-         ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
+        :paramtype private_endpoint: ~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointProperty
         :keyword private_link_service_connection_state: Connection state of the private endpoint
          connection.
         :paramtype private_link_service_connection_state:
-         ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+         ~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
@@ -418,7 +415,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.PrivateEndpointConnection]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.PrivateEndpointConnection]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -506,7 +503,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.PrivateLinkResource]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.PrivateLinkResource]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -616,7 +613,7 @@ class ScopedResourceListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.ScopedResource]
+    :vartype value: list[~azure.mgmt.monitor.v2019_10_17.models.ScopedResource]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """

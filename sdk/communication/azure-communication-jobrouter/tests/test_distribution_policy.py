@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import copy
 import pytest
 from devtools_testutils import recorded_by_proxy
 from _router_test_case import RouterRecordedTestCase
@@ -108,9 +109,10 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             # Act
-            mode.min_concurrent_offers = 2
-            mode.max_concurrent_offers = 2
-            distribution_policy_response.mode = mode
+            mode_copy = copy.deepcopy(mode)
+            mode_copy.min_concurrent_offers = 2
+            mode_copy.max_concurrent_offers = 2
+            distribution_policy_response.mode = mode_copy
 
             updated_distribution_policy = router_client.update_distribution_policy(
                 dp_identifier,
@@ -122,7 +124,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 identifier = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
-                mode = mode
+                mode = mode_copy
             )
 
     @RouterPreparers.router_test_decorator
@@ -158,9 +160,10 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             # Act
-            mode.min_concurrent_offers = 2
-            mode.max_concurrent_offers = 2
-            distribution_policy_response.mode = mode
+            mode_copy = copy.deepcopy(mode)
+            mode_copy.min_concurrent_offers = 2
+            mode_copy.max_concurrent_offers = 2
+            distribution_policy_response.mode = mode_copy
 
             updated_distribution_policy = router_client.update_distribution_policy(
                 dp_identifier,
@@ -172,7 +175,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 identifier = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
-                mode = mode
+                mode = mode_copy
             )
 
     @RouterPreparers.router_test_decorator

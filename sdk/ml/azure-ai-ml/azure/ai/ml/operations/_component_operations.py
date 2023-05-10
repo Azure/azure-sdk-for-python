@@ -32,6 +32,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
@@ -53,6 +54,7 @@ from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -72,11 +74,13 @@ class ComponentOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
+        preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
+        self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
         self._init_args = kwargs
@@ -94,6 +98,13 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(
             AzureMLResourceType.ENVIRONMENT,
             lambda x: isinstance(x, EnvironmentOperations),
+        )
+
+    @property
+    def _workspace_operations(self) -> WorkspaceOperations:
+        return self._all_operations.get_operation(
+            AzureMLResourceType.WORKSPACE,
+            lambda x: isinstance(x, WorkspaceOperations),
         )
 
     @property
@@ -222,6 +233,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
+        **kwargs,
     ) -> ValidationResult:
         """validate a specified component. if there are inline defined
         entities, e.g. Environment, Code, they won't be created.
@@ -233,13 +245,19 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: All validation errors
         :type: ValidationResult
         """
-        return self._validate(component, raise_on_failure=raise_on_failure)
+        return self._validate(
+            component,
+            raise_on_failure=raise_on_failure,
+            # TODO 2330505: change this to True after remote validation is ready
+            skip_remote_validation=kwargs.pop("skip_remote_validation", True),
+        )
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
-        raise_on_failure: bool = False,
+        raise_on_failure: bool,
+        skip_remote_validation: bool,
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
@@ -248,11 +266,27 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, types.FunctionType):
             component = _refine_component(component)
 
-        # local validation only for now
-        # TODO: use remote call to validate the entire component after MFE API is ready
+        # local validation
         result = component._validate(raise_error=raise_on_failure)
+        # remote validation, note that preflight_operation is not available for registry client
+        if not skip_remote_validation and self._preflight_operation:
+            workspace = self._workspace_operations.get()
+            remote_validation_result = self._preflight_operation.begin_validate(
+                resource_group_name=self._resource_group_name,
+                deployment_name=self._workspace_name,
+                parameters=component._build_rest_object_for_remote_validation(
+                    location=workspace.location,
+                    workspace_name=self._workspace_name,
+                ),
+                **self._init_args,
+            )
+            result.merge_with(remote_validation_result.result(), overwrite=True)
+        # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
-        return result
+        return result.try_raise(
+            error_target=ErrorTarget.COMPONENT,
+            raise_error=raise_on_failure,
+        )
 
     @monitor_with_telemetry_mixin(
         logger,
@@ -309,7 +343,7 @@ class ComponentOperations(_ScopeDependentOperations):
             component._is_anonymous = kwargs.pop("is_anonymous", False)
 
         if not skip_validation:
-            self._validate(component, raise_on_failure=True)
+            self._validate(component, raise_on_failure=True, skip_remote_validation=True)
 
         # Create all dependent resources
         # Only upload dependencies if component is NOT IPP
@@ -629,17 +663,21 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @classmethod
     def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
-        """Traverse the pipeline component and divide nodes to resolve into layers.
+        """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
+        put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
         B C D
         | |
         E F
+        |
+        G
         return value will be:
         [
-          [("B", B), ("C", C), ("D", D)],
-          [("E", E), ("F", F)],
+          [("B", B), ("C", C)],
+          [("E", E)],
+          [("D", D), ("F", F), ("G", G)],
         ]
 
         :param component: The pipeline component to resolve.
@@ -649,32 +687,35 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
-        # add an empty layer to mark the end of the first layer
-        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
+        nodes_to_process = list(component.jobs.items())
+        layers = []
+        leaf_nodes = []
 
-        while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
-            key, job_instance = layers[cur_layer][cur_layer_head]
-            cur_layer_head += 1
+        while nodes_to_process:
+            layers.append([])
+            new_nodes_to_process = []
+            for key, job_instance in nodes_to_process:
+                cls._resolve_binding_on_supported_fields_for_node(job_instance)
+                if isinstance(job_instance, LoopNode):
+                    job_instance = job_instance.body
 
-            cls._resolve_binding_on_supported_fields_for_node(job_instance)
-            if isinstance(job_instance, LoopNode):
-                job_instance = job_instance.body
+                for extra_operation in extra_operations:
+                    extra_operation(job_instance, key)
 
-            for extra_operation in extra_operations:
-                extra_operation(job_instance, key)
+                if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
+                    # candidates for next layer
+                    new_nodes_to_process.extend(job_instance.component.jobs.items())
+                    # use layers to store pipeline nodes in each layer for now
+                    layers[-1].append((key, job_instance))
+                else:
+                    # note that LoopNode has already been replaced by its body here
+                    leaf_nodes.append((key, job_instance))
+            nodes_to_process = new_nodes_to_process
 
-            if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
-                if cur_layer + 1 == len(layers):
-                    layers.append([])
-                layers[cur_layer + 1].extend(job_instance.component.jobs.items())
-
-            if cur_layer_head == len(layers[cur_layer]):
-                cur_layer += 1
-                cur_layer_head = 0
-
-        # if there is no subgraph, pop the empty layer inserted at the beginning
-        if len(layers[-1]) == 0:
+        # if there is subgraph, the last item in layers will be empty for now as all leaf nodes are stored in leaf_nodes
+        if len(layers) != 0:
             layers.pop()
+            layers.append(leaf_nodes)
 
         return layers
 
@@ -727,9 +768,6 @@ class ComponentOperations(_ScopeDependentOperations):
 
         for layer in reversed(layers):
             for _, job_instance in layer:
-                if isinstance(job_instance, LoopNode):
-                    job_instance = job_instance.body
-
                 if isinstance(job_instance, AutoMLJob):
                     # only compute is resolved here
                     self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)

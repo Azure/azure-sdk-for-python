@@ -1,0 +1,66 @@
+{
+    "properties": {
+        "action": {
+            "actionType": "CreateMonitor",
+            "monitorDefinition": {
+                "computeId": "mycompute",
+                "monitoringTarget": "fake_endpoint_id",
+                "signals": {
+                    "testSignal": {
+                        "signalType": "FeatureAttributionDrift",
+                        "mode": "Enabled",
+                        "modelType": "classification",
+                        "lookbackPeriod": "P60D",
+                        "targetData": {
+                            "dataContext": "test",
+                            "asset": {
+                                "jobInputType": "mltable",
+                                "uri": "Direct:1"
+                            }
+                        },
+                        "baselineData": {
+                            "dataContext": "test",
+                            "asset": {
+                                "jobInputType": "mltable",
+                                "uri": "Direct:1"
+                            }
+                        },
+                        "metricThreshold": {
+                            "metric": "normalizedDiscountedCumulativeGain",
+                            "threshold": {
+                                "value": 0.5
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "trigger": {
+            "triggerType": "Recurrence",
+            "timeZone": "utc",
+            "frequency": "week",
+            "interval": 1,
+            "schedule": {
+                "hours": [
+                    22, 20
+                ],
+                "minutes": [
+                    0, 0
+                ],
+                "weekDays": [
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday"
+                ]
+            }
+        },
+        "properties": {
+            "prop1": "value"
+        },
+        "tags": {
+            "tag1": "tag"
+        }
+    }
+}

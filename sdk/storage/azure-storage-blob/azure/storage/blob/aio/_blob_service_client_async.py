@@ -40,7 +40,8 @@ from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
@@ -117,7 +118,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     def __init__(
             self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)

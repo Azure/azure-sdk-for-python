@@ -34,7 +34,8 @@ else:
     from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import (
         ShareProperties,
         Metrics,
@@ -95,7 +96,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
     """
     def __init__(
             self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             *,
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
@@ -108,10 +109,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         super(ShareServiceClient, self).__init__(
             account_url,
             credential=credential,
+            token_intent=token_intent,
             **kwargs)
-        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
-        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,

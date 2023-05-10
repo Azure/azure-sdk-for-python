@@ -6,7 +6,7 @@
 %% 2. Run command: mmdc -i DefaultAzureCredentialAuthFlow.md -o DefaultAzureCredentialAuthFlow.svg
 
 flowchart LR;
-    A(Environment):::deployed ==> B(Workload Identity):::deployed ==> C(Managed Identity):::deployed ==> D(Azure Developer CLI):::developer ==> E(Azure CLI):::developer ==> F(Azure PowerShell):::developer ==> G(Interactive browser):::interactive;
+    A(Environment):::deployed ==> B(Workload Identity):::deployed ==> C(Managed Identity):::deployed ==> D(Azure CLI):::developer ==> E(Azure PowerShell):::developer ==> F(Azure Developer CLI):::developer ==> G(Interactive browser):::interactive;
 
     subgraph CREDENTIAL TYPES;
         direction LR;
@@ -25,7 +25,7 @@ flowchart LR;
     %% Add API ref links to credential type boxes
     click A "https://learn.microsoft.com/python/api/azure-identity/azure.identity.environmentcredential?view=azure-python" _blank;
     click C "https://learn.microsoft.com/python/api/azure-identity/azure.identity.managedidentitycredential?view=azure-python" _blank;
-    click E "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azureclicredential?view=azure-python" _blank;
-    click F "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azurepowershellcredential?view=azure-python" _blank;
+    click D "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azureclicredential?view=azure-python" _blank;
+    click E "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azurepowershellcredential?view=azure-python" _blank;
     click G "https://learn.microsoft.com/python/api/azure-identity/azure.identity.interactivebrowsercredential?view=azure-python" _blank;
 ```

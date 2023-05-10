@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._client import ConfidentialLedgerCertificateClient
-from ._version import VERSION
+from .._version import VERSION
 
 __version__ = VERSION
 

@@ -6,9 +6,10 @@
 
 import logging
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, AzureMLResourceType
@@ -40,6 +41,15 @@ class ModelSchema(PathAwareSchema):
     job_name = fields.Str(dump_only=True)
     latest_version = fields.Str(dump_only=True)
     datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema, required=False), dump_only=True)
+
+    @pre_dump
+    def validate(self, data, **kwargs):
+        if data._intellectual_property:  # pylint: disable=protected-access
+            ipp_field = data._intellectual_property  # pylint: disable=protected-access
+            if ipp_field:
+                setattr(data, "intellectual_property", ipp_field)
+        return data
 
     @post_load
     def make(self, data, **kwargs):
