@@ -74,7 +74,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
         **kwargs,
-    ):
+    ): # pylint: disable=too-many-instance-attributes
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(

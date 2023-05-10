@@ -269,6 +269,7 @@ class ModelOperations(_ScopeDependentOperations):
                     name=name,
                     version=version,
                     workspace_name=self._workspace_name,
+                    api_version="2023-02-01-preview",
                     **self._scope_kwargs,
                 )
             )
