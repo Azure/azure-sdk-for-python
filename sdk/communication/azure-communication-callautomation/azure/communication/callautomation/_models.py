@@ -236,6 +236,10 @@ class CallConnectionProperties():
     :vartype source_display_name: str
     :ivar source_identity: Source identity of the caller.
     :vartype source_identity: ~azure.communication.callautomation.CommunicationIdentifier
+    :ivar correlation_id: Correlation ID of the call
+    :vartype correlation_id: str
+    :ivar answered_by_identifier: The identifier that answered the call
+    :vartype answered_by_identifier: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
         self,
