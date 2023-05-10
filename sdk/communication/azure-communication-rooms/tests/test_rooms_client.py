@@ -433,6 +433,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
 
+    @recorded_by_proxy
     def test_list_rooms_first_room_is_not_null_success(self):
         # create a room -> list all rooms -> delete room
         create_response = self.rooms_client.create_room()

@@ -465,7 +465,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
 
-    @RoomsAsyncTestCase.await_prepared_test
+    @recorded_by_proxy_async
     async def test_list_rooms_first_room_is_not_null_success_async(self):
         # create a room -> list all rooms -> delete room
         async with self.rooms_client:
