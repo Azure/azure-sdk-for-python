@@ -39,7 +39,10 @@ from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
-DeploymentType = TypeVar("DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment])
+DeploymentType = TypeVar(
+    "DeploymentType",
+    bound=Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment]
+)
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
