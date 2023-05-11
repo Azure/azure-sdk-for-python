@@ -43,6 +43,7 @@ async def get_old_response_trio(old_request):
 def new_request(port):
     return RestHttpRequest("GET", "http://localhost:{}/streams/basic".format(port))
 
+
 @pytest_asyncio.fixture
 async def get_new_response(new_request):
     async def _callback(transport, **kwargs):
