@@ -345,13 +345,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace_async
     async def release_cloud_events(
-        self,
-        topic_name: str,
-        event_subscription_name: str,
-        lock_tokens: _models.ReleaseOptions,
-        *,
-        event_delivery_delay_in_seconds: Optional[int] = None,
-        **kwargs: Any
+        self, topic_name: str, event_subscription_name: str, lock_tokens: _models.ReleaseOptions, **kwargs: Any
     ) -> _models.ReleaseResult:
         """Release batch of Cloud Events. The server responds with an HTTP 200 status code if at least one
         event is successfully released. The response body will include the set of successfully released
@@ -363,10 +357,6 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :type event_subscription_name: str
         :param lock_tokens: ReleaseOptions. Required.
         :type lock_tokens: ~azure.eventgrid.models.ReleaseOptions
-        :keyword event_delivery_delay_in_seconds: Delivery delay for the event in seconds. When value
-         is 0, the event is released immediately. It is an optional parameter and if not specified, the
-         default value is 0. Default value is None.
-        :paramtype event_delivery_delay_in_seconds: int
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -394,7 +384,6 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         request = build_event_grid_release_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
-            event_delivery_delay_in_seconds=event_delivery_delay_in_seconds,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
