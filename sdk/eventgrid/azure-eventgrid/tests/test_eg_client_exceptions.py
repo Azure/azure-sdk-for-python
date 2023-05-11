@@ -1,41 +1,45 @@
 import pytest
 import os
+import time
 from azure.eventgrid import EventGridClient
 from azure.eventgrid.models import *
-from azure.core.messaging import CloudEvent 
+from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ServiceResponseTimeoutError
 
-class TestEGClientExceptions():
+
+class TestEGClientExceptions:
     def create_eg_client(self, endpoint):
-        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_key = os.environ["EVENTGRID_KEY"]
         client = EventGridClient(endpoint=endpoint, credential=AzureKeyCredential(eventgrid_key))
         return client
 
     def test_publish_cloud_event_bad_request(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
-        event = CloudEvent(type="Contoso.Items.ItemReceived", source=None, subject="MySubject", data={"itemSku": "Contoso Item SKU #1"})
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived", source=None, subject="MySubject", data={"itemSku": "Contoso Item SKU #1"}
+        )
 
         with pytest.raises(HttpResponseError):
             client.publish_cloud_events(topic_name, [event])
 
-
     def test_publish_cloud_event_not_found(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
 
         client = self.create_eg_client(eventgrid_endpoint)
-        event = CloudEvent(type="Contoso.Items.ItemReceived", source=None, subject="MySubject", data={"itemSku": "Contoso Item SKU #1"})
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived", source=None, subject="MySubject", data={"itemSku": "Contoso Item SKU #1"}
+        )
 
         with pytest.raises(ResourceNotFoundError):
             client.publish_cloud_events("faketopic", [event])
 
-
     def test_receive_cloud_event_not_found(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -43,9 +47,9 @@ class TestEGClientExceptions():
             client.receive_cloud_events("faketopic", event_subscription_name)
 
     def test_receive_cloud_event_max_events_negative(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -53,9 +57,9 @@ class TestEGClientExceptions():
             client.receive_cloud_events(topic_name, event_subscription_name, max_events=-20)
 
     def test_receive_cloud_event_timeout_negative(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -63,9 +67,9 @@ class TestEGClientExceptions():
             client.receive_cloud_events(topic_name, event_subscription_name, max_wait_time=-20)
 
     def test_receive_cloud_event_timeout_max_value(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -73,9 +77,9 @@ class TestEGClientExceptions():
             client.receive_cloud_events(topic_name, event_subscription_name, max_wait_time=121)
 
     def test_receive_cloud_event_timeout_min_value(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -83,8 +87,8 @@ class TestEGClientExceptions():
             client.receive_cloud_events(topic_name, event_subscription_name, max_wait_time=9)
 
     def test_acknowledge_cloud_event_not_found(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -93,8 +97,8 @@ class TestEGClientExceptions():
             client.acknowledge_cloud_events("faketopic", event_subscription_name, lock_tokens=lock_tokens)
 
     def test_release_cloud_event_not_found(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -102,19 +106,20 @@ class TestEGClientExceptions():
             lock_tokens = ReleaseOptions(lock_tokens=["faketoken"])
             client.release_cloud_events("faketopic", event_subscription_name, lock_tokens=lock_tokens)
 
-    # def test_reject_cloud_event_not_found(self):
-    #     eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-    #     event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+    def test_reject_cloud_event_not_found(self):
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
-    #     client = self.create_eg_client(eventgrid_endpoint)
+        client = self.create_eg_client(eventgrid_endpoint)
+        lock_tokens = RejectOptions(lock_tokens=["faketoken"])
 
-    #     with pytest.raises(ResourceNotFoundError):
-    #         client.acknowledge_cloud_events("faketopic", event_subscription_name)
+        with pytest.raises(ResourceNotFoundError):
+            client.reject_cloud_events("faketopic", event_subscription_name, lock_tokens=lock_tokens)
 
     def test_acknowledge_cloud_event_invalid_token(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -126,9 +131,9 @@ class TestEGClientExceptions():
         assert ack.failed_lock_tokens[0].lock_token == "faketoken"
 
     def test_release_cloud_event_invalid_token(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
 
@@ -140,9 +145,9 @@ class TestEGClientExceptions():
         assert release.failed_lock_tokens[0].lock_token == "faketoken"
 
     def test_reject_cloud_event_invalid_token(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
         lock_tokens = RejectOptions(lock_tokens=["faketoken"])
@@ -154,12 +159,28 @@ class TestEGClientExceptions():
         assert reject.failed_lock_tokens[0].lock_token == "faketoken"
 
     def test_release_cloud_event_event_delivery_time(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        topic_name = os.environ['TOPIC_NAME']
-        event_subscription_name = os.environ['EVENT_SUBSCRIPTION_NAME']
+        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
+        topic_name = os.environ["TOPIC_NAME"]
+        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
 
         client = self.create_eg_client(eventgrid_endpoint)
-        lock_tokens = ReleaseOptions(lock_tokens=["faketoken"])
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived", source="l", subject="MySubject", data={"itemSku": "Contoso Item SKU #1"}
+        )
 
-        with pytest.raises(HttpResponseError):
-            client.release_cloud_events(topic_name, event_subscription_name, lock_tokens=lock_tokens, event_delivery_delay_in_seconds=-20)
+        client.publish_cloud_events(topic_name, event)
+        time.sleep(10)
+
+        event = client.receive_cloud_events(topic_name, event_subscription_name, max_events=1)
+        lock_token = event.value[0].broker_properties.lock_token
+        lock_tokens = ReleaseOptions(lock_tokens=[lock_token])
+        start = time.time()
+
+        client.release_cloud_events(
+            topic_name, event_subscription_name, lock_tokens=lock_tokens
+        )
+        event_receive_again = client.release_cloud_events(topic_name, event_subscription_name, lock_tokens=lock_tokens)
+        if time.time() - start <= 1000:
+            assert event_receive_again.failed_lock_tokens[0].lock_token == lock_token
+        else:
+            assert True
