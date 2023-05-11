@@ -67,7 +67,6 @@ from azure.ai.ml.exceptions import (
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from ._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
