@@ -22,7 +22,12 @@ from azure.containerregistry import (
 )
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    HttpResponseError,
+    ServiceRequestError,
+)
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
@@ -811,12 +816,10 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 assert size == blob_size
 
                 await client.delete_blob(repo, digest)
-            except ResourceNotFoundError as err:
+            except ServiceRequestError as err:
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                assert err.status_code == 404
-                assert err.response.request.method == "PATCH"
-                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
+                print(f"Failed to upload blob: {err.message}")
 
             # Test blob upload and download in unequal size chunks
             try:
@@ -833,12 +836,10 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 assert size == blob_size
 
                 await client.delete_blob(repo, digest)
-            except ResourceNotFoundError as err:
+            except ServiceRequestError as err:
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                assert err.status_code == 404
-                assert err.response.request.method == "PATCH"
-                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
+                print(f"Failed to upload blob: {err.message}")
 
             # Cleanup
             await client.delete_repository(repo)

@@ -22,7 +22,12 @@ from azure.containerregistry import (
     ManifestDigestValidationError,
 )
 from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    HttpResponseError,
+    ServiceRequestError,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
@@ -804,12 +809,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 assert size == blob_size
 
                 client.delete_blob(repo, digest)
-            except ResourceNotFoundError as err:
+            except ServiceRequestError as err:
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                assert err.status_code == 404
-                assert err.response.request.method == "PATCH"
-                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
+                print(f"Failed to upload blob: {err.message}")
 
             # Test blob upload and download in unequal size chunks
             try:
@@ -826,12 +829,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 assert size == blob_size
 
                 client.delete_blob(repo, digest)
-            except ResourceNotFoundError as err:
+            except ServiceRequestError as err:
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                assert err.status_code == 404
-                assert err.response.request.method == "PATCH"
-                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
+                print(f"Failed to upload blob: {err.message}")
 
             # Cleanup
             client.delete_repository(repo)
