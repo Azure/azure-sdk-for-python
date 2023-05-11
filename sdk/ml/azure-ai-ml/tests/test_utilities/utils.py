@@ -354,7 +354,7 @@ def build_temp_folder(
     source_base_dir: Union[str, os.PathLike] = None,
     relative_dirs_to_copy: List[str] = None,
     relative_files_to_copy: List[str] = None,
-    extra_files_to_create: Dict[str, Optional[str]] = None,
+    extra_files_to_create: Dict[str, Union[None, bytes, str]] = None,
 ) -> str:
     """Build a temporary folder with files and subfolders copied from source_base_dir.
     Note that the last part of path to upload will be recorded as part of request url in playback mode, so please avoid
@@ -391,9 +391,14 @@ def build_temp_folder(
                 if content is None:
                     target_file.touch()
                     continue
-                with open(target_file, "w") as f:
-                    if content:
-                        f.write(content)
+                if content is None:
+                    target_file.touch()
+                elif isinstance(content, str):
+                    target_file.write_text(content)
+                elif isinstance(content, bytes):
+                    target_file.write_bytes(content)
+                else:
+                    raise ValueError(f"Unsupported content type {type(content)}")
 
         yield temp_dir
 
