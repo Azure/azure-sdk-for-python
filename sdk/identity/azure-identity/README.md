@@ -226,7 +226,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`ChainedTokenCredential`][chain_cred_ref]| Allows users to define custom authentication flows composing multiple credentials.
 |[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
 |[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
-|[`WorkloadIdentityCredential`][workload_id_cref_ref]| Supports [Azure AD workload identity](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
+|[`WorkloadIdentityCredential`][workload_id_cred_ref]| Supports [Azure AD workload identity](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
 
 ### Authenticate service principals
 
@@ -372,6 +372,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
 [userpass_cred_ref]: https://aka.ms/azsdk/python/identity/usernamepasswordcredential
 [vscode_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
-[workload_id_cref_ref]: https://aka.ms/azsdk/python/identity/workloadidentitycredential
+[workload_id_cred_ref]: https://aka.ms/azsdk/python/identity/workloadidentitycredential
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2FREADME.png)
