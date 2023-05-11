@@ -17,7 +17,7 @@ module_logger = logging.getLogger(__name__)
 class ModelConfigurationSchema(PathAwareSchema):
     mode = StringTransformedEnum(
         allowed_values=[
-            "readonly_mount",
+            "read_only_mount",
             "download",
         ]
     )
