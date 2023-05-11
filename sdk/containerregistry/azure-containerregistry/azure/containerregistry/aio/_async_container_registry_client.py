@@ -36,6 +36,7 @@ from .._helpers import (
     _is_tag,
     _parse_next_link,
     _validate_digest,
+    _get_blob_size,
     SUPPORTED_API_VERSIONS,
     OCI_IMAGE_MANIFEST,
     SUPPORTED_MANIFEST_MEDIA_TYPES,
@@ -1051,6 +1052,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
         :raises DigestValidationError:
             If the content of retrieved blob digest does not match the requested digest.
+        :raises ValueError: If the content-range header is missing or invalid in response.
         """
         end_range = DEFAULT_CHUNK_SIZE - 1
         first_chunk, headers = cast(
@@ -1063,6 +1065,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
         )
+        blob_size = _get_blob_size(headers)
         return AsyncDownloadBlobStream(
             response=first_chunk,
             digest=digest,
@@ -1073,7 +1076,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_and_headers,
                 **kwargs
             ),
-            blob_size=int(headers["Content-Range"].split("/")[1]),
+            blob_size=blob_size,
             downloaded=int(headers["Content-Length"]),
             chunk_size=DEFAULT_CHUNK_SIZE
         )

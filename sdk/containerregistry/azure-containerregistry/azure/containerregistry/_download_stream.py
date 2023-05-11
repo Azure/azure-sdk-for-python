@@ -68,7 +68,7 @@ class DownloadBlobStream(
         try:
             return self._yield_data()
         except StopIteration:
-            if self._downloaded >= self._blob_size:
+            if self._downloaded == self._blob_size:
                 computed_digest = "sha256:" + self._hasher.hexdigest()
                 if computed_digest != self._digest:
                     raise DigestValidationError(

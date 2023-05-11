@@ -139,3 +139,11 @@ def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
 def _validate_digest(data: Union[IO[bytes], bytes], expected_digest: str) -> bool:
     digest = _compute_digest(data)
     return digest == expected_digest
+
+def _get_blob_size(headers: Dict[str, str]) -> int:
+    if not headers["Content-Range"]:
+        raise ValueError("Missing content-range header in response.")
+    blob_size = int(headers["Content-Range"].split("/")[1])
+    if blob_size <= 0:
+        raise ValueError("Invalid content-range header in response.")
+    return blob_size
