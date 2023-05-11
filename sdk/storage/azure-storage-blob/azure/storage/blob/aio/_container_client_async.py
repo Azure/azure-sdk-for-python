@@ -1389,7 +1389,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     def get_blob_client(
             self, blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: str
+            snapshot=None,  # type: str
+            *,
+            version_id=None,  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -1402,6 +1404,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.BlobClient
 
@@ -1419,10 +1423,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        try:
-            version_id = blob.version_id
-        except AttributeError:
-            version_id = None
+        if version_id is None:
+            try:
+                version_id = blob.version_id
+            except AttributeError:
+                pass
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

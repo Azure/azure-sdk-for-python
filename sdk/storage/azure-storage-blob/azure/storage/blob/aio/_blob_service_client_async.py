@@ -679,7 +679,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
             blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: Optional[Union[Dict[str, Any], str]]
+            snapshot=None,  # type: Optional[Union[Dict[str, Any], str]]
+            *,
+            version_id=None,  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -699,6 +701,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             or a dictionary output returned by
             :func:`~azure.storage.blob.aio.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.BlobClient
 
@@ -719,10 +723,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-        try:
-            version_id = blob.version_id
-        except AttributeError:
-            version_id = None
+        if version_id is None:
+            try:
+                version_id = blob.version_id
+            except AttributeError:
+                pass
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

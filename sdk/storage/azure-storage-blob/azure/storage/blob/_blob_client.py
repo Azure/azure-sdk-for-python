@@ -2921,6 +2921,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'tags': tags,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'version_id': kwargs.pop('version_id', None) or self.version_id,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2968,8 +2969,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        version_id = kwargs.pop('version_id', None) or self.version_id
-        options = self._set_blob_tags_options(tags=tags, version_id=version_id, **kwargs)
+        options = self._set_blob_tags_options(tags=tags, **kwargs)
         try:
             return self._client.blob.set_tags(**options)
         except HttpResponseError as error:

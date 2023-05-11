@@ -2666,20 +2666,29 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         blob_name = self.get_resource_name("utcontainer")
         blob_data = 'abc'
-        blob_data2 = 'abcabc'
         blob_client = container.get_blob_client(blob_name)
 
         # Act
         blob_client.upload_blob(blob_data, overwrite=True)
         v1_props = blob_client.get_blob_properties()
-        blob_client.upload_blob(blob_data2, overwrite=True)
+        blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 4, overwrite=True)
+        v4_props = blob_client.get_blob_properties()
 
-        v1_blob_client = container.get_blob_client(v1_props)
+        v1_blob_client = container.get_blob_client(blob=v1_props['name'], version_id=v1_props['version_id'])
         props1 = v1_blob_client.get_blob_properties()
-        v2_blob_client = container.get_blob_client(v2_props)
+        v2_blob_client = container.get_blob_client(blob=v2_props)
         props2 = v2_blob_client.get_blob_properties()
+        v3_blob_client = bsc.get_blob_client(container=container.container_name, blob=v3_props['name'], version_id=v3_props['version_id'])
+        props3 = v3_blob_client.get_blob_properties()
+        v4_blob_client = bsc.get_blob_client(container=container.container_name, blob=v4_props)
+        props4 = v4_blob_client.get_blob_properties()
 
         # Assert
         assert props1['version_id'] == v1_props['version_id']
         assert props2['version_id'] == v2_props['version_id']
+        assert props3['version_id'] == v3_props['version_id']
+        assert props4['version_id'] == v4_props['version_id']
