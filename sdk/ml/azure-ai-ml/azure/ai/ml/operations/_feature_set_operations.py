@@ -429,5 +429,5 @@ class FeatureSetOperations(_ScopeDependentOperations):
             )
 
         featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
-        featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec.yaml")
+        featureset_spec_yaml_path = Path(featureset_spec_path, "FeatureSetSpec.yaml")
         return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
