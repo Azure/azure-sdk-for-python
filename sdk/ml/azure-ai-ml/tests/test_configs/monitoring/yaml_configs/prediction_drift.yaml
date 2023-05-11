@@ -10,7 +10,7 @@ trigger:
       - 20
     minutes:
       - 0
-      - 0
+      - 30
     week_days:
       - monday
       - tuesday
@@ -18,7 +18,9 @@ trigger:
       - thursday
       - friday
 create_monitor:
-  compute: azureml:mycompute
+  compute:
+    instance_type: "standard_e8s_v3"
+    runtime_version: "3.2"
   monitoring_target:
     endpoint_deployment_id: fake_endpoint_id
   monitoring_signals:
@@ -30,7 +32,7 @@ create_monitor:
             type: mltable
             path: azureml:Direct:1
           dataset_context: test
-        lookback_period: 60
+        data_window_size: 60
       baseline_dataset:
         input_dataset:
           type: mltable
