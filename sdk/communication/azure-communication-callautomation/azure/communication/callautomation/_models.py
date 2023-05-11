@@ -212,7 +212,7 @@ class MediaStreamingConfiguration(object):
             audio_channel_type=self.audio_channel_type
             )
 
-class CallConnectionProperties():
+class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
     :ivar call_connection_id: The call connection id of this call leg.
