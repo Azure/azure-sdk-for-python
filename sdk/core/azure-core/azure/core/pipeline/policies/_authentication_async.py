@@ -49,7 +49,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token():
-                    self._token = await self._credential.get_token(*self._scopes)
+                    self._token = await await_result(self._credential.get_token, *self._scopes)
         request.http_request.headers["Authorization"] = "Bearer " + self._token.token
 
     async def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs: Any) -> None:
@@ -62,7 +62,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :param str scopes: required scopes of authentication
         """
         async with self._lock:
-            self._token = await self._credential.get_token(*scopes, **kwargs)
+            self._token = await await_result(self._credential.get_token, *scopes, **kwargs)
         request.http_request.headers["Authorization"] = "Bearer " + self._token.token
 
     async def send(self, request: "PipelineRequest") -> "PipelineResponse":
