@@ -947,17 +947,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         manifest_bytes = response.http_response.read()
         manifest_json = response.http_response.json()
         if tag_or_digest.startswith("sha256:"):
-            digest = tag_or_digest
-            if not _validate_digest(manifest_bytes, digest):
+            if not _validate_digest(manifest_bytes, tag_or_digest):
                 raise DigestValidationError(
                     "The content of retrieved manifest digest does not match the requested digest."
                 )
-        else:
-            digest = response.http_response.headers['Docker-Content-Digest']
-            if not _validate_digest(manifest_bytes, digest):
-                raise DigestValidationError(
-                    "The server-computed digest does not match the client-computed digest."
-                )
+        digest = response.http_response.headers['Docker-Content-Digest']
+        if not _validate_digest(manifest_bytes, digest):
+            raise DigestValidationError(
+                "The server-computed digest does not match the client-computed digest."
+            )
 
         return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 
