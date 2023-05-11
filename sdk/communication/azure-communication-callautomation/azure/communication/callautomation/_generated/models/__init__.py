@@ -19,6 +19,7 @@ from ._models import CallLocator
 from ._models import CallParticipant
 from ._models import CallTransferAccepted
 from ._models import CallTransferFailed
+from ._models import ChannelAffinity
 from ._models import Choice
 from ._models import ChoiceResult
 from ._models import CollectTonesResult
@@ -113,6 +114,7 @@ __all__ = [
     "CallParticipant",
     "CallTransferAccepted",
     "CallTransferFailed",
+    "ChannelAffinity",
     "Choice",
     "ChoiceResult",
     "CollectTonesResult",
