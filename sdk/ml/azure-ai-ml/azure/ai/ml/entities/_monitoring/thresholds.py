@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Any, List
+
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._monitoring import MonitorMetricName, MonitorFeatureType, MonitorModelType
@@ -96,6 +98,30 @@ class DataDriftMetricThreshold(MetricThreshold):
             threshold=obj.threshold.value if obj.threshold else None,
         )
 
+    @classmethod
+    def _get_default_thresholds(cls) -> List["DataDriftMetricThreshold"]:
+        return [
+            cls(
+                applicable_feature_type=MonitorFeatureType.NUMERICAL,
+                metric_name=MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
+                threshold=0.1,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.CATEGORICAL,
+                metric_name=MonitorMetricName.JENSEN_SHANNON_DISTANCE,
+                threshold=0.1,
+            ),
+        ]
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, DataDriftMetricThreshold):
+            return NotImplemented
+        return (
+            self.applicable_feature_type == other.applicable_feature_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
+        )
+
 
 @experimental
 class PredictionDriftMetricThreshold(MetricThreshold):
@@ -157,6 +183,30 @@ class PredictionDriftMetricThreshold(MetricThreshold):
             threshold=obj.threshold.value if obj.threshold else None,
         )
 
+    @classmethod
+    def _get_default_thresholds(cls) -> List["PredictionDriftMetricThreshold"]:
+        return [
+            cls(
+                applicable_feature_type=MonitorFeatureType.NUMERICAL,
+                metric_name=MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
+                threshold=0.1,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.CATEGORICAL,
+                metric_name=MonitorMetricName.JENSEN_SHANNON_DISTANCE,
+                threshold=0.1,
+            ),
+        ]
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, PredictionDriftMetricThreshold):
+            return NotImplemented
+        return (
+            self.applicable_feature_type == other.applicable_feature_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
+        )
+
 
 @experimental
 class DataQualityMetricThreshold(MetricThreshold):
@@ -213,6 +263,50 @@ class DataQualityMetricThreshold(MetricThreshold):
             applicable_feature_type=obj.data_type.lower(),
             metric_name=camel_to_snake(obj.metric),
             threshold=obj.threshold.value if obj.threshold else None,
+        )
+
+    @classmethod
+    def _get_default_thresholds(cls) -> List["DataQualityMetricThreshold"]:
+        return [
+            cls(
+                applicable_feature_type=MonitorFeatureType.NUMERICAL,
+                metric_name=MonitorMetricName.NULL_VALUE_RATE,
+                threshold=0,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.NUMERICAL,
+                metric_name=MonitorMetricName.DATA_TYPE_ERROR_RATE,
+                threshold=0,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.NUMERICAL,
+                metric_name=MonitorMetricName.OUT_OF_BOUND_RATE,
+                threshold=0,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.CATEGORICAL,
+                metric_name=MonitorMetricName.NULL_VALUE_RATE,
+                threshold=0,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.CATEGORICAL,
+                metric_name=MonitorMetricName.DATA_TYPE_ERROR_RATE,
+                threshold=0,
+            ),
+            cls(
+                applicable_feature_type=MonitorFeatureType.CATEGORICAL,
+                metric_name=MonitorMetricName.OUT_OF_BOUND_RATE,
+                threshold=0,
+            ),
+        ]
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, DataQualityMetricThreshold):
+            return NotImplemented
+        return (
+            self.applicable_feature_type == other.applicable_feature_type
+            and self.metric_name == other.metric_name
+            and self.threshold == other.threshold
         )
 
 
