@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.core import CaseInsensitiveEnumMeta
 
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
@@ -851,12 +850,6 @@ class InferenceServerType:
     AZUREML_BATCH = "azureml_batch"
     TRITON = "triton"
     CUSTOM = "custom"
-
-
-@experimental
-class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ALL = "all"
-    NONE = "none"
 
 
 class AzureDevopsArtifactsType:
