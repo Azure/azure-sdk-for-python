@@ -2643,6 +2643,8 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar continuous_mode_properties: Configuration values for continuous mode backup.
+    :vartype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
     """
 
     _validation = {
@@ -2652,18 +2654,48 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "migration_state": {"key": "migrationState", "type": "BackupPolicyMigrationState"},
+        "continuous_mode_properties": {"key": "continuousModeProperties", "type": "ContinuousModeProperties"},
     }
 
     def __init__(
-        self, *, migration_state: Optional["_models.BackupPolicyMigrationState"] = None, **kwargs: Any
+        self,
+        *,
+        migration_state: Optional["_models.BackupPolicyMigrationState"] = None,
+        continuous_mode_properties: Optional["_models.ContinuousModeProperties"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword migration_state: The object representing the state of the migration between the backup
          policies.
         :paramtype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+        :keyword continuous_mode_properties: Configuration values for continuous mode backup.
+        :paramtype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
         """
         super().__init__(migration_state=migration_state, **kwargs)
         self.type: str = "Continuous"
+        self.continuous_mode_properties = continuous_mode_properties
+
+
+class ContinuousModeProperties(_serialization.Model):
+    """Configuration values for periodic mode backup.
+
+    :ivar tier: Enum to indicate type of Continuous backup mode. Known values are:
+     "Continuous7Days" and "Continuous30Days".
+    :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+    """
+
+    _attribute_map = {
+        "tier": {"key": "tier", "type": "str"},
+    }
+
+    def __init__(self, *, tier: Optional[Union[str, "_models.ContinuousTier"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tier: Enum to indicate type of Continuous backup mode. Known values are:
+         "Continuous7Days" and "Continuous30Days".
+        :paramtype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+        """
+        super().__init__(**kwargs)
+        self.tier = tier
 
 
 class CorsPolicy(_serialization.Model):
@@ -2877,7 +2909,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -3069,7 +3101,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -3231,7 +3263,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -3437,7 +3469,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -3755,7 +3787,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -3921,7 +3953,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -8481,6 +8513,9 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
     :ivar deletion_time: The time at which the restorable database account has been deleted
      (ISO-8601 format).
     :vartype deletion_time: ~datetime.datetime
+    :ivar oldest_restorable_time: The least recent time at which the database account can be
+     restored to (ISO-8601 format).
+    :vartype oldest_restorable_time: ~datetime.datetime
     :ivar api_type: The API type of the restorable database account. Known values are: "MongoDB",
      "Gremlin", "Cassandra", "Table", "Sql", and "GremlinV2".
     :vartype api_type: str or ~azure.mgmt.cosmosdb.models.ApiType
@@ -8505,6 +8540,7 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         "account_name": {"key": "properties.accountName", "type": "str"},
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
         "deletion_time": {"key": "properties.deletionTime", "type": "iso-8601"},
+        "oldest_restorable_time": {"key": "properties.oldestRestorableTime", "type": "iso-8601"},
         "api_type": {"key": "properties.apiType", "type": "str"},
         "restorable_locations": {"key": "properties.restorableLocations", "type": "[RestorableLocationResource]"},
     }
@@ -8516,6 +8552,7 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         account_name: Optional[str] = None,
         creation_time: Optional[datetime.datetime] = None,
         deletion_time: Optional[datetime.datetime] = None,
+        oldest_restorable_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8528,6 +8565,9 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         :keyword deletion_time: The time at which the restorable database account has been deleted
          (ISO-8601 format).
         :paramtype deletion_time: ~datetime.datetime
+        :keyword oldest_restorable_time: The least recent time at which the database account can be
+         restored to (ISO-8601 format).
+        :paramtype oldest_restorable_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.id = None
@@ -8537,6 +8577,7 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         self.account_name = account_name
         self.creation_time = creation_time
         self.deletion_time = deletion_time
+        self.oldest_restorable_time = oldest_restorable_time
         self.api_type = None
         self.restorable_locations = None
 
@@ -12395,11 +12436,19 @@ class ThroughputSettingsResource(_serialization.Model):
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending.
     :vartype offer_replace_pending: str
+    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+     triggering splits.
+    :vartype instant_maximum_throughput: str
+    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
+     maxThroughput value (for autoscale) that can be specified.
+    :vartype soft_allowed_maximum_throughput: str
     """
 
     _validation = {
         "minimum_throughput": {"readonly": True},
         "offer_replace_pending": {"readonly": True},
+        "instant_maximum_throughput": {"readonly": True},
+        "soft_allowed_maximum_throughput": {"readonly": True},
     }
 
     _attribute_map = {
@@ -12407,6 +12456,8 @@ class ThroughputSettingsResource(_serialization.Model):
         "autoscale_settings": {"key": "autoscaleSettings", "type": "AutoscaleSettingsResource"},
         "minimum_throughput": {"key": "minimumThroughput", "type": "str"},
         "offer_replace_pending": {"key": "offerReplacePending", "type": "str"},
+        "instant_maximum_throughput": {"key": "instantMaximumThroughput", "type": "str"},
+        "soft_allowed_maximum_throughput": {"key": "softAllowedMaximumThroughput", "type": "str"},
     }
 
     def __init__(
@@ -12429,6 +12480,8 @@ class ThroughputSettingsResource(_serialization.Model):
         self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
+        self.instant_maximum_throughput = None
+        self.soft_allowed_maximum_throughput = None
 
 
 class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, ExtendedResourceProperties):
@@ -12453,6 +12506,12 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending.
     :vartype offer_replace_pending: str
+    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+     triggering splits.
+    :vartype instant_maximum_throughput: str
+    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
+     maxThroughput value (for autoscale) that can be specified.
+    :vartype soft_allowed_maximum_throughput: str
     """
 
     _validation = {
@@ -12461,6 +12520,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         "etag": {"readonly": True},
         "minimum_throughput": {"readonly": True},
         "offer_replace_pending": {"readonly": True},
+        "instant_maximum_throughput": {"readonly": True},
+        "soft_allowed_maximum_throughput": {"readonly": True},
     }
 
     _attribute_map = {
@@ -12471,6 +12532,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         "autoscale_settings": {"key": "autoscaleSettings", "type": "AutoscaleSettingsResource"},
         "minimum_throughput": {"key": "minimumThroughput", "type": "str"},
         "offer_replace_pending": {"key": "offerReplacePending", "type": "str"},
+        "instant_maximum_throughput": {"key": "instantMaximumThroughput", "type": "str"},
+        "soft_allowed_maximum_throughput": {"key": "softAllowedMaximumThroughput", "type": "str"},
     }
 
     def __init__(
@@ -12496,6 +12559,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
+        self.instant_maximum_throughput = None
+        self.soft_allowed_maximum_throughput = None
 
 
 class ThroughputSettingsGetResults(ARMResourceProperties):

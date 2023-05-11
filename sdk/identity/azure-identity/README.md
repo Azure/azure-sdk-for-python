@@ -70,9 +70,9 @@ The Azure Identity library focuses on OAuth authentication with Azure AD. It off
 1. **Environment** - `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables "environment variables") and use it to authenticate.
 1. **Workload Identity** - If the application is deployed to Azure Kubernetes Service with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
 1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
-1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd auth login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Azure CLI** - If a user has signed in via the Azure CLI `az login` command, `DefaultAzureCredential` will authenticate as that user.
 1. **Azure PowerShell** - If a user has signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate as that user.
+1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd auth login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This credential type is disabled by default.
 
 #### Note about `VisualStudioCodeCredential`
@@ -255,8 +255,6 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`PowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
 |[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
 
-> __Note:__ `AzureDeveloperCliCredential` is in beta and its name may change before the stable release.
-
 ## Environment variables
 
 [DefaultAzureCredential][default_cred_ref] and [EnvironmentCredential][environment_cred_ref] can be configured with environment variables. Each type of authentication requires values for specific
@@ -288,6 +286,16 @@ variables:
 |`AZURE_PASSWORD`|that user's password
 
 Configuration is attempted in the above order. For example, if values for a client secret and certificate are both present, the client secret will be used.
+
+## Token caching
+
+Token caching is a feature provided by the Azure Identity library that allows apps to:
+- Cache tokens in memory (default) or on disk (opt-in).
+- Improve resilience and performance.
+- Reduce the number of requests made to Azure AD to obtain access tokens.
+
+The Azure Identity library offers both in-memory and persistent disk caching. For more details, see the [token caching documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md).
+
 
 ## Troubleshooting
 

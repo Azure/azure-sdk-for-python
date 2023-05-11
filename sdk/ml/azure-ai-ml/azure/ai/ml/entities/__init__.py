@@ -16,6 +16,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
+from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
@@ -65,6 +66,10 @@ from ._deployment.online_deployment import (
     ManagedOnlineDeployment,
     OnlineDeployment,
 )
+from ._deployment.data_collector import DataCollector
+from ._deployment.model_batch_deployment import ModelBatchDeployment
+from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
+from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings, OnlineScaleSettings
 from ._endpoint.batch_endpoint import BatchEndpoint
@@ -134,6 +139,7 @@ from ._workspace.networking import (
     ServiceTagDestination,
     PrivateEndpointDestination,
     IsolationMode,
+    ManagedNetworkProvisionStatus,
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
@@ -149,9 +155,32 @@ from ._assets._artifacts._package.model_configuration import ModelConfiguration
 from ._assets._artifacts._package.base_environment_source import BaseEnvironment
 from ._assets._artifacts._package.model_package import (
     ModelPackage,
+    ModelPackageInput,
     PackageInputPathId,
     PackageInputPathUrl,
     PackageInputPathVersion,
+)
+from ._monitoring.alert_notification import AlertNotification
+from ._monitoring.definition import MonitorDefinition
+from ._monitoring.input_data import MonitorInputData
+from ._monitoring.schedule import MonitorSchedule
+from ._monitoring.signals import (
+    DataDriftSignal,
+    DataQualitySignal,
+    PredictionDriftSignal,
+    FeatureAttributionDriftSignal,
+    CustomMonitoringSignal,
+    TargetDataset,
+    MonitorFeatureFilter,
+    DataSegment,
+)
+from ._monitoring.target import MonitoringTarget
+from ._monitoring.thresholds import (
+    DataDriftMetricThreshold,
+    DataQualityMetricThreshold,
+    PredictionDriftMetricThreshold,
+    FeatureAttributionDriftMetricThreshold,
+    CustomMonitoringMetricThreshold,
 )
 
 
@@ -166,19 +195,15 @@ from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
-from ._feature_set.feature_set_backfill_response import FeatureSetBackfillResponse
-from ._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
+from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
+from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
 from ._notification.notification import Notification
 
-# TODO: enable in PuP
-# from ._job.import_job import ImportJob
-# from ._component.import_component import ImportComponent
+from ._data_import.schedule import ImportDataSchedule
 
 __all__ = [
-    # "ImportJob",
-    # "ImportComponent",
     "Resource",
     "Job",
     "CommandJob",
@@ -227,6 +252,8 @@ __all__ = [
     "Environment",
     "BuildContext",
     "Model",
+    "ModelBatchDeployment",
+    "ModelBatchDeploymentSettings",
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
@@ -242,6 +269,7 @@ __all__ = [
     "ServiceTagDestination",
     "PrivateEndpointDestination",
     "IsolationMode",
+    "ManagedNetworkProvisionStatus",
     "EndpointConnection",
     "CustomerManagedKey",
     "DataImport",
@@ -259,6 +287,7 @@ __all__ = [
     "NetworkSettings",
     "Component",
     "PipelineJobSettings",
+    "PipelineComponentBatchDeployment",
     "ParallelComponent",
     "CommandComponent",
     "SparkComponent",
@@ -284,6 +313,7 @@ __all__ = [
     "RecurrenceTrigger",
     "RecurrencePattern",
     "JobSchedule",
+    "ImportDataSchedule",
     "Schedule",
     "ComputePowerAction",
     "ComputeSchedules",
@@ -323,8 +353,8 @@ __all__ = [
     "FeatureStore",
     "MaterializationStore",
     "Notification",
-    "FeatureSetBackfillResponse",
-    "FeatureSetMaterializationResponse",
+    "FeatureSetBackfillMetadata",
+    "FeatureSetMaterializationMetadata",
     # builders
     "Command",
     "Parallel",
@@ -346,6 +376,7 @@ __all__ = [
     "EndpointAuthKeys",
     "EndpointAuthToken",
     "ModelPackage",
+    "ModelPackageInput",
     "AzureMLOnlineInferencingServer",
     "AzureMLBatchInferencingServer",
     "TritonInferencingServer",
@@ -357,4 +388,24 @@ __all__ = [
     "PackageInputPathVersion",
     "Route",
     "AccessKeyConfiguration",
+    "AlertNotification",
+    "MonitorDefinition",
+    "MonitorInputData",
+    "MonitorSchedule",
+    "DataDriftSignal",
+    "DataQualitySignal",
+    "PredictionDriftSignal",
+    "FeatureAttributionDriftSignal",
+    "CustomMonitoringSignal",
+    "TargetDataset",
+    "MonitorFeatureFilter",
+    "DataSegment",
+    "MonitoringTarget",
+    "DataDriftMetricThreshold",
+    "DataQualityMetricThreshold",
+    "PredictionDriftMetricThreshold",
+    "FeatureAttributionDriftMetricThreshold",
+    "CustomMonitoringMetricThreshold",
+    "DataCollector",
+    "IntellectualProperty",
 ]

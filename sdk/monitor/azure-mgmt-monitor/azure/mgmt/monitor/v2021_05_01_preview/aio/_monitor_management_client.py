@@ -34,23 +34,23 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar autoscale_settings: AutoscaleSettingsOperations operations
     :vartype autoscale_settings:
-     $(python-base-namespace).v2021_05_01_preview.aio.operations.AutoscaleSettingsOperations
+     azure.mgmt.monitor.v2021_05_01_preview.aio.operations.AutoscaleSettingsOperations
     :ivar predictive_metric: PredictiveMetricOperations operations
     :vartype predictive_metric:
-     $(python-base-namespace).v2021_05_01_preview.aio.operations.PredictiveMetricOperations
+     azure.mgmt.monitor.v2021_05_01_preview.aio.operations.PredictiveMetricOperations
     :ivar diagnostic_settings: DiagnosticSettingsOperations operations
     :vartype diagnostic_settings:
-     $(python-base-namespace).v2021_05_01_preview.aio.operations.DiagnosticSettingsOperations
+     azure.mgmt.monitor.v2021_05_01_preview.aio.operations.DiagnosticSettingsOperations
     :ivar diagnostic_settings_category: DiagnosticSettingsCategoryOperations operations
     :vartype diagnostic_settings_category:
-     $(python-base-namespace).v2021_05_01_preview.aio.operations.DiagnosticSettingsCategoryOperations
+     azure.mgmt.monitor.v2021_05_01_preview.aio.operations.DiagnosticSettingsCategoryOperations
     :ivar management_group_diagnostic_settings: ManagementGroupDiagnosticSettingsOperations
      operations
     :vartype management_group_diagnostic_settings:
-     $(python-base-namespace).v2021_05_01_preview.aio.operations.ManagementGroupDiagnosticSettingsOperations
+     azure.mgmt.monitor.v2021_05_01_preview.aio.operations.ManagementGroupDiagnosticSettingsOperations
     :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettingsOperations operations
     :vartype subscription_diagnostic_settings:
-     $(python-base-namespace).v2021_05_01_preview.aio.operations.SubscriptionDiagnosticSettingsOperations
+     azure.mgmt.monitor.v2021_05_01_preview.aio.operations.SubscriptionDiagnosticSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.

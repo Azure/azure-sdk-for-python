@@ -97,7 +97,7 @@ class RoomsSample(object):
         except HttpResponseError as ex:
             print(ex)
 
-    def upsert_participants(self, room_id):
+    def add_or_update_participants(self, room_id):
         self.participant_1.role = ParticipantRole.ATTENDEE
         participants = [
             self.participant_1, # Update participant_1 role from Presenter to Attendee
@@ -105,7 +105,7 @@ class RoomsSample(object):
             ]
 
         try:
-            self.rooms_client.upsert_participants(room_id=room_id, participants=participants)
+            self.rooms_client.add_or_update_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
@@ -120,7 +120,7 @@ class RoomsSample(object):
         participants = [self.participant_1.communication_identifier]
 
         try:
-            self.rooms_client.remove_participants(room_id=room_id, communication_identifiers=participants)
+            self.rooms_client.remove_participants(room_id=room_id, participants=participants)
         except HttpResponseError as ex:
             print(ex)
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     if len(sample.rooms) > 0:
         sample.get_room(room_id=sample.rooms[0] )
         sample.update_single_room(room_id=sample.rooms[0])
-        sample.upsert_participants(room_id=sample.rooms[0])
+        sample.add_or_update_participants(room_id=sample.rooms[0])
         sample.list_participants(room_id=sample.rooms[0])
         sample.remove_participants(room_id=sample.rooms[0])
         sample.get_room(room_id=sample.rooms[0])

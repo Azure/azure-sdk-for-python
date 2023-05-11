@@ -21,6 +21,7 @@ from azure.ai.ml.entities import (
     DiagnoseWorkspaceParameters,
     Workspace,
     WorkspaceKeys,
+    ManagedNetworkProvisionStatus,
 )
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -126,21 +127,29 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @distributed_trace
     def begin_provision_network(
         self,
+        *,
         workspace_name: Optional[str] = None,
         include_spark: Optional[bool] = False,
-    ) -> LROPoller:
+    ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
 
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
         :return: An instance of LROPoller.
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """
         workspace_name = self._check_workspace_name(workspace_name)
-        return self._provision_network_operation.begin_provision_managed_network(
-            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=include_spark)
+
+        poller = self._provision_network_operation.begin_provision_managed_network(
+            self._resource_group_name,
+            workspace_name,
+            ManagedNetworkProvisionOptions(include_spark=include_spark),
+            polling=True,
+            cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
         )
+        module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
+        return poller
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -178,8 +187,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(
-        self, name: str, *, delete_dependent_resources: bool, force_to_purge: bool = False, **kwargs: Dict
-    ) -> LROPoller:
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         """Delete a workspace.
 
         :param name: Name of the workspace
@@ -188,14 +197,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
-        :param force_to_purge: Whether to purge the workspace permanently,
-            if set to True this workspace won't be able to recover.
-        :type force_to_purge: true
+        :param permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
+            Set this flag to override the soft-delete behavior and permanently delete your workspace.
+        :type permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         return super().begin_delete(
-            name, delete_dependent_resources=delete_dependent_resources, force_to_purge=force_to_purge, **kwargs
+            name, delete_dependent_resources=delete_dependent_resources, permanently_delete=permanently_delete, **kwargs
         )
 
     @distributed_trace

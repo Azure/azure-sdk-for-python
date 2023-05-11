@@ -43,6 +43,7 @@ class WorkspaceConnectionSchema(PathAwareSchema):
         required=True,
     )
     target = fields.Str()
+    expiryTime = fields.Str()
     credentials = UnionField(
         [
             NestedField(PatTokenConfigurationSchema),

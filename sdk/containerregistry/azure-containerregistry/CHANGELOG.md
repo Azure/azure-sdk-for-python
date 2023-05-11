@@ -1,5 +1,16 @@
 # Release History
 
+## 1.1.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Changed the digest validation exception type to `DigestValidationError` in `set/get manifest` and `upload/download blob` operations.
+
 ## 1.1.0b4 (2023-04-25)
 
 ### Features Added

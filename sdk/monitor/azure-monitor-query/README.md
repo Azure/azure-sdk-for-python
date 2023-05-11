@@ -521,19 +521,7 @@ for metric in response.metrics:
 
 ## Troubleshooting
 
-Enable the `azure.monitor.query` logger to collect traces from the library.
-
-### General
-
-Monitor Query client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
-
-### Logging
-
-This library uses the standard [logging][python_logging] library for logging. Basic information about HTTP sessions, such as URLs and headers, is logged at the `INFO` level.
-
-### Optional configuration
-
-Optional keyword arguments can be passed in at the client and per-operation level. The `azure-core` [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
+See our [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
 
 ## Next steps
 
@@ -581,6 +569,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-query-ref-docs]: https://aka.ms/azsdk/python/monitor-query/docs
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/samples
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/TROUBLESHOOTING.md
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

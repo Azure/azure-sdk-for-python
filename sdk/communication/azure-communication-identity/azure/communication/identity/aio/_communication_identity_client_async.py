@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureKeyCredential
 
-from .._generated.aio._communication_identity_client\
+from .._generated.aio._client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._shared.models import CommunicationUserIdentifier
@@ -95,7 +95,7 @@ class CommunicationIdentityClient:
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return await self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
+            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
             **kwargs)
 
     @distributed_trace_async
@@ -123,8 +123,8 @@ class CommunicationIdentityClient:
 
         return await self._identity_service_client.communication_identity.create(
             body=request_body,
-            cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
-                AccessToken(u['accessToken']['token'], u['accessToken']['expiresOn'])),
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
+                AccessToken(u.access_token.token, u.access_token.expires_on)),
             **kwargs)
 
     @distributed_trace_async
@@ -174,7 +174,7 @@ class CommunicationIdentityClient:
         return await self._identity_service_client.communication_identity.issue_access_token(
             user.properties['id'],
             body=request_body,
-            cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
+            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
 
     @distributed_trace_async
@@ -223,7 +223,7 @@ class CommunicationIdentityClient:
         }
         return await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
             body=request_body,
-            cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
+            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationIdentityClient":
