@@ -3,6 +3,7 @@
 ## 1.7.0 (Unreleased)
 
 ### Features Added
+- Added data import schedule. The class added is `ImportDataSchedule`.
 
 ### Bugs Fixed
 
@@ -23,6 +24,7 @@
 - Added experimental `distribution: ray` support in command job.
 - Added support to enable data isolation feature at workspace creation stage.
 - Added auto_delete_setting support for asset version in data import job.
+- Added support to enable set workspace connection secret expiry time.
 
 ### Bugs Fixed
 

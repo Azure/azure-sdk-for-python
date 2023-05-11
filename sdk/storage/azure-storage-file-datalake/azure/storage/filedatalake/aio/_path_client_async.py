@@ -22,7 +22,8 @@ from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import ContentSettings, FileProperties
 
 
@@ -54,7 +55,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             self, account_url: str,
             file_system_name: str,
             path_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -87,6 +88,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
     async def __aexit__(self, *args):
         await self._blob_client.close()
+        await self._datalake_client_for_blob_operation.close()
         await super(PathClient, self).__aexit__(*args)
 
     async def close(self):
@@ -94,7 +96,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        await self._blob_client.close()
         await self.__aexit__()
 
     async def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):

@@ -5972,8 +5972,8 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
     """Azure VM workload-specific protectable item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureVmWorkloadSAPAseSystemProtectableItem, AzureVmWorkloadSAPHanaDBInstance,
-    AzureVmWorkloadSAPHanaDatabaseProtectableItem, AzureVmWorkloadSAPHanaHSR,
+    AzureVmWorkloadSAPHanaHSRProtectableItem, AzureVmWorkloadSAPAseSystemProtectableItem,
+    AzureVmWorkloadSAPHanaDBInstance, AzureVmWorkloadSAPHanaDatabaseProtectableItem,
     AzureVmWorkloadSAPHanaSystemProtectableItem,
     AzureVmWorkloadSQLAvailabilityGroupProtectableItem, AzureVmWorkloadSQLDatabaseProtectableItem,
     AzureVmWorkloadSQLInstanceProtectableItem
@@ -6035,10 +6035,10 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
 
     _subtype_map = {
         "protectable_item_type": {
+            "HanaHSRContainer": "AzureVmWorkloadSAPHanaHSRProtectableItem",
             "SAPAseSystem": "AzureVmWorkloadSAPAseSystemProtectableItem",
             "SAPHanaDBInstance": "AzureVmWorkloadSAPHanaDBInstance",
             "SAPHanaDatabase": "AzureVmWorkloadSAPHanaDatabaseProtectableItem",
-            "SAPHanaHSR": "AzureVmWorkloadSAPHanaHSR",
             "SAPHanaSystem": "AzureVmWorkloadSAPHanaSystemProtectableItem",
             "SQLAvailabilityGroupContainer": "AzureVmWorkloadSQLAvailabilityGroupProtectableItem",
             "SQLDataBase": "AzureVmWorkloadSQLDatabaseProtectableItem",
@@ -8060,8 +8060,10 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         self.protected_item_type: str = "AzureVmWorkloadSAPHanaDBInstance"
 
 
-class AzureVmWorkloadSAPHanaHSR(AzureVmWorkloadProtectableItem):  # pylint: disable=too-many-instance-attributes
-    """Azure VM workload-specific protectable item representing SAP HANA Dbinstance.
+class AzureVmWorkloadSAPHanaHSRProtectableItem(
+    AzureVmWorkloadProtectableItem
+):  # pylint: disable=too-many-instance-attributes
+    """Azure VM workload-specific protectable item representing HANA HSR.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8181,7 +8183,7 @@ class AzureVmWorkloadSAPHanaHSR(AzureVmWorkloadProtectableItem):  # pylint: disa
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type: str = "SAPHanaHSR"
+        self.protectable_item_type: str = "HanaHSRContainer"
 
 
 class AzureVmWorkloadSAPHanaSystemProtectableItem(
@@ -17942,8 +17944,8 @@ class OperationWorkerResponse(_serialization.Model):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-     "HttpVersionNotSupported".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "HttpVersionNotSupported", and "Continue".
     :vartype status_code: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
     :ivar headers: HTTP headers associated with this operation.
@@ -17972,8 +17974,8 @@ class OperationWorkerResponse(_serialization.Model):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-         "HttpVersionNotSupported".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+         "HttpVersionNotSupported", and "Continue".
         :paramtype status_code: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
         :keyword headers: HTTP headers associated with this operation.
@@ -17996,8 +17998,8 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-     "HttpVersionNotSupported".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "HttpVersionNotSupported", and "Continue".
     :vartype status_code: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
     :ivar headers: HTTP headers associated with this operation.
@@ -18031,8 +18033,8 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-         "HttpVersionNotSupported".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+         "HttpVersionNotSupported", and "Continue".
         :paramtype status_code: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
         :keyword headers: HTTP headers associated with this operation.
@@ -18691,6 +18693,9 @@ class PrivateEndpointConnection(_serialization.Model):
      connection.
     :vartype private_endpoint:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpoint
+    :ivar group_ids: Group Ids for the Private Endpoint.
+    :vartype group_ids: list[str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.VaultSubResourceType]
     :ivar private_link_service_connection_state: Gets or sets private link service connection
      state.
     :vartype private_link_service_connection_state:
@@ -18700,6 +18705,7 @@ class PrivateEndpointConnection(_serialization.Model):
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpoint"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionState",
@@ -18711,6 +18717,7 @@ class PrivateEndpointConnection(_serialization.Model):
         *,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        group_ids: Optional[List[Union[str, "_models.VaultSubResourceType"]]] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs: Any
     ) -> None:
@@ -18723,6 +18730,9 @@ class PrivateEndpointConnection(_serialization.Model):
          connection.
         :paramtype private_endpoint:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpoint
+        :keyword group_ids: Group Ids for the Private Endpoint.
+        :paramtype group_ids: list[str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.VaultSubResourceType]
         :keyword private_link_service_connection_state: Gets or sets private link service connection
          state.
         :paramtype private_link_service_connection_state:
@@ -18731,6 +18741,7 @@ class PrivateEndpointConnection(_serialization.Model):
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.private_endpoint = private_endpoint
+        self.group_ids = group_ids
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
@@ -18806,14 +18817,14 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpointConnectionStatus
     :ivar description: Gets or sets description.
     :vartype description: str
-    :ivar action_required: Gets or sets actions required.
-    :vartype action_required: str
+    :ivar actions_required: Gets or sets actions required.
+    :vartype actions_required: str
     """
 
     _attribute_map = {
         "status": {"key": "status", "type": "str"},
         "description": {"key": "description", "type": "str"},
-        "action_required": {"key": "actionRequired", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
@@ -18821,7 +18832,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         *,
         status: Optional[Union[str, "_models.PrivateEndpointConnectionStatus"]] = None,
         description: Optional[str] = None,
-        action_required: Optional[str] = None,
+        actions_required: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18831,13 +18842,13 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpointConnectionStatus
         :keyword description: Gets or sets description.
         :paramtype description: str
-        :keyword action_required: Gets or sets actions required.
-        :paramtype action_required: str
+        :keyword actions_required: Gets or sets actions required.
+        :paramtype actions_required: str
         """
         super().__init__(**kwargs)
         self.status = status
         self.description = description
-        self.action_required = action_required
+        self.actions_required = actions_required
 
 
 class ProtectableContainerResource(Resource):

@@ -8,7 +8,7 @@ import os
 import json
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -26,11 +26,12 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
     read_feature_set_metadata_contents,
     read_remote_feature_set_spec_metadata_contents,
+    _datetime_to_str,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
@@ -41,9 +42,10 @@ from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import Feat
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class FeatureSetOperations(_ScopeDependentOperations):
@@ -71,7 +73,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    # @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -116,7 +119,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:
         """Get the specified FeatureSet asset.
 
@@ -135,7 +139,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, featureset: FeatureSet, **kwargs: Dict) -> LROPoller[FeatureSet]:
         """Create or update FeatureSet
 
@@ -166,7 +171,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
             cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(deserialized),
         )
 
-    # @monitor_with_activity(logger, "FeatureSet.BeginBackFill", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.BeginBackFill", ActivityType.PUBLICAPI)
     def begin_backfill(
         self,
         *,
@@ -224,14 +230,15 @@ class FeatureSetOperations(_ScopeDependentOperations):
             cls=lambda response, deserialized, headers: FeatureSetBackfillMetadata._from_rest_object(deserialized),
         )
 
-    # @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
     def list_materialization_operations(
         self,
         name: str,
         version: str,
         *,
-        feature_window_start_time: Optional[str] = None,
-        feature_window_end_time: Optional[str] = None,
+        feature_window_start_time: Optional[Union[str, datetime]] = None,
+        feature_window_end_time: Optional[Union[str, datetime]] = None,
         filters: Optional[str] = None,
         **kwargs: Dict,
     ) -> ItemPaged[FeatureSetMaterializationMetadata]:
@@ -242,15 +249,16 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :param version: Feature set version.
         :type version: str
         :param feature_window_start_time: Start time of the feature window to filter materialization jobs.
-        :type feature_window_start_time: str
+        :type feature_window_start_time: Union[str, datetime]
         :param feature_window_end_time: End time of the feature window to filter materialization jobs.
-        :type feature_window_end_time: str
+        :type feature_window_end_time: Union[str, datetime]
         :param filters: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
         :type filters: str
         :return: An iterator like instance of ~azure.ai.ml.entities.FeatureSetMaterializationMetadata objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationMetadata]
         """
-
+        feature_window_start_time = _datetime_to_str(feature_window_start_time) if feature_window_start_time else None
+        feature_window_end_time = _datetime_to_str(feature_window_end_time) if feature_window_end_time else None
         materialization_jobs = self._operation.list_materialization_jobs(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -264,7 +272,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
         return materialization_jobs
 
-    # @monitor_with_activity(logger, "FeatureSet.ListFeatures", ActivityType.INTERNALCALL)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.ListFeatures", ActivityType.PUBLICAPI)
     def list_features(
         self,
         feature_set_name: str,
@@ -303,7 +312,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
         return features
 
-    # @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.INTERNALCALL)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
     def get_feature(self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict) -> "Feature":
         """Get Feature
 
@@ -329,7 +339,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         return Feature._from_rest_object(feature)
 
-    # @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -354,7 +365,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -417,5 +429,5 @@ class FeatureSetOperations(_ScopeDependentOperations):
             )
 
         featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
-        featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec.yaml")
+        featureset_spec_yaml_path = Path(featureset_spec_path, "FeatureSetSpec.yaml")
         return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)

@@ -37,12 +37,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
     2. WorkloadIdentityCredential if environment variable configuration is set by the Azure workload
        identity webhook.
     3. An Azure managed identity. See :class:`~azure.identity.ManagedIdentityCredential` for more details.
-    4. The identity currently logged in to the Azure Developer CLI.
-    5. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
+    4. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    6. The identity currently logged in to the Azure CLI.
-    7. The identity currently logged in to Azure PowerShell.
+    5. The identity currently logged in to the Azure CLI.
+    6. The identity currently logged in to Azure PowerShell.
+    7. The identity currently logged in to the Azure Developer CLI.
 
     This default behavior is configurable with keyword arguments.
 
@@ -82,7 +82,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
         settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
         Directory work or school accounts.
-    :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
+    :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
 
     .. admonition:: Example:
@@ -129,7 +129,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
-        developer_credential_timeout = kwargs.pop("developer_credential_timeout", 10)
+        process_timeout = kwargs.pop("process_timeout", 10)
 
         exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
@@ -160,8 +160,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     **kwargs
                 )
             )
-        if not exclude_developer_cli_credential:
-            credentials.append(AzureDeveloperCliCredential(process_timeout=developer_credential_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -174,9 +172,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
+        if not exclude_developer_cli_credential:
+            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
                 credentials.append(
