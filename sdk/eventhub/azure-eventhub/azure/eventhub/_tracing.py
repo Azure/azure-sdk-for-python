@@ -59,7 +59,6 @@ class TraceAttributes:
     TRACE_MESSAGING_OPERATION_ATTRIBUTE = "messaging.operation"
     TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE = "messaging.batch.message_count"
 
-    LEGACY_TRACE_COMPONENT_ATTRIBUTE = "component"
     LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE = "message_bus.destination"
     LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE = "peer.address"
 
@@ -178,8 +177,8 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
     links = []
     try:
         for event in trace_events:
+            headers = {}
             if event.properties:
-                headers = {}
                 traceparent = (event.properties.get(TRACE_PARENT_PROPERTY, b"") or
                                event.properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
                 if hasattr(traceparent, "decode"):
@@ -193,9 +192,9 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
                 if tracestate:
                     headers["tracestate"] = tracestate
 
-                enqueued_time = event.system_properties.get(PROP_TIMESTAMP)
-                attributes = {'enqueuedTime': enqueued_time} if enqueued_time else None
-                links.append(Link(headers, attributes=attributes))
+            enqueued_time = event.system_properties.get(PROP_TIMESTAMP)
+            attributes = {'enqueuedTime': enqueued_time} if enqueued_time else None
+            links.append(Link(headers, attributes=attributes))
     except AttributeError:
         pass
     return links
@@ -239,7 +238,7 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
                 headers["tracestate"] = tracestate
     except AttributeError:
         return None
-    return Link(headers) if headers else None
+    return Link(headers)
 
 
 def add_span_attributes(
@@ -259,7 +258,6 @@ def add_span_attributes(
 
     if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.PROCESS):
         # Maintain legacy attributes for backwards compatibility.
-        span.add_attribute(TraceAttributes.LEGACY_TRACE_COMPONENT_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
         if client:
             span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access
             span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)  # pylint: disable=protected-access

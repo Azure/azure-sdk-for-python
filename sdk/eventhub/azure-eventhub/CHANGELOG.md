@@ -20,6 +20,7 @@
      - `messaging.system` - messaging system (i.e., `eventhubs`)
      - `messaging.operation` - type of operation (i.e., `publish`, `receive`, or `process`)
      - `messaging.batch.message_count` - number of messages sent, received, or processed (if more than one)
+   - The `component` attribute was removed from all spans.
    - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
    - Message application properties will now contain values for `traceparent` (and `tracestate` if applicable)
 
