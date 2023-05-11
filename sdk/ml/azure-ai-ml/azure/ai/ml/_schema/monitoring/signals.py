@@ -52,7 +52,7 @@ class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
 
 class TargetDatasetSchema(metaclass=PatchedSchemaMeta):
     dataset = NestedField(MonitorInputDataSchema)
-    lookback_period = fields.Int()
+    data_window_size = fields.Int()
 
     @post_load
     def make(self, data, **kwargs):

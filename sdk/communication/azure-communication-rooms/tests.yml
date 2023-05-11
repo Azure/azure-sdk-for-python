@@ -22,4 +22,7 @@ stages:
       Clouds: Public,Int
       TestResourceDirectories:
         - communication/test-resources/
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
 

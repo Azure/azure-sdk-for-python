@@ -1394,7 +1394,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace
     def list_handles(self, **kwargs):
-        # type: (Any) -> AsyncItemPaged
+        # type: (Any) -> AsyncItemPaged[Handle]
         """Lists handles for file.
 
         :keyword int timeout:

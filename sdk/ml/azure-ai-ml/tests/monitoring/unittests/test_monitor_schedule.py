@@ -53,6 +53,7 @@ class TestMonitorSchedule:
 
         validate_to_from_rest_translation(json_path, yaml_path)
 
+    @pytest.mark.skip(reason="model performance not supported in PuP")
     def test_model_performance_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/model_performance_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/model_performance.yaml"
@@ -64,3 +65,21 @@ class TestMonitorSchedule:
         yaml_path = "tests/test_configs/monitoring/yaml_configs/custom.yaml"
 
         validate_to_from_rest_translation(json_path, yaml_path)
+
+    def test_out_of_box_schedule_creation(self):
+        json_path = "tests/test_configs/monitoring/rest_json_configs/out_of_box_rest.json"
+        yaml_path = "tests/test_configs/monitoring/yaml_configs/out_of_the_box.yaml"
+
+        with open(json_path, "r") as f:
+            rest_out_of_box_schedule = json.load(f)
+
+        monitor_schedule = load_schedule(yaml_path)
+
+        monitor_schedule._create_default_monitor_definition(
+            "input_arm_id",
+            "uri_folder",
+            "output_arm_id",
+            "uri_folder",
+        )
+
+        assert monitor_schedule._to_rest_object().serialize() == rest_out_of_box_schedule
