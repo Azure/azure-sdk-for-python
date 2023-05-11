@@ -22,6 +22,7 @@ SUPPORTED_API_VERSIONS = [
     "2021-07-01"
 ]
 DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
+MAX_MANIFEST_SIZE = 4 * 1024 * 1024
 
 # The default audience used for all clouds when audience is not set
 DEFAULT_AUDIENCE = "https://containerregistry.azure.net"

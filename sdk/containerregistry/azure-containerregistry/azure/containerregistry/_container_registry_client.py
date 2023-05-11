@@ -36,6 +36,7 @@ from ._helpers import (
     SUPPORTED_MANIFEST_MEDIA_TYPES,
     DEFAULT_AUDIENCE,
     DEFAULT_CHUNK_SIZE,
+    MAX_MANIFEST_SIZE,
 )
 from ._models import (
     RepositoryProperties,
@@ -932,6 +933,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ~azure.containerregistry.DigestValidationError:
             If the content of retrieved manifest digest does not match the requested digest, or
             the server-computed digest does not match the client-computed digest when tag is passing.
+        :raises ValueError: If the manifest size is bigger than 4MB.
         """
         response = cast(
             PipelineResponse,
@@ -943,6 +945,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
         )
+        if response.http_response.headers['Content-Length'] > MAX_MANIFEST_SIZE:
+            raise ValueError("Manifest size is bigger than 4MB.")
         media_type = response.http_response.headers['Content-Type']
         manifest_bytes = response.http_response.read()
         manifest_json = response.http_response.json()
