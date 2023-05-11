@@ -39,7 +39,7 @@ from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
-DeploymentType = TypeVar("DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment])
+DeploymentType = TypeVar("DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment])
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
@@ -76,7 +76,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
-        deployment: Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment],
+        deployment: DeploymentType,
         *,
         skip_script_validation: bool = False,
         **kwargs,
