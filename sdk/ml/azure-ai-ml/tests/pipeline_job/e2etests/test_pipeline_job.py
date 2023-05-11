@@ -5,19 +5,11 @@ from typing import Any, Callable, Dict
 import pydash
 import pytest
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import (
-    _PYTEST_TIMEOUT_METHOD,
-    assert_job_cancel,
-    sleep_if_live,
-    wait_until_done,
-)
+from devtools_testutils import AzureRecordedTestCase, is_live, is_live_and_not_recording
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_singularity_id_for_resource,
-)
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -36,12 +28,7 @@ from .._util import (
 
 
 def assert_job_input_output_types(job: PipelineJob):
-    from azure.ai.ml.entities._job.pipeline._io import (
-        NodeInput,
-        NodeOutput,
-        PipelineInput,
-        PipelineOutput,
-    )
+    from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput, PipelineOutput
 
     for _, input in job.inputs.items():
         assert isinstance(input, PipelineInput)
@@ -1773,8 +1760,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         pipeline.jobs["compare_2"].outputs.best_model.version = random_version
         pipeline.jobs["compare_2"].outputs.best_result.version = random_version
 
+        # force rerun only when is live and not recording.
+        if not is_live_and_not_recording():
+            pipeline.settings.force_rerun = False
+
         pipeline_job = client.jobs.create_or_update(pipeline)
-        client.jobs.stream(pipeline_job.name)
+        # skip stream in recording mode
+        if is_live():
+            client.jobs.stream(pipeline_job.name)
 
         def check_name_version_and_register_succeed(output, asset_name):
             assert output.name == asset_name
