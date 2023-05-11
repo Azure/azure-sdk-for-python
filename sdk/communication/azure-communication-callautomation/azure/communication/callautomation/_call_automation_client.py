@@ -126,6 +126,7 @@ class CallAutomationClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
+    @distributed_trace
     def get_call_connection(
         self,
         call_connection_id: str,

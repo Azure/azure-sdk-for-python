@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, Dict
 from urllib.parse import urlparse
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -128,6 +129,7 @@ class CallAutomationClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
+    @distributed_trace
     def get_call_connection(
         self,
         call_connection_id: str,
