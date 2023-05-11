@@ -1,6 +1,6 @@
 # Release History
 
-## 4.4.0b1 (2023-05-10)
+## 4.4.0b1 (2023-05-11)
 
 ### Bugs Fixed
 - Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
