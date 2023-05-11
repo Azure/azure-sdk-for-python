@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+import os.path
 from pathlib import Path
 
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
@@ -15,6 +16,8 @@ class MdcConfigResolver(object):
         self.environment_variables = None
         self.volumes = None
         self.mdc_config = None
+        self.config_path = "/etc/mdc-config.json"
+        self.local_config_name = "mdc-config.json"
         self._construct(data_collector)
 
     def _construct(self, data_collector: DataCollector) -> None:
@@ -42,14 +45,12 @@ class MdcConfigResolver(object):
         if not self.mdc_config:
             return
 
-        mdc_setting_path = str(Path(directory_path, "mdc_config.json").resolve())
+        mdc_setting_path = str(Path(directory_path, self.local_config_name).resolve())
         with open(mdc_setting_path, "w") as f:
             d = json.dumps(self.mdc_config)
             f.write(f"{d}")
 
-        self.environment_variables = {"AZUREML_MDC_CONFIG_PATH": "/etc/mdc-config.json"}
-        self.volumes = {
-            f"{directory_path}/mdc_config.json:/etc:z": {
-                f"{directory_path}/mdc_config.json": {"bind": "/etc/mdc-config.json"}
-            }
-        }
+        self.environment_variables = {"AZUREML_MDC_CONFIG_PATH": self.config_path}
+        local_path = os.path.join(directory_path, self.local_config_name)
+
+        self.volumes = {f"{local_path}:{self.config_path}:z": {local_path: {"bind": self.config_path}}}
