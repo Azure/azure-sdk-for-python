@@ -19,11 +19,11 @@ flowchart LR;
     classDef interactive fill:#A5A5A5, stroke:#828282;
 
     %% Add API ref links to credential type boxes
-    click A "https://learn.microsoft.com/python/api/azure-identity/azure.identity.environmentcredential?view=azure-python" _blank;
-    click B "https://learn.microsoft.com/python/api/azure-identity/azure.identity.workloadidentitycredential?view=azure-python" _blank;
-    click C "https://learn.microsoft.com/python/api/azure-identity/azure.identity.managedidentitycredential?view=azure-python" _blank;
-    click D "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azureclicredential?view=azure-python" _blank;
-    click E "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azurepowershellcredential?view=azure-python" _blank;
-    click F "https://learn.microsoft.com/python/api/azure-identity/azure.identity.azuredeveloperclicredential?view=azure-python" _blank;
-    click G "https://learn.microsoft.com/python/api/azure-identity/azure.identity.interactivebrowsercredential?view=azure-python" _blank;
+    click A "https://aka.ms/azsdk/python/identity/environmentcredential" _blank;
+    click B "https://aka.ms/azsdk/python/identity/workloadidentitycredential" _blank;
+    click C "https://aka.ms/azsdk/python/identity/managedidentitycredential" _blank;
+    click D "https://aka.ms/azsdk/python/identity/azclicredential" _blank;
+    click E "https://aka.ms/azsdk/python/identity/powershellcredential" _blank;
+    click F "https://aka.ms/azsdk/python/identity/azuredeveloperclicredential" _blank;
+    click G "https://aka.ms/azsdk/python/identity/interactivebrowsercredential" _blank;
 ```
