@@ -483,6 +483,9 @@ class ContinuousDtmfRecognitionToneReceived(ContinuousDtmfRecognitionToneReceive
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId or
      skype chain ID.
     :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -495,12 +498,13 @@ class ContinuousDtmfRecognitionToneReceived(ContinuousDtmfRecognitionToneReceive
         self.call_connection_id = parent.call_connection_id
         self.server_call_id = parent.server_call_id
         self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
         self.result_information = parent.result_information
         self.kind = "ContinuousDtmfRecognitionToneReceived"
 
 
 class ContinuousDtmfRecognitionToneFailed(ContinuousDtmfRecognitionToneFailedRest):
-    """Event sent when failed to start continuous Dtmf recognition.
+    """Event sent when failed to recognize continuous Dtmf tone.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -509,6 +513,9 @@ class ContinuousDtmfRecognitionToneFailed(ContinuousDtmfRecognitionToneFailedRes
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -520,6 +527,7 @@ class ContinuousDtmfRecognitionToneFailed(ContinuousDtmfRecognitionToneFailedRes
         self.call_connection_id = parent.call_connection_id
         self.server_call_id = parent.server_call_id
         self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
         self.result_information = parent.result_information
         self.kind = "ContinuousDtmfRecognitionToneFailed"
 
