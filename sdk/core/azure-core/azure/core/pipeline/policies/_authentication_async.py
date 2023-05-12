@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import asyncio
 import time
-from typing import TYPE_CHECKING, Any, Awaitable, Optional
+from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
@@ -50,7 +50,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token():
                     self._token = await await_result(self._credential.get_token, *self._scopes)
-        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+        request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
 
     async def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -63,7 +63,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         """
         async with self._lock:
             self._token = await await_result(self._credential.get_token, *scopes, **kwargs)
-        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+        request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
 
     async def send(self, request: "PipelineRequest") -> "PipelineResponse":
         """Authorize request with a bearer token and send it to the next policy
