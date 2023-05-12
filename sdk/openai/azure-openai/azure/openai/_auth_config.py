@@ -92,9 +92,10 @@ def login(
         credential = DefaultAzureCredential()
         session.auth = CredentialRefresh(credential, scopes=get_scopes(scopes))
     else:
-        # should we assume api_type azure here? or take openai default?
+        # should we assume api_type azure here? or take openai default? what if it's a token string?
         session.auth = CredentialRefresh(openai.api_key)
 
     # probably should not set session if using OAI...
+    # should we create single session or provide sesssion factory?
     openai.requestssession = session
     return session
