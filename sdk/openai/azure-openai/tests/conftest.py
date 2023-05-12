@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-
+import openai
 from devtools_testutils.sanitizers import add_header_regex_sanitizer, add_oauth_response_sanitizer
 
 
@@ -44,10 +44,11 @@ def add_sanitizers(test_proxy, environment_variables):
 
 @pytest.fixture(scope="session")
 def azure_openai_creds(environment_variables):
+    openai.api_base = environment_variables.get(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
+    openai.api_type = "azure"
+    openai.api_key = environment_variables.get(ENV_AZURE_OPENAI_KEY)
+    openai.api_version = environment_variables.get(ENV_AZURE_OPENAI_API_VERSION)
     yield {
-        "endpoint": environment_variables.get(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/"),
-        "key": environment_variables.get(ENV_AZURE_OPENAI_KEY),
-        "api_version": environment_variables.get(ENV_AZURE_OPENAI_API_VERSION),
         "completions_name": environment_variables.get(ENV_AZURE_OPENAI_COMPLETIONS_NAME),
         "chat_completions_name": environment_variables.get(ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME),
         "embeddings_name": environment_variables.get(ENV_AZURE_OPENAI_EMBEDDINGS_NAME),
