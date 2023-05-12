@@ -96,14 +96,14 @@ class BrokerProperties(_model_base.Model):
 
     :ivar lock_token: The token used to lock the event. Required.
     :vartype lock_token: str
-    :ivar delivery_attempt_count: The attempt count for deliverying the event. Required.
-    :vartype delivery_attempt_count: int
+    :ivar delivery_count: The attempt count for delivering the event. Required.
+    :vartype delivery_count: int
     """
 
     lock_token: str = rest_field(name="lockToken")
     """The token used to lock the event. Required."""
-    delivery_attempt_count: int = rest_field(name="deliveryAttemptCount")
-    """The attempt count for deliverying the event. Required."""
+    delivery_count: int = rest_field(name="deliveryCount")
+    """The attempt count for delivering the event. Required."""
 
 
 class CloudEvent(_model_base.Model):

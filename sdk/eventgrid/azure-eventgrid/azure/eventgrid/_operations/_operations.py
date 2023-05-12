@@ -35,7 +35,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_event_grid_publish_cloud_event_request(  # pylint: disable=name-too-long
+def build_event_grid_publish_cloud_event_request(
     topic_name: str, *, content: _models._models.CloudEvent, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -43,8 +43,6 @@ def build_event_grid_publish_cloud_event_request(  # pylint: disable=name-too-lo
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
@@ -58,12 +56,11 @@ def build_event_grid_publish_cloud_event_request(  # pylint: disable=name-too-lo
 
     # Construct headers
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_publish_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_publish_cloud_events_request(
     topic_name: str, *, content: List[_models._models.CloudEvent], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -71,8 +68,6 @@ def build_event_grid_publish_cloud_events_request(  # pylint: disable=name-too-l
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
@@ -86,12 +81,11 @@ def build_event_grid_publish_cloud_events_request(  # pylint: disable=name-too-l
 
     # Construct headers
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_receive_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_receive_cloud_events_request(
     topic_name: str,
     event_subscription_name: str,
     *,
@@ -127,7 +121,7 @@ def build_event_grid_receive_cloud_events_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_event_grid_acknowledge_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_acknowledge_cloud_events_request(
     topic_name: str, event_subscription_name: str, *, content: _models.AcknowledgeOptions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -156,7 +150,7 @@ def build_event_grid_acknowledge_cloud_events_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_release_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_release_cloud_events_request(
     topic_name: str, event_subscription_name: str, *, content: _models.ReleaseOptions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -185,7 +179,7 @@ def build_event_grid_release_cloud_events_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_event_grid_reject_cloud_events_request(  # pylint: disable=name-too-long
+def build_event_grid_reject_cloud_events_request(
     topic_name: str, event_subscription_name: str, *, content: _models.RejectOptions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -216,7 +210,9 @@ def build_event_grid_reject_cloud_events_request(  # pylint: disable=name-too-lo
 
 class EventGridClientOperationsMixin(EventGridClientMixinABC):
     @distributed_trace
-    def _publish_cloud_event(self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any) -> Any:
+    def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any
+    ) -> None:
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
@@ -232,8 +228,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: any
-        :rtype: any
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -250,7 +246,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         content_type: str = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/cloudevents+json; charset=utf-8")
         )
-        cls: ClsType[Any] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
 
@@ -278,18 +274,13 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(Any, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def _publish_cloud_events(self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any) -> Any:
+    def _publish_cloud_events(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
+    ) -> None:
         """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
@@ -305,8 +296,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: any
-        :rtype: any
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -323,7 +314,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         content_type: str = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/cloudevents-batch+json; charset=utf-8")
         )
-        cls: ClsType[Any] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
@@ -351,15 +342,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(Any, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})
 
     @distributed_trace
     def _receive_cloud_events(

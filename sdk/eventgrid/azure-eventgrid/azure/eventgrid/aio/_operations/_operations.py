@@ -41,7 +41,9 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class EventGridClientOperationsMixin(EventGridClientMixinABC):
     @distributed_trace_async
-    async def _publish_cloud_event(self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any) -> Any:
+    async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any
+    ) -> None:
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
@@ -57,8 +59,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: any
-        :rtype: any
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -75,7 +77,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         content_type: str = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/cloudevents+json; charset=utf-8")
         )
-        cls: ClsType[Any] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
 
@@ -103,20 +105,13 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(Any, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def _publish_cloud_events(
+    async def _publish_cloud_events(  # pylint: disable=inconsistent-return-statements
         self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
-    ) -> Any:
+    ) -> None:
         """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
@@ -132,8 +127,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: any
-        :rtype: any
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -150,7 +145,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         content_type: str = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/cloudevents-batch+json; charset=utf-8")
         )
-        cls: ClsType[Any] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
@@ -178,15 +173,8 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(Any, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})
 
     @distributed_trace_async
     async def _receive_cloud_events(
