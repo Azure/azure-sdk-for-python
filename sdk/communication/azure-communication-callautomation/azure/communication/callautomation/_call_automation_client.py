@@ -429,7 +429,6 @@ class CallAutomationClient(object):
          When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
-         ///.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
         :keyword recording_storage_type: Recording storage mode.
          ``External`` enables bring your own storage.

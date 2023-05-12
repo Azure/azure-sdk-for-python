@@ -141,12 +141,12 @@ class ChannelAffinity(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar channel: Channel number to which bitstream from a particular participant will be written.
-    :vartype channel: int
     :ivar target_participant: The identifier for the participant whose bitstream will be written to the
      channel
      represented by the channel number. Required.
     :vartype target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+    :ivar channel: Channel number to which bitstream from a particular participant will be written.
+    :vartype channel: int
     """
 
     def __init__(
