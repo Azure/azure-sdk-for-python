@@ -1186,6 +1186,9 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
      skype chain ID.
     :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1195,6 +1198,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
@@ -1204,6 +1208,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
         result_information: Optional["_models.ResultInformation"] = None,
         **kwargs: Any
     ) -> None:
@@ -1215,6 +1220,9 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
          skype chain ID.
         :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
         :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
          services.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1223,6 +1231,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
+        self.operation_context = operation_context
         self.result_information = result_information
 
 
@@ -1238,6 +1247,9 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId or
      skype chain ID.
     :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1248,6 +1260,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
     }
 
@@ -1258,6 +1271,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
         result_information: Optional["_models.ResultInformation"] = None,
         **kwargs: Any
     ) -> None:
@@ -1271,6 +1285,9 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId or
          skype chain ID.
         :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
         :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
          services.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
@@ -1280,6 +1297,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
+        self.operation_context = operation_context
         self.result_information = result_information
 
 
@@ -3348,8 +3366,6 @@ class ToneInfo(_serialization.Model):
     :ivar tone: Required. Known values are: "zero", "one", "two", "three", "four", "five", "six",
      "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
     :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
-    :ivar participant_id: The id of participant.
-    :vartype participant_id: str
     """
 
     _validation = {
@@ -3360,17 +3376,9 @@ class ToneInfo(_serialization.Model):
     _attribute_map = {
         "sequence_id": {"key": "sequenceId", "type": "int"},
         "tone": {"key": "tone", "type": "str"},
-        "participant_id": {"key": "participantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sequence_id: int,
-        tone: Union[str, "_models.DtmfTone"],
-        participant_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, sequence_id: int, tone: Union[str, "_models.DtmfTone"], **kwargs: Any) -> None:
         """
         :keyword sequence_id: The sequence id which can be used to determine if the same tone was
          played multiple times or if any tones were missed. Required.
@@ -3378,13 +3386,10 @@ class ToneInfo(_serialization.Model):
         :keyword tone: Required. Known values are: "zero", "one", "two", "three", "four", "five",
          "six", "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
         :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
-        :keyword participant_id: The id of participant.
-        :paramtype participant_id: str
         """
         super().__init__(**kwargs)
         self.sequence_id = sequence_id
         self.tone = tone
-        self.participant_id = participant_id
 
 
 class TransferCallResponse(_serialization.Model):
