@@ -5,6 +5,7 @@
 import pytest
 from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingType
 from azure.keyvault.administration.aio import KeyVaultSettingsClient
+from azure.keyvault.administration._internal import HttpChallengeCache
 from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -35,6 +36,11 @@ class TestSettings(KeyVaultTestCase):
     async def test_update_settings(self, client: KeyVaultSettingsClient, **kwargs):
         setting = await client.get_setting("AllowKeyManagementOperationsThroughARM")
         assert setting.name and setting.setting_type and setting.value
+
+        # Clear the credential's token and challenge cache to force a new auth interaction upon calling `update_setting`
+        # This tests for a bug in 4.3.0 (or the service) where `update_setting` doesn't trigger correct authentication
+        client._client._config.authentication_policy._token = None
+        HttpChallengeCache.clear()
 
         # Set value by using a bool
         opposite_value = KeyVaultSetting(
