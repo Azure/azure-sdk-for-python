@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.p2_svpn_gateways.begin_disconnect_p2_s_vpn_connections(
+    client.p2_svpn_gateways.begin_disconnect_p2_s_vpn_connections(
         resource_group_name="p2s-vpn-gateway-test",
         p2_s_vpn_gateway_name="p2svpngateway",
         request={"vpnConnectionIds": ["vpnconnId1", "vpnconnId2"]},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-09-01/examples/P2sVpnGatewaysDisconnectP2sVpnConnections.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/P2sVpnGatewaysDisconnectP2sVpnConnections.json
 if __name__ == "__main__":
     main()
