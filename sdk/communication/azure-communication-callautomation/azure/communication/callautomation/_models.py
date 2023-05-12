@@ -156,10 +156,10 @@ class ChannelAffinity(object):
         **kwargs
     ):
         """
-        :keyword participant: The identifier for the participant whose bitstream will be written to the
+        :keyword target_participant: The identifier for the participant whose bitstream will be written to the
          channel
          represented by the channel number. Required.
-        :paramtype participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :paramtype target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword channel: Channel number to which bitstream from a particular participant will be
          written.
         :paramtype channel: int
