@@ -172,8 +172,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     def __init__(
         self, credential: "AzureKeyCredential", name: str, **kwargs  # pylint: disable=unused-argument
     ) -> None:
-        super(AzureKeyCredentialPolicy, self).__init__()
-        self._credential = credential
+        super().__init__()
         if not hasattr(credential, "key"):
             raise TypeError(
                 "String is not a supported credential input type. Use an instance of AzureKeyCredential."
@@ -182,6 +181,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
             raise ValueError("name can not be None or empty")
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
+        self._credential = credential
         self._name = name
 
     def on_request(self, request):
