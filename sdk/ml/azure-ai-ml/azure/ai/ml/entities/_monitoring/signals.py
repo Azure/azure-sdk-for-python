@@ -345,7 +345,6 @@ class PredictionDriftSignal(MonitoringSignal):
                     type=production_data_type,
                 ),
                 dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                lookback_period=60,
             ),
             metric_thresholds=PredictionDriftMetricThreshold._get_default_thresholds(),
         )
