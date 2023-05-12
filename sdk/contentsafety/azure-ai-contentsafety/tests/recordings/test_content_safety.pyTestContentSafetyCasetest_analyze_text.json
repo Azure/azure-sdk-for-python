@@ -19,15 +19,15 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2022-12-30-preview,2023-04-30-preview",
-        "apim-request-id": "daae6344-a96a-4f3b-ab00-bb25a62ea3cd",
+        "apim-request-id": "017b54ad-8dd0-4fcd-9e3f-ef10aa360cfa",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.ContentSafety.Text:Analyze=1",
-        "Date": "Fri, 12 May 2023 08:58:44 GMT",
+        "Date": "Fri, 12 May 2023 09:50:47 GMT",
         "Server": "istio-envoy",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "65",
+        "x-envoy-upstream-service-time": "69",
         "x-ms-region": "Central US EUAP"
       },
       "ResponseBody": {

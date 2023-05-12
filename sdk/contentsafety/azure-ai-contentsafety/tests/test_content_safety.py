@@ -10,7 +10,7 @@ from test_data import *
 ContentSafetyPreparer = functools.partial(
     PowerShellPreparer,
     "content_safety",
-    content_safety_endpoint="https://fake_cs_resource.cognitiveservices.azure.com/",
+    content_safety_endpoint="https://fake_cs_resource.cognitiveservices.azure.com",
     content_safety_key="00000000000000000000000000000000",
 )
 
