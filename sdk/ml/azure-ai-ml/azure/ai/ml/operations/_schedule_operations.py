@@ -341,7 +341,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                             signal.baseline_dataset = default_dataset
                             # set tags for trailing dataset
                             schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
-                    elif not mdc_input_enabled and not (signal.target_dataset or signal.baseline_dataset):
+                    elif not mdc_input_enabled and not (signal.target_dataset and signal.baseline_dataset):
                         # if target or baseline dataset is absent and data collector for input is not enabled,
                         # collect exception message
                         msg = (
@@ -367,7 +367,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                             signal.baseline_dataset = default_dataset
                             # set tags for trailing window
                             schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
-                    elif not mdc_input_enabled and not (signal.target_dataset or signal.baseline_dataset):
+                    elif not mdc_input_enabled and not (signal.target_dataset and signal.baseline_dataset):
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (

@@ -1,0 +1,764 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/onlineEndpoints/iris-endpoint/deployments/my-iris-deployment?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-23b5bd2f993414a5f600444f89bf1edd-2cfaf639615f8a64-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2060d42a-0f4b-435d-94d0-50705e329d6c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11988",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215821Z:2060d42a-0f4b-435d-94d0-50705e329d6c",
+        "x-request-time": "0.081"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/onlineEndpoints/iris-endpoint/deployments/my-iris-deployment",
+        "name": "my-iris-deployment",
+        "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints/deployments",
+        "properties": {
+          "description": null,
+          "properties": {},
+          "codeConfiguration": {
+            "codeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/8fc8b417-8731-429b-92cd-9fddeddd05b6/versions/1",
+            "scoringScript": "score.py"
+          },
+          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/a200e73cc5fab08f35ce30c370edc64d",
+          "environmentVariables": {
+            "AZUREML_ENTRY_SCRIPT": "score.py",
+            "AML_APP_ROOT": "/var/azureml-app/scripts",
+            "AZUREML_MODEL_DIR": "/var/azureml-app/azureml-models/iris-model/1"
+          },
+          "scaleSettings": {
+            "scaleType": "Default"
+          },
+          "requestSettings": {
+            "maxQueueWait": "PT0S",
+            "requestTimeout": "PT5S",
+            "maxConcurrentRequestsPerInstance": 1
+          },
+          "modelMountPath": null,
+          "appInsightsEnabled": false,
+          "livenessProbe": {
+            "failureThreshold": 30,
+            "successThreshold": 1,
+            "timeout": "PT2S",
+            "period": "PT10S",
+            "initialDelay": "PT10S"
+          },
+          "readinessProbe": {
+            "failureThreshold": 30,
+            "successThreshold": 1,
+            "timeout": "PT2S",
+            "period": "PT10S",
+            "initialDelay": "PT10S"
+          },
+          "provisioningState": "Failed",
+          "instanceType": "Standard_F2s_v2",
+          "model": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/iris-model/versions/1",
+          "egressPublicNetworkAccess": "Disabled",
+          "dataCollector": null,
+          "endpointComputeType": "Managed"
+        },
+        "systemData": {
+          "createdAt": "2023-05-09T05:37:00.4351296\u002B00:00",
+          "createdBy": "Mathieu St-Louis",
+          "lastModifiedAt": "2023-05-09T05:37:00.4351345\u002B00:00"
+        },
+        "tags": {
+          "data_collector.collections.model_inputs.enabled": "true",
+          "data_collector.collections.model_inputs.data.name": "iris-endpoint-my-iris-deployment-model_inputs",
+          "data_collector.collections.model_inputs.data.path": "azureml://datastores/workspaceblobstore/paths/modelDataCollector/iris-endpoint/my-iris-deployment/model_inputs",
+          "data_collector.collections.model_inputs.data.version": "1",
+          "data_collector.collections.model_outputs.enabled": "true",
+          "data_collector.collections.model_outputs.data.name": "iris-endpoint-my-iris-deployment-model_outputs",
+          "data_collector.collections.model_outputs.data.path": "azureml://datastores/workspaceblobstore/paths/modelDataCollector/iris-endpoint/my-iris-deployment/model_outputs",
+          "data_collector.collections.model_outputs.data.version": "1"
+        },
+        "location": "centraluseuap",
+        "kind": "Managed",
+        "sku": {
+          "name": "Default",
+          "tier": "Standard"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-4b7457cf5dbaa1f3721abe40e6e17c8a-2d84a64a5083cd9e-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a4b7eead-0210-466c-85be-f0b496417353",
+        "x-ms-ratelimit-remaining-subscription-reads": "11987",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215821Z:a4b7eead-0210-466c-85be-f0b496417353",
+        "x-request-time": "0.083"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+        "name": "1",
+        "type": "Microsoft.MachineLearningServices/workspaces/data/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "autoDeleteSetting": null,
+          "dataUri": "azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/modelDataCollector/iris-endpoint/my-iris-deployment/model_inputs/",
+          "stage": null,
+          "intellectualProperty": null,
+          "dataType": "uri_folder"
+        },
+        "systemData": {
+          "createdAt": "2023-05-09T05:36:48.3286549\u002B00:00",
+          "createdBy": "Mathieu St-Louis",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-09T05:36:48.3368755\u002B00:00"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-5812431e2fe5299407712ae9d5d89257-f36002623e8913f2-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c47352d0-6840-4539-9c99-5d8da2277dbe",
+        "x-ms-ratelimit-remaining-subscription-reads": "11986",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215821Z:c47352d0-6840-4539-9c99-5d8da2277dbe",
+        "x-request-time": "0.027"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+        "name": "1",
+        "type": "Microsoft.MachineLearningServices/workspaces/data/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "autoDeleteSetting": null,
+          "dataUri": "azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/modelDataCollector/iris-endpoint/my-iris-deployment/model_inputs/",
+          "stage": null,
+          "intellectualProperty": null,
+          "dataType": "uri_folder"
+        },
+        "systemData": {
+          "createdAt": "2023-05-09T05:36:48.3286549\u002B00:00",
+          "createdBy": "Mathieu St-Louis",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-09T05:36:48.3368755\u002B00:00"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_outputs/versions/1?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-345e4460f8fdec7ceb6fe21f824fb53b-9ce2fa5a69a15316-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "96a377b6-1ddb-4f59-a0db-a89b9a611ccf",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215821Z:96a377b6-1ddb-4f59-a0db-a89b9a611ccf",
+        "x-request-time": "0.026"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_outputs/versions/1",
+        "name": "1",
+        "type": "Microsoft.MachineLearningServices/workspaces/data/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": false,
+          "autoDeleteSetting": null,
+          "dataUri": "azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/modelDataCollector/iris-endpoint/my-iris-deployment/model_outputs/",
+          "stage": null,
+          "intellectualProperty": null,
+          "dataType": "uri_folder"
+        },
+        "systemData": {
+          "createdAt": "2023-05-09T05:36:49.7955204\u002B00:00",
+          "createdBy": "Mathieu St-Louis",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-09T05:36:49.8038209\u002B00:00"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/schedules/default-momo-schedule?api-version=2023-04-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "3959",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Loan approval model monitoring setup with minimal configurations",
+          "properties": {},
+          "tags": {
+            "data-drift-signal.baselinedata.datarange.type": "Trailing",
+            "data-drift-signal.baselinedata.datarange.window_size": "P7D",
+            "data-quality-signal.baselinedata.datarange.type": "Trailing",
+            "data-quality-signal.baselinedata.datarange.window_size": "P7D",
+            "prediction-drift-signal.baselinedata.datarange.type": "Trailing",
+            "prediction-drift-signal.baselinedata.datarange.window_size": "P7D",
+            "compute.spark.resources.instance_type": "standard_e8s_v3",
+            "compute.spark.resources.runtime_version": "3.2"
+          },
+          "action": {
+            "actionType": "CreateMonitor",
+            "monitorDefinition": {
+              "computeId": "spark",
+              "monitoringTarget": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/onlineEndpoints/iris-endpoint/deployments/my-iris-deployment",
+              "signals": {
+                "data-drift-signal": {
+                  "lookbackPeriod": "P7D",
+                  "mode": "Enabled",
+                  "signalType": "DataDrift",
+                  "baselineData": {
+                    "asset": {
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "jobInputType": "uri_folder"
+                    },
+                    "dataContext": "modelInputs"
+                  },
+                  "dataSegment": {
+                    "feature": "foo",
+                    "values": [
+                      "a",
+                      "b",
+                      "c"
+                    ]
+                  },
+                  "metricThresholds": [
+                    {
+                      "dataType": "Numerical",
+                      "threshold": {
+                        "value": 0.5
+                      },
+                      "metric": "jensenShannonDistance"
+                    },
+                    {
+                      "dataType": "Categorical",
+                      "threshold": {
+                        "value": 0.2
+                      },
+                      "metric": "pearsonsChiSquaredTest"
+                    }
+                  ],
+                  "targetData": {
+                    "asset": {
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "jobInputType": "uri_folder"
+                    },
+                    "dataContext": "modelInputs"
+                  }
+                },
+                "data-quality-signal": {
+                  "lookbackPeriod": "P7D",
+                  "mode": "Enabled",
+                  "signalType": "DataQuality",
+                  "baselineData": {
+                    "asset": {
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "jobInputType": "uri_folder"
+                    },
+                    "dataContext": "modelInputs"
+                  },
+                  "metricThresholds": [
+                    {
+                      "dataType": "Numerical",
+                      "threshold": {
+                        "value": 0.5
+                      },
+                      "metric": "nullValueRate"
+                    },
+                    {
+                      "dataType": "Categorical",
+                      "threshold": {
+                        "value": 0.2
+                      },
+                      "metric": "outOfBoundsRate"
+                    }
+                  ],
+                  "targetData": {
+                    "asset": {
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "jobInputType": "uri_folder"
+                    },
+                    "dataContext": "modelInputs"
+                  }
+                },
+                "prediction-drift-signal": {
+                  "lookbackPeriod": "P7D",
+                  "mode": "Enabled",
+                  "signalType": "PredictionDrift",
+                  "baselineData": {
+                    "asset": {
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_outputs/versions/1",
+                      "jobInputType": "uri_folder"
+                    },
+                    "dataContext": "modelOutputs"
+                  },
+                  "metricThresholds": [
+                    {
+                      "dataType": "Numerical",
+                      "threshold": {
+                        "value": 0.5
+                      },
+                      "metric": "jensenShannonDistance"
+                    },
+                    {
+                      "dataType": "Categorical",
+                      "threshold": {
+                        "value": 0.2
+                      },
+                      "metric": "populationStabilityIndex"
+                    }
+                  ],
+                  "modelType": "classification",
+                  "targetData": {
+                    "asset": {
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_outputs/versions/1",
+                      "jobInputType": "uri_folder"
+                    },
+                    "dataContext": "modelOutputs"
+                  }
+                }
+              }
+            }
+          },
+          "displayName": "Loan Approval model monitoring",
+          "trigger": {
+            "timeZone": "utc",
+            "triggerType": "Recurrence",
+            "frequency": "week",
+            "interval": 1,
+            "schedule": {
+              "hours": [
+                22,
+                20
+              ],
+              "minutes": [
+                0,
+                30
+              ],
+              "weekDays": [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday"
+              ]
+            }
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "azure-asyncoperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationsStatus/s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE?api-version=2023-04-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Length": "7266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:28 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/schedules/default-momo-schedule?api-version=2023-04-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-180d5d17a634d011360d9780ed7ba197-40416acc903a906b-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT30M",
+        "x-ms-correlation-request-id": "253c1632-c55a-4d6a-9a03-8b46d62217f6",
+        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215828Z:253c1632-c55a-4d6a-9a03-8b46d62217f6",
+        "x-request-time": "6.315"
+      },
+      "ResponseBody": {
+        "properties": {
+          "description": "Loan approval model monitoring setup with minimal configurations",
+          "tags": {
+            "data-drift-signal.baselinedata.datarange.type": "Trailing",
+            "data-drift-signal.baselinedata.datarange.window_size": "P7D",
+            "data-quality-signal.baselinedata.datarange.type": "Trailing",
+            "data-quality-signal.baselinedata.datarange.window_size": "P7D",
+            "prediction-drift-signal.baselinedata.datarange.type": "Trailing",
+            "prediction-drift-signal.baselinedata.datarange.window_size": "P7D",
+            "compute.spark.resources.instance_type": "standard_e8s_v3",
+            "compute.spark.resources.runtime_version": "3.2"
+          },
+          "properties": {
+            "azureml.telemetry.attribution": "modelmonitoring"
+          },
+          "displayName": "Loan Approval model monitoring",
+          "isEnabled": true,
+          "trigger": {
+            "endTime": null,
+            "startTime": null,
+            "timeZone": "utc",
+            "triggerType": "Recurrence",
+            "frequency": "Week",
+            "interval": 1,
+            "schedule": {
+              "hours": [
+                22,
+                20
+              ],
+              "minutes": [
+                0,
+                30
+              ],
+              "weekDays": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday"
+              ],
+              "monthDays": null
+            }
+          },
+          "action": {
+            "actionType": "CreateMonitor",
+            "monitorDefinition": {
+              "monitoringTarget": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/onlineEndpoints/iris-endpoint/deployments/my-iris-deployment",
+              "signals": {
+                "data-drift-signal": {
+                  "lookbackPeriod": "P7D",
+                  "mode": "Enabled",
+                  "signalType": "DataDrift",
+                  "features": null,
+                  "dataSegment": {
+                    "feature": "foo",
+                    "values": [
+                      "a",
+                      "b",
+                      "c"
+                    ]
+                  },
+                  "metricThresholds": [
+                    {
+                      "threshold": {
+                        "value": 0.5
+                      },
+                      "dataType": "Numerical",
+                      "metric": "JensenShannonDistance"
+                    },
+                    {
+                      "threshold": {
+                        "value": 0.2
+                      },
+                      "dataType": "Categorical",
+                      "metric": "PearsonsChiSquaredTest"
+                    }
+                  ],
+                  "targetData": {
+                    "dataContext": "ModelInputs",
+                    "asset": {
+                      "description": null,
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "mode": "ReadOnlyMount",
+                      "jobInputType": "uri_folder"
+                    },
+                    "preprocessingComponentId": null,
+                    "targetColumnName": null
+                  },
+                  "baselineData": {
+                    "dataContext": "ModelInputs",
+                    "asset": {
+                      "description": null,
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "mode": "ReadOnlyMount",
+                      "jobInputType": "uri_folder"
+                    },
+                    "preprocessingComponentId": null,
+                    "targetColumnName": null
+                  }
+                },
+                "data-quality-signal": {
+                  "lookbackPeriod": "P7D",
+                  "mode": "Enabled",
+                  "signalType": "DataQuality",
+                  "features": null,
+                  "metricThresholds": [
+                    {
+                      "threshold": {
+                        "value": 0.5
+                      },
+                      "dataType": "Numerical",
+                      "metric": "NullValueRate"
+                    },
+                    {
+                      "threshold": {
+                        "value": 0.2
+                      },
+                      "dataType": "Categorical",
+                      "metric": "OutOfBoundsRate"
+                    }
+                  ],
+                  "targetData": {
+                    "dataContext": "ModelInputs",
+                    "asset": {
+                      "description": null,
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "mode": "ReadOnlyMount",
+                      "jobInputType": "uri_folder"
+                    },
+                    "preprocessingComponentId": null,
+                    "targetColumnName": null
+                  },
+                  "baselineData": {
+                    "dataContext": "ModelInputs",
+                    "asset": {
+                      "description": null,
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_inputs/versions/1",
+                      "mode": "ReadOnlyMount",
+                      "jobInputType": "uri_folder"
+                    },
+                    "preprocessingComponentId": null,
+                    "targetColumnName": null
+                  }
+                },
+                "prediction-drift-signal": {
+                  "lookbackPeriod": "P7D",
+                  "mode": "Enabled",
+                  "signalType": "PredictionDrift",
+                  "metricThresholds": [
+                    {
+                      "threshold": {
+                        "value": 0.5
+                      },
+                      "dataType": "Numerical",
+                      "metric": "JensenShannonDistance"
+                    },
+                    {
+                      "threshold": {
+                        "value": 0.2
+                      },
+                      "dataType": "Categorical",
+                      "metric": "PopulationStabilityIndex"
+                    }
+                  ],
+                  "modelType": "Classification",
+                  "targetData": {
+                    "dataContext": "ModelOutputs",
+                    "asset": {
+                      "description": null,
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_outputs/versions/1",
+                      "mode": "ReadOnlyMount",
+                      "jobInputType": "uri_folder"
+                    },
+                    "preprocessingComponentId": null,
+                    "targetColumnName": null
+                  },
+                  "baselineData": {
+                    "dataContext": "ModelOutputs",
+                    "asset": {
+                      "description": null,
+                      "uri": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/data/iris-endpoint-my-iris-deployment-model_outputs/versions/1",
+                      "mode": "ReadOnlyMount",
+                      "jobInputType": "uri_folder"
+                    },
+                    "preprocessingComponentId": null,
+                    "targetColumnName": null
+                  }
+                }
+              },
+              "computeId": "spark",
+              "alertNotificationSetting": null
+            }
+          },
+          "provisioningState": "Creating"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationsStatus/s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-e741361cb65782acc3ba73661005c558-47a71d576ba53532-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "fa4ef070-00d0-4213-8295-97c8900e3590",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215828Z:fa4ef070-00d0-4213-8295-97c8900e3590",
+        "x-request-time": "0.018"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE",
+        "name": "s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE",
+        "status": "Creating"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationsStatus/s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.7.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 12 May 2023 21:58:33 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-0e48abb22afb003a476831fb22028ce4-4494327e4fac557a-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "09200644-9aba-445c-b739-b3e60262bac0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11983",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230512T215833Z:09200644-9aba-445c-b739-b3e60262bac0",
+        "x-request-time": "0.020"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "UserError",
+          "message": "Identity(object id: ) does not have permissions for Microsoft.MachineLearningServices/workspaces/experiments/runs/read actions. Please refer to https://aka.ms/azureml-auth-troubleshooting to fix the permissions issue.",
+          "details": [],
+          "additionalInfo": []
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE",
+        "name": "s:0cced050-3e9c-4ca6-b300-7d37c030c0ca:D6OWqhgsVDC2CF6xC6V1KD29vJf-Rb9gMPR42wZxVzE",
+        "status": "Failed"
+      }
+    }
+  ],
+  "Variables": {}
+}
