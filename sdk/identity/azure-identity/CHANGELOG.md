@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- VisualStudioCodeCredential prints an informative error message when used (as it is currently broken) ([#30385](https://github.com/Azure/azure-sdk-for-python/pull/30385))
 
 ## 1.13.0 (2023-05-11)
 
