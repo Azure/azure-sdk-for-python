@@ -31,7 +31,12 @@ import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient, ArtifactArchitecture, ArtifactOperatingSystem
+from azure.containerregistry import (
+    ContainerRegistryClient,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
+    DigestValidationError,
+)
 from utilities import load_registry, get_authority, get_audience, get_credential
 
 
@@ -53,8 +58,10 @@ class SetGetImage(object):
         with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Upload a layer
             layer_digest, layer_size = client.upload_blob(repository_name, layer)
+            print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config_digest, config_size = client.upload_blob(repository_name, config)
+            print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
                 "config": {
@@ -75,12 +82,14 @@ class SetGetImage(object):
                 ],
             }
             # Set the image
-            manifest_digest = client.set_manifest(repository_name, oci_manifest)
+            manifest_digest = client.set_manifest(repository_name, oci_manifest, tag="latest")
+            print(f"Uploaded manifest: digest - {manifest_digest}")
 
             # Get the image
-            get_manifest_result = client.get_manifest(repository_name, manifest_digest)
+            get_manifest_result = client.get_manifest(repository_name, "latest")
             received_manifest = get_manifest_result.manifest
-            print(received_manifest)
+            print(f"Got manifest:\n{received_manifest}")
+            
             # Download and write out the layers
             for layer in received_manifest["layers"]:
                 # Remove the "sha256:" prefix from digest
@@ -90,9 +99,10 @@ class SetGetImage(object):
                     with open(layer_file_name, "wb") as layer_file:
                         for chunk in stream:
                             layer_file.write(chunk)
-                except ValueError:
+                except DigestValidationError:
                     print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
                     os.remove(layer_file_name)
+                print(f"Got layer: {layer_file_name}")
             # Download and write out the config
             config_file_name = "config.json"
             try:
@@ -100,9 +110,10 @@ class SetGetImage(object):
                 with open(config_file_name, "wb") as config_file:
                     for chunk in stream:
                         config_file.write(chunk)
-            except ValueError:
+            except DigestValidationError:
                 print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
                 os.remove(config_file_name)
+            print(f"Got config: {config_file_name}")
 
             # Delete the layers
             for layer in received_manifest["layers"]:
@@ -110,7 +121,7 @@ class SetGetImage(object):
             # Delete the config
             client.delete_blob(repository_name, received_manifest["config"]["digest"])
             # Delete the image
-            client.delete_manifest(repository_name, manifest_digest)
+            client.delete_manifest(repository_name, get_manifest_result.digest)
 
     def set_get_docker_image(self):
         load_registry()

@@ -32,7 +32,7 @@ import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ArtifactArchitecture, ArtifactOperatingSystem
+from azure.containerregistry import ArtifactArchitecture, ArtifactOperatingSystem, DigestValidationError
 from azure.containerregistry.aio import ContainerRegistryClient
 from utilities import load_registry, get_authority, get_audience, get_credential
 
@@ -55,8 +55,10 @@ class SetGetImageAsync(object):
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Upload a layer
             layer_digest, layer_size = await client.upload_blob(repository_name, layer)
+            print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config_digest, config_size = await client.upload_blob(repository_name, config)
+            print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
                 "config": {
@@ -78,12 +80,13 @@ class SetGetImageAsync(object):
             }
 
             # Set the image
-            manifest_digest = await client.set_manifest(repository_name, oci_manifest)
+            manifest_digest = await client.set_manifest(repository_name, oci_manifest, tag="latest")
+            print(f"Uploaded manifest: digest - {manifest_digest}")
 
             # Get the image
-            get_manifest_result = await client.get_manifest(repository_name, manifest_digest)
+            get_manifest_result = await client.get_manifest(repository_name, "latest")
             received_manifest = get_manifest_result.manifest
-            print(received_manifest)
+            print(f"Got manifest:\n{received_manifest}")
 
             # Download and write out the layers
             for layer in received_manifest["layers"]:
@@ -94,9 +97,10 @@ class SetGetImageAsync(object):
                     with open(layer_file_name, "wb") as layer_file:
                         async for chunk in stream:
                             layer_file.write(chunk)
-                except ValueError:
+                except DigestValidationError:
                     print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
                     os.remove(layer_file_name)
+                print(f"Got layer: {layer_file_name}")
             # Download and write out the config
             config_file_name = "config.json"
             try:
@@ -104,9 +108,10 @@ class SetGetImageAsync(object):
                 with open(config_file_name, "wb") as config_file:
                     async for chunk in stream:
                         config_file.write(chunk)
-            except ValueError:
+            except DigestValidationError:
                 print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
                 os.remove(config_file_name)
+            print(f"Got config: {config_file_name}")
 
             # Delete the layers
             for layer in received_manifest["layers"]:
@@ -114,7 +119,7 @@ class SetGetImageAsync(object):
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
             # Delete the image
-            await client.delete_manifest(repository_name, manifest_digest)
+            await client.delete_manifest(repository_name, get_manifest_result.digest)
 
     async def set_get_docker_image(self):
         load_registry()
