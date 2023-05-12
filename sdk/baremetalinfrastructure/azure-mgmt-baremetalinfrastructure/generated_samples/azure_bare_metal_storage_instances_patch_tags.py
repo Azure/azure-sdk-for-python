@@ -14,7 +14,7 @@ from azure.mgmt.baremetalinfrastructure import BareMetalInfrastructureClient
     pip install azure-identity
     pip install azure-mgmt-baremetalinfrastructure
 # USAGE
-    python list_all_management_operations_supported_by_the_azure_bare_metal_rp.py
+    python azure_bare_metal_storage_instances_patch_tags.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +26,17 @@ from azure.mgmt.baremetalinfrastructure import BareMetalInfrastructureClient
 def main():
     client = BareMetalInfrastructureClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="f0f4887f-d13c-4943-a8ba-d7da28d2a3fd",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.azure_bare_metal_storage_instances.update(
+        resource_group_name="myResourceGroup",
+        azure_bare_metal_storage_instance_name="myABMSInstance",
+        tags_parameter={"tags": {"testkey": "testvalue"}},
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/stable/2021-08-09/examples/AzureBareMetalOperations_List.json
+# x-ms-original-file: specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/stable/2023-04-06/examples/AzureBareMetalStorageInstances_PatchTags.json
 if __name__ == "__main__":
     main()

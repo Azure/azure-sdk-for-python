@@ -95,3 +95,16 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of provisioning of the AzureBareMetalStorageInstance."""
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
+    MIGRATING = "Migrating"

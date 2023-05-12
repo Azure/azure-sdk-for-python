@@ -14,7 +14,7 @@ from azure.mgmt.baremetalinfrastructure import BareMetalInfrastructureClient
     pip install azure-identity
     pip install azure-mgmt-baremetalinfrastructure
 # USAGE
-    python delete_tags_field_of_an_azure_bare_metal_instance.py
+    python azure_bare_metal_instances_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="f0f4887f-d13c-4943-a8ba-d7da28d2a3fd",
     )
 
-    response = client.azure_bare_metal_instances.update(
+    response = client.azure_bare_metal_instances.get(
         resource_group_name="myResourceGroup",
-        azure_bare_metal_instance_name="myABMInstance",
-        tags_parameter={"tags": {}},
+        azure_bare_metal_instance_name="myAzureBareMetalInstance",
     )
     print(response)
 
 
-# x-ms-original-file: specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/stable/2021-08-09/examples/AzureBareMetalInstances_PatchTags_Delete.json
+# x-ms-original-file: specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/stable/2023-04-06/examples/AzureBareMetalInstances_Get.json
 if __name__ == "__main__":
     main()

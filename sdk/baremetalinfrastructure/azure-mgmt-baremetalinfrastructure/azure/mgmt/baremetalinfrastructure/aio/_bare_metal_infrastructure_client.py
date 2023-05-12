@@ -12,10 +12,10 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import BareMetalInfrastructureClientConfiguration
-from .operations import AzureBareMetalInstancesOperations, Operations
+from .operations import AzureBareMetalInstancesOperations, AzureBareMetalStorageInstancesOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -30,13 +30,16 @@ class BareMetalInfrastructureClient:  # pylint: disable=client-accepts-api-versi
      azure.mgmt.baremetalinfrastructure.aio.operations.AzureBareMetalInstancesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.baremetalinfrastructure.aio.operations.Operations
+    :ivar azure_bare_metal_storage_instances: AzureBareMetalStorageInstancesOperations operations
+    :vartype azure_bare_metal_storage_instances:
+     azure.mgmt.baremetalinfrastructure.aio.operations.AzureBareMetalStorageInstancesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-08-09". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-04-06". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -51,9 +54,9 @@ class BareMetalInfrastructureClient:  # pylint: disable=client-accepts-api-versi
         self._config = BareMetalInfrastructureClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -61,6 +64,9 @@ class BareMetalInfrastructureClient:  # pylint: disable=client-accepts-api-versi
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.azure_bare_metal_storage_instances = AzureBareMetalStorageInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
@@ -91,5 +97,5 @@ class BareMetalInfrastructureClient:  # pylint: disable=client-accepts-api-versi
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
