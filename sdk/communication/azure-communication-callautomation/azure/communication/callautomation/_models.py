@@ -22,7 +22,8 @@ from ._generated.models._enums import (
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
-    deserialize_comm_user_identifier
+    deserialize_comm_user_identifier,
+    serialize_identifier
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
