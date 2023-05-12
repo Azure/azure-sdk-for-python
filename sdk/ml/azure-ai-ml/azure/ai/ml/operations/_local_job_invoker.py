@@ -18,6 +18,9 @@ from pathlib import Path
 from threading import Thread
 from typing import Dict, Optional, Tuple
 
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import AzureError
+
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import DockerProxy
@@ -31,8 +34,6 @@ from azure.ai.ml.constants._common import (
     LOCAL_JOB_FAILURE_MSG,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import AzureError
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
@@ -427,13 +428,13 @@ def start_run_if_local(
     return snapshot_id
 
 
-def _log_subprocess(io, file, show_in_console=False):
-    def log_subprocess(io, file, show_in_console):
-        for line in iter(io.readline, ""):
+def _log_subprocess(output_io, file, show_in_console=False):
+    def log_subprocess():
+        for line in iter(output_io.readline, ""):
             if show_in_console:
                 print(line, end="")
             file.write(line)
 
-    thread = Thread(target=log_subprocess, args=(io, file, show_in_console))
+    thread = Thread(target=log_subprocess)
     thread.daemon = True
     thread.start()
