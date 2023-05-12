@@ -5,9 +5,9 @@
 import logging
 from typing import Any
 
-from marshmallow import post_load
+from marshmallow import post_load, fields
 
-from azure.ai.ml._schema import PatchedSchemaMeta, StringTransformedEnum, NestedField
+from azure.ai.ml._schema import PatchedSchemaMeta, StringTransformedEnum, NestedField, UnionField
 from azure.ai.ml._schema._deployment.online.data_asset_schema import DataAssetSchema
 from azure.ai.ml.constants._common import Boolean
 
@@ -16,7 +16,13 @@ module_logger = logging.getLogger(__name__)
 
 class DeploymentCollectionSchema(metaclass=PatchedSchemaMeta):
     enabled = StringTransformedEnum(required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE])
-    data = NestedField(DataAssetSchema)
+    data = UnionField(
+        [
+            fields.Str(),
+            NestedField(DataAssetSchema),
+        ]
+    )
+    client_id = fields.Str()
 
     # pylint: disable=unused-argument,no-self-use
     @post_load

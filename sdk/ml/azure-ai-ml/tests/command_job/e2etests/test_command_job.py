@@ -35,6 +35,7 @@ TEST_PARAMS = {"a_param": "1", "another_param": "2"}
     "mock_code_hash",
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
+    "mock_anon_component_version",
 )
 @pytest.mark.training_experiences_test
 class TestCommandJob(AzureRecordedTestCase):
@@ -486,6 +487,19 @@ class TestCommandJob(AzureRecordedTestCase):
         assert job.outputs.test2.version == "2"
         assert job.outputs.test3.name == "test3_output"
         assert job.outputs.test3.version == "3"
+
+    @pytest.mark.e2etest
+    def test_ray_command_job(self, randstr: Callable[[], str], client: MLClient) -> None:
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/command_job/command_job_dist_ray.yml",
+                params_override=[{"name": randstr("job_name")}],
+            )
+        )
+
+        job_status = wait_until_done(client=client, job=job)
+
+        assert job_status == JobStatus.COMPLETED
 
 
 def check_tid_in_url(client: MLClient, job: Job) -> None:

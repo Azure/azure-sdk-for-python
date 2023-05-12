@@ -45,7 +45,7 @@
         "value": ""
     },
     "logAnalyticsName": {
-        "value": ""
+        "value": "none"
     },
     "logAnalyticsArmId": {
         "value": ""
@@ -151,5 +151,8 @@
     },
     "online_store_connection_target" : {
         "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
     }
 }

@@ -23,9 +23,10 @@ class AzureMLOnlineInferencingServer:
 
     :param code_configuration: The code configuration of the inferencing server.
     :type code_configuration: str
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, code_configuration: CodeConfiguration = None, **kwargs):
+    def __init__(self, *, code_configuration: CodeConfiguration = None, **kwargs):
         self.type = "azureml_online"
         self.code_configuration = code_configuration
 
@@ -43,9 +44,10 @@ class AzureMLBatchInferencingServer:
 
     :param code_configuration: The code configuration of the inferencing server.
     :type code_configuration: azure.ai.ml.entities.CodeConfiguration
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, code_configuration: CodeConfiguration = None, **kwargs):
+    def __init__(self, *, code_configuration: CodeConfiguration = None, **kwargs):
         self.type = "azureml_batch"
         self.code_configuration = code_configuration
 
@@ -63,9 +65,10 @@ class TritonInferencingServer:
 
     :param inference_configuration: The inference configuration of the inferencing server.
     :type inference_configuration: azure.ai.ml.entities.CodeConfiguration
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, inference_configuration: CodeConfiguration = None, **kwargs):
+    def __init__(self, *, inference_configuration: CodeConfiguration = None, **kwargs):
         self.type = "triton"
         self.inference_configuration = inference_configuration
 
@@ -89,7 +92,7 @@ class Route:
     :type path: str
     """
 
-    def __init__(self, port: str = None, path: str = None):
+    def __init__(self, *, port: str = None, path: str = None):
         self.port = port
         self.path = path
 
@@ -157,9 +160,10 @@ class CustomInferencingServer:
 
     :param inference_configuration: The inference configuration of the inferencing server.
     :type inference_configuration: OnlineInferenceConfiguration
+    :ivar type: The type of the inferencing server.
     """
 
-    def __init__(self, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
+    def __init__(self, *, inference_configuration: OnlineInferenceConfiguration = None, **kwargs):
         self.type = "custom"
         self.inference_configuration = inference_configuration
 

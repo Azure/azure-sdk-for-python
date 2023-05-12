@@ -735,6 +735,7 @@ from ._artifacts_client_enums import AmazonRdsForOraclePartitionOption
 from ._artifacts_client_enums import AvroCompressionCodec
 from ._artifacts_client_enums import AzureFunctionActivityMethod
 from ._artifacts_client_enums import AzureSearchIndexWriteBehaviorType
+from ._artifacts_client_enums import AzureStorageAuthenticationType
 from ._artifacts_client_enums import BigDataPoolReferenceType
 from ._artifacts_client_enums import BlobEventType
 from ._artifacts_client_enums import CassandraSourceReadConsistencyLevels
@@ -1581,6 +1582,7 @@ __all__ = [
     "AvroCompressionCodec",
     "AzureFunctionActivityMethod",
     "AzureSearchIndexWriteBehaviorType",
+    "AzureStorageAuthenticationType",
     "BigDataPoolReferenceType",
     "BlobEventType",
     "CassandraSourceReadConsistencyLevels",
