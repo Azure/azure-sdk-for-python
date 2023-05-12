@@ -959,7 +959,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
         )
-        if response.http_response.headers['Content-Length'] > MAX_MANIFEST_SIZE:
+        if int(response.http_response.headers['Content-Length']) > MAX_MANIFEST_SIZE:
             raise ValueError("Manifest size is bigger than 4MB.")
         media_type = response.http_response.headers['Content-Type']
         manifest_bytes = await response.http_response.read()
