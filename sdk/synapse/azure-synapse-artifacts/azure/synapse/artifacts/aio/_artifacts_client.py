@@ -113,7 +113,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -188,5 +188,5 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

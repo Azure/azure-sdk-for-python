@@ -58,7 +58,10 @@ def sample_get_operations():
             print("My {} operation is completed.".format(operation_info.kind))
             result = operation_info.result
             if result is not None:
-                print("Model ID: {}".format(result.model_id))
+                if operation_info.kind == "documentClassifierBuild":
+                    print(f"Classifier ID: {result.classifier_id}")
+                else:
+                    print("Model ID: {}".format(result.model_id))
         elif operation_info.status == "failed":
             print("My {} operation failed.".format(operation_info.kind))
             error = operation_info.error

@@ -17,7 +17,12 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+    RayDistribution,
+)
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -118,7 +123,9 @@ def command(
     experiment_name: Optional[str] = None,
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
-    distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+    distribution: Optional[
+        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+    ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,
     outputs: Optional[Dict] = None,
@@ -162,7 +169,11 @@ def command(
     :type environment_variables: dict
     :param distribution: the distribution mode to use for this command
     :type distribution:
-        Union[Dict, azure.ai.ml.MpiDistribution, azure.ai.ml.TensorFlowDistribution, azure.ai.ml.PyTorchDistribution]
+        Union[Dict,
+              azure.ai.ml.MpiDistribution,
+              azure.ai.ml.TensorFlowDistribution,
+              azure.ai.ml.PyTorchDistribution,
+              azure.ai.ml.RayDistribution]
     :param compute: the name of the compute where the command job is executed(
         will not be used if the command is used as a component/function)
     :type compute: str

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 import six
 import msal
@@ -44,9 +44,25 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_on_behalf_of_credential]
+            :end-before: [END create_on_behalf_of_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an OnBehalfOfCredential.
     """
 
     def __init__(
@@ -89,7 +105,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     @wrap_exceptions
     def _acquire_token_silently(
         self, *scopes: str, **kwargs: Any
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    ) -> Optional[AccessToken]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)
@@ -100,14 +116,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return (
-                        AccessToken(
-                            result["access_token"], now + int(result["expires_in"])
-                        ),
-                        None,
-                    )
+                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-        return None, None
+        return None
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

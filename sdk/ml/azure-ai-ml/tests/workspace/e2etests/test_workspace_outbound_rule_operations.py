@@ -5,18 +5,15 @@ from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.entities._workspace.workspace import Workspace, ManagedNetwork
 from azure.ai.ml.entities._workspace.networking import (
     FqdnDestination,
     PrivateEndpointDestination,
     ServiceTagDestination,
 )
-from azure.core.paging import ItemPaged
-from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.core.polling import LROPoller
 
 
@@ -33,7 +30,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         reason="ARM template makes playback complex, so the test is flaky when run against recording",
     )
     def test_workspace_create_with_managed_network_list_show_remove_rules(
-        self, client: MLClient, randstr: Callable[[], str]
+        self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
         # resource name key word
         wps_name = f"e2etest_{randstr('wps_name')}_mvnet"
@@ -42,7 +39,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         wps_display_name = f"{wps_name} display name"
         params_override = [
             {"name": wps_name},
-            # {"location": location}, # using master for now
+            {"location": location},
             {"description": wps_description},
             {"display_name": wps_display_name},
         ]
@@ -54,7 +51,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
-        # assert workspace.location == location # using master for now
+        assert workspace.location == location
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
@@ -63,7 +60,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
         rules_dict = {}
         for rule in rules:
-            rules_dict[rule.rule_name] = rule
+            rules_dict[rule.name] = rule
 
         assert "my-service" in rules_dict.keys()
         assert isinstance(rules_dict["my-service"], ServiceTagDestination)
@@ -75,7 +72,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert "my-storage" in rules_dict.keys()
         assert isinstance(rules_dict["my-storage"], PrivateEndpointDestination)
         assert rules_dict["my-storage"].category == OutboundRuleCategory.USER_DEFINED
-        assert "storageAccounts/mvnetstorage1" in rules_dict["my-storage"].service_resource_id
+        assert "storageAccounts/mvnetteststorage" in rules_dict["my-storage"].service_resource_id
         assert rules_dict["my-storage"].spark_enabled == False
         assert rules_dict["my-storage"].subresource_target == "blob"
 
@@ -115,13 +112,13 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-perule")
         assert isinstance(rule, PrivateEndpointDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert "storageAccounts/mvnetstorage2" in rule.service_resource_id
+        assert "storageAccounts/mvnetteststorage2" in rule.service_resource_id
         assert rule.subresource_target == "blob"
         assert rule.spark_enabled == True
 
         # assert update did not remove existing outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        rule_names = [rule.rule_name for rule in rules]
+        rule_names = [rule.name for rule in rules]
         assert "pytorch" in rule_names
         assert "my-service" in rule_names
         assert "my-storage" in rule_names
@@ -141,7 +138,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
 
         # assert remove worked removed the outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        rule_names = [rule.rule_name for rule in rules]
+        rule_names = [rule.name for rule in rules]
         assert "pytorch" not in rule_names
         assert "my-service" not in rule_names
         assert "my-storage" not in rule_names
@@ -151,3 +148,43 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         # verify that request was accepted by checking if poller is returned
         assert poller
         assert isinstance(poller, LROPoller)
+
+    @pytest.mark.e2etest
+    @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_workspace_create_with_managed_network_provision_network(
+        self, client: MLClient, randstr: Callable[[], str], location: str
+    ) -> None:
+        # resource name key word
+        wps_name = f"e2etest_{randstr('wps_name')}_mvnet"
+
+        wps_description = f"{wps_name} description"
+        wps_display_name = f"{wps_name} display name"
+        params_override = [
+            {"name": wps_name},
+            {"location": location},
+            {"description": wps_description},
+            {"display_name": wps_display_name},
+        ]
+        wps = load_workspace(None, params_override=params_override)
+        wps.managed_network = ManagedNetwork(IsolationMode.ALLOW_INTERNET_OUTBOUND)
+
+        # test creation
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+        assert workspace.location == location
+        assert workspace.description == wps_description
+        assert workspace.display_name == wps_display_name
+        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_INTERNET_OUTBOUND
+
+        provisioning_output = client.workspaces.begin_provision_network(
+            workspace_name=workspace.name, include_spark=False
+        ).result()
+        assert provisioning_output.status == "Active"
+        assert provisioning_output.spark_ready == False

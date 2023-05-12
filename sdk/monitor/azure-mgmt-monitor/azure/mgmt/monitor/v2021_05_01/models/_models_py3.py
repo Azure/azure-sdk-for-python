@@ -86,7 +86,7 @@ class ErrorContract(_serialization.Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~$(python-base-namespace).v2021_05_01.models.ErrorResponse
+    :vartype error: ~azure.mgmt.monitor.v2021_05_01.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -96,7 +96,7 @@ class ErrorContract(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~$(python-base-namespace).v2021_05_01.models.ErrorResponse
+        :paramtype error: ~azure.mgmt.monitor.v2021_05_01.models.ErrorResponse
         """
         super().__init__(**kwargs)
         self.error = error
@@ -203,7 +203,7 @@ class MetadataValue(_serialization.Model):
     """Represents a metric metadata value.
 
     :ivar name: the name of the metadata.
-    :vartype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
     :ivar value: the value of the metadata.
     :vartype value: str
     """
@@ -218,7 +218,7 @@ class MetadataValue(_serialization.Model):
     ) -> None:
         """
         :keyword name: the name of the metadata.
-        :paramtype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
         :keyword value: the value of the metadata.
         :paramtype value: str
         """
@@ -238,7 +238,7 @@ class Metric(_serialization.Model):
     :vartype type: str
     :ivar name: the name and the display name of the metric, i.e. it is localizable string.
      Required.
-    :vartype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar error_code: 'Success' or the error details on query failures for this metric.
@@ -248,9 +248,9 @@ class Metric(_serialization.Model):
     :ivar unit: The unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-    :vartype unit: str or ~$(python-base-namespace).v2021_05_01.models.Unit
+    :vartype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.Unit
     :ivar timeseries: the time series returned when a data query is performed. Required.
-    :vartype timeseries: list[~$(python-base-namespace).v2021_05_01.models.TimeSeriesElement]
+    :vartype timeseries: list[~azure.mgmt.monitor.v2021_05_01.models.TimeSeriesElement]
     """
 
     _validation = {
@@ -292,7 +292,7 @@ class Metric(_serialization.Model):
         :paramtype type: str
         :keyword name: the name and the display name of the metric, i.e. it is localizable string.
          Required.
-        :paramtype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword error_code: 'Success' or the error details on query failures for this metric.
@@ -302,9 +302,9 @@ class Metric(_serialization.Model):
         :keyword unit: The unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-        :paramtype unit: str or ~$(python-base-namespace).v2021_05_01.models.Unit
+        :paramtype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.Unit
         :keyword timeseries: the time series returned when a data query is performed. Required.
-        :paramtype timeseries: list[~$(python-base-namespace).v2021_05_01.models.TimeSeriesElement]
+        :paramtype timeseries: list[~azure.mgmt.monitor.v2021_05_01.models.TimeSeriesElement]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -364,35 +364,34 @@ class MetricDefinition(_serialization.Model):  # pylint: disable=too-many-instan
     :ivar namespace: the namespace the metric belongs to.
     :vartype namespace: str
     :ivar name: the name and the display name of the metric, i.e. it is a localizable string.
-    :vartype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar category: Custom category name for this metric.
     :vartype category: str
     :ivar metric_class: The class of the metric. Known values are: "Availability", "Transactions",
      "Errors", "Latency", and "Saturation".
-    :vartype metric_class: str or ~$(python-base-namespace).v2021_05_01.models.MetricClass
+    :vartype metric_class: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricClass
     :ivar unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-    :vartype unit: str or ~$(python-base-namespace).v2021_05_01.models.MetricUnit
+    :vartype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricUnit
     :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
      "Total".
     :vartype primary_aggregation_type: str or
-     ~$(python-base-namespace).v2021_05_01.models.AggregationType
+     ~azure.mgmt.monitor.v2021_05_01.models.AggregationType
     :ivar supported_aggregation_types: the collection of what aggregation types are supported.
     :vartype supported_aggregation_types: list[str or
-     ~$(python-base-namespace).v2021_05_01.models.AggregationType]
+     ~azure.mgmt.monitor.v2021_05_01.models.AggregationType]
     :ivar metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :vartype metric_availabilities:
-     list[~$(python-base-namespace).v2021_05_01.models.MetricAvailability]
+    :vartype metric_availabilities: list[~azure.mgmt.monitor.v2021_05_01.models.MetricAvailability]
     :ivar id: the resource identifier of the metric definition.
     :vartype id: str
     :ivar dimensions: the name and the display name of the dimension, i.e. it is a localizable
      string.
-    :vartype dimensions: list[~$(python-base-namespace).v2021_05_01.models.LocalizableString]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2021_05_01.models.LocalizableString]
     """
 
     _attribute_map = {
@@ -437,35 +436,35 @@ class MetricDefinition(_serialization.Model):  # pylint: disable=too-many-instan
         :keyword namespace: the namespace the metric belongs to.
         :paramtype namespace: str
         :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
-        :paramtype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword category: Custom category name for this metric.
         :paramtype category: str
         :keyword metric_class: The class of the metric. Known values are: "Availability",
          "Transactions", "Errors", "Latency", and "Saturation".
-        :paramtype metric_class: str or ~$(python-base-namespace).v2021_05_01.models.MetricClass
+        :paramtype metric_class: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricClass
         :keyword unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-        :paramtype unit: str or ~$(python-base-namespace).v2021_05_01.models.MetricUnit
+        :paramtype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricUnit
         :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
          values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
          "Total".
         :paramtype primary_aggregation_type: str or
-         ~$(python-base-namespace).v2021_05_01.models.AggregationType
+         ~azure.mgmt.monitor.v2021_05_01.models.AggregationType
         :keyword supported_aggregation_types: the collection of what aggregation types are supported.
         :paramtype supported_aggregation_types: list[str or
-         ~$(python-base-namespace).v2021_05_01.models.AggregationType]
+         ~azure.mgmt.monitor.v2021_05_01.models.AggregationType]
         :keyword metric_availabilities: the collection of what aggregation intervals are available to
          be queried.
         :paramtype metric_availabilities:
-         list[~$(python-base-namespace).v2021_05_01.models.MetricAvailability]
+         list[~azure.mgmt.monitor.v2021_05_01.models.MetricAvailability]
         :keyword id: the resource identifier of the metric definition.
         :paramtype id: str
         :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
          string.
-        :paramtype dimensions: list[~$(python-base-namespace).v2021_05_01.models.LocalizableString]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2021_05_01.models.LocalizableString]
         """
         super().__init__(**kwargs)
         self.is_dimension_required = is_dimension_required
@@ -489,7 +488,7 @@ class MetricDefinitionCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: the values for the metric definitions. Required.
-    :vartype value: list[~$(python-base-namespace).v2021_05_01.models.MetricDefinition]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01.models.MetricDefinition]
     """
 
     _validation = {
@@ -503,7 +502,7 @@ class MetricDefinitionCollection(_serialization.Model):
     def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs: Any) -> None:
         """
         :keyword value: the values for the metric definitions. Required.
-        :paramtype value: list[~$(python-base-namespace).v2021_05_01.models.MetricDefinition]
+        :paramtype value: list[~azure.mgmt.monitor.v2021_05_01.models.MetricDefinition]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -535,7 +534,7 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
     :ivar category: Category or type of metric.
     :vartype category: str
     :ivar dimensions: The dimensions of metric.
-    :vartype dimensions: list[~$(python-base-namespace).v2021_05_01.models.DimensionProperties]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2021_05_01.models.DimensionProperties]
     :ivar fill_gap_with_zero: Property to specify whether to fill empty gaps with zero.
     :vartype fill_gap_with_zero: bool
     :ivar internal_metric_name: The internal metric name.
@@ -600,7 +599,7 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
         :keyword category: Category or type of metric.
         :paramtype category: str
         :keyword dimensions: The dimensions of metric.
-        :paramtype dimensions: list[~$(python-base-namespace).v2021_05_01.models.DimensionProperties]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2021_05_01.models.DimensionProperties]
         :keyword fill_gap_with_zero: Property to specify whether to fill empty gaps with zero.
         :paramtype fill_gap_with_zero: bool
         :keyword internal_metric_name: The internal metric name.
@@ -698,10 +697,9 @@ class Operation(_serialization.Model):
     :ivar is_data_action: Property to specify whether the action is a data action.
     :vartype is_data_action: bool
     :ivar display: Display metadata associated with the operation.
-    :vartype display: ~$(python-base-namespace).v2021_05_01.models.OperationDisplay
+    :vartype display: ~azure.mgmt.monitor.v2021_05_01.models.OperationDisplay
     :ivar service_specification: One property of operation, include metric specifications.
-    :vartype service_specification:
-     ~$(python-base-namespace).v2021_05_01.models.ServiceSpecification
+    :vartype service_specification: ~azure.mgmt.monitor.v2021_05_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -726,10 +724,9 @@ class Operation(_serialization.Model):
         :keyword is_data_action: Property to specify whether the action is a data action.
         :paramtype is_data_action: bool
         :keyword display: Display metadata associated with the operation.
-        :paramtype display: ~$(python-base-namespace).v2021_05_01.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.monitor.v2021_05_01.models.OperationDisplay
         :keyword service_specification: One property of operation, include metric specifications.
-        :paramtype service_specification:
-         ~$(python-base-namespace).v2021_05_01.models.ServiceSpecification
+        :paramtype service_specification: ~azure.mgmt.monitor.v2021_05_01.models.ServiceSpecification
         """
         super().__init__(**kwargs)
         self.name = name
@@ -796,7 +793,7 @@ class OperationListResult(_serialization.Model):
     and a URL link to get the next set of results.
 
     :ivar value: List of operations supported by the Microsoft.Insights provider.
-    :vartype value: list[~$(python-base-namespace).v2021_05_01.models.Operation]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -811,7 +808,7 @@ class OperationListResult(_serialization.Model):
     ) -> None:
         """
         :keyword value: List of operations supported by the Microsoft.Insights provider.
-        :paramtype value: list[~$(python-base-namespace).v2021_05_01.models.Operation]
+        :paramtype value: list[~azure.mgmt.monitor.v2021_05_01.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
@@ -840,7 +837,7 @@ class Response(_serialization.Model):
     :ivar resourceregion: The region of the resource being queried for metrics.
     :vartype resourceregion: str
     :ivar value: the value of the collection. Required.
-    :vartype value: list[~$(python-base-namespace).v2021_05_01.models.Metric]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01.models.Metric]
     """
 
     _validation = {
@@ -885,7 +882,7 @@ class Response(_serialization.Model):
         :keyword resourceregion: The region of the resource being queried for metrics.
         :paramtype resourceregion: str
         :keyword value: the value of the collection. Required.
-        :paramtype value: list[~$(python-base-namespace).v2021_05_01.models.Metric]
+        :paramtype value: list[~azure.mgmt.monitor.v2021_05_01.models.Metric]
         """
         super().__init__(**kwargs)
         self.cost = cost
@@ -900,11 +897,10 @@ class ServiceSpecification(_serialization.Model):
     """One property of operation, include log specifications.
 
     :ivar log_specifications: Log specifications of operation.
-    :vartype log_specifications:
-     list[~$(python-base-namespace).v2021_05_01.models.LogSpecification]
+    :vartype log_specifications: list[~azure.mgmt.monitor.v2021_05_01.models.LogSpecification]
     :ivar metric_specifications: Metric specifications of operation.
     :vartype metric_specifications:
-     list[~$(python-base-namespace).v2021_05_01.models.MetricSpecification]
+     list[~azure.mgmt.monitor.v2021_05_01.models.MetricSpecification]
     :ivar legacy_metric_specifications: Legacy Metric specifications for operation. Deprecated, do
      not use.
     :vartype legacy_metric_specifications: JSON
@@ -926,11 +922,10 @@ class ServiceSpecification(_serialization.Model):
     ) -> None:
         """
         :keyword log_specifications: Log specifications of operation.
-        :paramtype log_specifications:
-         list[~$(python-base-namespace).v2021_05_01.models.LogSpecification]
+        :paramtype log_specifications: list[~azure.mgmt.monitor.v2021_05_01.models.LogSpecification]
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications:
-         list[~$(python-base-namespace).v2021_05_01.models.MetricSpecification]
+         list[~azure.mgmt.monitor.v2021_05_01.models.MetricSpecification]
         :keyword legacy_metric_specifications: Legacy Metric specifications for operation. Deprecated,
          do not use.
         :paramtype legacy_metric_specifications: JSON
@@ -952,7 +947,7 @@ class SubscriptionScopeMetric(_serialization.Model):
     :vartype type: str
     :ivar name: the name and the display name of the metric, i.e. it is localizable string.
      Required.
-    :vartype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar error_code: 'Success' or the error details on query failures for this metric.
@@ -962,9 +957,9 @@ class SubscriptionScopeMetric(_serialization.Model):
     :ivar unit: The unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-    :vartype unit: str or ~$(python-base-namespace).v2021_05_01.models.MetricUnit
+    :vartype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricUnit
     :ivar timeseries: the time series returned when a data query is performed. Required.
-    :vartype timeseries: list[~$(python-base-namespace).v2021_05_01.models.TimeSeriesElement]
+    :vartype timeseries: list[~azure.mgmt.monitor.v2021_05_01.models.TimeSeriesElement]
     """
 
     _validation = {
@@ -1006,7 +1001,7 @@ class SubscriptionScopeMetric(_serialization.Model):
         :paramtype type: str
         :keyword name: the name and the display name of the metric, i.e. it is localizable string.
          Required.
-        :paramtype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword error_code: 'Success' or the error details on query failures for this metric.
@@ -1016,9 +1011,9 @@ class SubscriptionScopeMetric(_serialization.Model):
         :keyword unit: The unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-        :paramtype unit: str or ~$(python-base-namespace).v2021_05_01.models.MetricUnit
+        :paramtype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricUnit
         :keyword timeseries: the time series returned when a data query is performed. Required.
-        :paramtype timeseries: list[~$(python-base-namespace).v2021_05_01.models.TimeSeriesElement]
+        :paramtype timeseries: list[~azure.mgmt.monitor.v2021_05_01.models.TimeSeriesElement]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -1041,35 +1036,34 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):  # pylint: disabl
     :ivar namespace: the namespace the metric belongs to.
     :vartype namespace: str
     :ivar name: the name and the display name of the metric, i.e. it is a localizable string.
-    :vartype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar category: Custom category name for this metric.
     :vartype category: str
     :ivar metric_class: The class of the metric. Known values are: "Availability", "Transactions",
      "Errors", "Latency", and "Saturation".
-    :vartype metric_class: str or ~$(python-base-namespace).v2021_05_01.models.MetricClass
+    :vartype metric_class: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricClass
     :ivar unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-    :vartype unit: str or ~$(python-base-namespace).v2021_05_01.models.MetricUnit
+    :vartype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricUnit
     :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
      "Total".
     :vartype primary_aggregation_type: str or
-     ~$(python-base-namespace).v2021_05_01.models.MetricAggregationType
+     ~azure.mgmt.monitor.v2021_05_01.models.MetricAggregationType
     :ivar supported_aggregation_types: the collection of what aggregation types are supported.
     :vartype supported_aggregation_types: list[str or
-     ~$(python-base-namespace).v2021_05_01.models.MetricAggregationType]
+     ~azure.mgmt.monitor.v2021_05_01.models.MetricAggregationType]
     :ivar metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :vartype metric_availabilities:
-     list[~$(python-base-namespace).v2021_05_01.models.MetricAvailability]
+    :vartype metric_availabilities: list[~azure.mgmt.monitor.v2021_05_01.models.MetricAvailability]
     :ivar id: the resource identifier of the metric definition.
     :vartype id: str
     :ivar dimensions: the name and the display name of the dimension, i.e. it is a localizable
      string.
-    :vartype dimensions: list[~$(python-base-namespace).v2021_05_01.models.LocalizableString]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2021_05_01.models.LocalizableString]
     """
 
     _attribute_map = {
@@ -1114,35 +1108,35 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):  # pylint: disabl
         :keyword namespace: the namespace the metric belongs to.
         :paramtype namespace: str
         :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
-        :paramtype name: ~$(python-base-namespace).v2021_05_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2021_05_01.models.LocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword category: Custom category name for this metric.
         :paramtype category: str
         :keyword metric_class: The class of the metric. Known values are: "Availability",
          "Transactions", "Errors", "Latency", and "Saturation".
-        :paramtype metric_class: str or ~$(python-base-namespace).v2021_05_01.models.MetricClass
+        :paramtype metric_class: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricClass
         :keyword unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-        :paramtype unit: str or ~$(python-base-namespace).v2021_05_01.models.MetricUnit
+        :paramtype unit: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricUnit
         :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
          values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
          "Total".
         :paramtype primary_aggregation_type: str or
-         ~$(python-base-namespace).v2021_05_01.models.MetricAggregationType
+         ~azure.mgmt.monitor.v2021_05_01.models.MetricAggregationType
         :keyword supported_aggregation_types: the collection of what aggregation types are supported.
         :paramtype supported_aggregation_types: list[str or
-         ~$(python-base-namespace).v2021_05_01.models.MetricAggregationType]
+         ~azure.mgmt.monitor.v2021_05_01.models.MetricAggregationType]
         :keyword metric_availabilities: the collection of what aggregation intervals are available to
          be queried.
         :paramtype metric_availabilities:
-         list[~$(python-base-namespace).v2021_05_01.models.MetricAvailability]
+         list[~azure.mgmt.monitor.v2021_05_01.models.MetricAvailability]
         :keyword id: the resource identifier of the metric definition.
         :paramtype id: str
         :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
          string.
-        :paramtype dimensions: list[~$(python-base-namespace).v2021_05_01.models.LocalizableString]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2021_05_01.models.LocalizableString]
         """
         super().__init__(**kwargs)
         self.is_dimension_required = is_dimension_required
@@ -1166,8 +1160,7 @@ class SubscriptionScopeMetricDefinitionCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The values for the metric definitions. Required.
-    :vartype value:
-     list[~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricDefinition]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricDefinition]
     """
 
     _validation = {
@@ -1182,7 +1175,7 @@ class SubscriptionScopeMetricDefinitionCollection(_serialization.Model):
         """
         :keyword value: The values for the metric definitions. Required.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetricDefinition]
+         list[~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetricDefinition]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -1208,7 +1201,7 @@ class SubscriptionScopeMetricResponse(_serialization.Model):
     :ivar resourceregion: The region of the resource being queried for metrics.
     :vartype resourceregion: str
     :ivar value: the value of the collection. Required.
-    :vartype value: list[~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetric]
+    :vartype value: list[~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetric]
     """
 
     _validation = {
@@ -1253,7 +1246,7 @@ class SubscriptionScopeMetricResponse(_serialization.Model):
         :keyword resourceregion: The region of the resource being queried for metrics.
         :paramtype resourceregion: str
         :keyword value: the value of the collection. Required.
-        :paramtype value: list[~$(python-base-namespace).v2021_05_01.models.SubscriptionScopeMetric]
+        :paramtype value: list[~azure.mgmt.monitor.v2021_05_01.models.SubscriptionScopeMetric]
         """
         super().__init__(**kwargs)
         self.cost = cost
@@ -1305,7 +1298,7 @@ class SubscriptionScopeMetricsRequestBodyParameters(
     :ivar result_type: Reduces the set of data collected. The syntax allowed depends on the
      operation. See the operation's description for details. Known values are: "Data" and
      "Metadata".
-    :vartype result_type: str or ~$(python-base-namespace).v2021_05_01.models.MetricResultType
+    :vartype result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricResultType
     :ivar metric_namespace: Metric namespace where the metrics you want reside.
     :vartype metric_namespace: str
     :ivar auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
@@ -1385,7 +1378,7 @@ class SubscriptionScopeMetricsRequestBodyParameters(
         :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata".
-        :paramtype result_type: str or ~$(python-base-namespace).v2021_05_01.models.MetricResultType
+        :paramtype result_type: str or ~azure.mgmt.monitor.v2021_05_01.models.MetricResultType
         :keyword metric_namespace: Metric namespace where the metrics you want reside.
         :paramtype metric_namespace: str
         :keyword auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
@@ -1416,10 +1409,10 @@ class TimeSeriesElement(_serialization.Model):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 
     :ivar metadatavalues: the metadata values returned if $filter was specified in the call.
-    :vartype metadatavalues: list[~$(python-base-namespace).v2021_05_01.models.MetadataValue]
+    :vartype metadatavalues: list[~azure.mgmt.monitor.v2021_05_01.models.MetadataValue]
     :ivar data: An array of data points representing the metric values.  This is only returned if a
      result type of data is specified.
-    :vartype data: list[~$(python-base-namespace).v2021_05_01.models.MetricValue]
+    :vartype data: list[~azure.mgmt.monitor.v2021_05_01.models.MetricValue]
     """
 
     _attribute_map = {
@@ -1436,10 +1429,10 @@ class TimeSeriesElement(_serialization.Model):
     ) -> None:
         """
         :keyword metadatavalues: the metadata values returned if $filter was specified in the call.
-        :paramtype metadatavalues: list[~$(python-base-namespace).v2021_05_01.models.MetadataValue]
+        :paramtype metadatavalues: list[~azure.mgmt.monitor.v2021_05_01.models.MetadataValue]
         :keyword data: An array of data points representing the metric values.  This is only returned
          if a result type of data is specified.
-        :paramtype data: list[~$(python-base-namespace).v2021_05_01.models.MetricValue]
+        :paramtype data: list[~azure.mgmt.monitor.v2021_05_01.models.MetricValue]
         """
         super().__init__(**kwargs)
         self.metadatavalues = metadatavalues

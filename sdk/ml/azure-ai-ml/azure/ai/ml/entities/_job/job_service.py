@@ -6,18 +6,25 @@
 
 import logging
 from typing import Dict, Optional, Union
+
 from typing_extensions import Literal
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AllNodes
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobService as RestJobService
-from azure.ai.ml._utils._experimental import experimental
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AllNodes
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    JobService as RestJobService,
+)
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
 
-@experimental
 class JobServiceBase(RestTranslatableMixin, DictMixin):
     """Base class for job service configuration.
 
@@ -145,7 +152,6 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         return result
 
 
-@experimental
 class JobService(JobServiceBase):
     """Basic job service configuration for backward compatibility. Use JupyterLabJobService, SshJobService,
     TensorBoardJobService or VsCodeJobService specific to your job type instead of JobService.
@@ -175,7 +181,6 @@ class JobService(JobServiceBase):
         return self._to_rest_job_service()
 
 
-@experimental
 class SshJobService(JobServiceBase):
     """SSH job service configuration.
 
@@ -230,7 +235,6 @@ class SshJobService(JobServiceBase):
         return self._to_rest_job_service(updated_properties)
 
 
-@experimental
 class TensorBoardJobService(JobServiceBase):
     """TensorBoard job service configuration.
 
@@ -285,7 +289,6 @@ class TensorBoardJobService(JobServiceBase):
         return self._to_rest_job_service(updated_properties)
 
 
-@experimental
 class JupyterLabJobService(JobServiceBase):
     """JupyterLab job service configuration.
 
@@ -333,7 +336,6 @@ class JupyterLabJobService(JobServiceBase):
         return self._to_rest_job_service()
 
 
-@experimental
 class VsCodeJobService(JobServiceBase):
     """VS Code job service configuration.
 

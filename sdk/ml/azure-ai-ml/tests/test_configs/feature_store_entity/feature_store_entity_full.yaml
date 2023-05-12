@@ -2,9 +2,7 @@ name: test-featurestore-entity
 version: "1"
 description: Yaml load test feature_store_entity
 index_columns:
-  - name: name,
+  - name: accountID
     type: string
-  - name: id,
-    type: integer
 tags:
   t1: v1

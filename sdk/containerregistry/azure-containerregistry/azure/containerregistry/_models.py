@@ -9,7 +9,6 @@ from enum import Enum
 from typing import List
 
 from azure.core import CaseInsensitiveEnumMeta
-
 from ._generated.models import (
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
@@ -305,30 +304,26 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class DownloadBlobResult(object):
-    """The result from downloading a blob from the registry.
+class GetManifestResult(object):
+    """The get manifest result.
 
-    :ivar data: The blob content.
-    :vartype data: IO
-    :ivar str digest: The blob's digest, calculated by the registry.
-    """
-
-    def __init__(self, **kwargs):
-        self.data = kwargs.get("data")
-        self.digest = kwargs.get("digest")
-
-
-class DownloadManifestResult(object):
-    """The result from downloading a manifest from the registry.
-
-    :ivar manifest: The OCI manifest that was downloaded.
-    :vartype manifest: ~azure.containerregistry.models.OCIManifest
-    :ivar data: The manifest stream that was downloaded.
-    :vartype data: IO
+    :ivar manifest: The manifest JSON.
+    :vartype manifest: MutableMapping[str, Any]
+    :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 
     def __init__(self, **kwargs):
         self.manifest = kwargs.get("manifest")
-        self.data = kwargs.get("data")
+        self.media_type = kwargs.get("media_type")
         self.digest = kwargs.get("digest")
+
+
+class DigestValidationError(ValueError):
+    """Thrown when a manifest digest validation fails.
+    :param str message: Message for caller describing the reason for the failure.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)

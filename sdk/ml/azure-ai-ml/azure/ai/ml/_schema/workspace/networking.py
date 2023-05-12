@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument,no-self-use,no-else-return
 
-from marshmallow import fields
+from marshmallow import fields, EXCLUDE
 from marshmallow.decorators import post_load, pre_dump
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
@@ -32,7 +32,14 @@ class DestinationSchema(metaclass=PatchedSchemaMeta):
 
 
 @experimental
+class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
+    spark_ready = fields.Bool()
+    status = fields.Str()
+
+
+@experimental
 class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
+    name = fields.Str(required=True)
     type = StringTransformedEnum(
         allowed_values=[OutboundRuleType.FQDN, OutboundRuleType.PRIVATE_ENDPOINT, OutboundRuleType.SERVICE_TAG],
         casing_transform=camel_to_snake,
@@ -48,6 +55,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
     )
+    status = fields.Str(dump_only=True)
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -63,24 +71,28 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
     def createdestobject(self, data, **kwargs):
         dest = data.get("destination", False)
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
+        name = data.get("name", None)
+        status = data.get("status", None)
         if dest:
             if isinstance(dest, str):
-                return FqdnDestination(rule_name=None, destination=dest, category=_snake_to_camel(category))
+                return FqdnDestination(name=name, destination=dest, category=_snake_to_camel(category), status=status)
             else:
                 if dest.get("subresource_target", False):
                     return PrivateEndpointDestination(
-                        rule_name=None,
+                        name=name,
                         service_resource_id=dest["service_resource_id"],
                         subresource_target=dest["subresource_target"],
                         spark_enabled=dest["spark_enabled"],
                         category=_snake_to_camel(category),
+                        status=status,
                     )
             return ServiceTagDestination(
-                rule_name=None,
+                name=name,
                 service_tag=dest["service_tag"],
                 protocol=dest["protocol"],
                 port_ranges=dest["port_ranges"],
                 category=_snake_to_camel(category),
+                status=status,
             )
 
     def fqdn_dest2dict(self, fqdndest):
@@ -113,25 +125,14 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         metadata={"description": "isolation mode for the workspace managed network."},
     )
-    outbound_rules = fields.Dict(
-        keys=fields.Str(required=True), values=NestedField(OutboundRuleSchema, allow_none=False), allow_none=True
-    )
+    outbound_rules = fields.List(NestedField(OutboundRuleSchema, allow_none=False, unknown=EXCLUDE), allow_none=True)
     network_id = fields.Str(required=False)
+    status = NestedField(ManagedNetworkStatusSchema, dump_only=True)
 
     @post_load
     def make(self, data, **kwargs):
-        rules_dict = data.get("outbound_rules", False)
-        if rules_dict:
-            rules_as_list = []
-            for rule_name in rules_dict:
-                rule = rules_dict[rule_name]
-                rule.rule_name = rule_name
-                rules_as_list.append(rule)
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), rules_as_list)
+        outbound_rules = data.get("outbound_rules", False)
+        if outbound_rules:
+            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), outbound_rules)
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
-
-    @pre_dump
-    def predump(self, data, **kwargs):
-        data.outbound_rules = {rule.rule_name: rule for rule in data.outbound_rules}
-        return data

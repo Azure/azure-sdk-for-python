@@ -191,7 +191,6 @@ class TestBatchEndpointOperations:
         mocker: MockFixture,
         randint: Callable[[], int],
     ) -> None:
-
         data_name = "data_name"
         data_version = randint()
         endpoint_name = "myBatchEndpoint"
@@ -230,7 +229,6 @@ class TestBatchEndpointOperations:
         mock_batch_endpoint_operations: BatchEndpointOperations,
         mocker: MockFixture,
     ) -> None:
-
         input_path = "https://foo/bar/train.csv"
         endpoint_name = "myBatchEndpoint"
         deployment_name = "myDeployment"

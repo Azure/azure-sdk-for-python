@@ -84,7 +84,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
@@ -270,9 +269,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
 
-        if is_private_preview_enabled() and outputs:
+        if outputs:
             params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
-        if is_private_preview_enabled() and job_name:
+        if job_name:
             params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
 
         # Batch job doesn't have a python class, loading a rest object using params override

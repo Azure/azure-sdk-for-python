@@ -7,9 +7,9 @@
 import logging
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BlockedTransformers
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake

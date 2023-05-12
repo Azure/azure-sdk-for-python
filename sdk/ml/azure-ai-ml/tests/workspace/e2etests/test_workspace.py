@@ -46,6 +46,7 @@ class TestWorkspace(AzureRecordedTestCase):
             {"location": location},
             {"description": wps_description},
             {"display_name": wps_display_name},
+            {"enable_data_isolation": True},
         ]
 
         # only test simple aspects of both a pointer and path-loaded workspace
@@ -60,6 +61,8 @@ class TestWorkspace(AzureRecordedTestCase):
             assert workspace.description == wps_description
             assert workspace.display_name == wps_display_name
             assert workspace.public_network_access == PublicNetworkAccess.ENABLED
+            # TODO uncomment this when enableDataIsolation flag change bug resolved for PATCH on the service side
+            # assert workspace.enable_data_isolation == True
 
         workspace = verify_entity_load_and_dump(
             load_workspace,
@@ -74,12 +77,13 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
 
-        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"
-        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"
+        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/sdktestconnectionacr"
+        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/sdktestconnect7425646050"
         param_image_build_compute = "compute"
         param_display_name = "Test display name"
         param_description = "Test description"
         param_tags = {"k1": "v1", "k2": "v2"}
+        workspace.enable_data_isolation = False
         workspace_poller = client.workspaces.begin_update(
             workspace,
             display_name=param_display_name,
@@ -101,8 +105,11 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.container_registry.lower() == static_acr.lower()
         assert workspace.application_insights.lower() == static_appinsights.lower()
         assert workspace.tags == param_tags
+        # enable_data_isolation flag can be only set at workspace creation stage, update for both put/patch is invliad
+        # TODO uncomment this when enableDataIsolation flag change bug resolved for PATCH on the service side
+        # assert workspace.enable_data_isolation == True
 
-        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True, permanently_delete=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
         assert isinstance(poller, LROPoller)
@@ -359,8 +366,6 @@ class TestWorkspace(AzureRecordedTestCase):
         ]
         wps = load_workspace("./tests/test_configs/workspace/workspace_mvnet.yaml", params_override=params_override)
 
-        wps.managed_network.outbound_rules.pop("my-storage")
-
         # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)
         assert isinstance(workspace_poller, LROPoller)
@@ -371,20 +376,24 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        assert "my-service" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
-        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], ServiceTagDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], FqdnDestination)
 
         # test get
         workspace = client.workspaces.get(name=wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        assert "my-service" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
-        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], ServiceTagDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
+        assert len(rules) == 1
+        assert isinstance(rules[0], FqdnDestination)
 
         # test workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)

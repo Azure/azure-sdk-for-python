@@ -483,7 +483,6 @@ class TestOperationOrchestration:
         operation_orchestrator._environments.create_or_update.assert_called_once()
 
     def test_arm_id_not_start_with_slash(self, operation_orchestrator: OperationOrchestrator):
-
         arm_id = NAMED_RESOURCE_ID_FORMAT.format(
             Test_Subscription,
             Test_Resource_Group,

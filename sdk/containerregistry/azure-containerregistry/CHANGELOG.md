@@ -1,16 +1,38 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b5 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
-- Suppress the response error with status code `404` in `delete_blob()`.
-- Added to return blob size in bytes in `upload_blob()`.
 
 ### Bugs Fixed
 
 ### Other Changes
+- Changed the digest validation exception type to `DigestValidationError` in `set/get manifest` and `upload/download blob` operations.
+
+## 1.1.0b4 (2023-04-25)
+
+### Features Added
+- Added an optional kwarg `media_type` in `set_manifest()` to enable uploading image manifests of any type.
+
+### Breaking Changes
+- Renamed `upload_manifest()` to `set_manifest()`, and changed to consume manifest in `JSON` instead of `OCIManifest` type.
+- Renamed `download_manifest()` to `get_manifest()`, and changed it's return type from `DownloadManifestResult` to `GetManifestResult`.
+
+### Other Changes
+- Changed the default audience to `"https://containerregistry.azure.net"` which works for all clouds.
+
+## 1.1.0b3 (2023-04-04)
+
+### Features Added
+- Supported uploading and downding large OCI artifact blobs in synchronous and asynchronous `ContainerRegistryClient`.
+- Published model `DownloadManifestResult`, `DownloadBlobStream` and `AsyncDownloadBlobStream`.
+
+### Breaking Changes
+- Suppress the response error with status code `404` in `delete_blob()`.
+- Added to return blob size in bytes in `upload_blob()`.
+- Changed `download_blob()` return type from `DownloadBlobResult` to `DownloadBlobStream` and `AsyncDownloadBlobStream`.
 
 ## 1.1.0b2 (2023-03-24)
 
@@ -28,7 +50,7 @@
 ## 1.1.0b1 (2022-05-10)
 
 ### Features Added
-- Supported uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`. ([#24004](https://github.com/Azure/azure-sdk-for-python/pull/24004))
+- Supported uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`.
 ### Other Changes
 
 - Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.
@@ -55,7 +77,7 @@
 ### Features Added
 
 - Updated the supported rest api version to be the stable "2021-07-01".
-  - Removed the property `teleport_enabled` in `RepositoryProperties`.
+- Removed the property `teleport_enabled` in `RepositoryProperties`.
 
 ## 1.0.0b6 (2021-09-08)
 

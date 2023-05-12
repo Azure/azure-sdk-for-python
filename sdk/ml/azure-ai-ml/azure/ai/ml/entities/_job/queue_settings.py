@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional, Union
 
 from typing_extensions import Literal
 
-from ..._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
+from ..._restclient.v2023_04_01_preview.models import QueueSettings as RestQueueSettings
 from ..._utils._experimental import experimental
 from ..._utils.utils import is_data_binding_expression
 from ...constants._job.job import JobPriorityValues, JobTierNames

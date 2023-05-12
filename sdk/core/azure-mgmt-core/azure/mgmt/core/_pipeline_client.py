@@ -49,7 +49,10 @@ class ARMPipelineClient(PipelineClient):
             if isinstance(per_call_policies, Iterable):
                 per_call_policies.append(ARMAutoResourceProviderRegistrationPolicy())
             else:
-                per_call_policies = [per_call_policies, ARMAutoResourceProviderRegistrationPolicy()]
+                per_call_policies = [
+                    per_call_policies,
+                    ARMAutoResourceProviderRegistrationPolicy(),
+                ]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get("config")
             if not config.http_logging_policy:

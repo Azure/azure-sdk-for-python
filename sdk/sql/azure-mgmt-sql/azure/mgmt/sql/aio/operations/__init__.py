@@ -175,8 +175,8 @@ from ._synapse_link_workspaces_operations import SynapseLinkWorkspacesOperations
 from ._virtual_clusters_operations import VirtualClustersOperations
 from ._instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
-from ._managed_databases_operations import ManagedDatabasesOperations
 from ._database_encryption_protectors_operations import DatabaseEncryptionProtectorsOperations
+from ._managed_databases_operations import ManagedDatabasesOperations
 from ._managed_instances_operations import ManagedInstancesOperations
 from ._managed_ledger_digest_uploads_operations import ManagedLedgerDigestUploadsOperations
 from ._recoverable_databases_operations import RecoverableDatabasesOperations
@@ -330,8 +330,8 @@ __all__ = [
     "VirtualClustersOperations",
     "InstanceFailoverGroupsOperations",
     "ManagedDatabaseRestoreDetailsOperations",
-    "ManagedDatabasesOperations",
     "DatabaseEncryptionProtectorsOperations",
+    "ManagedDatabasesOperations",
     "ManagedInstancesOperations",
     "ManagedLedgerDigestUploadsOperations",
     "RecoverableDatabasesOperations",

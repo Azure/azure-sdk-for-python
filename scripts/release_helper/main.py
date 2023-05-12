@@ -53,12 +53,13 @@ def select_language_issues(issues: List[IssuePackage], language: str) -> List[Is
 
 def output(result: Dict[str, Dict[str, IssueProcess]]):
     with open("release_issues_summary.md", 'w') as file_out:
-        file_out.write('| title | Python | Go | Java | Js | created date | target date | status |\n')
-        file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+        file_out.write('| id | title | Python | Go | Java | Js | created date | target date | status |\n')
+        file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+        idx = 1
         for title, language_issue in result.items():
             created_date = ""
             target_date = ""
-            line = f"| {title} "
+            line = f"| {idx} | {title} "
             status = ""
             enable_out = False
             for language in ["Python", "Go", "Java", "JS"]:
@@ -74,6 +75,7 @@ def output(result: Dict[str, Dict[str, IssueProcess]]):
                 else:
                     line = f"{line} | "
             if enable_out:
+                idx = idx + 1
                 status = f"Hold on by {status}" if status else status
                 line = f"{line} | {created_date} | {target_date} | {status} |\n"
                 file_out.write(line)
