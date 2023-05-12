@@ -1,8 +1,10 @@
 # Release History
 
-## 10.2.0b8 (2023-05-09)
+## 10.2.0b8 (2023-05-12)
 
-change log generation failed!!!
+### Features Added
+
+  - Model ServerForUpdate has a new parameter network
 
 ## 10.2.0b7 (2023-04-18)
 
