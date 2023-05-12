@@ -132,6 +132,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Internal constructor for sharing the pipeline with CallAutomationClient."""
         return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
+    @distributed_trace
     def get_call_properties(self, **kwargs) -> CallConnectionProperties:
         """Get the latest properties of this call.
 

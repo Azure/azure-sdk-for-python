@@ -276,15 +276,18 @@ class AnswerCallRequest(_serialization.Model):
     :vartype incoming_call_context: str
     :ivar callback_uri: The callback uri. Required.
     :vartype callback_uri: str
+    :ivar operation_context: A customer set value used to track the answering of a call.
+    :vartype operation_context: str
     :ivar media_streaming_configuration: Media Streaming Configuration.
     :vartype media_streaming_configuration:
      ~azure.communication.callautomation.models.MediaStreamingConfiguration
     :ivar azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
      resource attached.
     :vartype azure_cognitive_services_endpoint_url: str
-    :ivar answered_by_identifier: The identifier of the contoso app which answers the call.
+    :ivar answered_by_identifier: The identifier of the call automation entity which answers the
+     call.
     :vartype answered_by_identifier:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     """
 
     _validation = {
@@ -295,9 +298,10 @@ class AnswerCallRequest(_serialization.Model):
     _attribute_map = {
         "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "azure_cognitive_services_endpoint_url": {"key": "azureCognitiveServicesEndpointUrl", "type": "str"},
-        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationIdentifierModel"},
+        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationUserIdentifierModel"},
     }
 
     def __init__(
@@ -305,9 +309,10 @@ class AnswerCallRequest(_serialization.Model):
         *,
         incoming_call_context: str,
         callback_uri: str,
+        operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
-        answered_by_identifier: Optional["_models.CommunicationIdentifierModel"] = None,
+        answered_by_identifier: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -315,19 +320,23 @@ class AnswerCallRequest(_serialization.Model):
         :paramtype incoming_call_context: str
         :keyword callback_uri: The callback uri. Required.
         :paramtype callback_uri: str
+        :keyword operation_context: A customer set value used to track the answering of a call.
+        :paramtype operation_context: str
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration:
          ~azure.communication.callautomation.models.MediaStreamingConfiguration
         :keyword azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive
          Services resource attached.
         :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword answered_by_identifier: The identifier of the contoso app which answers the call.
+        :keyword answered_by_identifier: The identifier of the call automation entity which answers the
+         call.
         :paramtype answered_by_identifier:
-         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
         self.callback_uri = callback_uri
+        self.operation_context = operation_context
         self.media_streaming_configuration = media_streaming_configuration
         self.azure_cognitive_services_endpoint_url = azure_cognitive_services_endpoint_url
         self.answered_by_identifier = answered_by_identifier
@@ -409,7 +418,7 @@ class CallConnected(_serialization.Model):
         self.operation_context = operation_context
 
 
-class CallConnectionProperties(_serialization.Model):
+class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a call connection.
 
     :ivar call_connection_id: The call connection id.
@@ -437,6 +446,12 @@ class CallConnectionProperties(_serialization.Model):
     :ivar source_identity: Source identity.
     :vartype source_identity:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar correlation_id: The correlation ID.
+    :vartype correlation_id: str
+    :ivar answered_by_identifier: Identity of the answering entity. Only populated when identity is
+     provided in the request.
+    :vartype answered_by_identifier:
+     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     """
 
     _attribute_map = {
@@ -449,6 +464,8 @@ class CallConnectionProperties(_serialization.Model):
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
         "source_identity": {"key": "sourceIdentity", "type": "CommunicationIdentifierModel"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationUserIdentifierModel"},
     }
 
     def __init__(
@@ -463,6 +480,8 @@ class CallConnectionProperties(_serialization.Model):
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
         source_identity: Optional["_models.CommunicationIdentifierModel"] = None,
+        correlation_id: Optional[str] = None,
+        answered_by_identifier: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -492,6 +511,12 @@ class CallConnectionProperties(_serialization.Model):
         :keyword source_identity: Source identity.
         :paramtype source_identity:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword correlation_id: The correlation ID.
+        :paramtype correlation_id: str
+        :keyword answered_by_identifier: Identity of the answering entity. Only populated when identity
+         is provided in the request.
+        :paramtype answered_by_identifier:
+         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
@@ -503,6 +528,8 @@ class CallConnectionProperties(_serialization.Model):
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source_identity = source_identity
+        self.correlation_id = correlation_id
+        self.answered_by_identifier = answered_by_identifier
 
 
 class CallDisconnected(_serialization.Model):
@@ -1272,7 +1299,7 @@ class CreateCallRequest(_serialization.Model):
     :vartype source_display_name: str
     :ivar source_identity: The identifier of the source of the call.
     :vartype source_identity:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     :ivar operation_context: A customer set value used to track the answering of a call.
     :vartype operation_context: str
     :ivar callback_uri: The callback URI. Required.
@@ -1296,7 +1323,7 @@ class CreateCallRequest(_serialization.Model):
         "targets": {"key": "targets", "type": "[CommunicationIdentifierModel]"},
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
-        "source_identity": {"key": "sourceIdentity", "type": "CommunicationIdentifierModel"},
+        "source_identity": {"key": "sourceIdentity", "type": "CommunicationUserIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
@@ -1311,7 +1338,7 @@ class CreateCallRequest(_serialization.Model):
         callback_uri: str,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
-        source_identity: Optional["_models.CommunicationIdentifierModel"] = None,
+        source_identity: Optional["_models.CommunicationUserIdentifierModel"] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
@@ -1331,7 +1358,7 @@ class CreateCallRequest(_serialization.Model):
         :paramtype source_display_name: str
         :keyword source_identity: The identifier of the source of the call.
         :paramtype source_identity:
-         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         :keyword operation_context: A customer set value used to track the answering of a call.
         :paramtype operation_context: str
         :keyword callback_uri: The callback URI. Required.

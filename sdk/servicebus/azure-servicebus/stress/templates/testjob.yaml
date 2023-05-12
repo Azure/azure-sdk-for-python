@@ -24,43 +24,43 @@ spec:
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueuepullw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin &&  python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output &&  python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuepullw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "abatchw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "batchw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueue" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queue" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues.py --method send_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues.py --method send_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueuepull" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuepull" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin &&  python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --output $DEBUG_SHARE/output.bin']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output &&  python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "abatch" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output.bin && python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --output $DEBUG_SHARE/output.bin']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && cat > $DEBUG_SHARE/output && python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "batch" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE  && cat > $DEBUG_SHARE/output.bin && python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --output $DEBUG_SHARE/output.bin']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE  && cat > $DEBUG_SHARE/output && python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable  ']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "amemray" }}

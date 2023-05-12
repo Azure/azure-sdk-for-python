@@ -13,6 +13,7 @@ from ._generated.models import (
 )
 from ._shared.models import (
     CommunicationIdentifier,
+    CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
 from ._generated.models._enums import (
@@ -21,7 +22,7 @@ from ._generated.models._enums import (
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
-    serialize_identifier
+    deserialize_comm_user_identifier
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
@@ -247,7 +248,7 @@ class MediaStreamingConfiguration(object):
             audio_channel_type=self.audio_channel_type
             )
 
-class CallConnectionProperties():
+class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
     :ivar call_connection_id: The call connection id of this call leg.
@@ -271,6 +272,10 @@ class CallConnectionProperties():
     :vartype source_display_name: str
     :ivar source_identity: Source identity of the caller.
     :vartype source_identity: ~azure.communication.callautomation.CommunicationIdentifier
+    :ivar correlation_id: Correlation ID of the call
+    :vartype correlation_id: str
+    :ivar answered_by_identifier: The identifier that answered the call
+    :vartype answered_by_identifier: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
         self,
@@ -285,6 +290,8 @@ class CallConnectionProperties():
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source_identity: Optional[CommunicationIdentifier] = None,
+        correlation_id: Optional[str] = None,
+        answered_by_identifier: Optional[CommunicationUserIdentifier] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -297,6 +304,8 @@ class CallConnectionProperties():
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source_identity = source_identity
+        self.correlation_id = correlation_id
+        self.answered_by_identifier = answered_by_identifier
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -318,7 +327,13 @@ class CallConnectionProperties():
             source_display_name=call_connection_properties_generated.source_display_name,
             source_identity=deserialize_identifier(call_connection_properties_generated.source_identity)
             if call_connection_properties_generated.source_identity
-            else None)
+            else None,
+            correlation_id=call_connection_properties_generated.correlation_id,
+            answered_by_identifier=deserialize_comm_user_identifier(
+                call_connection_properties_generated.answered_by_identifier)
+            if call_connection_properties_generated.answered_by_identifier
+            else None
+            )
 
 class RecordingProperties(object):
     """Detailed recording properties of the call.
