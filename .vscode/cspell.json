@@ -1453,6 +1453,15 @@
         "wday",
         "deseralize"
       ]
+    },
+    {
+      "filename": "sdk/contentsafety/azure-ai-contentsafety/azure/ai/contentsafety/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
     }
   ],
   "allowCompoundWords": true
