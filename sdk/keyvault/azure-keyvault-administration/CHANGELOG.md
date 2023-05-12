@@ -1,10 +1,12 @@
 # Release History
 
-## 4.4.0b1 (2023-05-11)
+## 4.4.0b1 (2023-05-15)
 
 ### Bugs Fixed
 - Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
   ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
+- Newly-created `KeyVaultSettingsClient`s that call `update_setting` no longer cause erroneous "No content provided"
+  errors ([#30382](https://github.com/Azure/azure-sdk-for-python/issues/30382))
 
 ## 4.3.0 (2023-03-16)
 
