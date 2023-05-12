@@ -6,7 +6,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated_models import UpdateSettingRequest
-from ._internal import KeyVaultClientBase
+from ._internal import HttpChallengeCache, KeyVaultClientBase
 from ._models import KeyVaultSetting
 
 
@@ -72,6 +72,17 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        # Challenge authentication doesn't work as expected with this method's request endpoint
+        # If we need to prompt an auth challenge, do so using `get_setting` instead
+        # (Note: we prompt a challenge instead of fetching a token directly so the token has correct permissions)
+        challenge_cached = HttpChallengeCache.get_challenge_for_url(self._vault_url)
+        if not challenge_cached:
+            # `get_setting` is just used to prompt a challenge; we don't want to stop on any errors it may raise
+            try:
+                self._client.get_setting(vault_base_url=self._vault_url, setting_name=setting.name, **kwargs)
+            except:
+                pass
+
         parameters = UpdateSettingRequest(value=setting.value)
         result = self._client.update_setting(
             vault_base_url=self._vault_url,
