@@ -48,26 +48,26 @@ def main():
 
     # Fetch control plane resource dependencies
     target_project_name = list(client.dev_center.list_projects(top=1))[0]['name']
-    target_catalog_name = list(client.environments.list_catalog_items(target_project_name, top=1))[0]['catalogName']
-    target_catalog_item_name = list(client.environments.list_catalog_items(target_project_name, top=1))[0]['name']
-    target_environment_type_name = list(client.environments.list_environment_types(target_project_name, top=1))[0]['name']
+    target_catalog_name = list(client.deployment_environments.list_catalogs(target_project_name, top=1))[0]['name']
+    target_environment_definition_name = list(client.deployment_environments.list_environment_definitions_by_catalog(target_project_name, target_catalog_name, top=1))[0]['name']
+    target_environment_type_name = list(client.deployment_environments.list_environment_types(target_project_name, top=1))[0]['name']
 
     # Stand up a new environment
-    create_response = client.environments.begin_create_or_update_environment(target_project_name,
-                                                       "Dev_Environment",
-                                                       {
-                                                        "catalogName": target_catalog_name,
-                                                        "catalogItemName": target_catalog_item_name,
-                                                        "environmentType": target_environment_type_name
-                                                       })
+    environment = {
+        "catalogName": target_catalog_name,
+        "environmentDefinitionName": target_environment_definition_name,
+        "environmentType": target_environment_type_name
+    }
+    
+    create_response = client.deployment_environments.begin_create_or_update_environment(target_project_name, "DevTestEnv", environment)
     environment_result = create_response.result()
 
     LOG.info(f"Provisioned environment with status {environment_result['provisioningState']}.")
 
     # Tear down the environment when finished
-    delete_response = client.environments.begin_delete_environment(target_project_name, "Dev_Environment")
-    delete_response.wait()
-    LOG.info("Completed deletion for the environment.")
+    delete_response = client.deployment_environments.begin_delete_environment(target_project_name, "DevTestEnv")
+    delete_result = delete_response.result()
+    LOG.info(f"Completed deletion for the environment with status {delete_result['status']}")
 
 
 if __name__ == "__main__":
