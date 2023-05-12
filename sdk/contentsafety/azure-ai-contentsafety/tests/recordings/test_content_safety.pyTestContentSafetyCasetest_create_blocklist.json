@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "00000000000000000000000000000000/contentsafety/text/blocklists/TestBlocklist?api-version=2023-04-30-preview",
+      "RequestUri": "https://fake_cs_resource.cognitiveservices.azure.com/contentsafety/text/blocklists/TestBlocklist?api-version=2023-04-30-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,24 +9,22 @@
         "Connection": "keep-alive",
         "Content-Length": "45",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "Ocp-Apim-Subscription-Key": "https://fake_cs_resource.cognitiveservices.azure.com/",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
         "User-Agent": "azsdk-python-ai-contentsafety/1.0.0b1 Python/3.8.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "description": "Test blocklist management."
       },
-      "StatusCode": 201,
+      "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e61295d9-4651-4f84-9398-478358a92ed9",
-        "apim-subscription-id": "973fda3f71b6448db2933f4e72c9d160",
+        "apim-request-id": "fc931e37-8d96-42db-93be-339cd05c1993",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 14:21:24 GMT",
-        "Location": "00000000000000000000000000000000contentsafety/text/blocklists/TestBlocklist?api-version=2023-04-30-preview",
+        "Date": "Fri, 12 May 2023 08:58:46 GMT",
         "Server": "istio-envoy",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "41",
+        "x-envoy-upstream-service-time": "10",
         "x-ms-region": "Central US EUAP"
       },
       "ResponseBody": {
