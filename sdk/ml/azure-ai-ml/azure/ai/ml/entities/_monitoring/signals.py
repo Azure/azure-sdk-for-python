@@ -27,8 +27,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
-from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType, MonitorDatasetContext
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
@@ -244,19 +243,8 @@ class DataDriftSignal(DataSignal):
         )
 
     @classmethod
-    def _get_default_data_drift_signal(cls, production_data_id: str, production_data_type: str) -> "DataDriftSignal":
+    def _get_default_data_drift_signal(cls) -> "DataDriftSignal":
         return cls(
-            target_dataset=TargetDataset(
-                dataset=MonitorInputData(
-                    input_dataset=Input(path=production_data_id, type=production_data_type),
-                    dataset_context=MonitorDatasetContext.MODEL_INPUTS,
-                ),
-                data_window_size=7,
-            ),
-            baseline_dataset=MonitorInputData(
-                input_dataset=Input(path=production_data_id, type=production_data_type),
-                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
-            ),
             features=ALL_FEATURES,
             metric_thresholds=DataDriftMetricThreshold._get_default_thresholds(),
         )
@@ -325,27 +313,8 @@ class PredictionDriftSignal(MonitoringSignal):
         )
 
     @classmethod
-    def _get_default_prediction_drift_signal(
-        cls, production_data_id: str, production_data_type: str
-    ) -> "PredictionDriftSignal":
+    def _get_default_prediction_drift_signal(cls) -> "PredictionDriftSignal":
         return cls(
-            target_dataset=TargetDataset(
-                dataset=MonitorInputData(
-                    input_dataset=Input(
-                        path=production_data_id,
-                        type=production_data_type,
-                    ),
-                    dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                ),
-                data_window_size=7,
-            ),
-            baseline_dataset=MonitorInputData(
-                input_dataset=Input(
-                    path=production_data_id,
-                    type=production_data_type,
-                ),
-                dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
-            ),
             metric_thresholds=PredictionDriftMetricThreshold._get_default_thresholds(),
         )
 
@@ -421,26 +390,9 @@ class DataQualitySignal(DataSignal):
 
     @classmethod
     def _get_default_data_quality_signal(
-        cls, production_data_id: str, production_data_type: str
+        cls,
     ) -> "DataQualitySignal":
         return cls(
-            target_dataset=TargetDataset(
-                dataset=MonitorInputData(
-                    input_dataset=Input(
-                        path=production_data_id,
-                        type=production_data_type,
-                    ),
-                    dataset_context=MonitorDatasetContext.MODEL_INPUTS,
-                ),
-                data_window_size=7,
-            ),
-            baseline_dataset=MonitorInputData(
-                input_dataset=Input(
-                    path=production_data_id,
-                    type=production_data_type,
-                ),
-                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
-            ),
             features=ALL_FEATURES,
             metric_thresholds=DataQualityMetricThreshold._get_default_thresholds(),
         )

@@ -109,21 +109,9 @@ class MonitorDefinition(RestTranslatableMixin):
             alert_notification=from_rest_alert_notification,
         )
 
-    def _populate_default_signal_information(
-        self,
-        model_inputs_arm_id: str,
-        model_inputs_type: str,
-        model_outputs_arm_id: str,
-        model_outputs_type: str,
-    ):
+    def _populate_default_signal_information(self):
         self.monitoring_signals = {
-            DefaultMonitorSignalNames.DATA_DRIFT_SIGNAL: DataDriftSignal._get_default_data_drift_signal(
-                model_inputs_arm_id, model_inputs_type
-            ),
-            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal(  # pylint: disable=line-too-long
-                model_outputs_arm_id, model_outputs_type
-            ),
-            DefaultMonitorSignalNames.DATA_QUALITY_SIGNAL: DataQualitySignal._get_default_data_quality_signal(
-                model_inputs_arm_id, model_inputs_type
-            ),
+            DefaultMonitorSignalNames.DATA_DRIFT_SIGNAL: DataDriftSignal._get_default_data_drift_signal(),
+            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
+            DefaultMonitorSignalNames.DATA_QUALITY_SIGNAL: DataQualitySignal._get_default_data_quality_signal(),
         }

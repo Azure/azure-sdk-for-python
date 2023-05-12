@@ -148,17 +148,13 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
 
-    def _create_default_monitor_definition(
-        self, model_inputs_arm_id: str, model_inputs_type: str, model_outputs_arm_id: str, model_outputs_type: str
-    ):
-        self.create_monitor._populate_default_signal_information(
-            model_inputs_arm_id,
-            model_inputs_type,
-            model_outputs_arm_id,
-            model_outputs_type,
-        )
+    def _create_default_monitor_definition(self):
+        self.create_monitor._populate_default_signal_information()
 
         # add appropriate tags to schedule
         for signal_name in [name.value for name in DefaultMonitorSignalNames]:
-            self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
-            self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"
+            self._set_baseline_data_trailing_tags_for_signal(signal_name)
+
+    def _set_baseline_data_trailing_tags_for_signal(self, signal_name):
+        self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
+        self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"
