@@ -462,7 +462,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :return: None
         :rtype: None
@@ -489,7 +489,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :return: None
         :rtype: None
@@ -519,7 +519,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :return: None
         :rtype: None
