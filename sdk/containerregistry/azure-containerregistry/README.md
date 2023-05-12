@@ -69,10 +69,16 @@ For more information please see [Container Registry Concepts](https://docs.micro
 
 The following sections provide several code snippets covering some of the most common ACR Service tasks, including:
 
-- [List repositories](#list-repositories)
-- [List tags with anonymous access](#list-tags-with-anonymous-access)
-- [Set artifact properties](#set-artifact-properties)
-- [Delete images](#delete-images)
+- Registry operations:
+  - [List repositories](#list-repositories)
+  - [List tags with anonymous access](#list-tags-with-anonymous-access)
+  - [Set artifact properties](#set-artifact-properties)
+  - [Delete images](#delete-images)
+- Blob and manifest operations:
+  - [Upload images](#upload-images)
+  - [Download images](#download-images)
+  - [Delete manifest](#delete-manifest)
+  - [Delete blob](#delete-blob)
 
 Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` environment variable set to a string containing the `https://` prefix and the name of the login server, for example "https://myregistry.azurecr.io".
 
@@ -136,6 +142,105 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
                 print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
+
+### Upload images
+
+To upload a full image, we need to upload individual layers and configuration. After that we can upload a manifest which describes an image or artifact and assign it a tag.
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+repository_name = "my_repository"
+layer = BytesIO(b"Sample layer")
+config = BytesIO(json.dumps(
+    {
+        "sample config": "content",
+    }).encode())
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    layer_digest, layer_size = client.upload_blob(repository_name, layer)
+    print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
+    config_digest, config_size = client.upload_blob(repository_name, config)
+    print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
+    oci_manifest = {
+        "config": {
+            "mediaType": "application/vnd.oci.image.config.v1+json",
+            "digest": config_digest,
+            "sizeInBytes": config_size,
+        },
+        "schemaVersion": 2,
+        "layers": [
+            {
+                "mediaType": "application/vnd.oci.image.layer.v1.tar",
+                "digest": layer_digest,
+                "size": layer_size,
+                "annotations": {
+                    "org.opencontainers.image.ref.name": "artifact.txt",
+                },
+            },
+        ],
+    }
+    manifest_digest = client.set_manifest(repository_name, oci_manifest, tag="latest")
+    print(f"Uploaded manifest: digest - {manifest_digest}")
+```
+
+### Download images
+
+To download a full image, we need to download its manifest and then download individual layers and configuration.
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+repository_name = "my_repository"
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    get_manifest_result = client.get_manifest(repository_name, "latest")
+    received_manifest = get_manifest_result.manifest
+    print(f"Got manifest:\n{received_manifest}")
+    # Download and write out the layers
+    for layer in received_manifest["layers"]:
+        layer_file_name = layer["digest"].split(":")[1]
+        try:
+            stream = client.download_blob(repository_name, layer["digest"])
+            with open(layer_file_name, "wb") as layer_file:
+                for chunk in stream:
+                    layer_file.write(chunk)
+        except DigestValidationError:
+            print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
+            os.remove(layer_file_name)
+        print(f"Got layer: {layer_file_name}")
+    # Download and write out the config
+    config_file_name = "config.json"
+    try:
+        stream = client.download_blob(repository_name, received_manifest["config"]["digest"])
+        with open(config_file_name, "wb") as config_file:
+            for chunk in stream:
+                config_file.write(chunk)
+    except DigestValidationError:
+        print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
+        os.remove(config_file_name)
+    print(f"Got config: {config_file_name}")
+```
+
+### Delete manifest
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+repository_name = "my_repository"
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    get_manifest_result = client.get_manifest(repository_name, "latest")
+    client.delete_manifest(repository_name, get_manifest_result.digest)
+```
+
+### Delete blob
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+repository_name = "my_repository"
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    get_manifest_result = client.get_manifest(repository_name, "latest")
+    received_manifest = get_manifest_result.manifest
+    for layer in received_manifest["layers"]:
+        client.delete_blob(repository_name, layer["digest"])
+    client.delete_blob(repository_name, received_manifest["config"]["digest"])
+```
+
 
 ## Troubleshooting
 
