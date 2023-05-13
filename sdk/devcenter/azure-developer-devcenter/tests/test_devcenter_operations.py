@@ -120,7 +120,7 @@ class TestDevcenter(AzureRecordedTestCase):
         project_name = kwargs.pop("devcenter_project_name")
         environment_type_name = kwargs.pop("devcenter_environment_type_name")
         catalog_name = kwargs.pop("devcenter_catalog_name")
-        env_defn_name = kwargs.pop("devcenter_environment_definition_name")
+        env_definition_name = kwargs.pop("devcenter_environment_definition_name")
         env_name = kwargs.pop("devcenter_environment_name")
 
         client = self.create_client(endpoint)
@@ -137,18 +137,18 @@ class TestDevcenter(AzureRecordedTestCase):
         assert filtered_catalog_response[0]['name'] == catalog_response['name']
 
         # Environment Definitions
-        env_defn_response = client.deployment_environments.get_environment_definition(project_name, catalog_name, env_defn_name)
-        assert env_defn_response['name'] == env_defn_name
+        env_definition_response = client.deployment_environments.get_environment_definition(project_name, catalog_name, env_definition_name)
+        assert env_definition_response['name'] == env_definition_name
 
-        all_env_defn_response = client.deployment_environments.list_environment_definitions(project_name)
-        filtered_all_env_defn_response = filter(lambda x: x['name'] == env_defn_name, all_env_defn_response)
-        filtered_all_env_defn_response = list(filtered_all_env_defn_response)
-        assert len(filtered_all_env_defn_response) == 1 and filtered_all_env_defn_response[0]['name'] == env_defn_response['name']
+        all_env_definition_response = client.deployment_environments.list_environment_definitions(project_name)
+        filtered_all_env_definition_response = filter(lambda x: x['name'] == env_definition_name, all_env_definition_response)
+        filtered_all_env_definition_response = list(filtered_all_env_definition_response)
+        assert len(filtered_all_env_definition_response) == 1 and filtered_all_env_definition_response[0]['name'] == env_definition_response['name']
 
-        env_defns_response = client.deployment_environments.list_environment_definitions_by_catalog(project_name, catalog_name)
-        filtered_env_defns_response = filter(lambda x: x['name'] == env_defn_name, env_defns_response)
-        filtered_env_defns_response = list(filtered_env_defns_response)
-        assert len(filtered_env_defns_response) == 1 and filtered_env_defns_response[0]['name'] == env_defn_response['name']
+        env_definitions_response = client.deployment_environments.list_environment_definitions_by_catalog(project_name, catalog_name)
+        filtered_env_definitions_response = filter(lambda x: x['name'] == env_definition_name, env_definitions_response)
+        filtered_env_definitions_response = list(filtered_env_definitions_response)
+        assert len(filtered_env_definitions_response) == 1 and filtered_env_definitions_response[0]['name'] == env_definition_response['name']
 
         # Environment Types
         env_types_response = client.deployment_environments.list_environment_types(project_name)
@@ -159,7 +159,7 @@ class TestDevcenter(AzureRecordedTestCase):
         # Environments
         environment = {
             "catalogName": catalog_name,
-            "environmentDefinitionName": env_defn_name,
+            "environmentDefinitionName": env_definition_name,
             "environmentType": environment_type_name
         }
         create_env_response = client.deployment_environments.begin_create_or_update_environment(project_name, env_name, environment)
