@@ -27,6 +27,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ServiceRequestError,
+    ServiceResponseError,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineRequest
@@ -809,7 +810,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 assert size == blob_size
 
                 client.delete_blob(repo, digest)
-            except ServiceRequestError as err:
+            except (ServiceRequestError, ServiceResponseError) as err:
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
                 print(f"Failed to upload blob: {err.message}")
@@ -829,7 +830,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 assert size == blob_size
 
                 client.delete_blob(repo, digest)
-            except ServiceRequestError as err:
+            except (ServiceRequestError, ServiceResponseError) as err:
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
                 print(f"Failed to upload blob: {err.message}")
