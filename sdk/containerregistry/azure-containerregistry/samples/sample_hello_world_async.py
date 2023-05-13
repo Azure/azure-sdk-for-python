@@ -32,7 +32,7 @@ import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry.aio import ContainerRegistryClient
-from utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_credential
 
 
 class HelloWorldAsync(object):
@@ -40,14 +40,13 @@ class HelloWorldAsync(object):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
-        self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority, is_async=True)
 
     async def basic_sample(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential) as client:
         # [END create_registry_client]
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():

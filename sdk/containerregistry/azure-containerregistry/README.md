@@ -48,6 +48,7 @@ az acr create --name MyContainerRegistry --resource-group MyResourceGroup --loca
 
 The [Azure Identity library][identity] provides easy Azure Active Directory support for authentication. The `DefaultAzureCredential` assumes the `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET` environment variables are set, for more information refer to the [Azure Identity environment variables section](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#environment-variables)
 
+<!-- SNIPPET:sample_hello_world.create_registry_client -->
 ```python
 # Create a ContainerRegistryClient that will authenticate through Active Directory
 from azure.containerregistry import ContainerRegistryClient
@@ -57,6 +58,7 @@ endpoint = "https://mycontainerregistry.azurecr.io"
 audience = "https://management.azure.com"
 client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
 ```
+<!-- END SNIPPET -->
 
 ## Key concepts
 
@@ -86,11 +88,11 @@ Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` env
 
 Iterate through the collection of repositories in the registry.
 
-<!-- SNIPPET:sample_list_repositories.list_repository_names -->
+<!-- SNIPPET:sample_delete_tags.list_repository_names -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
     # Iterate through all the repositories
     for repository_name in client.list_repository_names():
         print(repository_name)
@@ -101,27 +103,28 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 Iterate through the collection of tags in the repository with anonymous access.
 
-<!-- SNIPPET:sample_list_tags.list_tags_with_anonymous_access -->
+<!-- SNIPPET:sample_list_tags.list_tags_anonymous -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint) as client:
     manifest = client.get_manifest_properties("library/hello-world", "latest")
-    print(manifest.repository_name + ": ")
+    print(f"Tags of {manifest.repository_name}: ")
     for tag in manifest.tags:
-        print(tag + "\n")
+        print(f"{tag}\n")
 ```
+<!-- END SNIPPET -->
 
 ### Set artifact properties
 
 Set properties of an artifact.
 
-<!-- SNIPPET:sample_set_artifact_properties.update_manifest_properties -->
+<!-- SNIPPET:sample_set_image_properties.update_manifest_properties -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
-    # Set permissions on the v1 image's "latest" tag
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
+    # Set permissions on the image's "latest" tag
     client.update_manifest_properties(
         "library/hello-world",
         "latest",
@@ -135,11 +138,11 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 Delete images older than the first three in the repository.
 
-<!-- SNIPPET:sample_delete_images.delete_manifest -->
+<!-- SNIPPET:sample_delete_images.delete_manifests -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
     for repository in client.list_repository_names():
         manifest_count = 0
         for manifest in client.list_manifest_properties(repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
@@ -154,7 +157,7 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 To upload a full image, we need to upload individual layers and configuration. After that we can upload a manifest which describes an image or artifact and assign it a tag.
 
-<!-- SNIPPET:sample_upload_images.upload_blob_and_manifest -->
+<!-- SNIPPET:sample_set_get_image.upload_blob_and_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
@@ -163,7 +166,7 @@ config = BytesIO(json.dumps(
     {
         "sample config": "content",
     }).encode())
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
     layer_digest, layer_size = client.upload_blob(repository_name, layer)
     print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
     config_digest, config_size = client.upload_blob(repository_name, config)
@@ -195,11 +198,11 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 To download a full image, we need to download its manifest and then download individual layers and configuration.
 
-<!-- SNIPPET:sample_download_images.download_blob_and_manifest -->
+<!-- SNIPPET:sample_set_get_image.download_blob_and_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
     get_manifest_result = client.get_manifest(repository_name, "latest")
     received_manifest = get_manifest_result.manifest
     print(f"Got manifest:\n{received_manifest}")
@@ -231,11 +234,11 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 ### Delete manifest
 
-<!-- SNIPPET:sample_delete_manifest.delete_manifest -->
+<!-- SNIPPET:sample_set_get_image.delete_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
     get_manifest_result = client.get_manifest(repository_name, "latest")
     client.delete_manifest(repository_name, get_manifest_result.digest)
 ```
@@ -243,11 +246,11 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 ### Delete blob
 
-<!-- SNIPPET:sample_delete_blob.delete_blob -->
+<!-- SNIPPET:sample_set_get_image.delete_blob -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
-with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
     get_manifest_result = client.get_manifest(repository_name, "latest")
     received_manifest = get_manifest_result.manifest
     for layer in received_manifest["layers"]:

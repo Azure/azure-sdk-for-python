@@ -34,7 +34,7 @@ import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry.aio import ContainerRegistryClient
-from utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_credential
 
 
 class ListTagsAsync(object):
@@ -42,18 +42,18 @@ class ListTagsAsync(object):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
-        self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority, is_async=True)
 
     async def list_tags(self):
         load_registry()
-        # Instantiate an instance of ContainerRegistryClient    
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        # [START list_tags_anonymous]
+        async with ContainerRegistryClient(self.endpoint) as client:
             manifest = await client.get_manifest_properties("library/hello-world", "latest")
-            print("Tags of " + manifest.repository_name + ": ")
+            print(f"Tags of {manifest.repository_name}: ")
             # Iterate through all the tags
             for tag in manifest.tags:
-                print(tag)
+                print(f"{tag}\n")
+        # [END list_tags_anonymous]
 
 
 async def main():

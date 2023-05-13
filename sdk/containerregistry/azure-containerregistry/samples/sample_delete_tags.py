@@ -31,7 +31,7 @@ USAGE:
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient, ArtifactTagOrder
-from utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_credential
 
 
 class DeleteTags(object):
@@ -39,12 +39,11 @@ class DeleteTags(object):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
-        self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority)
 
     def delete_tags(self):
         load_registry()
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # [START list_repository_names]
             for repository in client.list_repository_names():
                 print(repository)

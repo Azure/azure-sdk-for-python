@@ -34,7 +34,7 @@ from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ArtifactArchitecture, ArtifactOperatingSystem, DigestValidationError
 from azure.containerregistry.aio import ContainerRegistryClient
-from utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_credential
 
 
 class SetGetImageAsync(object):
@@ -42,17 +42,17 @@ class SetGetImageAsync(object):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
-        self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority, is_async=True)
 
     async def set_get_oci_image(self):
+        # [START upload_blob_and_manifest]
         repository_name = "sample-oci-image-async"
         layer = BytesIO(b"Sample layer")
         config = BytesIO(json.dumps(
             {
                 "sample config": "content",
             }).encode())
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = await client.upload_blob(repository_name, layer)
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
@@ -82,7 +82,9 @@ class SetGetImageAsync(object):
             # Set the image
             manifest_digest = await client.set_manifest(repository_name, oci_manifest, tag="latest")
             print(f"Uploaded manifest: digest - {manifest_digest}")
+            # [END upload_blob_and_manifest]
 
+            # [START download_blob_and_manifest]
             # Get the image
             get_manifest_result = await client.get_manifest(repository_name, "latest")
             received_manifest = get_manifest_result.manifest
@@ -112,14 +114,20 @@ class SetGetImageAsync(object):
                 print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
+            # [END download_blob_and_manifest]
 
+            # [START delete_blob]
             # Delete the layers
             for layer in received_manifest["layers"]:
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
+            # [END delete_blob]
+            
+            # [START delete_manifest]
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
+            # [END delete_manifest]
 
     async def set_get_docker_image(self):
         load_registry()
@@ -140,7 +148,7 @@ class SetGetImageAsync(object):
                 }
             ]
         }
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set the image with one custom media type
             await client.set_manifest(repository_name, manifest_list, tag="sample", media_type=manifest_list["mediaType"])
 

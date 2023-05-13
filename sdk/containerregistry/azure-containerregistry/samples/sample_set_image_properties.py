@@ -45,15 +45,17 @@ class SetImageProperties(object):
 
     def set_image_properties(self):
         load_registry()
-        # Instantiate an instance of ContainerRegistryClient
+        # [START update_manifest_properties]
         with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            # Set permissions on the v1 image's "latest" tag
+            # Set permissions on the image's "latest" tag
             client.update_manifest_properties(
                 "library/hello-world",
-                "v1",
+                "latest",
                 can_write=False,
                 can_delete=False
             )
+            # [END update_manifest_properties]
+            
             # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
             # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
             # and that tag did not have permissions set to prevent reads or deletes, the image could still be

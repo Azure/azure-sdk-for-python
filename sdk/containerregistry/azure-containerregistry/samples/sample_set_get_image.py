@@ -37,7 +37,7 @@ from azure.containerregistry import (
     ArtifactOperatingSystem,
     DigestValidationError,
 )
-from utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_credential
 
 
 class SetGetImage(object):
@@ -45,17 +45,17 @@ class SetGetImage(object):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
-        self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority)
 
     def set_get_oci_image(self):
+        # [START upload_blob_and_manifest]
         repository_name = "sample-oci-image"
         layer = BytesIO(b"Sample layer")
         config = BytesIO(json.dumps(
             {
                 "sample config": "content",
             }).encode())
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = client.upload_blob(repository_name, layer)
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
@@ -84,7 +84,9 @@ class SetGetImage(object):
             # Set the image
             manifest_digest = client.set_manifest(repository_name, oci_manifest, tag="latest")
             print(f"Uploaded manifest: digest - {manifest_digest}")
+            # [END upload_blob_and_manifest]
 
+            # [START download_blob_and_manifest]
             # Get the image
             get_manifest_result = client.get_manifest(repository_name, "latest")
             received_manifest = get_manifest_result.manifest
@@ -114,14 +116,20 @@ class SetGetImage(object):
                 print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
-
+            # [END download_blob_and_manifest]
+            
+            # [START delete_blob]
             # Delete the layers
             for layer in received_manifest["layers"]:
                 client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             client.delete_blob(repository_name, received_manifest["config"]["digest"])
+            # [END delete_blob]
+            
+            # [START delete_manifest]
             # Delete the image
             client.delete_manifest(repository_name, get_manifest_result.digest)
+            # [END delete_manifest]
 
     def set_get_docker_image(self):
         load_registry()
@@ -142,7 +150,7 @@ class SetGetImage(object):
                 }
             ]
         }
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set the image with one custom media type
             client.set_manifest(repository_name, manifest_list, tag="sample", media_type=manifest_list["mediaType"])
 
