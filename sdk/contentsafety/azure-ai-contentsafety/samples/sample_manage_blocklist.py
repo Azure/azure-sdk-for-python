@@ -1,7 +1,13 @@
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.contentsafety.models import TextBlocklist, TextBlockItemInfo, AddBlockItemsOptions, RemoveBlockItemsOptions, AnalyzeTextOptions
+from azure.ai.contentsafety.models import (
+    TextBlocklist,
+    TextBlockItemInfo,
+    AddBlockItemsOptions,
+    RemoveBlockItemsOptions,
+    AnalyzeTextOptions,
+)
 from azure.core.exceptions import HttpResponseError
 import time
 
@@ -11,6 +17,7 @@ endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
 # Create an Content Safety client
 client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
 
 def list_text_blocklists():
     try:
@@ -23,6 +30,7 @@ def list_text_blocklists():
     except Exception as e:
         print(e)
         return None
+
 
 def create_or_update_text_blocklist(name, description):
     try:
@@ -38,6 +46,7 @@ def create_or_update_text_blocklist(name, description):
         print(e)
         return None
 
+
 def get_text_blocklist(name):
     try:
         return client.get_text_blocklist(blocklist_name=name)
@@ -49,6 +58,7 @@ def get_text_blocklist(name):
     except Exception as e:
         print(e)
         return None
+
 
 def list_block_items(name):
     try:
@@ -63,6 +73,7 @@ def list_block_items(name):
         print(e)
         return None
 
+
 def remove_block_items(name, items):
     request = RemoveBlockItemsOptions(block_item_ids=[i.block_item_id for i in items])
     try:
@@ -76,6 +87,7 @@ def remove_block_items(name, items):
     except Exception as e:
         print(e)
         return False
+
 
 def add_block_items(name, items):
     block_items = [TextBlockItemInfo(text=i) for i in items]
@@ -96,6 +108,7 @@ def add_block_items(name, items):
 
     return response.value
 
+
 def get_block_item(name, item_id):
     try:
         return client.get_text_blocklist_item(blocklist_name=name, block_item_id=item_id)
@@ -108,11 +121,10 @@ def get_block_item(name, item_id):
         print(e)
         return None
 
+
 def analyze_text_with_blocklists(name, text):
     try:
-        response = client.analyze_text(
-            AnalyzeTextOptions(text=text, blocklist_names=[name], break_by_blocklists=False)
-        )
+        response = client.analyze_text(AnalyzeTextOptions(text=text, blocklist_names=[name], break_by_blocklists=False))
     except HttpResponseError as e:
         print("Analyze text failed.")
         print("Error code: {}".format(e.error.code))
@@ -123,6 +135,7 @@ def analyze_text_with_blocklists(name, text):
         return None
 
     return response.blocklists_match_results
+
 
 def delete_blocklist(name):
     try:

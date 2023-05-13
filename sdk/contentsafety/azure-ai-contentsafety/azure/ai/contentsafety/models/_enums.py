@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ImageCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ImageCategory."""
+    """Image analyze category."""
 
     HATE = "Hate"
     SELF_HARM = "SelfHarm"
@@ -20,7 +20,7 @@ class ImageCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TextCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TextCategory."""
+    """Text analyze category."""
 
     HATE = "Hate"
     SELF_HARM = "SelfHarm"

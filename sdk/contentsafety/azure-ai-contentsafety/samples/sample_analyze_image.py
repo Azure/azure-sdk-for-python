@@ -3,6 +3,7 @@ from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 
+
 def analyze_image():
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
@@ -31,7 +32,6 @@ def analyze_image():
         print("Sexual severity: {}".format(response.sexual_result.severity))
     if response.violence_result is not None:
         print("Violence severity: {}".format(response.violence_result.severity))
-
 
 
 if __name__ == "__main__":

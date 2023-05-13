@@ -44,7 +44,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -66,7 +66,7 @@ def build_content_safety_analyze_text_request(**kwargs: Any) -> HttpRequest:  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -88,9 +88,7 @@ def build_content_safety_analyze_image_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_get_text_blocklist_request(  # pylint: disable=name-too-long
-    blocklist_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_content_safety_get_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -114,9 +112,7 @@ def build_content_safety_get_text_blocklist_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_create_or_update_text_blocklist_request(  # pylint: disable=name-too-long
-    blocklist_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_content_safety_create_or_update_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -143,9 +139,7 @@ def build_content_safety_create_or_update_text_blocklist_request(  # pylint: dis
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_delete_text_blocklist_request(  # pylint: disable=name-too-long
-    blocklist_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_content_safety_delete_text_blocklist_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-30-preview"))
@@ -163,7 +157,7 @@ def build_content_safety_delete_text_blocklist_request(  # pylint: disable=name-
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -182,9 +176,7 @@ def build_content_safety_list_text_blocklists_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_add_block_items_request(  # pylint: disable=name-too-long
-    blocklist_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_content_safety_add_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -211,9 +203,7 @@ def build_content_safety_add_block_items_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_remove_block_items_request(  # pylint: disable=name-too-long
-    blocklist_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_content_safety_remove_block_items_request(blocklist_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -237,7 +227,7 @@ def build_content_safety_remove_block_items_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_get_text_blocklist_item_request(  # pylint: disable=name-too-long
+def build_content_safety_get_text_blocklist_item_request(
     blocklist_name: str, block_item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -264,7 +254,7 @@ def build_content_safety_get_text_blocklist_item_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_content_safety_list_text_blocklist_items_request(  # pylint: disable=name-too-long
+def build_content_safety_list_text_blocklist_items_request(
     blocklist_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -577,8 +567,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Returns text blocklist details.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -644,8 +633,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.ai.contentsafety.models.TextBlocklist
@@ -667,8 +655,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -690,8 +677,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -713,8 +699,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param resource: The resource instance. Is one of the following types: TextBlocklist, JSON, IO
          Required.
@@ -797,8 +782,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Deletes a text blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -939,10 +923,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AddBlockItemsResult:
         """Add BlockItems To Text Blocklist.
 
-        Add blockItems to a text blocklist.
+        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: ~azure.ai.contentsafety.models.AddBlockItemsOptions
@@ -962,10 +945,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AddBlockItemsResult:
         """Add BlockItems To Text Blocklist.
 
-        Add blockItems to a text blocklist.
+        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: JSON
@@ -985,10 +967,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AddBlockItemsResult:
         """Add BlockItems To Text Blocklist.
 
-        Add blockItems to a text blocklist.
+        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: IO
@@ -1008,10 +989,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AddBlockItemsResult:
         """Add BlockItems To Text Blocklist.
 
-        Add blockItems to a text blocklist.
+        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Is one of the following types: AddBlockItemsOptions, JSON, IO Required.
         :type body: ~azure.ai.contentsafety.models.AddBlockItemsOptions or JSON or IO
@@ -1090,10 +1070,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> None:
         """Remove BlockItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist.
+        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: ~azure.ai.contentsafety.models.RemoveBlockItemsOptions
@@ -1113,10 +1092,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> None:
         """Remove BlockItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist.
+        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: JSON
@@ -1136,10 +1114,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> None:
         """Remove BlockItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist.
+        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Required.
         :type body: IO
@@ -1159,10 +1136,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> None:
         """Remove BlockItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist.
+        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param body: Is one of the following types: RemoveBlockItemsOptions, JSON, IO Required.
         :type body: ~azure.ai.contentsafety.models.RemoveBlockItemsOptions or JSON or IO
@@ -1229,8 +1205,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Get blockItem By blockItemId from a text blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param block_item_id: Block Item Id. It will be uuid. Required.
         :type block_item_id: str
@@ -1294,8 +1269,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         Get all blockItems in a text blocklist.
 
-        :param blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-         a-z  -  .  _  ~. Required.
+        :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int

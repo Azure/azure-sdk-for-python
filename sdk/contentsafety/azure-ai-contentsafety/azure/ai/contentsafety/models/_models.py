@@ -415,8 +415,6 @@ class TextAnalyzeSeverityResult(_model_base.Model):
 class TextBlockItem(_model_base.Model):
     """Item in TextBlocklist.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar block_item_id: Block Item Id. It will be uuid. Required.
@@ -427,7 +425,7 @@ class TextBlockItem(_model_base.Model):
     :vartype text: str
     """
 
-    block_item_id: str = rest_field(name="blockItemId", readonly=True)
+    block_item_id: str = rest_field(name="blockItemId")
     """Block Item Id. It will be uuid. Required."""
     description: Optional[str] = rest_field()
     """Block item description."""
@@ -438,6 +436,7 @@ class TextBlockItem(_model_base.Model):
     def __init__(
         self,
         *,
+        block_item_id: str,
         text: str,
         description: Optional[str] = None,
     ):
@@ -493,20 +492,16 @@ class TextBlockItemInfo(_model_base.Model):
 class TextBlocklist(_model_base.Model):
     """Text Blocklist.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar blocklist_name: Text blocklist name. Only supports the following characters: 0-9  A-Z
-     a-z  -  .  _  ~. Required.
+    :ivar blocklist_name: Text blocklist name. Required.
     :vartype blocklist_name: str
     :ivar description: Text blocklist description.
     :vartype description: str
     """
 
-    blocklist_name: str = rest_field(name="blocklistName", readonly=True)
-    """Text blocklist name. Only supports the following characters: 0-9  A-Z  a-z  -  .  _  ~.
-     Required."""
+    blocklist_name: str = rest_field(name="blocklistName")
+    """Text blocklist name. Required."""
     description: Optional[str] = rest_field()
     """Text blocklist description."""
 
@@ -514,6 +509,7 @@ class TextBlocklist(_model_base.Model):
     def __init__(
         self,
         *,
+        blocklist_name: str,
         description: Optional[str] = None,
     ):
         ...
