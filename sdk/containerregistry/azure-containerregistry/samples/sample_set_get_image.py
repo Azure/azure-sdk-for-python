@@ -121,12 +121,13 @@ class SetGetImage(object):
             "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
             "manifests": [
                 {
-                    "digest": "sha256:f54a58bc1aac5ea1a25d796ae155dc228b3f0e11d046ae276b39c4bf2f13d8c4",
+                    "digest": "sha256:7e9b6e7ba2842c91cf49f3e214d04a7a496f8214356f41d81a6e6dcad11f11e3",
                     "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
                     "platform": {
                         "architecture": ArtifactArchitecture.AMD64,
                         "os": ArtifactOperatingSystem.LINUX
-                    }
+                    },
+                    "size": 525
                 }
             ]
         }
