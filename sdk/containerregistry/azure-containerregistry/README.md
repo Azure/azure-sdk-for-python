@@ -86,6 +86,7 @@ Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` env
 
 Iterate through the collection of repositories in the registry.
 
+<!-- SNIPPET:sample_list_repositories.list_repository_names -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
@@ -94,11 +95,13 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
     for repository_name in client.list_repository_names():
         print(repository_name)
 ```
+<!-- END SNIPPET -->
 
 ### List tags with anonymous access
 
 Iterate through the collection of tags in the repository with anonymous access.
 
+<!-- SNIPPET:sample_list_tags.list_tags_with_anonymous_access -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
@@ -113,6 +116,7 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
 
 Set properties of an artifact.
 
+<!-- SNIPPET:sample_set_artifact_properties.update_manifest_properties -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
@@ -125,11 +129,13 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
         can_delete=False
     )
 ```
+<!-- END SNIPPET -->
 
 ### Delete images
 
 Delete images older than the first three in the repository.
 
+<!-- SNIPPET:sample_delete_images.delete_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
@@ -142,11 +148,13 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
                 print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
+<!-- END SNIPPET -->
 
 ### Upload images
 
 To upload a full image, we need to upload individual layers and configuration. After that we can upload a manifest which describes an image or artifact and assign it a tag.
 
+<!-- SNIPPET:sample_upload_images.upload_blob_and_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
@@ -181,11 +189,13 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
     manifest_digest = client.set_manifest(repository_name, oci_manifest, tag="latest")
     print(f"Uploaded manifest: digest - {manifest_digest}")
 ```
+<!-- END SNIPPET -->
 
 ### Download images
 
 To download a full image, we need to download its manifest and then download individual layers and configuration.
 
+<!-- SNIPPET:sample_download_images.download_blob_and_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
@@ -217,9 +227,11 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
         os.remove(config_file_name)
     print(f"Got config: {config_file_name}")
 ```
+<!-- END SNIPPET -->
 
 ### Delete manifest
 
+<!-- SNIPPET:sample_delete_manifest.delete_manifest -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
@@ -227,9 +239,11 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
     get_manifest_result = client.get_manifest(repository_name, "latest")
     client.delete_manifest(repository_name, get_manifest_result.digest)
 ```
+<!-- END SNIPPET -->
 
 ### Delete blob
 
+<!-- SNIPPET:sample_delete_blob.delete_blob -->
 ```python
 endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 repository_name = "my_repository"
@@ -240,6 +254,7 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
         client.delete_blob(repository_name, layer["digest"])
     client.delete_blob(repository_name, received_manifest["config"]["digest"])
 ```
+<!-- END SNIPPET -->
 
 
 ## Troubleshooting
