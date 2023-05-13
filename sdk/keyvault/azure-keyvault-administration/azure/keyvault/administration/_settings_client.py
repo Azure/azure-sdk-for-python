@@ -80,7 +80,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
             # `get_setting` is just used to prompt a challenge; we don't want to stop on any errors it may raise
             try:
                 self._client.get_setting(vault_base_url=self._vault_url, setting_name=setting.name, **kwargs)
-            except:
+            except Exception:  # pylint:disable=broad-except
                 pass
 
         parameters = UpdateSettingRequest(value=setting.value)
