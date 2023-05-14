@@ -16,16 +16,6 @@ This release updates the Azure DevCenter library to use the 2023-04-01 GA API.
  - Updated samples
  - Improved integration test coverage with session records  
 
-## 1.0.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0b2 (2023-02-07)
 
 This release updates the Azure DevCenter library to use the 2022-11-11-preview API.
