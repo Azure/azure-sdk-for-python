@@ -10,7 +10,7 @@ namespace: azure.developer.devcenter
 package-name: azure-developer-devcenter
 license-header: MICROSOFT_MIT_NO_VERSION
 title: DevCenterClient
-package-version: 1.0.0b3
+package-version: 1.0.0
 package-mode: dataplane
 package-pprint-name: Azure Developer DevCenter Service
 security: AADToken
