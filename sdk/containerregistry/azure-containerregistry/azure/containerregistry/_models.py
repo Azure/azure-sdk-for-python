@@ -308,7 +308,7 @@ class GetManifestResult(object):
     """The get manifest result.
 
     :ivar manifest: The manifest JSON.
-    :vartype manifest: MutableMapping[str, Any]
+    :vartype manifest: Mapping[str, Any]
     :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
