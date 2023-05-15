@@ -793,6 +793,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
