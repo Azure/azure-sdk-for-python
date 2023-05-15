@@ -425,14 +425,14 @@ class CallAutomationClient(object):
          which participant first audio was detected.
          Channel to participant mapping details can be found in the metadata of the recording.
         :paramtype audio_channel_participant_ordering: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword recording_storage_type: Recording storage mode.
+         ``External`` enables bring your own storage.
+        :paramtype recording_storage_type: str
         :keyword channel_affinity: The channel affinity of call recording
          When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
-        :keyword recording_storage_type: Recording storage mode.
-         ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'BlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage
