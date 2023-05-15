@@ -16,11 +16,11 @@ USAGE:
     python sample_set_get_image.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
 
     This sample assumes your registry has a repository "library/hello-world", run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -47,9 +47,9 @@ class SetGetImage(object):
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority)
 
-    def set_get_oci_image(self):
+    def set_oci_image(self):
         # [START upload_blob_and_manifest]
-        repository_name = "sample-oci-image"
+        self.repository_name = "sample-oci-image"
         layer = BytesIO(b"Sample layer")
         config = BytesIO(json.dumps(
             {
@@ -57,10 +57,10 @@ class SetGetImage(object):
             }).encode())
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
-            layer_digest, layer_size = client.upload_blob(repository_name, layer)
+            layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
-            config_digest, config_size = client.upload_blob(repository_name, config)
+            config_digest, config_size = client.upload_blob(self.repository_name, config)
             print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
@@ -81,14 +81,16 @@ class SetGetImage(object):
                     },
                 ],
             }
-            # Set the image
-            manifest_digest = client.set_manifest(repository_name, oci_manifest, tag="latest")
+            # Set the image with tag "latest"
+            manifest_digest = client.set_manifest(self.repository_name, oci_manifest, tag="latest")
             print(f"Uploaded manifest: digest - {manifest_digest}")
-            # [END upload_blob_and_manifest]
-
-            # [START download_blob_and_manifest]
+        # [END upload_blob_and_manifest]
+    
+    def get_oci_image(self):
+        # [START download_blob_and_manifest]
+        with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Get the image
-            get_manifest_result = client.get_manifest(repository_name, "latest")
+            get_manifest_result = client.get_manifest(self.repository_name, "latest")
             received_manifest = get_manifest_result.manifest
             print(f"Got manifest:\n{received_manifest}")
             
@@ -97,7 +99,7 @@ class SetGetImage(object):
                 # Remove the "sha256:" prefix from digest
                 layer_file_name = layer["digest"].split(":")[1]
                 try:
-                    stream = client.download_blob(repository_name, layer["digest"])
+                    stream = client.download_blob(self.repository_name, layer["digest"])
                     with open(layer_file_name, "wb") as layer_file:
                         for chunk in stream:
                             layer_file.write(chunk)
@@ -108,7 +110,7 @@ class SetGetImage(object):
             # Download and write out the config
             config_file_name = "config.json"
             try:
-                stream = client.download_blob(repository_name, received_manifest["config"]["digest"])
+                stream = client.download_blob(self.repository_name, received_manifest["config"]["digest"])
                 with open(config_file_name, "wb") as config_file:
                     for chunk in stream:
                         config_file.write(chunk)
@@ -116,21 +118,34 @@ class SetGetImage(object):
                 print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
-            # [END download_blob_and_manifest]
-            
-            # [START delete_blob]
+        # [END download_blob_and_manifest]
+        
+    def delete_blob(self):    
+        # [START delete_blob]
+        with ContainerRegistryClient(self.endpoint, self.credential) as client:
+            get_manifest_result = client.get_manifest(self.repository_name, "latest")
+            received_manifest = get_manifest_result.manifest
             # Delete the layers
             for layer in received_manifest["layers"]:
-                client.delete_blob(repository_name, layer["digest"])
+                client.delete_blob(self.repository_name, layer["digest"])
             # Delete the config
-            client.delete_blob(repository_name, received_manifest["config"]["digest"])
-            # [END delete_blob]
-            
-            # [START delete_manifest]
+            client.delete_blob(self.repository_name, received_manifest["config"]["digest"])
+        # [END delete_blob]
+        
+    def delete_oci_image(self):    
+        # [START delete_manifest]
+        with ContainerRegistryClient(self.endpoint, self.credential) as client:
+            get_manifest_result = client.get_manifest(self.repository_name, "latest")
             # Delete the image
-            client.delete_manifest(repository_name, get_manifest_result.digest)
-            # [END delete_manifest]
+            client.delete_manifest(self.repository_name, get_manifest_result.digest)
+        # [END delete_manifest]
 
+    def set_get_oci_image(self):
+        self.set_oci_image()
+        self.get_oci_image()
+        self.delete_blob()
+        self.delete_oci_image()
+    
     def set_get_docker_image(self):
         load_registry()
         repository_name = "library/hello-world"

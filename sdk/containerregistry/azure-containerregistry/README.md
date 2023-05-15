@@ -48,7 +48,6 @@ az acr create --name MyContainerRegistry --resource-group MyResourceGroup --loca
 
 The [Azure Identity library][identity] provides easy Azure Active Directory support for authentication. The `DefaultAzureCredential` assumes the `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET` environment variables are set, for more information refer to the [Azure Identity environment variables section](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#environment-variables)
 
-<!-- SNIPPET:sample_hello_world.create_registry_client -->
 ```python
 # Create a ContainerRegistryClient that will authenticate through Active Directory
 from azure.containerregistry import ContainerRegistryClient
@@ -58,7 +57,6 @@ endpoint = "https://mycontainerregistry.azurecr.io"
 audience = "https://management.azure.com"
 client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
 ```
-<!-- END SNIPPET -->
 
 ## Key concepts
 
@@ -82,7 +80,7 @@ The following sections provide several code snippets covering some of the most c
   - [Delete manifest](#delete-manifest)
   - [Delete blob](#delete-blob)
 
-Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` environment variable set to a string containing the `https://` prefix and the name of the login server, for example "https://myregistry.azurecr.io".
+Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` environment variable set to a string containing the `https://` prefix and the name of the login server, for example "https://myregistry.azurecr.io". Anonymous access samples are getting endpoint value from environment variable`CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT`.
 
 ### List repositories
 
@@ -90,9 +88,7 @@ Iterate through the collection of repositories in the registry.
 
 <!-- SNIPPET:sample_delete_tags.list_repository_names -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
+with ContainerRegistryClient(self.endpoint, self.credential) as client:
     # Iterate through all the repositories
     for repository_name in client.list_repository_names():
         print(repository_name)
@@ -105,11 +101,11 @@ Iterate through the collection of tags in the repository with anonymous access.
 
 <!-- SNIPPET:sample_list_tags.list_tags_anonymous -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-with ContainerRegistryClient(endpoint) as client:
-    manifest = client.get_manifest_properties("library/hello-world", "latest")
+endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+with ContainerRegistryClient(endpoint) as anon_client:
+    manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
     print(f"Tags of {manifest.repository_name}: ")
+    # Iterate through all the tags
     for tag in manifest.tags:
         print(f"{tag}\n")
 ```
@@ -121,13 +117,11 @@ Set properties of an artifact.
 
 <!-- SNIPPET:sample_set_image_properties.update_manifest_properties -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
-    # Set permissions on the image's "latest" tag
+with ContainerRegistryClient(self.endpoint, self.credential) as client:
+    # Set permissions on image "library/hello-world:v1"
     client.update_manifest_properties(
         "library/hello-world",
-        "latest",
+        "v1",
         can_write=False,
         can_delete=False
     )
@@ -140,14 +134,22 @@ Delete images older than the first three in the repository.
 
 <!-- SNIPPET:sample_delete_images.delete_manifests -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
+with ContainerRegistryClient(self.endpoint, self.credential) as client:
     for repository in client.list_repository_names():
+        # Keep the three most recent images, delete everything else
         manifest_count = 0
-        for manifest in client.list_manifest_properties(repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
+        for manifest in client.list_manifest_properties(
+            repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
+        ):
             manifest_count += 1
             if manifest_count > 3:
+                # Make sure will have the permission to delete the manifest later
+                client.update_manifest_properties(
+                    repository,
+                    manifest.digest,
+                    can_write=True,
+                    can_delete=True
+                )
                 print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
@@ -159,18 +161,20 @@ To upload a full image, we need to upload individual layers and configuration. A
 
 <!-- SNIPPET:sample_set_get_image.upload_blob_and_manifest -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-repository_name = "my_repository"
+self.repository_name = "sample-oci-image"
 layer = BytesIO(b"Sample layer")
 config = BytesIO(json.dumps(
     {
         "sample config": "content",
     }).encode())
-with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
-    layer_digest, layer_size = client.upload_blob(repository_name, layer)
+with ContainerRegistryClient(self.endpoint, self.credential) as client:
+    # Upload a layer
+    layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
     print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
-    config_digest, config_size = client.upload_blob(repository_name, config)
+    # Upload a config
+    config_digest, config_size = client.upload_blob(self.repository_name, config)
     print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
+    # Create an oci image with config and layer info
     oci_manifest = {
         "config": {
             "mediaType": "application/vnd.oci.image.config.v1+json",
@@ -189,7 +193,8 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
             },
         ],
     }
-    manifest_digest = client.set_manifest(repository_name, oci_manifest, tag="latest")
+    # Set the image with tag "latest"
+    manifest_digest = client.set_manifest(self.repository_name, oci_manifest, tag="latest")
     print(f"Uploaded manifest: digest - {manifest_digest}")
 ```
 <!-- END SNIPPET -->
@@ -236,11 +241,10 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
 
 <!-- SNIPPET:sample_set_get_image.delete_manifest -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-repository_name = "my_repository"
-with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
-    get_manifest_result = client.get_manifest(repository_name, "latest")
-    client.delete_manifest(repository_name, get_manifest_result.digest)
+with ContainerRegistryClient(self.endpoint, self.credential) as client:
+    get_manifest_result = client.get_manifest(self.repository_name, "latest")
+    # Delete the image
+    client.delete_manifest(self.repository_name, get_manifest_result.digest)
 ```
 <!-- END SNIPPET -->
 
@@ -248,14 +252,14 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
 
 <!-- SNIPPET:sample_set_get_image.delete_blob -->
 ```python
-endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-repository_name = "my_repository"
-with ContainerRegistryClient(endpoint, DefaultAzureCredential()) as client:
-    get_manifest_result = client.get_manifest(repository_name, "latest")
+with ContainerRegistryClient(self.endpoint, self.credential) as client:
+    get_manifest_result = client.get_manifest(self.repository_name, "latest")
     received_manifest = get_manifest_result.manifest
+    # Delete the layers
     for layer in received_manifest["layers"]:
-        client.delete_blob(repository_name, layer["digest"])
-    client.delete_blob(repository_name, received_manifest["config"]["digest"])
+        client.delete_blob(self.repository_name, layer["digest"])
+    # Delete the config
+    client.delete_blob(self.repository_name, received_manifest["config"]["digest"])
 ```
 <!-- END SNIPPET -->
 

@@ -16,11 +16,11 @@ USAGE:
     python sample_set_get_image_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of you Container Registry account for anonymous access
+    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
 
     This sample assumes your registry has a repository "library/hello-world", run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of you Container Registry account for anonymous access
+    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -45,7 +45,6 @@ class SetGetImageAsync(object):
         self.credential = get_credential(self.authority, is_async=True)
 
     async def set_get_oci_image(self):
-        # [START upload_blob_and_manifest]
         repository_name = "sample-oci-image-async"
         layer = BytesIO(b"Sample layer")
         config = BytesIO(json.dumps(
@@ -114,20 +113,15 @@ class SetGetImageAsync(object):
                 print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
-            # [END download_blob_and_manifest]
 
-            # [START delete_blob]
             # Delete the layers
             for layer in received_manifest["layers"]:
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
-            # [END delete_blob]
             
-            # [START delete_manifest]
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
-            # [END delete_manifest]
 
     async def set_get_docker_image(self):
         load_registry()

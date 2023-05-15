@@ -16,12 +16,12 @@ USAGE:
     python sample_delete_images_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
 
     This sample assumes your registry has at least one repository with more than three images,
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -46,7 +46,6 @@ class DeleteImagesAsync(object):
     async def delete_images(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        # [START delete_manifests]
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             async for repository in client.list_repository_names():
                 # Keep the three most recent images, delete everything else
@@ -66,7 +65,6 @@ class DeleteImagesAsync(object):
 
                         print(f"Deleting {repository}:{manifest.digest}")
                         await client.delete_manifest(repository, manifest.digest)
-        # [END delete_manifests]
 
 
 async def main():

@@ -17,12 +17,12 @@ USAGE:
     python sample_set_image_properties_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
 
     This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -45,22 +45,20 @@ class SetImagePropertiesAsync(object):
 
     async def set_image_properties(self):
         load_registry()
-        # [START update_manifest_properties]
+        # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
-            # Set permissions on the image's "latest" tag
+            # Set permissions on image "library/hello-world:v1"
             await client.update_manifest_properties(
                 "library/hello-world",
-                "latest",
+                "v1",
                 can_write=False,
                 can_delete=False
-            )
-            # [END update_manifest_properties]
-            
-            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
-            # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
-            # and that tag did not have permissions set to prevent reads or deletes, the image could still be
-            # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
-            # (which references the same image), it would succeed.
+            )        
+        # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
+        # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
+        # and that tag did not have permissions set to prevent reads or deletes, the image could still be
+        # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
+        # (which references the same image), it would succeed.
 
 
 async def main():

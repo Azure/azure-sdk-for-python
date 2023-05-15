@@ -16,12 +16,12 @@ USAGE:
     python sample_delete_tags.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
 
     This sample assumes your registry has at least one repository with more than three tags,
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -43,21 +43,22 @@ class DeleteTags(object):
 
     def delete_tags(self):
         load_registry()
+        # [START list_repository_names]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
-            # [START list_repository_names]
-            for repository in client.list_repository_names():
-                print(repository)
+            # Iterate through all the repositories
+            for repository_name in client.list_repository_names():
+                print(repository_name)
                 # [END list_repository_names]
 
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
                 for tag in client.list_tag_properties(
-                    repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
+                    repository_name, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
                 ):
                     tag_count += 1
                     if tag_count > 3:
-                        print(f"Deleting {repository}:{tag.name}")
-                        client.delete_tag(repository, tag.name)
+                        print(f"Deleting {repository_name}:{tag.name}")
+                        client.delete_tag(repository_name, tag.name)
 
 
 if __name__ == "__main__":
