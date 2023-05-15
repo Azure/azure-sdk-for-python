@@ -45,7 +45,9 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
 
     # Connection config
-    policy.RequestTimeout = kwargs.pop('request_timeout', policy.RequestTimeout)
+    # `request_timeout` is supported as a legacy parameter later replaced by `connection_timeout`
+    policy.RequestTimeout = kwargs.pop('request_timeout', None) \
+                            or kwargs.pop('connection_timeout', policy.RequestTimeout)
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
@@ -97,7 +99,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int request_timeout: The HTTP request timeout in milliseconds.
+    :keyword int connection_timeout: The HTTP request timeout in milliseconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
