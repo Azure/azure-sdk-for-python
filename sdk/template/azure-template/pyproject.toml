@@ -1,3 +1,7 @@
 [tool.azure-sdk-build]
-pylint=false
-verifytypes = false
+mypy = true
+type_check_samples = true
+verifytypes = true
+pyright = true
+pylint = true
+black = true

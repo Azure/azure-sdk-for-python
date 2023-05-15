@@ -7,7 +7,7 @@ import unittest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
-    CallAutomationClient, ServerCallLocator
+    CallAutomationClient, ServerCallLocator, ChannelAffinity, CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
 from unittest.mock import Mock
@@ -27,9 +27,10 @@ class TestCallRecordingClient(unittest.TestCase):
         callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
         call_locator = ServerCallLocator(server_call_id = "locatorId")
-
+        target_participant = CommunicationUserIdentifier("testId")
+        channel_affinity=ChannelAffinity(target_participant=target_participant, channel=0)
         try:
-            callautomation_client.start_recording(call_locator=call_locator)
+            callautomation_client.start_recording(call_locator=call_locator, channel_affinity=[channel_affinity])
         except:
             raised = True
             raise
