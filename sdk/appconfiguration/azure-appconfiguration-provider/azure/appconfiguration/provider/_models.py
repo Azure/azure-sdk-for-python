@@ -69,8 +69,9 @@ class RefreshRegistrations:
 
 class AzureAppConfigurationRefreshOptions:
     def __init__(self):
-        self._refresh_interval = 30
+        self.refresh_interval = 30
         self._refresh_registrations = []
+        self.callback = None
 
     def register(
         self,
@@ -82,12 +83,3 @@ class AzureAppConfigurationRefreshOptions:
         self._refresh_registrations.append(
             RefreshRegistrations(key_filter, label_filter, refresh_all)
         )
-
-    def get_refresh_interval(self):
-        return self._refresh_interval
-
-    def get_refresh_registrations(self):
-        return self._refresh_registrations
-
-    def set_callback(self, callback):
-        self._callback = callback
