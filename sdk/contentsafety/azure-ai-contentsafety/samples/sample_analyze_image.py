@@ -8,7 +8,7 @@ from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 def analyze_image():
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    image_path = os.path.join("sample_data", "image.jpg")
+    image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/image.jpg"))
 
     # Create an Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))

@@ -34,9 +34,7 @@ def list_text_blocklists():
 
 def create_or_update_text_blocklist(name, description):
     try:
-        return client.create_or_update_text_blocklist(
-            blocklist_name=name, resource=TextBlocklist(description=description)
-        )
+        return client.create_or_update_text_blocklist(blocklist_name=name, description=description)
     except HttpResponseError as e:
         print("Create or update text blocklist failed. ")
         if e.error is not None:
@@ -175,8 +173,9 @@ if __name__ == "__main__":
         print("Block items added: {}".format(result))
 
     # remove one blocklist item
-    if remove_block_items(name=blocklist_name, items=[result[0]]):
-        print("Block item removed: {}".format(result[0]))
+    if result is not None and len(result) > 0:
+        if remove_block_items(name=blocklist_name, items=[result[0]]):
+            print("Block item removed: {}".format(result[0]))
 
     result = list_block_items(name=blocklist_name)
     if result is not None:
@@ -186,11 +185,12 @@ if __name__ == "__main__":
     print("Waiting for blocklist service update...")
     time.sleep(30)
     match_results = analyze_text_with_blocklists(name=blocklist_name, text=input_text)
-    for match_result in match_results:
-        print("Block item was hit, offset={}, length={}.".format(match_result.offset, match_result.length))
-        block_item = get_block_item(blocklist_name, match_result.block_item_id)
-        if block_item is not None:
-            print("Get block item: {}".format(block_item))
+    if match_results is not None:
+        for match_result in match_results:
+            print("Block item was hit, offset={}, length={}.".format(match_result.offset, match_result.length))
+            block_item = get_block_item(blocklist_name, match_result.block_item_id)
+            if block_item is not None:
+                print("Get block item: {}".format(block_item))
 
     # delete blocklist
     if delete_blocklist(name=blocklist_name):

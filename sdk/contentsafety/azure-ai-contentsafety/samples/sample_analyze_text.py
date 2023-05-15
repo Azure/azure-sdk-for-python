@@ -8,7 +8,7 @@ from azure.ai.contentsafety.models import AnalyzeTextOptions, TextCategory
 def analyze_text():
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    text_path = os.path.join("sample_data", "text.txt")
+    text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/text.txt"))
 
     # Create an Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
