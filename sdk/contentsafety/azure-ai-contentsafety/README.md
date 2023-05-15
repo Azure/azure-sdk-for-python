@@ -16,6 +16,14 @@ python -m pip install azure-ai-contentsafety
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Ai Contentsafety instance.
 
+#### Key concepts
+
+#### Examples
+
+#### Troubleshooting
+
+#### Next steps
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

@@ -1,6 +1,7 @@
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 
 
@@ -19,10 +20,14 @@ def analyze_image():
     # Analyze image
     try:
         response = client.analyze_image(request)
-    except Exception as e:
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return
+    except HttpResponseError as e:
+        print("Analyze image failed.")
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return
+        print(e)
+        raise
 
     if response.hate_result is not None:
         print("Hate severity: {}".format(response.hate_result.severity))

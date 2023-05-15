@@ -1,6 +1,7 @@
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.contentsafety.models import (
     TextBlocklist,
     TextBlockItemInfo,
@@ -24,13 +25,12 @@ def list_text_blocklists():
         return client.list_text_blocklists()
     except HttpResponseError as e:
         print("List text blocklists failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
-
+        raise
 
 def create_or_update_text_blocklist(name, description):
     try:
@@ -39,12 +39,12 @@ def create_or_update_text_blocklist(name, description):
         )
     except HttpResponseError as e:
         print("Create or update text blocklist failed. ")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
+        raise
 
 
 def get_text_blocklist(name):
@@ -52,12 +52,12 @@ def get_text_blocklist(name):
         return client.get_text_blocklist(blocklist_name=name)
     except HttpResponseError as e:
         print("Get text blocklist failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
+        raise
 
 
 def list_block_items(name):
@@ -66,12 +66,12 @@ def list_block_items(name):
         return list(response)
     except HttpResponseError as e:
         print("List block items failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
+        raise
 
 
 def remove_block_items(name, items):
@@ -81,12 +81,12 @@ def remove_block_items(name, items):
         return True
     except HttpResponseError as e:
         print("Remove block items failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return False
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return False
         print(e)
-        return False
+        raise
 
 
 def add_block_items(name, items):
@@ -96,17 +96,15 @@ def add_block_items(name, items):
             blocklist_name=name,
             body=AddBlockItemsOptions(block_items=block_items),
         )
+        return response.value
     except HttpResponseError as e:
         print("Add block items failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
-
-    return response.value
+        raise
 
 
 def get_block_item(name, item_id):
@@ -114,27 +112,26 @@ def get_block_item(name, item_id):
         return client.get_text_blocklist_item(blocklist_name=name, block_item_id=item_id)
     except HttpResponseError as e:
         print("Get block item failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
+        raise
 
 
 def analyze_text_with_blocklists(name, text):
     try:
         response = client.analyze_text(AnalyzeTextOptions(text=text, blocklist_names=[name], break_by_blocklists=False))
+        return response.blocklists_match_results
     except HttpResponseError as e:
         print("Analyze text failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return None
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return None
         print(e)
-        return None
-
-    return response.blocklists_match_results
+        raise
 
 
 def delete_blocklist(name):
@@ -143,16 +140,16 @@ def delete_blocklist(name):
         return True
     except HttpResponseError as e:
         print("Delete blocklist failed.")
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
-        return False
-    except Exception as e:
+        if e.error is not None:
+            print("Error code: {}".format(e.error.code))
+            print("Error message: {}".format(e.error.message))
+            return False
         print(e)
-        return False
+        raise
 
 
 if __name__ == "__main__":
-    blocklist_name = "Test Blocklist"
+    blocklist_name = "TestBlocklist"
     blocklist_description = "Test blocklist management."
 
     # list blocklists
