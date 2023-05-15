@@ -608,6 +608,8 @@ class ModelOperations(_ScopeDependentOperations):
 
                 package_request.base_environment_source.resource_id = (
                     "azureml:/" + package_request.base_environment_source.resource_id
+                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)
+                    else package_request.base_environment_source.resource_id
                 )
 
             package_request = package_request._to_rest_object()
