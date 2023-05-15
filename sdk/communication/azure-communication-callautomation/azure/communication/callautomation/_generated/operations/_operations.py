@@ -34,7 +34,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_azure_communication_call_automation_service_create_call_request(  # pylint: disable=name-too-long
+def build_azure_communication_call_automation_service_create_call_request(
     *, repeatability_request_id: Optional[str] = None, repeatability_first_sent: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -66,7 +66,7 @@ def build_azure_communication_call_automation_service_create_call_request(  # py
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_azure_communication_call_automation_service_answer_call_request(  # pylint: disable=name-too-long
+def build_azure_communication_call_automation_service_answer_call_request(
     *, repeatability_request_id: Optional[str] = None, repeatability_first_sent: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -98,7 +98,7 @@ def build_azure_communication_call_automation_service_answer_call_request(  # py
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_azure_communication_call_automation_service_redirect_call_request(  # pylint: disable=name-too-long
+def build_azure_communication_call_automation_service_redirect_call_request(
     *, repeatability_request_id: Optional[str] = None, repeatability_first_sent: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -130,7 +130,7 @@ def build_azure_communication_call_automation_service_redirect_call_request(  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_azure_communication_call_automation_service_reject_call_request(  # pylint: disable=name-too-long
+def build_azure_communication_call_automation_service_reject_call_request(
     *, repeatability_request_id: Optional[str] = None, repeatability_first_sent: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -186,9 +186,7 @@ def build_call_connection_get_call_request(call_connection_id: str, **kwargs: An
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_hangup_call_request(  # pylint: disable=name-too-long
-    call_connection_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_connection_hangup_call_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -212,7 +210,7 @@ def build_call_connection_hangup_call_request(  # pylint: disable=name-too-long
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_terminate_call_request(  # pylint: disable=name-too-long
+def build_call_connection_terminate_call_request(
     call_connection_id: str,
     *,
     repeatability_request_id: Optional[str] = None,
@@ -250,7 +248,7 @@ def build_call_connection_terminate_call_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_transfer_to_participant_request(  # pylint: disable=name-too-long
+def build_call_connection_transfer_to_participant_request(
     call_connection_id: str,
     *,
     repeatability_request_id: Optional[str] = None,
@@ -291,9 +289,7 @@ def build_call_connection_transfer_to_participant_request(  # pylint: disable=na
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_get_participants_request(  # pylint: disable=name-too-long
-    call_connection_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_connection_get_participants_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -317,7 +313,7 @@ def build_call_connection_get_participants_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_add_participant_request(  # pylint: disable=name-too-long
+def build_call_connection_add_participant_request(
     call_connection_id: str,
     *,
     repeatability_request_id: Optional[str] = None,
@@ -358,7 +354,7 @@ def build_call_connection_add_participant_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_remove_participant_request(  # pylint: disable=name-too-long
+def build_call_connection_remove_participant_request(
     call_connection_id: str,
     *,
     repeatability_request_id: Optional[str] = None,
@@ -481,7 +477,7 @@ def build_call_connection_unmute_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_connection_get_participant_request(  # pylint: disable=name-too-long
+def build_call_connection_get_participant_request(
     call_connection_id: str, participant_raw_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -535,9 +531,7 @@ def build_call_media_play_request(call_connection_id: str, **kwargs: Any) -> Htt
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_media_cancel_all_media_operations_request(  # pylint: disable=name-too-long
-    call_connection_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_media_cancel_all_media_operations_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -588,9 +582,7 @@ def build_call_media_recognize_request(call_connection_id: str, **kwargs: Any) -
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_media_start_continuous_dtmf_recognition_request(  # pylint: disable=name-too-long
-    call_connection_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_media_start_continuous_dtmf_recognition_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -617,9 +609,7 @@ def build_call_media_start_continuous_dtmf_recognition_request(  # pylint: disab
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_media_stop_continuous_dtmf_recognition_request(  # pylint: disable=name-too-long
-    call_connection_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_media_stop_continuous_dtmf_recognition_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -673,7 +663,7 @@ def build_call_media_send_dtmf_request(call_connection_id: str, **kwargs: Any) -
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_recording_start_recording_request(  # pylint: disable=name-too-long
+def build_call_recording_start_recording_request(
     *, repeatability_request_id: Optional[str] = None, repeatability_first_sent: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -705,9 +695,7 @@ def build_call_recording_start_recording_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_recording_get_recording_properties_request(  # pylint: disable=name-too-long
-    recording_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_recording_get_recording_properties_request(recording_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -731,9 +719,7 @@ def build_call_recording_get_recording_properties_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_recording_stop_recording_request(  # pylint: disable=name-too-long
-    recording_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_recording_stop_recording_request(recording_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -757,9 +743,7 @@ def build_call_recording_stop_recording_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_recording_pause_recording_request(  # pylint: disable=name-too-long
-    recording_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_recording_pause_recording_request(recording_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -783,9 +767,7 @@ def build_call_recording_pause_recording_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_recording_resume_recording_request(  # pylint: disable=name-too-long
-    recording_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_call_recording_resume_recording_request(recording_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

@@ -465,6 +465,27 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
 
+    @recorded_by_proxy_async
+    async def test_list_rooms_first_room_is_not_null_success_async(self):
+        # create a room -> list all rooms -> delete room
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
+
+            all_rooms = self.rooms_client.list_rooms()
+            first_room = None
+            count = 0
+            async for room in all_rooms:
+                if count == 1:
+                    break
+                first_room = room
+                count += 1
+
+            assert first_room is not None
+            self.verify_successful_room_response(first_room)
+
+            # delete the room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+
     def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
         if room_id is not None:
             assert room_id == response.id
@@ -475,3 +496,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             assert valid_until.replace(tzinfo=None) == datetime.strptime(
                 response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
         assert response.created_at is not None
+        assert response.id is not None
+        assert response.valid_from is not None
+        assert response.valid_until is not None
+

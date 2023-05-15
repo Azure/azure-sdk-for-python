@@ -60,7 +60,7 @@ class ModelPackageInputSchema(PathAwareSchema):
     type = StringTransformedEnum(allowed_values=["uri_file", "uri_folder"], casing_transform=camel_to_snake)
     mode = StringTransformedEnum(
         allowed_values=[
-            "readonly_mount",
+            "read_only_mount",
             "download",
         ],
         casing_transform=camel_to_snake,
