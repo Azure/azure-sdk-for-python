@@ -131,7 +131,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider._load_all()
 
     if provider._refresh_options is not None:
-        for register in provider._refresh_options.get_refresh_registrations():
+        for register in provider._refresh_options._refresh_registrations:
             key = provider._client.get_configuration_setting(
                 register.key_filter, register.label_filter
             )
@@ -276,7 +276,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
         if self._refresh_options is not None:
             self._next_refresh_time = datetime.now() + timedelta(
-                seconds=self._refresh_options._refresh_interval
+                seconds=self._refresh_options.refresh_interval
             )
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
@@ -288,7 +288,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def refresh(self, **kwargs) -> None:
         if (
             self._refresh_options is None
-            or len(self._refresh_options.get_refresh_registrations()) == 0
+            or len(self._refresh_options._refresh_registrations) == 0
         ):
             return
 
@@ -297,7 +297,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
         refresh_all = False
 
-        for registration in self._refresh_options.get_refresh_registrations():
+        for registration in self._refresh_options._refresh_registrations:
             if registration.refresh_all == True:
                 updated_sentinel = self._client.get_configuration_setting(
                     key=registration.key_filter,
@@ -313,13 +313,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         if refresh_all:
             self._load_all(**kwargs)
             self._next_refresh_time = datetime.now() + timedelta(
-                seconds=self._refresh_options._refresh_interval
+                seconds=self._refresh_options.refresh_interval
             )
             return
 
         # Only update individual keys if the refresh_all didn't trigger
         updated_dict = self._dict.copy()
-        updated_registrations = self._refresh_options.get_refresh_registrations().copy()
+        updated_registrations = self._refresh_options._refresh_registrations.copy()
 
         try:
             for registration in updated_registrations:
@@ -338,12 +338,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         ] = self._proccess_key_value(updated_sentinel)
 
             self._dict = updated_dict
-            self._refresh_options.set_refresh_registrations(updated_registrations)
+            self._refresh_options._refresh_registrations = updated_registrations
             self._next_refresh_time = datetime.now() + timedelta(
                 seconds=self._refresh_options._refresh_interval
             )
             self._attempts = 1
-        except:
+        except Exception as error:
+            error.message = "An error occurred while checking for configuration updates. \
+                {} attempts have been made.\n {}".format(self._attempts, error.message)
             # Refresh All or None, any failure will trigger a backoff
             self._next_refresh_time = datetime.now() + timedelta(
                 microseconds=self._calculate_backoff()
@@ -354,7 +356,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         dict = {}
         for select in self._selects:
             configurations = self._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter, **kwarg
+                key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
             for config in configurations:
                 key = self._proccess_key_name(config)
