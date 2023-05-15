@@ -18,12 +18,12 @@ USAGE:
     python sample_list_tags.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of you Container Registry account for anonymous access
 
     This sample assumes your registry has a repository "library/hello-world" with image tagged "latest",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of you Container Registry account for anonymous access
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -39,7 +39,7 @@ from utilities import load_registry, get_authority, get_credential
 class ListTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority)
 
