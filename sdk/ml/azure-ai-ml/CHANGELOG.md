@@ -6,6 +6,7 @@
 - Added data import schedule. The class added is `ImportDataSchedule`.
 
 ### Bugs Fixed
+- Bug fixed for the error `TypeError: 'SASCredentialDto' object is not subscriptable` while running `az ml model download` Az CLI command.
 
 ### Breaking Changes
 
