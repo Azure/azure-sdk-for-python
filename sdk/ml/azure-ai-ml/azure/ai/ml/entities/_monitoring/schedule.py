@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import AnyStr, Dict, IO, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.constants._monitoring import DefaultMonitorSignalNames, SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._system_data import SystemData
@@ -91,11 +92,18 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         )
 
     def _to_rest_object(self) -> RestSchedule:
+        tags = {
+            **self.tags,
+            **{
+                SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type,
+                SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
+            },
+        }
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
                 properties=self.properties,
-                tags=self.tags,
+                tags=tags,
                 action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object()),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
@@ -126,7 +134,9 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         properties = obj.properties
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
-            create_monitor=MonitorDefinition._from_rest_object(properties.action.monitor_definition),
+            create_monitor=MonitorDefinition._from_rest_object(
+                properties.action.monitor_definition, tags=obj.properties.tags
+            ),
             name=obj.name,
             id=obj.id,
             display_name=properties.display_name,
@@ -137,3 +147,18 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             is_enabled=properties.is_enabled,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
+
+    def _create_default_monitor_definition(
+        self, model_inputs_arm_id: str, model_inputs_type: str, model_outputs_arm_id: str, model_outputs_type: str
+    ):
+        self.create_monitor._populate_default_signal_information(
+            model_inputs_arm_id,
+            model_inputs_type,
+            model_outputs_arm_id,
+            model_outputs_type,
+        )
+
+        # add appropriate tags to schedule
+        for signal_name in [name.value for name in DefaultMonitorSignalNames]:
+            self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
+            self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"

@@ -67,10 +67,12 @@ from ._deployment.online_deployment import (
     OnlineDeployment,
 )
 from ._deployment.data_collector import DataCollector
+from ._deployment.deployment_collection import DeploymentCollection
 from ._deployment.model_batch_deployment import ModelBatchDeployment
 from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
+from ._deployment.request_logging import RequestLogging
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings, OnlineScaleSettings
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
@@ -408,4 +410,6 @@ __all__ = [
     "CustomMonitoringMetricThreshold",
     "DataCollector",
     "IntellectualProperty",
+    "DeploymentCollection",
+    "RequestLogging",
 ]

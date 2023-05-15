@@ -264,7 +264,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
         # Get code coverage params for current package
         package_name = os.path.basename(package_dir)
-        coverage_commands = create_code_coverage_params(parsed_args, package_name)
+        coverage_commands = create_code_coverage_params(parsed_args, package_dir)
         local_options_array.extend(coverage_commands)
 
         pkg_egg_info_name = "{}.egg-info".format(package_name.replace("-", "_"))

@@ -1,6 +1,6 @@
 # Release History
 
-## 0.15.1 (Unreleased)
+## 0.16.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.16.0 (2023-05-12)
+
+### Bugs Fixed
+
+  - Fix to support IO input  #29615
 
 ## 0.15.0 (2023-01-09)
 

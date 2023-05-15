@@ -27,7 +27,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
-from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
+from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType, MonitorDatasetContext
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
@@ -101,18 +102,18 @@ class TargetDataset:
 
     :param dataset: Target dataset definition for monitor
     :type dataset: ~azure.ai.ml.entities.MonitorInputData
-    :param lookback_period: The number of days a single monitor looks back over the target
-    :type lookback_period: int
+    :param data_window_size: The number of days a single monitor looks back over the target
+    :type data_window_size: int
     """
 
     def __init__(
         self,
         *,
         dataset: MonitorInputData,
-        lookback_period: int = None,
+        data_window_size: int = None,
     ):
         self.dataset = dataset
-        self.lookback_period = lookback_period
+        self.data_window_size = data_window_size
 
 
 @experimental
@@ -193,8 +194,8 @@ class DataDriftSignal(DataSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset,
-        baseline_dataset: MonitorInputData,
+        baseline_dataset: MonitorInputData = None,
+        target_dataset: TargetDataset = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataDriftMetricThreshold],
         alert_enabled: bool = True,
@@ -218,8 +219,8 @@ class DataDriftSignal(DataSignal):
             features=rest_features,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
-            if self.target_dataset.lookback_period
+            lookback_period=to_iso_duration_format_days(self.target_dataset.data_window_size)
+            if self.target_dataset.data_window_size
             else None,
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
         )
@@ -229,7 +230,7 @@ class DataDriftSignal(DataSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
-                lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
+                data_window_size=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
             ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             features=_from_rest_features(obj.features),
@@ -240,6 +241,24 @@ class DataDriftSignal(DataSignal):
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
+        )
+
+    @classmethod
+    def _get_default_data_drift_signal(cls, production_data_id: str, production_data_type: str) -> "DataDriftSignal":
+        return cls(
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData(
+                    input_dataset=Input(path=production_data_id, type=production_data_type),
+                    dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+                ),
+                data_window_size=7,
+            ),
+            baseline_dataset=MonitorInputData(
+                input_dataset=Input(path=production_data_id, type=production_data_type),
+                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+            ),
+            features=ALL_FEATURES,
+            metric_thresholds=DataDriftMetricThreshold._get_default_thresholds(),
         )
 
 
@@ -263,8 +282,8 @@ class PredictionDriftSignal(MonitoringSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset,
-        baseline_dataset: MonitorInputData,
+        baseline_dataset: MonitorInputData = None,
+        target_dataset: TargetDataset = None,
         metric_thresholds: List[PredictionDriftMetricThreshold],
         alert_enabled: bool = True,
     ):
@@ -284,8 +303,8 @@ class PredictionDriftSignal(MonitoringSignal):
             baseline_data=self.baseline_dataset._to_rest_object(),
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
-            if self.target_dataset.lookback_period
+            lookback_period=to_iso_duration_format_days(self.target_dataset.data_window_size)
+            if self.target_dataset.data_window_size
             else None,
         )
 
@@ -294,7 +313,7 @@ class PredictionDriftSignal(MonitoringSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
-                lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
+                data_window_size=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
             ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             metric_thresholds=[
@@ -303,6 +322,31 @@ class PredictionDriftSignal(MonitoringSignal):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+        )
+
+    @classmethod
+    def _get_default_prediction_drift_signal(
+        cls, production_data_id: str, production_data_type: str
+    ) -> "PredictionDriftSignal":
+        return cls(
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData(
+                    input_dataset=Input(
+                        path=production_data_id,
+                        type=production_data_type,
+                    ),
+                    dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                ),
+                data_window_size=7,
+            ),
+            baseline_dataset=MonitorInputData(
+                input_dataset=Input(
+                    path=production_data_id,
+                    type=production_data_type,
+                ),
+                dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
+            ),
+            metric_thresholds=PredictionDriftMetricThreshold._get_default_thresholds(),
         )
 
 
@@ -330,8 +374,8 @@ class DataQualitySignal(DataSignal):
     def __init__(
         self,
         *,
-        target_dataset: TargetDataset,
-        baseline_dataset: MonitorInputData,
+        baseline_dataset: MonitorInputData = None,
+        target_dataset: TargetDataset = None,
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: List[DataQualityMetricThreshold],
         alert_enabled: bool = True,
@@ -353,8 +397,8 @@ class DataQualitySignal(DataSignal):
             features=rest_features,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
-            if self.target_dataset.lookback_period
+            lookback_period=to_iso_duration_format_days(self.target_dataset.data_window_size)
+            if self.target_dataset.data_window_size
             else None,
         )
 
@@ -363,16 +407,42 @@ class DataQualitySignal(DataSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
-                lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
+                data_window_size=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
             ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             features=_from_rest_features(obj.features),
             metric_thresholds=[
-                DataDriftMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
+                DataQualityMetricThreshold._from_rest_object(threshold) for threshold in obj.metric_thresholds
             ],
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+        )
+
+    @classmethod
+    def _get_default_data_quality_signal(
+        cls, production_data_id: str, production_data_type: str
+    ) -> "DataQualitySignal":
+        return cls(
+            target_dataset=TargetDataset(
+                dataset=MonitorInputData(
+                    input_dataset=Input(
+                        path=production_data_id,
+                        type=production_data_type,
+                    ),
+                    dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+                ),
+                data_window_size=7,
+            ),
+            baseline_dataset=MonitorInputData(
+                input_dataset=Input(
+                    path=production_data_id,
+                    type=production_data_type,
+                ),
+                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+            ),
+            features=ALL_FEATURES,
+            metric_thresholds=DataQualityMetricThreshold._get_default_thresholds(),
         )
 
 
@@ -441,8 +511,8 @@ class FeatureAttributionDriftSignal(ModelSignal):
             metric_threshold=self.metric_thresholds._to_rest_object(),
             model_type=self.model_type,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
-            if self.target_dataset.lookback_period
+            lookback_period=to_iso_duration_format_days(self.target_dataset.data_window_size)
+            if self.target_dataset.data_window_size
             else None,
         )
 
@@ -451,7 +521,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
-                lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
+                data_window_size=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
             ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             metric_thresholds=FeatureAttributionDriftMetricThreshold._from_rest_object(obj.metric_threshold),
@@ -491,8 +561,8 @@ class ModelPerformanceSignal(ModelSignal):
             metric_threshold=self.metric_thresholds._to_rest_object(model_type=self.model_type),
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            lookback_period=to_iso_duration_format_days(self.target_dataset.lookback_period)
-            if self.target_dataset.lookback_period
+            lookback_period=to_iso_duration_format_days(self.target_dataset.data_window_size)
+            if self.target_dataset.data_window_size
             else None,
         )
 
@@ -501,7 +571,7 @@ class ModelPerformanceSignal(ModelSignal):
         return cls(
             target_dataset=TargetDataset(
                 dataset=MonitorInputData._from_rest_object(obj.target_data),
-                lookback_period=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
+                data_window_size=from_iso_duration_format_days(obj.lookback_period) if obj.lookback_period else None,
             ),
             baseline_dataset=MonitorInputData._from_rest_object(obj.baseline_data),
             metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
