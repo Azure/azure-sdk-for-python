@@ -148,3 +148,11 @@ def _get_blob_size(headers: Dict[str, str]) -> int:
     if blob_size <= 0:
         raise ValueError("Invalid content-range header in response.")
     return blob_size
+
+def _get_manifest_size(headers: Dict[str, str]) -> int:
+    if not headers["Content-Length"]:
+        raise ValueError("Missing content-length header in response.")
+    manifest_size = int(headers["Content-Length"])
+    if manifest_size <= 0:
+        raise ValueError("Invalid content-length header in response.")
+    return manifest_size    
