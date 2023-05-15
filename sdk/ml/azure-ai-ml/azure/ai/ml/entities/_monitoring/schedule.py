@@ -19,7 +19,7 @@ from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigge
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties, RecurrenceFrequency
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -99,12 +99,29 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
             },
         }
+        default_data_window_size = None
+        if isinstance(self.trigger, RecurrenceTrigger):
+            frequency = self.trigger.frequency.lower()
+            interval = self.trigger.interval
+            if frequency == RecurrenceFrequency.MINUTE.lower() or RecurrenceFrequency.HOUR.lower():
+                default_data_window_size = "P1D"
+            if frequency == RecurrenceFrequency.DAY.lower():
+                default_data_window_size = f"P{interval}D"
+            if frequency == RecurrenceFrequency.WEEK.lower():
+                default_data_window_size = f"P{interval * 7}D"
+            if frequency == RecurrenceFrequency.MONTH.lower():
+                default_data_window_size = f"P{interval * 30}D"
+            else:
+                default_data_window_size = "P7D"
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
                 properties=self.properties,
                 tags=tags,
-                action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object()),
+                action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object(
+                        default_data_window_size=default_data_window_size
+                    )
+                ),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
                 trigger=self.trigger._to_rest_object(),

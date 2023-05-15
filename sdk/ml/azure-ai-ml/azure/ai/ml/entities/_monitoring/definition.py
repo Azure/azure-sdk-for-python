@@ -72,7 +72,8 @@ class MonitorDefinition(RestTranslatableMixin):
         self.monitoring_signals = monitoring_signals
         self.alert_notification = alert_notification
 
-    def _to_rest_object(self) -> RestMonitorDefinition:
+    def _to_rest_object(self, **kwargs) -> RestMonitorDefinition:
+        default_data_window_size = kwargs.get("default_data_window_size")
         rest_alert_notification = None
         if self.alert_notification:
             if isinstance(self.alert_notification, str) and self.alert_notification.lower() == AZMONITORING:
