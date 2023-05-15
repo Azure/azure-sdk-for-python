@@ -817,6 +817,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
                 print(f"Failed to upload blob: {err.message}")
+            except ResourceNotFoundError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                assert err.status_code == 404
+                assert err.response.request.method == "PATCH"
+                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
             # Test blob upload and download in unequal size chunks
             try:
@@ -837,6 +843,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 # Service does not support resumable upload when get transient error while uploading
                 # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
                 print(f"Failed to upload blob: {err.message}")
+            except ResourceNotFoundError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                assert err.status_code == 404
+                assert err.response.request.method == "PATCH"
+                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
             # Cleanup
             client.delete_repository(repo)
