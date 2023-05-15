@@ -45,10 +45,12 @@ class DeleteTagsAsync(object):
 
     async def delete_tags(self):
         load_registry()
+        # [START list_repository_names]
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
                 print(repository_name)
+                # [END list_repository_names]
 
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
