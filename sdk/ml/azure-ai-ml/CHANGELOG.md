@@ -7,12 +7,6 @@
 - Added support to enable data isolation feature at workspace creation stage.
 - Added auto_delete_setting support for asset version in data import job.
 
-### Bugs Fixed
-
-### Breaking Changes
-
-### Other Changes
-
 
 ## 1.6.0 (05/01/2023)
 
