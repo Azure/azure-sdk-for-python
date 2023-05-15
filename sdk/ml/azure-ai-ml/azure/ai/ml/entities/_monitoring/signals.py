@@ -469,7 +469,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             lookback_period=to_iso_duration_format_days(self.target_dataset.data_window_size)
             if self.target_dataset.data_window_size
-            else default_data_window_size = kwargs.get("default_data_window_size"),
+            else default_data_window_size,
         )
 
     @classmethod

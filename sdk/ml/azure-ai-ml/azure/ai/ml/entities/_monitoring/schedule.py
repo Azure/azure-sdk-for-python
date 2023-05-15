@@ -118,7 +118,8 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 description=self.description,
                 properties=self.properties,
                 tags=tags,
-                action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object(
+                action=CreateMonitorAction(
+                    monitor_definition=self.create_monitor._to_rest_object(
                         default_data_window_size=default_data_window_size
                     )
                 ),
