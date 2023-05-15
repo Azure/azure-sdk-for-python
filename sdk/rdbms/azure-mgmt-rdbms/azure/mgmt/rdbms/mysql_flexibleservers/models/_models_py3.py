@@ -2014,6 +2014,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
      ~azure.mgmt.rdbms.mysql_flexibleservers.models.ReplicationRole
     :ivar data_encryption: The Data Encryption for CMK.
     :vartype data_encryption: ~azure.mgmt.rdbms.mysql_flexibleservers.models.DataEncryption
+    :ivar network: Network related properties of a server.
+    :vartype network: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Network
     """
 
     _attribute_map = {
@@ -2028,6 +2030,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindow"},
         "replication_role": {"key": "properties.replicationRole", "type": "str"},
         "data_encryption": {"key": "properties.dataEncryption", "type": "DataEncryption"},
+        "network": {"key": "properties.network", "type": "Network"},
     }
 
     def __init__(
@@ -2044,6 +2047,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
         replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
+        network: Optional["_models.Network"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2071,6 +2075,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
          ~azure.mgmt.rdbms.mysql_flexibleservers.models.ReplicationRole
         :keyword data_encryption: The Data Encryption for CMK.
         :paramtype data_encryption: ~azure.mgmt.rdbms.mysql_flexibleservers.models.DataEncryption
+        :keyword network: Network related properties of a server.
+        :paramtype network: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Network
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -2084,6 +2090,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         self.maintenance_window = maintenance_window
         self.replication_role = replication_role
         self.data_encryption = data_encryption
+        self.network = network
 
 
 class ServerGtidSetParameter(_serialization.Model):
