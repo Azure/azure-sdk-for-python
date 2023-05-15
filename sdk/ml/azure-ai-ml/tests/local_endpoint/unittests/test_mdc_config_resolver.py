@@ -64,3 +64,50 @@ class TestMdcConfigResolver:
         }
 
         assert mdc_config == resolver.mdc_config
+
+    def test_resolve_mdc_config_collections_disabled(self):
+        resolver = MdcConfigResolver(
+            data_collector=DataCollector(
+                collections={
+                    "inputs": DeploymentCollection(enabled="false"),
+                    "outputs": DeploymentCollection(enabled="false"),
+                    "request": DeploymentCollection(enabled="false"),
+                    "Response": DeploymentCollection(enabled="false"),
+                },
+                request_logging=RequestLogging(capture_headers=["aaa", "bbb"]),
+                sampling_rate=0.9,
+            )
+        )
+
+        assert not resolver.mdc_config
+        resolver.write_file("/mnt")
+
+        assert not resolver.environment_variables
+        assert not resolver.volumes
+
+    def test_resolve_mdc_config_no_collections(self):
+        resolver = MdcConfigResolver(data_collector=DataCollector(collections={}))
+
+        assert not resolver.mdc_config
+        resolver.write_file("/mnt")
+
+        assert not resolver.environment_variables
+        assert not resolver.volumes
+
+    def test_resolve_mdc_config_no_custom_logging(self):
+        resolver = MdcConfigResolver(
+            data_collector=DataCollector(
+                collections={
+                    "request": DeploymentCollection(enabled="true"),
+                    "Response": DeploymentCollection(enabled="true"),
+                },
+                request_logging=RequestLogging(capture_headers=["aaa", "bbb"]),
+                sampling_rate=0.9,
+            )
+        )
+
+        assert not resolver.mdc_config
+        resolver.write_file("/mnt")
+
+        assert not resolver.environment_variables
+        assert not resolver.volumes
