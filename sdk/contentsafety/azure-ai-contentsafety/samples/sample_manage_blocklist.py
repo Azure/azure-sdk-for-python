@@ -1,9 +1,7 @@
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError
 from azure.ai.contentsafety.models import (
-    TextBlocklist,
     TextBlockItemInfo,
     AddBlockItemsOptions,
     RemoveBlockItemsOptions,
@@ -34,7 +32,10 @@ def list_text_blocklists():
 
 def create_or_update_text_blocklist(name, description):
     try:
-        return client.create_or_update_text_blocklist(blocklist_name=name, description=description)
+        return client.create_or_update_text_blocklist(
+            blocklist_name=name,
+            resource={"description": description}
+        )
     except HttpResponseError as e:
         print("Create or update text blocklist failed. ")
         if e.error is not None:
