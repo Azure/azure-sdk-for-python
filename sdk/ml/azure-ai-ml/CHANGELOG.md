@@ -26,7 +26,7 @@
 ### Other Changes
 
 
-## 1.6.0 (05/01/2023)
+## 1.6.0 (2023-05-01)
 
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
