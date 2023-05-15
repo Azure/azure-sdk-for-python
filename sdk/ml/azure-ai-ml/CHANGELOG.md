@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support to enable set workspace connection secret expiry time.
+- Added support for `stage` on model version
 
 ### Bugs Fixed
 
