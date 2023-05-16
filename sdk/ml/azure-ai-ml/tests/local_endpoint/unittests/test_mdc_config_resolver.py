@@ -37,6 +37,8 @@ class TestMdcConfigResolver:
         }
 
         assert mdc_config == resolver.mdc_config
+        assert {} == resolver.environment_variables
+        assert {} == resolver.volumes
 
     def test_resolve_mdc_config_global_sampling_rate(self):
         resolver = MdcConfigResolver(
@@ -64,6 +66,8 @@ class TestMdcConfigResolver:
         }
 
         assert mdc_config == resolver.mdc_config
+        assert {} == resolver.environment_variables
+        assert {} == resolver.volumes
 
     def test_resolve_mdc_config_collections_disabled(self):
         resolver = MdcConfigResolver(
@@ -81,18 +85,16 @@ class TestMdcConfigResolver:
 
         assert not resolver.mdc_config
         resolver.write_file("/mnt")
-
-        assert not resolver.environment_variables
-        assert not resolver.volumes
+        assert {} == resolver.environment_variables
+        assert {} == resolver.volumes
 
     def test_resolve_mdc_config_no_collections(self):
         resolver = MdcConfigResolver(data_collector=DataCollector(collections={}))
 
         assert not resolver.mdc_config
         resolver.write_file("/mnt")
-
-        assert not resolver.environment_variables
-        assert not resolver.volumes
+        assert {} == resolver.environment_variables
+        assert {} == resolver.volumes
 
     def test_resolve_mdc_config_no_custom_logging(self):
         resolver = MdcConfigResolver(
@@ -108,6 +110,5 @@ class TestMdcConfigResolver:
 
         assert not resolver.mdc_config
         resolver.write_file("/mnt")
-
-        assert not resolver.environment_variables
-        assert not resolver.volumes
+        assert {} == resolver.environment_variables
+        assert {} == resolver.volumes

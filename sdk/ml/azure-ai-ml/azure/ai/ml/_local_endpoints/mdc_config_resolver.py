@@ -20,8 +20,8 @@ class MdcConfigResolver(object):
         self,
         data_collector: DataCollector,
     ):
-        self.environment_variables = None
-        self.volumes = None
+        self.environment_variables = {}
+        self.volumes = {}
         self.mdc_config = None
         self.config_path = "/etc/mdc-config.json"
         self.local_config_name = "mdc-config.json"
