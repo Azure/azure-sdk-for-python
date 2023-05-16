@@ -14,6 +14,7 @@ from ._models import (
 )
 from azure.core.messaging import CloudEvent
 
+
 class PublishResult(object):
     """The result of the Publish operation."""
 
@@ -26,6 +27,7 @@ class PublishResult(object):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
 
 class ReceiveDetails(InternalReceiveDetails):
     """Receive operation details per Cloud Event.
@@ -121,7 +123,7 @@ __all__: List[str] = [
     "ReceiveDetails",
     "ReceiveResult",
     "BrokerProperties",
-    "PublishResult"
+    "PublishResult",
 ]  # Add all objects you want publicly available to users at this package level
 
 

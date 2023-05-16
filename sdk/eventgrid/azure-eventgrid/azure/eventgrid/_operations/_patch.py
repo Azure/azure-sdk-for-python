@@ -89,7 +89,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @distributed_trace
-    def publish_cloud_events(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> PublishResult:
+    def publish_cloud_events(
+        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs
+    ) -> PublishResult:
         """Publish Cloud Events to namespace topic.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
