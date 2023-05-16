@@ -1,3 +1,4 @@
+import os
 import base64
 import functools
 
@@ -5,7 +6,6 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, record
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.ai.contentsafety.models import AnalyzeTextOptions, ImageData, AnalyzeImageOptions, TextBlocklist
 from azure.core.credentials import AzureKeyCredential
-from test_data import *
 
 ContentSafetyPreparer = functools.partial(
     PowerShellPreparer,
@@ -28,9 +28,16 @@ class TestContentSafetyCase(TestContentSafety):
         client = self.create_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
-        request = AnalyzeTextOptions(text=get_text_data(), categories=[])
+        text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt"))
+        with open(text_path) as f:
+            request = AnalyzeTextOptions(text=f.readline(), categories=[])
         response = client.analyze_text(request)
 
+        assert response is not None
+        assert response.hate_result is not None
+        assert response.violence_result is not None
+        assert response.sexual_result is not None
+        assert response.self_harm_result is not None
         assert response.hate_result.severity > 0
 
     @ContentSafetyPreparer()
@@ -39,7 +46,9 @@ class TestContentSafetyCase(TestContentSafety):
         client = self.create_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
-        request = AnalyzeImageOptions(image=ImageData(content=base64.b64decode(get_image_content_data())))
+        image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/image.jpg"))
+        with open(image_path, "rb") as file:
+            request = AnalyzeImageOptions(image=ImageData(content=file.read()))
         response = client.analyze_image(request)
 
         assert response.violence_result.severity > 0
@@ -50,7 +59,10 @@ class TestContentSafetyCase(TestContentSafety):
         client = self.create_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
-        request = TextBlocklist(description="Test blocklist management.")
-        response = client.create_or_update_text_blocklist(blocklist_name="TestBlocklist", resource=request)
+        name = "TestBlocklist"
+        description = "Test blocklist management."
+        response = client.create_or_update_text_blocklist(blocklist_name=name, resource={"description": description})
 
-        print(response)
+        assert response is not None
+        assert response.blocklist_name == name
+        assert response.description == description
