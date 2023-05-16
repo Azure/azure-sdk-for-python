@@ -99,7 +99,10 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
             },
         }
-        default_data_window_size = None
+        # default data window size is calculated based on the trigger frequency
+        # by default 7 days if user provides incorrect recurrence frequency
+        # or a cron expression
+        default_data_window_size = "P7D"
         if isinstance(self.trigger, RecurrenceTrigger):
             frequency = self.trigger.frequency.lower()
             interval = self.trigger.interval
@@ -111,8 +114,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 default_data_window_size = f"P{interval * 7}D"
             if frequency == RecurrenceFrequency.MONTH.lower():
                 default_data_window_size = f"P{interval * 30}D"
-            else:
-                default_data_window_size = "P7D"
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,

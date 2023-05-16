@@ -85,7 +85,12 @@ class MonitorDefinition(RestTranslatableMixin):
             monitoring_target=(self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id)
             if self.monitoring_target
             else None,
-            signals={signal_name: signal._to_rest_object() for signal_name, signal in self.monitoring_signals.items()},
+            signals={
+                signal_name: signal._to_rest_object(
+                    default_data_window_size=default_data_window_size,
+                )
+                for signal_name, signal in self.monitoring_signals.items()
+            },
             alert_notification_setting=rest_alert_notification,
         )
 
