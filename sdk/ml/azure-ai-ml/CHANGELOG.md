@@ -6,6 +6,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+
 ### Breaking Changes
 
 ### Other Changes
