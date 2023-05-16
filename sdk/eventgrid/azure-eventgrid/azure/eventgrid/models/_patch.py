@@ -96,8 +96,8 @@ class BrokerProperties(InternalBrokerProperties):
 
     :ivar lock_token: The token used to lock the event. Required.
     :vartype lock_token: str
-    :ivar delivery_attempt_count: The attempt count for deliverying the event. Required.
-    :vartype delivery_attempt_count: int
+    :ivar delivery_count: The attempt count for deliverying the event. Required.
+    :vartype delivery_count: int
     """
 
     @overload
@@ -105,7 +105,7 @@ class BrokerProperties(InternalBrokerProperties):
         self,
         *,
         lock_token: str,
-        delivery_attempt_count: int,
+        delivery_count: int,
     ):
         ...
 
