@@ -2,4 +2,4 @@
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
 ../../core/azure-core
-openai
+git+https://github.com/openai/openai-python@main
