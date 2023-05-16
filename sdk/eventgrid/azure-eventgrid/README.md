@@ -102,23 +102,6 @@ client = EventGridPublisherClient(endpoint, credential)
 
 > **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].
 
-<!-- SNIPPET:preview_samples.sample_eg_client_authentication.client_auth_with_key_cred -->
-
-```python
-# [START client_auth_with_key_cred]
-import os
-from azure.eventgrid import EventGridClient
-from azure.core.credentials import AzureKeyCredential
-
-key = os.environ["EVENTGRID_KEY"]
-endpoint = os.environ["EVENTGRID_ENDPOINT"]
-
-credential = AzureKeyCredential(key)
-client = EventGridClient(endpoint, credential)
-```
-
-<!-- END SNIPPET -->
-
 ## Key concepts
 
 ### Topic
