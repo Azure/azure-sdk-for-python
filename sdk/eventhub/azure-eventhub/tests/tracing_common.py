@@ -5,8 +5,12 @@
 
 """Fake implementation of AbstractSpan for tests. Copied from `azure-core/tests`."""
 from contextlib import contextmanager
-from azure.core.tracing import HttpSpanMixin, SpanKind
 from typing import Union, Sequence, Optional, Dict
+import uuid
+
+from azure.core.tracing import HttpSpanMixin, SpanKind
+
+
 AttributeValue = Union[
     str,
     bool,
@@ -19,11 +23,12 @@ AttributeValue = Union[
 ]
 Attributes = Optional[Dict[str, AttributeValue]]
 
+
 class FakeSpan(HttpSpanMixin, object):
     # Keep a fake context of the current one
     CONTEXT = []
 
-    def __init__(self, span=None, name="span", kind=None, *, links=[]):
+    def __init__(self, span=None, name="span", kind=None, *, links=[], **kwargs):
         # type: (Optional[Span], Optional[str]) -> None
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
@@ -39,11 +44,9 @@ class FakeSpan(HttpSpanMixin, object):
         self._kind = kind or SpanKind.UNSPECIFIED
         self.attributes = {}
         self.children = []
-        if self.CONTEXT:
-            self.CONTEXT[-1].children.append(self)
-        self.CONTEXT.append(self)
         self.status = None
         self.links = links
+        self.traceparent = uuid.uuid4().hex
 
     def __str__(self):
         buffer = "Name: {}\n".format(self.name)
@@ -76,22 +79,25 @@ class FakeSpan(HttpSpanMixin, object):
         """Get the span kind of this span."""
         return self._kind
 
-
     @kind.setter
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
         self._kind = value
-    
+
     def __enter__(self):
         """Start a span."""
+        if self.CONTEXT:
+            self.CONTEXT[-1].children.append(self)
+        self.CONTEXT.append(self)
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
         if exception_value:
             self.status = exception_value.args[0]
-        self.CONTEXT.pop()
+        if self.CONTEXT:
+            self.CONTEXT.pop()
 
     def start(self):
         # type: () -> None
@@ -109,7 +115,7 @@ class FakeSpan(HttpSpanMixin, object):
         Returns a dictionary with the header labels and values.
         :return: A key value pair dictionary
         """
-        return {'traceparent': '123456789'}
+        return {'traceparent': self.traceparent}
 
     def add_attribute(self, key, value):
         # type: (str, Union[str, int]) -> None
