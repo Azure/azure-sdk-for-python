@@ -15,10 +15,8 @@ def analyze_text():
 
     # Read sample data
     with open(text_path) as f:
-        text = f.readline()
-
-    # Build request
-    request = AnalyzeTextOptions(text=text, categories=[TextCategory.HATE, TextCategory.SELF_HARM])
+        # Build request
+        request = AnalyzeTextOptions(text=f.readline(), categories=[TextCategory.HATE, TextCategory.SELF_HARM])
 
     # Analyze text
     try:
