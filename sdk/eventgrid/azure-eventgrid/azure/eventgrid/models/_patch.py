@@ -7,6 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, overload, Mapping, Any
+from .. import _model_base
 from ._models import (
     ReceiveDetails as InternalReceiveDetails,
     ReceiveResult as InternalReceiveResult,
@@ -15,7 +16,7 @@ from ._models import (
 from azure.core.messaging import CloudEvent
 
 
-class PublishResult(object):
+class PublishResult(_model_base.Model):
     """The result of the Publish operation."""
 
     @overload
