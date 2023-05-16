@@ -269,11 +269,8 @@ class _LocalDeploymentHelper(object):
             mdc_config = MdcConfigResolver(deployment.data_collector)
             mdc_config.write_file(deployment_directory_path)
 
-            for k, v in mdc_config.environment_variables.items():
-                environment_variables[k] = v
-
-            for k, v in mdc_config.volumes.items():
-                volumes[k] = v
+            environment_variables.update(mdc_config.environment_variables)
+            volumes.update(mdc_config.volumes)
 
         # Determine whether we need to use local context or downloaded context
         build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
