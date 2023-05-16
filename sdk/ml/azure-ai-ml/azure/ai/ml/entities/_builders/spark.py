@@ -16,7 +16,7 @@ from ..._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
 from ..._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from ..._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
+from ..._schema.job.parameterized_spark import CONF_KEY_MAP
 from ..._schema.job.spark_job import SparkJobSchema
 from ..._utils.utils import is_url
 from ...constants._common import (
@@ -304,13 +304,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if "entry" in obj and obj["entry"]:
             obj["entry"] = SparkJobEntry._from_rest_object(obj["entry"])
         if "conf" in obj and obj["conf"]:
-            identify_schema = UnionField(
-                [
-                    NestedField(SparkConfSchema, unknown=INCLUDE),
-                ]
-            )
-            obj["conf"] = identify_schema._deserialize(value=obj["conf"], attr=None, data=None)
-
             # get conf setting value from conf
             for field_name, _ in CONF_KEY_MAP.items():
                 value = obj["conf"].get(field_name, None)
@@ -333,13 +326,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         from .spark_func import spark
 
         rest_spark_job: RestSparkJob = obj.properties
-        identify_schema = UnionField(
-            [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
-            ]
-        )
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
-        rest_spark_conf = identify_schema._deserialize(value=rest_spark_conf, attr=None, data=None)
 
         spark_job = spark(
             name=obj.name,

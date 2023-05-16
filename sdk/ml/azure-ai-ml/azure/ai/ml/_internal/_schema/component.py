@@ -9,7 +9,7 @@ from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 from ..._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
 from ..._schema.component.component import ComponentSchema
 from ..._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
-from ..._schema.job.parameterized_spark import SparkConfSchema, SparkEntryClassSchema, SparkEntryFileSchema
+from ..._schema.job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
 from ...constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
@@ -210,5 +210,5 @@ class InternalSparkComponentSchema(InternalComponentSchema):
 
     files = fields.List(fields.Str(required=True))
     archives = fields.List(fields.Str(required=True))
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
     args = fields.Str(metadata={"description": "Command Line arguments."})
