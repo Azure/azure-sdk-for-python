@@ -20,6 +20,12 @@ class PublishResult(_model_base.Model):
     """The result of the Publish operation."""
 
     @overload
+    def __init__(
+        self,
+    ):
+        ...
+
+    @overload
     def __init__(self, mapping: Mapping[str, Any]):
         """
         :param mapping: raw JSON to initialize the model.

@@ -117,7 +117,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
             self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
-            return PublishResult()
+        return PublishResult()
 
     @distributed_trace
     def receive_cloud_events(
