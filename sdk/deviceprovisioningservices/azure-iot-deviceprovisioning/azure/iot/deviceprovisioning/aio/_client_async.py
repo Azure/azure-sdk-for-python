@@ -27,7 +27,7 @@ from .._generated._version import VERSION
 from .._generated.aio import (
     DeviceProvisioningClient as GeneratedDeviceProvisioningClient,
 )
-from .operations import (
+from .._generated.aio.operations import (
     DeviceRegistrationStateOperations,
     EnrollmentGroupOperations,
     IndividualEnrollmentOperations,

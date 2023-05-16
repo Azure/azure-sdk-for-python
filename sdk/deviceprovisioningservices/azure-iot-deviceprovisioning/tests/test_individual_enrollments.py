@@ -1,5 +1,4 @@
 from azure.iot.deviceprovisioning import DeviceProvisioningClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
@@ -11,6 +10,7 @@ from conftest import (
     WEBHOOK_URL,
     ProvisioningServicePreparer,
 )
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from utility.common import create_test_cert, generate_enrollment, generate_key
 
 
@@ -218,7 +218,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             attestation_type=attestation_type,
             primary_key=primary_key,
             secondary_key=secondary_key,
-            initial_twin_properties=INITIAL_TWIN_PROPERTIES
+            initial_twin_properties=INITIAL_TWIN_PROPERTIES,
         )
 
         enrollment_id2 = self.create_random_name("sym_enrollment2_")
@@ -387,3 +387,54 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
+
+    @ProvisioningServicePreparer()
+    @recorded_by_proxy
+    def test_individual_enrollment_paging(self, deviceprovisioningservices_endpoint):
+        from operator import length_hint
+
+        total_enrollments = 150
+        page_size = 50
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
+        attestation_type = "tpm"
+        enrollments = []
+        for x in range(total_enrollments):
+            enrollment_id = self.create_random_name(f"ind_enroll_tpm_{x}")
+            device_id = self.create_random_name(f"device_{x}")
+            enrollment = generate_enrollment(
+                id=enrollment_id,
+                attestation_type=attestation_type,
+                endorsement_key=TEST_ENDORSEMENT_KEY,
+                provisioning_status="enabled",
+                device_id=device_id,
+                allocation_policy="static",
+            )
+            client.individual_enrollment.create_or_update(
+                id=enrollment_id, enrollment=enrollment
+            )
+            enrollments.append(enrollment_id)
+
+        query_results = []
+        query = client.individual_enrollment.query(
+            query_specification={"query": "select *"}
+        )
+        for enrollment in query:
+            query_results.append(enrollment["registrationId"])
+        assert len(query_results) == len(enrollments)
+
+        query_results = []
+        # Should page `page_size` items at a time
+        query = client.individual_enrollment.query(
+            query_specification={"query": "select *"}, top=page_size
+        )
+        for enrollment_page in query.by_page():
+            assert length_hint(enrollment_page) == page_size
+            for enrollment in enrollment_page:
+                query_results.append(enrollment["registrationId"])
+
+        assert len(query_results) == len(enrollments)
+
+        for id in enrollments:
+            client.individual_enrollment.delete(id=id)

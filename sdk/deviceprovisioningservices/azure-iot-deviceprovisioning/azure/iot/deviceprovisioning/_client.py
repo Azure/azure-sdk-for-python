@@ -27,7 +27,7 @@ from ._api_version import DEFAULT_VERSION, ApiVersion
 from ._auth import SasCredentialPolicy, SharedKeyCredentialPolicy
 from ._generated import DeviceProvisioningClient as GeneratedDeviceProvisioningClient
 from ._generated._version import VERSION
-from .operations import (
+from ._generated.operations import (
     DeviceRegistrationStateOperations,
     EnrollmentGroupOperations,
     IndividualEnrollmentOperations,
