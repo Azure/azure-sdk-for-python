@@ -7,7 +7,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
-from ...models._patch import ReceiveResult, ReceiveDetails
+from ...models._patch import ReceiveResult, ReceiveDetails, PublishResult
 from ..._operations._patch import _cloud_event_to_generated
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
@@ -33,8 +33,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: Publish result
+        :rtype:  ~azure.eventgrid.models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -46,7 +46,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         *,
         content_type: str = "application/cloudevents+json; charset=utf-8",
         **kwargs: Any
-    ) -> None:
+    ) -> PublishResult:
         """Publish Single Cloud Event to namespace topic.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
@@ -57,8 +57,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: Publish result
+        :rtype:  ~azure.eventgrid.models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -74,20 +74,21 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: Publish result
+        :rtype:  ~azure.eventgrid.models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             internal_body = _cloud_event_to_generated(body)
-            await self._publish_cloud_event(topic_name, internal_body, **kwargs)
+            publish_result = await self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
             internal_body_list = []
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
-            await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
+            publish_result = await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
+        return publish_result
 
     @distributed_trace_async
     async def receive_cloud_events(

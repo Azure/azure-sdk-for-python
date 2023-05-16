@@ -59,8 +59,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: Publish result
+        :rtype:  ~azure.eventgrid.models.PublishResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
