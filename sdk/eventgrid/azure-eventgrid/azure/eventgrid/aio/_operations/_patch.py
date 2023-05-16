@@ -22,7 +22,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         *,
         content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
-    ) -> None:
+    ) -> PublishResult:
         """Publish Batch of Cloud Events to namespace topic.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
@@ -63,7 +63,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
     @distributed_trace_async
-    async def publish_cloud_events(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> None:
+    async def publish_cloud_events(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> PublishResult:
         """Publish Cloud Events to namespace topic.
         :param topic_name: Topic Name. Required.
         :type topic_name: str
