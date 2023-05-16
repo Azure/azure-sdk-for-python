@@ -80,11 +80,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         # (Note: we prompt a challenge instead of fetching a token directly so the token has correct permissions)
         challenge_cached = HttpChallengeCache.get_challenge_for_url(self._vault_url)
         if not challenge_cached:
-            # `get_setting` is just used to prompt a challenge; we don't want to stop on any errors it may raise
-            try:
-                await self._client.get_setting(vault_base_url=self._vault_url, setting_name=setting.name, **kwargs)
-            except Exception:  # pylint:disable=broad-except
-                pass
+            await self._client.get_setting(vault_base_url=self._vault_url, setting_name=setting.name, **kwargs)
 
         parameters = UpdateSettingRequest(value=setting.value)
         result = await self._client.update_setting(
