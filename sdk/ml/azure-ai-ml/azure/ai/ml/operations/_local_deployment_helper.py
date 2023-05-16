@@ -262,8 +262,7 @@ class _LocalDeploymentHelper(object):
         }
 
         volumes = {}
-        for k, v in image_context.volumes.items():
-            volumes[k] = v
+        volumes.update(image_context.volumes)
 
         if deployment.data_collector:
             mdc_config = MdcConfigResolver(deployment.data_collector)
