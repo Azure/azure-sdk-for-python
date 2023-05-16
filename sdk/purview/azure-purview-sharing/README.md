@@ -189,8 +189,7 @@ sent_share_id = uuid.uuid4()
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
 
 for list_response in list_request:
-    result_list = json.loads(list_response)
-    print(result_list)
+    print(list_response)
 ```
 
 ### List received shares
