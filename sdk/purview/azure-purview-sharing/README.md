@@ -43,7 +43,7 @@ client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.
 
 The following section shows you how to initialize and authenticate your client and share data.
 
-### Create sent share
+### Create share
 
 ```python Snippet:create_a_sent_share
 import os, uuid, json
@@ -193,7 +193,7 @@ for list_response in list_request:
     print(result_list)
 ```
 
-### List detached received shares
+### List received shares
 
 ```python Snippet:get_all_detached_received_shares
 import os
@@ -210,7 +210,7 @@ list_detached_response = client.received_shares.list_detached(orderby="propertie
 print(list_detached_response)
 ```
 
-### Create a received share
+### Attach a received share
 
 ```python Snippet:attach_a_received_share
 import os, json
@@ -276,7 +276,7 @@ retrieved_share = json.loads(get_share_response)
 print(retrieved_share)
 ```
 
-### List attached received shares
+### List attached shares
 
 ```python Snippet:list_attached_received_shares
 import os
