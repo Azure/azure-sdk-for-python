@@ -125,7 +125,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
 
         detail_items = []
-        receive_result_deserialized = ReceiveResult()
+        
         receive_result = await self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, max_wait_time=max_wait_time, **kwargs
         )
@@ -135,7 +135,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             detail_items.append(
                 ReceiveDetails(event=detail_item.get("event"), broker_properties=detail_item.get("brokerProperties"))
             )
-        receive_result_deserialized["value"] = detail_items
+        receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
 
