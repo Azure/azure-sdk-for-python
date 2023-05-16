@@ -73,6 +73,9 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
     
+    def is_china_endpoint(self, endpoint):
+        return ".azurecr.cn" in endpoint
+    
     def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"

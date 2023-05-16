@@ -112,3 +112,6 @@ def get_credential(authority, **kwargs):
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
         authority=authority
     )
+
+def get_data_path():
+    return os.path.join(os.getcwd(), "samples", "data", "docker_artifact")

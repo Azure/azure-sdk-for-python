@@ -57,7 +57,7 @@ class SetGetImageAsync(object):
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config_digest, config_size = await client.upload_blob(repository_name, config)
-            print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
+            print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
                 "config": {

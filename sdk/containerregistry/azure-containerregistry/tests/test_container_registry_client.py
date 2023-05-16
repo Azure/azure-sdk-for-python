@@ -538,6 +538,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_set_oci_manifest_stream_without_spaces(self, containerregistry_endpoint):
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = self.get_resource_name("repo")
         # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
         # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -588,6 +591,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_set_oci_manifest_stream_without_spaces_with_tag(self, containerregistry_endpoint):
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = self.get_resource_name("repo")
         tag = "v1"
         # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
@@ -634,11 +640,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
     
     @acr_preparer()
     @recorded_by_proxy
     def test_set_docker_manifest_stream_without_spaces(self, containerregistry_endpoint):
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = "library/hello-world"
         # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
         # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -657,7 +665,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
     
     # Live only, as test proxy now cannot handle spaces correctly
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -685,11 +692,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert tags[0] == tag
             
             client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
     
     @acr_preparer()
     @recorded_by_proxy
     def test_set_docker_manifest_stream_without_spaces_with_tag(self, containerregistry_endpoint):
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = "library/hello-world"
         tag = "v1"
         # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
@@ -712,7 +721,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert tags[0] == tag
             
             client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
     
     # Live only, as test proxy now cannot handle spaces correctly
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -736,7 +744,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
     
     # Live only, as test proxy now cannot handle spaces correctly
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -765,7 +772,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert tags[0] == tag
             
             client.delete_manifest(repo, digest)
-            client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy

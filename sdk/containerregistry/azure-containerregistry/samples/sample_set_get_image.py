@@ -61,7 +61,7 @@ class SetGetImage(object):
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config_digest, config_size = client.upload_blob(self.repository_name, config)
-            print(f"Uploaded blob: digest - {config_digest}, size - {config_size}")
+            print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
                 "config": {
