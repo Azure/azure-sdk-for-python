@@ -7,8 +7,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import List
-from .._patch import EventGridSharedAccessKeyPolicy
 from azure.core.credentials import AzureKeyCredential
+from .._patch import EventGridSharedAccessKeyPolicy
 from ._client import EventGridClient as ServiceClientGenerated
 from .._legacy.aio import EventGridPublisherClient
 

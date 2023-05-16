@@ -7,11 +7,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 from typing import List, overload, Union, Any, Optional
-from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from azure.core.messaging import CloudEvent
+from azure.core.tracing.decorator import distributed_trace
+from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ..models._models import CloudEvent as InternalCloudEvent
 from ..models._patch import ReceiveResult, ReceiveDetails, PublishResult
-from azure.core.tracing.decorator import distributed_trace
 
 
 def _cloud_event_to_generated(cloud_event, **kwargs):

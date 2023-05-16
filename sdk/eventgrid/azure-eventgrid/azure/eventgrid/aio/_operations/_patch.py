@@ -124,8 +124,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        detail_items: ReceiveDetails = []
-        
+        detail_items = []
         receive_result = await self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, max_wait_time=max_wait_time, **kwargs
         )
