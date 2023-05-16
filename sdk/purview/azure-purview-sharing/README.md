@@ -78,7 +78,7 @@ artifact = {
 sent_share = {
     "properties": {
         "artifact": artifact,
-        "displayName": "sample=share",
+        "displayName": "sampleShare",
         "description": "A sample share"
     },
     "shareKind": "InPlace"
@@ -86,8 +86,7 @@ sent_share = {
 
 request = client.sent_shares.begin_create_or_replace(
     str(sent_share_id),
-    content_type="application/json",
-    content=json.dumps(sent_share))
+    sent_share=sent_share)
 
 response = request.result()
 print(response)
@@ -130,8 +129,8 @@ list_request = client.sent_shares.list(
     reference_name=provider_storage_account_resource_id,
     orderby="properties/createdAt desc")
 
-list_response = list_request.result()
-print(list_response)
+for list_response in list_request:
+    print(list_response)
 ```
 
 ### Create sent share invitation
@@ -165,7 +164,7 @@ invitation = {
 invitation_request = client.sent_shares.create_invitation(
     sent_share_id=str(sent_share_id),
     sent_share_invitation_id=str(sent_share_invitation_id),
-    sent_share_invitation=json.dumps(invitation))
+    sent_share_invitation=invitation)
 
 invitation_response = invitation_request.result()
 created_invitation = json.loads(invitation_response)
@@ -188,9 +187,10 @@ client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 sent_share_id = uuid.uuid4()
 
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
-list_response = list_request.result()
-result_list = json.loads(list_response)
-print(result_list)
+
+for list_response in list_request:
+    result_list = json.loads(list_response)
+    print(result_list)
 ```
 
 ### List detached received shares
@@ -226,8 +226,7 @@ client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
 
 list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
-list_detached = json.loads(list_detached_response)
-received_share = list_detached[0]
+received_share = next(x for x in list_detached_response)
 
 store_reference = {
     "referenceName": consumer_storage_account_resource_id,
