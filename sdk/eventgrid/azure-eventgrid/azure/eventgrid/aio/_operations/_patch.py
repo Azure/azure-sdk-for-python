@@ -83,14 +83,14 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             internal_body = _cloud_event_to_generated(body)
-            publish_result = await self._publish_cloud_event(topic_name, internal_body, **kwargs)
+            await self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
             internal_body_list = []
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
-            publish_result = await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
-        return publish_result
+            await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
+        return PublishResult()
 
     @distributed_trace_async
     async def receive_cloud_events(
