@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- Added sanity check for manifest size at download time - if manifest is bigger than 4MB, `ValueError` will be thrown.
 
 ### Bugs Fixed
 
