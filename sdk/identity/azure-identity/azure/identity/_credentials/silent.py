@@ -125,7 +125,7 @@ class SilentAuthenticationCredential:
             details = result.get("error_description") or result.get("error")
             if details:
                 message += ": {}".format(details)
-            raise ClientAuthenticationError(message=message)
+            raise CredentialUnavailableError(message=message)
 
         # cache doesn't contain a matching refresh (or access) token
         raise CredentialUnavailableError(message=NO_TOKEN.format(self._auth_record.username))
