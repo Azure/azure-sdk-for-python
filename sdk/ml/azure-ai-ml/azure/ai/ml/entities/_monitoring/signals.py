@@ -573,7 +573,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         self.component_id = component_id
         self.alert_enabled = alert_enabled
 
-    def _to_rest_object(self, **kwargs) -> RestCustomMonitoringSignal: # pylint:disable=unused-argument
+    def _to_rest_object(self, **kwargs) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
