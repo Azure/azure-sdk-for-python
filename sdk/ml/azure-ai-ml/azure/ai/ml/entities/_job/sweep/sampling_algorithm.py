@@ -39,16 +39,14 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
 
-    :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
-    :vartype type: str
-    :param logbase: A positive number or e in string format to be used as base for log
-        based random sampling.
-    :type logbase: Union[float, str]
     :param rule: The specific type of random algorithm. Possible values include: "random",
         "sobol".
     :type rule: str
-    :param seed: An integer to use as the seed for random number generation.
+    :param seed: The seed for random number generation.
     :type seed: int
+    :param logbase: A positive number or e in string format to be used as base for log
+        based random sampling.
+    :type logbase: Union[float, str]
     """
 
     def __init__(
@@ -58,6 +56,17 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         seed: int = None,
         logbase: Union[float, str] = None,
     ) -> None:
+        """Random Sampling Algorithm.
+
+        :param rule: The specific type of random algorithm. Possible values include: "random",
+            "sobol".
+        :type rule: str
+        :param seed: The seed for random number generation.
+        :type seed: int
+        :param logbase: A positive number or e in string format to be used as base for log
+            based random sampling.
+        :type logbase: Union[float, str]
+        """
         super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
