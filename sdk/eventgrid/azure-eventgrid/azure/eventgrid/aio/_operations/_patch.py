@@ -33,8 +33,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: Publish result
-        :rtype:  ~azure.eventgrid.models.PublishResult
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -57,8 +57,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: Publish result
-        :rtype:  ~azure.eventgrid.models.PublishResult
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -76,8 +76,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: Publish result
-        :rtype:  ~azure.eventgrid.models.PublishResult
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if isinstance(body, CloudEvent):
@@ -90,7 +90,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
             await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
-        return PublishResult()
 
     @distributed_trace_async
     async def receive_cloud_events(

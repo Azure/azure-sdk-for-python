@@ -15,25 +15,6 @@ from ._models import (
     BrokerProperties as InternalBrokerProperties,
 )
 
-class PublishResult(_model_base.Model):
-    """The result of the Publish operation."""
-
-    @overload
-    def __init__(
-        self,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class ReceiveDetails(InternalReceiveDetails):
     """Receive operation details per Cloud Event.
@@ -129,7 +110,6 @@ __all__: List[str] = [
     "ReceiveDetails",
     "ReceiveResult",
     "BrokerProperties",
-    "PublishResult",
 ]  # Add all objects you want publicly available to users at this package level
 
 
