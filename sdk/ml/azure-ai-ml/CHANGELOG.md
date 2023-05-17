@@ -1,5 +1,10 @@
 # Release History
 
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
+
 ## 1.7.0 (2023-05-15)
 
 ### Features Added
