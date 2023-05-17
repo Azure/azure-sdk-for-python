@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added a new EventGridClient that supports publish, receive, acknowledge, release and reject operations for CloudEvents.
+- Added a new EventGridClient that supports publish, receive, acknowledge, release, and reject operations for CloudEvents.
 - Added new models to support the new operations on EventGridClient.
 
 ### Breaking Changes
