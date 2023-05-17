@@ -157,12 +157,25 @@ class LogNormal(Normal):
 
 class QNormal(Normal):
     """QNormal distribution configuration.
-
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "qnormal" for this class.
-    :vartype type: str
+    
+    :param mu: Mean of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the distribution.
+    :type sigma: float
+    :param q: Quantization factor.
+    :type q: int
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs) -> None:
+        """QNormal distribution configuration.
+        
+        :param mu: Mean of the distribution.
+        :type mu: float
+        :param sigma: Standard deviation of the distribution.
+        :type sigma: float
+        :param q: Quantization factor.
+        :type q: int
+        """
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
         self.q = q
