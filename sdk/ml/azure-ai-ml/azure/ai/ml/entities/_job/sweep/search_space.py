@@ -107,12 +107,21 @@ class Choice(SweepDistribution):
 
 class Normal(SweepDistribution):
     """Normal distribution configuration.
-
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "normal" for this class.
-    :vartype type: str
+    
+    :param mu: Mean of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the distribution.
+    :type sigma: float
     """
 
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
+        """Normal distribution configuration.
+        
+        :param mu: Mean of the distribution.
+        :type mu: float
+        :param sigma: Standard deviation of the distribution.
+        :type sigma: float
+        """
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
