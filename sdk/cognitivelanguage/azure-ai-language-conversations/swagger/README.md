@@ -294,28 +294,12 @@ directive:
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
         }
       };
-  - where-operation: ConversationalAnalysisAuthoring_AssignDeploymentResources
-    transform: >
-      $["responses"]["200"] = {
-        "description": "mock schema to get poller response when calling .result()",
-        "schema": {
-          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
-        }
-      };
   - where-operation: ConversationalAnalysisAuthoring_LoadSnapshot
     transform: >
       $["responses"]["200"] = {
         "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringLoadSnapshotJobState"
-        }
-      };
-  - where-operation: ConversationalAnalysisAuthoring_UnassignDeploymentResources
-    transform: >
-      $["responses"]["200"] = {
-        "description": "mock schema to get poller response when calling .result()",
-        "schema": {
-          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
         }
       };
   # Rename `body` param for operations
@@ -420,33 +404,9 @@ directive:
       from: ConversationalAnalysisAuthoring_ListTrainingConfigVersions
       to: ListTrainingConfigVersions
   - rename-operation:
-      from: ConversationalAnalysisAuthoring_DeleteDeploymentFromResources
-      to: DeleteDeploymentFromResources
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_GetDeploymentDeleteFromResourcesStatus
-      to: GetDeploymentDeleteFromResourcesStatus
-  - rename-operation:
       from: ConversationalAnalysisAuthoring_LoadSnapshot
       to: LoadSnapshot
   - rename-operation:
       from: ConversationalAnalysisAuthoring_GetLoadSnapshotStatus
       to: GetLoadSnapshotStatus
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_ListDeploymentResources
-      to: ListDeploymentResources
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_AssignDeploymentResources
-      to: AssignDeploymentResources
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_GetAssignDeploymentResourcesStatus
-      to: GetAssignDeploymentResourcesStatus
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_UnassignDeploymentResources
-      to: UnassignDeploymentResources
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_GetUnassignDeploymentResourcesStatus
-      to: GetUnassignDeploymentResourcesStatus
-  - rename-operation:
-      from: ConversationalAnalysisAuthoring_ListAssignedResourceDeployments
-      to: ListAssignedResourceDeployments
 ```
