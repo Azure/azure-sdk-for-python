@@ -51,7 +51,7 @@ class ReceiveDetails(InternalReceiveDetails):
         self,
         *,
         broker_properties: "BrokerProperties",
-        event: CloudEvent,
+        event: "CloudEvent",
     ):
         ...
 
