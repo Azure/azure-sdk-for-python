@@ -28,8 +28,7 @@ class AutoScaleSettings:
         max_node_count: Optional[int] = None,
         enabled: Optional[bool] = None,
     ) -> None:
-        """Auto scale settings for synapse spark compute.
-
+        """
         :param min_node_count: Min node count
         :type min_node_count: int
         :param max_node_count: Max node count
@@ -60,9 +59,8 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for synapse spark compute."""
 
-    def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None):
-        """Auto pause settings for synapse spark compute.
-
+    def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None) -> None:
+        """
         :param delay_in_minutes: ideal time delay in minutes before pause cluster
         :type delay_in_minutes: int
         :param auto_scale_enabled:  Auto pause enabled
