@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
+from typing import Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
@@ -49,25 +50,34 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
 
 
 class BanditPolicy(EarlyTerminationPolicy):
-    """Defines an early termination policy based on slack criteria, and a frequency and delay interval for evaluation.
+    """Defines an early termination policy based on slack criteria and a frequency and delay interval for evaluation.
 
-    :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+    :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
-    :param evaluation_interval: Interval (number of runs) between policy evaluations.
+    :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
     :type evaluation_interval: int
-    :param slack_amount: Absolute distance allowed from the best performing run.
+    :param slack_amount: Absolute distance allowed from the best performing run. Defaults to 0.
     :type slack_amount: float
-    :param slack_factor: Ratio of the allowed distance from the best performing run.
+    :param slack_factor: Ratio of the allowed distance from the best performing run. Defaults to 0.
     :type slack_factor: float
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
+            :language: ipython
+            :linenos:
+            :lines: 341-353
+            :caption: Configuring a BanditPolicy for a hyperparameter sweep on a Command job.
     """
 
     def __init__(
         self,
         *,
-        delay_evaluation: int = 0,
-        evaluation_interval: int = 0,
-        slack_amount: float = 0,
-        slack_factor: float = 0,
+        delay_evaluation: Optional[int] = 0,
+        evaluation_interval: Optional[int] = 0,
+        slack_amount: Optional[float] = 0,
+        slack_factor: Optional[float] = 0,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = EarlyTerminationPolicyType.BANDIT.lower()
