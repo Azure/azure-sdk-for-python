@@ -11,6 +11,8 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SparkJobEntryType:
+    """Type of Spark job entry. Possibilities are Python file entry or Scala class entry."""
+
     SPARK_JOB_FILE_ENTRY = "SparkJobPythonEntry"
     SPARK_JOB_CLASS_ENTRY = "SparkJobScalaEntry"
 
