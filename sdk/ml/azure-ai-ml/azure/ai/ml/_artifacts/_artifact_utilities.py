@@ -480,7 +480,7 @@ def _get_snapshot_path_info(artifact) -> Tuple[Path, IgnoreFile, str]:
     _validate_path(path, _type=ErrorTarget.CODE)
 
     # to align with _check_and_upload_path, we need to try getting the ignore file from the artifact first
-    ignore_file = getattr(artifact, "_ignore_file", get_ignore_file(path))
+    ignore_file = get_ignore_file(path)
     # Note that we haven't used getattr(artifact, "_upload_hash", get_content_hash(path, ignore_file)) here, which
     # is aligned with _check_and_upload_path. Current guess is that content_hash is what we used in blob, so we must
     # use it to retrieve the artifact.
