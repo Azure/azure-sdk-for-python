@@ -27,7 +27,7 @@ class AutoScaleSettings:
         min_node_count: Optional[int] = None,
         max_node_count: Optional[int] = None,
         enabled: Optional[bool] = None,
-    ):
+    ) -> None:
         """Auto scale settings for synapse spark compute.
 
         :param min_node_count: Min node count
