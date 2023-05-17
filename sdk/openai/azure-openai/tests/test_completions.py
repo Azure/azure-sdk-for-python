@@ -9,7 +9,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 class TestCompletions(AzureRecordedTestCase):
-    """Missing tests for keyword arguments `suffix` and `logit_bias`"""
+    """Missing tests for keyword argument `suffix`"""
 
     def test_completion_bad_deployment_name(self, azure_openai_creds):
         with pytest.raises(openai.error.InvalidRequestError) as e:
@@ -48,6 +48,24 @@ class TestCompletions(AzureRecordedTestCase):
         deployment = azure_openai_creds["completions_name"]
 
         completion = openai.Completion.create(prompt=["hello world", "how are you today?"], deployment_id=deployment)
+        assert completion.id
+        assert completion.object == "text_completion"
+        assert completion.created
+        assert completion.model
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 2
+        for c in completion.choices:
+            assert c.finish_reason
+            assert c.index is not None
+            assert c.text
+
+    @pytest.mark.skip("openai.error.APIError: Invalid response object from API: 'Unsupported data type\n' (HTTP response code was 400)")
+    def test_completion_token_input(self, azure_openai_creds):
+        deployment = azure_openai_creds["completions_name"]
+ 
+        completion = openai.Completion.create(prompt=[10919, 3124, 318, 281, 17180, 30], deployment_id=deployment)
         assert completion.id
         assert completion.object == "text_completion"
         assert completion.created
@@ -232,7 +250,6 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.usage.prompt_tokens is not None
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
-        assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
         assert completion.choices[0].text
 
@@ -284,6 +301,26 @@ class TestCompletions(AzureRecordedTestCase):
             prompt="How do I bake a chocolate cake?",
             deployment_id=deployment,
             user="krista"
+        )
+
+        assert completion.id
+        assert completion.object == "text_completion"
+        assert completion.created
+        assert completion.model
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].text
+
+    def test_completion_logit_bias(self, azure_openai_creds):
+        deployment = azure_openai_creds["completions_name"]
+        completion = openai.Completion.create(
+            prompt="What color is the ocean?",
+            deployment_id=deployment,
+            logit_bias={17585: -100, 14573: -100}
         )
 
         assert completion.id

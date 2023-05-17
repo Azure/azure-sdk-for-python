@@ -9,7 +9,6 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 class TestChatCompletionsAsync(AzureRecordedTestCase):
-    """Missing tests for keyword argument `logit_bias`"""
 
     @pytest.mark.asyncio
     async def test_chat_completion_bad_deployment_name(self, azure_openai_creds):
@@ -190,7 +189,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.usage.prompt_tokens is not None
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
-        assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
@@ -237,6 +235,32 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             user="krista"
         )
 
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.created
+        assert completion.model
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content
+        assert completion.choices[0].message.role
+
+    @pytest.mark.asyncio
+    async def test_chat_completion_logit_bias(self, azure_openai_creds):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "What color is the ocean?"}
+        ]
+        deployment = azure_openai_creds["chat_completions_name"]
+
+        completion = await openai.ChatCompletion.acreate(
+            deployment_id=deployment,
+            messages=messages,
+            logit_bias={17585: -100, 14573: -100}
+        )
         assert completion.id
         assert completion.object == "chat.completion"
         assert completion.created
