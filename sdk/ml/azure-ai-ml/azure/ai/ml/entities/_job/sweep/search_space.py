@@ -221,12 +221,30 @@ class Uniform(SweepDistribution):
 
 class LogUniform(Uniform):
     """LogUniform distribution configuration.
+    
+    :param min_value: Minimum value of the log of the distribution.
+    :type min_value: float
+    :param max_value: Maximum value of the log of the distribution.
+    :type max_value: float
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "loguniform" for this class.
-    :vartype type: str
+    .. admonition:: Example:
+    :class: tip
+
+    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/tensorflow/train-hyperparameter-tune-deploy-with-tensorflow/train-hyperparameter-tune-deploy-with-tensorflow.ipynb
+        :language: ipython
+        :linenos:
+        :lines: 342-361
+        :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
     """
 
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs):
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
+        """LogUniform distribution configuration.
+        
+        :param min_value: Minimum value of the log of the distribution.
+        :type min_value: float
+        :param max_value: Maximum value of the log of the distribution.
+        :type max_value: float
+        """
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
