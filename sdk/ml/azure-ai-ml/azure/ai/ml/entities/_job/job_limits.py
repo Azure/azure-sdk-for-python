@@ -6,17 +6,9 @@ import logging
 from abc import ABC
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    CommandJobLimits as RestCommandJobLimits,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    SweepJobLimits as RestSweepJobLimits,
-)
-from azure.ai.ml._utils.utils import (
-    from_iso_duration_format,
-    is_data_binding_expression,
-    to_iso_duration_format,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJobLimits as RestSweepJobLimits
+from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -92,7 +84,19 @@ class SweepJobLimits(JobLimits):
         max_total_trials: Optional[int] = None,
         timeout: Optional[int] = None,
         trial_timeout: Optional[int] = None,
-    ):
+    ) -> None:
+        """Sweep Job limit class.
+
+        :param max_concurrent_trials: Sweep Job max concurrent trials.
+        :type max_concurrent_trials: int
+        :param max_total_trials: Sweep Job max total trials.
+        :type max_total_trials: int
+        :param timeout: The max run duration in seconds , after which the job will be cancelled.
+        Only supports duration with precision as low as Seconds.
+        :type timeout: int
+        :param trial_timeout: Sweep Job Trial timeout value in seconds.
+        :type trial_timeout: int
+        """
         super().__init__()
         self.type = JobType.SWEEP
         self.max_concurrent_trials = max_concurrent_trials
