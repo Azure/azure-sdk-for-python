@@ -2,7 +2,8 @@
 
 ### Timeout config
 
-The timeout options for the client can be changed from the default configurations with the options below. These are:
+The timeout options for the client can be changed from the default configurations with the options below. 
+These options can be passed in at the client constructor or on a per-request basis. These are:
 - `Client Timeout`: can be changed by passing the `timeout` option. This option has no default value, and is only present
 if it is passed in by the user. If not present, the other connectivity timeouts will be used.
 - `Connection Timeout`: can be changed through `connection_timeout` option. Default value is 60s.
