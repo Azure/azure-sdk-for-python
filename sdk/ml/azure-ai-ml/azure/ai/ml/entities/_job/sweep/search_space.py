@@ -128,12 +128,20 @@ class Normal(SweepDistribution):
 
 class LogNormal(Normal):
     """LogNormal distribution configuration.
-
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "lognormal" for this class.
-    :vartype type: str
+    
+    :param mu: Mean of the log of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the log of the distribution.
+    :type sigma: float
     """
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+        """LogNormal distribution configuration.
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
+        :param mu: Mean of the log of the distribution.
+        :type mu: float
+        :param sigma: Standard deviation of the log of the distribution.
+        :type sigma: float
+        """
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
