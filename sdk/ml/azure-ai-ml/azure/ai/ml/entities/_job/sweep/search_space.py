@@ -52,12 +52,18 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 
 class Choice(SweepDistribution):
     """Choice distribution configuration.
+    
+    .. admonition:: Example:
+        :class: tip
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "choice" for this class.
-    :vartype type: str
+        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/scikit-learn/train-hyperparameter-tune-deploy-with-sklearn/train-hyperparameter-tune-with-sklearn.ipynb
+            :language: ipython
+            :linenos:
+            :lines: 488-505
+            :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs):
+    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
