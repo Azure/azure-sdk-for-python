@@ -242,11 +242,29 @@ class Randint(SweepDistribution):
 class Uniform(SweepDistribution):
     """Uniform distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "uniform" for this class.
-    :vartype type: str
+    :param min_value: Minimum value of the distribution.
+    :type min_value: float
+    :param max_value: Maximum value of the distribution.
+    :type max_value: float
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
+            :language: ipython
+            :linenos:
+            :lines: 314-322
+            :caption: Configuring Uniform distributions for learning rates and momentum during a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs):
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
+        """Uniform distribution configuration.
+
+        :param min_value: Minimum value of the distribution.
+        :type min_value: float
+        :param max_value: Maximum value of the distribution.
+        :type max_value: float
+        """
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
         self.min_value = min_value
