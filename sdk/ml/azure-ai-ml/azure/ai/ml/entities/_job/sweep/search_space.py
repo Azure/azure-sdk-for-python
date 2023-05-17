@@ -282,9 +282,13 @@ class LogUniform(Uniform):
 
 class QUniform(Uniform):
     """QUniform distribution configuration.
-
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "quniform" for this class.
-    :vartype type: str
+    
+    :param min_value: Minimum value of the distribution.
+    :type min_value: float
+    :param max_value: Maximum value of the distribution.
+    :type max_value: float
+    :param q: Quantization factor.
+    :type q: int
     """
 
     def __init__(
@@ -293,7 +297,16 @@ class QUniform(Uniform):
         max_value: Optional[Union[int, float]] = None,
         q: Optional[int] = None,
         **kwargs,
-    ):
+    ) -> None:
+        """QUniform distribution configuration.
+        
+        :param min_value: Minimum value of the distribution.
+        :type min_value: float
+        :param max_value: Maximum value of the distribution.
+        :type max_value: float
+        :param q: Quantization factor.
+        :type q: int
+        """
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
         self.q = q
