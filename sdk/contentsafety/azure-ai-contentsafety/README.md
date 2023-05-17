@@ -99,6 +99,8 @@ The following section provides several code snippets covering some of the most c
 
 ### Analyze text
 
+<!-- SNIPPET:sample_analyze_text.analyze_text -->
+
 ```python
 import os
 from azure.ai.contentsafety import ContentSafetyClient
@@ -142,7 +144,11 @@ if __name__ == "__main__":
     analyze_text()
 ```
 
+<!-- END SNIPPET -->
+
 ### Analyze image
+
+<!-- SNIPPET:sample_analyze_image.analyze_image -->
 
 ```python
 import os
@@ -190,7 +196,11 @@ if __name__ == "__main__":
     analyze_image()
 ```
 
+<!-- END SNIPPET -->
+
 ### Manage text blocklist
+
+<!-- SNIPPET:sample_manage_blocklist.manage_blocklist -->
 
 ```python
 import os
@@ -389,8 +399,9 @@ if __name__ == "__main__":
     get_block_item()
     remove_block_items()
     delete_blocklist()
-
 ```
+
+<!-- END SNIPPET -->
 
 ## Troubleshooting
 

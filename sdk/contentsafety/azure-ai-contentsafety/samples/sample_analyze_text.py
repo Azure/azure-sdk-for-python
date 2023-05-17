@@ -1,3 +1,4 @@
+# [START analyze_text]
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
@@ -38,3 +39,4 @@ def analyze_text():
 
 if __name__ == "__main__":
     analyze_text()
+# [END analyze_text]

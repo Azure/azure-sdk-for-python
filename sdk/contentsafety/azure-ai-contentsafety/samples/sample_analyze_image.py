@@ -1,3 +1,4 @@
+# [START analyze_image]
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
@@ -41,3 +42,4 @@ def analyze_image():
 
 if __name__ == "__main__":
     analyze_image()
+# [END analyze_image]

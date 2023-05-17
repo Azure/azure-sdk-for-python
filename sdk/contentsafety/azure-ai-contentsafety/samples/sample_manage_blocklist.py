@@ -1,3 +1,4 @@
+# [START manage_blocklist]
 import os
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
@@ -194,3 +195,4 @@ if __name__ == "__main__":
     get_block_item()
     remove_block_items()
     delete_blocklist()
+# [END manage_blocklist]
