@@ -117,6 +117,7 @@ class PathClient(StorageAccountHostsMixin):
 
     def __exit__(self, *args):
         self._blob_client.close()
+        self._datalake_client_for_blob_operation.close()
         super(PathClient, self).__exit__(*args)
 
     def close(self):
@@ -124,7 +125,6 @@ class PathClient(StorageAccountHostsMixin):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._blob_client.close()
         self.__exit__()
 
     def _format_url(self, hostname):
