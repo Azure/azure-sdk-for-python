@@ -49,10 +49,9 @@ class TestMonitorSchedule(AzureRecordedTestCase):
         test_path = "tests/test_configs/monitoring/yaml_configs/data_quality.yaml"
         created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
 
-    """@pytest.mark.skipif(
+    @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
-    )"""
-
+    )
     def test_out_of_box_schedule(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/out_of_the_box.yaml"
         endpoint_name = "iris-endpoint"
@@ -152,6 +151,9 @@ class TestMonitorSchedule(AzureRecordedTestCase):
                     ),
                 ]"""
 
+    @pytest.mark.skipif(
+        condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
+    )
     def test_default_target_baseline_dataset(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/no_target_baseline_data.yaml"
         endpoint_name = "iris-endpoint"
