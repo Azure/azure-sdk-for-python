@@ -178,11 +178,20 @@ class QNormal(Normal):
 class QLogNormal(QNormal):
     """QLogNormal distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "qlognormal" for this class.
-    :vartype type: str
+    :param mu: Mean of the log of the distribution.
+    :type mu: float
+    :param sigma: Standard deviation of the log of the distribution.
+    :type sigma: float
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs) -> None:
+        """QLogNormal distribution configuration.
+
+        :param mu: Mean of the log of the distribution.
+        :type mu: float
+        :param sigma: Standard deviation of the log of the distribution.
+        :type sigma: float
+        """
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
 
@@ -286,13 +295,22 @@ class QUniform(Uniform):
 
 class QLogUniform(QUniform):
     """QLogUniform distribution configuration.
-
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "qloguniform" for this class.
-    :vartype type: str
+    
+    :param min_value: Minimum value of the log of the distribution.
+    :type min_value: float
+    :param max_value: Maximum value of the log of the distribution.
+    :type max_value: float
     """
 
     def __init__(
         self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
-    ):
+    ) -> None:
+        """QLogUniform distribution configuration.
+        
+        :param min_value: Minimum value of the log of the distribution.
+        :type min_value: float
+        :param max_value: Maximum value of the log of the distribution.
+        :type max_value: float
+        """
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)
