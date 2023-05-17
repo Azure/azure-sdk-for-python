@@ -6,6 +6,7 @@
 
 import random
 import re
+import subprocess
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -34,6 +35,7 @@ from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     InvalidVSCodeRequestError,
+    LocalDeploymentGPUNotAvailable,
     ValidationErrorType,
     ValidationException,
 )
@@ -82,6 +84,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         deployment: OnlineDeployment,
         *,
         local: bool = False,
+        local_enable_gpu: bool = False,
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
         **kwargs,
@@ -92,6 +95,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type deployment: ~azure.ai.ml.entities.OnlineDeployment
         :param local: Whether deployment should be created locally, defaults to False
         :type local: bool, optional
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
@@ -113,6 +118,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             found for local deployment.
         :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint.
             VSCode debug is only supported for local endpoints.
+        : raise ~azure.ai.ml.exceptions.LocalDeploymentGPUNotAvailable: Raised if Nvidia GPU is not available in the system and local_enable_gpu is set while local deployment
         :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
@@ -123,9 +129,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     msg="VSCode Debug is only support for local endpoints. Please set local to True."
                 )
             if local:
+                if local_enable_gpu:
+                    try:
+                        subprocess.check_output('nvidia-smi')
+                    except Exception:
+                        raise LocalDeploymentGPUNotAvailable(msg="Nvidia GPU is not available in your local system. Use nvidia-smi command to see the available GPU")
                 return self._local_deployment_helper.create_or_update(
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
+                    local_enable_gpu=local_enable_gpu
                 )
             if deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs:
                 module_logger.warning(
