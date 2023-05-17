@@ -271,7 +271,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         schedule._is_enabled = False
         return self.begin_create_or_update(schedule, **kwargs)
 
-    def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
+    def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None: # pylint:disable=too-many-branches,too-many-statements
         # resolve target ARM ID
         model_inputs_name, model_outputs_name = None, None
         model_inputs_version, model_outputs_version = None, None
