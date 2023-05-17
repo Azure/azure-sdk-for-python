@@ -17,7 +17,8 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    MediaStreamingConfiguration
+    MediaStreamingConfiguration,
+    ChannelAffinity
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -53,6 +54,7 @@ __all__ = [
     "ServerCallLocator",
     "GroupCallLocator",
     "FileSource",
+    "ChannelAffinity",
 
     # models for output
     "CallConnectionProperties",

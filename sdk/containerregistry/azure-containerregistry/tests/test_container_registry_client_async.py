@@ -805,7 +805,7 @@ class TestContainerRegistryClientAsyncUnitTests:
             content_type = "application/vnd.oci.image.manifest.v1+json"
             return MyMagicMock(
                 status_code=200,
-                headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type},
+                headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type, "Content-Length": len(b"hello world")},
                 read=read,
                 json=json
         )
