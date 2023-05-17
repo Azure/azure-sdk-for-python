@@ -207,7 +207,14 @@ def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
     if "--cov-append" in command_array:
         folders = [folder for folder in os.listdir(tox_dir) if "whl" != folder]
         for folder in folders:
-            shutil.rmtree(folder)
+            try:
+                shutil.rmtree(folder)
+            except Exception as e:
+                # git has a permissions problem. one of the files it drops
+                # cannot be removed as no one has the permission to do so.
+                # lets log just in case, but this should really only affect windows machines.
+                logging.info(e)
+                pass
     else:
         shutil.rmtree(tox_dir)
 
